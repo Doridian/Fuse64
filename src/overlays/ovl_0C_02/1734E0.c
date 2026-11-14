@@ -535,6 +535,7 @@ static void func_ovl0C_02_80048358(void) {
 static void func_ovl0C_02_80048350(void) {
 }
 static void func_ovl0C_02_80048348(void) {
+    D_ovl0C_02_8004A0FC[0] = 0; /* the reference keeps the unused .bss in place */
 }
 
 void func_ovl0C_02_80048330(void) {
@@ -1336,7 +1337,7 @@ void func_ovl0C_02_80046038(void) {
     func_ovl0C_02_80049498(0x404);
 }
 
-void func_ovl0C_02_80046030(void) { if (0) { D_ovl0C_02_8004A0FC[0] = 0; } /* fake: keeps the unused word in .bss */
+void func_ovl0C_02_80046030(void) {
 }
 
 void func_ovl0C_02_80045E8C(void) {

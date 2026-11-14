@@ -615,9 +615,6 @@ void *func_8027361C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
     s32 flags;
     Ent88 *e;
     Obj8E *obj;
-    s32 t1;
-    s32 t2;
-    s32 pad[23]; /* fake: frame-tuned; the frame is 0xA8 */
 
     idx = func_802735CC();
     if (idx == -1) {
@@ -642,8 +639,7 @@ void *func_8027361C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
     if (obj == NULL) {
         return NULL;
     }
-    t1 = func_802311E8(obj);
-    if (t1 == 0) {
+    if (func_802311E8(obj) == 0) {
         return NULL;
     }
     obj->unk30 = 0x21;
@@ -651,8 +647,7 @@ void *func_8027361C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
     obj->unk38 = 40.0f;
     e = &ENTS[idx];
     func_80273544((u8 *) e);
-    t2 = func_80238A10(func_8027723C, (s32) e, 0, 0, 0xB0);
-    e->unk4 = t2;
+    e->unk4 = func_80238A10(func_8027723C, (s32) e, 0, 0, 0xB0);
     if (e->unk4 == -1) {
         return NULL;
     }
@@ -675,9 +670,9 @@ void *func_8027361C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
     e->unk5E = 0;
     e->unk60 = e->unk62 = 0;
     if (e->unk10 & 2) {
-        e->unk64 &= ~2;
+        func_8027036C(&e->unk64, 2);
     } else {
-        e->unk64 |= 2;
+        func_80270354(&e->unk64, 2);
     }
     for (idx = 0; idx < 3; idx++) {
         e->unk24[idx] = NULL;
@@ -693,7 +688,7 @@ void *func_8027361C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
     e->unk50 = 0.0f;
     e->unk54 = 0.0f;
     e->unk66 = PLAYERS[arg4].unk20 + 1;
-    e->unk64 &= ~4;
+    func_8027036C(&e->unk64, 4);
     e->unk74 = 9;
     if (e->unk10 & 0x800) {
         e->xf->sx = 10.0f;
@@ -716,15 +711,15 @@ void *func_8027361C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
             e->unk84 = 0.0033333334f;
         }
     }
-    e->unk64 &= ~1;
-    e->unk64 &= ~0x20;
-    e->unk64 &= ~0x200;
-    e->unk64 &= ~8;
-    e->unk64 &= ~0x10;
-    e->unk64 &= ~0x80;
-    e->unk64 &= ~0x40;
-    e->unk64 &= ~0x400;
-    e->unk64 &= ~0x800;
+    func_8027036C(&e->unk64, 1);
+    func_8027036C(&e->unk64, 0x20);
+    func_8027036C(&e->unk64, 0x200);
+    func_8027036C(&e->unk64, 8);
+    func_8027036C(&e->unk64, 0x10);
+    func_8027036C(&e->unk64, 0x80);
+    func_8027036C(&e->unk64, 0x40);
+    func_8027036C(&e->unk64, 0x400);
+    func_8027036C(&e->unk64, 0x800);
     return e;
 }
 
@@ -1180,30 +1175,10 @@ s32 func_8027655C(Ent88 *arg0) {
     struct { f32 z, y, x; } v;
     f32 sp158;
     void *sp154;
-    s16 t2;
-    s16 t3;
-    s16 t4;
-    s32 t5;
-    s16 t6;
-    s32 t7;
-    s16 t8;
-    s32 t9;
-    s16 t10;
-    Obj8E *t12;
-    s16 t13;
-    Obj8E *t14;
-    s16 t15;
-    void *t16;
-    s16 t17;
-    Obj8E *t18;
-    u16 t19;
-    f32 t20;
-    f32 t21;
-    f32 t22;
     s16 fl;
     s32 f8;
-    s16 t11;
-    s32 padB[1]; /* fake: frame slots */
+    s16 t2;
+    s16 t3;
 
     if (D_802A14B4 == 1) {
         return 0;
@@ -1231,9 +1206,7 @@ s32 func_8027655C(Ent88 *arg0) {
     if (t2) {
         sp168 = 15.0f;
     }
-    t7 = func_80272024(arg0->unk74);
-    t12 = arg0->obj;
-    func_80291944(t12, t7, sp168);
+    func_80291944(arg0->obj, func_80272024(arg0->unk74), sp168);
     arg0->x = arg0->xf->x;
     arg0->y = arg0->xf->y;
     arg0->z = arg0->xf->z;
@@ -1242,22 +1215,20 @@ s32 func_8027655C(Ent88 *arg0) {
     if (!t3 && !func_802712A8(&arg0->unk64, 0x10)) {
         arg0->obj->unk70 = 1.6333334f;
         sp158 = arg0->obj->unk6C;
-        arg0->unk64 &= ~8;
-        t14 = arg0->obj;
-        func_80230914(t14);
+        func_8027036C(&arg0->unk64, 8);
+        func_80230914(arg0->obj);
         if (arg0->obj->unk6C == 0.0f && arg0->obj->unk68 == 0.0f) {
-            t4 = func_802712A8(&arg0->unk64, 0x800);
-            if (!t4) {
-                arg0->unk64 |= 8;
-                arg0->unk64 |= 0x800;
+            if (!func_802712A8(&arg0->unk64, 0x800)) {
+                func_80270354(&arg0->unk64, 8);
+                func_80270354(&arg0->unk64, 0x800);
             }
             arg0->unk50 = 0.0f;
             if (sp158 != arg0->obj->unk6C) {
                 arg0->unk30 = arg0->obj;
             }
         } else {
-            arg0->unk64 |= 8;
-            arg0->unk64 &= ~0x800;
+            func_80270354(&arg0->unk64, 8);
+            func_8027036C(&arg0->unk64, 0x800);
         }
         arg0->x = arg0->xf->x;
         arg0->y = arg0->xf->y;
@@ -1265,23 +1236,20 @@ s32 func_8027655C(Ent88 *arg0) {
     }
     fl = arg0->unk64 & 0x10;
     if (!fl && !func_802712A8(&arg0->unk64, 0x200)) {
-        t5 = func_802909FC(arg0->obj, func_80277378);
-        if (t5 && func_8023369C(arg0->xf->x, arg0->obj->unk58, 1.0f)
+        if (func_802909FC(arg0->obj, func_80277378) && func_8023369C(arg0->xf->x, arg0->obj->unk58, 1.0f)
             && func_8023369C(arg0->xf->z, arg0->obj->unk60, 1.0f) && func_802712A8(&arg0->unk64, 4)) {
             func_802712C4((s16 *) arg0);
         }
     } else if (fl) {
         func_802733C8((u8 *) arg0->obj);
     } else {
-        t16 = arg0->unk38;
-        func_802727D8(t16);
+        func_802727D8(arg0->unk38);
     }
     arg0->x = arg0->xf->x;
     arg0->y = arg0->xf->y;
     arg0->z = arg0->xf->z;
     f8 = func_802712A8(&arg0->unk64, 8);
-    t6 = func_802712A8(&arg0->unk64, 4);
-    if (t6 || f8) {
+    if (func_802712A8(&arg0->unk64, 4) || f8) {
         func_802714C4();
         OBJ_DD8->unk40->x = OBJ_DD8->unk58 = arg0->x;
         OBJ_DD8->unk40->y = OBJ_DD8->unk5C = arg0->y;
@@ -1291,17 +1259,13 @@ s32 func_8027655C(Ent88 *arg0) {
         OBJ_DD8->unk30 = 1;
         OBJ_DD8->unk34 = 40.0f;
         OBJ_DD8->unk38 = 40.0f;
-        t8 = func_802712A8(&arg0->unk64, 0x400);
-        if (!t8 && !func_80232D18(OBJ_DD8, 1)) {
-            arg0->unk64 |= 0x400;
+        if (!func_802712A8(&arg0->unk64, 0x400) && !func_80232D18(OBJ_DD8, 1)) {
+            func_80270354(&arg0->unk64, 0x400);
         }
-        t10 = func_802712A8(&arg0->unk64, 0x400);
-        if (t10) {
-            t18 = arg0->obj;
-            sp154 = func_802308B8(t18, 0x16);
+        if (func_802712A8(&arg0->unk64, 0x400)) {
+            sp154 = func_802308B8(arg0->obj, 0x16);
         } else {
-            t9 = func_8022F4AC((s32) arg0->obj, 0x16, (s32) func_802443F4(arg0->unkE));
-            sp154 = (void *) t9;
+            sp154 = (void *) func_8022F4AC((s32) arg0->obj, 0x16, (s32) func_802443F4(arg0->unkE));
         }
         if (sp154 != NULL) {
             arg0->x = arg0->xf->x = arg0->obj->unk58;
@@ -1309,37 +1273,29 @@ s32 func_8027655C(Ent88 *arg0) {
             arg0->z = arg0->xf->z = arg0->obj->unk60;
             func_80276184((s16 *) arg0, sp154);
             func_802712C4((s16 *) arg0);
-            t11 = func_802712A8(&arg0->unk64, 8);
-            if (t11) {
+            if (func_802712A8(&arg0->unk64, 8)) {
                 void *r = func_802700EC((u8 *) arg0->obj, sp154, func_80272024(arg0->unk74), sp168);
-                arg0->unk64 |= 0x200;
+                func_80270354(&arg0->unk64, 0x200);
                 arg0->unk38 = r;
-                arg0->unk64 &= ~8;
+                func_8027036C(&arg0->unk64, 8);
             }
             OBJ_DD8->unk40->x = OBJ_DD8->unk58 = arg0->x;
             OBJ_DD8->unk40->y = OBJ_DD8->unk5C = arg0->y;
             OBJ_DD8->unk40->z = OBJ_DD8->unk60 = arg0->z;
-            t13 = func_802712A8(&arg0->unk64, 0x400);
-            if (t13 && func_80232D18(OBJ_DD8, 1)) {
-                arg0->unk64 &= ~0x400;
+            if (func_802712A8(&arg0->unk64, 0x400) && func_80232D18(OBJ_DD8, 1)) {
+                func_8027036C(&arg0->unk64, 0x400);
             }
         }
     }
-    t15 = func_802712A8(&arg0->unk64, 0x40);
-    if (t15) {
-        arg0->unk64 |= 1;
+    if (func_802712A8(&arg0->unk64, 0x40)) {
+        func_80270354(&arg0->unk64, 1);
     }
-    t17 = func_802712A8(&arg0->unk64, 1);
-    if (t17) {
+    if (func_802712A8(&arg0->unk64, 1)) {
         func_80275948((s16 *) arg0);
         return 1;
     }
-    t20 = arg0->x;
-    t21 = arg0->y;
-    t22 = arg0->z;
-    func_80271448(t20, t21, t22, &v.x, &v.y, &v.z);
-    t19 = func_8026D7D8((s32) v.x, (s32) v.y, (s32) v.z);
-    if ((t19 & 0xF) == 9) {
+    func_80271448(arg0->x, arg0->y, arg0->z, &v.x, &v.y, &v.z);
+    if ((func_8026D7D8((s32) v.x, (s32) v.y, (s32) v.z) & 0xF) == 9) {
         func_80275948((s16 *) arg0);
     }
     func_80275034((s16 *) arg0);

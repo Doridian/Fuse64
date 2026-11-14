@@ -1342,7 +1342,7 @@ static void func_ovl0B_04_80044154(void) {
     D_ovl0B_04_8004A490.unk1 = D_ovl0B_04_8004A290[n][0];
 }
 
-static void func_ovl0B_04_800441BC(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+static void func_ovl0B_04_800441BC(void) { /* unidentified: an original static (inlined or unused) left only its stub here; its body is unknown */
 }
 
 /* The set and item of the character at the cursor. */
@@ -1366,7 +1366,7 @@ static void func_ovl0B_04_80044210(void) {
     func_ovl0B_04_80048640(D_ovl0B_04_8004A448[D_ovl0B_04_8004A490.unk0], D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0], 2);
 }
 
-static void func_ovl0B_04_80044264(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+static void func_ovl0B_04_80044264(void) { /* unidentified: an original static (inlined or unused) left only its stub here; its body is unknown */
 }
 
 /* A character set's character. */
@@ -1393,7 +1393,7 @@ static u8 func_ovl0B_04_8004426C(u8 set, u8 idx) {
     return r;
 }
 
-static void func_ovl0B_04_800442FC(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+static void func_ovl0B_04_800442FC(void) { /* unidentified: an original static (inlined or unused) left only its stub here; its body is unknown */
 }
 
 /* The END item's and the set tab's looks. */
@@ -1466,10 +1466,10 @@ static void func_ovl0B_04_8004447C(s32 id, s32 alpha) {
     o->unk36 = alpha;
 }
 
-static void func_ovl0B_04_800444D0(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+static void func_ovl0B_04_800444D0(void) { /* unidentified: an original static (inlined or unused) left only its stub here; its body is unknown */
 }
 
-static void func_ovl0B_04_800444D8(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+static void func_ovl0B_04_800444D8(void) { /* unidentified: an original static (inlined or unused) left only its stub here; its body is unknown */
 }
 
 /* The menu cursor hidden. */
@@ -1516,7 +1516,7 @@ static void func_ovl0B_04_8004461C(Entry *e) {
     e->unk0->unk1C = e->unk10;
 }
 
-static void func_ovl0B_04_80044624(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+static void func_ovl0B_04_80044624(void) { /* unidentified: an original static (inlined or unused) left only its stub here; its body is unknown */
 }
 
 static s8 func_ovl0B_04_8004462C(u8 set, u8 c) {
@@ -1990,7 +1990,7 @@ static void func_ovl0B_04_80045540(u8 item, u16 buttons, u8 *ret) {
     func_ovl0B_04_8004456C();
 }
 
-static void func_ovl0B_04_80045848(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+static void func_ovl0B_04_80045848(void) { /* unidentified: an original static (inlined or unused) left only its stub here; its body is unknown */
 }
 
 static void func_ovl0B_04_80045850(void) {
@@ -2151,10 +2151,10 @@ static u8 func_ovl0B_04_80046180(u8 arg0, u16 arg1) {
     return ret;
 }
 
-static void func_ovl0B_04_80046284(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+static void func_ovl0B_04_80046284(void) { /* unidentified: an original static (inlined or unused) left only its stub here; its body is unknown */
 }
 
-static void func_ovl0B_04_8004628C(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+static void func_ovl0B_04_8004628C(void) { /* unidentified: an original static (inlined or unused) left only its stub here; its body is unknown */
 }
 
 /* Pages 5-8: the half's five choices written ("---" for a closed one). */
@@ -2270,7 +2270,7 @@ static void func_ovl0B_04_80046734(u8 item, u16 buttons) {
 }
 #endif
 
-static void func_ovl0B_04_800468E0(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+static void func_ovl0B_04_800468E0(void) { /* unidentified: an original static (inlined or unused) left only its stub here; its body is unknown */
 }
 
 /* Choice n's open flag (inlined). */

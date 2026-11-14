@@ -29,7 +29,12 @@
  * and puts each one's static callees just before it, in the reverse order
  * of its calls (each after its own callees); the `if (0)` call lists at
  * the end of 800444E8, 800459C4, 80046AA0 and the others pull the
- * original's runs of statics and stubs into place. An indirect call pulls
+ * original's runs of statics and stubs into place (fakes; the empty
+ * statics they place stand for inlined ones not yet found). The pages 5-8
+ * handlers' stubs are found: 80046AA0, 80046CEC, 80046F20 and 8004716C
+ * each call a K&R static (80046A98, 80046CE4, 80046F18, 80047164) that
+ * runs the page's set-up, 800468F0(base), defined after its caller so its
+ * inlined .loc lines sort after the call's. An indirect call pulls
  * every function whose address the code takes: 80043ADC's would pull
  * 80043CD0 in front of it, so 80043CD0 ends with a dead call to
  * 80043ADC and is defined just after it: 80043CD0's turn comes first and
@@ -1189,10 +1194,10 @@ static s32 func_ovl0B_04_80044714(u8 set, u8 c);
 #define HALF_IDX(item, half) ((item) < 11 ? (item) - (half) * 5 : 6)
 #define PAGE_IDX(item) HALF_IDX(item, D_ovl0B_04_8004A1A8)
 
-static void func_ovl0B_04_800436C0(void) {
+static void func_ovl0B_04_800436C0(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_800438F4(void) {
+static void func_ovl0B_04_800438F4(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
 /* A page's texts freed (inlined). */
@@ -1204,81 +1209,81 @@ static void func_ovl0B_04_80043AD4(s32 *ids, s32 n) {
     }
 }
 
-static void func_ovl0B_04_80043F3C(void) {
+static void func_ovl0B_04_80043F3C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_80043F44(void) {
+static void func_ovl0B_04_80043F44(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_80043F4C(void) {
+static void func_ovl0B_04_80043F4C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_80043F54(void) {
+static void func_ovl0B_04_80043F54(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_80043F5C(void) {
+static void func_ovl0B_04_80043F5C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_80043F64(void) {
+static void func_ovl0B_04_80043F64(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_80043F6C(void) {
+static void func_ovl0B_04_80043F6C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_80043F74(void) {
+static void func_ovl0B_04_80043F74(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_80043F7C(void) {
+static void func_ovl0B_04_80043F7C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_80043F84(void) {
+static void func_ovl0B_04_80043F84(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_80043F8C(void) {
+static void func_ovl0B_04_80043F8C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_80043F94(void) {
+static void func_ovl0B_04_80043F94(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
 #if !VERSION_JP
-static void func_ovl0B_04_80043F9C(void) {
+static void func_ovl0B_04_80043F9C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 #endif
 
-static void func_ovl0B_04_800441BC(void) {
+static void func_ovl0B_04_800441BC(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_80044264(void) {
+static void func_ovl0B_04_80044264(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_800442FC(void) {
+static void func_ovl0B_04_800442FC(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_80044304(void) {
+static void func_ovl0B_04_80044304(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_80044384(void) {
+static void func_ovl0B_04_80044384(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_8004438C(void) {
+static void func_ovl0B_04_8004438C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_800444D0(void) {
+static void func_ovl0B_04_800444D0(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_800444D8(void) {
+static void func_ovl0B_04_800444D8(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_800444E0(void) {
+static void func_ovl0B_04_800444E0(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_800445BC() {
+static void func_ovl0B_04_800445BC() { /* fake: an empty K&R static called first in the static it precedes, for the original's stub (header) */
 }
 
-static void func_ovl0B_04_8004461C() {
+static void func_ovl0B_04_8004461C() { /* fake: an empty K&R static called first in the static it precedes, for the original's stub (header) */
 }
 
-static void func_ovl0B_04_80044624() {
+static void func_ovl0B_04_80044624() { /* fake: an empty K&R static called first in the static it precedes, for the original's stub (header) */
 }
 
 /* Page 9's fade in, over the page (inlined). */
@@ -1308,19 +1313,19 @@ static void func_ovl0B_04_80045538(void) {
     }
 }
 
-static void func_ovl0B_04_80045848(void) {
+static void func_ovl0B_04_80045848(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_80046284(void) {
+static void func_ovl0B_04_80046284(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_8004628C(void) {
+static void func_ovl0B_04_8004628C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_800468E0(void) {
+static void func_ovl0B_04_800468E0(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
-static void func_ovl0B_04_800468E8(void) {
+static void func_ovl0B_04_800468E8(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
 /* The objects of a run of entries, and their removal (inlined). */
@@ -1477,7 +1482,7 @@ u8 func_ovl0B_04_80046B28(u8 arg0, u16 arg1) {
 
 void func_ovl0B_04_80046AA0(Obj *arg0) {
     func_ovl0B_04_80046A98();
-    if (0) {
+    if (0) { /* fake: dead calls: the emission order of the stubs and statics (header) */
         func_ovl0B_04_800468E8();
         func_ovl0B_04_800468E0();
         func_ovl0B_04_80046734(0, 0);
@@ -1505,12 +1510,12 @@ static void func_ovl0B_04_800468F0(s32 base) {
         D_ovl0B_04_8004A480[i + 10] = 1;
     }
     for (i = 1; i < 11; i++) {
-        if (!o) {}
+        if (!o) {} /* fake: dead reads (header, 800468F0) */
 #if !VERSION_JP
-        if (!o) {}
+        if (!o) {} /* fake: dead read */
 #else
-        if (!o) {}
-        if (!base) {}
+        if (!o) {} /* fake: dead read */
+        if (!base) {} /* fake: dead read */
 #endif
         if (func_ovl0B_04_800484B0(base + i) == 0) {
             D_ovl0B_04_8004A480[i] = 0;
@@ -1762,7 +1767,7 @@ void func_ovl0B_04_800459C4(Obj *arg0) {
     func_ovl0B_04_80045958(D_ovl0B_04_8004A2D0[0], D_ovl0B_04_8004A2D0[1]);
     func_ovl0B_04_SetText(D_ovl0B_04_8004A468[1], D_ovl0B_04_80048A78, 5, 0.7f);
     func_ovl0B_04_SetText(D_ovl0B_04_8004A468[4], D_ovl0B_04_80048A84, 6, 0.5f);
-    if (0) {
+    if (0) { /* fake: dead calls: the emission order (header) */
         func_ovl0B_04_80045958(0, 0);
         func_ovl0B_04_800458F4(0, 0);
         func_ovl0B_04_80045850();
@@ -1819,7 +1824,7 @@ static void func_ovl0B_04_80045540(u8 item, u16 buttons, u8 *ret) {
         D_ovl0B_04_8004A490.unk1 = 0;
         D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0] = 0;
         if ((D_ovl0B_04_8004A490.unk0 == 7 && c == 0) || (D_ovl0B_04_8004A490.unk0 != 7 && D_ovl0B_04_8004A490.unk0 > 0)) {
-            if (D_ovl0B_04_8004A490.unk1) {}
+            if (D_ovl0B_04_8004A490.unk1) {} /* fake: see above */
             D_ovl0B_04_8004A490.unk0 = ((u32) D_ovl0B_04_8004A490.unk0 - 1) & 0xFF;
         }
         func_ovl0B_04_80044210();
@@ -2292,7 +2297,7 @@ void func_ovl0B_04_800444E8(Obj *arg0) {
     o->unk36 = 0;
     o->unkC |= 0x80;
 #endif
-    if (0) {
+    if (0) { /* fake: dead calls: the emission order of the statics and stubs (header) */
         func_ovl0B_04_800444E0();
         func_ovl0B_04_800444D8();
         func_ovl0B_04_800444D0();
@@ -2547,7 +2552,7 @@ void func_ovl0B_04_80043ADC(void) {
             func_ovl0B_04_80043A7C(p->unk0, p->unk4, p->unk8);
         } else {
             func_ovl0B_04_80043A24(p->unk0, p->unk4, p->unk8);
-            if (!p3) {}
+            if (!p3) {} /* fake: second dead read (header, 80043ADC) */
         }
 #endif
         menu = func_ovl0B_04_800485D0(p->unkC, p->unk10, p->unk16, p->unk18, p->unk1A);
@@ -2571,7 +2576,7 @@ void func_ovl0B_04_80043ADC(void) {
 #endif
     func_ovl0B_04_800477F0(0x1F, 0x11, 0);
     func_ovl0B_04_80048258();
-    if (0) {
+    if (0) { /* fake: dead calls: the emission order (header) */
 #if !VERSION_JP
         func_ovl0B_04_80043A7C(0, 0, 0);
 #endif
@@ -2698,7 +2703,7 @@ void func_ovl0B_04_800436C8(void) {
         }
         func_ovl0B_04_80048290();
     }
-    if (0) {
+    if (0) { /* fake: dead calls: the emission order (header) */
         func_ovl0B_04_800436C0();
         func_ovl0B_04_80043640(0);
     }

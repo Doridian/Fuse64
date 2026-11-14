@@ -34,7 +34,7 @@
  *   (a fake) so it keeps its word and 80048164..8004816C their addresses.
  */
 #include "common.h"
-#line 42 "1A0CD0.c"
+#line 42 "1A0CD0.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0D_03's stage object, IDO -O3: the functions are written last to first
@@ -905,9 +905,9 @@ void func_ovl0D_03_80044AA8(void) {
 static void func_ovl0D_03_80044AA0(void) {
     func_ovl0D_03_80044A88();
     D_ovl0D_03_800481A0 = func_ovl0D_03_80046B38();
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     func_ovl0D_03_80044A3C();
-#line 913 "1A0CD0.c"
+#line 913 "1A0CD0.c" /* fake: back from the other file, at the line numbers it matched with */
 }
 
 /* the models, as the flags already set leave them */
@@ -1000,9 +1000,9 @@ static void func_ovl0D_03_8004449C(Vec3f *corner, Vec3f (*rows)[4]) {
     s32 k;
 
     /* fake: (as in ovl_0D_02): j = 0 after the loop's line */
-#line 3000 "1A0CD0.c"
+#line 3000 "1A0CD0.c" /* fake: back from the other file, at the line numbers it matched with */
     j = 0;
-#line 1008 "1A0CD0.c"
+#line 1008 "1A0CD0.c" /* fake: back from the other file, at the line numbers it matched with */
     for (; j < 3; j++) {
         for (k = 0; k < 4; k++) {
             rows[j][k].x = corner->x * 10.0f - k * 200.0f;
@@ -1092,7 +1092,7 @@ static void func_ovl0D_03_800441C4(s32 idx) {
 
 
 /* in "panels.c" (a fake, see the top) */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0D_03_800441BC(Trio_0D03 *t, s32 count) {
     s32 i;
 
@@ -1101,7 +1101,7 @@ static void func_ovl0D_03_800441BC(Trio_0D03 *t, s32 count) {
         t++;
     }
 }
-#line 1107 "1A0CD0.c"
+#line 1107 "1A0CD0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 void func_ovl0D_03_8004419C(void) {
     func_ovl0D_03_80044138();
@@ -1255,9 +1255,9 @@ static void func_ovl0D_03_80043C14(void) {
     Ent_0D03 *p;
 
     /* fake: (see the top) */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     func_ovl0D_03_80047400(D_ovl0D_03_8004817C);
-#line 1263 "1A0CD0.c"
+#line 1263 "1A0CD0.c" /* fake: back from the other file, at the line numbers it matched with */
     for (p = D_ovl0D_03_80047D1C; p < D_ovl0D_03_80047D1C + 3; p++) {
         if (p->obj != NULL) {
             func_ovl0D_03_80043B98(p);
@@ -1412,9 +1412,9 @@ static void func_ovl0D_03_8004337C(Ent_0D03 *e) {
     switch (func_ovl0D_03_80043374(e)) {
         case 0:
             /* fake: (see the top) */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
             x0 = grid[0] - 1;
-#line 1420 "1A0CD0.c"
+#line 1420 "1A0CD0.c" /* fake: back from the other file, at the line numbers it matched with */
             x1 = x0 + 4;
             z1 = grid[2] + len;
             x2 = x0 + 1;

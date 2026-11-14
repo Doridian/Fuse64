@@ -48,7 +48,7 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
-#line 56 "205890.c"
+#line 56 "205890.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0F_10's game object, IDO -O3: the functions are written last to first
@@ -365,7 +365,7 @@ static void func_ovl0F_10_80044B7C(UnkStruct_ovl0F_10_80045F30 *task, UnkStructA
     }
 }
 
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0F_10_80044B84(void) {
     func_ovl0F_10_80045E98(0.0f);
     func_ovl0F_10_80045EA0(0x7F);
@@ -769,7 +769,7 @@ static void func_ovl0F_10_80043408(void) {
     func_ovl0F_10_80045AB0(D_ovl0F_10_80046AE0[1]->unk40, 0x61);
     D_ovl0F_10_80046AE0[1]->unk40->unk14 += 3200.0f;
 }
-#line 779 "205890.c"
+#line 779 "205890.c" /* fake: back from the other file, at the line numbers it matched with */
 
 static void func_ovl0F_10_80043410(void) {
     func_ovl0F_10_800453B8(0x233);

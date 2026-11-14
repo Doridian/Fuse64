@@ -12,7 +12,7 @@
  * (src/overlays/ovl_0E_12/1D6120.c has the details).
  */
 #include "common.h"
-#line 22 "1BC030.c"
+#line 22 "1BC030.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0E_03's game object, IDO -O3: the functions are written last to first
@@ -958,11 +958,11 @@ void func_ovl0E_03_800430A8(void) {
     }
 }
 
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0E_03_800430A0(s16 i) {
     func_ovl0E_03_80043060(&D_ovl0E_03_80046B78[i]);
 }
-#line 977 "1BC030.c"
+#line 977 "1BC030.c" /* fake: back from the other file, at the line numbers it matched with */
 
 void func_ovl0E_03_80043060(UnkStruct_ovl0E_03_80046B78 *arg0) {
     func_ovl0E_03_80045458(arg0->unk14, arg0->unk16, arg0->unk18, arg0->unk1A, arg0->unk1C, arg0->unk1E);

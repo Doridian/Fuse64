@@ -28,7 +28,7 @@
  * - func_ovl0C_02_80049260 returns s32 (8004797C's v1, as in ovl_0C_07).
  */
 #include "common.h"
-#line 46 "1734E0.c"
+#line 46 "1734E0.c" /* fake: names this file as the build does, for the #line regions below */
 
 /* the handler's state (ovl_0C_07's D_ovl0C_07_80047990) */
 typedef struct {
@@ -1291,9 +1291,9 @@ void func_ovl0C_02_800460B0(void) {
     func_ovl0C_02_80045780();
     func_ovl0C_02_80045668();
     func_ovl0C_02_80045538();
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     rec = &D_ovl0C_02_80049EEC;
-#line 1308 "1734E0.c"
+#line 1308 "1734E0.c" /* fake: back from the other file, at the line numbers it matched with */
     rec->unk0 = func_ovl0C_02_80049110(rec->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
     func_ovl0C_02_800490C8(rec->unk0, 0x01080000);
     func_ovl0C_02_800490D0(rec->unk0, 0x02000000);
@@ -1313,14 +1313,14 @@ void func_ovl0C_02_800460B0(void) {
     rec->unk0->unk40->unk28 = rec->unk2C;
     rec->unk0->unk40->unk2C = rec->unk30;
     rec->unk0->unk40->unk30 = rec->unk34;
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     if (func_ovl0C_02_800494A0(0x41A) != 0) {
         func_ovl0C_02_80048E18(D_ovl0C_02_80049EEC.unk4);
         D_ovl0C_02_80049EEC.unk4 = func_ovl0C_02_80048E10(D_ovl0C_02_80049EEC.unk0->unk40, 0, 0xA, 0x400, D_ovl0C_02_80049EEC.unk10, D_ovl0C_02_80049EEC.unk12);
     }
     func_ovl0C_02_800454B4();
 }
-#line 1335 "1734E0.c"
+#line 1335 "1734E0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 void func_ovl0C_02_80046078(void) {
     func_ovl0C_02_80046038();
@@ -1418,7 +1418,7 @@ void func_ovl0C_02_80045A7C(void) {
 /* ovl_12_03's func_ovl12_03_8004316C; inlined into func_ovl0C_02_80045A7C
  * only, which is inlined into its callers in turn.  The body on one line
  * (a macro), as there. */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0C_02_80045A74(f32 x, s32 z, s32 count) {
     s32 i;
 
@@ -1431,7 +1431,7 @@ static void func_ovl0C_02_80045A74(f32 x, s32 z, s32 count) {
     D_ovl0C_02_8004A100[2] = z * 100.0f;
     D_ovl0C_02_8004A0F0 = func_ovl0C_02_80049670(0x28, D_ovl0C_02_8004A100, 0);
 }
-#line 1446 "1734E0.c"
+#line 1446 "1734E0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 void func_ovl0C_02_80045898(void) {
     UnkStructA *obj;

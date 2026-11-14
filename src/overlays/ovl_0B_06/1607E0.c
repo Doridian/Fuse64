@@ -1740,7 +1740,7 @@ void COPY_FILE(void) {
             if ((sel & 0xF) == 3) {
                 sel &= 0xF0;
                 sel |= COPY_ASK();
-#line 1520
+#line 1520 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             } else if ((sel & 0xF) == 4) {
                 func_ovl0B_06_800459D8(0);
             } else {
@@ -2685,9 +2685,9 @@ void func_ovl0B_06_80043C48(s32 arg0) {
         case 2:
             D_ovl0B_06_80049928 = 0;
             func_ovl0B_06_80048FF8(0x32, 0x32, 0x32);
-#line 2484
+#line 2484 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             D_ovl0B_06_8004A668[0] = func_ovl0B_06_80048258();
-#line 2483
+#line 2483 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             func_ovl0B_06_80048A00(0x7F);
             func_ovl0B_06_80048978(1);
             func_ovl0B_06_80048998(0, 10.0f, 0);
@@ -2893,7 +2893,7 @@ static void CLOSE_A(s32 n, Box_ovl0B_06 *box) {
     }
 }
 
-#line 2518
+#line 2518 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 static void OPEN_B(s32 n, Box_ovl0B_06 *box) {
     s32 i;
     f32 step;
@@ -2909,7 +2909,7 @@ static void OPEN_B(s32 n, Box_ovl0B_06 *box) {
         func_ovl0B_06_80048CF0();
     }
 }
-#line 2706
+#line 2706 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 
 static void CLOSE_B(s32 n, Box_ovl0B_06 *box) {
     s32 i;

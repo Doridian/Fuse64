@@ -355,9 +355,9 @@ static void func_ovl17_09_8004456C(UnkStructA *obj, f32 speed) {
     pos[0] = obj->unk40->unk10;
     pos[1] = obj->unk40->unk14;
     pos[2] = obj->unk40->unk18;
-#line 4 "2B8D20.c"
+#line 4 "2B8D20.c" /* fake: names this file as the build does, for the #line regions below */
     dir = D_ovl17_09_8004629C;
-#line 5 "panels.c"
+#line 5 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     if (func_ovl17_09_80045048(obj->unk40) == obj->unk40->unk14) {
         func_ovl17_09_80045FD8(obj, dir, speed);
     } else {
@@ -392,7 +392,7 @@ static void func_ovl17_09_8004456C(UnkStructA *obj, f32 speed) {
                 break;
         }
     }
-#line 900 "2B8D20.c"
+#line 900 "2B8D20.c" /* fake: back from the other file, at the line numbers it matched with */
     saved = obj->unkC;
     hit = FALSE;
     other = NULL;
@@ -653,7 +653,7 @@ static void func_ovl17_09_8004312C(void) {
 static void func_ovl17_09_8004313C(void) {
     D_ovl17_09_800462AC = 0.0f;
     D_ovl17_09_800462B0 = 0.0f;
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     func_ovl17_09_80043010();
 }
 

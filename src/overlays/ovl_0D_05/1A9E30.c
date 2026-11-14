@@ -15,7 +15,7 @@
  *   so grid sits at sp+168 as in the original.
  */
 #include "common.h"
-#line 20 "1A9E30.c"
+#line 20 "1A9E30.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0D_05's stage object, IDO -O3: the functions are written last to first
@@ -579,7 +579,7 @@ void func_ovl0D_05_80043790(void) {
 }
 
 /* in "panels.c" (a fake: see the top) */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0D_05_80043788(void) {
 }
 
@@ -787,7 +787,7 @@ void func_ovl0D_05_80043018(void) {
     if (func_ovl0D_05_800459D0(0x409) != 0) {
         /* fake: (see the top) */
         j = D_ovl0D_05_8004617C = func_ovl0D_05_80044CC8(0x15A);
-#line 795 "1A9E30.c"
+#line 795 "1A9E30.c" /* fake: back from the other file, at the line numbers it matched with */
         func_ovl0D_05_80044CD0(j, 0, 0, D_ovl0D_05_80046170[0] - 1, D_ovl0D_05_80046170[2] - 1, 0, 0, 0);
         func_ovl0D_05_80045600(D_ovl0D_05_80045F2C[0].obj, 0x01000000);
         func_ovl0D_05_80045600(D_ovl0D_05_80045F64[0].obj, 0x01000000);

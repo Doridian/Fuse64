@@ -536,7 +536,7 @@ static void func_ovl0F_02_80046E80(void) {
     func_ovl0F_02_80047328(8, 4, 0x11, 9, 0x15, 0x1416);
     func_ovl0F_02_80047328(0xA, 4, 0x11, 0xD, 0x15, 0x1411);
     D_ovl0F_02_80048610 = 0;
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 }
 
 void func_ovl0F_02_80046DF8(void) {
@@ -607,7 +607,7 @@ static void func_ovl0F_02_80046150(s32 n, UnkStruct_ovl0F_02_80048734 *panels, U
     UnkStruct_ovl0F_02_80048734 *p;
 
     p = panels;
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     func_ovl0F_02_80044F74(n, panels);
     for (i = 0; i < n; i++) {
         if (p->unk1C == 0.0f) {
@@ -625,7 +625,7 @@ static void func_ovl0F_02_80046150(s32 n, UnkStruct_ovl0F_02_80048734 *panels, U
     }
     D_ovl0F_02_80048918[func_ovl0F_02_80047FF8(n - 1)].unk8 = 3;
 }
-#line 645 "1E84A0.c"
+#line 645 "1E84A0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 /* case 2's: the wind, the blocks' callbacks and the particles */
 static void func_ovl0F_02_80046178(s32 n1, s32 n2) {
@@ -696,7 +696,7 @@ static void func_ovl0F_02_80045F14(void) {
 static void func_ovl0F_02_80045F0C(UnkStruct_ovl0F_02_80048734 *p, s32 count) {
     s32 i;
 
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     for (i = 0; i < count; i++) {
         *p->unk0 = func_ovl0F_02_80047D10(p->unk4, p->unk24 | 0x01000000, 0x30, p->unk8);
         func_ovl0F_02_80044C94(p);
@@ -706,7 +706,7 @@ static void func_ovl0F_02_80045F0C(UnkStruct_ovl0F_02_80048734 *p, s32 count) {
         p++;
     }
 }
-#line 700 "1E84A0.c"
+#line 700 "1E84A0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 /* case 2's: the movers and their script */
 static void func_ovl0F_02_80045F24(UnkStructA **arg0) {
@@ -1336,7 +1336,7 @@ static void func_ovl0F_02_80043B30(s32 i) {
 }
 
 /* case 0x52's: the panel the player stands on, if it is still up */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static s32 func_ovl0F_02_80043B28(s32 n, UnkStruct_ovl0F_02_80048734 *panels, UnkStruct_ovl0F_02_80048918 *flags) {
     s32 i;
     UnkStruct_ovl0F_02_80048734 *p;
@@ -1353,15 +1353,15 @@ static s32 func_ovl0F_02_80043B28(s32 n, UnkStruct_ovl0F_02_80048734 *panels, Un
     }
     return -1;
 }
-#line 1362 "1E84A0.c"
+#line 1362 "1E84A0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 static void func_ovl0F_02_8004393C(void) {
 }
 
 /* a task: a panel is stepped on and its block drops */
-#line 1376 "1E84A0.c"
+#line 1376 "1E84A0.c" /* fake: back from the other file, at the line numbers it matched with */
 void func_ovl0F_02_80043944(void) {
-#line 1368 "1E84A0.c"
+#line 1368 "1E84A0.c" /* fake: back from the other file, at the line numbers it matched with */
     s32 i;
     UnkStructA *obj;
     s32 k;
@@ -1410,7 +1410,7 @@ static void func_ovl0F_02_800436D8(UnkStructA *obj, f32 speed) {
     UnkStructA *other;
     s32 k;
 
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     pos[0] = obj->unk40->unk10;
     pos[1] = obj->unk40->unk14;
     pos[2] = obj->unk40->unk18;
@@ -1433,7 +1433,7 @@ static void func_ovl0F_02_800436D8(UnkStructA *obj, f32 speed) {
                 break;
         }
     }
-#line 1434 "1E84A0.c"
+#line 1434 "1E84A0.c" /* fake: back from the other file, at the line numbers it matched with */
     saved = obj->unkC;
     hit = FALSE;
     other = NULL;
@@ -1690,7 +1690,7 @@ static void func_ovl0F_02_800462F8_inl2(void) {
     }
 }
 
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0F_02_800462F8_inl0(u32 (*p)[3], s32 count) {
     s32 i;
 
@@ -1704,7 +1704,7 @@ static void func_ovl0F_02_800462F8_inl0(u32 (*p)[3], s32 count) {
 static void func_ovl0F_02_800462F8_inl4(void) {
     func_ovl0F_02_80046150(5, D_ovl0F_02_8004883C, D_ovl0F_02_80048918);
 }
-#line 1707 "1E84A0.c"
+#line 1707 "1E84A0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 
 
@@ -1792,13 +1792,13 @@ void func_ovl0F_02_800462F8(s32 arg0) {
             if (func_ovl0F_02_800474B0(0x12, 0xA, 0x12, 0xA) != 0) {
                 func_ovl0F_02_800462F8_inl1();
             } else {
-#line 6 "panels.c"
+#line 6 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
                 i = func_ovl0F_02_80043B28(5, D_ovl0F_02_8004883C, D_ovl0F_02_80048918);
                 if (i != -1) {
                     D_ovl0F_02_80048D74 = i;
                     func_ovl0F_02_80047E38(func_ovl0F_02_80043944, NULL, 0, 0, 0x110);
                 }
-#line 1790 "1E84A0.c"
+#line 1790 "1E84A0.c" /* fake: back from the other file, at the line numbers it matched with */
             }
             break;
         case 0x53:
@@ -1809,7 +1809,7 @@ void func_ovl0F_02_800462F8(s32 arg0) {
         case 1:
             func_ovl0F_02_800479D8(D_ovl0F_02_80048F1C);
             func_ovl0F_02_800479C0(0x258);
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
             func_ovl0F_02_80043020(5, D_ovl0F_02_8004883C);
             func_ovl0F_02_80043020(1, &D_ovl0F_02_800489C4);
             if (func_ovl0F_02_800480C0(D_ovl0F_02_800489F4.unk0[0].unk28) == 0) {

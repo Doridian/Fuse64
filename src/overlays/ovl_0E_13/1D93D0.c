@@ -23,7 +23,7 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
-#line 30 "1D93D0.c"
+#line 30 "1D93D0.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0E_13's game object, IDO -O3: the functions are written last to first
@@ -854,7 +854,7 @@ void func_ovl0E_13_80043940(s16 arg0) {
     func_ovl0E_13_80046040();
     func_ovl0E_13_800437B8(f);
     /* the brace in "panels.c": the epilogue restores s0 before s1 */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 }
 
 static void func_ovl0E_13_800437C0(UnkStruct_ovl0E_13_80046800 *e) {
@@ -879,7 +879,7 @@ static void func_ovl0E_13_800437C0(UnkStruct_ovl0E_13_80046800 *e) {
     e->unk0->unk40->unk30 = e->unk34;
 }
 
-#line 890 "1D93D0.c"
+#line 890 "1D93D0.c" /* fake: back from the other file, at the line numbers it matched with */
 static void func_ovl0E_13_800437B8(UnkStruct_ovl0E_13_80046800 *e) {
     func_ovl0E_13_80045EB0(e->unk0, 0x01000000);
     func_ovl0E_13_80045EC0(e->unk0);
@@ -970,7 +970,7 @@ void func_ovl0E_13_80043110(void) {
 /* Inlined into func_ovl0E_13_80043110 only, which is inlined into its
  * callers in turn; in "panels.c" for the block boundary where its body
  * starts. */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0E_13_80043108(f32 x, s32 z, s32 count) {
     s32 i;
 

@@ -17,7 +17,7 @@
  *   `move a1,s4` stays in the call's delay slot.
  */
 #include "common.h"
-#line 27 "1BFC40.c"
+#line 27 "1BFC40.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0E_04's game object, IDO -O3: the functions are written last to first
@@ -825,7 +825,7 @@ void func_ovl0E_04_800439A4(void) {
 /* Inlined into func_ovl0E_04_800439A4 only, which is inlined into its
  * callers in turn; in "panels.c" for the block boundary where its body
  * starts (ovl_0C_09's func_ovl0C_09_80043D00). */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0E_04_8004399C(f32 x, s32 z, s32 count) {
     s32 i;
 
@@ -838,7 +838,7 @@ static void func_ovl0E_04_8004399C(f32 x, s32 z, s32 count) {
     D_ovl0E_04_80046F30[2] = z * 100.0f;
     D_ovl0E_04_80046F20 = func_ovl0E_04_800466F0(0x25, D_ovl0E_04_80046F30, 0);
 }
-#line 848 "1BFC40.c"
+#line 848 "1BFC40.c" /* fake: back from the other file, at the line numbers it matched with */
 
 void func_ovl0E_04_80043908(void) {
     s16 flag;
@@ -1027,10 +1027,10 @@ void func_ovl0E_04_80043158(void) {
 }
 
 /* in "panels.c": a block boundary before the load in func_ovl0E_04_80043158 */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0E_04_80043150(void) {
 }
-#line 1045 "1BFC40.c"
+#line 1045 "1BFC40.c" /* fake: back from the other file, at the line numbers it matched with */
 
 static void func_ovl0E_04_80043148(void) {
 }

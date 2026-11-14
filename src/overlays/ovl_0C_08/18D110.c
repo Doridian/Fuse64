@@ -322,7 +322,7 @@ void func_ovl0C_08_80043654(void) {
     func_ovl0C_08_800441E0(0x253);
     func_ovl0C_08_80044378();
     func_ovl0C_08_800435D4(&D_ovl0C_08_800454FC);
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 }
 
 /* The overlay's handler: the entry returns it to the loader. */

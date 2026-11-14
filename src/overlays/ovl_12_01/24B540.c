@@ -8,7 +8,7 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
-#line 16 "24B540.c"
+#line 16 "24B540.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_12_01's game object, IDO -O3: the functions are written last to first
@@ -741,10 +741,10 @@ void func_ovl12_01_80043754(void) {
 
 /* In panels.c: its inlined (empty) body's `.file` ends the block before
  * the load of D_ovl12_01_800464E0, so `sw ra` comes first (2 words to 0). */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl12_01_8004374C(void) {
 }
-#line 752 "24B540.c"
+#line 752 "24B540.c" /* fake: back from the other file, at the line numbers it matched with */
 
 /* Defined above func_ovl12_01_800436F8, which pulls it out (and it its own
  * callees, defined below it) ahead of itself. */
@@ -841,7 +841,7 @@ void func_ovl12_01_80043190(void) {
  * file (panels.c): the `.file` at the inlined body ends as1's block after
  * the prologue and the hoisted &D_ovl12_01_800464F0, 100.0f and count, as
  * in the original (17 words to 0). */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl12_01_80043188(f32 x, s32 z, s32 count) {
     s32 i;
 

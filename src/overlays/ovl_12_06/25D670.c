@@ -25,7 +25,7 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
-#line 30 "25D670.c"
+#line 30 "25D670.c" /* fake: names this file as the build does, for the #line regions below */
 
 /* What func_ovl12_06_80045770 returns (D_ovl12_06_80045FCC). */
 typedef struct {
@@ -378,7 +378,7 @@ void func_ovl12_06_800439D4(void) {
  * leaving its `jr ra; nop` stub just before it. */
 static void func_ovl12_06_80043144(void) {
     D_ovl12_06_80045FBC = func_ovl12_06_80044C98();
-#line 374
+#line 374 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     func_ovl12_06_80044B98(0x236);
     func_ovl12_06_80044BB0(0x241);
     func_ovl12_06_80044D48();

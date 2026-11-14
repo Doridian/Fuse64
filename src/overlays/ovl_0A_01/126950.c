@@ -800,7 +800,7 @@ static void func_ovl0A_01_80046084(f32 a) {
         func_ovl0A_01_80047FD0();
     }
 }
-#line 700
+#line 700 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 static void func_ovl0A_01_8004607C(s32 n, Entry2 *tbl) {
     s32 i;
 
@@ -855,7 +855,7 @@ static void func_ovl0A_01_8004608C(void) {
     }
 }
 
-#line 50
+#line 50 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 static void func_ovl0A_01_80046094(void) {
     while (D_ovl0A_01_80048770[2].obj->unk40->unk20 > 180.0f) {
         D_ovl0A_01_80048770[2].obj->unk40->unk20 -= 2.0f;
@@ -865,7 +865,7 @@ static void func_ovl0A_01_80046094(void) {
     D_ovl0A_01_80048770[2].obj->unk40->unk20 = 180.0f;
 }
 
-#line 850
+#line 850 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 void func_ovl0A_01_80045EA0(void) {
     s32 wait;
     f32 pos[3];
@@ -1082,7 +1082,7 @@ void func_ovl0A_01_80044F3C(void) {
     func_ovl0A_01_80044A2C();
     v = 0;
     pos[0] = 200.0f;
-#line 1063
+#line 1063 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     pos[2] = 900.0f;
     pos[1] = v;
     played = 0;
@@ -1211,7 +1211,7 @@ static void func_ovl0A_01_80044A2C(void) {
     func_ovl0A_01_80043018(3, D_ovl0A_01_80048A84);
 }
 
-#line 100
+#line 100 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 static void func_ovl0A_01_80044A24(Obj *obj, f32 *pos, f32 *tgt) {
     f32 ang[3];
     s32 u1;
@@ -1224,7 +1224,7 @@ static void func_ovl0A_01_80044A24(Obj *obj, f32 *pos, f32 *tgt) {
     obj->unk40->unk2C = ang[2] / 100.0f;
 }
 
-#line 1206
+#line 1206 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 static void func_ovl0A_01_80044968(s32 frame, f32 dx, f32 dy) {
     if (frame >= 0xC9 && frame < 0x190) {
         D_ovl0A_01_800488D8[5].obj->unk40->unk10 += 12.0f * dx;
@@ -1369,24 +1369,24 @@ void func_ovl0A_01_800442B4(void) {
         } while (++j < 1370);
     }
     v = j;
-#line 1347
+#line 1347 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     func_ovl0A_01_80047530(0x1A, 0x12, 4);
     func_ovl0A_01_80047F98();
-    if (0) { s32 *p = &v; } /* fake: dead code, for the order or allocation it gives (no code) */
+    if (0) { s32 *p = &v; } /* fake: dead code: v's address taken keeps it in memory (no code) */
 }
 
 static void func_ovl0A_01_8004428C(void) {
-#line 1355
+#line 1355 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     D_ovl0A_01_80048A70 = 0;
-#line 1354
+#line 1354 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     D_ovl0A_01_80048A64 = func_ovl0A_01_80047F88(func_ovl0A_01_80045EA0, NULL, 0, 0, 0x130);
 }
 
-#line 1157
+#line 1157 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 static void func_ovl0A_01_80044294(void) {
     func_ovl0A_01_80047E40(D_ovl0A_01_80048890[1].obj, 0x01000000);
 }
-#line 1360
+#line 1360 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 
 static void func_ovl0A_01_8004429C(void) {
     func_ovl0A_01_80047E40(D_ovl0A_01_80048890[0].obj, 0x01000000);
@@ -1396,7 +1396,7 @@ static void func_ovl0A_01_800442A4(void) {
     func_ovl0A_01_80047E38(D_ovl0A_01_80048770[4].obj, 0x80000);
 }
 
-#line 1329
+#line 1329 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 static void func_ovl0A_01_800442AC(void) {
     D_ovl0A_01_80048A1C = 0.0f;
     D_ovl0A_01_80048A20 = 0.0f;
@@ -1649,9 +1649,9 @@ static void func_ovl0A_01_80043380(Entry *tbl, s32 n) {
     Entry *e;
 
     for (i = 0; i < n; i++) {
-#line 1614
+#line 1614 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
         e = tbl;
-#line 1613
+#line 1613 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
         tbl->obj = func_ovl0A_01_80047E60(tbl->unk4 == 0 ? tbl->unk8 : 0x320, 0x0D000000, 0xD0, NULL);
         if (tbl->unk4 != 0) {
             func_ovl0A_01_80043378(tbl);
@@ -1750,7 +1750,7 @@ static void func_ovl0A_01_80043010(s32 task) {
         func_ovl0A_01_80047F90(task);
     }
 }
-#line 1670
+#line 1670 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 static void func_ovl0A_01_80043020(s32 n, Entry2 *tbl) {
     s32 i;
 

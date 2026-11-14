@@ -1253,7 +1253,7 @@ void func_ovl0C_06_8004510C(void) {
     rec->unk0->unk40->unk28 = rec->unk2C;
     rec->unk0->unk40->unk2C = rec->unk30;
     rec->unk0->unk40->unk30 = rec->unk34;
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     func_ovl0C_06_80044C0C();
 }
 

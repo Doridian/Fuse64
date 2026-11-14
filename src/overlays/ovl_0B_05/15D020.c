@@ -31,7 +31,7 @@
  * the one after the region does, whatever path it is compiled by.
  */
 #include "common.h"
-#line 34 "15D020.c"
+#line 34 "15D020.c" /* fake: names this file as the build does, for the #line regions below */
 
 typedef struct {
     /* 0x00 */ u8 unk0[4];
@@ -346,7 +346,7 @@ static void func_ovl0B_05_80044D60(void) {
     D_ovl0B_05_800467C0[0] = D_ovl0B_05_800467EC[0] + D_ovl0B_05_80046824[0];
 }
 
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0B_05_80044DD0(UnkStruct_ovl0B_05_8004669C *fade, Gfx_ovl0B_05 **arg1) {
     Gfx_ovl0B_05 *gfx = *arg1;
 
@@ -357,7 +357,7 @@ static void func_ovl0B_05_80044DD0(UnkStruct_ovl0B_05_8004669C *fade, Gfx_ovl0B_
     *arg1 = gfx;
 }
 
-#line 352 "15D020.c"
+#line 352 "15D020.c" /* fake: back from the other file, at the line numbers it matched with */
 static void func_ovl0B_05_80044DD8(s32 arg0, Gfx_ovl0B_05 **arg1) {
     func_ovl0B_05_80044DD0(&D_ovl0B_05_8004669C, arg1);
 }

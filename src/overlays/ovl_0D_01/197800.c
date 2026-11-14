@@ -38,7 +38,7 @@
  *   it (a fake), so it keeps its word.
  */
 #include "common.h"
-#line 48 "197800.c"
+#line 48 "197800.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0D_01's stage object, IDO -O3: the functions are written last to first
@@ -569,9 +569,9 @@ void func_ovl0D_01_800455E0(void) {
     D_ovl0D_01_80047B30.y = 32768.0f;
     D_ovl0D_01_80047B30.z = 32768.0f;
     /* fake: (see the top): its a0 after the stores */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     func_ovl0D_01_80046278(D_ovl0D_01_80047B18);
-#line 581 "197800.c"
+#line 581 "197800.c" /* fake: back from the other file, at the line numbers it matched with */
     D_ovl0D_01_80047B0C = func_ovl0D_01_80046CB0(-1, 0x80, 0.0f, 0.0f, 0.0f);
     D_ovl0D_01_80047B0C->unkC = 0x3FFFF;
     func_ovl0D_01_800463B0(0);
@@ -581,9 +581,9 @@ void func_ovl0D_01_800455E0(void) {
     func_ovl0D_01_800455B8();
     D_ovl0D_01_80047B2C = func_ovl0D_01_800463B8();
     /* fake: (see the top): 1600.0f in $f16 */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     func_ovl0D_01_800455B0();
-#line 593 "197800.c"
+#line 593 "197800.c" /* fake: back from the other file, at the line numbers it matched with */
     func_ovl0D_01_800448CC();
     func_ovl0D_01_800455A8();
     func_ovl0D_01_800455A0();
@@ -885,10 +885,10 @@ void func_ovl0D_01_80044D74(void) {
 }
 
 /* in "panels.c" (a fake, see the top) */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0D_01_80044D6C(void) {
 }
-#line 898 "197800.c"
+#line 898 "197800.c" /* fake: back from the other file, at the line numbers it matched with */
 
 static void func_ovl0D_01_80044D64(void) {
 }
@@ -920,9 +920,9 @@ void func_ovl0D_01_800448D4(void) {
     s32 i;
 
     /* fake: the region's .file keeps the first call out of the prologue */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     func_ovl0D_01_800448CC();
-#line 932 "197800.c"
+#line 932 "197800.c" /* fake: back from the other file, at the line numbers it matched with */
     func_ovl0D_01_800448C4();
     for (i = 0; i < 2; i++) {
         func_ovl0D_01_800448BC(&D_ovl0D_01_800476EC[i], D_ovl0D_01_8004775C[i]);
@@ -1027,9 +1027,9 @@ static void func_ovl0D_01_800444E0(Ent_0D01 *e) {
     switch (func_ovl0D_01_800444D8(e)) {
         case 0:
             /* fake: (see the top) */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
             x0 = grid[0] - 1;
-#line 1039 "197800.c"
+#line 1039 "197800.c" /* fake: back from the other file, at the line numbers it matched with */
             x1 = x0 + 4;
             z1 = grid[2] + len;
             x2 = x0 + 1;
@@ -1138,9 +1138,9 @@ void func_ovl0D_01_80044154(void) {
          * the load below), and D_ovl0D_01_8004760C[1] reached from another
          * symbol, so uopt doesn't keep &[1] in a register for both
          */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
         D_ovl0D_01_8004760C[1].unk18 = y;
-#line 1150 "197800.c"
+#line 1150 "197800.c" /* fake: back from the other file, at the line numbers it matched with */
         D_ovl0D_01_800475D4[2].obj->unk40->unk14 = y * 10.0f;
         func_ovl0D_01_80046C70(D_ovl0D_01_8004767C[0].obj, 0x01000000);
         func_ovl0D_01_80046C70(D_ovl0D_01_8004767C[1].obj, 0x01000000);

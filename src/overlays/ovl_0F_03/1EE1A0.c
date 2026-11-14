@@ -755,7 +755,7 @@ void func_ovl0F_03_800434AC(UnkStructA *arg0) {
     }
 }
 
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0F_03_800434A4(UnkStructA *arg0, f32 *pos) {
     pos[0] = arg0->unk40->unk10;
     pos[1] = arg0->unk40->unk14;
@@ -1021,7 +1021,7 @@ static void func_ovl0F_03_8004342C(void) {
 static void func_ovl0F_03_800432E8(void) {
     func_ovl0F_03_80046440(&D_ovl0F_03_80047278);
 }
-#line 965 "1EE1A0.c"
+#line 965 "1EE1A0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 static void func_ovl0F_03_800432E0(void) {
     D_ovl0F_03_80046DFC = 0.0f;
@@ -1036,7 +1036,7 @@ static void func_ovl0F_03_800432D8(void) {
 }
 
 /* case 2's: the stage's tables */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0F_03_80044C8C(u32 (*p)[3], s32 count) {
     s32 i;
 
@@ -1045,7 +1045,7 @@ static void func_ovl0F_03_80044C8C(u32 (*p)[3], s32 count) {
         p++;
     }
 }
-#line 987 "1EE1A0.c"
+#line 987 "1EE1A0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 static void func_ovl0F_03_80044C84(void) {
     func_ovl0F_03_80045AF8(0x226);

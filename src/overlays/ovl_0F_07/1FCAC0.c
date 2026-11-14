@@ -16,7 +16,7 @@
  * named the same whatever path it is compiled by).
  */
 #include "common.h"
-#line 26 "1FCAC0.c"
+#line 26 "1FCAC0.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0F_07's game object, IDO -O3: the functions are written last to first
@@ -253,7 +253,7 @@ static void func_ovl0F_07_800441F8(UnkStruct_ovl0F_07_80045390 *task, UnkStructA
     }
 }
 
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0F_07_80044200(void) {
     func_ovl0F_07_800452F8(0.0f);
     func_ovl0F_07_80045300(0x7F);
@@ -271,7 +271,7 @@ static void func_ovl0F_07_80044200(void) {
                            D_ovl0F_07_80045D90.unk18);
     func_ovl0F_07_800458F0(0x8E);
 }
-#line 281 "1FCAC0.c"
+#line 281 "1FCAC0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 /* .data after func_ovl0F_07_800441F8's static */
 /* passed to func_ovl0F_07_800456D0: three 12-byte records */
@@ -456,11 +456,11 @@ static s32 func_ovl0F_07_800439A0(UnkStructA *arg0) {
     return hit;
 }
 
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0F_07_80043998(s32 *dst, f32 x, f32 z) {
     *dst = ((s16)(x * 500.0f) << 16) | ((s16)(z * 500.0f) & 0xFFFF);
 }
-#line 470 "1FCAC0.c"
+#line 470 "1FCAC0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 void func_ovl0F_07_800430AC(f32 arg0) {
     f32 sp1C;
@@ -583,7 +583,7 @@ void func_ovl0F_07_800433A4(s32 arg0) {
             } else {
                 func_ovl0F_07_80043310(0x27A);
             }
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
             D_ovl0F_07_80045E30[2]->unk40->unk10 = 2400.0f;
             D_ovl0F_07_80045E30[2]->unk40->unk14 = 2600.0f;
             D_ovl0F_07_80045E30[2]->unk40->unk18 = -2000.0f;
@@ -592,7 +592,7 @@ void func_ovl0F_07_800433A4(s32 arg0) {
             D_ovl0F_07_80045E30[2]->unk40->unk30 = 16.0f;
             func_ovl0F_07_80043228(D_ovl0F_07_80045CBC, 1);
             break;
-#line 602 "1FCAC0.c"
+#line 602 "1FCAC0.c" /* fake: back from the other file, at the line numbers it matched with */
         case 16:
             func_ovl0F_07_800449D0(0x17, 0, 0x1B);
             break;

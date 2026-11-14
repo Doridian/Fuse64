@@ -41,7 +41,7 @@
  * - 80045964: grid[7] (not [6]) puts the timer static's grid at sp+168.
  */
 #include "common.h"
-#line 59 "19C2D0.c"
+#line 59 "19C2D0.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0D_02's stage object, IDO -O3: the functions are written last to first
@@ -810,9 +810,9 @@ void func_ovl0D_02_800444FC(void) {
     func_ovl0D_02_800444D4();
     D_ovl0D_02_80047A54 = func_ovl0D_02_80046448();
     /* fake: (see the top): the call's delay slot stays empty */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     func_ovl0D_02_80044474();
-#line 829 "19C2D0.c"
+#line 829 "19C2D0.c" /* fake: back from the other file, at the line numbers it matched with */
     func_ovl0D_02_8004446C();
     func_ovl0D_02_80044464();
     func_ovl0D_02_8004445C();
@@ -830,13 +830,13 @@ void func_ovl0D_02_800444FC(void) {
 
 /* the probe: an invisible object moved about to test for hits; in
  * "panels.c" (a fake, see the top) */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0D_02_800444EC(void) {
     D_ovl0D_02_80047A3C = func_ovl0D_02_80046D40(-1, 0x80, 0.0f, 0.0f, 0.0f);
     D_ovl0D_02_80047A3C->unkC = 0x3FFFF;
 }
 
-#line 853 "19C2D0.c"
+#line 853 "19C2D0.c" /* fake: back from the other file, at the line numbers it matched with */
 static void func_ovl0D_02_800444F4(Trio_0D02 *t, s32 count) {
     s32 i;
 
@@ -894,9 +894,9 @@ static void func_ovl0D_02_80044444(void) {
             e = &D_ovl0D_02_800476D4[i];
             o = e->obj;
             /* fake: (see the top) */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
             o->unk40->unk48->unk4->unk4 = func_ovl0D_02_80046A38(o->unk40, 0) - 0.001f;
-#line 913 "19C2D0.c"
+#line 913 "19C2D0.c" /* fake: back from the other file, at the line numbers it matched with */
             func_ovl0D_02_80046D00(e->obj, 0x02000000);
             func_ovl0D_02_8004311C(e);
         }
@@ -909,9 +909,9 @@ static void func_ovl0D_02_8004421C(Vec3f *corner, Vec3f (*rows)[4]) {
     s32 k;
 
     /* fake: (see the top): j = 0 after the loop's line */
-#line 3000 "19C2D0.c"
+#line 3000 "19C2D0.c" /* fake: back from the other file, at the line numbers it matched with */
     j = 0;
-#line 928 "19C2D0.c"
+#line 928 "19C2D0.c" /* fake: back from the other file, at the line numbers it matched with */
     for (; j < 3; j++) {
         for (k = 0; k < 4; k++) {
             rows[j][k].x = corner->x * 10.0f - k * 200.0f;
@@ -1335,7 +1335,7 @@ static void func_ovl0D_02_8004311C(Ent_0D02 *e) {
     switch (func_ovl0D_02_80043114(e)) {
         case 0:
             /* fake: (see the top) */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
             x0 = grid[0] - 1;
             x1 = x0 + 4;
             z1 = grid[2] + len;

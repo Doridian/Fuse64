@@ -18,7 +18,7 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
-#line 21 "1D6120.c"
+#line 21 "1D6120.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0E_12's game object, IDO -O3: the functions are written last to first
@@ -773,7 +773,7 @@ void func_ovl0E_12_80043164(void) {
     }
 }
 
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0E_12_8004315C(s16 i) {
     func_ovl0E_12_8004311C(&D_ovl0E_12_80045FCC[i]);
 }

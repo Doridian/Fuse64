@@ -24,7 +24,7 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
-#line 30 "1FF8F0.c"
+#line 30 "1FF8F0.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0F_08's game object, IDO -O3: the functions are written last to first
@@ -379,7 +379,7 @@ void func_ovl0F_08_80043A28(UnkStructA *arg0) {
     }
 }
 
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0F_08_80043968(s32 *dst, f32 x, f32 z) {
     *dst = ((s16)(x * 500.0f) << 16) | ((s16)(z * 500.0f) & 0xFFFF);
 }
@@ -538,7 +538,7 @@ static void func_ovl0F_08_80043020(s32 count, UnkStruct_ovl0F_08_80045B90 *p) {
         p++;
     }
 }
-#line 548 "1FF8F0.c"
+#line 548 "1FF8F0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 static void func_ovl0F_08_80043018(void) {
     D_ovl0F_08_80045DD4 = func_ovl0F_08_80044A08();
@@ -563,7 +563,7 @@ void func_ovl0F_08_800433DC(s32 arg0) {
             } else {
                 func_ovl0F_08_800432B4(0x27A);
             }
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
             D_ovl0F_08_80045DA0[2]->unk40->unk10 = 2400.0f;
             D_ovl0F_08_80045DA0[2]->unk40->unk14 = 2600.0f;
             D_ovl0F_08_80045DA0[2]->unk40->unk18 = 5200.0f;
@@ -571,7 +571,7 @@ void func_ovl0F_08_800433DC(s32 arg0) {
             D_ovl0F_08_80045DA0[2]->unk40->unk2C = 16.0f;
             D_ovl0F_08_80045DA0[2]->unk40->unk30 = 16.0f;
             break;
-#line 581 "1FF8F0.c"
+#line 581 "1FF8F0.c" /* fake: back from the other file, at the line numbers it matched with */
         case 17:
             func_ovl0F_08_80044A20(0xC0);
             func_ovl0F_08_800449E0(0x29, 0, 0x12);

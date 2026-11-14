@@ -1176,7 +1176,7 @@ static s32 func_ovl0A_06_80044534(s32 arg0) {
 #if VERSION_JP
         func_ovl0A_06_80046950(D_ovl0A_06_80047738[3], D_ovl0A_06_80046DE0, 0);
 #else
-#line 1200
+#line 1200 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
         func_ovl0A_06_800469A0(D_ovl0A_06_80047738[3], D_ovl0A_06_80046DE0, 0);
 #endif
         D_ovl0A_06_80047748[3] = func_ovl0A_06_80046978(D_ovl0A_06_80047738[3]);
@@ -1661,9 +1661,9 @@ static s32 func_ovl0A_06_8004311C(void) {
             D_ovl0A_06_80047018 = 1;
             func_ovl0A_06_80043020(0, 1);
         } else if ((pressed & 0x8000) || (pressed & 0x1000)) {
-#line 1700
+#line 1700 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             ret = 1;
-#line 1676
+#line 1676 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             if (D_ovl0A_06_80047018 == 0) {
                 /* SE(1, 1) with `ret = 2` between its wait and its call */
                 switch (1) {
@@ -1680,9 +1680,9 @@ static s32 func_ovl0A_06_8004311C(void) {
                 SE(2, 2);
             }
         } else if (pressed & 0x4000) {
-#line 1700
+#line 1700 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             ret = 1;
-#line 1695
+#line 1695 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             SE(2, 2);
         }
         func_ovl0A_06_800465A0();
@@ -1722,7 +1722,7 @@ static void func_ovl0A_06_80043020(s32 sfx, s32 sel) {
     no = func_ovl0A_06_80046940(D_ovl0A_06_80046D2C, noX, noY, noScale, noScale, noFlag);
     yes = func_ovl0A_06_80046940(D_ovl0A_06_80046D24, yesX, yesY, yesScale, yesScale, yesFlag);
 #else
-#line 1740
+#line 1740 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     no = func_ovl0A_06_80046998(D_ovl0A_06_80046D2C, noX, noY, noScale, noScale, noFlag);
     yes = func_ovl0A_06_80046998(D_ovl0A_06_80046D24, yesX, yesY, yesScale, yesScale, yesFlag);
 #endif

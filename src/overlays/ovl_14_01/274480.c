@@ -3187,13 +3187,13 @@ void func_ovl14_01_800437B8(void) {
         func_ovl14_01_80043688(D_ovl14_01_8004D600, D_ovl14_01_8004D560);
         func_ovl14_01_80043688(D_ovl14_01_8004D618, D_ovl14_01_8004D5A0);
 /* fake: alternating #line files end as1 scheduling blocks */
-#line 3150 "x.c"
+#line 3150 "x.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
         func_ovl14_01_80043250(0);
-#line 3151 "y.c"
+#line 3151 "y.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
         temp_s0 = D_ovl14_01_8004D5DC;
-#line 3152 "x.c"
+#line 3152 "x.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
         temp_s0->unk40->unk48->unk4->unk4 = func_ovl14_01_8004C5D8(temp_s0->unk40, 0) - 0.001f;
-#line 3153 "y.c"
+#line 3153 "y.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
         func_ovl14_01_8004CC60(0x414);
         D_ovl14_01_8004D4F8.y = 8.0f;
         func_ovl14_01_8004C790(D_ovl14_01_8004D4F8.y, D_ovl14_01_8004D4F8.y);

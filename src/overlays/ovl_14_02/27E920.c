@@ -864,7 +864,7 @@ static s32 func_ovl14_02_8004D578(UnkStructA *obj) {
     return hit;
 }
 
-#line 1 "v.c"
+#line 1 "v.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl14_02_8004D638(s16 x, s16 z, Vec3f *vel) {
     vel->x = x * 0.002f;
     vel->z = z * 0.002f;
@@ -2852,10 +2852,10 @@ void func_ovl14_02_80048490(void) {
         D_ovl14_02_80050330[i] = 0;
     }
     i = 0;
-#line 4016 "y.c"
+#line 4016 "y.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     row = 0;
     do {
-#line 5018 "x.c"
+#line 5018 "x.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
         for (j = 0; j < 2 && i < 12; j++, i++) {
             D_ovl14_02_800502F0[i]->unk40->unk10 = (j * 1000.0f) + 1900.0f;
             D_ovl14_02_800502F0[i]->unk40->unk14 = D_ovl14_02_800502EC->y;

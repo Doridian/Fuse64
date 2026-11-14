@@ -10,7 +10,7 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
-#line 16 "250B70.c"
+#line 16 "250B70.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_12_03's game object, IDO -O3: the functions are written last to first
@@ -675,7 +675,7 @@ void func_ovl12_03_80043174(void) {
  * another file (panels.c), as ovl_12_01's func_ovl12_01_80043188: the
  * `.file` at the inlined body ends as1's block after the prologue and the
  * hoisted &D_ovl12_03_80045ED0, 100.0f and count (17 words to 0). */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl12_03_8004316C(f32 x, s32 z, s32 count) {
     s32 i;
 
@@ -706,7 +706,7 @@ void func_ovl12_03_80043108(void) {
  * the load of D_ovl12_03_80045EC0, so `sw ra` comes first (2 words to 0). */
 static void func_ovl12_03_80043100(void) {
 }
-#line 719 "250B70.c"
+#line 719 "250B70.c" /* fake: back from the other file, at the line numbers it matched with */
 
 static void func_ovl12_03_800430F8(void) {
 }

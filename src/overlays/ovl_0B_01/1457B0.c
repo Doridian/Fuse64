@@ -34,7 +34,7 @@
  *   original's order and registers without a frame slot.
  */
 #include "common.h"
-#line 37 "1457B0.c"
+#line 37 "1457B0.c" /* fake: names this file as the build does, for the #line regions below */
 
 typedef struct {
     u32 w0;
@@ -243,11 +243,11 @@ static void func_ovl0B_01_800445D4(void) {
     D_ovl0B_01_80045F80[0] = D_ovl0B_01_80045FAC[0];
 }
 
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0B_01_800445E4(void) {
 }
 
-#line 238 "1457B0.c"
+#line 238 "1457B0.c" /* fake: back from the other file, at the line numbers it matched with */
 static void func_ovl0B_01_8004464C(s32 arg0, Gfx_ovl0B_01 **arg1) {
     UnkStruct_ovl0B_01_80045E34 *fade = &D_ovl0B_01_80045E34;
     Gfx_ovl0B_01 *gfx;
@@ -260,14 +260,14 @@ static void func_ovl0B_01_8004464C(s32 arg0, Gfx_ovl0B_01 **arg1) {
     { Gfx_ovl0B_01 *g = gfx++; g->w0 = 0xF7000000; g->w1 = 0x10001; }
     { Gfx_ovl0B_01 *g = gfx++; g->w0 = 0xF6000000 | (((fade->unk2C + (s32) fade->unk34) & 0x3FF) << 14) | (((fade->unk30 + (s32) (fade->unk34 * fade->unk20)) & 0x3FF) << 2); g->w1 = (((fade->unk2C - (s32) fade->unk34) & 0x3FF) << 14) | (((fade->unk30 - (s32) (fade->unk34 * fade->unk20)) & 0x3FF) << 2); }
     *arg1 = gfx;
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 }
 
 void func_ovl0B_01_800445BC(void) {
     D_ovl0B_01_80045FA4 = -1;
     D_ovl0B_01_80045FA8 = -1;
 }
-#line 258 "1457B0.c"
+#line 258 "1457B0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 void func_ovl0B_01_80044560(f32 arg0, f32 arg1, f32 arg2) {
     func_ovl0B_01_80045348(D_ovl0B_01_80045FB0.x, D_ovl0B_01_80045FB0.y, D_ovl0B_01_80045FB0.z);

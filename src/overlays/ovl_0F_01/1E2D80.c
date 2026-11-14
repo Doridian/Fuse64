@@ -1173,7 +1173,7 @@ static void func_ovl0F_01_80043AF4(UnkStructA *obj, f32 *sv) {
     sv[1] = obj->unk40->unk14;
     sv[2] = obj->unk40->unk18;
 }
-#line 1149 "1E2D80.c"
+#line 1149 "1E2D80.c" /* fake: names this file as the build does, for the #line regions below */
 static void func_ovl0F_01_80043B04(void) {
     func_ovl0F_01_80043588(D_ovl0F_01_8004836C, 3);
 }
@@ -1253,9 +1253,9 @@ void func_ovl0F_01_80043B0C(void) {
     }
     func_ovl0F_01_80047760(50.0f, 50.0f, 50.0f);
     func_ovl0F_01_80047750(20);
-#line 1230
+#line 1230 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     D_ovl0F_01_80048420 = 2;
-#line 1229
+#line 1229 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     for (i = 0; i < 3; i++) {
         D_ovl0F_01_80048738[i]->unkC = 0;
         func_ovl0F_01_80047840(D_ovl0F_01_80048738[i], 0x01000030);
@@ -1526,7 +1526,7 @@ static void func_ovl0F_01_80043018(s32 count, UnkStruct_ovl0F_01_80048264 *p) {
 }
 
 /* case 2's: the stage's tables */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0F_01_80045FB0(u32 (*p)[3], s32 count) {
     s32 i;
 
@@ -1536,7 +1536,7 @@ static void func_ovl0F_01_80045FB0(u32 (*p)[3], s32 count) {
         p++;
     }
 }
-#line 1470 "1E2D80.c"
+#line 1470 "1E2D80.c" /* fake: back from the other file, at the line numbers it matched with */
 
 /* The overlay's handler: the entry returns it to the loader. */
 void func_ovl0F_01_80045FB8(s32 arg0) {
@@ -1558,7 +1558,7 @@ void func_ovl0F_01_80045FB8(s32 arg0) {
             func_ovl0F_01_80045E40(&D_ovl0F_01_80048428);
             func_ovl0F_01_80046F18(func_ovl0F_01_8004413C, 5);
             D_ovl0F_01_8004841C = func_ovl0F_01_80047988(func_ovl0F_01_80043B0C, NULL, 0, 0, 0x110);
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
             break;
         case 16:
             func_ovl0F_01_80046FF0(0x18, 3, 0x10);
@@ -1705,7 +1705,7 @@ void func_ovl0F_01_80045FB8(s32 arg0) {
             break;
         case 3:
             D_ovl0F_01_80048434 = 1;
-#line 1654 "1E2D80.c"
+#line 1654 "1E2D80.c" /* fake: back from the other file, at the line numbers it matched with */
             D_ovl0F_01_8004876C = func_ovl0F_01_80047018();
             func_ovl0F_01_80046FF8(&D_ovl0F_01_80048760);
             func_ovl0F_01_80047020(D_ovl0F_01_8004876C, D_ovl0F_01_80048750);

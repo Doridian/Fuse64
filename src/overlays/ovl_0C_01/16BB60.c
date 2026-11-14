@@ -32,7 +32,7 @@
  * - 800459FC declares obj before pos.
  */
 #include "common.h"
-#line 46 "16BB60.c"
+#line 46 "16BB60.c" /* fake: names this file as the build does, for the #line regions below */
 
 /* the handler's state (ovl_0C_07's D_ovl0C_07_80047990) */
 typedef struct {
@@ -1252,9 +1252,9 @@ void func_ovl0C_01_800468EC(void) {
     func_ovl0C_01_80046740();
     func_ovl0C_01_800464F8();
     func_ovl0C_01_800463E0();
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     rec = &D_ovl0C_01_8004A54C;
-#line 1265 "16BB60.c"
+#line 1265 "16BB60.c" /* fake: back from the other file, at the line numbers it matched with */
     rec->unk0 = func_ovl0C_01_80049800(rec->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
     func_ovl0C_01_800497B8(rec->unk0, 0x01080000);
     func_ovl0C_01_800497C0(rec->unk0, 0x02000000);
@@ -1274,7 +1274,7 @@ void func_ovl0C_01_800468EC(void) {
     rec->unk0->unk40->unk28 = rec->unk2C;
     rec->unk0->unk40->unk2C = rec->unk30;
     rec->unk0->unk40->unk30 = rec->unk34;
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     func_ovl0C_01_800468E4();
     if (func_ovl0C_01_80049B90(0x41A) != 0) {
         func_ovl0C_01_80049508(D_ovl0C_01_8004A54C.unk4);
@@ -1286,7 +1286,7 @@ void func_ovl0C_01_800468EC(void) {
 static void func_ovl0C_01_800468E4(void) {
 
 }
-#line 1297 "16BB60.c"
+#line 1297 "16BB60.c" /* fake: back from the other file, at the line numbers it matched with */
 
 void func_ovl0C_01_80046740(void) {
     UnkStruct_ovl0C_01_8004A104 *p;

@@ -1025,7 +1025,7 @@ void func_ovl0C_09_80043D08(void) {
     func_ovl0C_09_80046518(0x1F, 5, 0xF, 0x20, 0x10, 0x12);
 }
 
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0C_09_80043D00(f32 x, s32 z, s32 count) {
     s32 i;
 

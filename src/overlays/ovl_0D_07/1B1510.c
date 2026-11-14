@@ -18,7 +18,7 @@
  *   80043030 calls (the stubs' placement).
  */
 #include "common.h"
-#line 28 "1B1510.c"
+#line 28 "1B1510.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0D_07's stage object, IDO -O3: the functions are written last to first
@@ -535,7 +535,7 @@ void func_ovl0D_07_80043D80(void) {
 
 /* the stage's model (D_ovl0D_07_800465A0) placed; this static and the next
  * are in "panels.c" (a fake, see the top) */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0D_07_80043424(UnkStruct_ovl0D_07_800465A0 *e) {
     e->unk0 = func_ovl0D_07_80045CF0(e->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
     func_ovl0D_07_80045CA8(e->unk0, 0x01080000);
@@ -567,7 +567,7 @@ static void func_ovl0D_07_800432F0(UnkStruct_ovl0D_07_800465A0 *e) {
     e->unk0 = NULL;
     e->unk4 = -1;
 }
-#line 577 "1B1510.c"
+#line 577 "1B1510.c" /* fake: back from the other file, at the line numbers it matched with */
 
 
 void func_ovl0D_07_800432F8(void) {

@@ -38,7 +38,7 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
-#line 50 "1F7CA0.c"
+#line 50 "1F7CA0.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0F_05's game object, IDO -O3: the functions are written last to first
@@ -408,7 +408,7 @@ void func_ovl0F_05_800440AC(UnkStructA *arg0) {
 static void func_ovl0F_05_8004409C() {
 }
 
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0F_05_80043FE4(s32 *dst, f32 x, f32 z) {
     *dst = ((s16)(x * 500.0f) << 16) | ((s16)(z * 500.0f) & 0xFFFF);
 }
@@ -648,7 +648,7 @@ static void func_ovl0F_05_80043018(s32 count, UnkStruct_ovl0F_05_800461E0 *p) {
         p++;
     }
 }
-#line 664 "1F7CA0.c"
+#line 664 "1F7CA0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 /* The overlay's handler: the entry returns it to the loader. */
 void func_ovl0F_05_800430BC(s32 arg0) {
@@ -677,13 +677,13 @@ void func_ovl0F_05_800430BC(s32 arg0) {
             D_ovl0F_05_800464E0[8]->unk40->unk14 -= k3200;
             D_ovl0F_05_800464E0[9]->unk40->unk14 -= k3200;
             D_ovl0F_05_800464E0[10]->unk40->unk14 -= k3200;
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
             D_ovl0F_05_8004654C = func_ovl0F_05_80045A30(0x279);
             func_ovl0F_05_80045A40(D_ovl0F_05_8004654C, 0x20000000);
             D_ovl0F_05_8004654C->unk40 = 0.6f;
             D_ovl0F_05_8004654C->unk44 = D_ovl0F_05_8004654C->unk40 * 0.75f;
             D_ovl0F_05_8004654C->unk3C = D_ovl0F_05_8004654C->unk4C * 0.3f;
-#line 696 "1F7CA0.c"
+#line 696 "1F7CA0.c" /* fake: back from the other file, at the line numbers it matched with */
             D_ovl0F_05_800464E0[2]->unk40->unk10 = 2400.0f;
             D_ovl0F_05_800464E0[2]->unk40->unk14 = 2600.0f;
             D_ovl0F_05_800464E0[2]->unk40->unk18 = -2000.0f;

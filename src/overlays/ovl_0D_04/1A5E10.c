@@ -31,7 +31,7 @@
  *   puts 1600.0f in $f16 (as the original), and both its 1600s are floats.
  */
 #include "common.h"
-#line 44 "1A5E10.c"
+#line 44 "1A5E10.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0D_04's stage object, IDO -O3: the functions are written last to first
@@ -459,9 +459,9 @@ void func_ovl0D_04_80044D98(void) {
     D_ovl0D_04_80047078 = func_ovl0D_04_80045A58();
     func_ovl0D_04_800467A0(1);
     /* fake: (see the top): 1600.0f in $f16 */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     func_ovl0D_04_80044D40();
-#line 474 "1A5E10.c"
+#line 474 "1A5E10.c" /* fake: back from the other file, at the line numbers it matched with */
     func_ovl0D_04_80044310();
     func_ovl0D_04_80044D68();
     func_ovl0D_04_80044D60();
@@ -476,7 +476,7 @@ void func_ovl0D_04_80044D98(void) {
 }
 
 /* in "panels.c" (a fake, see the top) */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0D_04_80044D90(void) {
     if (func_ovl0D_04_80045A08() == 24) {
         func_ovl0D_04_800466D0(0x421);
@@ -487,7 +487,7 @@ static void func_ovl0D_04_80044D90(void) {
         D_ovl0D_04_80046C24[2].unk24 = 270.0f;
     }
 }
-#line 500 "1A5E10.c"
+#line 500 "1A5E10.c" /* fake: back from the other file, at the line numbers it matched with */
 
 static void func_ovl0D_04_80044D88(Trio_0D04 *t, s32 count) {
     s32 i;
@@ -868,9 +868,9 @@ static void func_ovl0D_04_80043F24(Ent_0D04 *e) {
     switch (func_ovl0D_04_80043F1C(e)) {
         case 0:
             /* fake: (see the top) */
-#line 1 "panels.c"
+#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
             x0 = grid[0] - 1;
-#line 882 "1A5E10.c"
+#line 882 "1A5E10.c" /* fake: back from the other file, at the line numbers it matched with */
             x1 = x0 + 4;
             z1 = grid[2] + len;
             x2 = x0 + 1;

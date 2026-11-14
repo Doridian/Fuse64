@@ -1953,10 +1953,7 @@ void func_802741D8(s16 arg0) {
     s32 t11;
     s32 t12;
     f32 t13;
-    f32 t14;
-    f32 t15;
-    s32 t16;
-    s32 sp60[3];
+    Unk8026DCAC sp60;
     f32 t17;
     f32 t18;
     f32 t19;
@@ -1975,10 +1972,10 @@ void func_802741D8(s16 arg0) {
     { f32 z = obj->unk40->z;
     t19 = obj->unk40->x;
     t20 = obj->unk40->y;
-    func_8026DCAC(t19, t20, z, sp60, 2); }
-    base.x = sp60[0];
-    base.y = sp60[1];
-    base.z = sp60[2];
+    func_8026DCAC(t19, t20, z, &sp60, 2); }
+    base.x = sp60.i[0];
+    base.y = sp60.i[1];
+    base.z = sp60.i[2];
     cur.x = base.x;
     cur.y = base.y;
     cur.z = base.z;
@@ -2009,8 +2006,7 @@ void func_802741D8(s16 arg0) {
     cur.z = sp3C[2];
     t13 = func_80234434(obj->unk40->rot);
     base.x = t13 * 100.0f;
-    t14 = func_80234408(obj->unk40->rot);
-    base.y = t14 * 100.0f;
+    base.y = func_80234408(obj->unk40->rot) * 100.0f;
     t3 = func_802336E4(base.x);
     if (t3) {
         base.x = 0.0f;
@@ -2027,8 +2023,7 @@ void func_802741D8(s16 arg0) {
     case 4:
     case 5:
     case 6:
-        t15 = func_8026E938((u8 *) OBJ_DD8->unk40);
-        cur.y = t15;
+        cur.y = func_8026E938((u8 *) OBJ_DD8->unk40);
         if (func_80270FC0((u8 *) obj) + obj->unk40->y <= cur.y) {
             return;
         }
@@ -2046,8 +2041,7 @@ void func_802741D8(s16 arg0) {
         if (t5) {
             func_802734BC((u8 *) e->obj);
         } else {
-            t16 = func_80271540(arg0);
-            o = (Obj8E *) t16;
+            o = (Obj8E *) func_80271540(arg0);
             if (o != NULL) {
                 t6 = func_802716F8(arg0);
                 if (t6 != NULL) {
@@ -2654,12 +2648,15 @@ void func_802720C8(u8 *arg0) {
     s32 t1;
     s32 t2;
     s32 t3;
-    s32 pad[2]; /* fake: places info at the original's offset */
+    Obj8E *o;
+    f32 y;
     s16 t;
     Unk8026DCAC info;
 
-    z = ((Obj8E *) arg0)->unk60;
-    func_8026DCAC(((Obj8E *) arg0)->unk58, ((Obj8E *) arg0)->unk5C, z, &info, 2);
+    o = (Obj8E *) arg0;
+    z = o->unk60;
+    y = o->unk5C;
+    func_8026DCAC(o->unk58, y, z, &info, 2);
     p[2] = info.i[0];
     p[1] = info.i[1];
     p[0] = info.i[2];
@@ -2951,13 +2948,12 @@ void func_802714C4() {
 }
 
 void func_80271448(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5) {
-    s32 pad[3]; /* fake: frame-tuned */
-    s32 a[3];
+    Unk8026DCAC a;
 
-    func_8026DCAC(arg0, arg1, arg2, a, 2);
-    *arg3 = a[0];
-    *arg4 = a[1];
-    *arg5 = a[2];
+    func_8026DCAC(arg0, arg1, arg2, &a, 2);
+    *arg3 = a.i[0];
+    *arg4 = a.i[1];
+    *arg5 = a.i[2];
 }
 
 s32 func_8027130C(u8 *arg0) {

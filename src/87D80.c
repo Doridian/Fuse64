@@ -965,10 +965,7 @@ f32 func_8026E8B8() {
 }
 
 void func_8026E6E4(u8 *arg0, f32 *arg1, f32 *arg2) {
-    s32 t1;
-    f32 t2;
-    s32 pad[1]; /* fake: frame-tuned */
-    s32 sp78[3];
+    Unk8026DCAC sp78;
     f32 sp6C[3];
     f32 temp_fs3;
     f32 temp_fs4;
@@ -980,8 +977,8 @@ void func_8026E6E4(u8 *arg0, f32 *arg1, f32 *arg2) {
     var_fs0 = M2C_FIELD(arg0, f32 *, 0x14);
     temp_fs4 = M2C_FIELD(arg0, f32 *, 0x18);
     do {
-        func_8026DCAC(temp_fs3, var_fs0, temp_fs4, sp78, 2);
-        temp_v0 = func_8026D7D8(sp78[0], sp78[1], sp78[2]);
+        func_8026DCAC(temp_fs3, var_fs0, temp_fs4, &sp78, 2);
+        temp_v0 = func_8026D7D8(sp78.i[0], sp78.i[1], sp78.i[2]);
         temp_v1 = temp_v0 & 0xF;
         if ((temp_v1 == 0) && (var_fs0 >= 0.0f)) {
             var_fs0 -= 100.0f;
@@ -1004,11 +1001,9 @@ void func_8026E6E4(u8 *arg0, f32 *arg1, f32 *arg2) {
     default:
         *arg2 = 0.0f;
     }
-    t1 = func_8026E278(temp_v0);
-    if (t1 != 0) {
+    if (func_8026E278(temp_v0) != 0) {
         func_8026DFB8(temp_fs3 + 50.0f, var_fs0, temp_fs4 + 50.0f, sp6C);
-        t2 = func_8029CB40(sp6C[2]);
-        *arg1 = (f32) ((f64) t2 * 57.29577951308232);
+        *arg1 = (f32) ((f64) func_8029CB40(sp6C[2]) * 57.29577951308232);
     }
 }
 

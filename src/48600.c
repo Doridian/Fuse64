@@ -238,6 +238,12 @@ s32 * func_8023A840(void);
 s32 func_8026D7D8(s32, s32, s32);
 u8 func_8026DC74(s32);
 void func_8026DCAC(f32, f32, f32, void *, s32);
+
+/* func_8026DCAC's result: the grid cell and the position within it */
+typedef struct {
+    /* 0x00 */ s32 i[3];
+    /* 0x0C */ f32 f[3];
+} Unk8026DCAC;
 void func_8026E6E4(void *, f32 *, f32 *);
 f32 func_8026E8B8(void);
 f32 func_8026E938(void *);
@@ -1731,23 +1737,20 @@ void func_8022FC0C(s32 arg0) {
 }
 
 f32 func_8022FB00(u8 *arg0) {
-    s32 f;
-    s32 g;
-    s32 h;
-    s32 sp50[3];
+    Unk8026DCAC sp50;
     f32 sum;
     s32 i;
     s32 t;
     Shape *obj;
 
     obj = ((UnkStructA80 *) arg0)->unk40;
-    func_8026DCAC(obj->pos[0], obj->pos[1], obj->pos[2], sp50, 2);
+    func_8026DCAC(obj->pos[0], obj->pos[1], obj->pos[2], &sp50, 2);
     sum = 0.0f;
-    for (i = 0; i <= sp50[1]; i++) {
+    for (i = 0; i <= sp50.i[1]; i++) {
         sum += (s32) func_8026DC74(i) * 100.0f;
     }
     for (; i < 6; i++) {
-        t = func_8026D7D8(sp50[0], i, sp50[2]);
+        t = func_8026D7D8(sp50.i[0], i, sp50.i[2]);
         if (t != 0x2010 && ((t & 0xF) || (t & 0x60))) {
             break;
         }

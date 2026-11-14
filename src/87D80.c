@@ -22,9 +22,11 @@
  * address in every pass, so uopt strength-reduces it as the original
  * does (a single use at the loop's end keeps a multu; the getter's value
  * taken there instead moves the load).
- * In func_8026DCAC uopt hoists iy out of the loop; a dead
- * `if (iy && iy) {}` adds two loop uses, so iy outranks the layer
- * pointer (tie, lower bit) and takes a0 as in the original.
+ * In func_8026DCAC uopt hoists iy out of the loop; a test using it
+ * twice (a range check, below) adds two loop uses, so iy outranks the
+ * layer pointer (tie, lower bit) and takes a0 as in the original.
+ * func_8026F5E8's x and y are initialised to 0.0f in their declarations
+ * (dead initialisers), which colours them f2 and f12.
  * In func_8026FC08 the `src = p = D_802AFC6C = ...`
  * chain puts &D_802AFC6C in v1, as the original does. Its inner loop
  * computes the three coordinates into x, y and z before `p += 2` and
@@ -33,10 +35,13 @@
  * as1 schedules them, j % 8 and the increment as the original does.
  * Fakes pass 7: the empty tests (the layer address in func_8026EE18 and
  * func_8026DCAC, the map after func_8026EAF8's loop, z at the end of
- * func_8026E938) are checks around compiled-out debug prints (DEBUG_PRINT,
- * include/macros.h; messages are placeholders). Their conditions are
+ * func_8026E938, iy's range in func_8026DCAC) are checks around
+ * compiled-out debug prints (DEBUG_PRINT, include/macros.h; messages are
+ * placeholders). Their conditions are
  * guesses: any test of the same value gives the same code, except that
- * the map's must be `!D_800B15D8` (`== NULL` changes it).
+ * the map's must be `!D_800B15D8` (`== NULL` changes it) and iy's must
+ * read it twice (`iy < 0` alone doesn't; any bound does, the loop's is
+ * taken). func_8026DCAC's `h = layer - 1` temporary was stale.
  */
 #include "common.h"
 
@@ -576,19 +581,15 @@ void func_8026F5E8(s32 arg0, s32 arg1, s32 arg2) {
     s32 sp28;
     s32 sp24;
     f32 pos[3];
-    f32 x;
-    f32 y;
+    f32 x = 0.0f;
+    f32 y = 0.0f;
     f32 z;
 
     sp28 = D_802AC5D0 & 4;
     sp24 = *func_8023A840() & 6;
     temp_v0 = func_8026D7D8(arg0, arg1, arg2);
     if (temp_v0 & 0x380) {
-        /* fake: x and y set first (dead stores), so uopt colours them f2
-         * and f12; the dead read of pos[1] gives z f16 */
-        x = 0.0f;
-        y = 0.0f;
-        if (pos[1]) {
+        if (pos[1]) { /* fake: a dead read of pos[1] gives z f16 */
         }
         pos[0] = arg0 * 100.0f;
         pos[1] = func_8026E2B0((f32) arg1);
@@ -1278,18 +1279,15 @@ void func_8026DCAC(f32 arg0, f32 arg1, f32 arg2, void *arg3, s32 arg4) {
     h = 0;
     for (layer = 0; layer < D_800B15D8->unk0 + 1; layer++) {
         iy = (s32) (arg1 * 0.01f);
-        if (iy && iy) { /* fake: two loop uses of iy (hoisted out of the
-                         * loop) raise it over the layer pointer */
+        if (iy < 0 || iy >= D_800B15D8->unk0 + 1) {
+            DEBUG_PRINT(("iy out of range\n"));
         }
         if (&D_800B15D8[layer] == NULL) {
             DEBUG_PRINT(("D_800B15D8[layer] == NULL\n"));
         }
         if (iy < h) {
             if (layer > 0) {
-                /* fake: h is dead after the break; this keeps the
-                 * ugen temporaries below in step with the original */
-                h = layer - 1;
-                ((Unk8026DCAC *) arg3)->i[1] = h;
+                ((Unk8026DCAC *) arg3)->i[1] = layer - 1;
             } else {
                 ((Unk8026DCAC *) arg3)->i[1] = layer;
             }

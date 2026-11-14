@@ -875,7 +875,6 @@ void func_ovl0F_01_8004464C(void) {
     s32 j; /* fake: a copy of i for the loop's body (from the permuter; it puts i in s0 and
             * the record in s2), but for the store to D_ovl0F_01_80048938.unk16 */
     UnkStructA_40 *p;
-    f32 padA[1]; /* fake: unused; the frame (0x100) and tilt/slope at sp+0xC4/0xC0 */
     f32 mx; /* the mover's x */
 
     active = TRUE;

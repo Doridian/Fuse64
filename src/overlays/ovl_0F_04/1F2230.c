@@ -53,8 +53,9 @@
  * product the caller stores, _inl1 has pos (after an unused padP, so at
  * 0xA8). Its fakes: `j = i;` first in the loop, j used everywhere but the
  * unk16 store (from the permuter: i in s0, the record in s2); the
- * mover's x is a local, mx, read before the x test (not a fake); padA[2]
- * (the frame, 2 words); and at least three of the unused st, rec, step,
+ * mover's x is a local, mx, read before the x test, and the player's
+ * position a pointer, p (not fakes; p took the old padA's place); and
+ * at least three of the unused st, rec, step,
  * player (else the unk16 store addresses the symbol, 2 words).
  * 80043028 has one fake: an empty `if (D_ovl0F_04_8004848C) {}` after the
  * D_ovl0F_04_8004847C store, which keeps the reloaded value live so it
@@ -1092,7 +1093,6 @@ void func_ovl0F_04_80044084(void) {
     s32 j; /* fake: a copy of i for the loop's body (from the permuter; it puts i in s0 and
             * the record in s2), but for the store to D_ovl0F_04_80048C90.unk16 */
     UnkStructA_40 *p;
-    f32 padA[1]; /* fake: unused; the frame (0x100) and tilt/slope at sp+0xC4/0xC0 */
     f32 mx; /* the mover's x */
 
     active = TRUE;

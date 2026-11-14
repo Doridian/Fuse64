@@ -1868,7 +1868,12 @@ static void func_ovl0B_04_800450C0(Obj *arg0) {
     func_ovl0B_04_8004447C(D_ovl0B_04_8004A3B0[5], 0x32);
     o->unkC |= 0x400;
     f = &D_ovl0B_04_80049B20[4];
-    if (!D_ovl0B_04_8004A3E4) {} /* fake: dead read of the fade pointer before f is set up (without it 57 words differ) */
+    /* A check around compiled-out debug output that no fade is running
+     * (without the read 57 words differ; any one-variable test matches,
+     * the condition is a guess). */
+    if (D_ovl0B_04_8004A3E4 != NULL) {
+        DEBUG_PRINT(("fade != NULL\n"));
+    }
     step = (f->unk18 - f->unk14) / f->unk1C;
     D_ovl0B_04_8004A3E4 = f;
     f->unk0 = func_ovl0B_04_80047E58(func_ovl0B_04_80043CD0, 0);

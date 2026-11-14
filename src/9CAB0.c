@@ -330,7 +330,7 @@ static s32 func_80284FCC(UnkStruct_80288040 *arg0);
 static void func_80285554();
 static void func_8028555C();
 static void func_80285564();
-static void func_80285650();
+static s32 func_80285650(UnkStruct_80288040 *a);
 static void func_80285A6C();
 static UnkStruct_800BA900 *func_80285A74();
 static void func_80285A7C(UnkStruct_80288040 *a_, UnkStruct_800BA8E8 *e_);
@@ -338,7 +338,7 @@ static void func_80285A84(UnkStruct_80288040 *a_, Vec3f *p, s32 mk);
 static void func_80285A8C(UnkStruct_80288040 *a_, UnkStruct_800BA8E8 *e_);
 static void func_80285A94(UnkStruct_80288040 *a_, Vec3f *p, s32 mk);
 static void func_80285F84(void);
-static s32 func_802863E8(s32 arg0);
+static s32 func_802863E8(s32 arg0, void *fn);
 static s32 func_802863F0(void);
 static s32 func_802863F8(void);
 static s32 func_802867CC(s32 arg0, f32 arg1, f32 arg2, f32 arg3);
@@ -611,7 +611,10 @@ void func_80286E60(void) {
 }
 
 s32 func_80286CA8(s32 arg0, f32 arg1, f32 arg2, f32 arg3) {
-    s32 pad[2]; /* fake: 8 bytes of frame above t, as in func_802863E8 */
+    s32 pad[2]; /* fake: 8 bytes of frame above t. func_802863E8's were its
+                 * second parameter; here the same code is written out, and
+                 * calling func_802863E8 (any parameters) un-inlines it from
+                 * func_802867E4; a block-local task, swapped declarations: no */
     s32 t;
     UnkStruct_800BB340 *task;
 
@@ -717,7 +720,7 @@ UnkStruct_80288040 *func_802867E4(s32 arg0, f32 arg1, f32 arg2, f32 arg3) {
     if (slot != -1) {
         if (D_800BB480 + 1 < 16) {
             { s32 c = D_800BB480 + 1; D_800BB480 = c; }
-            if ((t = func_802863E8(2)) != -1) {
+            if ((t = func_802863E8(2, func_80285F8C)) != -1) {
                 t1 = func_80285658(&D_800BA900[slot], &D_800BB340[t]);
                 if (t1 == 0) {
                     func_802867DC(&D_800BA900[slot]);
@@ -741,15 +744,18 @@ UnkStruct_80288040 *func_802867E4(s32 arg0, f32 arg1, f32 arg2, f32 arg3) {
     return ret;
 }
 
-static s32 func_802863E8(s32 arg0) {
-    s32 pad[2]; /* fake: frame above t */
+/* A task of kind arg0 running fn. The second parameter is what gives the
+ * inlined copy in func_802867E4 its 8 more bytes of frame (a pad stood in
+ * for it); that it is the task function, rather than the priority 0xD0 or
+ * anything else, is a guess. */
+static s32 func_802863E8(s32 arg0, void *fn) {
     s32 t;
     UnkStruct_800BB340 *task;
 
     t = func_802867D4();
     if (t != -1) {
         task = &D_800BB340[t];
-        task->unk0 = t; task->unkC = 0; task->unk4 = arg0; task->unk8 = func_80238A10(func_80285F8C, task, 0, 0, 0xD0); task->unk10 = NULL;
+        task->unk0 = t; task->unkC = 0; task->unk4 = arg0; task->unk8 = func_80238A10(fn, task, 0, 0, 0xD0); task->unk10 = NULL;
     }
     return t;
 }
@@ -971,18 +977,18 @@ static void func_80285A9C(UnkStruct_800BB340 *arg0) {
     }
 }
 
-static void func_80285650() {
-}
-
-static s32 func_80285658(UnkStruct_800BA900 *arg0, UnkStruct_800BB340 *arg1) {
-    UnkStruct_80288040 *a;
+/* A free place for a's object: from its position, step it 25 units at a
+ * time in each direction in turn until func_8028556C accepts the cell (40
+ * tries; the start is restored between directions). Inlined into
+ * func_80285658, so only its stub is here; its returned ok is the
+ * temporary a dead read stood in for. Its extent (x, z and D_800BB484
+ * inside it, or passed in) is a guess among the ones that match. */
+static s32 func_80285650(UnkStruct_80288040 *a) {
     f32 x;
     f32 z;
     s32 ok;
     s32 i;
 
-    func_80285650();
-    a = &arg0->unk14;
     x = a->unk0->unk40->unk10;
     z = a->unk0->unk40->unk18;
     D_800BB484 = a;
@@ -1012,12 +1018,20 @@ static s32 func_80285658(UnkStruct_800BA900 *arg0, UnkStruct_800BB340 *arg1) {
             break;
         }
     }
+    return ok;
+}
+
+static s32 func_80285658(UnkStruct_800BA900 *arg0, UnkStruct_800BB340 *arg1) {
+    UnkStruct_80288040 *a;
+    s32 ok;
+
+    a = &arg0->unk14;
+    ok = func_80285650(a);
     if (ok) {
         D_800BA900[a->unk80].unk8.x = a->unk0->unk40->unk10;
         D_800BA900[a->unk80].unk8.z = a->unk0->unk40->unk18;
     }
     if (!ok) {
-        if (ok) {} /* fake: dead read */
         func_802313DC(a->unk0, func_80282524(a));
         return 0;
     }

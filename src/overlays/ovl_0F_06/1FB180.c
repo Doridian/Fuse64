@@ -1,5 +1,11 @@
 #include "common.h"
 
+/*
+ * IDO -O3, like the other overlays: the functions are written last to first
+ * (it emits a file's functions in reverse).  At -O2 the common code's
+ * CORE_FUNC_D needed an `if (1)` fake to keep arg1 out of its stack home.
+ */
+
 void func_ovl0F_06_80043598(s32);
 void func_ovl0F_06_800435B0(s32);
 void func_ovl0F_06_80043748(void);
@@ -10,13 +16,12 @@ void func_ovl0F_06_80043DF8(f32, f32, f32);
 void func_ovl0F_06_80043E00(f32 *, f32 *, f32 *);
 void func_ovl0F_06_80044108(s32);
 void func_ovl0F_06_800445F8(s32, s32, s32);
-void func_ovl0F_06_80044690(s32, f32, f32, f32);
+s32 func_ovl0F_06_80044690(s32, f32, f32, f32);
 
 /* .bss, in first-seen order (docs/DECOMPILING.md, "Data") */
-u8 D_ovl0F_06_80044940[0x24]; /* not referenced here */
+u8 D_ovl0F_06_80044940[0x24]; /* unused (func_ovl0F_06_800431EC) */
 s32 D_ovl0F_06_80044964;
 s32 D_ovl0F_06_80044968;
-u8 D_ovl0F_06_8004496C[4]; /* not referenced here */
 Vec3f D_ovl0F_06_80044970;
 
 /* .data: six 12-byte records, each passed to func_ovl0F_06_800445F8 */
@@ -29,8 +34,56 @@ u32 D_ovl0F_06_80044890[][3] = {
     { 5, 0x15, 0xF3 },
 };
 
-void func_ovl0F_06_80043010(void) {
+static void func_ovl0F_06_8004323C(void) {
 }
+
+static void func_ovl0F_06_80043234(void) {
+}
+
+static void func_ovl0F_06_8004322C(void) {
+}
+
+static void func_ovl0F_06_80043224(void) {
+}
+
+static void func_ovl0F_06_8004321C(void) {
+}
+
+static void func_ovl0F_06_80043214(void) {
+}
+
+static void func_ovl0F_06_8004320C(void) {
+}
+
+static void func_ovl0F_06_80043204(void) {
+}
+
+static void func_ovl0F_06_800431FC(void) {
+}
+
+static void func_ovl0F_06_800431F4(void) {
+}
+
+/* unused (its body is dropped): the reference keeps the .bss nothing else
+ * uses out of common */
+static void func_ovl0F_06_800431EC(void) {
+    D_ovl0F_06_80044940[0] = 0;
+}
+
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl0F_06_800431D4
+#define CORE_FUNC_B func_ovl0F_06_80043178
+#define CORE_FUNC_C func_ovl0F_06_80043130
+#define CORE_FUNC_D func_ovl0F_06_800430FC
+#define CORE_BSS_A0 D_ovl0F_06_80044964
+#define CORE_BSS_A1 D_ovl0F_06_80044968
+#define CORE_BSS_B D_ovl0F_06_80044970
+#define CORE_ZJ_1704 func_ovl0F_06_80043DD8
+#define CORE_ZJ_1708 func_ovl0F_06_80043DF8
+#define CORE_ZJ_1709 func_ovl0F_06_80043E00
+#define CORE_ZJ_1904 func_ovl0F_06_80044108
+#define CORE_ZJ_2B04 func_ovl0F_06_80044690
+#include "overlays/common/core.h"
 
 /* The overlay's handler: the entry returns it to the loader. */
 void func_ovl0F_06_80043018(s32 arg0) {
@@ -85,62 +138,5 @@ void func_ovl0F_06_80043018(s32 arg0) {
     }
 }
 
-void func_ovl0F_06_800430FC(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
-
-    p = arg1->unk40;
-    if (1) { /* fake: a uopt block boundary; at -O2 a one-block body homes arg1 to the stack (do/while(0) and goto work alike; an initializer, one expression, a copy of arg0 or a struct-field array do not; at -O3 it is not needed) */
-    }
-    func_ovl0F_06_80044690(arg0, p->unk10, p->unk14, p->unk18);
-}
-
-void func_ovl0F_06_80043130(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl0F_06_80043E00(&sp1C, NULL, NULL);
-    func_ovl0F_06_80043DF8(sp1C + arg0, 32768.0f, 32768.0f);
-}
-
-void func_ovl0F_06_80043178(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl0F_06_80043DD8(D_ovl0F_06_80044970.x, D_ovl0F_06_80044970.y, D_ovl0F_06_80044970.z);
-    func_ovl0F_06_80043DF8(arg0, arg1, arg2);
-    func_ovl0F_06_80044108(0xB4);
-}
-
-void func_ovl0F_06_800431D4(void) {
-    D_ovl0F_06_80044964 = -1;
-    D_ovl0F_06_80044968 = -1;
-}
-
-void func_ovl0F_06_800431EC(void) {
-}
-
-void func_ovl0F_06_800431F4(void) {
-}
-
-void func_ovl0F_06_800431FC(void) {
-}
-
-void func_ovl0F_06_80043204(void) {
-}
-
-void func_ovl0F_06_8004320C(void) {
-}
-
-void func_ovl0F_06_80043214(void) {
-}
-
-void func_ovl0F_06_8004321C(void) {
-}
-
-void func_ovl0F_06_80043224(void) {
-}
-
-void func_ovl0F_06_8004322C(void) {
-}
-
-void func_ovl0F_06_80043234(void) {
-}
-
-void func_ovl0F_06_8004323C(void) {
+void func_ovl0F_06_80043010(void) {
 }

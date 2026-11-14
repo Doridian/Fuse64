@@ -394,13 +394,6 @@ void func_ovl0F_10_80043CCC(void) {
     }
 }
 
-void func_ovl0F_10_80043344(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl0F_10_80045C20(&sp1C, NULL, NULL);
-    func_ovl0F_10_80045C18(sp1C + arg0, 32768.0f, 32768.0f);
-}
-
 /* case 2's: the models of D_ovl0F_10_80046AE0[1] */
 static void func_ovl0F_10_80043408(void) {
     func_ovl0F_10_80045AB0(D_ovl0F_10_80046AE0[1]->unk40, 0x61);

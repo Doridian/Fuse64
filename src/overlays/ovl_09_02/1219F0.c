@@ -1,16 +1,10 @@
 #include "common.h"
 
-typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-} UnkStruct_ovl09_02_8004328C_Inner;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0x40];
-    /* 0x40 */ UnkStruct_ovl09_02_8004328C_Inner *unk40;
-} UnkStruct_ovl09_02_8004328C;
+/*
+ * IDO -O3, like the other overlays: the functions are written last to first
+ * (it emits a file's functions in reverse).  At -O2 the common code's
+ * CORE_FUNC_D needed an `if (1)` fake to keep arg1 out of its stack home.
+ */
 
 typedef struct {
     f32 x, y, z;
@@ -27,7 +21,7 @@ void func_ovl09_02_80044020(f32, f32);
 void func_ovl09_02_80044440(f32, f32);
 void func_ovl09_02_80044778(s32, s32, f32);
 s32 func_ovl09_02_800440D8(s32, s32);
-void func_ovl09_02_80044820(s32, s32, s32, s32);
+s32 func_ovl09_02_80044820(s32, f32, f32, f32);
 void func_ovl09_02_80043F90(f32 *, f32 *, f32 *);
 void func_ovl09_02_80043F88(f32, f32, f32);
 void func_ovl09_02_80043F68(f32, f32, f32);
@@ -35,27 +29,73 @@ void func_ovl09_02_80044298(s32);
 
 /* .bss: IDO lays it out in the order it first sees each variable, so the
  * definitions come before the code (docs/DECOMPILING.md, "Data"). */
-u8 D_ovl09_02_80044AD0[0x24]; /* not referenced here */
+u8 D_ovl09_02_80044AD0[0x24]; /* unused (func_ovl09_02_8004337C) */
 s32 D_ovl09_02_80044AF4;
 s32 D_ovl09_02_80044AF8;
-u8 D_ovl09_02_80044AFC[4]; /* not referenced here */
 Vec3f_ovl09_02_80044B00 D_ovl09_02_80044B00;
 f32 D_ovl09_02_80044B0C;
 f32 D_ovl09_02_80044B10;
 
-void func_ovl09_02_80043010(s32 arg0) {
-    func_ovl09_02_80044778(arg0, 0x40, 4.0f);
-    if (func_ovl09_02_800440D8(arg0, 0x10) != 0) {
-        func_ovl09_02_80044778(arg0, 0xC0, 4.0f);
-    }
+void func_ovl09_02_80043010(s32 arg0);
+void func_ovl09_02_80043058(s32 arg0);
+s32 func_ovl09_02_8004328C(s32, void *);
+void func_ovl09_02_800432C0(f32);
+void func_ovl09_02_80043308(f32, f32, f32);
+void func_ovl09_02_80043364(void);
+
+static void func_ovl09_02_800433D4(void) {
 }
 
-void func_ovl09_02_80043058(s32 arg0) {
-    func_ovl09_02_80044778(arg0, 0x40, 4.0f);
-    if (func_ovl09_02_800440D8(arg0, 0x10) != 0) {
-        func_ovl09_02_80044778(arg0, 0xC0, 4.0f);
-    }
+static void func_ovl09_02_800433CC(void) {
 }
+
+static void func_ovl09_02_800433C4(void) {
+}
+
+static void func_ovl09_02_800433BC(void) {
+}
+
+static void func_ovl09_02_800433B4(void) {
+}
+
+static void func_ovl09_02_800433AC(void) {
+}
+
+static void func_ovl09_02_800433A4(void) {
+}
+
+static void func_ovl09_02_8004339C(void) {
+}
+
+static void func_ovl09_02_80043394(void) {
+}
+
+static void func_ovl09_02_8004338C(void) {
+}
+
+static void func_ovl09_02_80043384(void) {
+}
+
+/* unused (its body is dropped): the reference keeps the .bss nothing else
+ * uses out of common */
+static void func_ovl09_02_8004337C(void) {
+    D_ovl09_02_80044AD0[0] = 0;
+}
+
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl09_02_80043364
+#define CORE_FUNC_B func_ovl09_02_80043308
+#define CORE_FUNC_C func_ovl09_02_800432C0
+#define CORE_FUNC_D func_ovl09_02_8004328C
+#define CORE_BSS_A0 D_ovl09_02_80044AF4
+#define CORE_BSS_A1 D_ovl09_02_80044AF8
+#define CORE_BSS_B D_ovl09_02_80044B00
+#define CORE_ZJ_1704 func_ovl09_02_80043F68
+#define CORE_ZJ_1708 func_ovl09_02_80043F88
+#define CORE_ZJ_1709 func_ovl09_02_80043F90
+#define CORE_ZJ_1904 func_ovl09_02_80044298
+#define CORE_ZJ_2B04 func_ovl09_02_80044820
+#include "overlays/common/core.h"
 
 /* The overlay's handler: the entry returns it to the loader.  Cases 1 and
  * 17 are empty but set the jump table's range (.rodata). */
@@ -124,65 +164,16 @@ void func_ovl09_02_800430A0(s32 arg0) {
     }
 }
 
-void func_ovl09_02_8004328C(s32 arg0, UnkStruct_ovl09_02_8004328C *arg1) {
-    UnkStruct_ovl09_02_8004328C_Inner *p;
-
-    p = arg1->unk40;
-    if (1) { /* fake: a uopt block boundary; at -O2 a one-block body homes arg1 to the stack (do/while(0) and goto work alike; an initializer, one expression, a copy of arg0 or a struct-field array do not; at -O3 it is not needed) */
+void func_ovl09_02_80043058(s32 arg0) {
+    func_ovl09_02_80044778(arg0, 0x40, 4.0f);
+    if (func_ovl09_02_800440D8(arg0, 0x10) != 0) {
+        func_ovl09_02_80044778(arg0, 0xC0, 4.0f);
     }
-    func_ovl09_02_80044820(arg0, p->unk10, p->unk14, p->unk18);
 }
 
-void func_ovl09_02_800432C0(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl09_02_80043F90(&sp1C, NULL, NULL);
-    func_ovl09_02_80043F88(sp1C + arg0, 32768.0f, 32768.0f);
-}
-
-void func_ovl09_02_80043308(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl09_02_80043F68(D_ovl09_02_80044B00.x, D_ovl09_02_80044B00.y, D_ovl09_02_80044B00.z);
-    func_ovl09_02_80043F88(arg0, arg1, arg2);
-    func_ovl09_02_80044298(0xB4);
-}
-
-void func_ovl09_02_80043364(void) {
-    D_ovl09_02_80044AF4 = -1;
-    D_ovl09_02_80044AF8 = -1;
-}
-
-void func_ovl09_02_8004337C(void) {
-}
-
-void func_ovl09_02_80043384(void) {
-}
-
-void func_ovl09_02_8004338C(void) {
-}
-
-void func_ovl09_02_80043394(void) {
-}
-
-void func_ovl09_02_8004339C(void) {
-}
-
-void func_ovl09_02_800433A4(void) {
-}
-
-void func_ovl09_02_800433AC(void) {
-}
-
-void func_ovl09_02_800433B4(void) {
-}
-
-void func_ovl09_02_800433BC(void) {
-}
-
-void func_ovl09_02_800433C4(void) {
-}
-
-void func_ovl09_02_800433CC(void) {
-}
-
-void func_ovl09_02_800433D4(void) {
+void func_ovl09_02_80043010(s32 arg0) {
+    func_ovl09_02_80044778(arg0, 0x40, 4.0f);
+    if (func_ovl09_02_800440D8(arg0, 0x10) != 0) {
+        func_ovl09_02_80044778(arg0, 0xC0, 4.0f);
+    }
 }

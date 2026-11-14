@@ -2142,17 +2142,13 @@ void func_8024D108(s32 arg0, s32 arg1) {
 void func_8024CEB8(s32 arg0) {
     Obj88 *obj;
     s32 code;
-    s32 pad[2]; /* fake: frame-tuned */
-    f32 pos[3];
-    UnkStruct_800AEDF0 *p;
     s32 hit;
     s32 v;
+    f32 pos[3];
 
-    p = &D_800AEDF0[arg0];
-    obj = (Obj88 *)p->unk28;
     hit = 0;
-    v = p->unk44;
-    if (!p && !p) {} /* fake: dead read (ugen temporaries) */
+    obj = (Obj88 *)func_802443F4(arg0);
+    v = func_802443CC(arg0);
     switch (v) {
     case 1:
     case 13:
@@ -2176,7 +2172,6 @@ void func_8024CEB8(s32 arg0) {
         }
         break;
     }
-    if (D_802ACF60) {} /* fake: dead read (ugen temporaries) */
     if (hit) {
         D_802ACF60 = func_8023A840();
         if (D_802ACF60[1] == 3 && D_802ACF60[2] == 0) {
@@ -3704,6 +3699,7 @@ void func_80247F90(s32 arg0) {
     Obj88 *other;
     UnkObj *self;
     f32 vec[3];
+
     self = (UnkObj *)func_802443F4(arg0);
     other = (Obj88 *)func_802443F4(D_800AEDF0[arg0].unkA8);
     vec[2] = D_800AEDF0[arg0].unkC0 + 100.0f;

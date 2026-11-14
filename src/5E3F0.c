@@ -3015,7 +3015,7 @@ void func_8024A0DC(s32 arg0) {
     s32 t3;
     s32 t4;
     Unk8026DCAC ipos;
-    s32 pad2[1]; /* fake: frame-tuned */
+    s32 t5;
     s32 id;
     s32 flags;
     s16 sid;
@@ -3116,7 +3116,8 @@ void func_8024A0DC(s32 arg0) {
         if (!flags && !flags) {} /* fake: dead read in an empty if (ugen temporaries) */
         }
         func_80244354(id, 0x420, 0);
-        if (!func_80244BA4(id, 0x02000000)) {
+        t5 = func_80244BA4(id, 0x02000000);
+        if (!t5) {
             func_80244354(id, 0x10000, 0);
         }
         D_800AEDF0[id].unk48 = 1;

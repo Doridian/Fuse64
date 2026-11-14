@@ -555,9 +555,6 @@ void func_ovl0F_08_800433DC(s32 arg0) {
             func_ovl0F_08_800433C4();
             func_ovl0F_08_800433BC(6, D_ovl0F_08_80045B90);
             func_ovl0F_08_80043330();
-            /* fake: ends the block, so the call is not scheduled into the
-             * store before it */
-            if (D_ovl0F_08_80045B2C && D_ovl0F_08_80045B2C && D_ovl0F_08_80045B2C) {}
             if (func_ovl0F_08_80045600(0x405) == 0) {
                 func_ovl0F_08_800432B4(0x279);
             } else {

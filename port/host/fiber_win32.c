@@ -16,7 +16,8 @@
 #include "host.h"
 
 struct HostFiber {
-    void *fiber;
+    void *fiber;    /* where fiber_run resumes it */
+    void *own;      /* its own, which CreateFiberEx made */
     void (*fn)(void *);
     void *arg;
 };
@@ -42,7 +43,7 @@ static HostFiber *f_create(void (*fn)(void *), void *arg, void *stack, size_t si
         host_fatal("fiber_create: no memory");
     f->fn = fn;
     f->arg = arg;
-    f->fiber = CreateFiberEx(0, size, 0, entry, f);
+    f->own = f->fiber = CreateFiberEx(0, size, 0, entry, f);
     if (!f->fiber)
         host_fatal("CreateFiberEx: error %lu", (unsigned long)GetLastError());
     return f;
@@ -50,8 +51,11 @@ static HostFiber *f_create(void (*fn)(void *), void *arg, void *stack, size_t si
 
 static void f_run(HostFiber *f) { SwitchToFiber(f->fiber); }
 
+/* (a game thread can yield from another fiber than its own: from one of
+   530C0's tasks, coro.c's fibers, which run inside the thread; it resumes
+   there, as a swapcontext backend's would) */
 static void f_yield(HostFiber *self) {
-    (void)self;
+    self->fiber = GetCurrentFiber();
     SwitchToFiber(loop_fiber);
 }
 
@@ -62,7 +66,7 @@ static __attribute__((noreturn)) void f_exit(HostFiber *self) {
 }
 
 static void f_free(HostFiber *f) {
-    DeleteFiber(f->fiber);
+    DeleteFiber(f->own);
     free(f);
 }
 

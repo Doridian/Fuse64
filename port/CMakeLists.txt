@@ -38,7 +38,17 @@ if(NOT EXTRACTED STREQUAL PORT_VERSION)
     message(FATAL_ERROR "asm/ is extracted for ${EXTRACTED}, not ${PORT_VERSION}")
 endif()
 if(EMSCRIPTEN)
-    set(PORT_SDL OFF CACHE BOOL "" FORCE)
+    # node: headless, the files the host's (the tests); web: a page
+    # (port/web/shell.html) with SDL2's canvas and sound, the save in
+    # IndexedDB
+    set(PORT_WASM_TARGET node CACHE STRING "the WebAssembly build's host: node or web")
+    set_property(CACHE PORT_WASM_TARGET PROPERTY STRINGS node web)
+    if(NOT PORT_WASM_TARGET MATCHES "^(node|web)$")
+        message(FATAL_ERROR "PORT_WASM_TARGET is node or web, not ${PORT_WASM_TARGET}")
+    endif()
+    if(PORT_WASM_TARGET STREQUAL "node")
+        set(PORT_SDL OFF CACHE BOOL "" FORCE)
+    endif()
 endif()
 if(NOT CMAKE_SIZEOF_VOID_P EQUAL 4)
     message(FATAL_ERROR "the port builds for 4-byte pointers so far (-m32, i386; docs/PORT.md, \"Pointers\")")
@@ -221,16 +231,36 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT CMAKE_POSITION_INDEPENDENT_CODE)
         target_link_options(bm64 PRIVATE -Wl,--image-base=0x10000000)
     endif()
 endif()
-if(EMSCRIPTEN)
+if(WIN32)
+    # Windows: the game's threads and 530C0's tasks are Windows fibers
+    # (fiber_win32.c, coro.c); the image above 8 MiB, as on Linux (no N64
+    # physical address there), and nothing of MinGW's runtime as a DLL
+    target_compile_definitions(bm64 PRIVATE PORT_HAVE_WIN32_FIBERS)
+    target_link_options(bm64 PRIVATE -Wl,--image-base=0x10000000 -static)
+    target_link_libraries(bm64 PRIVATE m)
+elseif(EMSCRIPTEN)
     # WebAssembly (emcmake cmake ...): headless under node.  The game's
     # threads and 530C0's tasks are emscripten's fibers (Asyncify).  The
     # program's data starts at 256 MiB, so that no pointer of the game's
     # looks like an N64 physical or segmented address (port/src/memory.c).
     target_compile_definitions(bm64 PRIVATE PORT_HAVE_ASYNCIFY)
     target_link_options(bm64 PRIVATE -sASYNCIFY -sASYNCIFY_STACK_SIZE=65536 -sGLOBAL_BASE=268435456
-        -sINITIAL_MEMORY=384MB -sALLOW_MEMORY_GROWTH=1 -sSTACK_SIZE=1MB -sNODERAWFS=1 -sEXIT_RUNTIME=1
-        -sENVIRONMENT=node --profiling-funcs)
-    set_target_properties(bm64 PROPERTIES SUFFIX ".js")
+        -sINITIAL_MEMORY=384MB -sALLOW_MEMORY_GROWTH=1 -sSTACK_SIZE=1MB --profiling-funcs)
+    if(PORT_WASM_TARGET STREQUAL "node")
+        target_link_options(bm64 PRIVATE -sNODERAWFS=1 -sEXIT_RUNTIME=1 -sENVIRONMENT=node)
+        set_target_properties(bm64 PROPERTIES SUFFIX ".js")
+    else()
+        # the page: the ROM from a file picker, the save in IndexedDB
+        # (IDBFS at /save), main() once the ROM is there; SDL2's canvas,
+        # keyboard, game controllers and WebAudio
+        target_compile_definitions(bm64 PRIVATE PORT_WASM_WEB PORT_HAVE_SDL)
+        target_compile_options(bm64 PRIVATE -sUSE_SDL=2)
+        target_link_options(bm64 PRIVATE -O2 -sUSE_SDL=2 -sENVIRONMENT=web -lidbfs.js -sFORCE_FILESYSTEM
+            -sINVOKE_RUN=0 -sEXIT_RUNTIME=0 -sEXPORTED_RUNTIME_METHODS=callMain,FS,IDBFS
+            --shell-file ${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html)
+        set_target_properties(bm64 PROPERTIES SUFFIX ".html")
+        set_property(TARGET bm64 APPEND PROPERTY LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html)
+    endif()
     target_link_libraries(bm64 PRIVATE m)
 else()
     find_package(Threads REQUIRED)

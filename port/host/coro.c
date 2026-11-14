@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include "host.h"
+#include "port_task.h"
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -62,7 +63,7 @@ typedef struct Coro {
 
 typedef struct {
     int *buf;                   /* the game's buffer */
-    jmp_buf jb;                 /* the host's, for it */
+    port_jmp_buf jb;            /* the host's, for it */
     Coro *owner;                /* the coroutine that saved it (main: coroutine 0) */
 } Buf;
 
@@ -88,7 +89,11 @@ static Buf *find(int *buf, int create) {
     return &bufs[nbufs++];
 }
 
-jmp_buf *port_task_save(int *buf) {
+#if defined(_WIN32)
+int port_task_v;
+#endif
+
+port_jmp_buf *port_task_save(int *buf) {
     Buf *b = find(buf, 1);
     b->owner = cur;
     buf[0] = (int)MARK;
@@ -101,7 +106,7 @@ static void after_switch(void) {
     if (resume_buf) {
         Buf *b = resume_buf;
         resume_buf = NULL;
-        longjmp(b->jb, resume_v);
+        PORT_LONGJMP(b->jb, resume_v);
     }
 }
 
@@ -279,7 +284,7 @@ void port_task_jump(int *buf, int v) {
         host_fatal("tasks: a coroutine resumed with nothing to do");
     }
     if (b->owner == cur)
-        longjmp(b->jb, v);
+        PORT_LONGJMP(b->jb, v);
     resume_buf = b;
     resume_v = v;
     coro_switch(b->owner);

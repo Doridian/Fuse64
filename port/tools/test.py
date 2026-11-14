@@ -59,6 +59,9 @@ def run(build, name, qemu=None, timeout=7200):
     emu = qemu or cache_value(build, "CMAKE_CROSSCOMPILING_EMULATOR")
     if os.path.exists(exe + ".js"):     # the WebAssembly build: under node
         exe, emu = exe + ".js", "node"
+    elif os.path.exists(exe + ".exe"):  # Windows: under its emulator (wine)
+        exe = exe + ".exe"
+        os.environ.setdefault("WINEDEBUG", "-all")
     tmp = tempfile.mkdtemp(prefix="bm64-test-")
     try:
         wav = os.path.join(tmp, "out.wav")

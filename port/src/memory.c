@@ -17,6 +17,12 @@
 extern char __executable_start[], _end[];
 #define IMAGE_LO ((uintptr_t)__executable_start)
 #define IMAGE_HI ((uintptr_t)_end)
+#elif defined(_WIN32)
+/* the PE image: from __ImageBase, SizeOfImage bytes (its optional header's,
+   at the same offset in PE32 and PE32+) */
+extern char __ImageBase[];
+#define IMAGE_LO ((uintptr_t)__ImageBase)
+#define IMAGE_HI (IMAGE_LO + *(const uint32_t *)(__ImageBase + *(const int32_t *)(__ImageBase + 0x3C) + 0x50))
 #endif
 
 int port_coro_stack(const void *p);

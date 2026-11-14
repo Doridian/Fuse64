@@ -23,12 +23,26 @@
 
 #include <setjmp.h>
 
-jmp_buf *port_task_save(int *buf);
+#if defined(_WIN32)
+/* MinGW's i386 longjmp unwinds the SEH chain, which a switch of fibers
+   leaves as another stack's: the compiler's own setjmp there, whose
+   longjmp passes 1 (the value goes beside it) */
+typedef void *port_jmp_buf[5];
+extern int port_task_v;
+#define PORT_SETJMP(b) (__builtin_setjmp(b) ? port_task_v : 0)
+#define PORT_LONGJMP(b, v) (port_task_v = (v) ? (v) : 1, __builtin_longjmp((b), 1))
+#else
+typedef jmp_buf port_jmp_buf;
+#define PORT_SETJMP(b) setjmp(b)
+#define PORT_LONGJMP(b, v) longjmp((b), (v))
+#endif
+
+port_jmp_buf *port_task_save(int *buf);
 void port_task_jump(int *buf, int v) __attribute__((noreturn));
 
 #undef func_80297C10
 #undef func_80297C7C
-#define func_80297C10(buf) ((u32)setjmp(*port_task_save(buf)))
+#define func_80297C10(buf) ((u32)PORT_SETJMP(*port_task_save(buf)))
 #define func_80297C7C(buf, v) port_task_jump((buf), (v))
 
 #endif

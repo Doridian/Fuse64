@@ -7,6 +7,9 @@
 #include <string.h>
 
 #include "host.h"
+#if defined(__EMSCRIPTEN__) && defined(PORT_WASM_WEB)
+#include <emscripten.h>
+#endif
 
 static uint8_t eeprom[512];
 static int loaded;
@@ -45,6 +48,10 @@ void host_eeprom_write(int block, const void *src) {
         fwrite(eeprom, 1, sizeof eeprom, f);
         fclose(f);
     }
+#if defined(__EMSCRIPTEN__) && defined(PORT_WASM_WEB)
+    /* the page keeps it in IndexedDB (port/web/shell.html) */
+    EM_ASM({ if (Module.syncSave) Module.syncSave(); });
+#endif
 }
 
 int host_pak_present(int pad) {

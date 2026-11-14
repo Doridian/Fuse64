@@ -234,7 +234,7 @@ static void func_802639E4(Gfx **gfxp, DrawF *info) {
     s32 c;
     s32 k;
     s32 r;
-    s32 pad; /* fake: frame slot */
+    s32 fill;
     s32 rows;
     f32 rf;
     f32 y;
@@ -254,8 +254,8 @@ static void func_802639E4(Gfx **gfxp, DrawF *info) {
         c = w;
     }
     r = c % k;
-    pad = r ? k - r : 0;
-    c += pad;
+    fill = r ? k - r : 0;
+    c += fill;
     if (c < k) {
         c = k;
     }
@@ -444,7 +444,7 @@ static void func_80264A98(Gfx **gfxp, DrawI *info) {
     s32 i;
     s32 k;
     s32 r;
-    s32 pad; /* fake: frame slot */
+    s32 fill;
     s32 uls;
     s32 ult;
     s32 a, b, c, d, e, f, g, hh;
@@ -460,8 +460,8 @@ static void func_80264A98(Gfx **gfxp, DrawI *info) {
     }
     cols++;
     r = cols % k;
-    pad = r ? k - r : 0;
-    cols += pad;
+    fill = r ? k - r : 0;
+    cols += fill;
     if (cols != 0) {
         rows = n / cols;
     } else {

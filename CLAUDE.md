@@ -1,7 +1,10 @@
 # Bomberman 64 decompilation
 
-A matching decompilation of Bomberman 64 (Hudson, 1997), aimed at a PC port
-(native and WebAssembly) with online multiplayer over WebRTC. The model is
+A matching decompilation of Bomberman 64 (Hudson, 1997), aimed at a PC port,
+**Fuse64** (native and WebAssembly), with online multiplayer over WebRTC.
+The port's own names (executable, window, web page, docs/PORT.md) say
+Fuse64, introduced as a port of Bomberman 64; the game, its ROMs and the
+decompilation keep Bomberman 64's name (and `bm64.*` in the ROM build). The model is
 the Blast Corps decomp in `../BlastCorps`: same goals, same rules, and its
 tools are the first place to look before writing a new one. docs/ROADMAP.md
 has the phases. Phases 0-2 are done: the ROM is built from its pieces

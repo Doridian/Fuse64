@@ -116,6 +116,17 @@ extern uintptr_t port_v0;
 #endif
 
 /*
+ * A name inside another one's object (D_800AEE14 is D_800AEDF0[0].unk24):
+ * a host compiler takes two names for two objects and may reorder their
+ * stores and loads.  PORT_ORDER() keeps what comes before it before.
+ */
+#ifdef TARGET_PC
+#define PORT_ORDER() __asm__ volatile("" ::: "memory")
+#else
+#define PORT_ORDER()
+#endif
+
+/*
  * The byte at p, the first of a 32-bit word (a display list command's
  * opcode, read as a byte): in the port, where words are in the host's
  * order, the word's top byte.  For IDO the byte as it is.

@@ -2496,7 +2496,7 @@ static s32 func_8023D0F8() {
     D_800AEFE8 = 0;
     D_800AF06C = 0;
     D_800AF0B0 = 0;
-    PLAYERS[0].unk24 = 1;
+    PORT_ORDER(); PLAYERS[0].unk24 = 1;
     M2C_FIELD(D_800AEDF0, s32 *, 0x344) = 0;
     func_80234858(&yaw, NULL, NULL);
     a = (s32) (yaw / 45.0f) * 45;

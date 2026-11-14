@@ -1,14 +1,250 @@
 # The PC port
 
-Phase 6 (docs/ROADMAP.md) has not started. The architecture is Blast
-Corps' (`../BlastCorps/docs/PORT.md`: "The build", "Memory model", "Where
-pointers are 8 bytes", "The overlay", "The asm data as C", "The platform
-layer"). This file says what the decompilation gives a port now and what
-the host side has to supply.
+The PC build (`port/`, phase 6 of docs/ROADMAP.md). It compiles the
+game's C as it is in `src/` with the host's compiler, links it with a
+host layer (libultra, libaudio, the RSP and RDP, a window, sound, the
+controller, the save) and runs it as an ordinary program. The model and
+much of the code are Blast Corps' port (`../BlastCorps/port`, the same
+author's, AGPL-3.0: NOTICES.md says which files come from it).
 
-## Readiness
+## Status
 
-As of 2026-11-13. All the game's code is C: boot_code, main_code and every
+As of 2026-11-14:
+
+| host | builds | how far it runs |
+|---|---|---|
+| Linux i386 (`-m32`), us | yes | the legal screen, title, file select, the opening, the world select, the first stage played; battle mode against three CPU players. `test.py`'s four scenarios pass |
+| Linux i386, eu | yes | as us (legal, menus and battle scenarios recorded) |
+| Linux i386, jp | yes | the legal screen and menus.txt; battle.jp.txt stops in ovl_0A_05 (below) |
+| big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | the legal scenario's frames, sound and save are x86's |
+| WebAssembly (emscripten, node) | yes | the legal scenario is x86's; menus.txt stops when ovl_0A_05 starts (below) |
+| 64-bit hosts (x86-64, aarch64, macOS) | no | needs the pointer pass ("32-bit hosts and 64-bit hosts", below) |
+| Windows | not tried | i386 with zig (`x86-windows-gnu`) or mingw should be close: fiber_win32.c is there |
+
+The ROM build is unchanged by all of it: every change to `src/` is under
+`TARGET_PC` or a macro that gives IDO the same text ("Source changes").
+
+## Building and running
+
+```
+make VERSION=us extract                 # the port's generators read asm/ and assets/code.bin
+cmake -S port -B build-port -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_C_FLAGS=-m32
+cmake --build build-port
+build-port/bm64 baserom.us.z64           # the user's own ROM
+```
+
+It needs clang (the overlays' sections: "Overlays"), CMake, Ninja,
+Python 3 and, for a window and sound, SDL2 (32-bit: `lib32-sdl2`). The
+build directory isn't `build/`, which `make clean` removes.
+`-DPORT_VERSION=eu` or `jp` builds another version, from that version's
+extract (CMake checks `.version`). Other options: `-DPORT_SDL=OFF`
+(headless only), `-DPORT_SANITIZE=address,undefined`,
+`-DPORT_HOST_MALLOC=ON` (the game's malloc the host's, for ASan).
+
+`bm64 --help` lists the options: `--headless` (no window and no sound;
+a virtual clock), `--deterministic`, `--frames N`, `--screenshot PREFIX`
+and `--every N` (BMP files), `--input FILE` (a scripted controller in the
+shift check's format, `tools/inputs`), `--save-dir DIR` (the EEPROM file
+`bm64.<v>.eep`), `--wav FILE`, `--hash` (each retrace's framebuffer
+hash), `-v`. With a window the keyboard (arrows, Z, X, C, A, S, Enter)
+and SDL's game controllers are the controller.
+
+### Cross builds
+
+`port/tools/cross-<arch>.cmake` (ppc, mips, mipsel, armhf, aarch64)
+cross-compile with zig cc into static musl executables that qemu-user
+runs (`cross-zig.cmake` has how to get zig without root):
+
+```
+cmake -S port -B build-port-mips -G Ninja -DCMAKE_TOOLCHAIN_FILE=port/tools/cross-mips.cmake
+cmake --build build-port-mips
+port/tools/test.py same build-port build-port-mips --scenario legal
+```
+
+musl has no ucontext, so the threads and tasks there are host threads,
+one running at a time (fiber_pthread.c). aarch64 is 64-bit and doesn't
+build yet.
+
+### WebAssembly
+
+```
+emcmake cmake -S port -B build-port-wasm -G Ninja
+cmake --build build-port-wasm
+node build-port-wasm/bm64.js --headless --frames 300 baserom.us.z64
+```
+
+It runs under node (`-sNODERAWFS`: the ROM and the save are files), the
+threads and tasks on emscripten's fibers (Asyncify). No page yet. What
+differs from the ELF build:
+
+- The program's data starts at 256 MiB (`-sGLOBAL_BASE`), so that no
+  pointer of its own looks like an N64 physical or segment address
+  (port/src/memory.c), as the ELF builds' image base above 8 MiB does.
+- wasm-ld has no absolute symbols: the segment and physical addresses the
+  C names (`D_1000000`, `D_200000`) are proxies, 16-byte objects that
+  `port_addr` and the renderer turn back into their numbers
+  (gen_regions.py).
+- clang takes no `#pragma clang section` for WebAssembly, so each overlay
+  file is compiled through a wrapper that includes it between `#pragma
+  clang attribute push(section)` and its pop (all of its variables in
+  `bm64o_<overlay>`; `const` is defined away there, as a const variable
+  can't share the section).
+- An indirect or cross-file call whose declaration disagrees with the
+  definition (void against a value, a float parameter) is a link error or
+  a trap. Declarations take the definition's type under `TARGET_PC`
+  (`PORT_RET`), and a `void` function whose callers use its value returns
+  `port_v0` (67 functions; "Source changes").
+
+## Testing
+
+`port/tools/test.py run BUILD` runs the build headless and deterministic
+from a blank save through scenarios and compares what it gives with
+`port/tools/test_refs.json`: a digest of the framebuffer at every retrace
+(and checkpoints every 300, so that a difference says when it began), the
+sound (`--wav`) and the EEPROM file.
+
+| scenario | retraces | input |
+|---|---|---|
+| legal | 300 | none |
+| menus | 3000 | tools/inputs/menus.txt |
+| battle | 6000 | tools/inputs/battle.<v>.txt |
+| story | 12000 | menus.txt (`--scenario story`: the first stage) |
+
+`--save` records them. `test.py same A B` compares two builds' runs with
+each other (a cross build under qemu, a sanitized build, the WebAssembly
+build against x86). Recorded: us legal, menus, battle and story; eu
+legal, menus and battle; jp none yet. The headless clock is virtual (it
+moves from one event to the next when every thread waits), so a run is
+the same on every host.
+
+## How it works
+
+### The build
+
+`port/CMakeLists.txt` compiles every C file of `src/` but libultra (the
+host has its own) with `-DTARGET_PC -D<VERSION>`, `-std=gnu89
+-fsigned-char -fno-strict-aliasing -fwrapv -ftrivial-auto-var-init=zero
+-ffp-contract=off` (and on x86 `-msse2 -mfpmath=sse -malign-double`:
+SSE's rounding, o32's alignment), errors only for what a host can't take,
+the port's SDK headers (`port/include/sdk`: Blast Corps', with
+F3DEX's macros added) and `-include port_game.h`; gmalloc as the Makefile
+does; and four generated files:
+
+- `asm_data.c` (port/tools/asm2c.py): main_code's data that is still asm,
+  and boot_code's VI modes, as packed structs at their N64 offsets, each
+  label an alias.
+- `zerojump.c` (gen_zerojump.py): every ZeroJump stub as a C function that
+  calls its target ("ZeroJump").
+- `regions.c` (gen_regions.py): the fixed addresses ("Memory").
+- `overlays.c` (gen_overlays.py): the overlays' table.
+
+### Memory
+
+The fixed-address names (`undefined_syms_auto.txt`: the work area from
+0x80063000, the framebuffers, the archive's buffers, the audio heap, the
+sbrk arena at 0x80300000) are aliases into one 8 MiB buffer laid out as
+RDRAM (`port_rdram`), since the C clears and indexes across them.
+`port_addr()` (port/src/memory.c) turns what the game hands the hardware
+(a KSEG0/1 address, a physical one, a segment address, a host pointer)
+into a host pointer. Pointers are 4 bytes, so the game's structures have
+their N64 layout (`tools/host_check.py layout`).
+
+### Byte order
+
+The data is in the host's order where the C reads it. What arrives from
+the ROM is converted by type where it arrives (port/src/native.c, the
+`#ifdef TARGET_PC` calls in 404C0, 87190, 80580): the asset cache's "64"
+files (pictures' records, models' display lists, vertices, nodes, poses,
+animations), the sound banks, sound tables, scripts and sequences. What
+only the RDP or the RSP's audio reads as bytes (texels, palettes, samples,
+framebuffers) stays big-endian, and the renderer reads it so. A few
+values the game keeps in the N64's order on purpose are read and written
+as such (the EEPROM header and default slot in AD5B0, a palette fade in
+ACA00: `PORT_BE32_GET` and the like). On a big-endian host all of it is
+the identity, which the qemu builds check.
+
+### Threads, tasks and timing
+
+The game's libultra threads are fibers (Blast Corps' threads.c and
+fiber_*.c: ucontext, Win32 fibers, Asyncify, or host threads one at a
+time) run by libultra's priority rules on one OS thread; main.c's loop
+runs when no thread can and raises what the hardware would (the VI at 60
+Hz, 50 in eu; timers; SP and DP done). 530C0's cooperative tasks
+(func_80297C10/func_80297C7C, setjmp and longjmp on the N64) are
+coroutines too (port/include/port_task.h, port/host/coro.c). The two
+busy-waits on the audio thread call `port_spin_wait()`.
+
+### ZeroJump
+
+The 5781 stubs (`jr $zero; li $t0, id`) are generated C functions that
+call the function the id's table names, resolved when the port is built
+from `tools/host_check.py`'s reading of the tables. A stub's prototype is
+its target's; where the caller declares it another way (a value from a
+`void` function, a pointer for an int), the stub converts, and a `void`
+target whose caller uses a value gives it `port_v0`: the last value a
+`PORT_V0(...)` in the game's C saved, which is what `$v0` held on the N64.
+boot.c has the handwritten asm's replacements (ROADMAP's list:
+func_80003190, func_80042000, WatchLo, the long long helpers).
+
+### Overlays
+
+Every overlay is linked in (their names carry the bank and entry). Each
+overlay file's variables go to sections of their own
+(port_ovl_section.h: bm64d_/bm64b_ on ELF), and loading an overlay
+(40FB0.c's loader, port/src/overlay.c) puts them back as they were at
+startup, which is what inflating it gave on the N64, then calls its
+entry.
+
+### Graphics
+
+port/host/gfx.c is a software F3DEX 1.x and RDP renderer that draws into
+the game's own color and depth images in `port_rdram`, as the RDP would:
+the game reads back what it drew (its screen captures, the fades). The
+VI's image is shown with SDL or hashed. It does the combiner and blender
+by their formulas in one and two cycles, TMEM with its loads, the texel
+formats, fill and copy modes, texture rectangles, coverage from alpha,
+fog and the z-buffer. About 140 retraces a second headless on one core.
+
+### Audio
+
+libaudio is Blast Corps' port of ultralib's (port/libaudio), with the
+calls this game makes that Blast Corps' doesn't (extra.c: the
+compressed-sequence player's channel calls, the synthesizer's) and the
+sound player (sndplayer.c). The RSP's audio microcode is Blast Corps'
+HLE (aspmain.c). The AI's buffers go to SDL or `--wav`.
+
+## Source changes
+
+All of them keep IDO's output the same in every version. Where a file has
+no `#line` they are `#ifdef TARGET_PC` blocks. In the 45 files with
+`#line` (IDO's matching tricks), a block would move the lines that
+follow, so the changes are macros on the same line, from
+include/common.h: `PORT_V0(x)`, `PORT_RET(ido, pc)`, `PORT_ONLY(x)`,
+`PORT_PAD(n)`/`PORT_MORE(n)` (room a host write needs past an N64
+array), `PORT_SPAN2`, `PORT_WORD_BYTE0`, `PORT_BE32_GET`/`SET`,
+`PORT_BE16_GET`/`SET`, `PORT_DCAC_LEN`. Besides: a task switch's
+macros (530C0), the overlay loader's call (40FB0), the byte-order calls
+where data arrives, and declarations a host needs.
+
+## What's left
+
+- **ovl_0A_05 in jp's battle and in WebAssembly's menus** ("Status"): the
+  first story stage's intro reads player 0's object (`D_800AEDF0[0].unk28`)
+  before it is made. TBD.
+- **64-bit**: Blast Corps' pointer pass over the 617 casts and 2273
+  `M2C_FIELD`s ("32-bit hosts and 64-bit hosts"). macOS and aarch64 need
+  it.
+- **Windows** (zig `x86-windows-gnu` or mingw, i386) and a WebAssembly
+  page (canvas, WebAudio, the save in IndexedDB), as Blast Corps' port.
+- jp's test references; the qemu builds through menus and battle.
+- The renderer: what the first stage and the menus show is checked by eye
+  against an emulator, not pixel for pixel.
+- Phase 7 and 8 (docs/ROADMAP.md, docs/NETPLAY.md): the input and the RNG
+  seed through the network.
+
+## What the decompilation gave the port
+
+As of 2026-11-13, before the port began. All the game's code is C: boot_code, main_code and every
 overlay in `src/`, ovl_0B_04's in `nonmatching/` (a complete draft a port
 can use as it is). `tools/host_check.py` checks what follows; the counts
 are us's, and eu and jp's are the same unless a line says otherwise.

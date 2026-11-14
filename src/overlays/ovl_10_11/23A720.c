@@ -281,87 +281,36 @@ s32 func_ovl10_11_8004304C(void (*arg0)(void)) {
     return found;
 }
 
-s32 func_ovl10_11_80044BEC(void (*arg0)(void), const char *arg1) {
-    s32 i;
-
-    i = func_ovl10_11_8004304C(arg0);
-    func_ovl10_11_80044E68("task_entry>%d:%s\n", i, arg1);
-    return i;
-}
-
-void func_ovl10_11_80044BC0(void (*arg0)(void)) {
-    D_ovl10_11_800467F0[func_ovl10_11_80044B7C(arg0)] = NULL;
-}
-
-s32 func_ovl10_11_80044B7C(void (*arg0)(void)) {
-    s32 i;
-    s32 found;
-
-    found = -1;
-    i = 0;
-    do {
-        if (arg0 == D_ovl10_11_800467F0[i]) {
-            found = i;
-        }
-        i++;
-    } while (found == -1 && i < 64);
-    return found;
-}
-
-void func_ovl10_11_80044B68(s32 arg0) {
-    D_ovl10_11_800467F0[arg0] = NULL;
-}
-
-void func_ovl10_11_80044B4C(s32 arg0) {
-    D_ovl10_11_800466E8[D_ovl10_11_800467E8] = arg0;
-}
-
-void func_ovl10_11_80044B30(void (*arg0)(void)) {
-    D_ovl10_11_800467F0[D_ovl10_11_800467E8] = arg0;
-}
-
-void func_ovl10_11_80044AA0(void) {
-    D_ovl10_11_800468F0 = func_ovl10_11_80045D80();
-    func_ovl10_11_80045D90(D_ovl10_11_800468F0, 0x20000001);
-    D_ovl10_11_800468F0->unk40 = 0.5f;
-    D_ovl10_11_800468F0->unk44 = D_ovl10_11_800468F0->unk40 * 0.75f;
-    D_ovl10_11_800468F0->unk18 = 0.1f;
-    D_ovl10_11_800468F0->unk1C = -0.1f;
-}
-
-void func_ovl10_11_80044A64(void) {
-    s32 *p;
-
-    p = func_ovl10_11_80045F90();
-    if (*p <= 0 || *p == 0) {
-        *p = 1;
-    }
-}
-
-void func_ovl10_11_800449F8(UnkStructA *arg0) {
-    s32 i;
-
-    if (arg0->unk8 & 1) {
-        func_ovl10_11_80045A50(16);
-    }
-    for (i = 0; i < 30; i++) {
-        func_ovl10_11_80045C28(arg0);
-        func_ovl10_11_80045D40();
-    }
-}
-
-void func_ovl10_11_80044978(UnkStructA *arg0) {
-    Vec3f pos;
-
-    if (arg0->unk8 & 1) {
-        func_ovl10_11_80045FF8(0xFF, 0xFF, 0xFF, 100.0f);
-        func_ovl10_11_80045BB0(arg0, 0x01000000);
-        func_ovl10_11_80045D18(5);
-        func_ovl10_11_80045FF8(0, 0, 0, 0.0f);
-        func_ovl10_11_80045C78(arg0, &pos);
-        func_ovl10_11_80046150(12, &pos, 0);
-    }
-}
+/* the names src/overlays/common/tasks.h's code has here */
+#define TASK_800432D0 func_ovl10_11_8004304C
+#define TASK_8004409C func_ovl10_11_80044978
+#define TASK_8004411C func_ovl10_11_800449F8
+#define TASK_80044188 func_ovl10_11_80044A64
+#define TASK_800441C4 func_ovl10_11_80044AA0
+#define TASK_80044254 func_ovl10_11_80044B30
+#define TASK_80044270 func_ovl10_11_80044B4C
+#define TASK_8004428C func_ovl10_11_80044B68
+#define TASK_800442A0 func_ovl10_11_80044134
+#define TASK_800442BC func_ovl10_11_80044B7C
+#define TASK_80044300 func_ovl10_11_80044BC0
+#define TASK_8004432C func_ovl10_11_80044BEC
+#define TASK_800445A8 func_ovl10_11_80044E68
+#define TASK_80045190 func_ovl10_11_80045A50
+#define TASK_800452F0 func_ovl10_11_80045BB0
+#define TASK_80045368 func_ovl10_11_80045C28
+#define TASK_800453B8 func_ovl10_11_80045C78
+#define TASK_80045458 func_ovl10_11_80045D18
+#define TASK_80045480 func_ovl10_11_80045D40
+#define TASK_800454C0 func_ovl10_11_80045D80
+#define TASK_800454D0 func_ovl10_11_80045D90
+#define TASK_800456D0 func_ovl10_11_80045F90
+#define TASK_80045738 func_ovl10_11_80045FF8
+#define TASK_80045890 func_ovl10_11_80046150
+#define TASK_D_80045D78 D_ovl10_11_800466E8
+#define TASK_D_80045E78 D_ovl10_11_800467E8
+#define TASK_D_80045E80 D_ovl10_11_800467F0
+#define TASK_D_80045F80 D_ovl10_11_800468F0
+#include "overlays/common/tasks.h"
 
 void func_ovl10_11_800447B0(void) {
     s32 found;
@@ -492,10 +441,6 @@ void func_ovl10_11_80044150(void) {
         }
         func_ovl10_11_80045D70(0xD0, 0xD0);
     }
-}
-
-void func_ovl10_11_80044134(void) {
-    D_ovl10_11_800467F0[D_ovl10_11_800467E8] = NULL;
 }
 
 void func_ovl10_11_80044010(void) {

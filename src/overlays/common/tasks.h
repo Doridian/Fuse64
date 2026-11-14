@@ -1,4 +1,17 @@
-/* tasks: from ovl_10_02 */
+/*
+ * Code the 0x10 bank's overlays (ovl_10_01..13) share: a run of twelve
+ * functions (two object handlers, a counter check, an object's set-up and
+ * the task table's: register, set, clear, find, remove), the same bytes
+ * (but for relocations) in all thirteen.  ovl_10_02, 03, 04, 08, 11 and
+ * 12 compile it from this one source; the others have the run's functions
+ * spread between their own, or in another form, and keep their copies.
+ *
+ * Names are ovl_10_02's addresses; an overlay maps them before the include:
+ *   TASK_<addr>      a function (the run's, and the ones it calls)
+ *   TASK_D_<addr>    its .bss (the task table, its index, the object)
+ *   TASK_OWN_800442A0  the overlay defines the "clear the running task"
+ *                    function itself, elsewhere (ovl_10_08, ovl_10_12)
+ */
 
 s32 TASK_8004432C(void (*arg0)(void), const char *arg1) {
     s32 i;
@@ -27,9 +40,11 @@ s32 TASK_800442BC(void (*arg0)(void)) {
     return found;
 }
 
+#ifndef TASK_OWN_800442A0
 void TASK_800442A0(void) {
     TASK_D_80045E80[TASK_D_80045E78] = NULL;
 }
+#endif
 
 void TASK_8004428C(s32 arg0) {
     TASK_D_80045E80[arg0] = NULL;

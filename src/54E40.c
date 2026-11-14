@@ -33,8 +33,15 @@
  * turn starts the run func_8023F26C .. func_802434F8), and
  * func_80243824, the first function in the file, holds dead references
  * that set that order; dead calls (seen by umerge, removed by uopt) pull
- * func_8023AB54 into func_8023AB90, func_8023B2AC into func_8023B318,
- * func_8023EB28 into func_8023ECEC and func_80242268 into func_80242270.
+ * func_8023AB54 into func_8023AB90, func_8023B2AC into func_8023B318
+ * and func_80242268 into func_80242270.
+ * - func_8023ECEC is a static inlined into func_8023ECF4 (the stub's
+ *   place: func_8023F26C's DFS emits func_8023EB28, last called, then
+ *   func_8023ECF4's callee, then func_8023ECF4). Which of func_8023ECF4's
+ *   statements it holds is a guess: any run of statements 0-10 matches.
+ * - func_8023F26C's last block is func_8023AE6C inlined (the global's
+ *   arguments are its x/y loads before the test; its 16-byte area is
+ *   the frame the x, y and pl locals used to fill).
  * - func_80241590, 80241BB0, 80242270 (digit counters over 16x16
  *   pictures) are written with the GBI macros (gDPLoadTLUT_pal256/pal16,
  *   gDPLoadTextureBlock_4b, gDPLoadTextureTile_4b, gSPTextureRectangle)
@@ -567,7 +574,7 @@ void func_8023E1D8(void);
 void func_8023E8AC(void);
 static void func_8023E8FC(f32 *arg0);
 static void *func_8023EB28(s32 arg0);
-void func_8023ECEC(void);
+static void func_8023ECEC(u8 *arg0);
 static void func_8023ECF4(u8 *arg0);
 static void func_8023EE40(s32 arg0);
 static void func_8023EF38(u8 *arg0);
@@ -1695,9 +1702,6 @@ void func_8023F26C() {
     s32 i;
     s32 task;
     u8 *obj;
-    u8 *pl;
-    s32 x;
-    s32 y;
 
     D_802A0B94 = 1;
     idp = func_802391F0();
@@ -1791,9 +1795,8 @@ void func_8023F26C() {
                 oz = 0.0f;
                 h = func_8028A81C(0x15, ox, oy, oz, (s32) model);
                 func_80245208(id, 1);
-                pl = D_800AEDF0 + id * 0xC8;
                 for (k = 0; k < 60; k++) {
-                    if (M2C_FIELD(pl, s32 *, 0x24) == 3) {
+                    if (PLAYERS[id].unk24 == 3) {
                         break;
                     }
                     M2C_FIELD(M2C_FIELD(model, u8 **, 0x40), f32 *, 0x10) = M2C_FIELD(M2C_FIELD(obj, u8 **, 0x40), f32 *, 0x10);
@@ -1801,7 +1804,7 @@ void func_8023F26C() {
                     M2C_FIELD(M2C_FIELD(model, u8 **, 0x40), f32 *, 0x18) = M2C_FIELD(M2C_FIELD(obj, u8 **, 0x40), f32 *, 0x18);
                     func_80239094();
                 }
-                if (M2C_FIELD(pl, s32 *, 0x24) != 3) {
+                if (PLAYERS[id].unk24 != 3) {
                     func_80245208(id, 0);
                 }
                 func_8028A4E0(h);
@@ -1840,15 +1843,7 @@ void func_8023F26C() {
         func_8026C8E8();
         func_8026C894();
         func_802510F0();
-        x = D_802AC5DC;
-        y = D_802AC5E0;
-        if (!(D_802AC5D0 & 1) && (D_802A01B4 == 0)) {
-            D_802AC5D4 = x; D_802AC5D8 = y;
-            D_802AC5DC = D_802AC5D4;
-            D_802AC5E0 = D_802AC5D8;
-            D_802AC5D0 |= 1;
-            D_802AC5E4 = 0;
-        }
+        func_8023AE6C(D_802AC5DC, D_802AC5E0, 0);
     }
     D_802A0B94 = 0;
     func_80239430();
@@ -1938,7 +1933,6 @@ static void func_8023EE40(s32 arg0) {
 
 static void func_8023ECF4(u8 *arg0) {
     s32 temp_s1;
-    u8 *temp_v0;
 
     func_802362B8(0x7F);
     D_802A0038 = 0;
@@ -1946,11 +1940,7 @@ static void func_8023ECF4(u8 *arg0) {
         func_80238A10(func_80241180, 0, 0, 0, 0x130);
         func_80238A10(func_80240F34, 0, 0, 0, 0x130);
     }
-    func_802313DC(arg0, 0x08000000);
-    temp_v0 = M2C_FIELD(arg0, void **, 0x40);
-    M2C_FIELD(temp_v0, s32 *, 0xC) = (s32) (M2C_FIELD(temp_v0, s32 *, 0xC) & ~0x4000);
-    func_80229E38(M2C_FIELD(arg0, void **, 0x40), 0x13, 0);
-    func_80229E38(M2C_FIELD(arg0, void **, 0x40), -1, 1);
+    func_8023ECEC(arg0);
     func_8022979C((s32) M2C_FIELD(arg0, void **, 0x40), 4, 0xC);
     func_8022979C((s32) M2C_FIELD(arg0, void **, 0x40), 5, 0xD);
     func_8026C660(0x1E);
@@ -1964,11 +1954,15 @@ static void func_8023ECF4(u8 *arg0) {
     func_8023903C(0x3C);
 }
 
-void func_8023ECEC() {
-    if (0) { /* fake: a dead call: the emission order (header) */
-        func_8023EB28(0);
-    }
+/* Inlined into func_8023ECF4 (its stub's place); its extent is a guess (header). */
+static void func_8023ECEC(u8 *arg0) {
+    u8 *temp_v0;
 
+    func_802313DC(arg0, 0x08000000);
+    temp_v0 = M2C_FIELD(arg0, void **, 0x40);
+    M2C_FIELD(temp_v0, s32 *, 0xC) = (s32) (M2C_FIELD(temp_v0, s32 *, 0xC) & ~0x4000);
+    func_80229E38(M2C_FIELD(arg0, void **, 0x40), 0x13, 0);
+    func_80229E38(M2C_FIELD(arg0, void **, 0x40), -1, 1);
 }
 
 static void *func_8023EB28(s32 arg0) {

@@ -325,10 +325,7 @@ void func_ovl12_02_80043420(void) {
 }
 
 void func_ovl12_02_80043308(void) {
-    f32 pad[2]; /* unused: the original's frame is 8 bytes bigger */
     f32 angle;
-    f32 sp20;
-    f32 sp1C;
 
     func_ovl12_02_80043FC8();
     switch (D_ovl12_02_800451B0.unk8) {
@@ -352,9 +349,7 @@ void func_ovl12_02_80043308(void) {
     if (angle != 360.0f) {
         func_ovl12_02_80044618(angle, 32768.0f, 32768.0f);
     } else {
-        sp20 = D_ovl12_02_800451B0.unkC;
-        func_ovl12_02_80044620(&sp1C, NULL, NULL);
-        func_ovl12_02_80044618(sp1C + sp20, 32768.0f, 32768.0f);
+        func_ovl12_02_800432C0(D_ovl12_02_800451B0.unkC);
     }
     func_ovl12_02_80043FB0(D_ovl12_02_800451B0.unk4);
 }

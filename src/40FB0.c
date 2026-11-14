@@ -31,7 +31,7 @@ void func_8022691C(s32 arg0) {
     struct UnkStruct_80225CC0 *file;
     s32 size;
     s32 id;
-    s32 pad[2]; /* fake: unused, the original's frame has 8 more bytes of locals */
+    s32 pad[2]; /* fake: unused, the original's frame has 8 more bytes of locals (pad[1] is enough; a separate file or size local for the overlay moves slots; possibly another inlined helper's area, as func_802267B0/func_802267E0 leave theirs below) */
 
     if (D_802A5328 != arg0) {
         D_802A5328 = arg0;

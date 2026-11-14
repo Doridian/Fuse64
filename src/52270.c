@@ -265,7 +265,7 @@ void func_80238100(void) {
 
 void func_80237F84(void *arg0) {
     s32 run;
-    s32 pad; /* fake: the frame has a slot here */
+    s16 type;
     UnkStruct_802A8938 *mq;
     s16 *msg = NULL;
 
@@ -279,7 +279,8 @@ void func_80237F84(void *arg0) {
             func_80297D90(&D_802A8938, &msg, 1);
         }
         func_80297D90(&D_802A8938, &msg, 1);
-        switch (*msg) {
+        type = *msg;
+        switch (type) {
             case 1:
                 D_802A8954++;
                 while (func_80297D90(&D_802A8958, &mq, 0) != -1) {

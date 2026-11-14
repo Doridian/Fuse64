@@ -30,7 +30,11 @@ void func_80265C20(s32 arg0, UnkStruct_80265C20 *arg1) {
     UnkStruct_80265C20_Inner *p;
 
     p = arg1->unk40;
-    if (1) { /* fake: (the permuter's) without it arg1 is spilled */
+    /* A check around compiled-out debug output: the test's block keeps
+     * arg1 from being spilled (any one-variable test of p matches; the
+     * condition is a guess). */
+    if (p == NULL) {
+        DEBUG_PRINT(("p == NULL\n"));
     }
     func_80299170(arg0, p->unk10, p->unk14, p->unk18);
 }

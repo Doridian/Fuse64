@@ -1396,7 +1396,7 @@ static void func_802691A0(void) {
     u8 bank;
 
     if (D_802AD22C->revision == 0) {
-        DEBUG_PRINT(("no sequence file\n"));
+        DEBUG_PRINT(("D_802AD22C->revision == 0\n"));
     }
     if (D_802AD22C->revision == 0x5331 || D_802AD22C->revision == 0x5332) {
         sd = &D_802AD22C->seqArray[D_802AD244];

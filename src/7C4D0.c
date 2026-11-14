@@ -13,10 +13,9 @@
  * Both functions match. Levers in func_80261CD0:
  * - the vertices are written through vtx->, with vtx++ after each one
  *   (more uses of vtx: it outranks the GBI temporaries and gets $t4);
- * - the tile's far corner x2/y2 is held once, for lrs/lrt (their frame
- *   words; a guess among held values), but x + tw and y + th are written
- *   out in the flip switch (x2/y2 there are two more coloured
- *   expressions: pz & 0xFFFF's temp moves from 140(sp));
+ * - x + tw and y + th are written out, not held in locals (two more
+ *   coloured expressions put pz & 0xFFFF's temp at 140(sp)); pad0 and
+ *   pad1 keep their frame words;
  * - per vertex tc[0] before tc[1] (register order), but on one line for
  *   vertices 0-2 (as1's store order), as are ob[0] and ob[1] of vertices
  *   1 and 2; vertex 3 writes tc[1] first and ob[1] last;
@@ -55,8 +54,8 @@ void func_80261CD0(Gfx **gfxp, Vtx *vtx, s32 mode, u8 *img, u32 width, u32 heigh
     s32 j;
     s32 x;
     s32 y;
-    s32 x2;
-    s32 y2;
+    s32 pad0; /* fake: frame slot (any held value fits: x + tw and y + th held for lrs/lrt match, but 7B2D0's drawer has one slot here, not two) */
+    s32 pad1; /* fake: frame slot */
     s32 uls;
     s32 ult;
     s32 ox;
@@ -131,12 +130,10 @@ void func_80261CD0(Gfx **gfxp, Vtx *vtx, s32 mode, u8 *img, u32 width, u32 heigh
             if (th < 0) {
                 th = 1;
             }
-            x2 = x + tw;
-            y2 = y + th;
             uls = x;
             ult = y;
-            lrs = x2;
-            lrt = y2;
+            lrs = x + tw;
+            lrt = y + th;
             if (--uls < 0) {
                 uls = 0;
             }

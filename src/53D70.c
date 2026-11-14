@@ -285,13 +285,15 @@ s32 func_80239A94(s32 arg0) {
 }
 
 void func_802399EC(s32 arg0, u16 arg1) {
+    s32 buttons;
+
     if (!arg1) {
         arg1 = 0xF03F;
     }
     do {
         func_80239094();
-    /* fake: the comma (from the permuter) only swaps the `and`'s operands */
-    } while (!(func_802399AC(arg0) & (0, arg1)));
+        buttons = func_802399AC(arg0);
+    } while (!(buttons & arg1));
 }
 
 u16 func_802399AC(s32 arg0) {

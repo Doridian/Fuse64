@@ -16,7 +16,9 @@
  * func_80296BEC (inlined: its parameter is a variable, coloured v1);
  * func_80296C10's frame once `start` was declared last; func_80296D4C
  * with `dst` set right after the call (as1 puts its addiu ahead of the
- * header stores) and an unexplained 24 bytes of frame as `s32 pad[6]`.
+ * header stores); its frame's 24 bytes above x are the held constants:
+ * t1, the shrink's target rectangle (the same 86, 72, 148, 111 that
+ * func_80296C10 is handed) and its 40 steps (a guess among held values).
  *
  * D_802B03C0's fifth entry is the full-screen picture (asm calls its
  * unkC D_802B2C0C). IDO loads both of func_80297114's float literals
@@ -380,7 +382,11 @@ void func_80296C10(u16 *arg0, s32 x, s32 y, s32 w, s32 h);
 
 void func_80296D4C(u16 *arg0, UnkStruct_80296D4C *arg1, UnkStruct_80297858 **arg2) {
     f32 t1;
-    s32 pad[5]; /* fake: frame: 0x98 (unexplained 24 bytes above the locals) */
+    f32 tx = 86.0f;
+    f32 ty = 72.0f;
+    f32 tw = 148.0f;
+    f32 th = 111.0f;
+    f32 steps = 40.0f;
     f32 x = 8.0f;
     f32 y = 6.0f;
     f32 w = 304.0f;
@@ -427,10 +433,10 @@ void func_80296D4C(u16 *arg0, UnkStruct_80296D4C *arg1, UnkStruct_80297858 **arg
     func_802276E0(0, 0, 0);
     func_802276D4(1);
     func_802276C8(0x40);
-    dx = (86.0f - x) / 40.0f;
-    dy = (72.0f - y) / 40.0f;
-    dw = (148.0f - w) / 40.0f;
-    dh = (111.0f - h) / 40.0f;
+    dx = (tx - x) / steps;
+    dy = (ty - y) / steps;
+    dw = (tw - w) / steps;
+    dh = (th - h) / steps;
     for (i = 0; i < 40; i++) {
         func_80227D50(D_802AC5C0, (s32) x + 2, (s32) y + 2, (s32) w - 2, (s32) h - 2);
         obj->unk10 = x;

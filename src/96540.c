@@ -526,7 +526,7 @@ s32 func_8027BF38(PakDir *dir) {
                         dir->files[i].ext[j] = state.ext_name[j];
                     }
                     for (j = 0; j < 16; j++) {
-                        if (dir) {} /* fake: dead read */
+                        if (dir) {} /* fake: dead read (a PakFile pointer for the entry, with or without t1: frame or registers move; `return;` in func_8027BF30: no) */
                         dir->files[i].name[(u32) j] = state.game_name[j];
                     }
                 } else {

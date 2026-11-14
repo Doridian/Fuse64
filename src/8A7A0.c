@@ -4,8 +4,7 @@
  * 0x30-byte slots D_802AFCE8, the object D_802AFDD8, the lists
  * D_802AFDE0/D_802AFE58) and the players' use of them. One -O3 file,
  * in two halves that were drafted apart: 8A7A0 (func_8026FFA0 to
- * func_80273F0C) and "8E730" (func_80273F30 on, the name its #line
- * directives keep). The second inlines the first's small helpers
+ * func_80273F0C) and "8E730" (func_80273F30 on). The second inlines the first's small helpers
  * (func_802712A8, func_80271448, func_80270384, ...) with no stub left,
  * which only one file does (an inlined static leaves a jr ra stub, a
  * global its body), and with the functions defined in this order (the
@@ -21,10 +20,11 @@
  * would inline within one file, and the second half calls 926A0
  * (src/926A0.c, its own file, emitted after). func_802733C8 keeps a dead call
  * (if (0) func_802731A4(0, 0)): without it umerge inlines it into
- * func_8027655C (296 more words). The #line directives keep each
- * part's own line numbers (and .loc), as in the two drafts this
- * was. The .rodata (jump tables included) is the original's in all
- * three versions.
+ * func_8027655C (296 more words). The .rodata (jump tables included)
+ * is the original's in all three versions. (The first match kept each
+ * draft's own line numbers with #line directives, and an in-body
+ * `#line 1 "tail.c"` in func_80277B54 to end an as1 block before its
+ * tail; none of them is needed now.)
  * func_80277B54's tail writes the new list nodes through a pointer read
  * back from the link just stored (`e = ENTS[0].next; e->next = NULL;
  * ...`, `n = D_802AFDE0.next`). uopt forwards the stored address, and a
@@ -62,17 +62,6 @@
  * getter's result in a0 as in the original (a variable f4 set in each
  * branch put it in v0). The two getter calls fewer free 16 bytes of
  * frame above the DCAC buffer: pad[20] takes them back.
- * func_80277B54's last loop and tail are under an in-body
- * `#line 1 "tail.c"`, switched back to 8E730.c before the closing
- * brace: that .file ends the as1 block, so the epilogue stays
- * unscheduled as in the original. The switch goes before the loop, not
- * after it: the tail's coloured constants (&D_802AFDE0 in a0, -1 in a1)
- * are set at the tail block's head with the loop's last .loc, which as1
- * then reads as tail.c line 3, below the tail's own lines, and orders
- * them as the original does (with the .file between the loop and the
- * tail they sat in an as1 block of their own, ahead of the tail). The
- * in-body #line emits a .file only because tail.c also holds a function
- * definition (func_80277CC0 is defined under it).
  * func_80276D68 matches with a dead `if (f) {}` in its first else
  * (it puts the 0x20 flag in the original's register) and a second
  * local `g` for the 0x80 test's load.
@@ -525,7 +514,6 @@ void *func_80277FC4(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4, f32 arg5, 
 void func_80278D54(s32 *arg0);
 void func_80278DBC(void);
 
-#line 401 "8A7A0.c"
 void func_80273F0C() {
     if (D_802AFC70 != 1) {
         D_802AFC70 = 1;
@@ -627,7 +615,7 @@ void *func_8027361C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
     s32 flags;
     Ent88 *e;
     Obj8E *obj;
-    s32 pad[25]; /* the frame is 0xA8 */
+    s32 pad[25]; /* fake: frame-tuned; the frame is 0xA8 */
 
     idx = func_802735CC();
     if (idx == -1) {
@@ -736,7 +724,6 @@ void *func_8027361C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
     return e;
 }
 
-#line 357 "8E730.c"
 void func_80277E1C() {
     s32 i;
 
@@ -784,12 +771,10 @@ void *func_80277CE0() {
     return D_8008F438;
 }
 
-#line 1 "tail.c"
 s16 func_80277CC0(u8 *arg0) {
     return M2C_FIELD(func_802703B4(arg0), s16 *, 0xE);
 }
 
-#line 425 "8E730.c"
 
 void func_80277B54() {
     s16 i;
@@ -812,7 +797,6 @@ void func_80277B54() {
     for (i = 0, e = ENTS; i < 22; i++, e++) {
         e->xf = NULL;
     }
-#line 1 "tail.c"
     for (i = 0; i < 6; i++) {
         IDS[i][0] = -1;
     }
@@ -828,7 +812,6 @@ void func_80277B54() {
     D_802AFDE0.unk4 = 0;
     n->next = NULL;
     n->unk4 = 0;
-#line 449 "8E730.c"
 }
 
 void func_80277AF8(s16 arg0, s16 arg1) {
@@ -1188,15 +1171,15 @@ void func_80276D68(Ent88 *arg0) {
 }
 
 s32 func_8027655C(Ent88 *arg0) {
-    s32 padT;
+    s32 padT; /* fake: frame slot */
     f32 sp168;
     struct { f32 z, y, x; } v;
     f32 sp158;
     void *sp154;
-    s32 pad[20];
+    s32 pad[20]; /* fake: frame-tuned (header: the getter calls the original has) */
     s16 fl;
     s32 f8;
-    s32 padB[2];
+    s32 padB[2]; /* fake: frame slots */
 
     if (D_802A14B4 == 1) {
         return 0;
@@ -1318,7 +1301,7 @@ s32 func_8027655C(Ent88 *arg0) {
 }
 
 void func_802763DC(s16 *arg0) {
-    s32 padT;
+    s32 padT; /* fake: frame slot */
     struct { f32 z, y, x; } v;
     s32 r;
     s16 f;
@@ -1381,7 +1364,7 @@ void func_80276184(s16 *arg0, u8 *arg1) {
 }
 
 s32 func_80275DD8(Ent88 *arg0, Ent88 *arg1) {
-    s32 pad[14];
+    s32 pad[14]; /* fake: frame-tuned */
     f32 sp14;
     s32 p1;
     f32 spC;
@@ -1606,11 +1589,11 @@ void func_80275C08(u8 *arg0, u8 *arg1) {
 void func_80275948(s16 *arg0) {
     u16 n;
     u16 i;
-    s32 padT[1];
+    s32 padT[1]; /* fake: frame slot */
     f32 x;
     f32 y;
     f32 z;
-    s32 padB[2];
+    s32 padB[2]; /* fake: frame slots */
     u16 snd;
     s16 f;
     void *nd;
@@ -1877,10 +1860,10 @@ s16 func_80274F64(s16 arg0) {
 s32 func_80274994(s16 arg0) {
     s32 t;
     s32 spB8;
-    s32 padU[1];
+    s32 padU[1]; /* fake: frame slot */
     struct { f32 z, y, x; } base;
     struct { f32 z, y, x; } cur;
-    s32 pad98;
+    s32 pad98; /* fake: frame slot */
     Obj8E *obj;
 
     func_802714C4();
@@ -1956,14 +1939,14 @@ void func_802741D8(s16 arg0) {
     Ent88 *e;
     Obj8E *obj;
     Obj8E *o;
-    s32 pad[3];
+    s32 pad[3]; /* fake: frame-tuned */
     f32 spA0;
-    s32 pad1[13];
+    s32 pad1[13]; /* fake: frame-tuned */
     s32 sp60[3];
-    s32 padA[6];
+    s32 padA[6]; /* fake: frame-tuned */
     f32 sp3C[3];
     Slot30 *slot;
-    s32 padC[1];
+    s32 padC[1]; /* fake: frame-tuned */
 
     func_802714C4();
     if (((arg0 >= 0 && arg0 < 5) ? 0 : 1) ? 0 : SLOTS[arg0].unkC) {
@@ -2151,7 +2134,6 @@ void *func_80273F30(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
     return func_8027361C(arg0, x, y, z, arg4);
 }
 
-#line 611 "8A7A0.c"
 s16 func_802735CC(void) {
     Ent88 *e;
     s16 i;
@@ -2217,7 +2199,7 @@ void func_802734BC(u8 *arg0) {
 
 void func_80273414(s16 *arg0) {
     Ent88 *e = (Ent88 *) arg0;
-    s32 pad[4];
+    s32 pad[4]; /* fake: frame-tuned */
     void *p;
 
     func_80270BA4((u8 *) e->obj);
@@ -2253,7 +2235,7 @@ void func_802733C8(u8 *arg0) {
 
     temp_v0 = func_80273370((s32) arg0);
     func_802731A4(M2C_FIELD(temp_v0, void **, 0xC), M2C_FIELD(temp_v0, s16 *, 0));
-    if (0) {
+    if (0) { /* fake: a dead call keeps func_802731A4 out of line (header) */
         func_802731A4(0, 0);
     }
 }
@@ -2273,7 +2255,7 @@ void *func_80273370(s32 arg0) {
 
 void func_802731A4(Obj8E *arg0, s16 arg1) {
     s32 done;
-    s32 pad;
+    s32 pad; /* fake: frame slot */
     f32 y;
     Sub8E *t;
     Obj8E *cur;
@@ -2356,7 +2338,7 @@ void func_80272FC0(Obj8E *arg0, s16 arg1) {
 }
 
 void func_802727D8(Ctl87 *arg0) {
-    s32 pad[2];
+    s32 pad[2]; /* fake: frame-tuned */
     s32 w;
     Obj8E *p;
     Obj8E *obj;
@@ -2512,7 +2494,7 @@ void func_80272494(Obj8E *arg0, Obj8E *arg1, Ctl87 *arg2) {
     s32 res;
     f32 a[3];
     f32 b[3];
-    s32 pad2[2]; /* places ang at the original's offset */
+    s32 pad2[2]; /* fake: places ang at the original's offset */
     f32 ang;
 
     a[0] = arg0->unk40->x;
@@ -2622,7 +2604,7 @@ s32 func_802721D4(Obj8E *arg0, s32 arg1, Ctl87 *arg2) {
 void func_802720C8(u8 *arg0) {
     f32 z;
     f32 p[3];
-    s32 pad[5]; /* places info at the original's offset */
+    s32 pad[5]; /* fake: places info at the original's offset */
     s16 t;
     Unk8026DCAC info;
 
@@ -2786,14 +2768,14 @@ void *func_802716F8(s16 arg0) {
     f32 dz;
     f32 r;
     f32 dist;
-    s32 pad[2]; /* the pads place the locals at the original's offsets */
+    s32 pad[2]; /* fake: the pads place the locals at the original's offsets */
     f32 a[3];
     f32 b[3];
-    s32 pad2[2];
+    s32 pad2[2]; /* fake: frame slots */
     f32 ang;
-    s32 pad3;
+    s32 pad3; /* fake: frame slot */
     f32 pr;
-    s32 pad4[4];
+    s32 pad4[4]; /* fake: frame slots */
     Obj8E *pl;
     Obj8E *obj;
     Unk8026DCAC info;
@@ -2861,7 +2843,7 @@ void *func_802716F8(s16 arg0) {
 }
 
 s32 func_80271540(s16 arg0) {
-    s32 pad[1];
+    s32 pad[1]; /* fake: frame slot */
     f32 sp28;
     f32 sp24;
     f32 temp_fv0;
@@ -2905,7 +2887,7 @@ void func_802714C4() {
 }
 
 void func_80271448(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5) {
-    s32 pad[3];
+    s32 pad[3]; /* fake: frame-tuned */
     s32 a[3];
 
     func_8026DCAC(arg0, arg1, arg2, a, 2);
@@ -2915,7 +2897,7 @@ void func_80271448(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5
 }
 
 s32 func_8027130C(u8 *arg0) {
-    s32 pad[10]; /* the frame is 0x50 */
+    s32 pad[10]; /* fake: frame-tuned; the frame is 0x50 */
     Ent88 *e;
     void *p;
 
@@ -3018,7 +3000,7 @@ void func_80271010(u8 *arg0, s16 arg1) {
         dz = 0.0f;
     }
     sl = &SLOTS[arg1];
-    if (sl) { /* fake, as in func_80272FC0 */
+    if (sl) { /* fake: as in func_80272FC0 */
     }
     sl->unk10 = 0x14;
     sl->unk0 = arg1;

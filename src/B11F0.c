@@ -62,7 +62,7 @@ void func_80234778(f32, f32, f32);
 void func_802362B8(s32);
 void func_80238EA8(s32);
 void func_80239430(void);
-s32 func_80239FF8(s32);
+PORT_RET(s32, u16) func_80239FF8(s32);
 s32 *func_8023A840(void);
 void func_80243DEC(s32);
 void func_80261CD0(void *, void *, s32, s32, s32, s32, s32, s32, s32, s32, s32);

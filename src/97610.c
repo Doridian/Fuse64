@@ -93,7 +93,7 @@ UnkStruct_8023A834 *func_8023A834(void);
 UnkStruct_8023A840 *func_8023A840(void);
 void func_8026C660(s32);
 s32 func_8026D7D8(s32, s32, s32);
-s32 func_8026DC74(s32);
+PORT_RET(s32, u8) func_8026DC74(s32);
 void func_8026EEF0(s32, s32, s32, s32, s32);
 s32 func_8026F068(s32, s32, s32, s32);
 void func_8027404C(f32, f32, f32, f32 *, f32 *, f32 *);

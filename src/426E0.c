@@ -829,7 +829,7 @@ u32 func_80229C10(UnkObj *arg0, s32 arg1, UnkVtx **arg2) {
     dl = (UnkGfx *)((u8 *)model + chunks[arg1].unk8);
     first = dl->w1;
     i = 0; if (!arg0) {} for (; i != 2; i++) { /* fake: i = 0, the dead test and the for on one line set the colouring and schedule (header) */
-        while (*(u8 *)dl != 4) {
+        while (PORT_WORD_BYTE0(dl) != 4) {
             dl++;
         }
         dl++;

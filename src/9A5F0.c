@@ -534,7 +534,7 @@ void func_80280028(u8 *src, u8 *dst, u16 col, u16 row, u16 width, u16 height, s3
 
 #if VERSION_JP
 void func_802800B4_jp(u8 *arg0, u8 *arg1, u16 arg2, u16 arg3) {
-    u8 glyph[0x120];
+    u8 glyph[0x120 PORT_MORE(0x20)]; /* (the proportional font reads past a glyph) */
     s32 base = 0;
     s32 col;
     s32 row;
@@ -567,7 +567,7 @@ void func_802800B4_jp(u8 *arg0, u8 *arg1, u16 arg2, u16 arg3) {
 }
 #else
 void func_80280358(u8 *arg0, u8 *arg1, u16 arg2, u16 arg3) {
-    u8 glyph[0x120];
+    u8 glyph[0x120 PORT_MORE(0x20)]; /* (the proportional font reads past a glyph) */
     s32 base = 0;
     s32 col;
     s32 row;

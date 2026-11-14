@@ -288,7 +288,7 @@ typedef struct { s32 v[5]; } Tbl5_5E3F0;
 typedef struct {
     s32 v[3];
 } Tbl3_5E3F0;
-typedef struct { s32 x, y, z, w; f32 h; } Cell5_5E3F0;
+typedef struct { s32 x, y, z, w; f32 h; PORT_PAD(4) } Cell5_5E3F0; /* (func_8026DCAC writes 6 words) */
 
 
 void free(void *);
@@ -330,8 +330,8 @@ void func_8023903C(s32);
 void func_80239094(void);
 void func_80239430(void);
 void func_80239880(s32, s32, f32 *);
-s32 func_802399AC(s32);
-s32 func_80239FF8(s32);
+PORT_RET(s32, u16) func_802399AC(s32);
+PORT_RET(s32, u16) func_80239FF8(s32);
 void * func_8023A834(void);
 void * func_8023A840(void);
 s32 func_8023A870(s32, s32);
@@ -340,7 +340,7 @@ void func_802506B8(u8 *);
 void func_8026BE80(s32);
 s32 func_8026C660(s32);
 s32 func_8026D7D8(s32, s32, s32);
-s32 func_8026DC74(s32);
+PORT_RET(s32, u8) func_8026DC74(s32);
 void func_8026DCAC(f32, f32, f32, void *, s32);
 s32 func_8026DF74(f32, f32, f32);
 s32 func_8026E278(s32);
@@ -356,7 +356,7 @@ s32 func_802704F8(f32);
 s32 func_80270714(s32);
 s32 func_80270770(s16, s16);
 void func_80270BA4(void *);
-s32 func_802712A8(s32 *, s32);
+PORT_RET(s32, s16) func_802712A8(s32 *, s32);
 s32 func_802712C4(s32);
 s32 func_80271540(s16);
 s32 func_80271BB8(s32);
@@ -364,7 +364,7 @@ void func_802727D8(s32);
 void func_802733C8(void *);
 s32 func_802741D8(s16);
 s32 func_80274994(s16);
-s32 func_80274F64(s32);
+PORT_RET(s32, s16) func_80274F64(s32);
 s32 func_80274F8C(s16, f32, f32, f32, s32);
 s32 func_80275C7C(s32, s32, s32);
 s32 func_8027750C(s32);

@@ -30,14 +30,14 @@ typedef struct {
 } UnkStruct_802A15C0;
 
 void func_80239094(void);
-s32 func_802399AC(s32);
-s32 func_80239EE8(s32);
+PORT_RET(s32, u16) func_802399AC(s32);
+PORT_RET(s32, s8) func_80239EE8(s32);
 #ifdef TARGET_PC
 s8 func_80239F70(s32 arg0); /* 53D70.c */
 #else
 s32 func_80239F70(void);
 #endif
-s32 func_8023A038(s32);
+PORT_RET(s32, u8) func_8023A038(s32);
 void func_8026C660(s32);
 s32 func_8027EDC8(s32 arg0);
 static void func_8027EFD8(f32 arg0, f32 arg1);

@@ -72,6 +72,11 @@ static ALPan pan(SndState *st) {
     return (ALPan)(p < 0 ? 0 : p > 127 ? 127 : p);
 }
 
+/* the key map's detune (Bomberman 64's sounds have none: 0) */
+static f32 detune(ALSound *snd) {
+    return snd->keyMap != NULL ? alCents2Ratio(snd->keyMap->detune) : 1.0f;
+}
+
 static void release(ALSndPlayer *sndp, SndState *st) {
     if (st->voiced) {
         alSynStopVoice(sndp->drvr, &st->voice);
@@ -102,7 +107,7 @@ static void handle(ALSndPlayer *sndp, SndEvent *e) {
         st->voiced = 1;
         st->voice.clientPrivate = st;
         alSynStartVoiceParams(sndp->drvr, &st->voice, snd->wavetable,
-                              st->pitch * alCents2Ratio(snd->keyMap->detune),
+                              st->pitch * detune(snd),
                               volume(st, snd->envelope->attackVolume), pan(st), st->fxMix,
                               snd->envelope->attackTime);
         st->state = AL_PLAYING;
@@ -143,7 +148,7 @@ static void handle(ALSndPlayer *sndp, SndEvent *e) {
     case SNDP_PITCH_EVT:
         st->pitch = e->msg.snd.f;
         if (st->voiced)
-            alSynSetPitch(sndp->drvr, &st->voice, st->pitch * alCents2Ratio(st->sound->keyMap->detune));
+            alSynSetPitch(sndp->drvr, &st->voice, st->pitch * detune(st->sound));
         return;
     case SNDP_FX_EVT:
         st->fxMix = (u8)e->msg.snd.v;

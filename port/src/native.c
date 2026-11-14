@@ -240,3 +240,215 @@ void port_asset_native(int32_t id, void *p, int32_t size) {
     (void)id, (void)p, (void)size;
 #endif
 }
+
+/* ---- sound (80580.c's loads) ---------------------------------------------------------------
+ *
+ * The bank file (.ctl, ALBankFile and what it points at) and 'T2''s sounds
+ * (the same ALSound records, with their offsets from the block's start):
+ * every record and leaf in the host's order, by its fields (the port's
+ * libaudio, port/libaudio/bankfile.h, reads them so).  A unit converted
+ * once (a leaf several sounds share). */
+
+#ifdef PORT_SWAP
+static uint8_t *bk;
+static uint32_t bklen;
+#define BK_MAX 0x200000
+static uint8_t done16[BK_MAX / 16];      /* converted, per 2-byte unit (a bit each) */
+
+static int fresh(uint32_t off, uint32_t n) {
+    /* (whether the units at off..off+n are all unconverted; marks them) */
+    if (off + n > bklen)
+        return 0;
+    for (uint32_t i = off / 2; i < (off + n) / 2; i++)
+        if (done16[i / 8] & (1 << (i % 8)))
+            return 0;
+    for (uint32_t i = off / 2; i < (off + n) / 2; i++)
+        done16[i / 8] |= (uint8_t)(1 << (i % 8));
+    return 1;
+}
+
+static void bk_words(uint32_t off, uint32_t n) {
+    for (uint32_t i = 0; i < n; i += 4)
+        sw32(bk + off + i);
+}
+
+static void bk_halves(uint32_t off, uint32_t n) {
+    for (uint32_t i = 0; i < n; i += 2)
+        sw16(bk + off + i);
+}
+
+/* a wave table (base, len, type, flags, loop, book) and its loop and book */
+static void bk_wave(uint32_t off) {
+    if (!off || !fresh(off, 0x14))
+        return;
+    uint8_t type = bk[off + 8];
+    uint32_t loop = rd32(bk + off + 0xC), book = rd32(bk + off + 0x10);
+    bk_words(off, 8);
+    bk_words(off + 0xC, 8);
+    if (type == 0) {                    /* ADPCM: the loop has its decoder state */
+        if (loop && fresh(loop, 0x2C)) {
+            bk_words(loop, 12);
+            bk_halves(loop + 12, 32);
+        }
+        if (book && off + 0x14 <= bklen && fresh(book, 8)) {
+            uint32_t order = rd32(bk + book), npred = rd32(bk + book + 4);
+            bk_words(book, 8);
+            if (order * npred <= 64 && fresh(book + 8, order * npred * 16))
+                bk_halves(book + 8, order * npred * 16);
+        }
+    } else if (loop && fresh(loop, 0xC)) {
+        bk_words(loop, 12);
+    }
+}
+
+/* a sound (envelope, key map, wave table, three bytes) */
+static void bk_sound_at(uint32_t off) {
+    if (!fresh(off, 0xC))
+        return;
+    uint32_t env = rd32(bk + off), wave = rd32(bk + off + 8);
+    bk_words(off, 12);
+    if (env && fresh(env, 12))
+        bk_words(env, 12);          /* (attack, decay, release; the two volumes are bytes) */
+    bk_wave(wave);
+}
+
+static void bk_sound(uint32_t off) {
+    if (off)
+        bk_sound_at(off);
+}
+
+static void bk_inst(uint32_t off) {
+    if (!off || !fresh(off, 0x10))
+        return;
+    uint16_t n = port_be16(bk + off + 0xE);
+    bk_halves(off + 0xC, 4);
+    for (uint32_t i = 0; i < n && fresh(off + 0x10 + 4 * i, 4); i++) {
+        uint32_t s = rd32(bk + off + 0x10 + 4 * i);
+        sw32(bk + off + 0x10 + 4 * i);
+        bk_sound(s);
+    }
+}
+
+static void bk_bank(uint32_t off) {
+    if (!off || !fresh(off, 0xC))
+        return;
+    uint16_t n = port_be16(bk + off);
+    uint32_t perc = rd32(bk + off + 8);
+    bk_halves(off, 2);
+    bk_words(off + 4, 8);
+    bk_inst(perc);
+    for (uint32_t i = 0; i < n && fresh(off + 0xC + 4 * i, 4); i++) {
+        uint32_t in = rd32(bk + off + 0xC + 4 * i);
+        sw32(bk + off + 0xC + 4 * i);
+        bk_inst(in);
+    }
+}
+
+static void bk_begin(void *p, uint32_t len) {
+    bk = p;
+    bklen = len < BK_MAX ? len : BK_MAX;
+    memset(done16, 0, sizeof done16);
+}
+#endif
+
+/* a bank file (ALBankFile: revision 'B1', the banks...) as it arrived */
+void port_bank_native(void *p, int32_t len) {
+#ifdef PORT_SWAP
+    if (len < 4 || port_be16(p) != 0x4231)
+        return;
+    bk_begin(p, (uint32_t)len);
+    uint16_t n = port_be16(bk + 2);
+    fresh(0, 4);
+    bk_halves(0, 4);
+    for (uint32_t i = 0; i < n && fresh(4 + 4 * i, 4); i++) {
+        uint32_t b = rd32(bk + 4 + 4 * i);
+        sw32(bk + 4 + 4 * i);
+        bk_bank(b);
+    }
+#else
+    (void)p, (void)len;
+#endif
+}
+
+/* 'T2''s sounds: count records of 16 bytes (80580.c's SndSound) */
+void port_sounds_native(void *p, int32_t len, int32_t count) {
+#ifdef PORT_SWAP
+    bk_begin(p, (uint32_t)len);
+    for (int32_t k = 0; k < count && (uint32_t)(16 * k + 16) <= bklen; k++)
+        bk_sound_at((uint32_t)(16 * k));     /* (the first at offset 0) */
+#else
+    (void)p, (void)len, (void)count;
+#endif
+}
+
+/* 'T1'/'T2', the sound table: s16 magic, s16 count, then 8-byte entries
+   (three s8, a u8, an s16 and a u16) */
+void port_sndtable_native(void *p, int32_t size) {
+#ifdef PORT_SWAP
+    uint8_t *d = p;
+    if (size < 4)
+        return;
+    sw16(d);
+    sw16(d + 2);
+    for (int32_t o = 4; o + 8 <= size; o += 8) {
+        sw16(d + o + 4);
+        sw16(d + o + 6);
+    }
+#else
+    (void)p, (void)size;
+#endif
+}
+
+/* 'T2''s header (80580.c's SndHeader): six words, two halves */
+void port_sndheader_native(void *p) {
+#ifdef PORT_SWAP
+    port_native32(p, 0x18);
+    port_native16((uint8_t *)p + 0x18, 4);
+#else
+    (void)p;
+#endif
+}
+
+/* the sound scripts: a word (the offset of the scripts' table of u16
+   offsets), the table, then the scripts' bytes */
+void port_scripts_native(void *p, int32_t size) {
+#ifdef PORT_SWAP
+    uint8_t *d = p;
+    if (size < 4)
+        return;
+    uint32_t off = rd32(d), end = (uint32_t)size;
+    sw32(d);
+    for (uint32_t o = off; o + 2 <= end && o + 2 <= (uint32_t)size; o += 2) {
+        uint16_t v = port_be16(d + o);
+        if (v > off && v < end)
+            end = v;
+        sw16(d + o);
+    }
+#else
+    (void)p, (void)size;
+#endif
+}
+
+/* the sequence file ('S1'/'S2'): s16 revision, s16 count, (offset, len)
+   words, and for 'S2' a 16-byte record a sequence (two bytes, then three
+   words) */
+void port_seqfile_native(void *p, int32_t size) {
+#ifdef PORT_SWAP
+    uint8_t *d = p;
+    if (size < 4)
+        return;
+    sw16(d);
+    sw16(d + 2);
+    uint16_t rev, count;
+    memcpy(&rev, d, 2);
+    memcpy(&count, d + 2, 2);
+    if (size < 4 + 8 * count)
+        return;
+    port_native32(d + 4, 8 * count);
+    if (rev == 0x5332 && size >= 4 + 24 * count)
+        for (uint32_t i = 0; i < count; i++)
+            port_native32(d + 4 + 8 * count + 16 * i + 4, 12);
+#else
+    (void)p, (void)size;
+#endif
+}

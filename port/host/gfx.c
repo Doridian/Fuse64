@@ -481,129 +481,115 @@ static void sample(int tile, float s, float t, float *o) {
 
 /* ---- the combiner and blender ---------------------------------------------------------------------- */
 
+/* the combiner's inputs, as slots: a colour each (RGBA, 0..255); an
+   alpha input is a slot's component 3 */
+enum {
+    S_COMB, S_TEX0, S_TEX1, S_PRIM, S_SHADE, S_ENV, S_ONE, S_ZERO, S_NOISE,
+    S_COMB_A, S_TEX0_A, S_TEX1_A, S_PRIM_A, S_SHADE_A, S_ENV_A, S_LOD, S_PRIM_LOD, S_NSLOTS
+};
+
 typedef struct {
     float shade[4], tex0[4], tex1[4];
     float lodf;
 } Inputs;
 
-static float cc_val(int sel, int which, int k, const Inputs *in, const float *comb) {
-    /* which: 0 a, 1 b, 2 c, 3 d (colour); 4-7 alpha */
-    static const float one = 255, zero = 0;
-    if (which < 4) {
-        switch (which) {
-        case 0:
-            switch (sel) {
-            case 0: return comb[k];
-            case 1: return in->tex0[k];
-            case 2: return in->tex1[k];
-            case 3: return gs.prim[k];
-            case 4: return in->shade[k];
-            case 5: return gs.env[k];
-            case 6: return one;
-            case 7: return (float)(rand() & 255);
-            default: return zero;
-            }
-        case 1:
-            switch (sel) {
-            case 0: return comb[k];
-            case 1: return in->tex0[k];
-            case 2: return in->tex1[k];
-            case 3: return gs.prim[k];
-            case 4: return in->shade[k];
-            case 5: return gs.env[k];
-            default: return zero;
-            }
-        case 2:
-            switch (sel) {
-            case 0: return comb[k];
-            case 1: return in->tex0[k];
-            case 2: return in->tex1[k];
-            case 3: return gs.prim[k];
-            case 4: return in->shade[k];
-            case 5: return gs.env[k];
-            case 7: return comb[3];
-            case 8: return in->tex0[3];
-            case 9: return in->tex1[3];
-            case 10: return gs.prim[3];
-            case 11: return in->shade[3];
-            case 12: return gs.env[3];
-            case 13: return in->lodf;
-            case 14: return gs.prim_lod;
-            default: return zero;
-            }
-        default:
-            switch (sel) {
-            case 0: return comb[k];
-            case 1: return in->tex0[k];
-            case 2: return in->tex1[k];
-            case 3: return gs.prim[k];
-            case 4: return in->shade[k];
-            case 5: return gs.env[k];
-            case 6: return one;
-            default: return zero;
-            }
-        }
-    }
-    switch (which) {
-    case 4: case 5: case 7:
-        switch (sel) {
-        case 0: return comb[3];
-        case 1: return in->tex0[3];
-        case 2: return in->tex1[3];
-        case 3: return gs.prim[3];
-        case 4: return in->shade[3];
-        case 5: return gs.env[3];
-        case 6: return which == 5 ? zero : one;
-        default: return zero;
-        }
-    default:
-        switch (sel) {
-        case 0: return in->lodf;
-        case 1: return in->tex0[3];
-        case 2: return in->tex1[3];
-        case 3: return gs.prim[3];
-        case 4: return in->shade[3];
-        case 5: return gs.env[3];
-        case 6: return gs.prim_lod;
-        default: return zero;
-        }
-    }
-}
+/* the selectors decoded: per cycle, the colour's a, b, c, d and the
+   alpha's (slots), and which inputs the combine reads */
+static struct {
+    uint64_t combine;
+    uint32_t cyc;
+    int8_t col[2][4], alp[2][4];
+    int tex0, tex1, noise;
+} ccd = { ~0ull, ~0u };
 
-/* the combine word's selectors for cycle c: colour a, b, c, d, alpha a, b, c, d */
-static void cc_sel(int c, int *s) {
-    uint64_t m = gs.combine;
-    uint32_t hi = (uint32_t)(m >> 32), lo = (uint32_t)m;
-    if (c == 0) {
-        s[0] = (hi >> 20) & 15; s[2] = (hi >> 15) & 31; s[4] = (hi >> 12) & 7; s[6] = (hi >> 9) & 7;
-        s[1] = (lo >> 28) & 15; s[5] = (lo >> 12) & 7; s[3] = (lo >> 15) & 7; s[7] = (lo >> 9) & 7;
-    } else {
-        s[0] = (hi >> 5) & 15; s[2] = hi & 31; s[4] = (lo >> 21) & 7; s[6] = (lo >> 18) & 7;
-        s[1] = (lo >> 24) & 15; s[5] = (lo >> 3) & 7; s[3] = (lo >> 6) & 7; s[7] = lo & 7;
+static int map_a(int s) { return s <= 5 ? s : s == 6 ? S_ONE : s == 7 ? S_NOISE : S_ZERO; }
+static int map_b(int s) { return s <= 5 ? s : S_ZERO; }
+static int map_c(int s) {
+    static const int8_t m[] = { S_COMB, S_TEX0, S_TEX1, S_PRIM, S_SHADE, S_ENV, S_ZERO, S_COMB_A, S_TEX0_A, S_TEX1_A,
+                                S_PRIM_A, S_SHADE_A, S_ENV_A, S_LOD, S_PRIM_LOD };
+    return s < (int)sizeof m ? m[s] : S_ZERO;
+}
+static int map_d(int s) { return s <= 5 ? s : s == 6 ? S_ONE : S_ZERO; }
+static int map_aa(int s) { return s <= 5 ? s : s == 6 ? S_ONE : S_ZERO; }    /* alpha a, b, d */
+static int map_ac(int s) { return s == 0 ? S_LOD : s <= 5 ? s : s == 6 ? S_PRIM_LOD : S_ZERO; }
+
+static void cc_decode(void) {
+    uint32_t cyc = (gs.om_h >> 20) & 3;
+    if (ccd.combine == gs.combine && ccd.cyc == cyc)
+        return;
+    ccd.combine = gs.combine;
+    ccd.cyc = cyc;
+    uint32_t hi = (uint32_t)(gs.combine >> 32), lo = (uint32_t)gs.combine;
+    int s[2][8] = {
+        { (hi >> 20) & 15, (lo >> 28) & 15, (hi >> 15) & 31, (lo >> 15) & 7,
+          (hi >> 12) & 7, (lo >> 12) & 7, (hi >> 9) & 7, (lo >> 9) & 7 },
+        { (hi >> 5) & 15, (lo >> 24) & 15, hi & 31, (lo >> 6) & 7,
+          (lo >> 21) & 7, (lo >> 3) & 7, (lo >> 18) & 7, lo & 7 },
+    };
+    ccd.tex0 = ccd.tex1 = ccd.noise = 0;
+    for (int c = 0; c < 2; c++) {
+        ccd.col[c][0] = (int8_t)map_a(s[c][0]);
+        ccd.col[c][1] = (int8_t)map_b(s[c][1]);
+        ccd.col[c][2] = (int8_t)map_c(s[c][2]);
+        ccd.col[c][3] = (int8_t)map_d(s[c][3]);
+        ccd.alp[c][0] = (int8_t)map_aa(s[c][4]);
+        ccd.alp[c][1] = (int8_t)map_aa(s[c][5]);
+        ccd.alp[c][2] = (int8_t)map_ac(s[c][6]);
+        ccd.alp[c][3] = (int8_t)map_aa(s[c][7]);
+        if (c == 1 && cyc != 1)
+            break;
+        for (int k = 0; k < 4; k++) {
+            int v = ccd.col[c][k], a = ccd.alp[c][k];
+            if (v == S_TEX0 || v == S_TEX0_A || a == S_TEX0)
+                ccd.tex0 = 1;
+            if (v == S_TEX1 || v == S_TEX1_A || a == S_TEX1)
+                ccd.tex1 = 1;
+            if (v == S_NOISE)
+                ccd.noise = 1;
+        }
     }
 }
 
 static void combine(const Inputs *in, float *out) {
-    float comb[4] = { 0, 0, 0, 0 };
-    int cycles = ((gs.om_h >> 20) & 3) == 1 ? 2 : 1;
+    float slot[S_NSLOTS][4];
+    int cycles = ccd.cyc == 1 ? 2 : 1;
+    memcpy(slot[S_TEX0], in->tex0, 16);
+    memcpy(slot[S_TEX1], in->tex1, 16);
+    memcpy(slot[S_SHADE], in->shade, 16);
+    for (int k = 0; k < 4; k++) {
+        slot[S_PRIM][k] = gs.prim[k];
+        slot[S_ENV][k] = gs.env[k];
+        slot[S_ONE][k] = 255;
+        slot[S_ZERO][k] = 0;
+        slot[S_COMB][k] = 0;
+        slot[S_TEX0_A][k] = in->tex0[3];
+        slot[S_TEX1_A][k] = in->tex1[3];
+        slot[S_PRIM_A][k] = gs.prim[3];
+        slot[S_SHADE_A][k] = in->shade[3];
+        slot[S_ENV_A][k] = gs.env[3];
+        slot[S_LOD][k] = in->lodf;
+        slot[S_PRIM_LOD][k] = gs.prim_lod;
+        slot[S_COMB_A][k] = 0;
+    }
+    if (ccd.noise) {
+        float n = (float)(rand() & 255);
+        for (int k = 0; k < 4; k++)
+            slot[S_NOISE][k] = n;
+    }
     for (int c = 0; c < cycles; c++) {
-        int s[8];
+        const int8_t *cs = ccd.col[c], *as = ccd.alp[c];
         float r[4];
-        cc_sel(c, s);
-        for (int k = 0; k < 3; k++) {
-            float a = cc_val(s[0], 0, k, in, comb), b = cc_val(s[1], 1, k, in, comb);
-            float cc = cc_val(s[2], 2, k, in, comb), d = cc_val(s[3], 3, k, in, comb);
-            r[k] = (a - b) * cc / 255.0f + d;
-        }
-        {
-            float a = cc_val(s[4], 4, 3, in, comb), b = cc_val(s[5], 5, 3, in, comb);
-            float cc = cc_val(s[6], 6, 3, in, comb), d = cc_val(s[7], 7, 3, in, comb);
-            r[3] = (a - b) * cc / 255.0f + d;
+        for (int k = 0; k < 3; k++)
+            r[k] = (slot[cs[0]][k] - slot[cs[1]][k]) * slot[cs[2]][k] / 255.0f + slot[cs[3]][k];
+        r[3] = (slot[as[0]][3] - slot[as[1]][3]) * slot[as[2]][3] / 255.0f + slot[as[3]][3];
+        for (int k = 0; k < 4; k++) {
+            float v = r[k] < 0 ? 0 : r[k] > 255 ? 255 : r[k];
+            slot[S_COMB][k] = v;
+            out[k] = v;
         }
         for (int k = 0; k < 4; k++)
-            comb[k] = r[k] < 0 ? 0 : r[k] > 255 ? 255 : r[k];
+            slot[S_COMB_A][k] = slot[S_COMB][3];
     }
-    memcpy(out, comb, sizeof comb);
 }
 
 static int cimg_px(int x, int y, uint8_t **p) {
@@ -715,12 +701,14 @@ static void shade_pixel(int x, int y, float z, const float *shade, float s, floa
     Inputs in;
     memcpy(in.shade, shade, sizeof in.shade);
     in.lodf = 0;
+    cc_decode();
+    memset(in.tex0, 0, sizeof in.tex0);
+    memset(in.tex1, 0, sizeof in.tex1);
     if (textured) {
-        sample(gs.tex_tile, s, t, in.tex0);
-        sample(gs.tex_tile + 1, s, t, in.tex1);
-    } else {
-        memset(in.tex0, 0, sizeof in.tex0);
-        memset(in.tex1, 0, sizeof in.tex1);
+        if (ccd.tex0)
+            sample(gs.tex_tile, s, t, in.tex0);
+        if (ccd.tex1)
+            sample(gs.tex_tile + 1, s, t, in.tex1);
     }
     float c[4];
     combine(&in, c);
@@ -1255,9 +1243,16 @@ static void run(const Cmd *dl) {
 }
 
 int host_gfx_task(const void *dl, uint32_t size) {
+    static int no_draw = -1;
+    if (no_draw < 0) {
+        const char *e = getenv("PORT_NO_DRAW");
+        no_draw = e && *e && *e != '0';
+    }
     if (host_verbose > 1)
         host_log("gfx task %p at retrace %u\n", dl, host_vi_count);
     (void)size;
+    if (no_draw)            /* (debugging: the game's logic alone) */
+        return 1;
     full_sync = 0;
     gs.mvi = 0;
     gs.mvp_ok = 0;

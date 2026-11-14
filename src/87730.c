@@ -27,7 +27,7 @@ typedef struct {
 void *func_8022A328(void *, s32, s32, s32, s32);
 void func_8023903C(s32);
 void func_80239094(void);
-s32 func_802399AC(s32);
+PORT_RET(s32, u16) func_802399AC(s32);
 s32 *func_8023A840(void);
 void func_8023A864(s32);
 void func_80243698(s32);

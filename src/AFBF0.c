@@ -76,7 +76,7 @@ s32 func_80238A10(void *, s32, void *, s32, u16);
 s32 func_8023903C(u32);
 void func_80239094(void);
 void func_80239430(void);
-s32 func_802399AC(s32);
+PORT_RET(s32, u16) func_802399AC(s32);
 UnkStruct_8023A840 *func_8023A840(void);
 void func_8023AA78(s32);
 void func_8023AE6C(s32, s32, s32);

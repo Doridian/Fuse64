@@ -7,11 +7,40 @@
  * calls its entry.
  */
 #include <stdlib.h>
-#include <string.h>
 #include "port.h"
 #include "port_overlay.h"
 
+/* the host's allocator: the game's (pc_names.h's bm64_malloc, in its sbrk
+   arena) is the game's alone, and main_code starts it afresh */
+#undef malloc
+#undef calloc
+#undef free
+void *malloc(size_t n);
+void *calloc(size_t n, size_t m);
+
 static char **initial;
+
+/* a section's bytes, redzones and all under AddressSanitizer (which puts
+   them between the variables) */
+#if defined(__has_feature)
+#if __has_feature(address_sanitizer)
+#define NO_ASAN __attribute__((no_sanitize("address")))
+#endif
+#endif
+#ifndef NO_ASAN
+#define NO_ASAN
+#endif
+
+static NO_ASAN void copy(char *d, const char *s, size_t n) {
+    for (size_t i = 0; i < n; i++)
+        d[i] = s[i];
+}
+
+static NO_ASAN void zero(char *d, size_t n, const char *mask) {
+    (void)mask;
+    for (size_t i = 0; i < n; i++)
+        d[i] = 0;
+}
 
 void port_overlay_init(void) {
     unsigned i;
@@ -23,7 +52,7 @@ void port_overlay_init(void) {
             initial[i] = malloc(n);
             if (!initial[i])
                 host_fatal("no memory for the overlays' data");
-            memcpy(initial[i], o->data, n);
+            copy(initial[i], o->data, n);
         }
     }
 }
@@ -35,9 +64,9 @@ void *port_overlay_load(int bank, int entry) {
         if (o->bank != bank || o->entry != entry)
             continue;
         if (o->data && o->data_end > o->data)
-            memcpy(o->data, initial[i], (size_t)(o->data_end - o->data));
+            copy(o->data, initial[i], (size_t)(o->data_end - o->data));
         if (o->bss && o->bss_end > o->bss)
-            memset(o->bss, 0, (size_t)(o->bss_end - o->bss));
+            zero(o->bss, (size_t)(o->bss_end - o->bss), NULL);
         if (host_verbose)
             host_log("overlay %s\n", o->name);
         return o->start();

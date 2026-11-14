@@ -1331,7 +1331,7 @@ void func_ovl0C_01_800463E0(void) {
     UnkStructA *obj;
 
     for (i = 0; i < 2; i++) {
-        p = &D_ovl0C_01_8004A584[i];
+        p = PORT_SPAN2(D_ovl0C_01_8004A584, D_ovl0C_01_8004A59C, i);
         if (!func_ovl0C_01_80049B90(p->unk14)) {
             obj = func_ovl0C_01_80049800(0x2A7, 0xD0, p->unk4, p->unk8, p->unkC);
             func_ovl0C_01_800497B8(obj, 0x03080000);

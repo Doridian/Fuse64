@@ -263,6 +263,18 @@ int host_run_one(void) {
     cur = best;
     fiber_run(best->fiber);
     cur = NULL;
+    {
+        /* PORT_HEAPCHECK=1: the game's heap checked after each turn */
+        static int check = -1;
+        int port_heap_check(void);
+        if (check < 0) {
+            const char *e = getenv("PORT_HEAPCHECK");
+            check = e && *e && *e != '0';
+        }
+        if (check && port_heap_check())
+            host_fatal("the heap went bad in thread %08lX's turn (pri %d), retrace %u", (unsigned long)best->key,
+                       best->pri, host_vi_count);
+    }
     return 1;
 }
 

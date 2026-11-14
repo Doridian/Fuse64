@@ -134,12 +134,20 @@ add_library(port_n64 OBJECT ${PORT_SRC} ${LIBAUDIO_C} ${GEN}/asm_data.c ${GEN}/z
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/gu.c PROPERTIES OBJECT_DEPENDS ${GEN}/sintable.h)
 target_include_directories(port_n64 PRIVATE ${N64_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/libaudio)
 target_compile_definitions(port_n64 PRIVATE ${N64_DEFINES})
-target_compile_options(port_n64 PRIVATE ${N64_FLAGS})
+target_compile_options(port_n64 PRIVATE ${N64_FLAGS} -std=gnu11)
 
 # ---- the host -------------------------------------------------------------------------
 file(GLOB HOST_C ${CMAKE_CURRENT_SOURCE_DIR}/host/*.c)
-add_executable(bm64 ${HOST_C} $<TARGET_OBJECTS:game_c> $<TARGET_OBJECTS:ovl_c> $<TARGET_OBJECTS:malloc_c>
-    $<TARGET_OBJECTS:port_n64>)
+# a debugging build: the game's allocator the host's (host/hostmalloc.c),
+# for AddressSanitizer to see the game's blocks
+option(PORT_HOST_MALLOC "the game's malloc the host's (debugging, with PORT_SANITIZE=address)" OFF)
+if(PORT_HOST_MALLOC)
+    add_executable(bm64 ${HOST_C} $<TARGET_OBJECTS:game_c> $<TARGET_OBJECTS:ovl_c> $<TARGET_OBJECTS:port_n64>)
+    target_compile_definitions(bm64 PRIVATE PORT_HOST_MALLOC)
+else()
+    add_executable(bm64 ${HOST_C} $<TARGET_OBJECTS:game_c> $<TARGET_OBJECTS:ovl_c> $<TARGET_OBJECTS:malloc_c>
+        $<TARGET_OBJECTS:port_n64>)
+endif()
 target_include_directories(bm64 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/host)
 target_compile_definitions(bm64 PRIVATE ${PORT_VERSION_DEFINE} _GNU_SOURCE)
 target_compile_options(bm64 PRIVATE ${HOST_FLAGS})

@@ -164,7 +164,21 @@ extern SndBankFile *D_802AD648;
 extern SndTable *D_802AD650;
 extern Voice *D_802AD654;
 extern VoiceScript *D_802AD65C;
+#ifdef TARGET_PC
+/* D_802A12BC and the pair D_802A12C0 are the sound player's config
+ * (ALSndpConfig: maxSounds, maxEvents, heap), which func_80269AFC passes
+ * by the first one's address: one struct in the port */
+struct SndpConfig80580 {
+    s32 maxSounds;
+    s32 count;
+    u8 *heap;
+};
+extern struct SndpConfig80580 D_802A12BC_cfg;
+#define D_802A12BC (D_802A12BC_cfg.maxSounds)
+#define D_802A12C0 D_802A12BC_cfg
+#else
 extern s32 D_802A12BC;
+#endif
 
 /* The N64 SDK's oscillator example (initOsc/updateOsc/stopOsc), Hudson's copy. */
 typedef struct oscData_s {
@@ -529,13 +543,10 @@ u32 D_802A1298[] = { 0x10, 0x80, 0x10000000, (u32) D_802AD120,
 #endif
 s32 D_802A12B4 = 2;
 s32 D_802A12B8 = 6;
-s32 D_802A12BC = 8;
 #ifdef TARGET_PC
-struct {
-    s32 count;
-    u8 *heap;
-} D_802A12C0 = { 0x100, D_802AD120 };
+struct SndpConfig80580 D_802A12BC_cfg = { 8, 0x100, D_802AD120 };
 #else
+s32 D_802A12BC = 8;
 s32 D_802A12C0[] = { 0x100, (s32) D_802AD120 };
 #endif
 s32 D_802A12C8[] = {
@@ -939,7 +950,7 @@ static s32 func_8026A108(s32 size) {
     if (p == NULL) {
         return 1;
     }
-    func_80269144(D_802A1330, p, size);
+    func_80269144(D_802A1330, p, size); PORT_ONLY(port_seqfile_native(p, size));
     return 0;
 }
 
@@ -1014,7 +1025,7 @@ static s16 func_80269AFC() {
             if (hdr == NULL) {
                 return 1;
             }
-            func_80269144(rom, hdr, 0x1C);
+            func_80269144(rom, hdr, 0x1C); PORT_ONLY(port_sndheader_native(hdr));
             rc = func_80269A84(hdr);
             if (rc != 0) {
                 return rc - 1;
@@ -1051,7 +1062,7 @@ static s32 func_80269A8C(s32 size) {
     if (D_802A1344 == 0) {
         p->magic = 0;
     } else {
-        func_80269144(D_802A1344, p, size);
+        func_80269144(D_802A1344, p, size); PORT_ONLY(port_sndtable_native(p, size));
     }
     return 0;
 }
@@ -1077,7 +1088,7 @@ static s32 func_80269A84(SndHeader *hdr) {
         return 2;
     }
     D_802A1348 = hdr->rom;
-    func_80269144(D_802A1348, D_802AD648, size);
+    func_80269144(D_802A1348, D_802AD648, size); PORT_ONLY(port_sounds_native(D_802AD648, size, hdr->count));
     for (k = 0; k < hdr->count; k++) {
         snd = (SndSound *) ((u8 *) D_802AD648 + k * 16);
         if (snd->flags != 0) {
@@ -1118,7 +1129,7 @@ static s32 func_80269A7C(SndHeader *hdr) {
         return 2;
     }
     hdr->scriptRom += D_802A1344;
-    func_80269144(hdr->scriptRom, D_802AD658, total);
+    func_80269144(hdr->scriptRom, D_802AD658, total); PORT_ONLY(port_scripts_native(D_802AD658, total));
     *D_802AD658 = (u16 *) ((u8 *) *D_802AD658 + (u32) D_802AD658);
     total = D_802A12BC * sizeof(VoiceScript);
     D_802AD65C = func_8026B72C(total);
@@ -1169,7 +1180,7 @@ static s32 func_802699C8() {
     if (p == NULL) {
         return 2;
     }
-    func_80269144(D_802A1348, p, size);
+    func_80269144(D_802A1348, p, size); PORT_ONLY(port_bank_native(p, size));
     p = D_802AD648;
     if (p->revision != 0x4231) {
         D_802A1348 = 0;
@@ -1385,13 +1396,13 @@ static void func_802691A0(void) {
         if (len & 1) {
             len++;
         }
-        func_80269144((s32) sd->offset, D_802AD224, len);
+        func_80269144((s32) sd->offset, D_802AD224, len); PORT_ONLY(port_native32(D_802AD224, 0x44));
     } else {
         len = D_802A1334 - D_802A1330;
         if (len & 1) {
             len++;
         }
-        func_80269144(D_802A1330, D_802AD224, len);
+        func_80269144(D_802A1330, D_802AD224, len); PORT_ONLY(port_native32(D_802AD224, 0x44));
     }
     func_80298510(D_802AD228, D_802AD224);
     if (D_802AD22C->revision == 0x5332) {
@@ -1412,7 +1423,7 @@ static void func_802691A0(void) {
     if (rom == D_802AD234) {
         goto play;
     }
-    func_80269144(rom, D_802AD21C, len);
+    func_80269144(rom, D_802AD21C, len); PORT_ONLY(port_bank_native(D_802AD21C, len));
     if (D_802AD21C->revision == 0x4231) {
         func_802983E8(D_802AD21C, (void *) table);
         D_802AD234 = rom;

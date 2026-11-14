@@ -232,6 +232,18 @@ static void coro_switch(Coro *to) {
 #endif
 
 void port_task_jump(int *buf, int v) {
+    {
+        /* PORT_HEAPCHECK=1: the game's heap checked at each switch */
+        static int check = -1;
+        int port_heap_check(void);
+        if (check < 0) {
+            const char *e = getenv("PORT_HEAPCHECK");
+            check = e && *e && *e != '0';
+        }
+        if (check && port_heap_check())
+            host_fatal("the heap went bad before a switch to task buffer %p (entry %p)", (void *)buf,
+                       (void *)(uintptr_t)(uint32_t)buf[3]);
+    }
     Buf *b = find(buf, 0);
     if (b == NULL || (unsigned)buf[0] != MARK) {
         /* a buffer func_80238A10 set up: a new task at its entry (word 3)

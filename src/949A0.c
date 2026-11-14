@@ -131,7 +131,7 @@ void func_8026C660(s32);
 f32 func_8026E8B8(void);
 void func_80270354(s32 *, s32);
 void func_8027036C(s32 *, s32);
-s32 func_802712A8(s32 *, s32);
+PORT_RET(s32, s16) func_802712A8(s32 *, s32);
 s32 func_80272024(s16);
 void func_802727D8(s32);
 void func_802733C8(UnkStruct_80279050_14 *);

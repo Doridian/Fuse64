@@ -31,5 +31,12 @@ void *port_segment_entry(int seg);
 void port_native32(void *p, unsigned int n);
 void port_native16(void *p, unsigned int n);
 void port_asset_native(int id, void *p, int size);
+/* ... and the sound data 80580.c loads */
+void port_bank_native(void *p, int len);
+void port_sounds_native(void *p, int len, int count);
+void port_sndtable_native(void *p, int size);
+void port_sndheader_native(void *p);
+void port_scripts_native(void *p, int size);
+void port_seqfile_native(void *p, int size);
 
 #endif

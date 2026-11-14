@@ -96,7 +96,7 @@ typedef struct {
     s32 unk4;
 } Info926;
 
-s32 func_8026DC74(s32 arg0);
+PORT_RET(s32, u8) func_8026DC74(s32 arg0);
 void func_8027404C(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5);
 s32 func_80277EA0(s16 arg0);
 s16 func_80277F0C(Rec926 *arg0);

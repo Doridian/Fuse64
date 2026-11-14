@@ -133,7 +133,7 @@ void func_8026DCAC(f32, f32, f32, UnkStruct_8026DCAC *, s32);
 s32 func_8026EE18(f32);
 s32 func_8026D7D8(s32, s32, s32);
 void func_802358D0(void *, s32, s16);
-s32 func_802399AC(s32);
+PORT_RET(s32, u16) func_802399AC(s32);
 extern UnkStruct_802443F4 *D_8009004C;
 s32 func_80243DDC(void);
 void func_80234578(Vec3f_8008E648 *, Vec3f_8008E648 *, Vec3f_8008E648 *);

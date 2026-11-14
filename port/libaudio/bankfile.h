@@ -19,6 +19,7 @@
  * message instead of reading wild memory.
  */
 #ifndef BANKFILE_H
+#include <string.h>
 #define BANKFILE_H
 
 /* the file: s16 revision, s16 bankCount, then bankCount offsets of banks */
@@ -86,14 +87,19 @@ static u8 bf_u8(const BankFileIn *f, u32 off) {
     return f->base[off];
 }
 
+/* (Bomberman 64: the file is in the host's order when it gets here,
+   port/src/native.c's port_bank_native, as the game's own code reads its
+   header and the records it walks) */
 static u16 bf_u16(const BankFileIn *f, u32 off) {
-    const u8 *p = f->base + off;
-    return (u16)(p[0] << 8 | p[1]);
+    u16 v;
+    memcpy(&v, f->base + off, 2);
+    return v;
 }
 
 static u32 bf_u32(const BankFileIn *f, u32 off) {
-    const u8 *p = f->base + off;
-    return (u32)p[0] << 24 | (u32)p[1] << 16 | (u32)p[2] << 8 | p[3];
+    u32 v;
+    memcpy(&v, f->base + off, 4);
+    return v;
 }
 
 #endif

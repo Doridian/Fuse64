@@ -429,9 +429,8 @@ void func_ovl17_09_80044A2C(UnkStructA *obj) {
 void func_ovl17_09_800448A0(UnkStructA *obj) {
     s32 idx;
     s16 k;
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
-    func_ovl17_09_8004456C(obj, D_ovl17_09_800462A4 * 0.42857143f);
+    func_ovl17_09_80044828(obj);
     if (obj->unk40->unk10 <= D_ovl17_09_80046570 || D_ovl17_09_80046574 <= obj->unk40->unk10 ||
         obj->unk40->unk14 < -10.0f) {
         func_ovl17_09_80045F28(0x10, obj->unk40->unk10, obj->unk40->unk14 + 150.0f, obj->unk40->unk18, 0);

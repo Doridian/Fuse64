@@ -422,7 +422,7 @@ void func_ovl13_02_8004BDA4(f32 arg0) {
 }
 
 void func_ovl13_02_80048FBC(s32 arg0) {
-    s32 pad[8]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad[3]; /* fake: unused, frame space the original has (no source for it found) */
     f32 *p;
     f32 dx;
     f32 dy;
@@ -432,18 +432,7 @@ void func_ovl13_02_80048FBC(s32 arg0) {
 
     func_ovl13_02_8004CFC0(0x41D);
     func_ovl13_02_8004362C(0);
-    D_ovl13_02_8004DE80.unk0 = 2;
-    D_ovl13_02_8004DE98.unk0 = 2;
-    D_ovl13_02_8004DEB0.unk0 = 2;
-    D_ovl13_02_8004DE80.unk8 = 0.8f;
-    D_ovl13_02_8004DE98.unk8 = 0.8f;
-    D_ovl13_02_8004DEB0.unk8 = 0.8f;
-    D_ovl13_02_8004DE80.unkC = 0.11f;
-    D_ovl13_02_8004DE98.unkC = 0.11f;
-    D_ovl13_02_8004DEB0.unkC = 0.11f;
-    D_ovl13_02_8004DE80.unk10 = 0.999f;
-    D_ovl13_02_8004DE98.unk10 = 0.999f;
-    D_ovl13_02_8004DEB0.unk10 = 0.999f;
+    func_ovl13_02_800435D4(2, 0.8f, 0.11f, 0.999f);
     D_ovl13_02_8004DEF8 = 1.0f;
     D_ovl13_02_8004DEFC = 0.0f;
     D_ovl13_02_8004DF00 = 50.0f;
@@ -1346,7 +1335,7 @@ void func_ovl13_02_800489C0(s32 arg0) {
     s32 padt[1]; /* fake: unused, frame space the original has (no source for it found) */
     f32 spA0[3];
     f32 sp94[3];
-    f32 pad[7]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 pad[3]; /* fake: unused, frame space the original has (no source for it found) */
     s32 var_s0;
     s32 var_s1;
     s32 var_s5;
@@ -1378,18 +1367,7 @@ void func_ovl13_02_800489C0(s32 arg0) {
     func_ovl13_02_8004CFC0(0x41D);
     func_ovl13_02_8004D2D0(0xDE);
     func_ovl13_02_8004362C(1);
-    D_ovl13_02_8004DE80.unk0 = 2;
-    D_ovl13_02_8004DE98.unk0 = 2;
-    D_ovl13_02_8004DEB0.unk0 = 2;
-    D_ovl13_02_8004DE80.unk8 = 0.8f;
-    D_ovl13_02_8004DE98.unk8 = 0.8f;
-    D_ovl13_02_8004DEB0.unk8 = 0.8f;
-    D_ovl13_02_8004DE80.unkC = 0.11f;
-    D_ovl13_02_8004DE98.unkC = 0.11f;
-    D_ovl13_02_8004DEB0.unkC = 0.11f;
-    D_ovl13_02_8004DE80.unk10 = 0.999f;
-    D_ovl13_02_8004DE98.unk10 = 0.999f;
-    D_ovl13_02_8004DEB0.unk10 = 0.999f;
+    func_ovl13_02_800435D4(2, 0.8f, 0.11f, 0.999f);
     D_ovl13_02_8004DEF8 = 1.0f;
     D_ovl13_02_8004DEFC = 0.0f;
     D_ovl13_02_8004DF00 = 20.0f;
@@ -1575,7 +1553,6 @@ void func_ovl13_02_800484B4(arg0) UnkStructA *arg0; {
 void func_ovl13_02_800480EC(s32 arg0) {
     f32 sp44[3];
     f32 sp38[3];
-    f32 pad[3]; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl13_02_8004CBF8(D_ovl13_02_8004DE3C, 0x08000000);
     func_ovl13_02_8004511C();
@@ -1593,18 +1570,7 @@ void func_ovl13_02_800480EC(s32 arg0) {
     func_ovl13_02_8004CA98(0x20);
     func_ovl13_02_8004CAC0(50.0f);
     D_ovl13_02_8004DE50[0]->unk50 = 10.0f;
-    D_ovl13_02_8004DE80.unk0 = 2;
-    D_ovl13_02_8004DE98.unk0 = 2;
-    D_ovl13_02_8004DEB0.unk0 = 2;
-    D_ovl13_02_8004DE80.unk8 = 0.8f;
-    D_ovl13_02_8004DE98.unk8 = 0.8f;
-    D_ovl13_02_8004DEB0.unk8 = 0.8f;
-    D_ovl13_02_8004DE80.unkC = 0.22f;
-    D_ovl13_02_8004DE98.unkC = 0.22f;
-    D_ovl13_02_8004DEB0.unkC = 0.22f;
-    D_ovl13_02_8004DE80.unk10 = 0.999f;
-    D_ovl13_02_8004DE98.unk10 = 0.999f;
-    D_ovl13_02_8004DEB0.unk10 = 0.999f;
+    func_ovl13_02_800435D4(2, 0.8f, 0.22f, 0.999f);
     sp44[0] = M2C_FIELD(&D_ovl13_02_8004DD10, f32 *, 0);
     sp44[1] = M2C_FIELD(&D_ovl13_02_8004DD10, f32 *, 4) + 5000.0f;
     sp44[2] = M2C_FIELD(&D_ovl13_02_8004DD10, f32 *, 8);

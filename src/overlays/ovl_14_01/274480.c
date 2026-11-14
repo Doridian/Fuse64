@@ -1365,10 +1365,6 @@ void func_ovl14_01_80048DE8(s32 arg0) {
     s32 id;
     s32 r;
     s32 i;
-    s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
-    s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
-    s32 pad3; /* fake: unused, frame space the original has (no source for it found) */
-    s32 pad4; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl14_01_80044B38(&D_ovl14_01_8004D4A0, 10);
     D_ovl14_01_8004D6E0.x = D_ovl14_01_8004D5F4->unk40->unk10;
@@ -1429,8 +1425,8 @@ void func_ovl14_01_80048DE8(s32 arg0) {
     }
     func_ovl14_01_80044B38(&D_ovl14_01_8004D518, 20);
     if (r == 0 && func_ovl14_01_80044FDC() == 0) {
-        func_ovl14_01_8004C9E8(func_ovl14_01_80045474, (void *) 0, 0, 0, 0x110);
-        func_ovl14_01_8004C9E8(func_ovl14_01_80045474, (void *) 1, 0, 0, 0x110);
+        func_ovl14_01_80045FA0((void *) 0);
+        func_ovl14_01_80045FA0((void *) 1);
         for (i = 0; i < 240 && r == 0 && func_ovl14_01_80044FDC() == 0; i++) {
             r = func_ovl14_01_80046AE8();
             func_ovl14_01_8004CA30();

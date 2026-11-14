@@ -1421,7 +1421,6 @@ void func_ovl15_02_8004D660() {
 void func_ovl15_02_8004D3BC(s32 *arg0, s32 *arg1, s32 *arg2) {
     s32 n;
     Vec3f pos;
-    s32 pad[4]; /* fake: unused, frame space the original has (no source for it found) */
 
     if (*arg0 == 0 && D_ovl15_02_80051408 != 0) {
         n = func_ovl15_02_80047AF4(D_ovl15_02_8005140C);
@@ -1440,7 +1439,7 @@ void func_ovl15_02_8004D3BC(s32 *arg0, s32 *arg1, s32 *arg2) {
     if (*arg2 == 0 && D_ovl15_02_80051400 != 0 && D_ovl15_02_80051408 != 0) {
         n = func_ovl15_02_80047AF4(D_ovl15_02_80051420);
         if (n > 0) {
-            func_ovl15_02_80050708(func_ovl15_02_8004CD68, D_ovl15_02_80051420, 0, 0, 0x150);
+            func_ovl15_02_8004CE64(D_ovl15_02_80051420);
             *arg2 = 120;
         }
         D_ovl15_02_80051400 -= n;
@@ -1459,7 +1458,7 @@ void func_ovl15_02_8004D3BC(s32 *arg0, s32 *arg1, s32 *arg2) {
     if (*arg1 == 0 && D_ovl15_02_80051404 != 0 && D_ovl15_02_80051408 != 0) {
         n = func_ovl15_02_80047AF4(D_ovl15_02_80051538[2]);
         if (n > 0) {
-            func_ovl15_02_80050708(func_ovl15_02_8004CD68, D_ovl15_02_80051538[2], 0, 0, 0x150);
+            func_ovl15_02_8004CE64(D_ovl15_02_80051538[2]);
             *arg1 = 120;
         }
         D_ovl15_02_80051404 -= n;

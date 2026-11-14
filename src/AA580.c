@@ -113,8 +113,9 @@
  *   td is the local area (declared locals, inlined statics' parameters
  *   and locals, compiler temps such as ABS's). Ours had td 248 (c at
  *   0x54); the original's is 244 (0x58, same frame 336). Removing
- *   09FC's pad6 drops td by 8 (alignment); "s32 qq[1];" as the first
- *   local of the inlined func_8029085C adds back exactly 4 (35 -> 20).
+ *   09FC's pad6 drops td by 8 (alignment); one local in the inlined
+ *   func_8029085C adds back exactly 4 (35 -> 20): the angle sum held in
+ *   `a` before the call (pass 2; it was a `s32 qq[1]` pad).
  * Left (23, p6): 09FC (20): the corner's r in a0 (it shares one range with
  *   the else branch's r; a fresh variable gets v0) and the unk44
  *   branch's p in v0, both v1 in the original, plus the t7/t9 rotation
@@ -642,12 +643,13 @@ static void func_8029087C(UnkStruct_802909FC *ctx) {
 }
 
 static void func_8029085C(UnkStruct_802909FC *ctx, f32 angle) {
-    s32 qq[1]; /* fake: frame slot (header) */
+    f32 a;
     ctx->unk10 = (ctx->unk0->unk40->unk10 + 50.0f) * 0.01f;
     ctx->unk18 = (ctx->unk0->unk40->unk18 + 50.0f) * 0.01f;
+    a = ctx->unk8 + angle;
     ctx->unk14
 #line 679 /* fake: numbering for as1 order */
-        = func_8026EE18(ctx->unk8 + angle);
+        = func_8026EE18(a);
 }
 
 #define func_802909FC_slope(c) ((c) == 3 || (c) == 4 || (c) == 5 || (c) == 6)

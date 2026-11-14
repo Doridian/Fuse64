@@ -71,7 +71,7 @@ set(N64_FLAGS -std=gnu89 -O2 -g -fsigned-char -fno-strict-aliasing -fwrapv -fno-
     -Wno-everything -Werror=implicit-function-declaration -Werror=int-conversion
     -Werror=incompatible-pointer-types -Werror=return-mismatch
     ${SAN_FLAGS})
-set(HOST_FLAGS -O2 -g -Wall -Wno-unused-function ${SAN_FLAGS})
+set(HOST_FLAGS -O2 -g -Wall -Wno-unused-function -ffp-contract=off ${SAN_FLAGS})
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86|i.86|AMD64|x86_64)" AND NOT EMSCRIPTEN)
     # i386: SSE arithmetic (x87 rounds otherwise), doubles and long longs
     # 8-aligned as MIPS o32 has them

@@ -27,6 +27,16 @@
 
 #include "host.h"
 
+static inline float ffloor(float f) {
+    int i = (int)f;
+    return (float)(f < (float)i ? i - 1 : i);
+}
+
+static inline float fceil(float f) {
+    int i = (int)f;
+    return (float)(f > (float)i ? i + 1 : i);
+}
+
 /* ---- addresses -------------------------------------------------------------------- */
 
 static uintptr_t seg[16];
@@ -462,13 +472,13 @@ static void sample(int tile, float s, float t, float *o) {
     }
     int filt = (gs.om_h >> 12) & 3;
     if (filt == 0 || ((gs.om_h >> 20) & 3) == 2) {      /* point (or copy mode) */
-        texel(tl, (int)floorf(s), (int)floorf(t), o);
+        texel(tl, (int)ffloor(s), (int)ffloor(t), o);
         return;
     }
     /* bilinear (the RDP's is a 3-point filter; this is close) */
     s -= 0.5f;
     t -= 0.5f;
-    int s0 = (int)floorf(s), t0 = (int)floorf(t);
+    int s0 = (int)ffloor(s), t0 = (int)ffloor(t);
     float fs = s - s0, ft = t - t0;
     float c00[4], c10[4], c01[4], c11[4];
     texel(tl, s0, t0, c00);
@@ -550,29 +560,47 @@ static void cc_decode(void) {
     }
 }
 
-static void combine(const Inputs *in, float *out) {
-    float slot[S_NSLOTS][4];
-    int cycles = ccd.cyc == 1 ? 2 : 1;
-    memcpy(slot[S_TEX0], in->tex0, 16);
-    memcpy(slot[S_TEX1], in->tex1, 16);
-    memcpy(slot[S_SHADE], in->shade, 16);
+/* the slots, the constant ones set once a primitive (cc_begin) */
+static float slot[S_NSLOTS][4];
+
+/* the noise input and the blender's dither: a generator of the renderer's
+   own, the same on every host (rand()'s isn't) */
+static uint32_t noise_state = 0x12345678u;
+static uint32_t noise8(void) {
+    noise_state ^= noise_state << 13;
+    noise_state ^= noise_state >> 17;
+    noise_state ^= noise_state << 5;
+    return noise_state & 255;
+}
+
+static void cc_begin(void) {
+    cc_decode();
     for (int k = 0; k < 4; k++) {
         slot[S_PRIM][k] = gs.prim[k];
         slot[S_ENV][k] = gs.env[k];
         slot[S_ONE][k] = 255;
         slot[S_ZERO][k] = 0;
+        slot[S_PRIM_A][k] = gs.prim[3];
+        slot[S_ENV_A][k] = gs.env[3];
+        slot[S_LOD][k] = 0;
+        slot[S_PRIM_LOD][k] = gs.prim_lod;
+    }
+}
+
+static void combine(const Inputs *in, float *out) {
+    int cycles = ccd.cyc == 1 ? 2 : 1;
+    memcpy(slot[S_TEX0], in->tex0, 16);
+    memcpy(slot[S_TEX1], in->tex1, 16);
+    memcpy(slot[S_SHADE], in->shade, 16);
+    for (int k = 0; k < 4; k++) {
         slot[S_COMB][k] = 0;
+        slot[S_COMB_A][k] = 0;
         slot[S_TEX0_A][k] = in->tex0[3];
         slot[S_TEX1_A][k] = in->tex1[3];
-        slot[S_PRIM_A][k] = gs.prim[3];
         slot[S_SHADE_A][k] = in->shade[3];
-        slot[S_ENV_A][k] = gs.env[3];
-        slot[S_LOD][k] = in->lodf;
-        slot[S_PRIM_LOD][k] = gs.prim_lod;
-        slot[S_COMB_A][k] = 0;
     }
     if (ccd.noise) {
-        float n = (float)(rand() & 255);
+        float n = (float)noise8();
         for (int k = 0; k < 4; k++)
             slot[S_NOISE][k] = n;
     }
@@ -580,8 +608,8 @@ static void combine(const Inputs *in, float *out) {
         const int8_t *cs = ccd.col[c], *as = ccd.alp[c];
         float r[4];
         for (int k = 0; k < 3; k++)
-            r[k] = (slot[cs[0]][k] - slot[cs[1]][k]) * slot[cs[2]][k] / 255.0f + slot[cs[3]][k];
-        r[3] = (slot[as[0]][3] - slot[as[1]][3]) * slot[as[2]][3] / 255.0f + slot[as[3]][3];
+            r[k] = (slot[cs[0]][k] - slot[cs[1]][k]) * slot[cs[2]][k] * (1.0f / 255.0f) + slot[cs[3]][k];
+        r[3] = (slot[as[0]][3] - slot[as[1]][3]) * slot[as[2]][3] * (1.0f / 255.0f) + slot[as[3]][3];
         for (int k = 0; k < 4; k++) {
             float v = r[k] < 0 ? 0 : r[k] > 255 ? 255 : r[k];
             slot[S_COMB][k] = v;
@@ -634,13 +662,16 @@ static int blend_px(uint8_t *p, float *c, const float *shade) {
         return 0;
     if ((l & 3) == 1 && c[3] == 0)
         return 0;
-    if ((l & 3) == 3 && c[3] < (float)(rand() & 255))
+    if ((l & 3) == 3 && c[3] < (float)noise8())
+        return 0;
+    /* coverage from alpha (ALPHA_CVG_SEL, CVG_X_ALPHA): none, nothing written */
+    if ((l & 0x3000) && c[3] < 1.0f && !force)
         return 0;
     read_mem(p, mem);
     float out[4];
     memcpy(out, c, sizeof out);
     for (int cy = 0; cy < cycles; cy++) {
-        int sh = cy == 0 ? 2 : 0;
+        int sh = cy == 0 ? 0 : 2;     /* (the first cycle's selectors are the top bits) */
         int pm = (l >> (30 - sh)) & 3, a1 = (l >> (26 - sh)) & 3;
         int mm = (l >> (22 - sh)) & 3, b1 = (l >> (18 - sh)) & 3;
         const float *P = pm == 0 ? out : pm == 1 ? mem : pm == 2 ? (const float[]){ gs.blend[0], gs.blend[1], gs.blend[2], gs.blend[3] }
@@ -701,7 +732,6 @@ static void shade_pixel(int x, int y, float z, const float *shade, float s, floa
     Inputs in;
     memcpy(in.shade, shade, sizeof in.shade);
     in.lodf = 0;
-    cc_decode();
     memset(in.tex0, 0, sizeof in.tex0);
     memset(in.tex1, 0, sizeof in.tex1);
     if (textured) {
@@ -724,43 +754,70 @@ static void raster(const SV *a, const SV *b, const SV *c, const float *flat, int
     float area = (x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0);
     if (fabsf(area) < 1e-6f)
         return;
-    int minx = (int)floorf(fminf(x0, fminf(x1, x2))), maxx = (int)ceilf(fmaxf(x0, fmaxf(x1, x2)));
-    int miny = (int)floorf(fminf(y0, fminf(y1, y2))), maxy = (int)ceilf(fmaxf(y0, fmaxf(y1, y2)));
+    int minx = (int)ffloor(fminf(x0, fminf(x1, x2))), maxx = (int)fceil(fmaxf(x0, fmaxf(x1, x2)));
+    int miny = (int)ffloor(fminf(y0, fminf(y1, y2))), maxy = (int)fceil(fmaxf(y0, fmaxf(y1, y2)));
     if (minx < (int)gs.sc_x0) minx = (int)gs.sc_x0;
     if (miny < (int)gs.sc_y0) miny = (int)gs.sc_y0;
     if (maxx > (int)gs.sc_x1) maxx = (int)gs.sc_x1;
     if (maxy > (int)gs.sc_y1) maxy = (int)gs.sc_y1;
+    if (minx >= maxx || miny >= maxy)
+        return;
     int persp = (gs.om_h >> 19) & 1;
     tris++;
+    cc_begin();
+    /* the barycentric weights are linear in x and y: w = wx * x + wy * y + w0
+       (and every attribute with them), stepped along a row */
+    float ia = 1.0f / area;
+    float w0x = -(y2 - y1) * ia, w0y = (x2 - x1) * ia;
+    float w0c = ((x1) * (y2) - (x2) * (y1)) * ia;
+    float w1x = -(y0 - y2) * ia, w1y = (x0 - x2) * ia;
+    float w1c = ((x2) * (y0) - (x0) * (y2)) * ia;
+    /* attributes: z, the shade's four, s, t, 1/w */
+    enum { NA = 8 };
+    float av[3][NA] = {
+        { a->z, a->c[0], a->c[1], a->c[2], a->c[3], a->s, a->t, a->iw },
+        { b->z, b->c[0], b->c[1], b->c[2], b->c[3], b->s, b->t, b->iw },
+        { c->z, c->c[0], c->c[1], c->c[2], c->c[3], c->s, c->t, c->iw },
+    };
+    float gx[NA], gy[NA], g0[NA];
+    for (int k = 0; k < NA; k++) {
+        /* v = w0 * va + w1 * vb + (1 - w0 - w1) * vc */
+        float da = av[0][k] - av[2][k], db = av[1][k] - av[2][k];
+        gx[k] = w0x * da + w1x * db;
+        gy[k] = w0y * da + w1y * db;
+        g0[k] = w0c * da + w1c * db + av[2][k];
+    }
     for (int y = miny; y < maxy; y++) {
-        float py = y + 0.5f;
+        float py = y + 0.5f, px = minx + 0.5f;
+        float w0 = w0x * px + w0y * py + w0c, w1 = w1x * px + w1y * py + w1c;
+        float v[NA];
+        for (int k = 0; k < NA; k++)
+            v[k] = gx[k] * px + gy[k] * py + g0[k];
         for (int x = minx; x < maxx; x++) {
-            float px = x + 0.5f;
-            float w0 = ((x1 - px) * (y2 - py) - (x2 - px) * (y1 - py)) / area;
-            float w1 = ((x2 - px) * (y0 - py) - (x0 - px) * (y2 - py)) / area;
             float w2 = 1 - w0 - w1;
-            if (w0 < -1e-5f || w1 < -1e-5f || w2 < -1e-5f)
-                continue;
-            float z = w0 * a->z + w1 * b->z + w2 * c->z;
-            float sh[4];
-            if (flat) {
-                memcpy(sh, flat, sizeof sh);
-            } else {
-                for (int k = 0; k < 4; k++)
-                    sh[k] = w0 * a->c[k] + w1 * b->c[k] + w2 * c->c[k];
-            }
-            float s = 0, t = 0;
-            if (textured) {
-                if (persp) {
-                    float iw = w0 * a->iw + w1 * b->iw + w2 * c->iw;
-                    s = (w0 * a->s + w1 * b->s + w2 * c->s) / iw;
-                    t = (w0 * a->t + w1 * b->t + w2 * c->t) / iw;
-                } else {
-                    s = w0 * a->s + w1 * b->s + w2 * c->s;
-                    t = w0 * a->t + w1 * b->t + w2 * c->t;
+            if (w0 >= -1e-5f && w1 >= -1e-5f && w2 >= -1e-5f) {
+                float sh[4];
+                if (flat)
+                    memcpy(sh, flat, sizeof sh);
+                else
+                    memcpy(sh, v + 1, sizeof sh);
+                float s = 0, t = 0;
+                if (textured) {
+                    if (persp) {
+                        float iw = 1.0f / v[7];
+                        s = v[5] * iw;
+                        t = v[6] * iw;
+                    } else {
+                        s = v[5];
+                        t = v[6];
+                    }
                 }
+                shade_pixel(x, y, v[0], sh, s, t, textured);
             }
-            shade_pixel(x, y, z, sh, s, t, textured);
+            w0 += w0x;
+            w1 += w1x;
+            for (int k = 0; k < NA; k++)
+                v[k] += gx[k];
         }
     }
 }
@@ -871,6 +928,8 @@ static void fill_rect(uint32_t w0, uint32_t w1) {
             }
         zbuf_owner = gs.zimg;
     }
+    if (cyc < 2)
+        cc_begin();
     for (int y = y0; y < y1; y++)
         for (int x = x0; x < x1; x++) {
             uint8_t *p;
@@ -902,12 +961,13 @@ static void tex_rect(uint32_t w0, uint32_t w1, uint32_t h1, uint32_t h2, int fli
         x1 += 1;
         y1 += 1;
     }
-    int ix0 = (int)x0, iy0 = (int)y0, ix1 = (int)ceilf(x1), iy1 = (int)ceilf(y1);
+    int ix0 = (int)x0, iy0 = (int)y0, ix1 = (int)fceil(x1), iy1 = (int)fceil(y1);
     if (ix0 < (int)gs.sc_x0) ix0 = (int)gs.sc_x0;
     if (iy0 < (int)gs.sc_y0) iy0 = (int)gs.sc_y0;
     if (ix1 > (int)gs.sc_x1) ix1 = (int)gs.sc_x1;
     if (iy1 > (int)gs.sc_y1) iy1 = (int)gs.sc_y1;
     int save_tile = gs.tex_tile;
+    cc_begin();
     gs.tex_tile = tile;
     for (int y = iy0; y < iy1; y++)
         for (int x = ix0; x < ix1; x++) {

@@ -89,6 +89,20 @@ extern uintptr_t port_v0;
 #define PORT_RET(ido, def) ido
 #endif
 
+/*
+ * A word the game keeps in the N64's byte order (the EEPROM's header, read
+ * and written as an s32 where the rest of the save is bytes): in the port
+ * read and written big-endian, so that a save is the same file on every
+ * host.  For IDO the expression `ido` as it is.
+ */
+#ifdef TARGET_PC
+#define PORT_BE32_GET(ido, p) ((s32)port_get_be32(p))
+#define PORT_BE32_SET(ido, p, v) port_set_be32((p), (v))
+#else
+#define PORT_BE32_GET(ido, p) (ido)
+#define PORT_BE32_SET(ido, p, v) ((ido) = (v))
+#endif
+
 /* a statement of the port's alone (after a load: port_native32 and the
  * like, port_game.h), on the line of what it follows */
 #ifdef TARGET_PC

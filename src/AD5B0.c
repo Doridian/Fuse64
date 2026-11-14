@@ -196,7 +196,7 @@ s32 func_80294E54(void) {
         func_80294DC0();
         return -1;
     }
-    if (*(s32 *) D_80063000 != 0x42414B55 || (D_80063004 & 0xFFFF00) != 0x487500) {
+    if (PORT_BE32_GET(*(s32 *) D_80063000, D_80063000) != 0x42414B55 || (PORT_BE32_GET(D_80063004, &D_80063004) & 0xFFFF00) != 0x487500) {
         if (func_80294DC0() != 0) {
             return -1;
         }
@@ -234,7 +234,7 @@ s32 func_80294E54(void) {
 
 s32 func_80294D34(u8 *hdr) {
     D_802A1DB8 = 1;
-    *(s32 *) hdr = 0x42414B55;
+    PORT_BE32_SET(*(s32 *) hdr, hdr, 0x42414B55);
     hdr[4] = (D_802A1DB0 << 7) | (D_802A1DAC << 6) | (D_802A1DA8 << 5) | 2;
     hdr[5] = 0x48;
     hdr[6] = 0x75;

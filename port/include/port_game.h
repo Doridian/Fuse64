@@ -25,6 +25,19 @@ void *port_overlay_load(int bank, int entry);
 /* 13F0's segment loader: the entry of ROM segment seg (main_code's, 2) */
 void *port_segment_entry(int seg);
 
+/* a big-endian word at p (include/common.h's PORT_BE32_GET/SET) */
+static inline unsigned int port_get_be32(const void *p) {
+    const unsigned char *b = (const unsigned char *)p;
+    return ((unsigned int)b[0] << 24) | ((unsigned int)b[1] << 16) | ((unsigned int)b[2] << 8) | b[3];
+}
+static inline void port_set_be32(void *p, unsigned int v) {
+    unsigned char *b = (unsigned char *)p;
+    b[0] = v >> 24;
+    b[1] = v >> 16;
+    b[2] = v >> 8;
+    b[3] = v;
+}
+
 /* Byte order (port/src/native.c): ROM bytes that arrived, put in the
    host's order: n bytes of 32-bit or 16-bit data, and a file of the asset
    cache by what it is.  The identity on a big-endian host. */

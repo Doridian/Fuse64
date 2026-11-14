@@ -106,9 +106,9 @@
  *   function's own, which as1's scheduler reads (the prologue's order);
  *   its object is read as `*D_ovl0F_04_800485C4[idx].unk0`, not through
  *   a pointer local, so uopt knows it doesn't alias the mover (`.noalias`,
- *   the load ahead of the mover's stores). An empty `if (!idx) {}` (a
- *   fake) keeps idx in a0 and spills idx and flag at the call (78 words
- *   without it). It matches.
+ *   the load ahead of the mover's stores). A compiled-out debug check of
+ *   idx at entry keeps idx in a0 and spills idx and flag at the call (78
+ *   words without it). It matches.
  * - 800439DC matches. Its own line (`#line 1376` before it, `#line 1368`
  *   after, so its body keeps its numbers), which the hoisted
  *   `li.s $f20, 0.0` and the prologue carry, must be at least 2 past its
@@ -961,8 +961,8 @@ void func_ovl0F_04_80044D34(s32 idx, s32 flag) {
     UnkStruct_ovl0F_04_80048534 *m;
     UnkStructA *obj;
 
-    /* fake: an empty test of idx keeps it in a0 and spills it and flag at the call (78 to 0) */
-    if (!idx) {
+    if (idx < 0) { /* a compiled-out debug check (the condition is a guess: any test of idx matches) */
+        DEBUG_PRINT(("idx < 0\n"));
     }
     func_ovl0F_04_80044D2C(idx);
     m = &D_ovl0F_04_80048534[idx];

@@ -33,7 +33,7 @@
  * sound) returns s32: as void, uopt kept 8004386C's temporaries in $v0
  * where the original has $v1. The .bss's unreferenced words (800492E0,
  * 8004930C, 8004A33C, 8004A3FC, 8004A418) are arrays, which would be
- * common: the dead `if (0)` in the stub 80047464 refers to them, and they
+ * common: the unused static 80047464 refers to them, and they
  * take their places in definition order.
  *
  * 8004386C is a while (TRUE) over switch (state), each case ending
@@ -427,13 +427,11 @@ s32 D_ovl0B_03_8004A410;
 s32 D_ovl0B_03_8004A414;
 u8 D_ovl0B_03_8004A418[8];
 
-/* An unused empty static (the original keeps its stub). Its dead `if (0)`
+/* An unused static (the original keeps its stub; its body is dropped). It
  * refers to the .bss words nothing else uses, which would otherwise be
  * common and leave .bss short. */
 static void func_ovl0B_03_80047464(void) {
-    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
-        D_ovl0B_03_800492E0[0] = D_ovl0B_03_8004930C[0] = D_ovl0B_03_8004A33C[0] = D_ovl0B_03_8004A3FC[0] = D_ovl0B_03_8004A418[0] = 0;
-    }
+    D_ovl0B_03_800492E0[0] = D_ovl0B_03_8004930C[0] = D_ovl0B_03_8004A33C[0] = D_ovl0B_03_8004A3FC[0] = D_ovl0B_03_8004A418[0] = 0;
 }
 
 /* An unused empty static (the original keeps its stub). */

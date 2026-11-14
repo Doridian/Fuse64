@@ -516,12 +516,10 @@ static void func_ovl0B_02_800481E8(void) {
 /* unused: the stub IDO -O3 leaves at the end of the object; it refers to
  * the .bss nothing else uses, which would otherwise be common */
 static void func_ovl0B_02_800482D0(void) {
-    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
-        D_ovl0B_02_8004A380[0] = D_ovl0B_02_8004A3A0[0] = D_ovl0B_02_8004A3A8 = 0;
+    D_ovl0B_02_8004A380[0] = D_ovl0B_02_8004A3A0[0] = D_ovl0B_02_8004A3A8 = 0;
 #if VERSION_JP
-        D_ovl0B_02_8004A3B0_jp = D_ovl0B_02_8004A3B4_jp = 0;
+    D_ovl0B_02_8004A3B0_jp = D_ovl0B_02_8004A3B4_jp = 0;
 #endif
-    }
 }
 
 void func_ovl0B_02_80047BFC(void) {

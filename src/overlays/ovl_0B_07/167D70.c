@@ -7,8 +7,8 @@
  * IDO -O3: the functions are written last to first. The tail (80045438,
  * 800453F0, 800453BC, 80045494 and the twelve empty stubs) is ovl_17_10's;
  * the .bss nothing here uses (D_ovl0B_07_80046DF0, ..E1C, ..F38) would
- * come out common (.bss 0x120): a dead `if (0)` in the stub 80045504
- * keeps it in place. The statics 80043544 (the buttons of every
+ * come out common (.bss 0x120): stores in the unused static 80045504
+ * (its body is dropped) keep it in place. The statics 80043544 (the buttons of every
  * controller; it uses its callers' $s0-$s2) and 8004359C (arg0 in $s2,
  * arg1 in $s1) are defined below the handler.
  * 80043594 is the x that centres a text at a scale: inlined in us (its
@@ -237,13 +237,11 @@ Vtx_ovl0B_07 D_ovl0B_07_80046CF0[4] = {
     { { { -8, -2, 0 }, 0, { 0, 0 }, { 0xFF, 0x00, 0x00, 0xFF } } },
 };
 
-/* unused: the stubs IDO -O3 leaves at the end of the object; the dead
- * `if (0)` in this one refers to the .bss nothing else uses, which would
+/* unused: the stubs IDO -O3 leaves at the end of the object (their bodies
+ * are dropped); this one refers to the .bss nothing else uses, which would
  * otherwise be common */
 static void func_ovl0B_07_80045504(void) {
-    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
-        D_ovl0B_07_80046DF0[0] = D_ovl0B_07_80046E1C[0] = D_ovl0B_07_80046F38[0] = 0;
-    }
+    D_ovl0B_07_80046DF0[0] = D_ovl0B_07_80046E1C[0] = D_ovl0B_07_80046F38[0] = 0;
 }
 
 static void func_ovl0B_07_800454FC(void) {

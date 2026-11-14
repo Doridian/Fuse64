@@ -33,13 +33,15 @@
  * The 14 stubs (two `jr ra` in a row): 8004A200 is the camera reset
  * 8004A208, 8004A2D4 and 8004A4C4 share (inlined in each), 8004A4AC-BC
  * statics inlined in 8004A4C4; 8004A898-8004A8E0 are the ten unused
- * statics after the tail, defined first in ascending order.
+ * statics after the tail, defined in ascending order (the first nine
+ * first, 8004A8E0 last of all).
  *
  * D_ovl13_01_8004C3D0/C3D4 (800455D0) and C3D8 (80045538) are
  * function-scope statics, the last three words of .bss but for C3DC-C3EC:
  * as file-scope globals uopt keeps their address in a register, where the
  * original reloads it with lui each time. The .bss nothing uses would be
- * common: dead `if (0)`s refer to it (8004A898, and 80043010 for C3DC).
+ * common: the unused statics refer to it (8004A898, and 8004A8E0 for C3DC:
+ * their bodies are dropped).
  *
  * What it took, function by function:
  * - 800431D4: its thresholds are `(s32)(frames * 0.25f)` and `* 0.95f`
@@ -385,13 +387,11 @@ s32 D_ovl13_01_8004BF3C = 0;
 s32 D_ovl13_01_8004BF40 = 0;
 s32 D_ovl13_01_8004BF44 = 0;
 
-/* unused: the stubs IDO -O3 leaves after the tail; the dead `if (0)` in
- * the first refers to the .bss words nothing else uses (but C3DC), which
- * would otherwise be common and leave .bss short */
+/* unused: the stubs IDO -O3 leaves after the tail (an unused static's
+ * body is dropped); the first refers to the .bss words nothing else uses
+ * (but C3DC), which would otherwise be common and leave .bss short */
 static void func_ovl13_01_8004A898(void) {
-    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
-        D_ovl13_01_8004C20C[0] = D_ovl13_01_8004C220[0] = D_ovl13_01_8004C22C[0] = D_ovl13_01_8004C26C[0] = D_ovl13_01_8004C2D4[0] = D_ovl13_01_8004C2EC[0] = D_ovl13_01_8004C304[0] = D_ovl13_01_8004C32C[0] = D_ovl13_01_8004C344[0] = D_ovl13_01_8004C364[0] = D_ovl13_01_8004C374[0] = D_ovl13_01_8004C384[0] = D_ovl13_01_8004C394[0] = D_ovl13_01_8004C3A4[0] = 0;
-    }
+    D_ovl13_01_8004C20C[0] = D_ovl13_01_8004C220[0] = D_ovl13_01_8004C22C[0] = D_ovl13_01_8004C26C[0] = D_ovl13_01_8004C2D4[0] = D_ovl13_01_8004C2EC[0] = D_ovl13_01_8004C304[0] = D_ovl13_01_8004C32C[0] = D_ovl13_01_8004C344[0] = D_ovl13_01_8004C364[0] = D_ovl13_01_8004C374[0] = D_ovl13_01_8004C384[0] = D_ovl13_01_8004C394[0] = D_ovl13_01_8004C3A4[0] = 0;
 }
 
 static void func_ovl13_01_8004A8A0(void) {
@@ -416,9 +416,6 @@ static void func_ovl13_01_8004A8D0(void) {
 }
 
 static void func_ovl13_01_8004A8D8(void) {
-}
-
-static void func_ovl13_01_8004A8E0(void) {
 }
 
 void func_ovl13_01_8004A880(void) {
@@ -2126,8 +2123,8 @@ void func_ovl13_01_80045538(void) {
 }
 
 /* The last of .bss, after the function-scope statics C3D0-C3D8, so defined
- * after their functions. C3DC is kept out of common by the dead `if (0)` in
- * 80043010, the last function (a reference earlier in the source puts it
+ * after their functions. C3DC is kept out of common by the unused static
+ * 8004A8E0, defined last of all (a reference earlier in the source puts it
  * before the statics; one in 800450B4 changes that function's code). IDO
  * puts C3E0, used before its definition, after everything else, so the
  * unused word after it is part of it. */
@@ -2810,10 +2807,6 @@ void func_ovl13_01_8004306C(s32 arg0) {
 }
 
 void func_ovl13_01_80043010(void) {
-    /* keeps D_ovl13_01_8004C3DC out of common (see its definition) */
-    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
-        D_ovl13_01_8004C3DC[0] = 0;
-    }
     if (!(*D_ovl13_01_8004C23C & 2)) {
         if (func_ovl13_01_8004B9F0(0xA4) == 0) {
             func_ovl13_01_8004B7A8(0x73);
@@ -2823,3 +2816,7 @@ void func_ovl13_01_80043010(void) {
     func_ovl13_01_8004B798();
 }
 
+/* the last unused static (stubs come out in definition order); it refers to C3DC */
+static void func_ovl13_01_8004A8E0(void) {
+    D_ovl13_01_8004C3DC[0] = 0;
+}

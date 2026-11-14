@@ -2,8 +2,8 @@
  * main_code's 93850, IDO -O3; it matches in us, eu and jp: the list of
  * bonus items at D_800BB4A8 (func_80279050 to func_8027A144, the list's
  * thread). The C is written last function first, as -O3 emits it. The
- * fakes in func_802797BC: the dead `if (sound) {}` that ends cases 2
- * and 3 lets as1 fill the delay slot after the func_80243DDC compare
+ * fakes in func_802797BC: the dead `if (sound) {}` that ends case 3
+ * (case 2's is no longer needed) lets as1 fill the delay slot after the func_80243DDC compare
  * with li a1,32 as the original does (without it, a nop and one word
  * more), and the dead `if (&D_800BA8A0[i] == 0) {}` after their
  * D_800AEDF0 store makes the D_800BA8A0 address live across that store,
@@ -418,8 +418,6 @@ void func_802797BC(UnkStruct_80279050_14 *arg0, UnkStruct_800BB4A8 *arg1) {
             if (&D_800BA8A0[i] == 0) {} /* fake: see the header */
             sound = 5;
             D_800BA8A0[i].unk4++;
-            if (sound) { /* fake: see the header */
-            }
             break;
         case 3:
             D_800AEDF0[i].unk18 |= 2;

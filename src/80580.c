@@ -33,7 +33,7 @@
  * from inlining it into the others. 8026724C's unused second SndDef
  * and 80268440's pad give the original's frame sizes.
  * 80267A18 has the original's size and s-registers: the dead `if (op ==
- * K) {}` tests and `if (idx) {}` give its constants their s-registers.
+ * K) {}` tests give its constants their s-registers.
  * Its frame (def at 0x80, vol at 0x5E, a spill at 0x20) is built from
  * the inlined statics' areas, laid out in call order: the stop loop
  * resets each child through 80266928 (no block-scoped local in
@@ -2645,9 +2645,6 @@ static void func_802660B4(void) {
     s32 i;
     Voice *v;
 
-    if (0) {
-        func_80298710(0);
-    }
     for (i = 0; i < D_802A12BC; i++) {
         v = &D_802AD654[i];
         if (v->state == 1) {

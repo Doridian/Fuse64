@@ -577,15 +577,11 @@ void func_8026F5E8(s32 arg0, s32 arg1, s32 arg2) {
     sp24 = *func_8023A840() & 6;
     temp_v0 = func_8026D7D8(arg0, arg1, arg2);
     if (temp_v0 & 0x380) {
-        /* fake: x and y appear first, so uopt colours them f2 and f12;
-         * the dead read of pos[1] gives z f16 */
+        /* fake: x and y set first (dead stores), so uopt colours them f2
+         * and f12; the dead read of pos[1] gives z f16 */
         x = 0.0f;
         y = 0.0f;
-        if (x) {
-        }
         if (pos[1]) {
-        }
-        if (y) {
         }
         pos[0] = arg0 * 100.0f;
         pos[1] = func_8026E2B0((f32) arg1);
@@ -1300,8 +1296,6 @@ void func_8026DCAC(f32 arg0, f32 arg1, f32 arg2, void *arg3, s32 arg4) {
     }
     if (arg1 < 0.0f) {
         ((Unk8026DCAC *) arg3)->i[1] = -1;
-        if (layer) { /* fake: keeps layer in a2 */
-        }
     }
     ix = ((Unk8026DCAC *) arg3)->i[0];
     ((Unk8026DCAC *) arg3)->f[0] = arg0 - (f32) ix * 100.0f;

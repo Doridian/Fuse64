@@ -57,9 +57,9 @@
  * position a pointer, p (not fakes; p took the old padA's place); and
  * at least three of the unused st, rec, step,
  * player (else the unk16 store addresses the symbol, 2 words).
- * 80043028 has one fake: an empty `if (D_ovl0F_04_8004848C) {}` after the
- * D_ovl0F_04_8004847C store, which keeps the reloaded value live so it
- * gets f2 and the product f12 (20 words without it).
+ * 80043028's unused local, level (D_ovl0F_04_8004848C read first: once an
+ * empty test after the D_ovl0F_04_8004847C store), keeps the reloaded value
+ * live so it gets f2 and the product f12 (20 words without it).
  *
  * as1 orders the instructions of a block partly by their `.loc` lines,
  * whatever the file, and a change of file (ugen's `.file`) ends a block.
@@ -1636,6 +1636,7 @@ static void func_ovl0F_04_80043028(void) {
     f32 d;
     f32 a;
     f32 b;
+    f32 level = D_ovl0F_04_8004848C; /* unused */
 
     a = 300.0f;
     b = 180.0f;
@@ -1670,8 +1671,6 @@ static void func_ovl0F_04_80043028(void) {
     }
     d = D_ovl0F_04_8004848C * 0.5f;
     D_ovl0F_04_8004847C = d;
-    if (D_ovl0F_04_8004848C) { /* fake: a dead test, for the register allocation or schedule */
-    }
     D_ovl0F_04_80048480 = 0.0f;
 }
 

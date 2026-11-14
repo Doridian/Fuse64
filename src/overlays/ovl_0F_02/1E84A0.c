@@ -1589,6 +1589,7 @@ static void func_ovl0F_02_80043028(void) {
     f32 d;
     f32 a;
     f32 b;
+    f32 level = D_ovl0F_02_800485FC; /* unused */
 
     a = 300.0f;
     b = 180.0f;
@@ -1623,8 +1624,6 @@ static void func_ovl0F_02_80043028(void) {
     }
     d = D_ovl0F_02_800485FC * 0.5f;
     D_ovl0F_02_800485EC = d;
-    if (D_ovl0F_02_800485FC) { /* fake: a dead test, for the register allocation or schedule */
-    }
     D_ovl0F_02_800485F0 = 0.0f;
 }
 

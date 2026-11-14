@@ -1410,7 +1410,9 @@ void func_ovl13_01_800477C0(void) {
         }
     }
     D_ovl13_01_8004C328->unk4C = W360(D_ovl13_01_8004C328->unk4C + diff);
-    if (!diff) {} /* fake: a dead test, for the register allocation or schedule */
+    if (diff > 180.0f || diff < -180.0f) { /* a compiled-out debug check (a guess: any test of diff matches) */
+        DEBUG_PRINT(("diff\n"));
+    }
     cur = (rot.y >= 0.0f && rot.y <= 180.0f) ? rot.y : (360.0f - rot.y) * -1.0f;
     n = (D_ovl13_01_8004C328->unk50 >= 0.0f && D_ovl13_01_8004C328->unk50 <= 180.0f) ? D_ovl13_01_8004C328->unk50 : (360.0f - D_ovl13_01_8004C328->unk50) * -1.0f;
     diff = cur - n;
@@ -1760,7 +1762,7 @@ void func_ovl13_01_80046800(void) {
 void func_ovl13_01_800465FC(f32 *arg0, f32 *arg1) {
     f32 d;
     f32 lim;
-    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 hi; /* the clamp's upper limit held (a guess: any held value fills the slot) */
     Vec3f sp38;
     Vec3f sp2C;
 
@@ -1776,9 +1778,10 @@ void func_ovl13_01_800465FC(f32 *arg0, f32 *arg1) {
     if (d < -180.0f) {
         d += 360.0f;
     }
-    lim = -1.0f * D_ovl13_01_8004C24C;
-    if (D_ovl13_01_8004C24C < d) {
-        d = D_ovl13_01_8004C24C;
+    hi = D_ovl13_01_8004C24C;
+    lim = -1.0f * hi;
+    if (hi < d) {
+        d = hi;
     }
     if (d < lim) {
         d = lim;
@@ -2014,7 +2017,7 @@ void func_ovl13_01_800455D0(s32 arg0) {
     Vec3f sp6C;
     Vec3f sp60;
     Vec3f sp54;
-    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 frames; /* the approach's length held (a guess: any held value fills the slot, 800.0f too) */
     f32 sp4C;
     f32 speed;
     s32 i;
@@ -2044,7 +2047,8 @@ void func_ovl13_01_800455D0(s32 arg0) {
     sp6C.z += D_ovl13_01_8004C200.z;
     func_ovl13_01_8004B5C8(&D_ovl13_01_8004C388.x, &sp6C.x, &sp54.x);
     sp54.y = (sp54.y - 90.0f >= 360.0f) ? sp54.y - 90.0f - 360.0f : (sp54.y < 90.0f) ? sp54.y - 90.0f + 360.0f : sp54.y - 90.0f;
-    speed = sp54.z / 45.0f;
+    frames = 45.0f;
+    speed = sp54.z / frames;
     sp4C = (speed / 90) * -1.0f;
     D_ovl13_01_8004C2A8 = 4.0f;
     D_ovl13_01_8004C2A4 = 4.0f;
@@ -2224,11 +2228,12 @@ void func_ovl13_01_800446FC(void) {
     f32 z;
     f32 step;
     Vec3f sp84;
-    f32 pad80; /* fake: unused, frame space the original has (no source for it found) */
+    f32 k; /* the approach speed's factor held (a guess: any held value fills the slot) */
     f32 sp7C;
     s32 i;
     s32 n;
 
+    k = 0.2f;
     D_ovl13_01_8004C2A8 = 1.0f;
     func_ovl13_01_8004B5C8(&D_ovl13_01_8004C260.x, &D_ovl13_01_8004C388.x, &spB4.x);
     a = spB4.x + 90.0f;
@@ -2271,12 +2276,14 @@ void func_ovl13_01_800446FC(void) {
     a = spB4.x + 180.0f;
     a = (a >= 360.0f) ? a - 360.0f : ((a < 0.0f) ? a + 360.0f : a);
     z = 0.0f;
-    sp7C = D_ovl13_01_8004C338->unk70 * 0.2f;
+    sp7C = D_ovl13_01_8004C338->unk70 * k;
     while (func_ovl13_01_8004B5E0(&D_ovl13_01_8004C260.x, &D_ovl13_01_8004C388.x) > 100.0f) {
         if (func_ovl13_01_80043830() >= 2) {
             break;
         }
-        if (z == 1.0f) {} /* fake: 1.0f's range is decided before 90.0f's piece is split */
+        if (z > 1.0f) { /* a compiled-out debug check (a guess: z == / >= 1.0f match too, the 1.0f compare is what counts) */
+            DEBUG_PRINT(("z\n"));
+        }
         func_ovl13_01_8004B5C8(&D_ovl13_01_8004C388.x, &D_ovl13_01_8004C260.x, &spA8.x);
         if (a == 90.0f) {} /* fake: 90.0f in $f14 */
         if (spA8.y - 90.0f >= 360.0f) {

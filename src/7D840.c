@@ -314,7 +314,6 @@ static s32 func_80263E6C(f32 u, f32 v, f32 du, f32 dv, f32 w, f32 h, RectF *r) {
     f32 wm;
     f32 hm;
     s32 flags;
-    s32 pad5;
     RectF *p;
 
     u0 = func_80263DC8(u, w);

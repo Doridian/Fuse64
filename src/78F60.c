@@ -14,15 +14,14 @@
  *   or t is masked, `(... << 5) & 0xFFFF`, the RNDF ones aren't: the mask
  *   costs no instruction (as1 drops it before the shift) but is one more
  *   ugen temp, which realigns the t6-t9 free list.
- * - func_8025EC44: `if (!scaleX) {}` after the call makes scaleY the
- *   float kept in memory. `pad1 = i + 1` (a dead store) before case 2's
- *   yl line gives i + 1 and j + 1 their expression bits ahead of
- *   ucvt(y1), so uopt's temp slots come out at 0x3C/0x38. `if (flags ==
- *   3) {}` first in the outer body lowers the shared count at node 23
- *   (Chow's addadjacents), so j + 1's split piece reaches the outer head
- *   and lives in v0. `if (!(tileH - i)) {}` after case 1's t line keeps
- *   those temp slots, and `if (!(height)) {}` before the th clamp gives
- *   width a0, height v1. The unused q0/q1 locals are frame slots.
+ * - func_8025EC44 (fakes, marked): `if (!scaleX) {}` after the call
+ *   makes scaleY the float kept in memory. `if (flags == 3) {}` first in
+ *   the outer body lowers the shared count at node 23 (Chow's
+ *   addadjacents), so j + 1's split piece reaches the outer head and
+ *   lives in v0. `if (!(tileH - i)) {}` after case 1's t line keeps
+ *   uopt's temp slots at 0x3C/0x38. The unused pad1/q0/q1 locals are
+ *   frame slots. (The first match also had a dead `pad1 = i + 1` and
+ *   `if (!(height)) {}`, which the others made unnecessary.)
  */
 #include "common.h"
 #define F3DEX_GBI
@@ -109,7 +108,7 @@ static void func_8025EC44(Gfx **gfxp, s32 x0, s32 y0, s32 x1, s32 y1, s32 mode, 
     s32 tileW;
     s32 tileH;
     s32 k;
-    s32 pad1;
+    s32 pad1; /* fake: frame slot */
     s32 flags;
     f32 scaleX;
     f32 scaleY;
@@ -123,8 +122,8 @@ static void func_8025EC44(Gfx **gfxp, s32 x0, s32 y0, s32 x1, s32 y1, s32 mode, 
     s32 yl;
     s32 xh;
     s32 yh;
-    s32 q0;
-    s32 q1;
+    s32 q0; /* fake: frame slot */
+    s32 q1; /* fake: frame slot */
 
     gfx = *gfxp;
 
@@ -152,12 +151,11 @@ static void func_8025EC44(Gfx **gfxp, s32 x0, s32 y0, s32 x1, s32 y1, s32 mode, 
     tileW = tw;
     tileH = th;
     for (j = 0, y = 0; j < ny; j++, y += th) {
-        if (flags == 3) {}
+        if (flags == 3) {} /* fake: lowers j + 1's shared count (header) */
         for (i = 0, x = 0, tw = tileW; i < nx; i++, x += tileW) {
             if (width < x + tw) {
                 tw = width - x;
             }
-            if (!(height)) {}
             if (height < y + th) {
                 th = height - y;
             }
@@ -168,7 +166,7 @@ static void func_8025EC44(Gfx **gfxp, s32 x0, s32 y0, s32 x1, s32 y1, s32 mode, 
                 th = 1;
             }
             func_8025E760(&gfx, x, mode, y, height, x + tw - 1, y + th - 1, img, width);
-            if (!scaleX) {}
+            if (!scaleX) {} /* fake: makes scaleY the float kept in memory */
             switch (flags) {
                 case 0:
                     s = ((s32) RNDD(i * tileW + 0.5) << 5) & 0xFFFF;
@@ -184,7 +182,7 @@ static void func_8025EC44(Gfx **gfxp, s32 x0, s32 y0, s32 x1, s32 y1, s32 mode, 
                 case 1:
                     s = (s32) RNDF((f32) (i * tileW + tileW - 1)) << 5;
                     t = ((s32) RNDD(j * tileH + 0.5) << 5) & 0xFFFF;
-                    if (!(tileH - i)) {}
+                    if (!(tileH - i)) {} /* fake: keeps uopt's temp slots (header) */
                     dsdx = (s32) RNDF(-1.0f / scaleX * 1023.0f) & 0xFFFF;
                     dtdy = RNDI(th / scaleY / (th + 1) * 1023.0f);
                     k = (nx - i - 1) * tw;
@@ -207,7 +205,6 @@ static void func_8025EC44(Gfx **gfxp, s32 x0, s32 y0, s32 x1, s32 y1, s32 mode, 
                     dtdy = (s32) RNDF(-1.0f / scaleY * 1023.0f) & 0xFFFF;
                     xl = RNDI(x0 + x * scaleX);
                     k = (ny - j - 1) * th;
-                    pad1 = i + 1;
                     yl = RNDI(k * scaleY + y1);
                     xh = RNDI(x0 + (x + tw) * scaleX);
                     yh = RNDI((k + tileH) * scaleY + y1);

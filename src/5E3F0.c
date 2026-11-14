@@ -2262,7 +2262,6 @@ void func_8024C884(s32 arg0, f32 arg1, s32 arg2) {
             func_8026C660(0x20);
         }
         D_800AEDF0[arg0].unk38 |= 0x40;
-    if (!obj && !obj) {}
     }
     if ((obj->unk40->unk48->unk4->unk8 & 0x40) ||
         (obj->unk40->unk48->unk4->unk4 < 12.0f && D_800AEDF0[arg0].unk2C == 0)) {

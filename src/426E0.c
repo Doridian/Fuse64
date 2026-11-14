@@ -554,7 +554,7 @@ UnkObj *func_8022A328(UnkModel *arg0, s32 arg1, s32 arg2, u32 arg3, s32 arg4) {
 
     D_802A5474 = 2;
     D_802A5478 = 0;
-    if (arg1) {}
+    if (arg1) {} /* fake: ends the entry block (see the header, func_8022A328) */
     while (D_800A0D00[D_802A5474].unk3C != NULL) {
         if (++D_802A5474 >= 0xA1) {
             break;
@@ -600,7 +600,7 @@ UnkObj *func_8022A328(UnkModel *arg0, s32 arg1, s32 arg2, u32 arg3, s32 arg4) {
     if (arg2 == 4) {
         D_800A0D00[D_802A5474].unk10 = D_800A0D00[D_802A5474].unk20 = 0.0f;
         c = &arg0->unkC[arg3];
-        if (c) {}
+        if (c) {} /* fake: dead read keeps the +12 in a register (header) */
         D_800A0D00[D_802A5474].unk14 = D_800A0D00[D_802A5474].unk24 = 0.0f;
         D_800A0D00[D_802A5474].unk18 = D_800A0D00[D_802A5474].unk28 = (u32)((u16 *)&c->unk4)[0];
         D_800A0D00[D_802A5474].unk1C = D_800A0D00[D_802A5474].unk2C = (u32)((u16 *)&c->unk4)[1];
@@ -630,7 +630,7 @@ void *func_8022A6C4(void *arg0, s32 arg1) {
     static s32 D_802A548C;
     s32 kind;
 
-    if (arg0) {}
+    if (arg0) {} /* fake: gives arg0's copy t0 before kind (header) */
     D_802A548C = 0;
     D_802A5488 = 0;
     kind = -1;
@@ -664,7 +664,7 @@ void *func_8022A6C4(void *arg0, s32 arg1) {
         }
     }
     D_8029F850 = kind;
-    return func_8022A328(arg0, arg1, kind | 0, D_802A5488, 0);
+    return func_8022A328(arg0, arg1, kind | 0, D_802A5488, 0); /* fake: `| 0` keeps kind out of a2 (header) */
 }
 
 void func_8022A1E8(void *arg0) {
@@ -821,14 +821,14 @@ u32 func_80229C10(UnkObj *arg0, s32 arg1, UnkVtx **arg2) {
     u32 first;
     s32 i;
 
-    if (!arg1) {}
+    if (!arg1) {} /* fake: keeps arg1's register busy (header, func_80229C10) */
     model = arg0->unk3C;
-    if (!arg2) {}
+    if (!arg2) {} /* fake: keeps arg2's register busy (header) */
     chunks = model->unkC;
-    if (!chunks) {}
+    if (!chunks) {} /* fake: keeps model+12 a value of its own (header) */
     dl = (UnkGfx *)((u8 *)model + chunks[arg1].unk8);
     first = dl->w1;
-    i = 0; if (!arg0) {} for (; i != 2; i++) {
+    i = 0; if (!arg0) {} for (; i != 2; i++) { /* fake: i = 0, the dead test and the for on one line set the colouring and schedule (header) */
         while (*(u8 *)dl != 4) {
             dl++;
         }
@@ -982,7 +982,7 @@ void func_8022946C(UnkObj *arg0, s32 arg1) {
 void func_80229448(s32 arg0, s32 arg1, s32 arg2) {
     s32 n;
 
-    for (arg2 = 0; arg2 * 4 != (n = 16); arg2++) {
+    for (arg2 = 0; arg2 * 4 != (n = 16); arg2++) { /* fake: arg2 as the counter and `(n = 16)` for the registers and bne order (header) */
     }
 }
 
@@ -1145,7 +1145,7 @@ static s32 func_802284F8(UnkObj *arg0, UnkGfx **arg1) {
     f32 rx;
     f32 ry;
     f32 rz;
-    s32 pad[2];
+    s32 pad[2]; /* fake: frame-tuned: the 0x160 frame, obj home at 0xB0 (header) */
 
     pushed = 0;
     gfx = *arg1;
@@ -1202,7 +1202,7 @@ static void func_802284F0(UnkObj *arg0, UnkGfx **arg1) {
             count = anim->unk8;
             if (count >= anim->unkC[cur].unk4) {
                 anim->unk8 = 0;
-                if (anim->unk4) {}
+                if (anim->unk4) {} /* fake: a fifth use of the load (colouring order, header) */
                 if (anim->unk4 == anim->unk0 - 1) {
                     anim->unk4 = 0;
                 } else {
@@ -1213,7 +1213,7 @@ static void func_802284F0(UnkObj *arg0, UnkGfx **arg1) {
             }
             gfx++;
             gSPSegment(g, i + 3, (u8 *)model + model->unkC[anim->unkC[anim->unk4].unk0].unk8);
-            if ((s32)g + (s32)g + (s32)g + (s32)g + (s32)g + (s32)model) {}
+            if ((s32)g + (s32)g + (s32)g + (s32)g + (s32)g + (s32)model) {} /* fake: dead sum: colouring order of g and model (header) */
         }
     }
     *arg1 = gfx;
@@ -1265,7 +1265,7 @@ static void func_8022827C(UnkObj *arg0) {
 
 void func_802289C0(UnkObj *arg0, UnkGfx **arg1) {
     UnkGfx *gfx;
-    s32 pad;
+    s32 pad; /* fake: frame-tuned: an unused slot */
     s32 pushed;
     void (*fn)(UnkObj *, UnkGfx **);
 

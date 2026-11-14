@@ -2213,7 +2213,6 @@ void func_8023DB0C() {
         func_80278E84(0, 8);
         func_80277AF8(0, 8);
     } else {
-#line 2196
         func_80277E1C();
 #line 2189
     }
@@ -2243,7 +2242,6 @@ void func_8023DB0C() {
     D_802AC660.unkA0 = 0;
 #line 2203
     D_802AC5D4 = 0x14;
-#line 2213
     D_802AC5D8 = 0x10;
     func_802268F4(2);
     func_802268F4(0x10);

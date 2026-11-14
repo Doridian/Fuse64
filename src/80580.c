@@ -1876,7 +1876,6 @@ static void func_80267A18(s16 idx) {
                         s->wait = 1;
                         break;
                 }
-                if (idx) {}
             }
             s->wait--;
             s->pc = pc;

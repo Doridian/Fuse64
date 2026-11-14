@@ -649,7 +649,6 @@ static void func_8029085C(UnkStruct_802909FC *ctx, f32 angle) {
 #line 679
         = func_8026EE18(ctx->unk8 + angle);
 }
-#line 582
 
 #define func_802909FC_slope(c) ((c) == 3 || (c) == 4 || (c) == 5 || (c) == 6)
 
@@ -685,7 +684,6 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
     s32 pad5;
     f32 a;
     f32 b;
-    s32 pad7;
     s32 c;
 
     ctx.unk0 = obj;

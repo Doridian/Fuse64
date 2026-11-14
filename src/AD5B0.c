@@ -426,7 +426,6 @@ void func_8029414C(u8 *buf) {
     chk += 7;
 #line 397
     for (k = 0, i = 0; i < 6; i++, k += 4) {
-#line 403
         j = k + 0x15;
         do {} while (0);
         func_80294064(&p, &chk, j, j + 1);

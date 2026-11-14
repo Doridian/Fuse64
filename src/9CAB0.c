@@ -1132,7 +1132,6 @@ static s32 func_8028556C(s32 arg0) {
     func_80285564();
     func_8028555C();
     func_80285554();
-#line 1116 /* fake: the load needs a later line than the 0x2000 test (as1 order) */
     p = D_800BB484;
 #line 1115
     if ((arg0 & 0x2000) ||

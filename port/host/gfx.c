@@ -44,6 +44,7 @@ static uintptr_t seg[16];
 /* a display list's address word: segmented (segment 1-15, an offset below
    16 MiB) through the segment table, else as the game made it (port_addr) */
 static uint8_t *addr(uintptr_t w) {
+    w = port_unproxy(w);
     uint32_t v = (uint32_t)w;
     if (w == v && (v >> 28) == 0 && ((v >> 24) & 0xF) != 0) {
         uintptr_t b = seg[(v >> 24) & 0xF];

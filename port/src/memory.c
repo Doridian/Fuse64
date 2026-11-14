@@ -25,7 +25,10 @@ int port_is_game_memory(const void *p) {
     uintptr_t a = (uintptr_t)p;
     if (a >= (uintptr_t)port_rdram && a < (uintptr_t)port_rdram + PORT_RDRAM_SIZE)
         return 1;
-#ifdef IMAGE_LO
+#if defined(__EMSCRIPTEN__)
+    /* the data from 256 MiB (-sGLOBAL_BASE, CMakeLists.txt) to the memory's end */
+    return a >= 0x10000000u && a < (uintptr_t)__builtin_wasm_memory_size(0) * 65536u;
+#elif defined(IMAGE_LO)
     if (a >= IMAGE_LO && a < IMAGE_HI)
         return 1;
     return host_in_thread_stack(p) || port_coro_stack(p);
@@ -34,7 +37,20 @@ int port_is_game_memory(const void *p) {
 #endif
 }
 
+/* gen/regions.c: where absolute symbols can't be (WebAssembly), the
+   segment and physical addresses the game names are small objects */
+extern const struct { uint8_t *p; uint32_t v; } port_abs_proxies[];
+extern const unsigned port_nabs_proxies;
+
+uintptr_t port_unproxy(uintptr_t a) {
+    for (unsigned i = 0; i < port_nabs_proxies; i++)
+        if (a >= (uintptr_t)port_abs_proxies[i].p && a < (uintptr_t)port_abs_proxies[i].p + 16)
+            return port_abs_proxies[i].v + (a - (uintptr_t)port_abs_proxies[i].p);
+    return a;
+}
+
 void *port_addr(uintptr_t a) {
+    a = port_unproxy(a);
     /* (the program is linked above 8 MiB, so no pointer of its own looks
        physical: CMakeLists.txt's image base) */
     if (a >= (uintptr_t)port_rdram && a < (uintptr_t)port_rdram + PORT_RDRAM_SIZE)

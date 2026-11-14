@@ -38,7 +38,7 @@ s8 func_80239F70(s32 arg0); /* 53D70.c */
 s32 func_80239F70(void);
 #endif
 PORT_RET(s32, u8) func_8023A038(s32);
-void func_8026C660(s32);
+PORT_RET(void, s32) func_8026C660(s32);
 s32 func_8027EDC8(s32 arg0);
 static void func_8027EFD8(f32 arg0, f32 arg1);
 s32 func_8027F0C4(s32 arg0);
@@ -248,9 +248,9 @@ UnkStruct_8027EFD8 *func_8027EFC8(void) {
     return D_802A15C0.unk0;
 }
 
-void func_8027EFA8(void) {
+PORT_RET(void, s32) func_8027EFA8(void) {
     PORT_V0(func_8027EDC8(0));
-}
+PORT_ONLY(return (s32)port_v0;) }
 
 s32 func_8027EDC8(s32 arg0) {
     s32 dir;

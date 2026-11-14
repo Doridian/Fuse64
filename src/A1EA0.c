@@ -165,7 +165,7 @@ s32 func_80234768(void);
 void func_80234858(f32 *, f32 *, f32 *);
 void func_802348B4(f32 *, f32 *, f32 *);
 s32 func_80238A10(void *, void *, s32, s32, s32);
-void func_80238EA8(s32);
+PORT_RET(void, s32) func_80238EA8(s32);
 void func_80239094(void);
 UnkStruct_800BB340 *func_802391F0(void);
 void func_80239430(void);

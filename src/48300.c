@@ -20,7 +20,7 @@ typedef struct {
 } Rect40;
 
 s32 func_80238A10(void *, s32, s32, s32, s32);
-void func_8023903C(s32);
+PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 s32 func_802391F0(void);
 void func_80239430(void);

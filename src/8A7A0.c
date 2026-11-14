@@ -256,7 +256,7 @@ s32 func_8022984C(void *, s32);
 f32 func_8022DF68(f32 *, f32 *);
 s32 func_8022E884(s32, s32);
 s32 func_8022F4AC(s32, s32, s32);
-void func_8022FC90(void *);
+PORT_RET(void, s32) func_8022FC90(void *);
 void func_8022FF58(f32 *, f32 *, f32 *);
 void * func_802308B8(void *, s32);
 void func_80230914(void *);
@@ -266,8 +266,8 @@ void func_802313DC(void *, s32);
 void func_80231408(void *, s32);
 void func_80231434(void *);
 void func_80232A34(u8 *arg0, s32 arg1);
-s32 func_80232AA8(s32);
-s32 func_80232AC8(s32, s32);
+PORT_RET(s32, void) func_80232AA8(s32);
+PORT_RET(s32, void) func_80232AC8(s32, s32);
 s32 func_80232D18(void *, s32);
 void func_80232DB4(void *);
 int func_8023369C(f32, f32, f32);
@@ -276,7 +276,7 @@ s32 func_80234248(s32);
 f32 func_80234408(f32);
 f32 func_80234434(f32);
 s32 func_80238A10(void *, s32, s32, s32, s32);
-void func_80238EA8(s32);
+PORT_RET(void, s32) func_80238EA8(s32);
 void func_80239094(void);
 s32 *func_802391F0(void);
 s32 *func_8023A840(void);
@@ -302,7 +302,7 @@ void func_8027F820();
 void func_8027F858(s32, s32);
 s32 func_80286CA8(s32, f32, f32, f32);
 s32 func_802870A8();
-s32 func_80287440(Obj8E *arg0);
+PORT_RET(s32, void) func_80287440(Obj8E *arg0);
 s32 func_802875B0();
 s32 func_8028A4E0(s32);
 s32 func_8028A81C(s32, f32, f32, f32, s32);
@@ -405,7 +405,7 @@ s16 *func_802703B4(u8 *arg0);
 s32 func_80270438(u8 *arg0, s32 *arg1);
 s32 func_802704F8(f32 arg0);
 s32 func_80270714(s16 arg0);
-void func_80270770(s16 arg0, s16 arg1);
+PORT_RET(void, s32) func_80270770(s16 arg0, s16 arg1);
 void func_80270A80(s32 *arg0);
 void func_80270B20(u8 *arg0);
 s16 func_80270B4C(s32 arg0);
@@ -474,7 +474,7 @@ void func_802740AC(s16 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4);
 void func_802741D8(s16 arg0);
 s32 func_80274994(s16 arg0);
 s16 func_80274F64(s16 arg0);
-void func_80274F8C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4);
+PORT_RET(void, s32) func_80274F8C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4);
 void func_80274FD4(Ent88 *arg0);
 void func_80275034(s16 *arg0);
 s32 func_802750C0(s16 *arg0, s16 arg1);
@@ -1850,9 +1850,9 @@ void func_80274FD4(Ent88 *arg0) {
     M2C_FIELD(M2C_FIELD(arg0, void **, 0x20), f32 *, 0x30) = (f32) M2C_FIELD(arg0, f32 *, 0x78);
 }
 
-void func_80274F8C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
+PORT_RET(void, s32) func_80274F8C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
     func_80273F30(arg0, arg1, arg2, arg3, arg4);
-}
+PORT_ONLY(return (s32)port_v0;) }
 
 s16 func_80274F64(s16 arg0) {
     return *(s16 *)(D_802AFC78 + (arg0 * 0x12));
@@ -3254,7 +3254,7 @@ void func_80270A80(s32 *arg0) {
     }
 }
 
-void func_80270770(s16 arg0, s16 arg1) {
+PORT_RET(void, s32) func_80270770(s16 arg0, s16 arg1) {
     Obj8E *o;
     Ctl87 *c;
     f32 speed;
@@ -3264,7 +3264,7 @@ void func_80270770(s16 arg0, s16 arg1) {
     s32 flags;
 
     if (func_80270714(arg0) == 0) {
-        return;
+        PORT_RET(return, return (s32)port_v0);
     }
     obj = (Obj8E *) func_80270714(arg0);
     switch (arg1) {
@@ -3330,10 +3330,10 @@ next:
         func_80232AA8((s32) obj);
         func_802313DC(obj, 0x200000);
         func_802313DC(obj, 0x600000);
-        return;
+        PORT_RET(return, return (s32)port_v0);
     }
     free(c);
-}
+PORT_ONLY(return (s32)port_v0;) }
 
 s32 func_80270714(s16 arg0) {
     if (func_802702BC(arg0) != 0) {

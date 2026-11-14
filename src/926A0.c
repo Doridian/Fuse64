@@ -19,8 +19,8 @@
 void *malloc(s32);
 void func_8022638C(u32, void *);
 void func_802297B8(void *, s32, s32, s32);
-s32 func_8022984C(void *, s32);
-void func_8022FC90(void *);
+PORT_RET(s32, void) func_8022984C(void *, s32);
+PORT_RET(void, s32) func_8022FC90(void *);
 void *func_80231274(s32, s32, s32, void *);
 void func_802313DC(void *, s32);
 void func_80232DB4(void *);

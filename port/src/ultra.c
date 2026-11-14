@@ -282,8 +282,8 @@ void osMapTLB(s32 index, OSPageMask pm, void *vaddr, u32 even, u32 odd, s32 asid
 void osMapTLBRdb(void) { }
 void osUnmapTLBAll(void) { }
 /* a pointer's value: the port's display lists take host pointers (port_addr) */
-u32 osVirtualToPhysical(void *p) { return (u32)(uintptr_t)p; }
-void *osPhysicalToVirtual(u32 a) { return (void *)(uintptr_t)a; }
+__UINTPTR_TYPE__ osVirtualToPhysical(void *p) { return (uintptr_t)p; }
+void *osPhysicalToVirtual(__UINTPTR_TYPE__ a) { return (void *)a; }
 
 /* ---- PI: the cartridge ------------------------------------------------------------- */
 

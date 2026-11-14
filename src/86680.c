@@ -40,7 +40,7 @@ void func_802690DC(s32, s32, s32, s32, s32);
 void func_80268D94(s8);
 void func_80268E7C(s16);
 void func_80268EE4(void);
-void func_80268F94(s16);
+PORT_RET(void, s32) func_80268F94(s16);
 PORT_RET(s32, s16) func_8026A754(s32, s32, void *, void *, s32);
 f32 sqrtf(f32);
 

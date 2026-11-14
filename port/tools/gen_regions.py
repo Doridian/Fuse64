@@ -34,12 +34,30 @@ def main():
          "#include <stdint.h>", "#include \"port_game.h\"", "",
          "/* the N64's RDRAM, for what the game has at fixed addresses */",
          "uint8_t port_rdram[0x%X] __attribute__((aligned(0x2000)));" % RDRAM_SIZE, ""]
+    absolute = []
     for n, a in sorted(names.items(), key=lambda e: e[1]):
         if 0x80000000 <= a < 0x80000000 + RDRAM_SIZE:
             o.append("__asm__(\".globl \" PORT_ULP \"%s\\n.set \" PORT_ULP \"%s, \" PORT_ULP \"port_rdram + 0x%X\\n\");"
                      % (n, n, a - 0x80000000))
         else:
-            o.append("__asm__(\".globl \" PORT_ULP \"%s\\n.set \" PORT_ULP \"%s, 0x%X\\n\");" % (n, n, a))
+            absolute.append((n, a))
+    # the segment and physical addresses: absolute symbols, or where the
+    # object format has none (WebAssembly) proxies, small objects that
+    # port_addr turns back into their numbers (port/src/memory.c)
+    o.append("#ifdef __EMSCRIPTEN__")
+    for n, a in absolute:
+        o.append("uint8_t %s[16] __attribute__((aligned(16)));" % n)
+    o.append("const struct { uint8_t *p; uint32_t v; } port_abs_proxies[] = {")
+    for n, a in absolute:
+        o.append("    { %s, 0x%X }," % (n, a))
+    o.append("};")
+    o.append("const unsigned port_nabs_proxies = %d;" % len(absolute))
+    o.append("#else")
+    for n, a in absolute:
+        o.append("__asm__(\".globl \" PORT_ULP \"%s\\n.set \" PORT_ULP \"%s, 0x%X\\n\");" % (n, n, a))
+    o.append("const unsigned port_nabs_proxies = 0;")
+    o.append("const struct { uint8_t *p; uint32_t v; } port_abs_proxies[1];")
+    o.append("#endif")
     open(out + ".tmp", "w").write("\n".join(o) + "\n")
     os.replace(out + ".tmp", out)
 

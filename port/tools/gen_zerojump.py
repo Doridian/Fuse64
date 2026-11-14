@@ -137,6 +137,12 @@ def main():
         if svar and sparams and sparams[-1] == "void *" and ds[0][1][-1] == "...":
             sparams = sparams[:-1]
         sparams = [p for p, raw in zip(sparams, ds[0][1] or []) if raw != "..."]
+        if ds[0][1] is None:
+            # declared without a prototype (`void f();`): the calls'
+            # arguments, ints (none passes a float: host_check.py decls),
+            # which is what a WebAssembly caller's signature has
+            nargs = max([c[4] for c in calls if c[3] == s] or [0])
+            sparams = ["int"] * nargs
         args = ", ".join("%s a%d" % (p, i) for i, p in enumerate(sparams)) or "void"
         if svar:
             args += ", ..."

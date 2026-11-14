@@ -38,7 +38,7 @@
 void func_80226E40(s32);
 u16 *func_80226E4C(s32);
 void func_8022946C(void *, s32);
-void func_8023903C(s32);
+PORT_RET(void, s32) func_8023903C(s32);
 void func_8023AA78(s32);
 void func_8023AE6C(s32, s32, s32);
 void func_8023AED0(s32);
@@ -60,7 +60,7 @@ void func_80227870(void);
 void func_802346C8(f32, f32, f32);
 void func_80234778(f32, f32, f32);
 void func_802362B8(s32);
-void func_80238EA8(s32);
+PORT_RET(void, s32) func_80238EA8(s32);
 void func_80239430(void);
 PORT_RET(s32, u16) func_80239FF8(s32);
 s32 *func_8023A840(void);

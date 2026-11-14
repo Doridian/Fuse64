@@ -122,7 +122,7 @@ typedef struct {
     /* 0x38 */ f32 unk38;
 } UnkStruct_8027A264; /* size 0x3C */
 
-void func_8022FC90(UnkStruct_80279050_14 *);
+PORT_RET(void, s32) func_8022FC90(UnkStruct_80279050_14 *);
 void func_802313DC(UnkStruct_80279050_14 *, s32);
 void func_80231408(UnkStruct_80279050_14 *, s32);
 UnkStruct_80279050_14 *func_802308B8(UnkStruct_80279050_14 *, s32);
@@ -136,10 +136,10 @@ void func_80246F00(s32, s32);
 void func_80248864(s32);
 void func_802488C0(s32);
 void func_802502BC(s32);
-void func_8026C660(s32);
+PORT_RET(void, s32) func_8026C660(s32);
 f32 func_8026E8B8(void);
 void func_80270354(s32 *, s32);
-s32 func_8027036C(s32 *, s32);
+PORT_RET(s32, void) func_8027036C(s32 *, s32);
 PORT_RET(s32, s16) func_802712A8(s32 *, s32);
 s32 func_80272024(s16);
 void func_802727D8(s32);
@@ -155,8 +155,8 @@ UnkStruct_80279050_14 *func_802443F4(s32);
 UnkStruct_800BB4A8 *func_8027AA74(s16, f32, f32, f32, s32, s32, s32);
 f32 func_80234434(f32);
 void func_8027A950(void);
-void func_8028A81C(s32, f32, f32, f32, s32);
-void func_8029217C(UnkStruct_80279050_14 *, s32, f32, void (*)());
+PORT_RET(void, s32) func_8028A81C(s32, f32, f32, f32, s32);
+PORT_RET(void, s32) func_8029217C(UnkStruct_80279050_14 *, s32, f32, void (*)());
 
 void func_802790E0(UnkStruct_800BB4A8 *arg0);
 void func_802797BC(UnkStruct_80279050_14 *arg0, UnkStruct_800BB4A8 *arg1);

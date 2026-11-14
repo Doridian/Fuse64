@@ -232,7 +232,7 @@ void func_80297D38(const char *, ...);
 
 s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32));
 void func_80291944(UnkStructA *obj, s32 dir, f32 speed);
-void func_8029217C(UnkStructA *obj, s32 dir, f32 speed, s32 (*cb)(s32));
+PORT_RET(void, s32) func_8029217C(UnkStructA *obj, s32 dir, f32 speed, s32 (*cb)(s32));
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -1075,11 +1075,11 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
     }
 }
 
-void func_8029217C(UnkStructA *obj, s32 dir, f32 speed, s32 (*cb)(s32)) {
+PORT_RET(void, s32) func_8029217C(UnkStructA *obj, s32 dir, f32 speed, s32 (*cb)(s32)) {
     func_80291944(obj, dir, speed);
     func_80230914(obj);
     func_802909FC(obj, cb);
-}
+PORT_ONLY(return (s32)port_v0;) }
 
 static void func_802921EC(void) {
 }

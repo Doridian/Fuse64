@@ -56,7 +56,7 @@ typedef struct {
 
 void *malloc(u32);
 void free(void *);
-void func_80225CCC(struct UnkStruct_80225CC0 *file, s32 offset, s32 whence);
+PORT_RET(void, s32) func_80225CCC(struct UnkStruct_80225CC0 *file, s32 offset, s32 whence);
 
 void func_8027FDF0(s32 arg0);
 void func_80280028(u8 *src, u8 *dst, u16 col, u16 row, u16 width, u16 height, s32 draw);
@@ -79,7 +79,7 @@ void func_80280E4C(s32 arg0, f32 arg1, f32 arg2);
 void func_80280EB0(s32 arg0, u16 arg1, u16 arg2);
 s32 func_80280F24(s32 *arg0);
 s32 func_802810A0(u8 *arg0, u16 arg1, u16 arg2, f32 arg3, f32 arg4, u8 arg5);
-void func_802811F0(u8 *arg0, u16 arg1, u16 arg2, f32 arg3, f32 arg4, u8 arg5);
+PORT_RET(void, s32) func_802811F0(u8 *arg0, u16 arg1, u16 arg2, f32 arg3, f32 arg4, u8 arg5);
 void func_8028124C(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 static void func_80281270(u8 *, u8 *);
 s32 func_80281278(u8 *arg0, u16 arg1, u16 arg2, f32 arg3, f32 arg4, u8 arg5);
@@ -256,11 +256,11 @@ void func_8028124C(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 #endif
 
 #if !VERSION_JP
-void func_802811F0(u8 *arg0, u16 arg1, u16 arg2, f32 arg3, f32 arg4, u8 arg5) {
+PORT_RET(void, s32) func_802811F0(u8 *arg0, u16 arg1, u16 arg2, f32 arg3, f32 arg4, u8 arg5) {
     D_802A1A44 = 1;
     PORT_V0(func_802810A0(arg0, arg1, arg2, arg3, arg4, arg5));
     D_802A1A44 = 0;
-}
+PORT_ONLY(return (s32)port_v0;) }
 #endif
 
 s32 func_802810A0(u8 *arg0, u16 arg1, u16 arg2, f32 arg3, f32 arg4, u8 arg5) {

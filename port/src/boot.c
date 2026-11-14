@@ -37,12 +37,12 @@ void func_80042000(void) { }
 
 /* zerojump's place in the ROM: 1050.c DMAs it to its page, which the port
    has no use for (nothing is copied: the size is 0) */
-__asm__(".globl " PORT_ULP "zerojump_ROM_START\n.set " PORT_ULP "zerojump_ROM_START, 0x1CBC0\n"
-        ".globl " PORT_ULP "zerojump_ROM_END\n.set " PORT_ULP "zerojump_ROM_END, 0x1CBC0\n");
+uint8_t zerojump_ROM_START[4];
+__asm__(".globl " PORT_ULP "zerojump_ROM_END\n.set " PORT_ULP "zerojump_ROM_END, " PORT_ULP "zerojump_ROM_START\n");
 
 /* main_code B2500, handwritten: the CPU's watch registers (WatchLo), set
    and cleared around 4E030's and 40040's code: no-ops */
-void func_80297D00(void) { }
+void func_80297D00(s32 addr) { }
 void func_80297D20(void) { }
 
 uintptr_t port_v0;

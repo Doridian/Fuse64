@@ -84,7 +84,7 @@ void func_80243DEC(s32);
 void func_8026C8E8(void);
 void func_8026C93C(s32);
 void func_80277E1C(void);
-void func_80280DB4(s32);
+PORT_RET(void, s32) func_80280DB4(s32);
 s32 func_802810A0(TextArg, u16, u16, f32, f32, u8);
 s32 func_80281278(TextArg, u16, u16, f32, f32, u8);
 UnkStruct_80281444 *func_80281444(s32);

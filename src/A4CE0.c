@@ -74,11 +74,11 @@ typedef struct {
     /* 0x24 */ f32 unk24;
 } UnkStruct_800BC770; /* size 0x28 */
 
-s32 func_8022979C(UnkStructA_40 *, s32, s32);
+PORT_RET(s32, void) func_8022979C(UnkStructA_40 *, s32, s32);
 void func_802297B8(UnkStructA_40 *, s32, s32, s32);
-s32 func_8022984C(UnkStructA_40 *, s32);
+PORT_RET(s32, void) func_8022984C(UnkStructA_40 *, s32);
 f32 func_80229D3C(UnkStructA_40 *, s32);
-void func_8022FC90(UnkStructA *);
+PORT_RET(void, s32) func_8022FC90(UnkStructA *);
 UnkStructA *func_80230CB4(s32, s32, s32, s32, s32);
 UnkStructA *func_80230E6C(s32, s32);
 UnkStructA *func_802311E8(UnkStructA *);
@@ -88,8 +88,8 @@ void func_80232DB4(UnkStructA *);
 s32 func_80234248(s32);
 f32 func_80234434(f32);
 s32 func_80238A10(void *, void *, s32, s32, s32);
-void func_80238EA8(s32);
-void func_8023903C(s32);
+PORT_RET(void, s32) func_80238EA8(s32);
+PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 void *func_802391F0(void);
 void func_80239430(void);
@@ -115,8 +115,8 @@ s32 func_8028A4E0(s32 arg0);
 void func_8028A584(void);
 static s32 func_8028A5C4(s32 slot, s32 kind, f32 *pos, s32 arg4, s32 arg3);
 static s32 func_8028A690(s32 kind);
-void func_8028A7CC(s32 kind, f32 *pos, s32 arg2);
-void func_8028A81C(s32 kind, f32 x, f32 y, f32 z, s32 arg4);
+PORT_RET(void, s32) func_8028A7CC(s32 kind, f32 *pos, s32 arg2);
+PORT_RET(void, s32) func_8028A81C(s32 kind, f32 x, f32 y, f32 z, s32 arg4);
 void func_8028A87C(void);
 void func_8028A8A4(void);
 static void func_8028A978();
@@ -199,18 +199,18 @@ void func_8028A87C(void) {
     func_80297D30(0x26, D_802A1CE4);
 }
 
-void func_8028A81C(s32 kind, f32 x, f32 y, f32 z, s32 arg4) {
+PORT_RET(void, s32) func_8028A81C(s32 kind, f32 x, f32 y, f32 z, s32 arg4) {
     f32 pos[3];
 
     pos[0] = x;
     pos[1] = y;
     pos[2] = z;
     func_8028A5C4(func_8028A690(kind), kind, pos, arg4, 0);
-}
+PORT_ONLY(return (s32)port_v0;) }
 
-void func_8028A7CC(s32 kind, f32 *pos, s32 arg2) {
+PORT_RET(void, s32) func_8028A7CC(s32 kind, f32 *pos, s32 arg2) {
     PORT_V0(func_8028A5C4(func_8028A690(kind), kind, pos, arg2, 0));
-}
+PORT_ONLY(return (s32)port_v0;) }
 
 void func_8028A584(void) {
     s32 i;

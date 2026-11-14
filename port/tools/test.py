@@ -15,7 +15,7 @@ compares two builds' runs with each other (a big-endian build under qemu
 against the native one, say).
 
 A cross build (port/tools/cross-*.cmake) runs under the emulator its
-CMake cache names, or --qemu's.
+CMake cache names, or --qemu's; the WebAssembly build under node.
 """
 import argparse
 import hashlib
@@ -57,6 +57,8 @@ def run(build, name, qemu=None, timeout=7200):
     frames, script = SCENARIOS[name]
     exe = os.path.join(build, "bm64")
     emu = qemu or cache_value(build, "CMAKE_CROSSCOMPILING_EMULATOR")
+    if os.path.exists(exe + ".js"):     # the WebAssembly build: under node
+        exe, emu = exe + ".js", "node"
     tmp = tempfile.mkdtemp(prefix="bm64-test-")
     try:
         wav = os.path.join(tmp, "out.wav")

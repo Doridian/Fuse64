@@ -48,6 +48,9 @@ void port_overlay_init(void) {
     for (i = 0; i < port_noverlays; i++) {
         const PortOverlay *o = &port_overlays[i];
         size_t n = o->data ? (size_t)(o->data_end - o->data) : 0;
+        if (host_verbose > 1)
+            host_log("overlay %s: data %p+%ld, bss %p+%ld\n", o->name, (void *)o->data, (long)(o->data_end - o->data),
+                     (void *)o->bss, (long)(o->bss_end - o->bss));
         if (n) {
             initial[i] = malloc(n);
             if (!initial[i])

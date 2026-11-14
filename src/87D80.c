@@ -365,7 +365,7 @@ s16 *func_802703B4(u8 *arg0);
 s32 func_80270438(u8 *arg0, s32 *arg1);
 s16 func_802704F8(f32 arg0);
 s32 func_80270714(s16 arg0);
-void func_80270770(s16 arg0, s16 arg1);
+PORT_RET(void, s32) func_80270770(s16 arg0, s16 arg1);
 void func_80270A80(s32 *arg0);
 void func_80270B20(u8 *arg0);
 s16 func_80270B4C(s32 arg0);

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""The game's C as a PC port's host compiler takes it (docs/PORT.md, "Readiness").
+"""The game's C as a PC port's host compiler takes it (docs/PORT.md, "What the decompilation
+gave the port").
 
   host_check.py compile [-v VER] [--cc clang,gcc] [--arch m32,m64]
         every game C file (src/ but libultra, nonmatching/), -DTARGET_PC,
@@ -28,6 +29,8 @@
 The port's own SDK headers have a display list's words as wide as a pointer
 (Blast Corps' port); here a copy of ultralib's gbi.h with that change
 (build/host_check/shim) stands in for them.
+The port's port_game.h is included as the
+port's build does (what the C's `#ifdef TARGET_PC` code calls).
 """
 import argparse
 import glob
@@ -65,7 +68,7 @@ def make_shim():
 def flags(f, ver, cc="clang", arch=("-m64",), std="gnu89"):
     inc = ["-iquote", os.path.dirname(f)] + MALLOC_FLAGS if f.startswith("src/libmalloc/") else \
         ["-iquote", os.path.dirname(f), "-I", SHIM, "-I", "include", "-I", "include/PR", "-I", "src",
-         "-I", "include/ultralib"]
+         "-I", "include/ultralib", "-I", "port/include", "-include", "port/include/port_game.h"]
     return [cc] + list(arch) + ["-std=" + std, "-DTARGET_PC", "-DVERSION_" + ver.upper(), "-D_LANGUAGE_C"] + inc
 
 

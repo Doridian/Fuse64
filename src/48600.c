@@ -1548,7 +1548,7 @@ void func_80230914(u8 *arg0) {
 }
 
 PORT_RET(void, s32) func_802308B8(f32 *arg0, s32 arg1) {
-    func_802304C0(arg1, arg0, 0);
+    PORT_V0(func_802304C0(arg1, arg0, 0));
 PORT_ONLY(return (s32)port_v0;) }
 
 void func_8023085C(f32 *arg0, s32 arg1) {
@@ -1760,7 +1760,7 @@ f32 func_8022FB00(u8 *arg0) {
 }
 
 PORT_RET(void, s32) func_8022FA88(f32 *arg0, s32 arg1, f32 *arg2) {
-    func_8022F844(arg1, arg0, 0, arg2);
+    PORT_V0(func_8022F844(arg1, arg0, 0, arg2));
 PORT_ONLY(return (s32)port_v0;) }
 
 void func_8022FA10(f32 *arg0, s32 arg1, f32 *arg2) {

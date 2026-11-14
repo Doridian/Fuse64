@@ -205,7 +205,7 @@ PORT_RET(void, s32) func_8028A81C(s32 kind, f32 x, f32 y, f32 z, s32 arg4) {
     pos[0] = x;
     pos[1] = y;
     pos[2] = z;
-    func_8028A5C4(func_8028A690(kind), kind, pos, arg4, 0);
+    PORT_V0(func_8028A5C4(func_8028A690(kind), kind, pos, arg4, 0));
 PORT_ONLY(return (s32)port_v0;) }
 
 PORT_RET(void, s32) func_8028A7CC(s32 kind, f32 *pos, s32 arg2) {

@@ -1078,7 +1078,7 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
 PORT_RET(void, s32) func_8029217C(UnkStructA *obj, s32 dir, f32 speed, s32 (*cb)(s32)) {
     func_80291944(obj, dir, speed);
     func_80230914(obj);
-    func_802909FC(obj, cb);
+    PORT_V0(func_802909FC(obj, cb));
 PORT_ONLY(return (s32)port_v0;) }
 
 static void func_802921EC(void) {

@@ -301,9 +301,11 @@ animation tracks' fields.
 
 ## Phase 6 — PC port
 
-The same architecture as Blast Corps' port (its docs/PORT.md). What the
-decompilation gives it so far, and what the host has to supply, is
-docs/PORT.md, "Readiness" (`tools/host_check.py`):
+Started (`port/`; docs/PORT.md, "Status": the game runs on 32-bit hosts,
+x86 natively, big-endian ones under qemu, and in WebAssembly). The same
+architecture as Blast Corps' port (its docs/PORT.md). What the
+decompilation gave it is docs/PORT.md, "What the decompilation gave the
+port" (`tools/host_check.py`):
 
 - One CMake build. The game's C, compiled by the host's compiler, in host
   byte order and pointer size. `#ifdef TARGET_PC` in `src/` for port-only

@@ -1851,7 +1851,7 @@ void func_80274FD4(Ent88 *arg0) {
 }
 
 PORT_RET(void, s32) func_80274F8C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
-    func_80273F30(arg0, arg1, arg2, arg3, arg4);
+    PORT_V0(func_80273F30(arg0, arg1, arg2, arg3, arg4));
 PORT_ONLY(return (s32)port_v0;) }
 
 s16 func_80274F64(s16 arg0) {
@@ -3263,7 +3263,7 @@ PORT_RET(void, s32) func_80270770(s16 arg0, s16 arg1) {
     s32 ok;
     s32 flags;
 
-    if (func_80270714(arg0) == 0) {
+    if (PORT_V0(func_80270714(arg0)) == 0) {
         PORT_RET(return, return (s32)port_v0);
     }
     obj = (Obj8E *) func_80270714(arg0);

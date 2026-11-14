@@ -51,6 +51,31 @@
   "frames": "cb4459fb1212ca1bdfa1d44b77e62c21bf8bfca1",
   "wav": "ee4733c7fcae21bcdc4ed09c8d5c13eb300ac3a1"
  },
+ "jp/legal": {
+  "checkpoints": {
+   "300": "157e2836"
+  },
+  "eeprom": "6b4c522172e36bd7b31f29fea72f78fda46059a6",
+  "frames": "e14f574a97b7a8ece58c32a8aeb1e6f7e8bbf69c",
+  "wav": "7aee78a2a81888c31ac92f3b77e4f61631591ba1"
+ },
+ "jp/menus": {
+  "checkpoints": {
+   "1200": "3a2d5953",
+   "1500": "6d8a8a91",
+   "1800": "b6872c23",
+   "2100": "169995f0",
+   "2400": "524aad56",
+   "2700": "a507d4a7",
+   "300": "157e2836",
+   "3000": "db8d7bd5",
+   "600": "31ba4c10",
+   "900": "e07af4be"
+  },
+  "eeprom": "2e939a4b4c54e88a202a0ddda9310a089445e547",
+  "frames": "d461653574fb44ebc0ce52a5fbdda620f73825d6",
+  "wav": "5d9ea3c47089ed8e1e6ecdb83f95dee9d6838f70"
+ },
  "us/battle": {
   "checkpoints": {
    "1200": "f8e64efe",

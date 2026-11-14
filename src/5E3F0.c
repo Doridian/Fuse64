@@ -44,8 +44,10 @@
  * its tests share a0, as in the original.
  * The large m2c functions (8024891C, 8024D8C4, 802444B8, 8024A0DC) are
  * still m2c's shape.
- * func_80244354 is never inlined in the original: a dead
- * `if (0) { func_80237664(); }` in it keeps it out of line here too.
+ * func_80244354 is never inlined in the original: its explicit final
+ * `return;` keeps it out of line here too (umerge counts the source's
+ * size before uopt; a dead initialiser `v = 0` does the same; which one
+ * the original had is a guess).
  * D_802ACEC8 is `s32 [][3]`; 802455A8/802456FC/802457D8 pass its row to
  * func_8024557C and func_80245480/func_80245690, which call
  * func_80245430. Where m2c expanded an inlined getter or flag test back
@@ -5012,9 +5014,7 @@ void func_80244354(s32 arg0, s32 arg1, s32 arg2) {
         v &= arg1 ^ -1;
     }
     D_800AEDF0[arg0].unk10 = v;
-    if (0) { /* fake: keeps func_80244354 out of line, as in the original (see the header) */
-        func_80237664();
-    }
+    return;
 }
 
 void func_80244308(void *arg0) {

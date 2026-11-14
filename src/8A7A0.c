@@ -18,9 +18,9 @@
  *
  * func_802727D8 calls func_8026E8B8 (87D80) with a jal, which IDO
  * would inline within one file, and the second half calls 926A0
- * (src/926A0.c, its own file, emitted after). func_802733C8 keeps a dead call
- * (if (0) func_802731A4(0, 0)): without it umerge inlines it into
- * func_8027655C (296 more words). The .rodata (jump tables included)
+ * (src/926A0.c, its own file, emitted after). func_802733C8 ends in an
+ * explicit `return;`: without it umerge (which weighs the source before
+ * uopt) inlines it into func_8027655C (296 more words). The .rodata (jump tables included)
  * is the original's in all three versions. (The first match kept each
  * draft's own line numbers with #line directives, and an in-body
  * `#line 1 "tail.c"` in func_80277B54 to end an as1 block before its
@@ -2276,9 +2276,7 @@ void func_802733C8(u8 *arg0) {
 
     temp_v0 = func_80273370((s32) arg0);
     func_802731A4(M2C_FIELD(temp_v0, void **, 0xC), M2C_FIELD(temp_v0, s16 *, 0));
-    if (0) { /* fake: a dead call keeps func_802731A4 out of line (header) */
-        func_802731A4(0, 0);
-    }
+    return;
 }
 
 void *func_80273370(s32 arg0) {

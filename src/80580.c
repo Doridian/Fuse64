@@ -29,8 +29,9 @@
  * recursive setters' stubs 80266154/298/3D8/508 (empty, the setters
  * recurse themselves). 80269144, the DMA, takes the ROM address first.
  * func_80265FBC is a static too (callers keep registers live across
- * it), inlined only into 80265FF8: a dead `if (0)` store keeps IDO
- * from inlining it into the others. 8026724C's unused second SndDef
+ * it), inlined only into 80265FF8: its dead initialiser (`s32 v = 0;`)
+ * is what keeps IDO from inlining it into the others (umerge counts the
+ * size before uopt deletes the store). 8026724C's unused second SndDef
  * and 80268440's pad give the original's frame sizes.
  * 80267A18 has the original's size and s-registers: the dead `if (op ==
  * K) {}` tests give its constants their s-registers.
@@ -2685,11 +2686,8 @@ void func_80265FF8(s8 arg0) {
 }
 
 static s16 func_80265FBC(s8 arg0) {
-    s32 v;
+    s32 v = 0;
 
-    if (0) { /* fake: dead store keeps func_80265FBC from being inlined into the others (header) */
-        D_802AD218 = 0;
-    }
     if (arg0 > 0) {
         v = (arg0 << 8) + 0xFF;
     } else {

@@ -2492,26 +2492,24 @@ void func_8024BF04(s32 arg0) {
 }
 
 void func_8024BD1C(s32 arg0) {
-    UnkStruct_800AEDF0 *e = &D_800AEDF0[arg0];
-    UnkObj *o = e->unk28;
+    UnkObj *o = (UnkObj *)func_802443F4(arg0);
 
-    if (!D_800AEDF0[arg0].unk10 && !D_800AEDF0[arg0].unk10) {} /* fake: dead read (ugen temporaries, see the header) */
-    if (e->unk64 > 360.0f) {
-        e->unk64 -= 360.0f;
+    if (D_800AEDF0[arg0].unk64 > 360.0f) {
+        D_800AEDF0[arg0].unk64 -= 360.0f;
     }
-    if (e->unk64 < 0.0f) {
-        e->unk64 += 360.0f;
+    if (D_800AEDF0[arg0].unk64 < 0.0f) {
+        D_800AEDF0[arg0].unk64 += 360.0f;
     }
-    e->unk60 += e->unk5C;
-    o->unk40->unk20 = e->unk60;
-    if (e->unk60 > 360.0f) {
+    D_800AEDF0[arg0].unk60 += D_800AEDF0[arg0].unk5C;
+    o->unk40->unk20 = D_800AEDF0[arg0].unk60;
+    if (D_800AEDF0[arg0].unk60 > 360.0f) {
         o->unk40->unk20 -= 360.0f;
     }
-    if (e->unk60 < 0.0f) {
+    if (D_800AEDF0[arg0].unk60 < 0.0f) {
         o->unk40->unk20 += 360.0f;
     }
-    if ((e->unk5C > 0.0f && e->unk58 <= e->unk60) || (e->unk5C < 0.0f && e->unk60 <= e->unk58)) {
-        o->unk40->unk20 = e->unk58;
+    if ((D_800AEDF0[arg0].unk5C > 0.0f && D_800AEDF0[arg0].unk58 <= D_800AEDF0[arg0].unk60) || (D_800AEDF0[arg0].unk5C < 0.0f && D_800AEDF0[arg0].unk60 <= D_800AEDF0[arg0].unk58)) {
+        o->unk40->unk20 = D_800AEDF0[arg0].unk58;
         if (o->unk40->unk20 >= 360.0f) {
             o->unk40->unk20 -= 360.0f;
         }
@@ -2520,11 +2518,8 @@ void func_8024BD1C(s32 arg0) {
         }
         func_80244354(arg0, 0x8000000, 0);
     }
-    {
-        void *q = (void *)e->unk2C;
-        if (q != 0) {
-            func_80231434(q);
-        }
+    if ((void *)D_800AEDF0[arg0].unk2C != 0) {
+        func_80231434((void *)D_800AEDF0[arg0].unk2C);
     }
 }
 

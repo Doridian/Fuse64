@@ -109,7 +109,7 @@ void func_ovl0D_07_80046248(s32, f32, f32, f32, s32); /* 0x2600 */
 void func_ovl0D_07_80046380(s32); /* 0x2B00 */
 void func_ovl0D_07_80046390(s32); /* 0x2B02 */
 void func_ovl0D_07_80046398(void); /* 0x2B03 */
-void func_ovl0D_07_800463A0(s32, f32, f32, f32); /* 0x2B04 */
+s32 func_ovl0D_07_800463A0(s32, f32, f32, f32); /* 0x2B04 */
 void func_ovl0D_07_80046428(s32, s32, s32, s32, s32); /* 0x2D00 */
 UnkStruct_ovl0D_07_80046440 *func_ovl0D_07_80046440(s32); /* 0x2D03 */
 void func_ovl0D_07_80046448(s32); /* 0x2D04 */
@@ -188,30 +188,20 @@ static void func_ovl0D_07_80044F0C(void) {
 static void func_ovl0D_07_80044F04(void) {
 }
 
-void func_ovl0D_07_80044EEC(void) {
-    D_ovl0D_07_80046704 = -1;
-    D_ovl0D_07_80046708 = -1;
-}
-
-void func_ovl0D_07_80044E90(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl0D_07_80045AE8(D_ovl0D_07_80046710.x, D_ovl0D_07_80046710.y, D_ovl0D_07_80046710.z);
-    func_ovl0D_07_80045B08(arg0, arg1, arg2);
-    func_ovl0D_07_80045E18(180);
-}
-
-void func_ovl0D_07_80044E48(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl0D_07_80045B10(&sp1C, NULL, NULL);
-    func_ovl0D_07_80045B08(sp1C + arg0, 32768.0f, 32768.0f);
-}
-
-void func_ovl0D_07_80044E14(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
-
-    p = arg1->unk40;
-    func_ovl0D_07_800463A0(arg0, p->unk10, p->unk14, p->unk18);
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl0D_07_80044EEC
+#define CORE_FUNC_B func_ovl0D_07_80044E90
+#define CORE_FUNC_C func_ovl0D_07_80044E48
+#define CORE_FUNC_D func_ovl0D_07_80044E14
+#define CORE_BSS_A0 D_ovl0D_07_80046704
+#define CORE_BSS_A1 D_ovl0D_07_80046708
+#define CORE_BSS_B D_ovl0D_07_80046710
+#define CORE_ZJ_1704 func_ovl0D_07_80045AE8
+#define CORE_ZJ_1708 func_ovl0D_07_80045B08
+#define CORE_ZJ_1709 func_ovl0D_07_80045B10
+#define CORE_ZJ_1904 func_ovl0D_07_80045E18
+#define CORE_ZJ_2B04 func_ovl0D_07_800463A0
+#include "overlays/common/core.h"
 
 /* a task: a pulse at the object's place (the callback's argument) */
 void func_ovl0D_07_80044C90(void) {

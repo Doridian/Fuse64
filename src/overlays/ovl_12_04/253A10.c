@@ -48,7 +48,7 @@ void func_ovl12_04_80044B80(u32 (*)[3]);
 void func_ovl12_04_80044B98(u32 (*)[3]);
 void func_ovl12_04_80044D18(UnkStructA *, s32, f32);
 void func_ovl12_04_80044D28(s32, s32, s32);
-void func_ovl12_04_80044DC0(s32, f32, f32, f32);
+s32 func_ovl12_04_80044DC0(s32, f32, f32, f32);
 
 void func_ovl12_04_80043010(void);
 void func_ovl12_04_80043020(void);
@@ -72,7 +72,7 @@ void func_ovl12_04_80043570(s32);
 void func_ovl12_04_80043690(UnkStructA *);
 void func_ovl12_04_80043750(UnkStructA *);
 void func_ovl12_04_80043810(UnkStructA *);
-void func_ovl12_04_80043888(s32, UnkStructA *);
+s32 func_ovl12_04_80043888(s32, void *);
 void func_ovl12_04_800438BC(f32, f32, f32);
 void func_ovl12_04_80043918(void);
 void func_ovl12_04_80043930(void);
@@ -151,23 +151,20 @@ static void func_ovl12_04_80043938(void) {
 void func_ovl12_04_80043930(void) {
 }
 
-void func_ovl12_04_80043918(void) {
-    D_ovl12_04_80045094 = -1;
-    D_ovl12_04_80045098 = -1;
-}
-
-void func_ovl12_04_800438BC(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl12_04_80044508(D_ovl12_04_800450A0.x, D_ovl12_04_800450A0.y, D_ovl12_04_800450A0.z);
-    func_ovl12_04_80044528(arg0, arg1, arg2);
-    func_ovl12_04_80044838(180);
-}
-
-void func_ovl12_04_80043888(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
-
-    p = arg1->unk40;
-    func_ovl12_04_80044DC0(arg0, p->unk10, p->unk14, p->unk18);
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl12_04_80043918
+#define CORE_FUNC_B func_ovl12_04_800438BC
+#define CORE_FUNC_C func_ovl12_04_800431D8
+#define CORE_FUNC_D func_ovl12_04_80043888
+#define CORE_BSS_A0 D_ovl12_04_80045094
+#define CORE_BSS_A1 D_ovl12_04_80045098
+#define CORE_BSS_B D_ovl12_04_800450A0
+#define CORE_ZJ_1704 func_ovl12_04_80044508
+#define CORE_ZJ_1708 func_ovl12_04_80044528
+#define CORE_ZJ_1709 func_ovl12_04_80044530
+#define CORE_ZJ_1904 func_ovl12_04_80044838
+#define CORE_ZJ_2B04 func_ovl12_04_80044DC0
+#include "overlays/common/core.h"
 
 void func_ovl12_04_80043810(UnkStructA *arg0) {
     s32 i;
@@ -346,13 +343,6 @@ void func_ovl12_04_80043220(void) {
         func_ovl12_04_800431D8(D_ovl12_04_800450B0.unkC);
     }
     func_ovl12_04_80043EC0(D_ovl12_04_800450B0.unk4);
-}
-
-void func_ovl12_04_800431D8(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl12_04_80044530(&sp1C, NULL, NULL);
-    func_ovl12_04_80044528(sp1C + arg0, 32768.0f, 32768.0f);
 }
 
 void func_ovl12_04_800431B8(void) {

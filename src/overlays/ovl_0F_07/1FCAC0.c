@@ -112,7 +112,7 @@ s32 func_ovl0F_07_800457C0(s32, f32 *, s32);
 void func_ovl0F_07_800457C8(s32);
 void func_ovl0F_07_80045878(s32, s32, s32);
 void func_ovl0F_07_800458F0(s32);
-void func_ovl0F_07_80045910(s32, f32, f32, f32);
+s32 func_ovl0F_07_80045910(s32, f32, f32, f32);
 
 void func_ovl0F_07_80043010(void);
 void func_ovl0F_07_800430AC(f32);
@@ -120,7 +120,7 @@ void func_ovl0F_07_800433A4(s32);
 void func_ovl0F_07_80043A58(UnkStructA *);
 void func_ovl0F_07_800440D8(UnkStructA *);
 void func_ovl0F_07_80044208(void);
-void func_ovl0F_07_800443B8(s32, UnkStructA *);
+s32 func_ovl0F_07_800443B8(s32, void *);
 void func_ovl0F_07_800443EC(f32, f32, f32);
 void func_ovl0F_07_80044448(void);
 void func_ovl0F_07_80044460(void);
@@ -214,23 +214,23 @@ static void func_ovl0F_07_80044468(void) {
 void func_ovl0F_07_80044460(void) {
 }
 
-void func_ovl0F_07_80044448(void) {
-    D_ovl0F_07_80045E74 = -1;
-    D_ovl0F_07_80045E78 = -1;
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl0F_07_80044448
+#define CORE_FUNC_B func_ovl0F_07_800443EC
+#define CORE_FUNC_C func_ovl0F_07_800430AC
+#define CORE_FUNC_D func_ovl0F_07_800443B8
+#define CORE_BSS_A0 D_ovl0F_07_80045E74
+#define CORE_BSS_A1 D_ovl0F_07_80045E78
+#define CORE_BSS_B D_ovl0F_07_80045E80
+#define CORE_ZJ_1704 func_ovl0F_07_80045058
+#define CORE_ZJ_1708 func_ovl0F_07_80045078
+#define CORE_ZJ_1709 func_ovl0F_07_80045080
+#define CORE_ZJ_1904 func_ovl0F_07_80045388
+#define CORE_ZJ_2B04 func_ovl0F_07_80045910
+#include "overlays/common/core.h"
 
-void func_ovl0F_07_800443EC(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl0F_07_80045058(D_ovl0F_07_80045E80.x, D_ovl0F_07_80045E80.y, D_ovl0F_07_80045E80.z);
-    func_ovl0F_07_80045078(arg0, arg1, arg2);
-    func_ovl0F_07_80045388(180);
-}
 
-void func_ovl0F_07_800443B8(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
 
-    p = arg1->unk40;
-    func_ovl0F_07_80045910(arg0, p->unk10, p->unk14, p->unk18);
-}
 
 void func_ovl0F_07_80044208(void) {
     UnkStruct_ovl0F_07_80045390 *task;
@@ -443,12 +443,12 @@ static void func_ovl0F_07_80043998(s32 *dst, f32 x, f32 z) {
 }
 #line 470 "1FCAC0.c" /* fake: back from the other file, at the line numbers it matched with */
 
-void func_ovl0F_07_800430AC(f32 arg0) {
-    f32 sp1C;
 
-    func_ovl0F_07_80045080(&sp1C, NULL, NULL);
-    func_ovl0F_07_80045078(sp1C + arg0, 32768.0f, 32768.0f);
-}
+
+
+
+
+
 
 static void func_ovl0F_07_8004339C(void) {
     s32 count;

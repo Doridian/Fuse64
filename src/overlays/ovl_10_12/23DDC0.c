@@ -91,7 +91,7 @@ void func_ovl10_12_80048440(u32 (*)[3]);
 void func_ovl10_12_80048530(s32, Vec3f *, s32);
 void func_ovl10_12_800485E8(s32, s32, s32);
 void func_ovl10_12_80048660(s32);
-void func_ovl10_12_80048680(s32, f32, f32, f32);
+s32 func_ovl10_12_80048680(s32, f32, f32, f32);
 void func_ovl10_12_80047780(s32);
 void func_ovl10_12_80047790(const char *);
 void func_ovl10_12_80047828(s32);
@@ -187,9 +187,9 @@ s32 func_ovl10_12_80046F60(void (*arg0)(void));
 void func_ovl10_12_80046FA4(void (*arg0)(void));
 s32 func_ovl10_12_80046FD0(void (*arg0)(void), const char *arg1);
 void func_ovl10_12_80047008(void);
-void func_ovl10_12_800470F8(s32 arg0, UnkStructA *arg1);
-void func_ovl10_12_8004712C(f32 arg0);
-void func_ovl10_12_80047174(f32 arg0, f32 arg1, f32 arg2);
+s32 func_ovl10_12_800470F8(s32, void *);
+void func_ovl10_12_8004712C(f32);
+void func_ovl10_12_80047174(f32, f32, f32);
 void func_ovl10_12_800471D0(void);
 static void func_ovl10_12_800471E8(void);
 
@@ -346,27 +346,20 @@ static void func_ovl10_12_800471E8(void) {
                              D_ovl10_12_80049964[0];
 }
 
-void func_ovl10_12_800471D0(void) {
-    D_ovl10_12_80048C54 = -1;
-    D_ovl10_12_80048C58 = -1;
-}
-
-void func_ovl10_12_80047174(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl10_12_80047DC8(D_ovl10_12_80048C60.x, D_ovl10_12_80048C60.y, D_ovl10_12_80048C60.z);
-    func_ovl10_12_80047DE8(arg0, arg1, arg2);
-    func_ovl10_12_800480F8(180);
-}
-
-void func_ovl10_12_8004712C(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl10_12_80047DF0(&sp1C, NULL, NULL);
-    func_ovl10_12_80047DE8(sp1C + arg0, 32768.0f, 32768.0f);
-}
-
-void func_ovl10_12_800470F8(s32 arg0, UnkStructA *arg1) {
-    func_ovl10_12_80048680(arg0, arg1->unk40->unk10, arg1->unk40->unk14, arg1->unk40->unk18);
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl10_12_800471D0
+#define CORE_FUNC_B func_ovl10_12_80047174
+#define CORE_FUNC_C func_ovl10_12_8004712C
+#define CORE_FUNC_D func_ovl10_12_800470F8
+#define CORE_BSS_A0 D_ovl10_12_80048C54
+#define CORE_BSS_A1 D_ovl10_12_80048C58
+#define CORE_BSS_B D_ovl10_12_80048C60
+#define CORE_ZJ_1704 func_ovl10_12_80047DC8
+#define CORE_ZJ_1708 func_ovl10_12_80047DE8
+#define CORE_ZJ_1709 func_ovl10_12_80047DF0
+#define CORE_ZJ_1904 func_ovl10_12_800480F8
+#define CORE_ZJ_2B04 func_ovl10_12_80048680
+#include "overlays/common/core.h"
 
 /* runs the tasks, one frame each time round */
 void func_ovl10_12_80047008(void) {

@@ -129,7 +129,7 @@ void func_ovl0F_09_80045B10(u32 (*)[3]);
 void func_ovl0F_09_80045BF8(s32, f32, f32, f32, s32);
 void func_ovl0F_09_80045CB8(s32, s32, s32);
 void func_ovl0F_09_80045D30(s32);
-void func_ovl0F_09_80045D50(s32, f32, f32, f32);
+s32 func_ovl0F_09_80045D50(s32, f32, f32, f32);
 
 void func_ovl0F_09_80043010(void);
 void func_ovl0F_09_800432CC(f32);
@@ -138,7 +138,7 @@ void func_ovl0F_09_80043D88(UnkStructA *);
 void func_ovl0F_09_80044408(UnkStructA *);
 void func_ovl0F_09_80044528(void);
 void func_ovl0F_09_8004460C(void);
-void func_ovl0F_09_80044810(s32, UnkStructA *);
+s32 func_ovl0F_09_80044810(s32, void *);
 void func_ovl0F_09_80044844(f32, f32, f32);
 void func_ovl0F_09_800448A0(void);
 void func_ovl0F_09_800448B8(void);
@@ -261,23 +261,23 @@ static void func_ovl0F_09_800448C0(void) {
 void func_ovl0F_09_800448B8(void) {
 }
 
-void func_ovl0F_09_800448A0(void) {
-    D_ovl0F_09_80046244 = -1;
-    D_ovl0F_09_80046248 = -1;
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl0F_09_800448A0
+#define CORE_FUNC_B func_ovl0F_09_80044844
+#define CORE_FUNC_C func_ovl0F_09_800432CC
+#define CORE_FUNC_D func_ovl0F_09_80044810
+#define CORE_BSS_A0 D_ovl0F_09_80046244
+#define CORE_BSS_A1 D_ovl0F_09_80046248
+#define CORE_BSS_B D_ovl0F_09_80046250
+#define CORE_ZJ_1704 func_ovl0F_09_80045498
+#define CORE_ZJ_1708 func_ovl0F_09_800454B8
+#define CORE_ZJ_1709 func_ovl0F_09_800454C0
+#define CORE_ZJ_1904 func_ovl0F_09_800457C8
+#define CORE_ZJ_2B04 func_ovl0F_09_80045D50
+#include "overlays/common/core.h"
 
-void func_ovl0F_09_80044844(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl0F_09_80045498(D_ovl0F_09_80046250.x, D_ovl0F_09_80046250.y, D_ovl0F_09_80046250.z);
-    func_ovl0F_09_800454B8(arg0, arg1, arg2);
-    func_ovl0F_09_800457C8(180);
-}
 
-void func_ovl0F_09_80044810(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
 
-    p = arg1->unk40;
-    func_ovl0F_09_80045D50(arg0, p->unk10, p->unk14, p->unk18);
-}
 
 void func_ovl0F_09_8004460C(void) {
     s32 dir;
@@ -487,12 +487,12 @@ static void func_ovl0F_09_80043CD8(f32 arg0) {
     }
 }
 
-void func_ovl0F_09_800432CC(f32 arg0) {
-    f32 sp1C;
 
-    func_ovl0F_09_800454C0(&sp1C, NULL, NULL);
-    func_ovl0F_09_800454B8(sp1C + arg0, 32768.0f, 32768.0f);
-}
+
+
+
+
+
 
 static void func_ovl0F_09_80043434(void) {
     s32 count;

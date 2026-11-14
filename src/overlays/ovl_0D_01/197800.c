@@ -233,7 +233,7 @@ void func_ovl0D_01_80047248(void); /* 0x2704 */
 void func_ovl0D_01_800472C8(s32, s32, s32); /* 0x2A00 */
 void func_ovl0D_01_80047328(void); /* 0x2A0C */
 void func_ovl0D_01_80047340(s32); /* 0x2B00 */
-void func_ovl0D_01_80047360(s32, f32, f32, f32); /* 0x2B04 */
+s32 func_ovl0D_01_80047360(s32, f32, f32, f32); /* 0x2B04 */
 void func_ovl0D_01_80047370(s32); /* 0x2B06 */
 void func_ovl0D_01_800474B8(void); /* 0x3000 */
 void func_ovl0D_01_800474C0(void); /* 0x3001 */
@@ -283,7 +283,7 @@ static void func_ovl0D_01_80045F14(void);
 
 void func_ovl0D_01_80043010(void);
 void func_ovl0D_01_80043098(void);
-void func_ovl0D_01_80043100(s32, Obj_0D01 *);
+s32 func_ovl0D_01_80043100(s32, void *);
 void func_ovl0D_01_80043134(void);
 void func_ovl0D_01_8004363C(void);
 void func_ovl0D_01_80043744(void);
@@ -547,10 +547,20 @@ void func_ovl0D_01_800454F8(void) {
     }
 }
 
-void func_ovl0D_01_800455B8(void) {
-    D_ovl0D_01_80047AF4 = -1;
-    D_ovl0D_01_80047AF8 = -1;
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl0D_01_800455B8
+#define CORE_FUNC_B func_ovl0D_01_8004376C
+#define CORE_FUNC_C func_ovl0D_01_80045270
+#define CORE_FUNC_D func_ovl0D_01_80043100
+#define CORE_BSS_A0 D_ovl0D_01_80047AF4
+#define CORE_BSS_A1 D_ovl0D_01_80047AF8
+#define CORE_BSS_B D_ovl0D_01_80047B00
+#define CORE_ZJ_1704 func_ovl0D_01_80046AA8
+#define CORE_ZJ_1708 func_ovl0D_01_80046AC8
+#define CORE_ZJ_1709 func_ovl0D_01_80046AD0
+#define CORE_ZJ_1904 func_ovl0D_01_80046DD8
+#define CORE_ZJ_2B04 func_ovl0D_01_80047360
+#include "overlays/common/core.h"
 
 void func_ovl0D_01_800455E0(void) {
     func_ovl0D_01_80047120(D_ovl0D_01_80047560);
@@ -726,13 +736,6 @@ void func_ovl0D_01_800452B8(void) {
     func_ovl0D_01_800470E0(0, 0x72, 0x37);
     func_ovl0D_01_800451F4();
     func_ovl0D_01_80045164();
-}
-
-void func_ovl0D_01_80045270(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl0D_01_80046AD0(&sp1C, NULL, NULL);
-    func_ovl0D_01_80046AC8(sp1C + arg0, 32768.0f, 32768.0f);
 }
 
 void func_ovl0D_01_800451F4(void) {
@@ -1243,11 +1246,8 @@ static void func_ovl0D_01_800437C8(s32 id, s32 x, s32 n, s32 z) {
     D_ovl0D_01_80047AF0 = func_ovl0D_01_80047210(id, &D_ovl0D_01_80047B00.x, 0);
 }
 
-void func_ovl0D_01_8004376C(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl0D_01_80046AA8(D_ovl0D_01_80047B00.x, D_ovl0D_01_80047B00.y, D_ovl0D_01_80047B00.z);
-    func_ovl0D_01_80046AC8(arg0, arg1, arg2);
-    func_ovl0D_01_80046DD8(180);
-}
+
+
 
 void func_ovl0D_01_80043744(void) {
     func_ovl0D_01_800436C8(D_ovl0D_01_8004780C);
@@ -1355,12 +1355,12 @@ void func_ovl0D_01_80043134(void) {
     func_ovl0D_01_80046DC8();
 }
 
-void func_ovl0D_01_80043100(s32 arg0, Obj_0D01 *arg1) {
-    Obj40_0D01 *p;
 
-    p = arg1->unk40;
-    func_ovl0D_01_80047360(arg0, p->unk10, p->unk14, p->unk18);
-}
+
+
+
+
+
 
 void func_ovl0D_01_80043098(void) {
     func_ovl0D_01_800462B0(0x13, 3, 0x18, 0x19, 5, 0x18, 0x10);

@@ -123,7 +123,7 @@ void func_ovl0F_05_80045E08(s32);
 void func_ovl0F_05_80045EB8(s32, s32, s32);
 void func_ovl0F_05_80045ED8(s32);
 void func_ovl0F_05_80045F30(s32);
-void func_ovl0F_05_80045F50(s32, f32, f32, f32);
+s32 func_ovl0F_05_80045F50(s32, f32, f32, f32);
 void func_ovl0F_05_800460A8(void);
 void func_ovl0F_05_800460B0(void);
 
@@ -133,7 +133,7 @@ void func_ovl0F_05_8004373C(void);
 void func_ovl0F_05_80043B74(void);
 void func_ovl0F_05_800440AC(UnkStructA *);
 void func_ovl0F_05_8004472C(void);
-void func_ovl0F_05_80044994(s32, UnkStructA *);
+s32 func_ovl0F_05_80044994(s32, void *);
 void func_ovl0F_05_800449C8(f32);
 void func_ovl0F_05_80044A10(f32, f32, f32);
 void func_ovl0F_05_80044A6C(void);
@@ -260,30 +260,30 @@ static void func_ovl0F_05_80044A8C(void) {
 void func_ovl0F_05_80044A84(void) {
 }
 
-void func_ovl0F_05_80044A6C(void) {
-    D_ovl0F_05_80046534 = -1;
-    D_ovl0F_05_80046538 = -1;
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl0F_05_80044A6C
+#define CORE_FUNC_B func_ovl0F_05_80044A10
+#define CORE_FUNC_C func_ovl0F_05_800449C8
+#define CORE_FUNC_D func_ovl0F_05_80044994
+#define CORE_BSS_A0 D_ovl0F_05_80046534
+#define CORE_BSS_A1 D_ovl0F_05_80046538
+#define CORE_BSS_B D_ovl0F_05_80046540
+#define CORE_ZJ_1704 func_ovl0F_05_80045698
+#define CORE_ZJ_1708 func_ovl0F_05_800456B8
+#define CORE_ZJ_1709 func_ovl0F_05_800456C0
+#define CORE_ZJ_1904 func_ovl0F_05_800459C8
+#define CORE_ZJ_2B04 func_ovl0F_05_80045F50
+#include "overlays/common/core.h"
 
-void func_ovl0F_05_80044A10(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl0F_05_80045698(D_ovl0F_05_80046540.x, D_ovl0F_05_80046540.y, D_ovl0F_05_80046540.z);
-    func_ovl0F_05_800456B8(arg0, arg1, arg2);
-    func_ovl0F_05_800459C8(180);
-}
 
-void func_ovl0F_05_800449C8(f32 arg0) {
-    f32 sp1C;
 
-    func_ovl0F_05_800456C0(&sp1C, NULL, NULL);
-    func_ovl0F_05_800456B8(sp1C + arg0, 32768.0f, 32768.0f);
-}
 
-void func_ovl0F_05_80044994(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
 
-    p = arg1->unk40;
-    func_ovl0F_05_80045F50(arg0, p->unk10, p->unk14, p->unk18);
-}
+
+
+
+
+
 
 void func_ovl0F_05_8004472C(void) {
     f32 x;

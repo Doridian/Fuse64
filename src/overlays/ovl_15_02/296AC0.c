@@ -428,7 +428,7 @@ void func_ovl15_02_800441C8(void);
 void func_ovl15_02_80044250(void);
 void func_ovl15_02_800442D8(void);
 void func_ovl15_02_80044328(void);
-s32 func_ovl15_02_80044378(s32 arg0, UnkStructA *arg1);
+s32 func_ovl15_02_80044378(s32, void *);
 void func_ovl15_02_800443AC(void);
 void func_ovl15_02_8004475C();
 void func_ovl15_02_80044840(UnkStructA *arg0, Vec3f *arg1);
@@ -541,8 +541,8 @@ void func_ovl15_02_8004F36C(void);
 void func_ovl15_02_8004F544(s32 arg0);
 void func_ovl15_02_8004F66C();
 void func_ovl15_02_8004F6E8(void);
-void func_ovl15_02_8004F764(f32 arg0);
-void func_ovl15_02_8004F7AC(f32 arg0, f32 arg1, f32 arg2);
+void func_ovl15_02_8004F764(f32);
+void func_ovl15_02_8004F7AC(f32, f32, f32);
 void func_ovl15_02_8004F808(void);
 
 /* .data */
@@ -643,23 +643,20 @@ static void func_ovl15_02_8004F860(void) {
 static void func_ovl15_02_8004F868(void) {
 }
 
-void func_ovl15_02_8004F808(void) {
-    D_ovl15_02_8005134C = -1;
-    D_ovl15_02_80051350 = -1;
-}
-
-void func_ovl15_02_8004F7AC(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl15_02_800503F8(D_ovl15_02_80051358.x, D_ovl15_02_80051358.y, D_ovl15_02_80051358.z);
-    func_ovl15_02_80050418(arg0, arg1, arg2);
-    func_ovl15_02_80050728(0xB4);
-}
-
-void func_ovl15_02_8004F764(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl15_02_80050420(&sp1C, NULL, NULL);
-    func_ovl15_02_80050418(sp1C + arg0, 32768.0f, 32768.0f);
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl15_02_8004F808
+#define CORE_FUNC_B func_ovl15_02_8004F7AC
+#define CORE_FUNC_C func_ovl15_02_8004F764
+#define CORE_FUNC_D func_ovl15_02_80044378
+#define CORE_BSS_A0 D_ovl15_02_8005134C
+#define CORE_BSS_A1 D_ovl15_02_80051350
+#define CORE_BSS_B D_ovl15_02_80051358
+#define CORE_ZJ_1704 func_ovl15_02_800503F8
+#define CORE_ZJ_1708 func_ovl15_02_80050418
+#define CORE_ZJ_1709 func_ovl15_02_80050420
+#define CORE_ZJ_1904 func_ovl15_02_80050728
+#define CORE_ZJ_2B04 func_ovl15_02_80050CB0
+#include "overlays/common/core.h"
 
 void func_ovl15_02_8004F1D4(void) {
     if (*D_ovl15_02_800513AC & 2) {
@@ -4130,13 +4127,6 @@ void func_ovl15_02_800443AC(void) {
         }
         D_ovl15_02_80051424->unk68 = (1.0f - (f32) i / n) * 20.0f;
     }
-}
-
-s32 func_ovl15_02_80044378(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
-
-    p = arg1->unk40;
-    return func_ovl15_02_80050CB0(arg0, p->unk10, p->unk14, p->unk18);
 }
 
 void func_ovl15_02_80044328(void) {

@@ -226,9 +226,9 @@ void func_ovl10_13_80048CEC(void);
 void func_ovl10_13_80048EA8(void);
 void func_ovl10_13_80048F00(void);
 void func_ovl10_13_80049044(void);
-void func_ovl10_13_80049138(s32 arg0, UnkStructA *arg1);
-void func_ovl10_13_8004916C(f32 arg0);
-void func_ovl10_13_800491B4(f32 arg0, f32 arg1, f32 arg2);
+s32 func_ovl10_13_80049138(s32, void *);
+void func_ovl10_13_8004916C(f32);
+void func_ovl10_13_800491B4(f32, f32, f32);
 void func_ovl10_13_80049210(void);
 static void func_ovl10_13_80049228(void);
 static void func_ovl10_13_80049230(void);
@@ -271,30 +271,20 @@ s32 D_ovl10_13_8004ADDC;
 s32 D_ovl10_13_8004ADE0;
 s32 D_ovl10_13_8004ADE4;
 
-void func_ovl10_13_80049210(void) {
-    D_ovl10_13_8004AB74 = -1;
-    D_ovl10_13_8004AB78 = -1;
-}
-
-void func_ovl10_13_800491B4(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl10_13_80049E18(D_ovl10_13_8004AB80.x, D_ovl10_13_8004AB80.y, D_ovl10_13_8004AB80.z);
-    func_ovl10_13_80049E38(arg0, arg1, arg2);
-    func_ovl10_13_8004A148(180);
-}
-
-void func_ovl10_13_8004916C(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl10_13_80049E40(&sp1C, NULL, NULL);
-    func_ovl10_13_80049E38(sp1C + arg0, 32768.0f, 32768.0f);
-}
-
-void func_ovl10_13_80049138(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
-
-    p = arg1->unk40;
-    func_ovl10_13_8004A6D0(arg0, p->unk10, p->unk14, p->unk18);
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl10_13_80049210
+#define CORE_FUNC_B func_ovl10_13_800491B4
+#define CORE_FUNC_C func_ovl10_13_8004916C
+#define CORE_FUNC_D func_ovl10_13_80049138
+#define CORE_BSS_A0 D_ovl10_13_8004AB74
+#define CORE_BSS_A1 D_ovl10_13_8004AB78
+#define CORE_BSS_B D_ovl10_13_8004AB80
+#define CORE_ZJ_1704 func_ovl10_13_80049E18
+#define CORE_ZJ_1708 func_ovl10_13_80049E38
+#define CORE_ZJ_1709 func_ovl10_13_80049E40
+#define CORE_ZJ_1904 func_ovl10_13_8004A148
+#define CORE_ZJ_2B04 func_ovl10_13_8004A6D0
+#include "overlays/common/core.h"
 
 void func_ovl10_13_80049044(void) {
     s32 i;

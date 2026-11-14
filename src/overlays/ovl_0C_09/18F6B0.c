@@ -175,7 +175,7 @@ void func_ovl0C_09_800474C8(f32 *);
 void func_ovl0C_09_80047538(s32, s32, s32);
 void func_ovl0C_09_80047598(void);
 s32 func_ovl0C_09_800475B0(s32);
-void func_ovl0C_09_800475D0(s32, f32, f32, f32);
+s32 func_ovl0C_09_800475D0(s32, f32, f32, f32);
 void func_ovl0C_09_800475E0(s32);
 void func_ovl0C_09_800475E8(s32, s8);
 void func_ovl0C_09_80047728(void);
@@ -236,7 +236,7 @@ void func_ovl0C_09_80045DB0(UnkStructA *);
 void func_ovl0C_09_80045E70(UnkStructA *);
 void func_ovl0C_09_80045EB4(UnkStructA *, s32, s32, f32, f32);
 void func_ovl0C_09_80045F8C(void);
-void func_ovl0C_09_8004609C(s32, UnkStructA *);
+s32 func_ovl0C_09_8004609C(s32, void *);
 void func_ovl0C_09_800460D0(f32, f32, f32);
 void func_ovl0C_09_8004612C(void);
 static void func_ovl0C_09_80046144(void);
@@ -337,23 +337,20 @@ static void func_ovl0C_09_80046144(void) {
     D_ovl0C_09_80047B0C[0] = D_ovl0C_09_80047B24[0];
 }
 
-void func_ovl0C_09_8004612C(void) {
-    D_ovl0C_09_80047B04 = -1;
-    D_ovl0C_09_80047B08 = -1;
-}
-
-void func_ovl0C_09_800460D0(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl0C_09_80046D18(D_ovl0C_09_80047B10.x, D_ovl0C_09_80047B10.y, D_ovl0C_09_80047B10.z);
-    func_ovl0C_09_80046D38(arg0, arg1, arg2);
-    func_ovl0C_09_80047048(180);
-}
-
-void func_ovl0C_09_8004609C(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
-
-    p = arg1->unk40;
-    func_ovl0C_09_800475D0(arg0, p->unk10, p->unk14, p->unk18);
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl0C_09_8004612C
+#define CORE_FUNC_B func_ovl0C_09_800460D0
+#define CORE_FUNC_C func_ovl0C_09_80043518
+#define CORE_FUNC_D func_ovl0C_09_8004609C
+#define CORE_BSS_A0 D_ovl0C_09_80047B04
+#define CORE_BSS_A1 D_ovl0C_09_80047B08
+#define CORE_BSS_B D_ovl0C_09_80047B10
+#define CORE_ZJ_1704 func_ovl0C_09_80046D18
+#define CORE_ZJ_1708 func_ovl0C_09_80046D38
+#define CORE_ZJ_1709 func_ovl0C_09_80046D40
+#define CORE_ZJ_1904 func_ovl0C_09_80047048
+#define CORE_ZJ_2B04 func_ovl0C_09_800475D0
+#include "overlays/common/core.h"
 
 void func_ovl0C_09_80045F8C(void) {
     f32 scale28;
@@ -1185,13 +1182,6 @@ void func_ovl0C_09_80043560(void) {
     }
     func_ovl0C_09_800466D0(D_ovl0C_09_80047B28.unk4);
     func_ovl0C_09_80046DD0(45.0f, 45.1f);
-}
-
-void func_ovl0C_09_80043518(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl0C_09_80046D40(&sp1C, NULL, NULL);
-    func_ovl0C_09_80046D38(sp1C + arg0, 32768.0f, 32768.0f);
 }
 
 void func_ovl0C_09_800434C0(void) {

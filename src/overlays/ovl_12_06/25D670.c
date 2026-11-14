@@ -93,7 +93,7 @@ void func_ovl12_06_80045B38(s32, f32, f32, f32, s32);
 void func_ovl12_06_80045C70(s32);
 void func_ovl12_06_80045C80(s32);
 void func_ovl12_06_80045C88(void);
-void func_ovl12_06_80045C90(s32, f32, f32, f32);
+s32 func_ovl12_06_80045C90(s32, f32, f32, f32);
 void func_ovl12_06_80045D18(s32, s32, s32, s32, s32);
 UnkStruct_ovl12_06_80045FC8 *func_ovl12_06_80045D30(s32);
 void func_ovl12_06_80045D38(s32);
@@ -105,7 +105,7 @@ void func_ovl12_06_800430D0(void);
 void func_ovl12_06_80043164(s32);
 void func_ovl12_06_800439D4(void);
 void func_ovl12_06_800446A0(void);
-void func_ovl12_06_800446F8(s32, UnkStructA *);
+s32 func_ovl12_06_800446F8(s32, void *);
 void func_ovl12_06_8004472C(f32);
 void func_ovl12_06_80044774(f32, f32, f32);
 void func_ovl12_06_800447D0(void);
@@ -170,30 +170,30 @@ static void func_ovl12_06_800447F8(void) {
 void func_ovl12_06_800447E8(void) {
 }
 
-void func_ovl12_06_800447D0(void) {
-    D_ovl12_06_80045FA4 = -1;
-    D_ovl12_06_80045FA8 = -1;
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl12_06_800447D0
+#define CORE_FUNC_B func_ovl12_06_80044774
+#define CORE_FUNC_C func_ovl12_06_8004472C
+#define CORE_FUNC_D func_ovl12_06_800446F8
+#define CORE_BSS_A0 D_ovl12_06_80045FA4
+#define CORE_BSS_A1 D_ovl12_06_80045FA8
+#define CORE_BSS_B D_ovl12_06_80045FB0
+#define CORE_ZJ_1704 func_ovl12_06_800453D8
+#define CORE_ZJ_1708 func_ovl12_06_800453F8
+#define CORE_ZJ_1709 func_ovl12_06_80045400
+#define CORE_ZJ_1904 func_ovl12_06_80045708
+#define CORE_ZJ_2B04 func_ovl12_06_80045C90
+#include "overlays/common/core.h"
 
-void func_ovl12_06_80044774(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl12_06_800453D8(D_ovl12_06_80045FB0.x, D_ovl12_06_80045FB0.y, D_ovl12_06_80045FB0.z);
-    func_ovl12_06_800453F8(arg0, arg1, arg2);
-    func_ovl12_06_80045708(180);
-}
 
-void func_ovl12_06_8004472C(f32 arg0) {
-    f32 sp1C;
 
-    func_ovl12_06_80045400(&sp1C, NULL, NULL);
-    func_ovl12_06_800453F8(sp1C + arg0, 32768.0f, 32768.0f);
-}
 
-void func_ovl12_06_800446F8(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
 
-    p = arg1->unk40;
-    func_ovl12_06_80045C90(arg0, p->unk10, p->unk14, p->unk18);
-}
+
+
+
+
+
 
 void func_ovl12_06_800446A0(void) {
     if (D_ovl12_06_80045FBC == 0x10) {

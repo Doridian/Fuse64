@@ -183,7 +183,7 @@ void func_ovl10_06_8004A618(s32);
 s32 func_ovl10_06_8004A640(void);
 void func_ovl10_06_8004A668(f32 *);
 void func_ovl10_06_8004A670(s32);
-void func_ovl10_06_8004A690(s32, f32, f32, f32);
+s32 func_ovl10_06_8004A690(s32, f32, f32, f32);
 void func_ovl10_06_8004A698(s32, f32 *);
 void func_ovl10_06_8004A7E8(void);
 void func_ovl10_06_8004A7F0(void);
@@ -295,9 +295,9 @@ void func_ovl10_06_80048EFC(UnkStructA *arg0);
 void func_ovl10_06_80048F7C(UnkStructA *arg0);
 s32 func_ovl10_06_80048FE8(void (*arg0)(), const char *arg1);
 void func_ovl10_06_80049020(void);
-void func_ovl10_06_80049118(s32 arg0, UnkStructA *arg1);
-void func_ovl10_06_8004914C(f32 arg0);
-void func_ovl10_06_80049194(f32 arg0, f32 arg1, f32 arg2);
+s32 func_ovl10_06_80049118(s32, void *);
+void func_ovl10_06_8004914C(f32);
+void func_ovl10_06_80049194(f32, f32, f32);
 void func_ovl10_06_800491F0(void);
 static void func_ovl10_06_80049208(void);
 
@@ -457,34 +457,24 @@ static void func_ovl10_06_80049208(void) {
 }
 
 /* ovl_17_09's 80044B70 */
-void func_ovl10_06_800491F0(void) {
-    D_ovl10_06_8004AB84 = -1;
-    D_ovl10_06_8004AB88 = -1;
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl10_06_800491F0
+#define CORE_FUNC_B func_ovl10_06_80049194
+#define CORE_FUNC_C func_ovl10_06_8004914C
+#define CORE_FUNC_D func_ovl10_06_80049118
+#define CORE_BSS_A0 D_ovl10_06_8004AB84
+#define CORE_BSS_A1 D_ovl10_06_8004AB88
+#define CORE_BSS_B D_ovl10_06_8004AB90
+#define CORE_ZJ_1704 func_ovl10_06_80049DD8
+#define CORE_ZJ_1708 func_ovl10_06_80049DF8
+#define CORE_ZJ_1709 func_ovl10_06_80049E00
+#define CORE_ZJ_1904 func_ovl10_06_8004A108
+#define CORE_ZJ_2B04 func_ovl10_06_8004A690
+#include "overlays/common/core.h"
 
 /* ovl_17_09's 80044B14 */
-void func_ovl10_06_80049194(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl10_06_80049DD8(D_ovl10_06_8004AB90.x, D_ovl10_06_8004AB90.y, D_ovl10_06_8004AB90.z);
-    func_ovl10_06_80049DF8(arg0, arg1, arg2);
-    func_ovl10_06_8004A108(180);
-}
-
 /* ovl_17_09's 80044ACC */
-void func_ovl10_06_8004914C(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl10_06_80049E00(&sp1C, NULL, NULL);
-    func_ovl10_06_80049DF8(sp1C + arg0, 32768.0f, 32768.0f);
-}
-
 /* ovl_17_09's 80044A98 */
-void func_ovl10_06_80049118(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
-
-    p = arg1->unk40;
-    func_ovl10_06_8004A690(arg0, p->unk10, p->unk14, p->unk18);
-}
-
 /* ovl_10_10's 80045700 */
 /* runs the tasks, one frame each time round */
 void func_ovl10_06_80049020(void) {

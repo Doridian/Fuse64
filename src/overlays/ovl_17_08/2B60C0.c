@@ -77,7 +77,7 @@ s32 func_ovl17_08_80045488(s32);
 void func_ovl17_08_800455C8(s32, s32, s32, f32);
 void func_ovl17_08_80045618(s32, s32, s32);
 void func_ovl17_08_80045630(u32 (*)[3]);
-void func_ovl17_08_80045870(s32, f32, f32, f32);
+s32 func_ovl17_08_80045870(s32, f32, f32, f32);
 
 void func_ovl17_08_80043010(void);
 void func_ovl17_08_80043034(void);
@@ -164,30 +164,20 @@ static void func_ovl17_08_800443E0(void) {
 static void func_ovl17_08_800443D4(void) {
 }
 
-void func_ovl17_08_800443BC(void) {
-    D_ovl17_08_80045C84 = -1;
-    D_ovl17_08_80045C88 = -1;
-}
-
-void func_ovl17_08_80044360(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl17_08_80044FB8(D_ovl17_08_80045C90.x, D_ovl17_08_80045C90.y, D_ovl17_08_80045C90.z);
-    func_ovl17_08_80044FD8(arg0, arg1, arg2);
-    func_ovl17_08_800452E8(180);
-}
-
-void func_ovl17_08_80044318(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl17_08_80044FE0(&sp1C, NULL, NULL);
-    func_ovl17_08_80044FD8(sp1C + arg0, 32768.0f, 32768.0f);
-}
-
-void func_ovl17_08_800442E4(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
-
-    p = arg1->unk40;
-    func_ovl17_08_80045870(arg0, p->unk10, p->unk14, p->unk18);
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl17_08_800443BC
+#define CORE_FUNC_B func_ovl17_08_80044360
+#define CORE_FUNC_C func_ovl17_08_80044318
+#define CORE_FUNC_D func_ovl17_08_800442E4
+#define CORE_BSS_A0 D_ovl17_08_80045C84
+#define CORE_BSS_A1 D_ovl17_08_80045C88
+#define CORE_BSS_B D_ovl17_08_80045C90
+#define CORE_ZJ_1704 func_ovl17_08_80044FB8
+#define CORE_ZJ_1708 func_ovl17_08_80044FD8
+#define CORE_ZJ_1709 func_ovl17_08_80044FE0
+#define CORE_ZJ_1904 func_ovl17_08_800452E8
+#define CORE_ZJ_2B04 func_ovl17_08_80045870
+#include "overlays/common/core.h"
 
 void func_ovl17_08_800440F4(void) {
     UnkStructA *obj;

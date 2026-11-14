@@ -276,7 +276,7 @@ void func_ovl0F_02_80048368(s32);
 void func_ovl0F_02_800483A0(f32 *);
 void func_ovl0F_02_800483A8(void);
 void func_ovl0F_02_800483C0(s32);
-void func_ovl0F_02_800483E0(s32, f32, f32, f32);
+s32 func_ovl0F_02_800483E0(s32, f32, f32, f32);
 void func_ovl0F_02_800483E8(s32, f32 *);
 void func_ovl0F_02_80048538(void);
 void func_ovl0F_02_80048540(void);
@@ -299,8 +299,8 @@ static void func_ovl0F_02_80046E70(void);
 static void func_ovl0F_02_80046E78(void);
 static void func_ovl0F_02_80046E80(void);
 void func_ovl0F_02_80046DF8(void);
-void func_ovl0F_02_80046D9C(f32 arg0, f32 arg1, f32 arg2);
-void func_ovl0F_02_80046D20(s32 arg0, UnkStructA *arg1);
+void func_ovl0F_02_80046D9C(f32, f32, f32);
+s32 func_ovl0F_02_80046D20(s32, void *);
 static void func_ovl0F_02_80046150(s32 n, UnkStruct_ovl0F_02_80048734 *panels, UnkStruct_ovl0F_02_80048918 *flags);
 static void func_ovl0F_02_80046178(s32 n1, s32 n2);
 static void func_ovl0F_02_80046160(UnkStruct_ovl0F_02_800489F4 *door);
@@ -335,7 +335,7 @@ static void func_ovl0F_02_800436C8(UnkStructA *obj, f32 speed);
 static void func_ovl0F_02_800436D0(UnkStructA *obj, f32 speed);
 void func_ovl0F_02_80043618(void);
 void func_ovl0F_02_800434F8(UnkStructA *arg0);
-void func_ovl0F_02_80046D54(f32 arg0);
+void func_ovl0F_02_80046D54(f32);
 void func_ovl0F_02_80043404(void);
 static void func_ovl0F_02_80044F74(s32 arg1, UnkStruct_ovl0F_02_80048734 *arg0);
 static void func_ovl0F_02_80044C94(UnkStruct_ovl0F_02_80048734 *arg0);
@@ -538,10 +538,20 @@ static void func_ovl0F_02_80046E80(void) {
 #line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 }
 
-void func_ovl0F_02_80046DF8(void) {
-    D_ovl0F_02_80048D5C = -1;
-    D_ovl0F_02_80048D60 = -1;
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl0F_02_80046DF8
+#define CORE_FUNC_B func_ovl0F_02_80046D9C
+#define CORE_FUNC_C func_ovl0F_02_80046D54
+#define CORE_FUNC_D func_ovl0F_02_80046D20
+#define CORE_BSS_A0 D_ovl0F_02_80048D5C
+#define CORE_BSS_A1 D_ovl0F_02_80048D60
+#define CORE_BSS_B D_ovl0F_02_80048D68
+#define CORE_ZJ_1704 func_ovl0F_02_80047B28
+#define CORE_ZJ_1708 func_ovl0F_02_80047B48
+#define CORE_ZJ_1709 func_ovl0F_02_80047B50
+#define CORE_ZJ_1904 func_ovl0F_02_80047E58
+#define CORE_ZJ_2B04 func_ovl0F_02_800483E0
+#include "overlays/common/core.h"
 
 static void func_ovl0F_02_80046170(void) {
     /* fake: first references in descending address order (the header) */
@@ -564,26 +574,16 @@ static void func_ovl0F_02_80046170(void) {
     }
 }
 
-void func_ovl0F_02_80046D9C(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl0F_02_80047B28(D_ovl0F_02_80048D68.x, D_ovl0F_02_80048D68.y, D_ovl0F_02_80048D68.z);
-    func_ovl0F_02_80047B48(arg0, arg1, arg2);
-    func_ovl0F_02_80047E58(180);
-}
-
 /* unreferenced in this overlay */
-void func_ovl0F_02_80046D54(f32 arg0) {
-    f32 sp1C;
 
-    func_ovl0F_02_80047B50(&sp1C, NULL, NULL);
-    func_ovl0F_02_80047B48(sp1C + arg0, 32768.0f, 32768.0f);
-}
 
-void func_ovl0F_02_80046D20(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
 
-    p = arg1->unk40;
-    func_ovl0F_02_800483E0(arg0, p->unk10, p->unk14, p->unk18);
-}
+
+
+
+
+
+
 
 /* case 2's: the door, closed or already open */
 static void func_ovl0F_02_80046160(UnkStruct_ovl0F_02_800489F4 *door) {

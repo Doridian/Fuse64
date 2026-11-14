@@ -295,7 +295,7 @@ void func_ovl0F_01_80047E98(s32, s32, s32);
 void func_ovl0F_01_80047EF0(f32 *);
 void func_ovl0F_01_80047EF8(void);
 void func_ovl0F_01_80047F10(s32);
-void func_ovl0F_01_80047F30(s32, f32, f32, f32);
+s32 func_ovl0F_01_80047F30(s32, f32, f32, f32);
 void func_ovl0F_01_80047F38(s32, f32 *);
 void func_ovl0F_01_800480C0(s32);
 void func_ovl0F_01_800480C8(void);
@@ -366,9 +366,9 @@ static void func_ovl0F_01_80045E40(UnkStructA **arg0);
 static void func_ovl0F_01_80045E30(void);
 static void func_ovl0F_01_80045E38(UnkStructA **arg0);
 static void func_ovl0F_01_80045FA0(void);
-void func_ovl0F_01_80046988(s32 arg0, UnkStructA *arg1);
-void func_ovl0F_01_800469BC(f32 arg0);
-void func_ovl0F_01_80046A04(f32 arg0, f32 arg1, f32 arg2);
+s32 func_ovl0F_01_80046988(s32, void *);
+void func_ovl0F_01_800469BC(f32);
+void func_ovl0F_01_80046A04(f32, f32, f32);
 static void func_ovl0F_01_80045FA8(void);
 void func_ovl0F_01_80046A60(void);
 static void func_ovl0F_01_80046AE0(void);
@@ -548,10 +548,20 @@ static void func_ovl0F_01_80046AD8(void) {
 static void func_ovl0F_01_80046AE0(void) {
 }
 
-void func_ovl0F_01_80046A60(void) {
-    D_ovl0F_01_80048774 = -1;
-    D_ovl0F_01_80048778 = -1;
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl0F_01_80046A60
+#define CORE_FUNC_B func_ovl0F_01_80046A04
+#define CORE_FUNC_C func_ovl0F_01_800469BC
+#define CORE_FUNC_D func_ovl0F_01_80046988
+#define CORE_BSS_A0 D_ovl0F_01_80048774
+#define CORE_BSS_A1 D_ovl0F_01_80048778
+#define CORE_BSS_B D_ovl0F_01_80048780
+#define CORE_ZJ_1704 func_ovl0F_01_80047678
+#define CORE_ZJ_1708 func_ovl0F_01_80047698
+#define CORE_ZJ_1709 func_ovl0F_01_800476A0
+#define CORE_ZJ_1904 func_ovl0F_01_800479A8
+#define CORE_ZJ_2B04 func_ovl0F_01_80047F30
+#include "overlays/common/core.h"
 
 static void func_ovl0F_01_80045FA8(void) {
     /* fake: first references in descending address order (ovl_0F_04's 800460B4) */
@@ -572,25 +582,15 @@ static void func_ovl0F_01_80045FA8(void) {
     }
 }
 
-void func_ovl0F_01_80046A04(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl0F_01_80047678(D_ovl0F_01_80048780.x, D_ovl0F_01_80048780.y, D_ovl0F_01_80048780.z);
-    func_ovl0F_01_80047698(arg0, arg1, arg2);
-    func_ovl0F_01_800479A8(180);
-}
 
-void func_ovl0F_01_800469BC(f32 arg0) {
-    f32 sp1C;
 
-    func_ovl0F_01_800476A0(&sp1C, NULL, NULL);
-    func_ovl0F_01_80047698(sp1C + arg0, 32768.0f, 32768.0f);
-}
 
-void func_ovl0F_01_80046988(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
 
-    p = arg1->unk40;
-    func_ovl0F_01_80047F30(arg0, p->unk10, p->unk14, p->unk18);
-}
+
+
+
+
+
 
 static void func_ovl0F_01_80045FA0(void) {
 }

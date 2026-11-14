@@ -311,7 +311,7 @@ Vec3f D_ovl14_01_8004D6F0[8];
 s32 D_ovl14_01_8004D750[4];
 
 void func_ovl14_01_80043010(UnkStructA **arg0, Link_ovl14_01 *arg1);
-s32 func_ovl14_01_800431C4(s32 arg0, UnkStructA *arg1);
+s32 func_ovl14_01_800431C4(s32, void *);
 static void func_ovl14_01_800431F8(UnkStructA *obj);
 void func_ovl14_01_80043250(s32 arg0);
 void func_ovl14_01_800432D8(void);
@@ -397,8 +397,8 @@ void func_ovl14_01_8004B698(void);
 void func_ovl14_01_8004B820(s32 arg0);
 void func_ovl14_01_8004B908(void);
 void func_ovl14_01_8004B9CC(void);
-void func_ovl14_01_8004BA48(f32 arg0);
-void func_ovl14_01_8004BA90(f32 arg0, f32 arg1, f32 arg2);
+void func_ovl14_01_8004BA48(f32);
+void func_ovl14_01_8004BA90(f32, f32, f32);
 void func_ovl14_01_8004BAEC(void);
 
 /* .data */
@@ -466,23 +466,23 @@ static void func_ovl14_01_8004BB3C(void) {
 static void func_ovl14_01_8004BB44(void) {
 }
 
-void func_ovl14_01_8004BAEC(void) {
-    D_ovl14_01_8004D4C4 = -1;
-    D_ovl14_01_8004D4C8 = -1;
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl14_01_8004BAEC
+#define CORE_FUNC_B func_ovl14_01_8004BA90
+#define CORE_FUNC_C func_ovl14_01_8004BA48
+#define CORE_FUNC_D func_ovl14_01_800431C4
+#define CORE_BSS_A0 D_ovl14_01_8004D4C4
+#define CORE_BSS_A1 D_ovl14_01_8004D4C8
+#define CORE_BSS_B D_ovl14_01_8004D4D0
+#define CORE_ZJ_1704 func_ovl14_01_8004C6D8
+#define CORE_ZJ_1708 func_ovl14_01_8004C6F8
+#define CORE_ZJ_1709 func_ovl14_01_8004C700
+#define CORE_ZJ_1904 func_ovl14_01_8004CA08
+#define CORE_ZJ_2B04 func_ovl14_01_8004CF90
+#include "overlays/common/core.h"
 
-void func_ovl14_01_8004BA90(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl14_01_8004C6D8(D_ovl14_01_8004D4D0.x, D_ovl14_01_8004D4D0.y, D_ovl14_01_8004D4D0.z);
-    func_ovl14_01_8004C6F8(arg0, arg1, arg2);
-    func_ovl14_01_8004CA08(0xB4);
-}
 
-void func_ovl14_01_8004BA48(f32 arg0) {
-    f32 sp1C;
 
-    func_ovl14_01_8004C700(&sp1C, NULL, NULL);
-    func_ovl14_01_8004C6F8(sp1C + arg0, 32768.0f, 32768.0f);
-}
 
 void func_ovl14_01_8004B9CC(void) {
     void *sp1C;
@@ -3263,12 +3263,12 @@ void func_ovl14_01_80043624(void) {
     func_ovl14_01_8004C9F8();
 }
 
-s32 func_ovl14_01_800431C4(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *temp_v0;
 
-    temp_v0 = arg1->unk40;
-    return func_ovl14_01_8004CF90(arg0, temp_v0->unk10, temp_v0->unk14, temp_v0->unk18);
-}
+
+
+
+
+
 
 void func_ovl14_01_80043250(s32 arg0) {
     func_ovl14_01_8004C5C0(D_ovl14_01_8004D5DC->unk40, arg0, 0);

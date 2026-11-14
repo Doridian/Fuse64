@@ -160,7 +160,7 @@ void func_ovl0A_02_80047FA0(s32, f32 *, s32); /* 0x2601 */
 void func_ovl0A_02_80048058(s32, s32, s32); /* 0x2A00 */
 void func_ovl0A_02_800480D0(s32); /* 0x2B00 */
 void func_ovl0A_02_800480E0(s32); /* 0x2B02 */
-void func_ovl0A_02_800480F0(s32, s32, s32, s32); /* 0x2B04 */
+s32 func_ovl0A_02_800480F0(s32, f32, f32, f32); /* 0x2B04 */
 void func_ovl0A_02_80048248(void); /* 0x3000 */
 void func_ovl0A_02_80048250(void); /* 0x3001 */
 void func_ovl0A_02_800482B8(void); /* 0x310A */
@@ -272,9 +272,9 @@ void func_ovl0A_02_800465B0(void);
 void func_ovl0A_02_800465D0(void);
 void func_ovl0A_02_800465F0(void);
 void func_ovl0A_02_8004664C(s32 arg0);
-void func_ovl0A_02_80046B70(s32 arg0, UnkStruct_ovl0A_02_B04 *arg1);
-void func_ovl0A_02_80046BA4(f32 arg0);
-void func_ovl0A_02_80046BEC(f32 arg0, f32 arg1, f32 arg2);
+s32 func_ovl0A_02_80046B70(s32, void *);
+void func_ovl0A_02_80046BA4(f32);
+void func_ovl0A_02_80046BEC(f32, f32, f32);
 void func_ovl0A_02_80046C48(void);
 static void func_ovl0A_02_80046C60(void);
 static void func_ovl0A_02_80046C68(void);
@@ -321,30 +321,20 @@ static void func_ovl0A_02_80046C60(void) {
     func_ovl0A_02_80047B48(func_ovl0A_02_8004699C, NULL, 0, 0, 0);
 }
 
-void func_ovl0A_02_80046C48(void) {
-    D_ovl0A_02_80048524 = -1;
-    D_ovl0A_02_80048528 = -1;
-}
-
-void func_ovl0A_02_80046BEC(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl0A_02_80047838(D_ovl0A_02_80048530.x, D_ovl0A_02_80048530.y, D_ovl0A_02_80048530.z);
-    func_ovl0A_02_80047858(arg0, arg1, arg2);
-    func_ovl0A_02_80047B68(0xB4);
-}
-
-void func_ovl0A_02_80046BA4(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl0A_02_80047860(&sp1C, NULL, NULL);
-    func_ovl0A_02_80047858(sp1C + arg0, 32768.0f, 32768.0f);
-}
-
-void func_ovl0A_02_80046B70(s32 arg0, UnkStruct_ovl0A_02_B04 *arg1) {
-    UnkStruct_ovl0A_02_B04_Inner *p;
-
-    p = arg1->unk40;
-    func_ovl0A_02_800480F0(arg0, p->unk10, p->unk14, p->unk18);
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl0A_02_80046C48
+#define CORE_FUNC_B func_ovl0A_02_80046BEC
+#define CORE_FUNC_C func_ovl0A_02_80046BA4
+#define CORE_FUNC_D func_ovl0A_02_80046B70
+#define CORE_BSS_A0 D_ovl0A_02_80048524
+#define CORE_BSS_A1 D_ovl0A_02_80048528
+#define CORE_BSS_B D_ovl0A_02_80048530
+#define CORE_ZJ_1704 func_ovl0A_02_80047838
+#define CORE_ZJ_1708 func_ovl0A_02_80047858
+#define CORE_ZJ_1709 func_ovl0A_02_80047860
+#define CORE_ZJ_1904 func_ovl0A_02_80047B68
+#define CORE_ZJ_2B04 func_ovl0A_02_800480F0
+#include "overlays/common/core.h"
 
 void func_ovl0A_02_8004699C(void) {
     Obj02 *self;

@@ -213,7 +213,7 @@ void func_ovl13_01_8004BC88(UnkStructA *, s32, f32); /* 0x2901 */
 void func_ovl13_01_8004BD10(s32); /* 0x2B00 */
 void func_ovl13_01_8004BD20(s32); /* 0x2B02 */
 void func_ovl13_01_8004BD28(void); /* 0x2B03 */
-void func_ovl13_01_8004BD30(s32, f32, f32, f32); /* 0x2B04 */
+s32 func_ovl13_01_8004BD30(s32, f32, f32, f32); /* 0x2B04 */
 void func_ovl13_01_8004BE88(void); /* 0x3000 */
 void func_ovl13_01_8004BE90(void); /* 0x3001 */
 
@@ -298,7 +298,7 @@ void func_ovl13_01_8004306C(s32 arg0);
 static void func_ovl13_01_800430CC(UnkStructA *arg0);
 static void func_ovl13_01_8004A4AC(void);
 static void func_ovl13_01_8004A200(void);
-s32 func_ovl13_01_80043124(s32 arg0, UnkStructA *arg1);
+s32 func_ovl13_01_80043124(s32, void *);
 void func_ovl13_01_80043158(void);
 void func_ovl13_01_800431D4(void);
 void func_ovl13_01_80043608(void);
@@ -375,8 +375,8 @@ void func_ovl13_01_8004A39C(void);
 void func_ovl13_01_8004A3E8(void);
 void func_ovl13_01_8004A4C4(void);
 void func_ovl13_01_8004A6FC(s32 arg0);
-void func_ovl13_01_8004A7DC(f32 arg0);
-void func_ovl13_01_8004A824(f32 arg0, f32 arg1, f32 arg2);
+void func_ovl13_01_8004A7DC(f32);
+void func_ovl13_01_8004A824(f32, f32, f32);
 void func_ovl13_01_8004A880(void);
 
 /* .data */
@@ -418,23 +418,20 @@ static void func_ovl13_01_8004A8D0(void) {
 static void func_ovl13_01_8004A8D8(void) {
 }
 
-void func_ovl13_01_8004A880(void) {
-    D_ovl13_01_8004C224 = -1;
-    D_ovl13_01_8004C228 = -1;
-}
-
-void func_ovl13_01_8004A824(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl13_01_8004B478(D_ovl13_01_8004C230.x, D_ovl13_01_8004C230.y, D_ovl13_01_8004C230.z);
-    func_ovl13_01_8004B498(arg0, arg1, arg2);
-    func_ovl13_01_8004B7A8(0xB4);
-}
-
-void func_ovl13_01_8004A7DC(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl13_01_8004B4A0(&sp1C, NULL, NULL);
-    func_ovl13_01_8004B498(sp1C + arg0, 32768.0f, 32768.0f);
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl13_01_8004A880
+#define CORE_FUNC_B func_ovl13_01_8004A824
+#define CORE_FUNC_C func_ovl13_01_8004A7DC
+#define CORE_FUNC_D func_ovl13_01_80043124
+#define CORE_BSS_A0 D_ovl13_01_8004C224
+#define CORE_BSS_A1 D_ovl13_01_8004C228
+#define CORE_BSS_B D_ovl13_01_8004C230
+#define CORE_ZJ_1704 func_ovl13_01_8004B478
+#define CORE_ZJ_1708 func_ovl13_01_8004B498
+#define CORE_ZJ_1709 func_ovl13_01_8004B4A0
+#define CORE_ZJ_1904 func_ovl13_01_8004B7A8
+#define CORE_ZJ_2B04 func_ovl13_01_8004BD30
+#include "overlays/common/core.h"
 
 void func_ovl13_01_8004A3E8(void) {
     func_ovl13_01_8004ADB0(0);
@@ -2771,13 +2768,6 @@ void func_ovl13_01_800431D4(void) {
     if (func_ovl13_01_8004B9F0(0xA4) != 0) {
         func_ovl13_01_8004B7A8(0xA);
     }
-}
-
-s32 func_ovl13_01_80043124(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *temp_v0;
-
-    temp_v0 = arg1->unk40;
-    func_ovl13_01_8004BD30(arg0, temp_v0->unk10, temp_v0->unk14, temp_v0->unk18);
 }
 
 void func_ovl13_01_80043158(void) {

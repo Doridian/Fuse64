@@ -3972,7 +3972,7 @@ void func_80246F00(s32 arg0, s32 arg1) {
                 func_8022F808(obj, (f32 *)obj->unk58);
                 if (!obj->unk40 && !obj->unk40) {} /* fake: likewise */
             }
-            if (*D_802ACF58) {} /* fake */
+            if (*D_802ACF58) {} /* fake: dead read (as the two above) */
             break;
         }
         func_80245FA0(arg0, arg1);

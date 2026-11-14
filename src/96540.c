@@ -511,7 +511,7 @@ s32 func_8027BF38(PakDir *dir) {
     s32 ret = 9;
     s32 i;
     s32 j;
-    s32 pad;
+    s32 pad; /* fake: frame slot */
     OSPfsState state;
 
     func_8027BF30();
@@ -525,7 +525,7 @@ s32 func_8027BF38(PakDir *dir) {
                         dir->files[i].ext[j] = state.ext_name[j];
                     }
                     for (j = 0; j < 16; j++) {
-                        if (dir) {}
+                        if (dir) {} /* fake: dead read */
                         dir->files[i].name[(u32) j] = state.game_name[j];
                     }
                 } else {

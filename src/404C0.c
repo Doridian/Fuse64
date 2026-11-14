@@ -215,7 +215,7 @@ s32 func_8022616C(u8 *arg0, s32 arg1, s32 arg2, UnkStruct_80225CC0 *arg3) {
     if (!(arg3->unk10 & 1)) {
         return 0;
     }
-    /* fake (the permuter's): count holding the product first, and the
+    /* fake: (the permuter's) count holding the product first, and the
      * if (1) below; without them the frame comes out 8 bytes bigger */
     count = arg1 * arg2;
     size = count;

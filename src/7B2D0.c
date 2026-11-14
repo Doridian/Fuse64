@@ -50,7 +50,7 @@ static void func_80260AD0(Gfx **gfxp, Vtx *vtx, s32 mode, u8 *img, u32 width, u3
     s32 j;
     s32 x;
     s32 y;
-    s32 pad0;
+    s32 pad0; /* fake: frame slot */
     s32 uls;
     s32 ult;
     s32 lrs;

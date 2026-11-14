@@ -379,7 +379,7 @@ void func_80297114(void) {
 void func_80296C10(u16 *arg0, s32 x, s32 y, s32 w, s32 h);
 
 void func_80296D4C(u16 *arg0, UnkStruct_80296D4C *arg1, UnkStruct_80297858 **arg2) {
-    s32 pad[6]; /* frame: 0x98 (unexplained 24 bytes above the locals) */
+    s32 pad[6]; /* fake: frame: 0x98 (unexplained 24 bytes above the locals) */
     f32 x = 8.0f;
     f32 y = 6.0f;
     f32 w = 304.0f;

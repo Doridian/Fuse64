@@ -496,7 +496,7 @@ static s32 func_8026B238(UnkStruct_8026B238 *info, UnkStruct_8026B238 *lastInfo)
 
 /* audiomgr.c's __amMain */
 static void func_8026B584(void *arg) {
-    s32 pad; /* an unused slot above done (frame 0x60) */
+    s32 pad; /* fake: an unused slot above done (frame 0x60) */
     s32 done;
     UnkStruct_8026B584 *msg;
     UnkStruct_8026B238 *lastInfo;

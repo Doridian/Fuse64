@@ -462,7 +462,7 @@ static void func_80287904(void) {
     f32 u[2];
     f32 v[2];
     f32 w;
-    s32 pad[3];
+    s32 pad[3]; /* fake: frame-tuned */
     f32 rot[3];
     f32 cam[3];
     f32 h;
@@ -636,7 +636,7 @@ void func_802876C8(UnkStruct_802B0260 *arg0) {
 
 void func_802876A0(void) {
     func_80297D30(0x1A, D_802A1B54);
-    if (0) {
+    if (0) { /* fake: dead calls */
         func_80297D30(0, 0);
         func_80297D30(0, 0);
     }

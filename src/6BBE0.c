@@ -1166,7 +1166,7 @@ loop_1:
 
 void func_8025C840() {
 
-    s32 pad[1];
+    s32 pad[1]; /* fake: frame-tuned */
     f32 spA0[3];
     f32 sp94[3];
     f32 *temp_s0;
@@ -1276,7 +1276,7 @@ void func_8025C590(s32 arg0) {
 }
 
 s32 func_80255224(f32 *arg0, f32 *arg1, s32 arg2) {
-    s32 pad;
+    s32 pad; /* fake: frame-tuned */
     s32 best;
     f32 *p;
     f32 d;
@@ -3568,7 +3568,7 @@ static void func_80254EC4(f32 *arg0) {
 }
 
 static s32 func_80254E20(f32 *arg0, s32 arg2, s32 arg1) {
-    s32 pad[2];
+    s32 pad[2]; /* fake: frame-tuned */
     f32 sp24;
     s32 n;
     u8 *temp_v0;
@@ -4524,7 +4524,7 @@ static s32 func_80252330(s32 *arg0, f32 arg1) {
 }
 
 static void func_80252174(f32 *arg0) {
-    s32 pad[6];
+    s32 pad[6]; /* fake: frame-tuned */
     f32 *temp_s1;
     f32 *temp_s2;
     f32 sp34;
@@ -4555,7 +4555,7 @@ static void func_80252174(f32 *arg0) {
 }
 
 static void func_80252048(f32 *arg0) {
-    s32 pad[6];
+    s32 pad[6]; /* fake: frame-tuned */
     f32 sp1C;
     f32 a;
 

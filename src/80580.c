@@ -1378,7 +1378,7 @@ static void func_802691A0(void) {
     s32 table;
     u8 bank;
 
-    if (D_802AD22C->revision) {}
+    if (D_802AD22C->revision) {} /* fake: dead read */
     if (D_802AD22C->revision == 0x5331 || D_802AD22C->revision == 0x5332) {
         sd = &D_802AD22C->seqArray[D_802AD244];
         len = sd->len;
@@ -1715,7 +1715,7 @@ static void *func_80268438(s16 num) {
 static void func_80268440(s16 idx) {
     Voice *v;
     SndDef def;
-    s32 pad[2];
+    s32 pad[2]; /* fake: frame-tuned (header) */
 
     v = &D_802AD654[idx];
     v->flags &= ~0x1000;
@@ -1757,8 +1757,8 @@ static void func_80267A18(s16 idx) {
                 s32 op = pc[0];
                 s->wait = (pc[1] << 8) + pc[2];
                 pc += 3;
-                if (op == 0x105) {}
-                if (op == ~2) {}
+                if (op == 0x105) {} /* fake: dead test: constants in s-registers (header) */
+                if (op == ~2) {} /* fake: dead test (header) */
                 switch (op - 0x80) {
                     case 3:
                         num = (pc[0] << 8) + pc[1];
@@ -1946,7 +1946,7 @@ static void func_802679A8(VoiceScript *s) {
         s->unk32 = 0;
     }
     if ((s->flags & 2) && s->unk1D == 1) {
-        if (s->unk20) {}
+        if (s->unk20) {} /* fake: dead read */
         s->unk20 += 2;
         if (s->unk20 >= s->unk22) {
             s->unk20 = 0;
@@ -2517,7 +2517,7 @@ void func_80266510(s16 idx, s8 vol) {
     s16 i;
 
     func_80266508();
-    if (!idx) {}
+    if (!idx) {} /* fake: dead read */
     v = &D_802AD654[idx];
     if (v->state == 1) {
         if (!(v->flags & 0x1000)) {
@@ -2546,7 +2546,7 @@ void func_802663E0(s16 idx, u8 pan) {
     s16 i;
 
     func_802663D8();
-    if (!idx) {}
+    if (!idx) {} /* fake: dead read */
     v = &D_802AD654[idx];
     if (v->state == 1) {
         if (pan >= 0x80) {
@@ -2578,7 +2578,7 @@ void func_802662A0(s16 idx, s16 pitch) {
     s16 i;
 
     func_80266298();
-    if (!idx) {}
+    if (!idx) {} /* fake: dead read */
     v = &D_802AD654[idx];
     if (v->state == 1) {
         if (pitch >= 0x4B1) {
@@ -2673,7 +2673,7 @@ void func_80265FF8(s8 arg0) {
 static s16 func_80265FBC(s8 arg0) {
     s32 v;
 
-    if (0) {
+    if (0) { /* fake: dead store keeps func_80265FBC from being inlined into the others (header) */
         D_802AD218 = 0;
     }
     if (arg0 > 0) {

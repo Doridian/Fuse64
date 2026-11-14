@@ -467,7 +467,7 @@ OSScTask *func_800008B0(OSScTask *t) {
         }
         return t;
     }
-    if (0) {
+    if (0) { /* fake: dead code that keeps the assert strings in .rodata */
         func_800018A8("sc->curRDPTask == gfx", "sched.c", 0);
     }
     return NULL;

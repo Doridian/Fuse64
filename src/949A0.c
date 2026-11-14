@@ -331,16 +331,16 @@ s32 func_8027BA80(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg4, s32 arg5) {
 }
 
 s32 func_8027B8D4(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
-    s16 pad0; /* the pads give the original's stack layout */
+    s16 pad0; /* fake: the pads give the original's stack layout */
     s16 type;
-    s32 pad[5];
+    s32 pad[5]; /* fake: frame slots */
     f32 x;
     f32 y;
     f32 z;
     s32 r;
     s16 i;
     s16 sum;
-    s32 pad2[4];
+    s32 pad2[4]; /* fake: frame slots */
 
     if (func_8027AF70() >= 8) {
         return 0;
@@ -510,7 +510,7 @@ s32 func_8027B480(s32 arg0) {
 void func_8027B440(UnkStruct_80279050_14 *arg0) {
     UnkStruct_800BB4A8 *node = func_8027A1A0(arg0);
 
-    if (node) {} /* fake (permuter): without it the registers come out swapped */
+    if (node) {} /* fake: (permuter) without it the registers come out swapped */
     func_8027036C(&node->unk54, 1);
     node->unk3C = 0.0f;
 }
@@ -791,7 +791,7 @@ void func_8027A950(void) {
     }
     D_802AFEC4 = 1;
     D_802AFEC8 = func_80238A10(func_8027A144, 0, D_800BD818, 0x1000, 0x50);
-    if (D_802AFEC8 == -1) {}
+    if (D_802AFEC8 == -1) {} /* fake: dead test */
     p = D_800BB4A0;
     for (i = 0; i < 48; i++, p++) {
         p->unk0 = i;
@@ -846,7 +846,7 @@ void func_8027A640(void) {
     z = st->unkE;
     mode = st->unk10;
     D_802AFE80 = malloc(func_802266DC(file));
-    if (D_802AFE80 == NULL) {}
+    if (D_802AFE80 == NULL) {} /* fake: dead test */
     func_8022616C(D_802AFE80, 1, func_802266DC(file), file);
     p = D_802AFE80;
     D_802AFE84 = p;

@@ -54,8 +54,8 @@ void func_80261CD0(Gfx **gfxp, Vtx *vtx, s32 mode, u8 *img, u32 width, u32 heigh
     s32 j;
     s32 x;
     s32 y;
-    s32 pad0;
-    s32 pad1;
+    s32 pad0; /* fake: frame slot */
+    s32 pad1; /* fake: frame slot */
     s32 uls;
     s32 ult;
     s32 ox;

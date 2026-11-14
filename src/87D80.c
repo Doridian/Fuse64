@@ -888,15 +888,15 @@ f32 func_8026EAF8(u8 *arg0) {
 }
 
 f32 func_8026E938(u8 *arg0) {
-    s32 padA[1];
+    s32 padA[1]; /* fake: frame slot */
     f32 fx;
     f32 fy;
     f32 fz;
-    s32 padB[2];
-    s32 padC[3];
+    s32 padB[2]; /* fake: frame slots */
+    s32 padC[3]; /* fake: frame slots */
     f32 v[3];
     Unk8026DCAC pos;
-    s32 padD[3];
+    s32 padD[3]; /* fake: frame slots */
     f32 r;
     s32 x;
     s32 y;
@@ -964,7 +964,7 @@ f32 func_8026E8B8() {
 }
 
 void func_8026E6E4(u8 *arg0, f32 *arg1, f32 *arg2) {
-    s32 pad[3];
+    s32 pad[3]; /* fake: frame-tuned */
     s32 sp78[3];
     f32 sp6C[3];
     f32 temp_fs3;
@@ -1065,7 +1065,7 @@ s32 func_8026E5CC(s32 arg0) {
 
 f32 func_8026E3AC(f32 arg0, f32 arg1, f32 arg2) {
     s32 attr;
-    s32 pad[3];
+    s32 pad[3]; /* fake: frame-tuned */
     Unk8026DCAC sp90;
     f32 pos[3];
     f32 sp78[3];

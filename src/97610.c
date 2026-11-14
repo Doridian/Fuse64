@@ -283,11 +283,11 @@ s32 func_8027E8EC(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
     node->unk2 = 0;
     node->unk14 = D_802B0190[kind].unk2;
     node->unkC = func_8022A6C4(model, 0x40);
-    if (node->unkC == NULL) {}
+    if (node->unkC == NULL) {} /* fake: dead read */
     node->unkC->unkC = func_8027CF64(arg0);
     if (D_802B01B8[kind].unk0 != 0) {
         node->unk10 = func_8022A6C4(model2, 0x60);
-        if (node->unk10 == NULL) {}
+        if (node->unk10 == NULL) {} /* fake: dead read */
         node->unk10->unkC = func_8027E5F8(arg0);
     } else {
         node->unk10 = NULL;
@@ -304,25 +304,25 @@ s32 func_8027E8EC(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
 void func_8027E6C4(void) {
     UnkStruct_80090440 *node;
     s16 i;
-    s64 m; // a separate -1 (not one register for both unk1A stores)
+    s64 m; /* fake: s64, a separate -1 (not one register for both unk1A stores) */
 
     if (D_802B0188 != 1) {
         D_802B0188 = 1;
         D_802B018C = 300;
         D_802B0180 = func_80238A10(func_8027DCB8, 0, 0, 0, 0x30);
-        if (D_802B0180 == 0) {}
+        if (D_802B0180 == 0) {} /* fake: dead read */
         D_802B01D8 = (D_802B0190[0].unk0 == 0) ? NULL : func_8026CE28(D_802B0190[0].unk0);
-        if (D_802B01D8 == NULL) {}
+        if (D_802B01D8 == NULL) {} /* fake: dead read */
         D_802B01DC = (D_802B0190[1].unk0 == 0) ? NULL : func_8026CE28(D_802B0190[1].unk0);
-        if (D_802B01DC == NULL) {}
+        if (D_802B01DC == NULL) {} /* fake: dead read */
         D_802B01E0 = (D_802B0190[2].unk0 == 0) ? NULL : func_8026CE28(D_802B0190[2].unk0);
-        if (D_802B01E0 == NULL) {}
+        if (D_802B01E0 == NULL) {} /* fake: dead read */
         D_802B01E4 = (D_802B01B8[0].unk0 == 0) ? NULL : func_8026CE28(D_802B01B8[0].unk0);
-        if (D_802B01E4 == NULL) {}
+        if (D_802B01E4 == NULL) {} /* fake: dead read */
         D_802B01E8 = (D_802B01B8[1].unk0 == 0) ? NULL : func_8026CE28(D_802B01B8[1].unk0);
-        if (D_802B01E8 == NULL) {}
+        if (D_802B01E8 == NULL) {} /* fake: dead read */
         D_802B01EC = (D_802B01B8[2].unk0 == 0) ? NULL : func_8026CE28(D_802B01B8[2].unk0);
-        if (D_802B01EC == NULL) {}
+        if (D_802B01EC == NULL) {} /* fake: dead read */
         D_802B01D0 = func_80231274(-1, 0, 0xD0, 0);
         node = D_80090440;
         for (i = 0; i < 50; i++, node++) {
@@ -386,7 +386,7 @@ s16 func_8027E5F8(s32 arg0) {
             break;
         default:
             ret = 0;
-            if (kind) {}
+            if (kind) {} /* fake: dead read */
             break;
     }
     return ret;
@@ -404,7 +404,7 @@ void func_8027DFAC(void) {
     s16 nx;
     s16 ny;
     s16 nz;
-    s16 pad;
+    s16 pad; /* fake: frame slot */
     s16 tries;
     s16 xs[3];
     s16 ys[3];
@@ -535,7 +535,7 @@ s16 func_8027DF40(s32 arg0) {
             break;
         default:
             ret = 0;
-            if (kind) {}
+            if (kind) {} /* fake: dead read */
             break;
     }
     return ret;
@@ -582,8 +582,8 @@ void func_8027DCB8(void) {
         if ((D_802AC5D0 & 4) && D_802B018A == 0 && func_8027D10C() == 0) {
             D_802B018A = 1;
             D_802B0184 = func_80238A10(func_8027DFAC, 0, 0, 0, 0x110);
-            if (D_802B0184 == 0) {}
-            if (D_802B0188) {}
+            if (D_802B0184 == 0) {} /* fake: dead read */
+            if (D_802B0188) {} /* fake: dead read */
         }
         func_8027CFC0();
         func_80239094();
@@ -595,7 +595,7 @@ void func_8027D894(void) {
     s32 i;
     s16 n;
     s16 kind;
-    s32 pad;
+    s32 pad; /* fake: frame slot */
     f32 pos[3];
 
     if (D_80090440[0].unk4 != NULL) {
@@ -711,7 +711,7 @@ void func_8027D774(UnkStruct_80090440 *arg0, UnkStruct_80090440 *arg1) {
 }
 
 void func_8027D398(UnkStruct_80090440 *arg0) {
-    s32 pad;
+    s32 pad; /* fake: frame slot */
     s32 mode = func_8023A840()->unk10;
     UnkStruct_8023A834 *t;
     u8 *p;
@@ -880,7 +880,7 @@ s16 func_8027CF64(s32 arg0) {
             break;
         default:
             ret = 0;
-            if (kind) {}
+            if (kind) {} /* fake: dead read */
             break;
     }
     return ret;

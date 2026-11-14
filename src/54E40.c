@@ -648,7 +648,7 @@ void func_80243824(s32 arg0) {
         }
     }
     D_802AC7A0[idx] = arg0;
-    if (0) {
+    if (0) { /* fake: dead references that set the emission order (header) */
         func_80238A10(func_802434F8, 0, 0, 0, 0);
         func_80238A10(func_80242FB4, 0, 0, 0, 0);
         func_80238A10(func_80242DA8, 0, 0, 0, 0);
@@ -998,7 +998,7 @@ void func_80242270(s32 arg0, Gfx **gdl) {
         div /= 10;
         m++;
     } while (m != 2);
-    if (0) {
+    if (0) { /* fake: a dead call: the emission order (header) */
         func_80242268();
     }
     gfx = *gdl;
@@ -1320,7 +1320,7 @@ void func_8023FD08() {
     u8 *obj;
     s32 msg;
     void *model;
-    s32 pad1;
+    s32 pad1; /* fake: frame (header: pad1/pad2 keep the frame) */
     u8 buf[12];
     UnkStruct_8023FD08 *o;
     f32 y4;
@@ -1328,7 +1328,7 @@ void func_8023FD08() {
     f32 y2;
     f32 y1;
     f32 dx;
-    s32 pad2;
+    s32 pad2; /* fake: frame (header) */
 
     D_802AC5D0 |= 0x90;
     func_80270770(0, 1);
@@ -1683,11 +1683,11 @@ void func_8023F26C() {
     s32 h;
     s32 k;
     s32 id;
-    s32 pad1;
+    s32 pad1; /* fake: frame-tuned */
     u32 mode;
-    s32 pad2;
+    s32 pad2; /* fake: frame-tuned */
     void *model;
-    s32 pad3[3];
+    s32 pad3[3]; /* fake: frame-tuned */
     s32 i;
     s32 task;
     u8 *obj;
@@ -1956,7 +1956,7 @@ static void func_8023ECF4(u8 *arg0) {
 }
 
 void func_8023ECEC() {
-    if (0) {
+    if (0) { /* fake: a dead call: the emission order (header) */
         func_8023EB28(0);
     }
 
@@ -1998,7 +1998,7 @@ static void *func_8023EB28(s32 arg0) {
 }
 
 static void func_8023E8FC(f32 *pos) {
-    s32 padA[9];
+    s32 padA[9]; /* fake: frame-tuned */
     f32 x;
     f32 y;
     f32 z;
@@ -2010,7 +2010,7 @@ static void func_8023E8FC(f32 *pos) {
         s32 unk0[4];
         f32 unk10[3];
     } s;
-    s32 padB[2];
+    s32 padB[2]; /* fake: frame-tuned */
 
     while (TRUE) {
         x = (s32) ((f32) func_8025E63C() * (((f32 (*)[3]) D_802A0658)[D_802AC660.unkA0 + 10][0] - ((f32 (*)[3]) D_802A0658)[D_802AC660.unkA0][0])) + ((f32 (*)[3]) D_802A0658)[D_802AC660.unkA0][0];
@@ -2122,7 +2122,7 @@ void func_8023E1D8() {
                 M2C_FIELD(cur, f32 *, 0x14) = 126.0f;
                 M2C_FIELD(cur, f32 *, 0x1C) = 140.0f;
             } else if (func_802399AC(0) & 0x8000) {
-                do {} while (0);
+                do {} while (0); /* fake: splits the block */
                 func_8026C660(1);
                 if (sel == 0) {
                     D_802AC810 = 1;
@@ -2131,7 +2131,7 @@ void func_8023E1D8() {
                 }
                 break;
             } else if (func_802399AC(0) & 0x4000) {
-                do {} while (0);
+                do {} while (0); /* fake: splits the block */
                 D_802AC810 = -1;
                 break;
             }
@@ -2214,14 +2214,14 @@ void func_8023DB0C() {
         func_80277AF8(0, 8);
     } else {
         func_80277E1C();
-#line 2189
+#line 2189 /* fake: numbering for as1 order */
     }
     D_802AC610.unk0 |= 1;
     D_802AC660.unk0 = 0;
-#line 2195
+#line 2195 /* fake: numbering for as1 order */
     PLAYERS[0].unk14 = 1;
-#line 2193
-    do {} while (0);
+#line 2193 /* fake: numbering for as1 order */
+    do {} while (0); /* fake: splits the block */
     for (i = 0; i < 4; i++) {
         D_802AC660.unk4[i] = 1;
         D_802AC660.unk40[i] = 0;
@@ -2240,7 +2240,7 @@ void func_8023DB0C() {
     D_802AC660.unk38 = 1;
     D_802AC660.unk3C = 1;
     D_802AC660.unkA0 = 0;
-#line 2203
+#line 2203 /* fake: numbering for as1 order */
     D_802AC5D4 = 0x14;
     D_802AC5D8 = 0x10;
     func_802268F4(2);
@@ -2355,7 +2355,7 @@ void func_8023DB0C() {
 void func_8023DA04(s32 arg0) {
     s32 temp_v1;
 
-    if (0) {
+    if (0) { /* fake: dead calls: the emission order */
         func_8023D9FC();
         func_8023D8A0();
     }
@@ -2448,7 +2448,7 @@ void func_8023D848() {
     D_802AC768 = NULL;
     D_802AC798 = 0;
     D_802A01BC = 1;
-    if (0) {
+    if (0) { /* fake: dead calls: the emission order */
         func_8023D840();
         func_8023D0F8();
     }
@@ -2464,9 +2464,9 @@ static s32 func_8023D0F8() {
     s32 k;
     s32 skip;
     Player54E40 *pl;
-    s32 pad;
+    s32 pad; /* fake: frame-tuned */
 
-    if (0) {
+    if (0) { /* fake: a dead call: the emission order */
         func_8023D0F0();
     }
     if ((D_802AC5D0 & 2) && (D_802AC610.unk14 != 0)) {
@@ -2478,7 +2478,7 @@ static s32 func_8023D0F8() {
         skip = 0;
     }
     D_802AC5D0 &= ~0x6E;
-    do {} while (0);
+    do {} while (0); /* fake: splits the block */
     D_800AEE14 = 0;
     D_800AEE58 = 0;
     D_800AEEDC = 0;
@@ -2700,7 +2700,7 @@ void func_8023CC54(s32 arg0) {
     s32 k;
     s32 t;
 
-    if (0) {
+    if (0) { /* fake: dead calls: the emission order */
         func_8023CC4C();
         func_8023CA94();
     }
@@ -2766,10 +2766,10 @@ void func_8023C374() {
     s32 sp68;
     s32 sp64;
     s32 sp60;
-    s32 pad;
+    s32 pad; /* fake: frame-tuned */
     u8 *temp_a0;
 
-    if (0) {
+    if (0) { /* fake: a dead call: the emission order */
         func_8023C170();
     }
     if ((D_802AC5F0 != 0) || (D_802AC5D4 < 0x28) || (D_802AC610.unk0 & 6)) {
@@ -2892,7 +2892,7 @@ static void func_8023C170() {
 }
 
 s32 func_8023BBCC() {
-    s32 pad[6];
+    s32 pad[6]; /* fake: frame-tuned */
     s32 i;
     s32 var_v0;
 
@@ -3167,7 +3167,7 @@ void func_8023AE6C(s32 arg0, s32 arg1, s32 arg2) {
 }
 
 void func_8023ADD4(s32 arg0) {
-    if (0) {
+    if (0) { /* fake: a dead call: the emission order */
         func_8023AC38();
     }
     if ((arg0 != 0) && (D_802A01B4 == 0)) {
@@ -3207,7 +3207,7 @@ static void func_8023AC38(void) {
         func_80280DB4(D_802AC7E4);
         func_80280DB4(D_802AC7E8);
     }
-    if (0) {
+    if (0) { /* fake: a dead call keeps the order once func_8023AB54 is inlined (header) */
         func_8023AB90();
     }
     if (!(D_802AC5D0 & 4)) {
@@ -3227,7 +3227,7 @@ static s32 func_8023AB90(void) {
     s32 id;
     u8 *obj;
 
-    if (0) {
+    if (0) { /* fake: dead calls: the emission order (header) */
         func_8023AB54(0, 0);
         func_8023AB4C(0, 0);
     }
@@ -3276,7 +3276,7 @@ s32 func_8023AA60(s32 arg0) {
 
 s32 func_8023A870(s32 arg0, s32 arg1) {
     u8 *obj;
-    s32 pad[2];
+    s32 pad[2]; /* fake: frame-tuned */
 
     if (!(D_802A01B0 & 2)) {
         if (!(D_802AC5D0 & 1)) {

@@ -107,7 +107,7 @@ extern s32 D_800BC76C;
 extern UnkStruct_800BC770 D_800BC770[16];
 
 /* a debris spawn, inlined everywhere with its own frame area (func_8028A978 is its empty stub) */
-/* SPAWN1's n is the caller's loop counter, for a fake (see the header) */
+/* fake: SPAWN1's n is the caller's loop counter; its dead test and both macros' pads (see the header) */
 #define SPAWN1(n, k, x, y, z) { s32 kind; f32 px, py, pz; s32 pad[2]; f32 pos[3]; s32 pad2; if (pos == (f32 *) (n * n) || n == 5) {} func_8028A978(); kind = k; px = x; py = y; pz = z; pos[0] = px; pos[1] = py; pos[2] = pz; func_8028A5C4(func_8028A690(kind), kind, pos, 0, 1); do {} while (0); }
 #define SPAWN(k, x, y, z) { s32 kind; f32 px, py, pz; s32 pad[3]; f32 pos[3]; func_8028A978(); kind = k; px = x; py = y; pz = z; pos[0] = px; pos[1] = py; pos[2] = pz; func_8028A5C4(func_8028A690(kind), kind, pos, 0, 1); do {} while (0); }
 
@@ -564,7 +564,7 @@ static void func_8028B670(UnkStruct_800BC528 *e, s32 kind, s32 mode, f32 scale, 
     s32 step;
     f32 t;
     s32 dir;
-    s32 pad;
+    s32 pad; /* fake: frame slot */
 
     step = 1;
     t = 0.0f;
@@ -871,7 +871,7 @@ static void func_8028CC18(void) {
     func_8028AB0C(m, 0.01f);
     e->unk10 = 1.f;
     while (t < 30.0f) {
-        if (t == 0.05f) {}
+        if (t == 0.05f) {} /* fake: dead test (header) */
         if (t < 20.0f) {
             if (step == 1) {
                 step++;

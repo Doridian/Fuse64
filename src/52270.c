@@ -265,7 +265,7 @@ void func_80238100(void) {
 
 void func_80237F84(void *arg0) {
     s32 run;
-    s32 pad; /* the frame has a slot here */
+    s32 pad; /* fake: the frame has a slot here */
     UnkStruct_802A8938 *mq;
     s16 *msg = NULL;
 

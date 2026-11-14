@@ -234,7 +234,7 @@ static void func_802639E4(Gfx **gfxp, DrawF *info) {
     s32 c;
     s32 k;
     s32 r;
-    s32 pad;
+    s32 pad; /* fake: frame slot */
     s32 rows;
     f32 rf;
     f32 y;
@@ -433,7 +433,7 @@ s32 func_80264070(Gfx **gfxp, TexFile *file, s32 idx, DrawF *info) {
 
 static void func_80264A98(Gfx **gfxp, DrawI *info) {
     s32 n;
-    s32 pad1;
+    s32 pad1; /* fake: frame slot */
     s32 du;
     s32 dv;
     s32 cols;
@@ -444,7 +444,7 @@ static void func_80264A98(Gfx **gfxp, DrawI *info) {
     s32 i;
     s32 k;
     s32 r;
-    s32 pad;
+    s32 pad; /* fake: frame slot */
     s32 uls;
     s32 ult;
     s32 a, b, c, d, e, f, g, hh;
@@ -727,17 +727,17 @@ void func_8026437C(Gfx **gfxp, TexFile *file, f32 x0, f32 y0, f32 x1, f32 y1, f3
     f32 fw;
     f32 fh;
     s32 i;
-    s32 pad0;
-    s32 pad1;
-    s32 pad2;
-    s32 pad3;
-    s32 pad4;
+    s32 pad0; /* fake: frame slots */
+    s32 pad1; /* fake: frame slot */
+    s32 pad2; /* fake: frame slot */
+    s32 pad3; /* fake: frame slot */
+    s32 pad4; /* fake: frame slot */
     s32 flags;
-    s32 pad5;
+    s32 pad5; /* fake: frame slot */
     RectF rects[4] = { { 32768.0f, 32768.0f, 32768.0f, 32768.0f }, { 32768.0f, 32768.0f, 32768.0f, 32768.0f }, { 32768.0f, 32768.0f, 32768.0f, 32768.0f }, { 32768.0f, 32768.0f, 32768.0f, 32768.0f } };
     DrawF info;
     Gfx *save;
-    s32 padA; /* the frame the old func_80263904(fw) call took */
+    s32 padA; /* fake: the frame the old func_80263904(fw) call took */
 
     gfx = *gfxp;
     if (func_80233650(x0, x1) || func_802336E4(w) || func_80233650(y0, y1) || func_802336E4(h)) {
@@ -771,13 +771,13 @@ void func_8026437C(Gfx **gfxp, TexFile *file, f32 x0, f32 y0, f32 x1, f32 y1, f3
     }
     fw = (rects[0].c - rects[0].a) - 1.0f;
     if (func_802336E4(rects[0].c - (f32) (s32) rects[0].c) == 0) {
-        if (fw + (s32) fw && fw + (s32) fw) {} /* keeps the dead conversion; `+` for its ugen temps */
+        if (fw + (s32) fw && fw + (s32) fw) {} /* fake: keeps the dead conversion; `+` for its ugen temps */
     }
     fh = (rects[0].d - rects[0].b) - 1.0f;
     if (func_802336E4(rects[0].d - (f32) (s32) rects[0].d) == 0) {
-        if (fh + (s32) fh && fh + (s32) fh) {}
+        if (fh + (s32) fh && fh + (s32) fh) {} /* fake: as above */
     }
-    /* fakes: uopt colouring priorities (a, fh, d) */
+    /* fake: uopt colouring priorities (a, fh, d) */
     if (rects[0].a == 32768.0f) {}
     if (fh * fh == fh) {}
     if (rects[0].d == 0.0f) {}
@@ -785,7 +785,7 @@ void func_8026437C(Gfx **gfxp, TexFile *file, f32 x0, f32 y0, f32 x1, f32 y1, f3
     if (rects[i].a != 32768.0f && rects[i].b != 32768.0f && rects[i].c != 32768.0f && rects[i].d != 32768.0f) {
         info.x0 = x0;
         info.y0 = y0;
-        if (fh * (s32) fh && fh * (s32) fh) {} /* keeps the dead conversion; `*` so it doesn't share the `+` above */
+        if (fh * (s32) fh && fh * (s32) fh) {} /* fake: keeps the dead conversion; `*` so it doesn't share the `+` above */
         /* c-a and d-b in info.x1/info.y1's registers; the assignment keeps them the first operand */
         info.x1 = (info.x1 = (rects[i].c - rects[i].a)) * (info.dirX * info.scaleX) + x0;
         info.y1 = (info.y1 = (rects[i].d - rects[i].b)) * (info.dirY * info.scaleY) + y0;

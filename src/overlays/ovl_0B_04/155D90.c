@@ -381,7 +381,7 @@ s32 D_ovl0B_04_8004A3F0;
 #else
 s32 D_ovl0B_04_8004A3B0[13];   /* page 9's */
 Fade *D_ovl0B_04_8004A3E4;
-u8 D_ovl0B_04_8004A3E8[8];     /* not referenced (UNUSED_BSS: fake) */
+u8 D_ovl0B_04_8004A3E8[8];     /* fake: not referenced (kept by UNUSED_BSS) */
 s32 D_ovl0B_04_8004A3F0;
 s32 D_ovl0B_04_8004A3F4;
 /* fake: a dead store in an `if (0)`, so -O3 keeps D_ovl0B_04_8004A3E8 in place */

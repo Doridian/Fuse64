@@ -599,7 +599,7 @@ s32 func_80288C40(UnkStruct_80288040 *arg0) {
         func_8028E8A4(arg0->unk50.b[0], arg0->unk0->unk40->unk10, arg0->unk0->unk40->unk14,
                       arg0->unk0->unk40->unk18, (arg0->unk50.b[1] >> 5) + 1);
     }
-    if (0) { D_802A1B70 = (s32) &v; }
+    if (0) { D_802A1B70 = (s32) &v; } /* fake: takes v's address in dead code: v stays in its home */
     if (func_80288C08(arg0, 180.0f)) {
         return 0;
     }
@@ -688,7 +688,7 @@ static s32 func_80288644(UnkStruct_80288040 *arg0, f32 px, f32 pz) {
             }
             break;
         case 0x20:
-            if (0) { func_8028863C(px, x); }
+            if (0) { func_8028863C(px, x); } /* fake: a dead call */
             if (pz < (z = arg0->unk0->unk40->unk18) && (x = arg0->unk0->unk40->unk10) < px
                 && func_802885E4(arg0, 8.0f, (px < (x = arg0->unk0->unk40->unk10)) ? x - px : px - x, func_8028863C(pz, z = arg0->unk0->unk40->unk18))) {
                 ret = 1;
@@ -702,7 +702,7 @@ static s32 func_80288644(UnkStruct_80288040 *arg0, f32 px, f32 pz) {
             }
             break;
         case 0x60:
-            if (0) { func_8028863C(px, x); }
+            if (0) { func_8028863C(px, x); } /* fake: a dead call */
             if ((z = arg0->unk0->unk40->unk18) < pz && (x = arg0->unk0->unk40->unk10) < px
                 && func_802885E4(arg0, 8.0f, (px < (x = arg0->unk0->unk40->unk10)) ? x - px : px - x, func_8028863C(pz, z = arg0->unk0->unk40->unk18))) {
                 ret = 1;
@@ -716,7 +716,7 @@ static s32 func_80288644(UnkStruct_80288040 *arg0, f32 px, f32 pz) {
             }
             break;
         case 0xA0:
-            if (0) { func_8028863C(px, x); }
+            if (0) { func_8028863C(px, x); } /* fake: a dead call */
             if ((z = arg0->unk0->unk40->unk18) < pz && px < (x = arg0->unk0->unk40->unk10)
                 && func_802885E4(arg0, 8.0f, (px < (x = arg0->unk0->unk40->unk10)) ? x - px : px - x, func_8028863C(pz, z = arg0->unk0->unk40->unk18))) {
                 ret = 1;
@@ -730,7 +730,7 @@ static s32 func_80288644(UnkStruct_80288040 *arg0, f32 px, f32 pz) {
             }
             break;
         case 0xE0:
-            if (0) { func_8028863C(px, x); }
+            if (0) { func_8028863C(px, x); } /* fake: a dead call */
             if (pz < (z = arg0->unk0->unk40->unk18) && px < (x = arg0->unk0->unk40->unk10)
                 && func_802885E4(arg0, 8.0f, (px < (x = arg0->unk0->unk40->unk10)) ? x - px : px - x, func_8028863C(pz, z = arg0->unk0->unk40->unk18))) {
                 ret = 1;

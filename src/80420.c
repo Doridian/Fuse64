@@ -30,7 +30,7 @@ void func_80265C20(s32 arg0, UnkStruct_80265C20 *arg1) {
     UnkStruct_80265C20_Inner *p;
 
     p = arg1->unk40;
-    if (1) { /* fake (the permuter's): without it arg1 is spilled */
+    if (1) { /* fake: (the permuter's) without it arg1 is spilled */
     }
     func_80299170(arg0, p->unk10, p->unk14, p->unk18);
 }

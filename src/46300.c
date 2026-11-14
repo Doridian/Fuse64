@@ -583,7 +583,7 @@ f32 func_8022BE48(UnkCurve *arg0, f32 arg1) {
             ret = vals[i];
         } else {
             ret = vals[i - 1]; /* (ret = ret) below: the add.s operand order */
-            ret = (ret = ret) + ((vals[i] - vals[i - 1]) / (keys[i] - keys[i - 1])) * (arg1 - keys[i - 1]);
+            ret = (ret = ret) + ((vals[i] - vals[i - 1]) / (keys[i] - keys[i - 1])) * (arg1 - keys[i - 1]); /* fake: `(ret = ret)` for the add operand order (header; `ret +=` swaps it) */
         }
     }
     return ret;

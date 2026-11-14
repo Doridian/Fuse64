@@ -69,9 +69,9 @@ void func_8028A154(void) {
     dst += 0x48;
     for (i = 0; i < 9; i++) {
         dst[i] = D_802A1C2C[i];
-        if (dst == NULL) {}
-        if (dst == NULL) {}
-        if (dst == NULL) {}
+        if (dst == NULL) {} /* fake: dead reads */
+        if (dst == NULL) {} /* fake: dead read */
+        if (dst == NULL) {} /* fake: dead read */
     }
 }
 

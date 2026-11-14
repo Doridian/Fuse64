@@ -2848,7 +2848,7 @@ void func_ovl13_02_80043B64(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     f32 ang[3];
     f32 dx;
     f32 dy;
-    f32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 lo; /* the clamp's lower limit (a guess among matching placements: any point after dx's wrap) */
 
     func_ovl13_02_8004CB88(arg0, arg3, ang);
     ang[1] = ((ang[1] - 90.0f) >= 360.0f) ? (ang[1] - 90.0f) - 360.0f : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + 360.0f : (ang[1] - 90.0f);
@@ -2860,12 +2860,13 @@ void func_ovl13_02_80043B64(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     if (dx < -180.0f) {
         dx += 360.0f;
     }
+    lo = arg2 * -1.0f;
     if (dx >= 0.0f) {
         if (dx > arg2) {
             dx = arg2;
         }
-    } else if (dx < arg2 * -1.0f) {
-        dx = arg2 * -1.0f;
+    } else if (dx < lo) {
+        dx = lo;
     }
     dy = ((0 <= ang[1] && ang[1] <= 180.0f) ? ang[1] : (360.0f - ang[1]) * -1.0f)
        - ((0 <= arg1[1] && arg1[1] <= 180.0f) ? arg1[1] : (360.0f - arg1[1]) * -1.0f);
@@ -2879,8 +2880,8 @@ void func_ovl13_02_80043B64(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
         if (dy > arg2) {
             dy = arg2;
         }
-    } else if (dy < arg2 * -1.0f) {
-        dy = arg2 * -1.0f;
+    } else if (dy < lo) {
+        dy = lo;
     }
     arg1[0] += dx;
     arg1[1] += dy;

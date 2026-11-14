@@ -34,8 +34,8 @@
  *   statics (model, chunks, index, found index, an unused one), which
  *   uopt keeps in registers and stores back where a region ends; the
  *   kind stays a local. `kind | 0` as the call argument keeps kind out
- *   of a2 (the chunk count takes it), and `if (arg0) {}` first gives
- *   arg0's copy t0 before kind.
+ *   of a2 (the chunk count takes it), and a test of arg0 first (a
+ *   compiled-out debug check, see below) gives arg0's copy t0 before kind.
  * - func_8022946C: `i = D_800A0D00[idx].unk0` before `p = ...` (i first
  *   seen first takes v1). func_8022997C: `s = D_80098C68; do {` on one
  *   line orders the preheader's addiu s1 before addiu s0.
@@ -89,7 +89,7 @@
  * - func_8022A328: the free slot and the list position are
  *   function-scope statics (D_802A5474, D_802A5478: no other function
  *   uses them), which uopt keeps in registers and stores back at each
- *   exit. `if (arg1) {}` after their initialisation ends the entry
+ *   exit. A test of arg1 after their initialisation ends the entry
  *   block, so the first slot test is a direct load and the pool base is
  *   loaded in the loop's preheader and again after it, as in the
  *   original. There is no pointer local: every access is
@@ -98,12 +98,12 @@
  *   calls itself (with shifts, not a multu by the coloured 80). In the
  *   arg2 == 4 arm the zeros are two chained pairs (unk10/unk20, then
  *   unk14/unk24) with the chunk address between them, a local with a
- *   dead read (`c = &arg0->unkC[arg3]; if (c) {}`, which keeps the +12
+ *   test (`c = &arg0->unkC[arg3]; if (c == NULL) ...`, which keeps the +12
  *   in a register); the else branch's stores are integer 0 and 1 (so
  *   the 0.0f of the other branch is a separate constant). The tail
  *   stores unk34, unk36, unk4C, then the D_802A5460 increment.
- * - func_80229C10: `if (!chunks) {}` keeps model+12 a value of its
- *   own; `if (!arg1) {}` first and `if (!arg2) {}` keep the arguments'
+ * - func_80229C10: the test of chunks keeps model+12 a value of its
+ *   own; the tests of arg1 first and arg2 keep the arguments'
  *   registers busy. The colouring is block-grained: dl, first and i
  *   must share a block with arg0 and chunks (so they avoid a0 and v0),
  *   and the loop's constants 2 and 4 must not (they take a0 and v0).
@@ -120,6 +120,13 @@
  *   in the entry block), so the IV gets v0 and 16 v1. The 16 assigned
  *   to a local inside the test (`!= (n = 16)`) gives bne the original's
  *   operand order (IV first).
+ * - Fakes pass 7: the empty tests of func_8022A328 (arg1, c),
+ *   func_8022A6C4 (arg0) and func_80229C10 (arg1, arg2, chunks) are
+ *   argument and pointer checks around compiled-out debug prints
+ *   (DEBUG_PRINT, include/macros.h; messages are placeholders). Any
+ *   condition on the same variable gives the same code (`chunks == NULL`
+ *   doesn't, `!chunks` does): the conditions are guesses, only the tests
+ *   are known, as in 97610.c.
  */
 #include "common.h"
 
@@ -554,7 +561,9 @@ UnkObj *func_8022A328(UnkModel *arg0, s32 arg1, s32 arg2, u32 arg3, s32 arg4) {
 
     D_802A5474 = 2;
     D_802A5478 = 0;
-    if (arg1) {} /* fake: ends the entry block (see the header, func_8022A328) */
+    if (arg1 < 0) {
+        DEBUG_PRINT(("arg1 < 0\n"));
+    }
     while (D_800A0D00[D_802A5474].unk3C != NULL) {
         if (++D_802A5474 >= 0xA1) {
             break;
@@ -600,7 +609,9 @@ UnkObj *func_8022A328(UnkModel *arg0, s32 arg1, s32 arg2, u32 arg3, s32 arg4) {
     if (arg2 == 4) {
         D_800A0D00[D_802A5474].unk10 = D_800A0D00[D_802A5474].unk20 = 0.0f;
         c = &arg0->unkC[arg3];
-        if (c) {} /* fake: dead read keeps the +12 in a register (header) */
+        if (c == NULL) {
+            DEBUG_PRINT(("c == NULL\n"));
+        }
         D_800A0D00[D_802A5474].unk14 = D_800A0D00[D_802A5474].unk24 = 0.0f;
         D_800A0D00[D_802A5474].unk18 = D_800A0D00[D_802A5474].unk28 = (u32)((u16 *)&c->unk4)[0];
         D_800A0D00[D_802A5474].unk1C = D_800A0D00[D_802A5474].unk2C = (u32)((u16 *)&c->unk4)[1];
@@ -630,7 +641,9 @@ void *func_8022A6C4(void *arg0, s32 arg1) {
     static s32 D_802A548C;
     s32 kind;
 
-    if (arg0) {} /* fake: gives arg0's copy t0 before kind (header) */
+    if (arg0 == NULL) {
+        DEBUG_PRINT(("arg0 == NULL\n"));
+    }
     D_802A548C = 0;
     D_802A5488 = 0;
     kind = -1;
@@ -821,11 +834,17 @@ u32 func_80229C10(UnkObj *arg0, s32 arg1, UnkVtx **arg2) {
     u32 first;
     s32 i;
 
-    if (!arg1) {} /* fake: keeps arg1's register busy (header, func_80229C10) */
+    if (arg1 < 0) {
+        DEBUG_PRINT(("arg1 < 0\n"));
+    }
     model = arg0->unk3C;
-    if (!arg2) {} /* fake: keeps arg2's register busy (header) */
+    if (arg2 == NULL) {
+        DEBUG_PRINT(("arg2 == NULL\n"));
+    }
     chunks = model->unkC;
-    if (!chunks) {} /* fake: keeps model+12 a value of its own (header) */
+    if (!chunks) {
+        DEBUG_PRINT(("chunks == NULL\n"));
+    }
     dl = (UnkGfx *)((u8 *)model + chunks[arg1].unk8);
     first = dl->w1;
     i = 0; if (!arg0) {} for (; i != 2; i++) { /* fake: i = 0, the dead test and the for on one line set the colouring and schedule (header) */

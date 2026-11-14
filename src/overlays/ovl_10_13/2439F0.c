@@ -2011,8 +2011,7 @@ static void func_ovl10_13_80043070(void) {
 static f32 func_ovl10_13_80043010(UnkStructA_40 *from, UnkStructA_40 *to) {
     Vec3f a;
     Vec3f b;
-    f32 pad[2]; /* unused: the original's frame is 8 bytes bigger */
-    f32 angle;
+    Vec3f angle;
 
     a.x = from->unk10;
     a.y = from->unk14;
@@ -2020,6 +2019,6 @@ static f32 func_ovl10_13_80043010(UnkStructA_40 *from, UnkStructA_40 *to) {
     b.x = to->unk10;
     b.y = to->unk14;
     b.z = to->unk18;
-    func_ovl10_13_80049F68(&a, &b, &angle);
-    return angle;
+    func_ovl10_13_80049F68(&a, &b, &angle.x);
+    return angle.x;
 }

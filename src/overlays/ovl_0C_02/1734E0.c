@@ -556,7 +556,8 @@ void func_ovl0C_02_800482A0(s32 arg0, UnkStructA *arg1) {
 }
 
 void func_ovl0C_02_80048190(void) {
-    s32 pad[2]; /* unused: the original's frame is 8 bytes bigger */
+    f32 scale28;
+    f32 scale2C;
     UnkStructA *src;
     UnkStructA *obj;
     s32 i;
@@ -568,9 +569,11 @@ void func_ovl0C_02_80048190(void) {
     obj->unk40->unk10 = src->unk40->unk10;
     obj->unk40->unk14 = src->unk40->unk14;
     obj->unk40->unk18 = src->unk40->unk18;
+    scale28 = 2.0f;
+    scale2C = 4.0f;
     count = 20;
     for (i = 0; i < count; i++) {
-        func_ovl0C_02_800480B8(obj, i, count, 2.0f, 4.0f);
+        func_ovl0C_02_800480B8(obj, i, count, scale28, scale2C);
         func_ovl0C_02_80049260();
     }
     func_ovl0C_02_800490E0(obj);

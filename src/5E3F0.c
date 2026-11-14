@@ -2378,7 +2378,6 @@ void func_8024C334(s32 arg0, s32 arg1, u16 arg2, f32 *arg3) {
     s32 t1;
     s32 t2;
     s32 t3;
-    s32 pad[3]; /* fake: frame-tuned */
     UnkStruct_800AEDF0 *e = &D_800AEDF0[arg0];
     s32 obj = (s32) e->unk28;
 
@@ -2387,7 +2386,7 @@ void func_8024C334(s32 arg0, s32 arg1, u16 arg2, f32 *arg3) {
         func_80243D54(arg0); /* fake: unused call: its R2 store frees v0 for the flag (header) */
         if (!((UnkObj *)obj)->unk40 && !((UnkObj *)obj)->unk40) {} /* fake: keeps unk28 loaded (t0) */
         if (!(e->unk38 & 0x1000)) {
-            func_802444B8(arg0, 8);
+            func_8024C314(arg0);
             e->unk38 |= 0x1000;
         }
     }

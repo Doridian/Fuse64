@@ -379,7 +379,8 @@ void func_80297114(void) {
 void func_80296C10(u16 *arg0, s32 x, s32 y, s32 w, s32 h);
 
 void func_80296D4C(u16 *arg0, UnkStruct_80296D4C *arg1, UnkStruct_80297858 **arg2) {
-    s32 pad[6]; /* fake: frame: 0x98 (unexplained 24 bytes above the locals) */
+    f32 t1;
+    s32 pad[5]; /* fake: frame: 0x98 (unexplained 24 bytes above the locals) */
     f32 x = 8.0f;
     f32 y = 6.0f;
     f32 w = 304.0f;
@@ -442,7 +443,8 @@ void func_80296D4C(u16 *arg0, UnkStruct_80296D4C *arg1, UnkStruct_80297858 **arg
         h += dh;
         func_80239094();
     }
-    func_80282144(0, 0, 0, 100.0f);
+    t1 = 100.0f;
+    func_80282144(0, 0, 0, t1);
     func_80227D50(D_802AC5C0, 8, 6, 0x130, 0xE4);
     func_8023903C(4);
     func_802276D4(0);

@@ -2570,7 +2570,7 @@ void func_8024B444(s32 arg0, f32 *arg1) {
     f32 old;
     s32 t3;
     f32 t4;
-    s32 pad1[1]; /* fake: frame-tuned */
+    f32 *t5;
     f32 posA[3];
     f32 posB[3];
     f32 vec[3];
@@ -2611,7 +2611,8 @@ void func_8024B444(s32 arg0, f32 *arg1) {
         vec[2] = D_800AEDF0[other].unkC0;
         vec[1] = 60.0f;
         vec[0] = 180.0f;
-        func_8022FEAC(vec, o2->unk4C);
+        t5 = o2->unk4C;
+        func_8022FEAC(vec, t5);
         func_80231434(o2);
     }
     o->unk40->unk28 += e->unk6C;
@@ -2749,7 +2750,8 @@ void func_8024B028(s32 arg0) {
     s32 r;
     s32 g;
     s32 b;
-    s32 pad[2]; /* fake: frame-tuned */
+    UnkModel *t1;
+    f32 t2;
     UnkStruct_800AEDF0 *e = &D_800AEDF0[arg0];
     UnkObj *o = e->unk28;
 
@@ -2776,7 +2778,9 @@ void func_8024B028(s32 arg0) {
         e->unk8C = 0.0f;
         e->unk88 = -e->unk88;
     }
-    func_8029279C(o->unk40, r, g, b, e->unk8C);
+    t1 = o->unk40;
+    t2 = e->unk8C;
+    func_8029279C(t1, r, g, b, t2);
     if (--e->unk90 == 0 || !func_80243EB4(arg0, 0x10)) {
         func_80246C3C(arg0, 0, 0);
     }

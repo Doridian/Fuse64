@@ -1536,7 +1536,7 @@ void func_802957C0(void **arg0, UnkStruct_80281444 **arg1) {
     u16 *dst;
     s32 i;
     UnkStruct_80281444 *obj;
-    s32 pad; /* fake: unused, the original frame has one more local */
+    f32 t1;
     f32 x = 8.0f;
     f32 y = 6.0f;
     f32 w = 304.0f;
@@ -1596,7 +1596,8 @@ void func_802957C0(void **arg0, UnkStruct_80281444 **arg1) {
         h += dh;
         func_80239094();
     }
-    func_80282144(0, 0, 0, 100.0f);
+    t1 = 100.0f;
+    func_80282144(0, 0, 0, t1);
     func_8023903C(4);
     func_802276D4(0);
     *arg0 = raw;

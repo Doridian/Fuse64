@@ -1189,7 +1189,17 @@ s32 func_8027655C(Ent88 *arg0) {
     s16 t8;
     s32 t9;
     s16 t10;
-    s32 pad[11]; /* fake: frame-tuned (header: the getter calls the original has) */
+    Obj8E *t12;
+    s16 t13;
+    Obj8E *t14;
+    s16 t15;
+    void *t16;
+    s16 t17;
+    Obj8E *t18;
+    u16 t19;
+    f32 t20;
+    f32 t21;
+    f32 t22;
     s16 fl;
     s32 f8;
     s16 t11;
@@ -1222,7 +1232,8 @@ s32 func_8027655C(Ent88 *arg0) {
         sp168 = 15.0f;
     }
     t7 = func_80272024(arg0->unk74);
-    func_80291944(arg0->obj, t7, sp168);
+    t12 = arg0->obj;
+    func_80291944(t12, t7, sp168);
     arg0->x = arg0->xf->x;
     arg0->y = arg0->xf->y;
     arg0->z = arg0->xf->z;
@@ -1232,7 +1243,8 @@ s32 func_8027655C(Ent88 *arg0) {
         arg0->obj->unk70 = 1.6333334f;
         sp158 = arg0->obj->unk6C;
         arg0->unk64 &= ~8;
-        func_80230914(arg0->obj);
+        t14 = arg0->obj;
+        func_80230914(t14);
         if (arg0->obj->unk6C == 0.0f && arg0->obj->unk68 == 0.0f) {
             t4 = func_802712A8(&arg0->unk64, 0x800);
             if (!t4) {
@@ -1261,7 +1273,8 @@ s32 func_8027655C(Ent88 *arg0) {
     } else if (fl) {
         func_802733C8((u8 *) arg0->obj);
     } else {
-        func_802727D8(arg0->unk38);
+        t16 = arg0->unk38;
+        func_802727D8(t16);
     }
     arg0->x = arg0->xf->x;
     arg0->y = arg0->xf->y;
@@ -1284,7 +1297,8 @@ s32 func_8027655C(Ent88 *arg0) {
         }
         t10 = func_802712A8(&arg0->unk64, 0x400);
         if (t10) {
-            sp154 = func_802308B8(arg0->obj, 0x16);
+            t18 = arg0->obj;
+            sp154 = func_802308B8(t18, 0x16);
         } else {
             t9 = func_8022F4AC((s32) arg0->obj, 0x16, (s32) func_802443F4(arg0->unkE));
             sp154 = (void *) t9;
@@ -1305,20 +1319,27 @@ s32 func_8027655C(Ent88 *arg0) {
             OBJ_DD8->unk40->x = OBJ_DD8->unk58 = arg0->x;
             OBJ_DD8->unk40->y = OBJ_DD8->unk5C = arg0->y;
             OBJ_DD8->unk40->z = OBJ_DD8->unk60 = arg0->z;
-            if (func_802712A8(&arg0->unk64, 0x400) && func_80232D18(OBJ_DD8, 1)) {
+            t13 = func_802712A8(&arg0->unk64, 0x400);
+            if (t13 && func_80232D18(OBJ_DD8, 1)) {
                 arg0->unk64 &= ~0x400;
             }
         }
     }
-    if (func_802712A8(&arg0->unk64, 0x40)) {
+    t15 = func_802712A8(&arg0->unk64, 0x40);
+    if (t15) {
         arg0->unk64 |= 1;
     }
-    if (func_802712A8(&arg0->unk64, 1)) {
+    t17 = func_802712A8(&arg0->unk64, 1);
+    if (t17) {
         func_80275948((s16 *) arg0);
         return 1;
     }
-    func_80271448(arg0->x, arg0->y, arg0->z, &v.x, &v.y, &v.z);
-    if ((func_8026D7D8((s32) v.x, (s32) v.y, (s32) v.z) & 0xF) == 9) {
+    t20 = arg0->x;
+    t21 = arg0->y;
+    t22 = arg0->z;
+    func_80271448(t20, t21, t22, &v.x, &v.y, &v.z);
+    t19 = func_8026D7D8((s32) v.x, (s32) v.y, (s32) v.z);
+    if ((t19 & 0xF) == 9) {
         func_80275948((s16 *) arg0);
     }
     func_80275034((s16 *) arg0);
@@ -1989,10 +2010,13 @@ void func_802741D8(s16 arg0) {
     s32 sp60[3];
     f32 t17;
     f32 t18;
-    s32 padA[4]; /* fake: frame-tuned */
+    f32 t19;
+    f32 t20;
+    f32 t21;
+    f32 t22;
     f32 sp3C[3];
     Slot30 *slot;
-    s32 padC[1]; /* fake: frame-tuned */
+    f32 t23;
 
     func_802714C4();
     if (((arg0 >= 0 && arg0 < 5) ? 0 : 1) ? 0 : SLOTS[arg0].unkC) {
@@ -2000,7 +2024,9 @@ void func_802741D8(s16 arg0) {
     }
     obj = func_802443F4(arg0);
     { f32 z = obj->unk40->z;
-    func_8026DCAC(obj->unk40->x, obj->unk40->y, z, sp60, 2); }
+    t19 = obj->unk40->x;
+    t20 = obj->unk40->y;
+    func_8026DCAC(t19, t20, z, sp60, 2); }
     base.x = sp60[0];
     base.y = sp60[1];
     base.z = sp60[2];
@@ -2008,7 +2034,9 @@ void func_802741D8(s16 arg0) {
     cur.y = base.y;
     cur.z = base.z;
     t10 = func_802704F8(obj->unk40->rot);
-    func_802740AC((s16) t10, 1.0f, 0.0f, &cur.x, &cur.z);
+    t21 = 1.0f;
+    t22 = 0.0f;
+    func_802740AC((s16) t10, t21, t22, &cur.x, &cur.z);
     t1 = func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z);
     if (t1 == 0) {
         return;
@@ -2017,7 +2045,8 @@ void func_802741D8(s16 arg0) {
     cur.y = base.y;
     cur.z = base.z;
     t11 = func_802704F8(obj->unk40->rot);
-    func_802740AC((s16) t11, 0.0f, 1.0f, &cur.x, &cur.z);
+    t23 = 0.0f;
+    func_802740AC((s16) t11, t23, 1.0f, &cur.x, &cur.z);
     t2 = func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z);
     if (t2 == 0) {
         return;
@@ -2677,7 +2706,10 @@ s32 func_802721D4(Obj8E *arg0, s32 arg1, Ctl87 *arg2) {
 void func_802720C8(u8 *arg0) {
     f32 z;
     f32 p[3];
-    s32 pad[5]; /* fake: places info at the original's offset */
+    s32 t1;
+    s32 t2;
+    s32 t3;
+    s32 pad[2]; /* fake: places info at the original's offset */
     s16 t;
     Unk8026DCAC info;
 
@@ -2686,7 +2718,10 @@ void func_802720C8(u8 *arg0) {
     p[2] = info.i[0];
     p[1] = info.i[1];
     p[0] = info.i[2];
-    t = func_8026D7D8(p[2], p[1], p[0]);
+    t1 = p[2];
+    t2 = p[1];
+    t3 = p[0];
+    t = func_8026D7D8(t1, t2, t3);
     t &= 0x1C00;
     if (t != 0) {
         func_8027F858((s32) arg0, t >> 10);
@@ -2852,7 +2887,8 @@ void *func_802716F8(s16 arg0) {
     f32 pr;
     f32 t6;
     f32 t7;
-    s32 pad4[2]; /* fake: frame slots */
+    f32 t8;
+    f32 t9;
     Obj8E *pl;
     Obj8E *obj;
     Unk8026DCAC info;
@@ -2865,7 +2901,9 @@ void *func_802716F8(s16 arg0) {
     obj = (Obj8E *) t3;
     if (obj != NULL) {
         z = obj->unk40->z;
-        func_8026DCAC(obj->unk40->x, obj->unk40->y, z, &info, 2);
+        t8 = obj->unk40->x;
+        t9 = obj->unk40->y;
+        func_8026DCAC(t8, t9, z, &info, 2);
         a[0] = info.i[0];
         a[1] = info.i[1];
         a[2] = info.i[2];
@@ -2985,7 +3023,9 @@ s32 func_8027130C(u8 *arg0) {
     s16 t1;
     s16 * t2;
     s16 t3;
-    s32 pad[7]; /* fake: frame-tuned; the frame is 0x50 */
+    Obj8E *t4;
+    s16 t5;
+    s32 pad[5]; /* fake: frame-tuned; the frame is 0x50 */
     Ent88 *e;
     void *p;
 
@@ -3002,9 +3042,11 @@ s32 func_8027130C(u8 *arg0) {
     if (t3) {
         func_80270BA4(arg0);
     }
-    if (func_802712A8(&e->unk64, 0x200)) {
+    t5 = func_802712A8(&e->unk64, 0x200);
+    if (t5) {
         func_8027036C(&e->unk64, 0x200);
-        func_802313DC(e->obj, 0x20000);
+        t4 = e->obj;
+        func_802313DC(t4, 0x20000);
         p = e->unk38;
         func_80270A80(p);
         free(p);

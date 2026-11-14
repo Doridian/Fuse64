@@ -784,7 +784,7 @@ static void func_80285F84(void) {
 static void func_80285F8C(void) {
     UnkStruct_800BB340 *task;
     s32 t1;
-    s32 padA[1]; /* fake: frame-tuned */
+    UnkStructA *t2;
     Vec3f pos2;
     s32 padB[2]; /* fake: frame-tuned */
     UnkStruct_80288040 *a;
@@ -821,7 +821,8 @@ static void func_80285F8C(void) {
                 t1 = func_80284FD4(a);
                 task->unkC = t1;
                 if (task->unkC != 1) {
-                    func_802313DC(a->unk0, 0x3FFFF);
+                    t2 = a->unk0;
+                    func_802313DC(t2, 0x3FFFF);
                     if (((u8) (a->unk7A & 0xF)) == 1) {
                         if (a->unk79 != -1) {
                             func_8028A4E0(a->unk79);

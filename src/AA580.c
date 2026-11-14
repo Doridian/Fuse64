@@ -685,7 +685,7 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
     f32 save[3];
     f32 h1;
     f32 h2;
-    s32 pad5; /* fake: frame-tuned */
+    UnkStructA_40 *t7;
     f32 a;
     f32 b;
     s32 c;
@@ -702,7 +702,8 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
     angle = 0.0f;
     sdir = 0.0f;
     if (ctx.unk0->unk6C == 0.0f && ctx.unk0->unk68 == 0.0f) {
-        func_8026E6E4(ctx.unk0->unk40, &angle, &sdir);
+        t7 = ctx.unk0->unk40;
+        func_8026E6E4(t7, &angle, &sdir);
     }
     func_8029085C(&ctx, angle);
     ctx.unk1C = ctx.unk4 - (s32) (ctx.unk4 * 0.01f) * 100.0f;

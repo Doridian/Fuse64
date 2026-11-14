@@ -462,7 +462,9 @@ static void func_80287904(void) {
     f32 u[2];
     f32 v[2];
     f32 w;
-    s32 pad[3]; /* fake: frame-tuned */
+    int t1;
+    f32 t2;
+    f32 t3;
     f32 rot[3];
     f32 cam[3];
     f32 h;
@@ -504,7 +506,8 @@ static void func_80287904(void) {
             switch (e->unk4 & 0xF) {
             case 0:
                 func_80234858(&rot[0], &rot[1], &rot[2]);
-                if (func_802336E4(rot[0]) != 0) {
+                t1 = func_802336E4(rot[0]);
+                if (t1 != 0) {
                     du = 0.0f;
                 } else if (func_80234768() == 1) {
                     du = w - (w / (360.0f / rot[0]));
@@ -536,9 +539,11 @@ static void func_80287904(void) {
                 }
             }
             u[i] = e->unk38 + du;
-            u[i] = func_80263DC8(u[i], w);
+            t2 = func_80263DC8(u[i], w);
+            u[i] = t2;
             v[i] = e->unk3C + dv;
-            v[i] = func_80263DC8(v[i], h);
+            t3 = func_80263DC8(v[i], h);
+            v[i] = t3;
             D_802B0308[e->unk0]->unk20 = u[i];
             D_802B0308[e->unk0]->unk24 = v[i];
         }

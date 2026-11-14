@@ -511,14 +511,15 @@ s32 func_8027BF38(PakDir *dir) {
     s32 ret = 9;
     s32 i;
     s32 j;
-    s32 pad; /* fake: frame slot */
+    s32 t1;
     OSPfsState state;
 
     func_8027BF30();
     switch (func_80298870(D_802AFF70, &dir->freeBytes)) {
         case 0:
             for (i = 0; i < 16; i++) {
-                if (func_80298850(D_802AFF70, i, &state) == 0) {
+                t1 = func_80298850(D_802AFF70, i, &state);
+                if (t1 == 0) {
                     dir->files[i].used = 1;
                     dir->files[i].size = state.file_size;
                     for (j = 0; j < 4; j++) {

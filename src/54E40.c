@@ -1687,9 +1687,11 @@ void func_8023F26C() {
     s32 id;
     s32 t1;
     u32 mode;
-    s32 pad2; /* fake: frame-tuned */
+    s32 t2;
     void *model;
-    s32 pad3[3]; /* fake: frame-tuned */
+    f32 t3;
+    f32 t4;
+    f32 t5;
     s32 i;
     s32 task;
     u8 *obj;
@@ -1776,14 +1778,18 @@ void func_8023F26C() {
             func_802313DC(obj, 0x01000000);
             func_8023903C(2);
             if ((D_802AC660.unk4[id] == 1) && (D_802AC660.unk40[id] == 1)) {
-                func_80227EE0(D_802AC660.unkE8[id]);
+                t2 = D_802AC660.unkE8[id];
+                func_80227EE0(t2);
             }
             func_8025C590(id);
             if ((D_802AC660.unk3C != 0) && (D_802AC660.unk2C > 0) && !(D_802AC5D0 & 0x10)) {
                 func_80243E90(id);
                 obj = func_8023EB28(id);
                 model = func_80231274(-1, 0x01000000, 0xD0, NULL);
-                h = func_8028A81C(0x15, 0.0f, 20.0f, 0.0f, (s32) model);
+                t3 = 0.0f;
+                t4 = 20.0f;
+                t5 = 0.0f;
+                h = func_8028A81C(0x15, t3, t4, t5, (s32) model);
                 func_80245208(id, 1);
                 pl = D_800AEDF0 + id * 0xC8;
                 for (k = 0; k < 60; k++) {

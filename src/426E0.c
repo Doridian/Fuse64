@@ -1265,7 +1265,7 @@ static void func_8022827C(UnkObj *arg0) {
 
 void func_802289C0(UnkObj *arg0, UnkGfx **arg1) {
     UnkGfx *gfx;
-    s32 pad; /* fake: frame-tuned: an unused slot */
+    UnkInst *t1;
     s32 pushed;
     void (*fn)(UnkObj *, UnkGfx **);
 
@@ -1292,7 +1292,8 @@ void func_802289C0(UnkObj *arg0, UnkGfx **arg1) {
         if (D_8029F84C == 0 || (arg0->unkC & 0x100)) {
             func_8022827C(arg0);
         }
-        func_8022DAB0(arg0->unk44, &gfx, (s32)arg0->unk3C);
+        t1 = arg0->unk44;
+        func_8022DAB0(t1, &gfx, (s32)arg0->unk3C);
     } else if (arg0->unkC & 4) {
         func_8022D58C(&gfx, (s32)arg0->unk3C, arg0->unk38);
     } else if (arg0->unkC & 0x10) {

@@ -496,7 +496,7 @@ static s32 func_8026B238(UnkStruct_8026B238 *info, UnkStruct_8026B238 *lastInfo)
 
 /* audiomgr.c's __amMain */
 static void func_8026B584(void *arg) {
-    s32 pad; /* fake: an unused slot above done (frame 0x60) */
+    s32 t1;
     s32 done;
     UnkStruct_8026B584 *msg;
     UnkStruct_8026B238 *lastInfo;
@@ -507,7 +507,8 @@ static void func_8026B584(void *arg) {
         func_80297D90(&D_802AD6A0.audioFrameMsgQ, &msg, 1);
         switch (msg->type) {
             case 1:
-                if (func_8026B238(D_802AD6A0.audioInfo[D_802AF938 % 3], lastInfo)) {
+                t1 = func_8026B238(D_802AD6A0.audioInfo[D_802AF938 % 3], lastInfo);
+                if (t1) {
                     func_80297D90(&D_802AD6A0.audioReplyMsgQ, &msg, 1);
                     func_8026B228(msg->info);
                     lastInfo = msg->info;

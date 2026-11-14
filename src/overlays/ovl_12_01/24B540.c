@@ -1,14 +1,12 @@
 /*
- * ovl_12_01 matches in us, eu and jp. Two `#line`
- * regions in another file (panels.c) end as1's blocks where the
- * original's do (see func_ovl12_01_8004374C and func_ovl12_01_80043188).
+ * ovl_12_01 matches in us, eu and jp. Two statics defined in another
+ * file (statics.h) end as1's blocks where the original's do (see func_ovl12_01_8004374C and func_ovl12_01_80043188).
  *
  * 2026-11-13: 1 `#line` that turned out redundant was removed (each tried away
  * against the sha1 in us, eu and jp). Where the notes above name a `#line`,
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
-#line 16 "24B540.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_12_01's game object, IDO -O3: the functions are written last to first
@@ -243,6 +241,8 @@ UnkStruct_ovl12_01_800462F0 D_ovl12_01_800462F0[] = {
 UnkStruct_ovl12_01_80046318 D_ovl12_01_80046318 = { NULL, 2350.0f, 602.0f, 1550.0f, 0x409 };
 UnkStruct_ovl12_01_8004632C D_ovl12_01_8004632C = { NULL, 4500.0f, 450.0f, 1550.0f };
 UnkStruct_ovl12_01_8004632C D_ovl12_01_8004633C = { NULL, 3700.0f, 0.0f, 600.0f };
+
+#include "statics.h"
 
 /* unused: the stubs IDO -O3 leaves at the end of the object. IDO drops
  * an unused static's body but counts the addresses it takes: with
@@ -739,13 +739,6 @@ void func_ovl12_01_80043754(void) {
     func_ovl12_01_80045058();
 }
 
-/* In panels.c: its inlined (empty) body's `.file` ends the block before
- * the load of D_ovl12_01_800464E0, so `sw ra` comes first (2 words to 0). */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl12_01_8004374C(void) {
-}
-#line 752 "24B540.c" /* fake: back from the other file, at the line numbers it matched with */
-
 /* Defined above func_ovl12_01_800436F8, which pulls it out (and it its own
  * callees, defined below it) ahead of itself. */
 void func_ovl12_01_80043468(void) {
@@ -834,25 +827,6 @@ void func_ovl12_01_80043264(void) {
 
 void func_ovl12_01_80043190(void) {
     func_ovl12_01_80043188(45.0f, 16, 1);
-}
-
-/* Inlined into func_ovl12_01_80043190 only; that one is inlined into its
- * callers in turn (ovl_12_03's func_ovl12_03_8004316C). Defined in another
- * file (panels.c): the `.file` at the inlined body ends as1's block after
- * the prologue and the hoisted &D_ovl12_01_800464F0, 100.0f and count, as
- * in the original (17 words to 0). */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl12_01_80043188(f32 x, s32 z, s32 count) {
-    s32 i;
-
-    D_ovl12_01_800464F0[0] = x * 100.0f;
-    D_ovl12_01_800464F0[1] = 0.0f;
-    for (i = 0; i < count; i++) {
-        D_ovl12_01_800464F0[1] += func_ovl12_01_80044FA0(i) * 100.0f;
-    }
-    D_ovl12_01_800464F0[1] += 100.0f;
-    D_ovl12_01_800464F0[2] = z * 100.0f;
-    D_ovl12_01_800464E0 = func_ovl12_01_80045EE0(0x28, (Vec3f *) D_ovl12_01_800464F0, 0);
 }
 
 static void func_ovl12_01_80043180(void) {

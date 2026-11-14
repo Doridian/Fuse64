@@ -4,21 +4,18 @@
  * func_ovl0E_12_80043164 needs an as1 basic-block boundary between its two
  * stores (unk0, unk4) and the next call (`sll t4,s3,5` for &D_FCC[i] is
  * scheduled above the stores): the call is in the inlined static
- * func_ovl0E_12_8004315C, defined under `#line 1 "panels.c"`, so ugen
+ * func_ovl0E_12_8004315C, defined in another file (statics.h), so ugen
  * emits a `.file` there. 8004315C is the static whose stub sits between
  * 80043164 and 8004311C; it isn't the empty call at 80043164's start (an
  * inline there from another file breaks the prologue's schedule). The
  * stores stay in 80043164 on separate lines (inside the static, the beq
- * delay slots lose their `li t3,-1`). A `#line` after the include names
- * the file 1D6120.c, so every function is in the same file whatever path
- * it's compiled from.
+ * delay slots lose their `li t3,-1`).
  *
  * 2026-11-13: 1 `#line` that turned out redundant was removed (each tried away
  * against the sha1 in us, eu and jp). Where the notes above name a `#line`,
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
-#line 21 "1D6120.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0E_12's game object, IDO -O3: the functions are written last to first
@@ -251,6 +248,8 @@ UnkStruct_ovl0E_12_80045FEC D_ovl0E_12_80045FEC[5] = {
     { -1, NULL, 0x1B6, 0x20, 0x30, 0.0f, -15.0f, 1, 0x78, 225.0f, 200.0f, 295.0f },
     { -1, NULL, 0x1B6, 0x20, 0x30, 0.0f, -15.0f, 1, 0x78, 245.0f, 200.0f, 295.0f },
 };
+
+#include "statics.h"
 
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
@@ -771,11 +770,6 @@ void func_ovl0E_12_80043164(void) {
             }
         }
     }
-}
-
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0E_12_8004315C(s16 i) {
-    func_ovl0E_12_8004311C(&D_ovl0E_12_80045FCC[i]);
 }
 
 void func_ovl0E_12_8004311C(UnkStruct_ovl0E_12_80045FCC *arg0) {

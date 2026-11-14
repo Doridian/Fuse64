@@ -1,13 +1,11 @@
 /*
  * ovl_0D_07's stage object, IDO -O3; it matches in us, eu and jp. Its
- * fakes:
- * - `#line 1 "panels.c"` around the two statics 80043424 and 800432F0
- *   (back to "1B1510.c" after them): the `.file` ugen emits where each is
- *   inlined ends an as1 block, which puts 8004342C's `mtc1 $zero` ahead of
+ * fakes and findings:
+ * - (not a fake) the two statics 80043424 and 800432F0 are defined in
+ *   another file, statics.h: the `.file` ugen emits where each is inlined
+ *   ends an as1 block, which puts 8004342C's `mtc1 $zero` ahead of
  *   `sw $ra` and keeps both statics' stores ahead of the next call (it
  *   replaces the `if (!D && !D && !D) {}` fakes 8004342C and 800432F8 had).
- *   The `#line` after the include gives the file one name however it is
- *   compiled.
  * - func_ovl0D_07_80043660, event 5: D_ovl0D_07_8004671C read into a
  *   block-local `k`, so it is its own live range and gets v0 (with the
  *   global compared directly it shares event 4's v1).
@@ -18,7 +16,6 @@
  *   80043030 calls (the stubs' placement).
  */
 #include "common.h"
-#line 28 "1B1510.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0D_07's stage object, IDO -O3: the functions are written last to first
@@ -155,6 +152,8 @@ UnkStructA_40 *D_ovl0D_07_8004673C;
 UnkStruct_ovl0D_07_800465A0 D_ovl0D_07_800465A0 = {
     NULL, -1, 0x16F, -1, -1, -1, -1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 };
+
+#include "statics.h"
 
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
@@ -532,44 +531,6 @@ void func_ovl0D_07_80043D80(void) {
     func_ovl0D_07_80045E08();
 }
 
-
-/* the stage's model (D_ovl0D_07_800465A0) placed; this static and the next
- * are in "panels.c" (a fake, see the top) */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0D_07_80043424(UnkStruct_ovl0D_07_800465A0 *e) {
-    e->unk0 = func_ovl0D_07_80045CF0(e->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
-    func_ovl0D_07_80045CA8(e->unk0, 0x01080000);
-    func_ovl0D_07_80045CB0(e->unk0, 0x02000000);
-    if (e->unkC != -1 && e->unkE != -1 && e->unk10 != -1 && e->unk12 != -1) {
-        e->unk4 = func_ovl0D_07_800459F0(e->unk0->unk40, 0, e->unkC, e->unkE, e->unk10, e->unk12);
-        if (e->unk4 == -1) {
-            while (TRUE) {
-            }
-        }
-    }
-    e->unk0->unk40->unk10 = e->unk14 * 10.0f;
-    e->unk0->unk40->unk14 = e->unk18 * 10.0f;
-    e->unk0->unk40->unk18 = e->unk1C * 10.0f;
-    e->unk0->unk40->unk1C = e->unk20;
-    e->unk0->unk40->unk20 = e->unk24;
-    e->unk0->unk40->unk24 = e->unk28;
-    e->unk0->unk40->unk28 = e->unk2C;
-    e->unk0->unk40->unk2C = e->unk30;
-    e->unk0->unk40->unk30 = e->unk34;
-}
-
-/* the stage's model removed */
-static void func_ovl0D_07_800432F0(UnkStruct_ovl0D_07_800465A0 *e) {
-    func_ovl0D_07_80045CC0(e->unk0);
-    if (e->unkC != 0xFFFF && e->unkE != 0xFFFF && e->unk10 != 0xFFFF && e->unk12 != 0xFFFF) {
-        func_ovl0D_07_800459F8(e->unk4);
-    }
-    e->unk0 = NULL;
-    e->unk4 = -1;
-}
-#line 577 "1B1510.c" /* fake: back from the other file, at the line numbers it matched with */
-
-
 void func_ovl0D_07_800432F8(void) {
     s32 i;
 
@@ -670,7 +631,6 @@ static void func_ovl0D_07_80043020(void) {
 
 static void func_ovl0D_07_80043028(void) {
 }
-
 
 /* the stage object's callback (the entry returns it): what each event does.
  * Last in the source, so it is processed first: it pulls out its callees

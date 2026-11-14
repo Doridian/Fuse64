@@ -5,14 +5,11 @@
  * way: an as1 block boundary between the two stores (unk0, unk4; separate
  * lines) and the next call, whose `sll t4,s3,5` (&D_80046B78[i]) is
  * scheduled above them. The call is in the inlined static
- * func_ovl0E_03_800430A0, defined under `#line 1 "panels.c"` so ugen emits
+ * func_ovl0E_03_800430A0, defined in another file (statics.h) so ugen emits
  * a `.file` there; 800430A0 is the static whose stub sits between 800430A8
- * and 80043060, not an empty call at 800430A8's start. `#line` after the
- * include names the file 1BC030.c whatever path it's compiled from
- * (src/overlays/ovl_0E_12/1D6120.c has the details).
+ * and 80043060, not an empty call at 800430A8's start.
  */
 #include "common.h"
-#line 22 "1BC030.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0E_03's game object, IDO -O3: the functions are written last to first
@@ -287,6 +284,8 @@ UnkStruct_ovl0E_03_80046B78 D_ovl0E_03_80046B78[1] = {
     { 0x415, 365.0f, -10.0f, 155.0f, 270.0f, 0x24, 0, 0xF, 0x25, 0x10, 1 },
 };
 
+#include "statics.h"
+
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
 static void func_ovl0E_03_800450C8(void) {
@@ -311,7 +310,6 @@ static void func_ovl0E_03_800450A8(void) {
 
 static void func_ovl0E_03_800450A0(void) {
 }
-
 
 void func_ovl0E_03_80045098(void) {
 }
@@ -957,12 +955,6 @@ void func_ovl0E_03_800430A8(void) {
         }
     }
 }
-
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0E_03_800430A0(s16 i) {
-    func_ovl0E_03_80043060(&D_ovl0E_03_80046B78[i]);
-}
-#line 977 "1BC030.c" /* fake: back from the other file, at the line numbers it matched with */
 
 void func_ovl0E_03_80043060(UnkStruct_ovl0E_03_80046B78 *arg0) {
     func_ovl0E_03_80045458(arg0->unk14, arg0->unk16, arg0->unk18, arg0->unk1A, arg0->unk1C, arg0->unk1E);

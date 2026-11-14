@@ -12,11 +12,11 @@
  * original's place.
  *
  * Fakes and guesses:
- * - `#line 1 "panels.c"` around the statics 800434A4, 80044C8C and
- *   800432E8 (ovl_0F_02's trick: a file change ends an as1 block, and as1
- *   orders a block partly by .loc line). 800434A4's makes 800434AC's pos
- *   copy schedule as the original (8 words to 3); 80044C8C's and
- *   800432E8's the handler's table loop and case 4's 800468C0 call.
+ * - (not a fake) the statics in statics.h are defined in another file: a
+ *   file change ends an as1 block, and as1 orders a block partly by .loc
+ *   line. 800434A4's makes 800434AC's pos copy schedule as the original;
+ *   80044C8C's and the handler's statics' the handler's table loop and
+ *   case 4's 800468C0 call.
  * - The handler's frame: `s32 pad[10]` in 8004327C (case 0x50), and case
  *   15's code written in the handler with the empty static 80043028
  *   called first (as a static of its own its 5-argument call takes 8
@@ -314,6 +314,8 @@ extern char D_ovl0F_03_80046FE0[];
 extern UnkStruct_ovl0F_03_80046FE4 D_ovl0F_03_80046FE4;
 
 /* unused: the stubs IDO -O3 leaves at the end of the object */
+#include "statics.h"
+
 /* A second caller keeps func_ovl0F_03_80043030 from being inlined. */
 static void func_ovl0F_03_80045678(void) {
     func_ovl0F_03_80043030(D_ovl0F_03_80046EB4);
@@ -755,13 +757,6 @@ void func_ovl0F_03_800434AC(UnkStructA *arg0) {
     }
 }
 
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0F_03_800434A4(UnkStructA *arg0, f32 *pos) {
-    pos[0] = arg0->unk40->unk10;
-    pos[1] = arg0->unk40->unk14;
-    pos[2] = arg0->unk40->unk18;
-}
-
 static s64 func_ovl0F_03_80043494(UnkStructA *arg0) {
     union {
         s64 ll;
@@ -791,12 +786,6 @@ static s64 func_ovl0F_03_80043494(UnkStructA *arg0) {
     }
     arg0->unkC = u.w[0];
     return u.ll;
-}
-
-static void func_ovl0F_03_8004348C(UnkStructA *arg0, f32 *pos) {
-    arg0->unk40->unk10 = pos[0];
-    arg0->unk40->unk14 = pos[1];
-    arg0->unk40->unk18 = pos[2];
 }
 
 static void func_ovl0F_03_8004349C(UnkStructA *arg0, f32 angle) {
@@ -910,34 +899,6 @@ static void func_ovl0F_03_80043030(UnkStruct_ovl0F_03_80046E88 *arg0) {
     (*arg0->unk0)->unk40->unk18 = pos[2];
 }
 
-/* case 4's: the particles' texture and display list */
-static void func_ovl0F_03_80043434(void) {
-    UnkStructA *obj;
-
-    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
-        func_ovl0F_03_80046648(func_ovl0F_03_80044C20, NULL, 0, 0, 0);
-    }
-    D_ovl0F_03_80046DF0 = func_ovl0F_03_800461C8(0x258);
-    obj = func_ovl0F_03_80046258(func_ovl0F_03_80044258, -60);
-    D_ovl0F_03_80047284 = obj;
-    obj->unkC |= 0x210;
-}
-
-/* case 2's: the door, closed or already open */
-static void func_ovl0F_03_80044C7C(UnkStruct_ovl0F_03_80046F0C *door) {
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
-    if (func_ovl0F_03_800468D0(door->unk0[0].unk28) == 0) {
-        func_ovl0F_03_80046648(func_ovl0F_03_80043F38, door, 0, 0, 0x110);
-    } else {
-        door->unk58();
-        door->unk5C();
-        door->unk0[1].unk10 -= 1.0f;
-        func_ovl0F_03_800430B4(1, &door->unk0[1]);
-        *door->unk0[0].unk0 = NULL;
-        door->unk0[1].unk10 += 1.0f;
-    }
-}
-
 static void func_ovl0F_03_80043020(s32 count, UnkStruct_ovl0F_03_80046E88 *p) {
     s32 i;
 
@@ -947,54 +908,9 @@ static void func_ovl0F_03_80043020(s32 count, UnkStruct_ovl0F_03_80046E88 *p) {
     }
 }
 
-static void func_ovl0F_03_8004326C(void) {
-    if (func_ovl0F_03_800468D0(0x404) == 0 && func_ovl0F_03_80045CC0(0x16, 0x1F, 0x16, 0x1F) != 0) {
-        func_ovl0F_03_80045D20(0x40);
-        func_ovl0F_03_80045CE8(1);
-        func_ovl0F_03_80046BB8();
-        func_ovl0F_03_80046AD8();
-        func_ovl0F_03_80045D10(1);
-        func_ovl0F_03_80046BD0(0x29);
-        func_ovl0F_03_800468C0(D_ovl0F_03_80046EB4[0].unk28);
-        func_ovl0F_03_80043020(1, D_ovl0F_03_80046EB4);
-        func_ovl0F_03_80043164(D_ovl0F_03_80046EB4, 0);
-        func_ovl0F_03_80046500(*D_ovl0F_03_80046EB4[1].unk0, 0x01000000);
-        func_ovl0F_03_80046648(func_ovl0F_03_80043AF0, D_ovl0F_03_80046EB4, 0, 0, 0x130);
-    }
-}
-
 static void func_ovl0F_03_80043274(s32 *p) {
     if (*p <= 0 || *p == 0) {
         *p = 1;
-    }
-}
-
-static void func_ovl0F_03_8004327C(void) {
-    s32 pad[10]; /* fake: unused, frame space the original has (no source for it found) */
-    if (func_ovl0F_03_800468D0(0x404) != 0 && func_ovl0F_03_80045CC0(0x16, 7, 0x16, 7) != 0) {
-        func_ovl0F_03_80045D10(1);
-        func_ovl0F_03_80045C70(0);
-        func_ovl0F_03_80046648(func_ovl0F_03_80043944, D_ovl0F_03_80046EB4, 0, 0, 0x130);
-        func_ovl0F_03_80043274(func_ovl0F_03_800468E0(0x21));
-        func_ovl0F_03_80045C18();
-    }
-}
-
-static void func_ovl0F_03_800432D0(void) {
-    switch (func_ovl0F_03_80045BF8()) {
-        case 0x12:
-            func_ovl0F_03_80045CF8(D_ovl0F_03_80046FA4[0].unk0, D_ovl0F_03_80046FA4[0].unk4,
-                                   D_ovl0F_03_80046FA4[0].unk8, D_ovl0F_03_80046FA4[0].unkC,
-                                   D_ovl0F_03_80046FA4[0].unk10, D_ovl0F_03_80046FA4[0].unk14,
-                                   D_ovl0F_03_80046FA4[0].unk18);
-            break;
-        case 0x14:
-            func_ovl0F_03_80045CF8(D_ovl0F_03_80046FA4[1].unk0, D_ovl0F_03_80046FA4[1].unk4,
-                                   D_ovl0F_03_80046FA4[1].unk8, D_ovl0F_03_80046FA4[1].unkC,
-                                   D_ovl0F_03_80046FA4[1].unk10, D_ovl0F_03_80046FA4[1].unk14,
-                                   D_ovl0F_03_80046FA4[1].unk18);
-            func_ovl0F_03_80046648(func_ovl0F_03_8004389C, NULL, 0, 0, 0x130);
-            break;
     }
 }
 
@@ -1021,7 +937,6 @@ static void func_ovl0F_03_8004342C(void) {
 static void func_ovl0F_03_800432E8(void) {
     func_ovl0F_03_80046440(&D_ovl0F_03_80047278);
 }
-#line 965 "1EE1A0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 static void func_ovl0F_03_800432E0(void) {
     D_ovl0F_03_80046DFC = 0.0f;
@@ -1034,18 +949,6 @@ static void func_ovl0F_03_800432D8(void) {
     func_ovl0F_03_800465D8(40.0f);
     func_ovl0F_03_800465E0(30);
 }
-
-/* case 2's: the stage's tables */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0F_03_80044C8C(u32 (*p)[3], s32 count) {
-    s32 i;
-
-    for (i = 0; i < count; i++) {
-        func_ovl0F_03_80046B58((*p)[0], (*p)[1], (*p)[2]);
-        p++;
-    }
-}
-#line 987 "1EE1A0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 static void func_ovl0F_03_80044C84(void) {
     func_ovl0F_03_80045AF8(0x226);

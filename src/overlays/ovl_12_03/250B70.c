@@ -1,6 +1,6 @@
 /*
- * ovl_12_03 matches in us, eu and jp. Two `#line` regions in another file
- * (panels.c) end as1's blocks where the original's do (see
+ * ovl_12_03 matches in us, eu and jp. Two statics defined in another file
+ * (statics.h) end as1's blocks where the original's do (see
  * func_ovl12_03_80043100 and func_ovl12_03_8004316C), as in ovl_12_01
  * (src/overlays/ovl_12_01/24B540.c), and func_ovl12_03_80044B98 is called
  * with no arguments (see its declaration).
@@ -10,7 +10,6 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
-#line 16 "250B70.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_12_03's game object, IDO -O3: the functions are written last to first
@@ -233,6 +232,8 @@ UnkStruct_ovl12_03_80045E24 D_ovl12_03_80045E24[] = {
     { NULL, 400.0f, 200.0f, 1300.0f },
 };
 UnkStruct_ovl12_03_80045E24 D_ovl12_03_80045E34 = { NULL, 3850.0f, 400.0f, 1350.0f };
+
+#include "statics.h"
 
 /* unused: the stubs IDO -O3 leaves at the end of the object */
 static void func_ovl12_03_80044598(void) {
@@ -662,31 +663,8 @@ void func_ovl12_03_80043248(UnkStruct_ovl12_03_80045C34 *arg0) {
     }
 }
 
-
-
 void func_ovl12_03_80043174(void) {
     func_ovl12_03_8004316C(40.0f, 15, 2);
-}
-
-
-/* Inlined into func_ovl12_03_80043174 only; that one is inlined into its
- * callers in turn. Called from more than one function it isn't inlined.
- * The parameter order sets func_ovl12_03_80043408's frame. Defined in
- * another file (panels.c), as ovl_12_01's func_ovl12_01_80043188: the
- * `.file` at the inlined body ends as1's block after the prologue and the
- * hoisted &D_ovl12_03_80045ED0, 100.0f and count (17 words to 0). */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl12_03_8004316C(f32 x, s32 z, s32 count) {
-    s32 i;
-
-    D_ovl12_03_80045ED0[0] = x * 100.0f;
-    D_ovl12_03_80045ED0[1] = 0.0f;
-    for (i = 0; i < count; i++) {
-        D_ovl12_03_80045ED0[1] += func_ovl12_03_80044950(i) * 100.0f;
-    }
-    D_ovl12_03_80045ED0[1] += 100.0f;
-    D_ovl12_03_80045ED0[2] = z * 100.0f;
-    D_ovl12_03_80045EC0 = func_ovl12_03_80045890(0x28, (Vec3f *) D_ovl12_03_80045ED0, 0);
 }
 
 void func_ovl12_03_80043138(s32 arg0) {
@@ -701,12 +679,6 @@ void func_ovl12_03_80043108(void) {
     func_ovl12_03_80045898(D_ovl12_03_80045EC0);
     func_ovl12_03_80044A08();
 }
-
-/* In panels.c: its inlined (empty) body's `.file` ends the block before
- * the load of D_ovl12_03_80045EC0, so `sw ra` comes first (2 words to 0). */
-static void func_ovl12_03_80043100(void) {
-}
-#line 719 "250B70.c" /* fake: back from the other file, at the line numbers it matched with */
 
 static void func_ovl12_03_800430F8(void) {
 }

@@ -2,22 +2,19 @@
  * ovl_0E_04 matches in us, eu and jp.
  *
  * - func_ovl0E_04_800439A4: the static it inlines, func_ovl0E_04_8004399C,
- *   is defined in "panels.c" (a fake `#line`; the `#line` after it returns
- *   to the file's own numbers, and the one after the include gives the file
- *   one name however it is compiled), as in ovl_0C_09's 18F6B0.c. The
+ *   is defined in another file (statics.h), as in ovl_0C_09's 18F6B0.c. The
  *   original's prologue has a block boundary right after the hoisted
  *   invariants (&D_ovl0E_04_80046F30 in s1, 100.0f in fs0, the count in
  *   s2): the `.file` ugen emits where the inlined body starts is it. The
  *   fakes it had before (the body as a one-line macro, `!i && !i`) go.
  * - func_ovl0E_04_80043158: the last of its empty statics,
- *   func_ovl0E_04_80043150, is defined in "panels.c" too: the boundary
+ *   func_ovl0E_04_80043150, is defined in statics.h too: the boundary
  *   keeps the `lui a0` of D_ovl0E_04_80046F20 after `sw ra`.
  * - func_ovl0E_04_80043B4C: the fake test of unkE before the last call is
  *   ovl_0E_05's (src/overlays/ovl_0E_05/1C3B40.c): it ends the block, so
  *   `move a1,s4` stays in the call's delay slot.
  */
 #include "common.h"
-#line 27 "1BFC40.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0E_04's game object, IDO -O3: the functions are written last to first
@@ -298,6 +295,8 @@ UnkStruct_ovl0E_04_80046DE0 D_ovl0E_04_80046DE0[3] = {
     { 1, -1, NULL, 1200.0f, 400.0f, 650.0f, 315.0f, 0, 0x402 },
     { 2, -1, NULL, 1420.0f, 600.0f, 1000.0f, 270.0f, 0, 0x403 },
 };
+
+#include "statics.h"
 
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
@@ -822,24 +821,6 @@ void func_ovl0E_04_800439A4(void) {
     func_ovl0E_04_8004399C(9.0f, 2, 1);
 }
 
-/* Inlined into func_ovl0E_04_800439A4 only, which is inlined into its
- * callers in turn; in "panels.c" for the block boundary where its body
- * starts (ovl_0C_09's func_ovl0C_09_80043D00). */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0E_04_8004399C(f32 x, s32 z, s32 count) {
-    s32 i;
-
-    D_ovl0E_04_80046F30[0] = x * 100.0f;
-    D_ovl0E_04_80046F30[1] = 0.0f;
-    for (i = 0; i < count; i++) {
-        D_ovl0E_04_80046F30[1] += func_ovl0E_04_800457B0(i) * 100.0f;
-    }
-    D_ovl0E_04_80046F30[1] += 100.0f;
-    D_ovl0E_04_80046F30[2] = z * 100.0f;
-    D_ovl0E_04_80046F20 = func_ovl0E_04_800466F0(0x25, D_ovl0E_04_80046F30, 0);
-}
-#line 848 "1BFC40.c" /* fake: back from the other file, at the line numbers it matched with */
-
 void func_ovl0E_04_80043908(void) {
     s16 flag;
     s16 i;
@@ -1025,12 +1006,6 @@ void func_ovl0E_04_80043158(void) {
     func_ovl0E_04_800466F8(D_ovl0E_04_80046F20);
     func_ovl0E_04_80045868();
 }
-
-/* in "panels.c": a block boundary before the load in func_ovl0E_04_80043158 */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0E_04_80043150(void) {
-}
-#line 1045 "1BFC40.c" /* fake: back from the other file, at the line numbers it matched with */
 
 static void func_ovl0E_04_80043148(void) {
 }

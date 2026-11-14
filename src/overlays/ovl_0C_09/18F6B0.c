@@ -9,8 +9,7 @@
  * 80045060's second flag is an s16.
  *
  * - func_ovl0C_09_80043D08: the static it inlines, func_ovl0C_09_80043D00,
- *   is defined in "panels.c" (a fake `#line`, to the end of the file).
- *   The original's prologue has a
+ *   is defined in another file (statics.h).  The original's prologue has a
  *   block boundary right after the hoisted invariants
  *   (&D_ovl0C_09_80047B10 in s1, 100.0f in fs0, the count in s2): the
  *   `.file` ugen emits where the inlined body starts is it.  The fakes it
@@ -307,6 +306,8 @@ UnkStruct_ovl0C_09_80047890 D_ovl0C_09_80047890[] = {
     { 5, 0, 0, NULL, NULL, 2450.0f, 1800.0f, 2050.0f, 1800.0f, 3300.0f, 2450.0f, 1700.0f, 2050.0f, 80.0f,
       0x18, 3, 0x14, 0x19, 4, 0x15, 0x80, 0, 0 },
 };
+
+#include "statics.h"
 
 /* unused: the stubs IDO -O3 leaves at the end of the object */
 static void func_ovl0C_09_8004617C(void) {
@@ -1023,20 +1024,6 @@ static void func_ovl0C_09_80043E00(void) {
 void func_ovl0C_09_80043D08(void) {
     func_ovl0C_09_80043D00(33.0f, 15, 5);
     func_ovl0C_09_80046518(0x1F, 5, 0xF, 0x20, 0x10, 0x12);
-}
-
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0C_09_80043D00(f32 x, s32 z, s32 count) {
-    s32 i;
-
-    D_ovl0C_09_80047B10.x = x * 100.0f;
-    D_ovl0C_09_80047B10.y = 0.0f;
-    for (i = 0; i < count; i++) {
-        D_ovl0C_09_80047B10.y += func_ovl0C_09_80046540(i) * 100.0f;
-    }
-    D_ovl0C_09_80047B10.y += 100.0f;
-    D_ovl0C_09_80047B10.z = z * 100.0f;
-    D_ovl0C_09_80047B00 = func_ovl0C_09_80047480(0x26, &D_ovl0C_09_80047B10, 0);
 }
 
 void func_ovl0C_09_80043C40(UnkStruct_ovl0C_09_8004784C *arg0) {

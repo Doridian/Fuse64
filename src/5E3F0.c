@@ -3611,9 +3611,6 @@ void func_80248148(s32 arg0, s32 arg1) {
     s32 link;
     s32 t1;
     s32 other;
-    s32 t2;
-    s32 t3;
-    s32 pad2[1]; /* fake: frame-tuned */
 
     if (D_800AEDF0[arg0].unk24 != 3) {
         if (arg1 == 3 || arg1 == 5) {
@@ -3622,9 +3619,7 @@ void func_80248148(s32 arg0, s32 arg1) {
             D_800AEDF0[arg0].unk14--;
         }
         func_802444B8(arg0, 0);
-        if (!D_800AEDF0[arg0].unk28 && !D_800AEDF0[arg0].unk28) {} /* fake: dead read (ugen temporaries) */
-        if (!D_802ACF60 && !D_802ACF60) {} /* fake: dead read (ugen temporaries) */
-        obj = (Obj88 *)D_800AEDF0[arg0].unk28;
+        obj = (Obj88 *)func_802443F4(arg0);
         func_80244354(arg0, 0x21C0, 0);
         link = D_802AC5D0 & 4;
         func_80244BE0(arg0, 1);
@@ -3639,8 +3634,7 @@ void func_80248148(s32 arg0, s32 arg1) {
             t1 = func_8023A870(arg0, arg1);
             if (t1) {
                 if (link) {
-                    t2 = func_80243EB4(arg0, 0x2000);
-                    if (t2) {
+                    if (func_80243EB4(arg0, 0x2000)) {
                         func_80247F90(arg0);
                     }
                     if (obj->unk44 != NULL) {
@@ -3650,8 +3644,7 @@ void func_80248148(s32 arg0, s32 arg1) {
                         func_80243D90(other, 0x2000, 0);
                         func_802313DC(obj, 0x600000);
                     }
-                    t3 = func_80243EB4(arg0, 0x200);
-                    if (!t3) {
+                    if (!func_80243EB4(arg0, 0x200)) {
                         func_8027B0BC((s16)arg0);
                     }
                 }

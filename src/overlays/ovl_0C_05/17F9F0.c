@@ -445,21 +445,15 @@ void func_ovl0C_05_80043970(s32 arg0) {
     }
 }
 
-/* 800437D4 and 80043814 are defined above their caller 8004384C: only then
- * does it pull them, after its statics (IDO -O3's order) */
-void func_ovl0C_05_800437D4(void) {
-    func_ovl0C_05_80045428(0x400);
-    func_ovl0C_05_80045428(0x401);
-    func_ovl0C_05_80045428(0x402);
-    func_ovl0C_05_80045428(0x403);
-    func_ovl0C_05_80045428(0x404);
-}
-
-void func_ovl0C_05_80043814(void) {
-    func_ovl0C_05_800437D4();
-    func_ovl0C_05_80044740(func_ovl0C_05_80043FF4);
-    func_ovl0C_05_80044790(func_ovl0C_05_80043F34);
-}
+/* the names src/overlays/common/flags.h's code has here */
+#define FLAGS_80046FDC func_ovl0C_05_800437D4
+#define FLAGS_8004701C func_ovl0C_05_80043814
+#define FLAGS_80048694 func_ovl0C_05_80043F34
+#define FLAGS_80048754 func_ovl0C_05_80043FF4
+#define FLAGS_80048EA0 func_ovl0C_05_80044740
+#define FLAGS_80048EF0 func_ovl0C_05_80044790
+#define FLAGS_80049B88 func_ovl0C_05_80045428
+#include "overlays/common/flags.h"
 
 void func_ovl0C_05_8004384C(void) {
     u32 (*p)[3];

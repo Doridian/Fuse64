@@ -655,19 +655,15 @@ void func_ovl0E_02_8004392C(void) {
     func_ovl0E_02_80045F48(0xFF, 0xA1, 0x1D);
 }
 
-void func_ovl0E_02_800438F4(void) {
-    func_ovl0E_02_800438B4();
-    func_ovl0E_02_80045190(func_ovl0E_02_80044BD8);
-    func_ovl0E_02_800451E0(func_ovl0E_02_80044B14);
-}
-
-void func_ovl0E_02_800438B4(void) {
-    func_ovl0E_02_80045E78(0x400);
-    func_ovl0E_02_80045E78(0x401);
-    func_ovl0E_02_80045E78(0x402);
-    func_ovl0E_02_80045E78(0x403);
-    func_ovl0E_02_80045E78(0x404);
-}
+/* the names src/overlays/common/flags.h's code has here */
+#define FLAGS_80046FDC func_ovl0E_02_800438B4
+#define FLAGS_8004701C func_ovl0E_02_800438F4
+#define FLAGS_80048694 func_ovl0E_02_80044B14
+#define FLAGS_80048754 func_ovl0E_02_80044BD8
+#define FLAGS_80048EA0 func_ovl0E_02_80045190
+#define FLAGS_80048EF0 func_ovl0E_02_800451E0
+#define FLAGS_80049B88 func_ovl0E_02_80045E78
+#include "overlays/common/flags.h"
 
 void func_ovl0E_02_800438AC(void) {
 }

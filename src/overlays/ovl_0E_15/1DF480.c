@@ -288,11 +288,15 @@ void func_ovl0E_15_80044E38(void) {
     func_ovl0E_15_80046068();
 }
 
-void func_ovl0E_15_80043340(void) {
-    func_ovl0E_15_80043300();
-    func_ovl0E_15_800455F0(func_ovl0E_15_80045024);
-    func_ovl0E_15_80045640(func_ovl0E_15_800438DC);
-}
+/* the names src/overlays/common/flags.h's code has here */
+#define FLAGS_80046FDC func_ovl0E_15_80043300
+#define FLAGS_8004701C func_ovl0E_15_80043340
+#define FLAGS_80048694 func_ovl0E_15_800438DC
+#define FLAGS_80048754 func_ovl0E_15_80045024
+#define FLAGS_80048EA0 func_ovl0E_15_800455F0
+#define FLAGS_80048EF0 func_ovl0E_15_80045640
+#define FLAGS_80049B88 func_ovl0E_15_800462D8
+#include "overlays/common/flags.h"
 
 /* a task, started by the handler's case 4 for D_ovl0E_15_80046954 0x10,
  * 0x1A and 0x1B */
@@ -701,14 +705,6 @@ void func_ovl0E_15_80043378(void) {
     D_ovl0E_15_80046958 = 1;
     D_ovl0E_15_8004695C = 0;
     func_ovl0E_15_80046278();
-}
-
-void func_ovl0E_15_80043300(void) {
-    func_ovl0E_15_800462D8(0x400);
-    func_ovl0E_15_800462D8(0x401);
-    func_ovl0E_15_800462D8(0x402);
-    func_ovl0E_15_800462D8(0x403);
-    func_ovl0E_15_800462D8(0x404);
 }
 
 void func_ovl0E_15_8004321C(void) {

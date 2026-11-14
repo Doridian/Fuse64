@@ -483,23 +483,15 @@ void func_ovl0C_04_80043ACC(s32 arg0) {
     }
 }
 
-/* 80043800, 80043840, 80043720 and 80043664 are defined above their caller
- * 80043878, as in ovl_0C_05: it pulls them out after itself in its call
- * order (with the two empty statics).  80043720 and 80043664 are not
- * static: as statics IDO inlines them. */
-void func_ovl0C_04_80043800(void) {
-    func_ovl0C_04_800456E8(0x400);
-    func_ovl0C_04_800456E8(0x401);
-    func_ovl0C_04_800456E8(0x402);
-    func_ovl0C_04_800456E8(0x403);
-    func_ovl0C_04_800456E8(0x404);
-}
-
-void func_ovl0C_04_80043840(void) {
-    func_ovl0C_04_80043800();
-    func_ovl0C_04_80044A00(func_ovl0C_04_800442AC);
-    func_ovl0C_04_80044A50(func_ovl0C_04_800441EC);
-}
+/* the names src/overlays/common/flags.h's code has here */
+#define FLAGS_80046FDC func_ovl0C_04_80043800
+#define FLAGS_8004701C func_ovl0C_04_80043840
+#define FLAGS_80048694 func_ovl0C_04_800441EC
+#define FLAGS_80048754 func_ovl0C_04_800442AC
+#define FLAGS_80048EA0 func_ovl0C_04_80044A00
+#define FLAGS_80048EF0 func_ovl0C_04_80044A50
+#define FLAGS_80049B88 func_ovl0C_04_800456E8
+#include "overlays/common/flags.h"
 
 void func_ovl0C_04_80043720(void) {
     UnkStruct_ovl0C_04_80045C58 *p;

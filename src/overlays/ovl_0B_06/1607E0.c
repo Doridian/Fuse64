@@ -1296,7 +1296,7 @@ static s32 ERASE_FILE(void) {
     loop = 1;
     sel = 0;
 #if VERSION_JP
-    if (!sel) {} /* fake: the while's test reads loop first; this gives jp's loop $s7, sel $s6 back */
+    if (!sel) {} /* fake: (jp only: us and eu match without it) the while's test reads loop first; this gives jp's loop $s7, sel $s6 back */
 #endif
     func_ovl0B_06_80048CA8(MSG_TASK, NULL, 0, 0, 0x130);
     func_ovl0B_06_800464C0(0);
@@ -1535,7 +1535,7 @@ static s32 LEVEL_ASK(s32 slot, s32 arg1) {
         if ((held & 0x200) && side == 1) {
             t = 0.0f;
             side = 0;
-            if (side) {} /* fake: dead read */
+            if (side) {} /* fake: dead read (jp only: us and eu match without it) */
             D_ovl0B_06_80049E44[5].unk0->unkC &= ~1;
             D_ovl0B_06_80049E44[6].unk0->unkC |= 1;
             SE(0, 5);
@@ -1610,7 +1610,7 @@ static s32 LEVEL_FILE(s32 slot) {
 #if VERSION_JP
         SET_TEXT(D_ovl0B_06_80049A44[0].unk4, D_ovl0B_06_80049480, D_ovl0B_06_80049A44[0].unk14);
         func_ovl0B_06_800490B0(D_ovl0B_06_80049A44[0].unk4, 40, 0);
-        if (result) {} /* fake: dead read (jp) */
+        if (result) {} /* fake: dead read (jp only: us and eu match without it) */
         SET_TEXT(D_ovl0B_06_80049A44[5].unk4, D_ovl0B_06_80049480, D_ovl0B_06_80049A44[5].unk14);
         func_ovl0B_06_800490B0(D_ovl0B_06_80049A44[5].unk4, 40, 0);
 #else
@@ -1823,7 +1823,7 @@ static s32 COPY_ASK(void) {
         func_ovl0B_06_80048CF0();
     } while (loop != 0);
     func_ovl0B_06_80044908(1);
-    if (!loop) {} /* fake: (wAG) loop $s4, sub $s6 */
+    if (!loop) {} /* fake: (jp only: us and eu match without it) (wAG) loop $s4, sub $s6 */
     slot = sub & 0xF;
 #if VERSION_JP
     SET_TEXT(D_ovl0B_06_80049B94[0].unk4, D_ovl0B_06_80049508, D_ovl0B_06_80049B94[0].unk14);

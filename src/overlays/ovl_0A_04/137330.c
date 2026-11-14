@@ -854,8 +854,6 @@ void func_ovl0A_04_80043300(void) {
         }
         func_ovl0A_04_80045EA0();
     }
-    if (!obj && !obj && !obj) { /* fake: a block boundary */
-    }
     func_ovl0A_04_80045A30(obj->unk40, 0x17, 0);
     func_ovl0A_04_80045D08(obj, 0x04000000);
     func_ovl0A_04_800432F0(obj);

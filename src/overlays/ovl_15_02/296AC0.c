@@ -2055,7 +2055,6 @@ void func_ovl15_02_8004B14C(void) {
     if (arms[j]) {} /* fake: dead read */
     for (j = 0; j != 60; j++) {
         func_ovl15_02_800495F8(root, &D_ovl15_02_80051500);
-        do {} while (0); /* fake: block boundary */
         for (i = 0; i < 5; i++) {
             arms[i]->unk4C += 6.0f;
             if (lim[i] < arms[i]->unk4C) {

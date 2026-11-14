@@ -20,10 +20,10 @@
  * parameter (the call's value is dead: a = 255 before its first use;
  * b, c or step as the parameter give the frame too, with more words).
  * step declared last puts it at the original's 0x74. `c -= ...` after
- * the unk36 = b store, and 8004607C numbered (#line 700) below 80046084's
- * first statements so its `move v1,zero` (i = 0) schedules first. In
- * 80043028, 80043020 numbered (#line 1670) below the switch puts case 17's
- * `move v0,zero` first in the same way (3 words).
+ * the unk36 = b store, and 8004607C defined before 80046084 (below its
+ * first statements' lines) so its `move v1,zero` (i = 0) schedules first.
+ * 80043028's statics defined before it put case 17's `move v0,zero` first
+ * in the same way (3 words).
  *
  * 800442B4's counter: the original keeps the frame count in a stack word
  * (v, address-taken in dead code so calls may change it): stored 0, loaded
@@ -32,14 +32,19 @@
  * (0);` and the explicit `if` keep the loops' slti ends and put the store
  * after the second loop's test.
  *
+ * Statics defined before their callers: an inlined static's stub comes out
+ * just before its first inliner wherever it is defined, so the definition
+ * place only sets its lines (2026-11-14: 8004607C, 8004608C, 80046094,
+ * 80044A24, 80044294 and 80043010/18/20 replaced eight `#line`s; the
+ * order 80046094 before 8004608C is needed, the rest a guess).
+ *
  * Levers that fixed the rest: `#line` renumbering (80043380's `e = tbl`
- * after the call's line; 80044A24 and 80046094 numbered below their
- * callers, so their argument setup and stores schedule first; 8004428C's
+ * after the call's line; 8004428C's
  * store and 800442B4's final `v = j` numbered after the call they precede,
- * so they land in its delay slot; 800442AC and 80044294 renumbered for
+ * so they land in its delay slot; 800442AC renumbered for
  * 800442B4's setup order; 80044F3C's `pos[2]` numbered before `v = 0`),
  * `k = D_ovl0A_01_80048D1C = ...` in 8004364C's switch, `base[0]` and `tgt[0]` computed separately in
- * 80043AA4 (ugen then picks $f0), a dead `if (fall) {}` at the top of
+ * 80043AA4 (ugen then picks $f0), a compiled-out `fall == NULL` check atop
  * 80044798 (its IPA registers: fall in s1, the table in s2), and in
  * 80046084 the variables shared between loops as the original's register
  * allocation needs (c is the first loop's alpha, the fade's colour and
@@ -710,10 +715,74 @@ void func_ovl0A_01_8004694C(void) {
     }
 }
 
+static void func_ovl0A_01_80046094(void) {
+    while (D_ovl0A_01_80048770[2].obj->unk40->unk20 > 180.0f) {
+        D_ovl0A_01_80048770[2].obj->unk40->unk20 -= 2.0f;
+        D_ovl0A_01_80048770[2].obj->unk40->unk18 -= 2.0f;
+        func_ovl0A_01_80047FD0();
+    }
+    D_ovl0A_01_80048770[2].obj->unk40->unk20 = 180.0f;
+}
+
+static void func_ovl0A_01_8004608C(void) {
+    s32 i;
+    f32 cz;
+    f32 cy;
+    f32 cx;
+    f32 ly;
+    f32 lz;
+    f32 lx;
+    f32 t;
+
+    cz = 611.229f;
+    cy = -502.879f;
+    cx = 2314.773f;
+    ly = 33.2f;
+    lx = 0;
+    t = 0.0f;
+    lz = 2425.0f;
+    D_ovl0A_01_80048770[5].obj->unk40->unk36 = 0xFF;
+    func_ovl0A_01_80047E38(D_ovl0A_01_80048770[5].obj, 0x01080000);
+    func_ovl0A_01_80047B30(D_ovl0A_01_80048770[5].obj->unk40, 0x61);
+    for (i = 0; i < 30; i++) {
+        cz -= 2.8f;
+        func_ovl0A_01_80047C78(2314.773f, -502.879f, cz);
+        func_ovl0A_01_80047FD0();
+        t += 8.5f;
+    }
+    func_ovl0A_01_80047FD0();
+    {
+        f32 z;
+
+        z = cz;
+        for (i = 0; i < 120; i++) {
+            D_ovl0A_01_80048770[0].obj->unk40->unk20 += 1.5f;
+            cx += -0.5417745f;
+            cy += 6.8256583f;
+            cz += (530.88f - z) / 120.0f;
+            ly += -0.25750002f;
+            lz += -5.1666665f;
+            lx += 0.09666667f;
+            func_ovl0A_01_80047C78(cx, cy, cz);
+            func_ovl0A_01_80047C98(lx, ly, lz);
+            func_ovl0A_01_80047FD0();
+        }
+    }
+}
+
 void func_ovl0A_01_8004609C(void) {
     func_ovl0A_01_80046094();
     func_ovl0A_01_8004608C();
     func_ovl0A_01_80046084(0.0f);
+}
+
+static void func_ovl0A_01_8004607C(s32 n, Entry2 *tbl) {
+    s32 i;
+
+    for (i = 0; i < n; i++, tbl++) {
+        tbl->unk0 = func_ovl0A_01_80047B98(tbl->unk18, 0);
+        tbl->unk0->unkC |= tbl->unk14;
+    }
 }
 
 static void func_ovl0A_01_80046084(f32 a) {
@@ -798,72 +867,7 @@ static void func_ovl0A_01_80046084(f32 a) {
         func_ovl0A_01_80047FD0();
     }
 }
-#line 700 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
-static void func_ovl0A_01_8004607C(s32 n, Entry2 *tbl) {
-    s32 i;
 
-    for (i = 0; i < n; i++, tbl++) {
-        tbl->unk0 = func_ovl0A_01_80047B98(tbl->unk18, 0);
-        tbl->unk0->unkC |= tbl->unk14;
-    }
-}
-static void func_ovl0A_01_8004608C(void) {
-    s32 i;
-    f32 cz;
-    f32 cy;
-    f32 cx;
-    f32 ly;
-    f32 lz;
-    f32 lx;
-    f32 t;
-
-    cz = 611.229f;
-    cy = -502.879f;
-    cx = 2314.773f;
-    ly = 33.2f;
-    lx = 0;
-    t = 0.0f;
-    lz = 2425.0f;
-    D_ovl0A_01_80048770[5].obj->unk40->unk36 = 0xFF;
-    func_ovl0A_01_80047E38(D_ovl0A_01_80048770[5].obj, 0x01080000);
-    func_ovl0A_01_80047B30(D_ovl0A_01_80048770[5].obj->unk40, 0x61);
-    for (i = 0; i < 30; i++) {
-        cz -= 2.8f;
-        func_ovl0A_01_80047C78(2314.773f, -502.879f, cz);
-        func_ovl0A_01_80047FD0();
-        t += 8.5f;
-    }
-    func_ovl0A_01_80047FD0();
-    {
-        f32 z;
-
-        z = cz;
-        for (i = 0; i < 120; i++) {
-            D_ovl0A_01_80048770[0].obj->unk40->unk20 += 1.5f;
-            cx += -0.5417745f;
-            cy += 6.8256583f;
-            cz += (530.88f - z) / 120.0f;
-            ly += -0.25750002f;
-            lz += -5.1666665f;
-            lx += 0.09666667f;
-            func_ovl0A_01_80047C78(cx, cy, cz);
-            func_ovl0A_01_80047C98(lx, ly, lz);
-            func_ovl0A_01_80047FD0();
-        }
-    }
-}
-
-#line 50 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
-static void func_ovl0A_01_80046094(void) {
-    while (D_ovl0A_01_80048770[2].obj->unk40->unk20 > 180.0f) {
-        D_ovl0A_01_80048770[2].obj->unk40->unk20 -= 2.0f;
-        D_ovl0A_01_80048770[2].obj->unk40->unk18 -= 2.0f;
-        func_ovl0A_01_80047FD0();
-    }
-    D_ovl0A_01_80048770[2].obj->unk40->unk20 = 180.0f;
-}
-
-#line 850 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 void func_ovl0A_01_80045EA0(void) {
     s32 wait;
     f32 pos[3];
@@ -1126,6 +1130,18 @@ void func_ovl0A_01_80044F3C(void) {
     }
 }
 
+static void func_ovl0A_01_80044A24(Obj *obj, f32 *pos, f32 *tgt) {
+    f32 ang[3];
+    s32 u1;
+    s32 u2;
+
+    func_ovl0A_01_80047DC8(pos, tgt, ang);
+    obj->unk40->unk20 = ang[0];
+    obj->unk40->unk1C = ((ang[1] - 180.0f) >= 360.0f ? (ang[1] - 180.0f) - 360.0f
+                         : (ang[1] - 180.0f) < 0.0f ? (ang[1] - 180.0f) + 360.0f : (ang[1] - 180.0f)) * -1.0f;
+    obj->unk40->unk2C = ang[2] / 100.0f;
+}
+
 static void func_ovl0A_01_80044A2C(void) {
     s32 i;
     s32 k;
@@ -1209,20 +1225,6 @@ static void func_ovl0A_01_80044A2C(void) {
     func_ovl0A_01_80043018(3, D_ovl0A_01_80048A84);
 }
 
-#line 100 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
-static void func_ovl0A_01_80044A24(Obj *obj, f32 *pos, f32 *tgt) {
-    f32 ang[3];
-    s32 u1;
-    s32 u2;
-
-    func_ovl0A_01_80047DC8(pos, tgt, ang);
-    obj->unk40->unk20 = ang[0];
-    obj->unk40->unk1C = ((ang[1] - 180.0f) >= 360.0f ? (ang[1] - 180.0f) - 360.0f
-                         : (ang[1] - 180.0f) < 0.0f ? (ang[1] - 180.0f) + 360.0f : (ang[1] - 180.0f)) * -1.0f;
-    obj->unk40->unk2C = ang[2] / 100.0f;
-}
-
-#line 1206 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 static void func_ovl0A_01_80044968(s32 frame, f32 dx, f32 dy) {
     if (frame >= 0xC9 && frame < 0x190) {
         D_ovl0A_01_800488D8[5].obj->unk40->unk10 += 12.0f * dx;
@@ -1237,7 +1239,7 @@ static void func_ovl0A_01_80044798(f32 speed, f32 *fall) {
     Inner *m;
 
     func_ovl0A_01_80044790();
-    if (fall) {} /* fake: a dead test, for the register allocation or schedule */
+    if (fall == NULL) { DEBUG_PRINT(("fall == NULL\n")); } /* a compiled-out debug check (any test of fall matches: guess) */
     m = D_ovl0A_01_800488D8[0].obj->unk40;
     if (m->unk20 > 72.0f) {
         m->unk10 += 12.0f * speed * 0.4f;
@@ -1312,6 +1314,10 @@ static void func_ovl0A_01_8004457C(void) {
     D_ovl0A_01_80048A24 = 0;
 }
 
+static void func_ovl0A_01_80044294(void) {
+    func_ovl0A_01_80047E40(D_ovl0A_01_80048890[1].obj, 0x01000000);
+}
+
 void func_ovl0A_01_800442B4(void) {
     volatile s32 v; /* kept in memory: the original stores and reloads it */
     s32 i;
@@ -1378,12 +1384,6 @@ static void func_ovl0A_01_8004428C(void) {
 #line 1354 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     D_ovl0A_01_80048A64 = func_ovl0A_01_80047F88(func_ovl0A_01_80045EA0, NULL, 0, 0, 0x130);
 }
-
-#line 1157 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
-static void func_ovl0A_01_80044294(void) {
-    func_ovl0A_01_80047E40(D_ovl0A_01_80048890[1].obj, 0x01000000);
-}
-#line 1360 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 
 static void func_ovl0A_01_8004429C(void) {
     func_ovl0A_01_80047E40(D_ovl0A_01_80048890[0].obj, 0x01000000);
@@ -1713,6 +1713,32 @@ static void func_ovl0A_01_8004327C(void) {
 static void func_ovl0A_01_80043274(void) {
 }
 
+static void func_ovl0A_01_80043018(s32 n, Entry *tbl) {
+    s32 i;
+
+    for (i = 0; i < n; i++) {
+        func_ovl0A_01_80047E50(tbl->obj);
+        tbl++;
+    }
+}
+
+static void func_ovl0A_01_80043020(s32 n, Entry2 *tbl) {
+    s32 i;
+
+    for (i = 0; i < n; i++) {
+        if (tbl->unk0 != NULL) {
+            func_ovl0A_01_80047B20(tbl->unk0);
+        }
+        tbl++;
+    }
+}
+
+static void func_ovl0A_01_80043010(s32 task) {
+    if ((task | 0) != -1) {
+        func_ovl0A_01_80047F90(task);
+    }
+}
+
 void func_ovl0A_01_80043028(void) {
     switch (D_ovl0A_01_80048D1C) {
         case 16:
@@ -1739,31 +1765,6 @@ void func_ovl0A_01_80043028(void) {
     }
     if (*D_ovl0A_01_80048D20 & 4) {
         func_ovl0A_01_800486F8();
-    }
-}
-
-static void func_ovl0A_01_80043010(s32 task) {
-    if ((task | 0) != -1) {
-        func_ovl0A_01_80047F90(task);
-    }
-}
-#line 1670 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
-static void func_ovl0A_01_80043020(s32 n, Entry2 *tbl) {
-    s32 i;
-
-    for (i = 0; i < n; i++) {
-        if (tbl->unk0 != NULL) {
-            func_ovl0A_01_80047B20(tbl->unk0);
-        }
-        tbl++;
-    }
-}
-static void func_ovl0A_01_80043018(s32 n, Entry *tbl) {
-    s32 i;
-
-    for (i = 0; i < n; i++) {
-        func_ovl0A_01_80047E50(tbl->obj);
-        tbl++;
     }
 }
 

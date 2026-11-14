@@ -60,8 +60,11 @@
  * `if (func_802712A8(&arg0->unk64, 4) || f8)`, after the if/else: uopt
  * moves the test's load and and into the three branch tails, with the
  * getter's result in a0 as in the original (a variable f4 set in each
- * branch put it in v0). The two getter calls fewer free 16 bytes of
- * frame above the DCAC buffer: pad[20] takes them back.
+ * branch put it in v0). Its flags are set and cleared with
+ * func_80270354/func_8027036C as everywhere in the second half: each
+ * inlined copy keeps an 8-byte area, which is the frame the old pad[20]
+ * stood for (and func_8027361C's pad[23]; func_8027130C's pad[10] was
+ * the inlined func_80270B20).
  * func_80276D68 matches with a dead `if (f) {}` in its first else
  * (it puts the 0x20 flag in the original's register) and a second
  * local `g` for the 0x80 test's load.

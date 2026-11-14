@@ -94,7 +94,7 @@
  *   to the join by PRE) but isn't constant-propagated into the second
  *   store. It has no pointer local: `D_802AC7F8[i]` everywhere makes
  *   every address a uopt temp, all spilled at sp+76 as in the original;
- *   pad1/pad2 keep the frame.
+ *   t1/t2 (two calls' values held in locals) keep the frame.
  * - func_8023CD1C is static (not inlined: four callers): ugen then takes
  *   its temporaries from t6-t9 only, which gives the else arm's rotation.
  *   fcmp counts a static with the function before it, so func_8023D0F8's

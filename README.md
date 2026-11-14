@@ -3,7 +3,8 @@
 A matching decompilation of Hudson Soft's *Bomberman 64* (N64, 1997;
 *Baku Bomberman* in Japan),
 aimed at a PC port, native and WebAssembly, with online multiplayer over
-WebRTC. You need your own ROM. None of the game's code or data is in this
+WebRTC: Fuse64 (`port/`, docs/PORT.md), a port of Bomberman 64 built from
+this decompilation. You need your own ROM. None of the game's code or data is in this
 repository.
 
 Stage 2 is done: all three ROMs rebuild byte for byte from disassembled code

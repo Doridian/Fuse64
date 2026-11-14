@@ -1,6 +1,6 @@
 /*
  * The save: the 4 Kbit EEPROM as a 512-byte file in the N64's byte order
- * (bm64.<version>.eep in --save-dir), written through at every write.  No
+ * (fuse64.<version>.eep in --save-dir), written through at every write.  No
  * controller pak is plugged in (port/src/pfs.c).
  */
 #include <stdio.h>
@@ -26,7 +26,7 @@ static void load(void) {
 #else
     const char *v = "us";
 #endif
-    snprintf(path, sizeof path, "%s/bm64.%s.eep", host_save_dir, v);
+    snprintf(path, sizeof path, "%s/fuse64.%s.eep", host_save_dir, v);
     FILE *f = fopen(path, "rb");
     if (f) {
         if (fread(eeprom, 1, sizeof eeprom, f) != sizeof eeprom)

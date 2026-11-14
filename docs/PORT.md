@@ -1,6 +1,7 @@
-# The PC port
+# Fuse64
 
-The PC build (`port/`, phase 6 of docs/ROADMAP.md). It compiles the
+Fuse64, a port of Bomberman 64 (Hudson, 1997) built from this
+decompilation (`port/`, phase 6 of docs/ROADMAP.md). It compiles the
 game's C as it is in `src/` with the host's compiler, links it with a
 host layer (libultra, libaudio, the RSP and RDP, a window, sound, the
 controller, the save) and runs it as an ordinary program. The model and
@@ -30,7 +31,7 @@ The ROM build is unchanged by all of it: every change to `src/` is under
 make VERSION=us extract                 # the port's generators read asm/ and assets/code.bin
 cmake -S port -B build-port -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_C_FLAGS=-m32
 cmake --build build-port
-build-port/bm64 baserom.us.z64           # the user's own ROM
+build-port/fuse64 baserom.us.z64           # the user's own ROM
 ```
 
 It needs clang (the overlays' sections: "Overlays"), CMake, Ninja,
@@ -41,11 +42,11 @@ extract (CMake checks `.version`). Other options: `-DPORT_SDL=OFF`
 (headless only), `-DPORT_SANITIZE=address,undefined`,
 `-DPORT_HOST_MALLOC=ON` (the game's malloc the host's, for ASan).
 
-`bm64 --help` lists the options: `--headless` (no window and no sound;
+`fuse64 --help` lists the options: `--headless` (no window and no sound;
 a virtual clock), `--deterministic`, `--frames N`, `--screenshot PREFIX`
 and `--every N` (BMP files), `--input FILE` (a scripted controller in the
 shift check's format, `tools/inputs`), `--save-dir DIR` (the EEPROM file
-`bm64.<v>.eep`), `--wav FILE`, `--hash` (each retrace's framebuffer
+`fuse64.<v>.eep`), `--wav FILE`, `--hash` (each retrace's framebuffer
 hash), `-v`. With a window the keyboard (arrows, Z, X, C, A, S, Enter)
 and SDL's game controllers are the controller.
 
@@ -70,7 +71,7 @@ build yet.
 ```
 emcmake cmake -S port -B build-port-wasm -G Ninja
 cmake --build build-port-wasm
-node build-port-wasm/bm64.js --headless --frames 300 baserom.us.z64
+node build-port-wasm/fuse64.js --headless --frames 300 baserom.us.z64
 ```
 
 It runs under node (`-sNODERAWFS`: the ROM and the save are files), the
@@ -87,7 +88,7 @@ differs from the ELF build:
 - clang takes no `#pragma clang section` for WebAssembly, so each overlay
   file is compiled through a wrapper that includes it between `#pragma
   clang attribute push(section)` and its pop (all of its variables in
-  `bm64o_<overlay>`; `const` is defined away there, as a const variable
+  `fuse64o_<overlay>`; `const` is defined away there, as a const variable
   can't share the section).
 - An indirect or cross-file call whose declaration disagrees with the
   definition (void against a value, a float parameter) is a link error or
@@ -190,7 +191,7 @@ func_80003190, func_80042000, WatchLo, the long long helpers).
 
 Every overlay is linked in (their names carry the bank and entry). Each
 overlay file's variables go to sections of their own
-(port_ovl_section.h: bm64d_/bm64b_ on ELF), and loading an overlay
+(port_ovl_section.h: fuse64d_/fuse64b_ on ELF), and loading an overlay
 (40FB0.c's loader, port/src/overlay.c) puts them back as they were at
 startup, which is what inflating it gave on the N64, then calls its
 entry.

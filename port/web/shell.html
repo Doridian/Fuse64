@@ -9,7 +9,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bomberman 64</title>
+<title>Fuse64</title>
 <link rel="icon" href="data:,">
 <style>
   :root { --bg: #111; --fg: #ddd; --dim: #888; --accent: #e85030; }
@@ -48,7 +48,7 @@
   var Module = {
     canvas: document.getElementById('canvas'),
     print: function (s) { console.log(s); },
-    printErr: function (s) { console.warn(s); if (/^bm64:/.test(s)) status(s); },
+    printErr: function (s) { console.warn(s); if (/^fuse64:/.test(s)) status(s); },
     setStatus: function (s) { if (!started && s) status(s); },
     onRuntimeInitialized: function () {
       FS.mkdir('/save');

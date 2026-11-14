@@ -63,7 +63,7 @@ void host_log(const char *fmt, ...) {
 
 void host_fatal(const char *fmt, ...) {
     va_list ap;
-    fprintf(stderr, "bm64: ");
+    fprintf(stderr, "fuse64: ");
     va_start(ap, fmt);
     vfprintf(stderr, fmt, ap);
     va_end(ap);

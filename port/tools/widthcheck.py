@@ -156,7 +156,7 @@ def sections(exe):
 
 
 def cmd_data(a):
-    exe = os.path.join(a.build, "bm64")
+    exe = os.path.join(a.build, "fuse64")
     dies = parse_dies(exe)
     secs = sections(exe)
     src = os.path.join(ROOT, "src") + "/"
@@ -241,7 +241,7 @@ def symbolize(exe, offs):
 
 
 def cmd_report(a):
-    exe = os.path.join(a.build, "bm64")
+    exe = os.path.join(a.build, "fuse64")
     pairs = collections.Counter()
     addrs = {}
     for rep in a.reports:

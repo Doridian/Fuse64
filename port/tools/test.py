@@ -55,14 +55,14 @@ def cache_value(build, key):
 def run(build, name, qemu=None, timeout=7200):
     ver = cache_value(build, "PORT_VERSION") or "us"
     frames, script = SCENARIOS[name]
-    exe = os.path.join(build, "bm64")
+    exe = os.path.join(build, "fuse64")
     emu = qemu or cache_value(build, "CMAKE_CROSSCOMPILING_EMULATOR")
     if os.path.exists(exe + ".js"):     # the WebAssembly build: under node
         exe, emu = exe + ".js", "node"
     elif os.path.exists(exe + ".exe"):  # Windows: under its emulator (wine)
         exe = exe + ".exe"
         os.environ.setdefault("WINEDEBUG", "-all")
-    tmp = tempfile.mkdtemp(prefix="bm64-test-")
+    tmp = tempfile.mkdtemp(prefix="fuse64-test-")
     try:
         wav = os.path.join(tmp, "out.wav")
         cmd = ([emu] if emu else []) + [exe, "--headless", "--deterministic", "--hash", "--frames", str(frames),
@@ -85,7 +85,7 @@ def run(build, name, qemu=None, timeout=7200):
             "checkpoints": {str(i + 1): hashes[i] for i in range(299, frames, 300)},
             "wav": hashlib.sha1(open(wav, "rb").read()).hexdigest() if os.path.exists(wav) else None,
         }
-        eep = os.path.join(tmp, "bm64.%s.eep" % ver)
+        eep = os.path.join(tmp, "fuse64.%s.eep" % ver)
         out["eeprom"] = hashlib.sha1(open(eep, "rb").read()).hexdigest() if os.path.exists(eep) else None
         return ver, out
     finally:

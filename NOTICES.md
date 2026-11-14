@@ -11,7 +11,7 @@ says where they come from and on what terms they are here.
 | decompals/ultralib (libultra reconstruction) | `include/ultralib/`, `src/libultra/` | no licence file; see below |
 | GNU malloc (`gmalloc.c`, 1995) | `src/libmalloc/` | GNU GPL v2 or later (from the LGPL v2 or later); see below |
 | Blast Corps decomp tools | `tools/elf_mips2.py` and others adapted from `../BlastCorps` | AGPL-3.0, same author |
-| Blast Corps PC port | parts of `port/` copied or adapted from `../BlastCorps/port` | AGPL-3.0, same author; see below |
+| Blast Corps PC port | parts of Fuse64 (`port/`) copied or adapted from `../BlastCorps/port` | AGPL-3.0, same author; see below |
 
 ---
 
@@ -40,7 +40,7 @@ usually do, because the matching build needs it and with this attribution,
 but it is not covered by this project's AGPL, and the files' original
 notices are kept as they are.
 
-The PC port must not depend on it: the N64 build keeps `src/libultra` and
+Fuse64, the PC port, must not depend on it: the N64 build keeps `src/libultra` and
 `include/ultralib` because it has to match the ROM, and the port replaces
 the library over the same interface (as Blast Corps' docs/DISTRIBUTION.md,
 "Replacing the SDK parts", does).
@@ -70,7 +70,7 @@ Tools adapted from `../BlastCorps` (`tools/libmatch.py`,
 `tools/gen_symbols.py`, `tools/elf_mips2.py`, ...) are the same author's
 work under AGPL-3.0, like this project.
 
-The PC port (`port/`, docs/PORT.md) reuses the game-agnostic parts of
+Fuse64, the PC port (`port/`, docs/PORT.md), reuses the game-agnostic parts of
 Blast Corps' port (`../BlastCorps/port`, commit `9203a91e`), the same
 author's work under AGPL-3.0 (its `LICENSE`, the same licence as this
 project's). Copied with small changes (includes, what this game doesn't
@@ -85,5 +85,5 @@ parser renamed `port_alBnkfParse`), `port/include/libaudio_heap.h`,
 `port/include/audio_log.h`, `port/tools/gen_sintable.py` and
 `port/tools/cross-*.cmake`. Adapted (rewritten in part for this game):
 `port/src/ultra.c` (libultra on the host), `port/host/main.c`,
-`port/host/runtime.c`, `port/include/port.h`. Each file's header says
-where it comes from.
+`port/host/runtime.c`, `port/include/port.h`, and the WebAssembly page
+`port/web/shell.html`. Each file's header says where it comes from.

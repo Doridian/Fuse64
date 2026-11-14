@@ -9,8 +9,8 @@ from a copy made then, its .bss cleared: what inflating it gave on the
 N64) and calls its entry (func_ovlBB_EE_80043000).  Its C is compiled with
 port/include/port_ovl_section.h, which puts its variables (function-scope
 statics too) in sections of their own, whose bounds are the linker's
-__start_/__stop_ names: bm64d_<overlay> and bm64b_<overlay> on ELF,
-bm64o_<overlay> (both kinds) in WebAssembly.
+__start_/__stop_ names: fuse64d_<overlay> and fuse64b_<overlay> on ELF,
+fuse64o_<overlay> (both kinds) in WebAssembly.
 """
 import os
 import sys
@@ -27,18 +27,18 @@ def main():
         bb, ee = n[4:6], n[7:9]
         o.append("void *func_ovl%s_%s_80043000(void);" % (bb, ee))
         for k in "dbo":
-            o.append("extern char __start_bm64%s_%s[] __attribute__((weak));" % (k, n))
-            o.append("extern char __stop_bm64%s_%s[] __attribute__((weak));" % (k, n))
+            o.append("extern char __start_fuse64%s_%s[] __attribute__((weak));" % (k, n))
+            o.append("extern char __stop_fuse64%s_%s[] __attribute__((weak));" % (k, n))
     o.append("")
     o.append("const PortOverlay port_overlays[] = {")
     for n in ovls:
         bb, ee = n[4:6], n[7:9]
         o.append("#ifdef __EMSCRIPTEN__")
-        o.append("    { \"%s\", 0x%s, 0x%s, func_ovl%s_%s_80043000, __start_bm64o_%s, __stop_bm64o_%s, 0, 0 },"
+        o.append("    { \"%s\", 0x%s, 0x%s, func_ovl%s_%s_80043000, __start_fuse64o_%s, __stop_fuse64o_%s, 0, 0 },"
                  % (n, bb, ee, bb, ee, n, n))
         o.append("#else")
-        o.append("    { \"%s\", 0x%s, 0x%s, func_ovl%s_%s_80043000, __start_bm64d_%s, __stop_bm64d_%s, "
-                 "__start_bm64b_%s, __stop_bm64b_%s }," % (n, bb, ee, bb, ee, n, n, n, n))
+        o.append("    { \"%s\", 0x%s, 0x%s, func_ovl%s_%s_80043000, __start_fuse64d_%s, __stop_fuse64d_%s, "
+                 "__start_fuse64b_%s, __stop_fuse64b_%s }," % (n, bb, ee, bb, ee, n, n, n, n))
         o.append("#endif")
     o.append("};")
     o.append("const unsigned port_noverlays = %d;" % len(ovls))

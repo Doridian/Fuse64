@@ -4,7 +4,7 @@
 # (cross-ppc.cmake, cross-mips.cmake, cross-mipsel.cmake, cross-armhf.cmake):
 #   cmake -S port -B build/port-ppc -G Ninja -DCMAKE_TOOLCHAIN_FILE=port/tools/cross-ppc.cmake
 #   cmake --build build/port-ppc
-#   qemu-ppc-static build/port-ppc/bm64 --headless ... baserom.us.z64
+#   qemu-ppc-static build/port-ppc/fuse64 --headless ... baserom.us.z64
 # zig is $ZIG, or zig on the PATH, or ~/.local/opt/zig/zig (one tarball from
 # ziglang.org unpacked; no root, no sysroot: zig carries musl).  No SDL
 # there: the build is headless (PORT_SDL=OFF); musl has no ucontext, so the

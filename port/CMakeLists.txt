@@ -1,16 +1,16 @@
-# The PC port of Bomberman 64.  See docs/PORT.md.
+# Fuse64, the PC port of Bomberman 64 (Hudson, 1997) built from this decompilation.  See docs/PORT.md.
 #
 # Needs the version's extract (make VERSION=us extract: asm/ and
 # assets/code.bin, which the generators read), then
 #   cmake -S port -B build/port -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_C_FLAGS=-m32
 #   cmake --build build/port
-#   build/port/bm64 baserom.us.z64
+#   build/port/fuse64 baserom.us.z64
 #
 # The game's C, port/src and port/libaudio are compiled as ordinary C by the
 # host's compiler, in the host's byte order and pointer size, and linked
 # with the host (port/host) into an ordinary program.
 cmake_minimum_required(VERSION 3.20)
-project(bm64_pc C)
+project(fuse64 C)
 
 set(PORT_VERSION us CACHE STRING "the version to build: us, eu or jp")
 set_property(CACHE PORT_VERSION PROPERTY STRINGS us eu jp)
@@ -129,7 +129,7 @@ if(EMSCRIPTEN)
         if(f MATCHES "/src/overlays/(ovl_[0-9A-F][0-9A-F]_[0-9][0-9])/([^/]*)$")
             set(w ${GEN}/ovlwrap/${CMAKE_MATCH_1}_${CMAKE_MATCH_2})
             # (`const` taken off: a const variable can't share the section)
-            set(text "#pragma clang attribute push(__attribute__((section(\"bm64o_${CMAKE_MATCH_1}\"))), apply_to = variable(is_global))\n#define const\n#include \"${f}\"\n#undef const\n#pragma clang attribute pop\n")
+            set(text "#pragma clang attribute push(__attribute__((section(\"fuse64o_${CMAKE_MATCH_1}\"))), apply_to = variable(is_global))\n#define const\n#include \"${f}\"\n#undef const\n#pragma clang attribute pop\n")
             if(EXISTS ${w})
                 file(READ ${w} old)
             else()
@@ -208,19 +208,19 @@ file(GLOB HOST_C ${CMAKE_CURRENT_SOURCE_DIR}/host/*.c)
 # for AddressSanitizer to see the game's blocks
 option(PORT_HOST_MALLOC "the game's malloc the host's (debugging, with PORT_SANITIZE=address)" OFF)
 if(PORT_HOST_MALLOC)
-    add_executable(bm64 ${HOST_C} $<TARGET_OBJECTS:game_c> $<TARGET_OBJECTS:ovl_c> $<TARGET_OBJECTS:port_n64>)
-    target_compile_definitions(bm64 PRIVATE PORT_HOST_MALLOC)
+    add_executable(fuse64 ${HOST_C} $<TARGET_OBJECTS:game_c> $<TARGET_OBJECTS:ovl_c> $<TARGET_OBJECTS:port_n64>)
+    target_compile_definitions(fuse64 PRIVATE PORT_HOST_MALLOC)
 else()
-    add_executable(bm64 ${HOST_C} $<TARGET_OBJECTS:game_c> $<TARGET_OBJECTS:ovl_c> $<TARGET_OBJECTS:malloc_c>
+    add_executable(fuse64 ${HOST_C} $<TARGET_OBJECTS:game_c> $<TARGET_OBJECTS:ovl_c> $<TARGET_OBJECTS:malloc_c>
         $<TARGET_OBJECTS:port_n64>)
 endif()
-target_include_directories(bm64 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/host)
-target_compile_definitions(bm64 PRIVATE ${PORT_VERSION_DEFINE} _GNU_SOURCE)
-target_compile_options(bm64 PRIVATE ${HOST_FLAGS})
+target_include_directories(fuse64 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/host)
+target_compile_definitions(fuse64 PRIVATE ${PORT_VERSION_DEFINE} _GNU_SOURCE)
+target_compile_options(fuse64 PRIVATE ${HOST_FLAGS})
 include(CheckSymbolExists)
 check_symbol_exists(swapcontext "ucontext.h" HAVE_SWAPCONTEXT)
 if(HAVE_SWAPCONTEXT)
-    target_compile_definitions(bm64 PRIVATE PORT_HAVE_UCONTEXT)
+    target_compile_definitions(fuse64 PRIVATE PORT_HAVE_UCONTEXT)
 endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT CMAKE_POSITION_INDEPENDENT_CODE)
     # a static executable's image is linked where no N64 physical address
@@ -228,50 +228,50 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT CMAKE_POSITION_INDEPENDENT_CODE)
     include(CheckLinkerFlag)
     check_linker_flag(C "-Wl,--image-base=0x10000000" HAVE_IMAGE_BASE)
     if(HAVE_IMAGE_BASE AND CMAKE_CROSSCOMPILING)
-        target_link_options(bm64 PRIVATE -Wl,--image-base=0x10000000)
+        target_link_options(fuse64 PRIVATE -Wl,--image-base=0x10000000)
     endif()
 endif()
 if(WIN32)
     # Windows: the game's threads and 530C0's tasks are Windows fibers
     # (fiber_win32.c, coro.c); the image above 8 MiB, as on Linux (no N64
     # physical address there), and nothing of MinGW's runtime as a DLL
-    target_compile_definitions(bm64 PRIVATE PORT_HAVE_WIN32_FIBERS)
-    target_link_options(bm64 PRIVATE -Wl,--image-base=0x10000000 -static)
-    target_link_libraries(bm64 PRIVATE m)
+    target_compile_definitions(fuse64 PRIVATE PORT_HAVE_WIN32_FIBERS)
+    target_link_options(fuse64 PRIVATE -Wl,--image-base=0x10000000 -static)
+    target_link_libraries(fuse64 PRIVATE m)
 elseif(EMSCRIPTEN)
     # WebAssembly (emcmake cmake ...): headless under node.  The game's
     # threads and 530C0's tasks are emscripten's fibers (Asyncify).  The
     # program's data starts at 256 MiB, so that no pointer of the game's
     # looks like an N64 physical or segmented address (port/src/memory.c).
-    target_compile_definitions(bm64 PRIVATE PORT_HAVE_ASYNCIFY)
-    target_link_options(bm64 PRIVATE -sASYNCIFY -sASYNCIFY_STACK_SIZE=65536 -sGLOBAL_BASE=268435456
+    target_compile_definitions(fuse64 PRIVATE PORT_HAVE_ASYNCIFY)
+    target_link_options(fuse64 PRIVATE -sASYNCIFY -sASYNCIFY_STACK_SIZE=65536 -sGLOBAL_BASE=268435456
         -sINITIAL_MEMORY=384MB -sALLOW_MEMORY_GROWTH=1 -sSTACK_SIZE=1MB --profiling-funcs)
     if(PORT_WASM_TARGET STREQUAL "node")
-        target_link_options(bm64 PRIVATE -sNODERAWFS=1 -sEXIT_RUNTIME=1 -sENVIRONMENT=node)
-        set_target_properties(bm64 PROPERTIES SUFFIX ".js")
+        target_link_options(fuse64 PRIVATE -sNODERAWFS=1 -sEXIT_RUNTIME=1 -sENVIRONMENT=node)
+        set_target_properties(fuse64 PROPERTIES SUFFIX ".js")
     else()
         # the page: the ROM from a file picker, the save in IndexedDB
         # (IDBFS at /save), main() once the ROM is there; SDL2's canvas,
         # keyboard, game controllers and WebAudio
-        target_compile_definitions(bm64 PRIVATE PORT_WASM_WEB PORT_HAVE_SDL)
-        target_compile_options(bm64 PRIVATE -sUSE_SDL=2)
-        target_link_options(bm64 PRIVATE -O2 -sUSE_SDL=2 -sENVIRONMENT=web -lidbfs.js -sFORCE_FILESYSTEM
+        target_compile_definitions(fuse64 PRIVATE PORT_WASM_WEB PORT_HAVE_SDL)
+        target_compile_options(fuse64 PRIVATE -sUSE_SDL=2)
+        target_link_options(fuse64 PRIVATE -O2 -sUSE_SDL=2 -sENVIRONMENT=web -lidbfs.js -sFORCE_FILESYSTEM
             -sINVOKE_RUN=0 -sEXIT_RUNTIME=0 -sEXPORTED_RUNTIME_METHODS=callMain,FS,IDBFS
             --shell-file ${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html)
-        set_target_properties(bm64 PROPERTIES SUFFIX ".html")
-        set_property(TARGET bm64 APPEND PROPERTY LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html)
+        set_target_properties(fuse64 PROPERTIES SUFFIX ".html")
+        set_property(TARGET fuse64 APPEND PROPERTY LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html)
     endif()
-    target_link_libraries(bm64 PRIVATE m)
+    target_link_libraries(fuse64 PRIVATE m)
 else()
     find_package(Threads REQUIRED)
-    target_link_libraries(bm64 PRIVATE Threads::Threads m)
-    target_compile_definitions(bm64 PRIVATE PORT_HAVE_PTHREAD)
+    target_link_libraries(fuse64 PRIVATE Threads::Threads m)
+    target_compile_definitions(fuse64 PRIVATE PORT_HAVE_PTHREAD)
 endif()
 if(PORT_SDL)
     find_package(SDL2 CONFIG)
     if(SDL2_FOUND)
-        target_compile_definitions(bm64 PRIVATE PORT_HAVE_SDL)
-        target_link_libraries(bm64 PRIVATE SDL2::SDL2)
+        target_compile_definitions(fuse64 PRIVATE PORT_HAVE_SDL)
+        target_link_libraries(fuse64 PRIVATE SDL2::SDL2)
     else()
         message(STATUS "no SDL2: a headless build")
     endif()

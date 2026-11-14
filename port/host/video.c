@@ -92,7 +92,7 @@ void host_video_init(void) {
         host_headless = 1;
         return;
     }
-    win = SDL_CreateWindow("Bomberman 64", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960, 720,
+    win = SDL_CreateWindow("Fuse64", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960, 720,
                            SDL_WINDOW_RESIZABLE);
     if (!win) {
         host_log("SDL: %s: running headless\n", SDL_GetError());

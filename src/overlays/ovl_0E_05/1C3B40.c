@@ -410,7 +410,7 @@ void func_ovl0E_05_80043EDC(void) {
     s32 up;
     f32 a[3];
     f32 b[3];
-    f32 pad2[1]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 dist;
 
     rec = func_ovl0E_05_800457D0();
     rec->unk0 = func_ovl0E_05_80045680(0x1BE, 0x01000040, 0x20, 0);
@@ -452,7 +452,8 @@ void func_ovl0E_05_80043EDC(void) {
             b[0] = D_ovl0E_05_80046210[0];
             b[1] = 0.0f;
             b[2] = D_ovl0E_05_80046210[2];
-            if (func_ovl0E_05_80045600(a, b) < 700.0f) {
+            dist = func_ovl0E_05_80045600(a, b);
+            if (dist < 700.0f) {
                 func_ovl0E_05_80045D50(0x7B, rec->unk0->unk40->unk10, rec->unk0->unk40->unk14,
                                        rec->unk0->unk40->unk18);
             }

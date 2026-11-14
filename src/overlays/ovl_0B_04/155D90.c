@@ -2688,27 +2688,6 @@ static void func_ovl0B_04_H4(void) {
     D_ovl0B_04_8004A060[12].unk0->unk36 = 90;
 }
 
-/* fake: K&R (frame-tuned): i's home at the original's 132 (a (void)
- * static's area puts 8 bytes before i). */
-static void func_ovl0B_04_H5a() {
-    s32 i;
-
-    D_ovl0B_04_8004A164 = func_ovl0B_04_80047DD8(0x49, 0);
-    D_ovl0B_04_8004A164->unk10 = -110.0f;
-    D_ovl0B_04_8004A164->unk14 = -70.0f;
-    D_ovl0B_04_8004A164->unk18 = 0.0f;
-    D_ovl0B_04_8004A164->unk20 = 0.0f;
-    func_ovl0B_04_80047E00(D_ovl0B_04_8004A164, 12);
-    for (i = 0; i < 12; i++) {
-        func_ovl0B_04_80047E08(D_ovl0B_04_8004A164, 0x4A, i, i);
-    }
-    func_ovl0B_04_80047E28(D_ovl0B_04_8004A164, -1);
-    D_ovl0B_04_8004A164->unkC |= 0x20;
-    /* fake: the store numbered below the line after it, for its place in the jal's delay slot */
-#line 2651 /* fake: see above */
-    D_ovl0B_04_8004A170 = func_ovl0B_04_80047E68(D_ovl0B_04_8004A164, 0xF);
-}
-#line 2633 /* fake: back to the file's numbering */
 
 /* The tests reread each slot through its pointer, as the original does;
  * the first test's value is its own variable (a: $a3, the later ones x:
@@ -2751,6 +2730,27 @@ static void func_ovl0B_04_H5b(void) {
     }
 }
 
+/* Defined after H5b (a guess among the places that match): an inlined
+ * static's lines sort by its definition, so its last store sorts after
+ * H5b's first call and as1 puts it in that jal's delay slot.
+ * fake: K&R (frame-tuned): i's home at the original's 132 (a (void)
+ * static's area puts 8 bytes before i). */
+static void func_ovl0B_04_H5a() {
+    s32 i;
+
+    D_ovl0B_04_8004A164 = func_ovl0B_04_80047DD8(0x49, 0);
+    D_ovl0B_04_8004A164->unk10 = -110.0f;
+    D_ovl0B_04_8004A164->unk14 = -70.0f;
+    D_ovl0B_04_8004A164->unk18 = 0.0f;
+    D_ovl0B_04_8004A164->unk20 = 0.0f;
+    func_ovl0B_04_80047E00(D_ovl0B_04_8004A164, 12);
+    for (i = 0; i < 12; i++) {
+        func_ovl0B_04_80047E08(D_ovl0B_04_8004A164, 0x4A, i, i);
+    }
+    func_ovl0B_04_80047E28(D_ovl0B_04_8004A164, -1);
+    D_ovl0B_04_8004A164->unkC |= 0x20;
+    D_ovl0B_04_8004A170 = func_ovl0B_04_80047E68(D_ovl0B_04_8004A164, 0xF);
+}
 static void func_ovl0B_04_H5c(void) {
     s32 i;
 

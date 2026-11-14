@@ -695,7 +695,6 @@ UnkStruct_80288040 *func_802867E4(s32 arg0, f32 arg1, f32 arg2, f32 arg3) {
     s32 t;
     UnkStruct_800BB340 *task;
     s32 t1;
-    s32 pad[1]; /* fake: frame-tuned */
 
     special = func_802863E0();
     ret = NULL;

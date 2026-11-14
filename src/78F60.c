@@ -18,10 +18,9 @@
  *   makes scaleY the float kept in memory. `if (flags == 3) {}` first in
  *   the outer body lowers the shared count at node 23 (Chow's
  *   addadjacents), so j + 1's split piece reaches the outer head and
- *   lives in v0. `if (!(tileH - i)) {}` after case 1's t line keeps
- *   uopt's temp slots at 0x3C/0x38. The unused pad1/q0/q1 locals are
- *   frame slots. (The first match also had a dead `pad1 = i + 1` and
- *   `if (!(height)) {}`, which the others made unnecessary.)
+ *   lives in v0. The unused pad1/q0/q1 locals are frame slots. (The
+ *   first match also had a dead `pad1 = i + 1`, `if (!(height)) {}` and
+ *   `if (!(tileH - i)) {}`, which the others made unnecessary.)
  */
 #include "common.h"
 #define F3DEX_GBI
@@ -182,7 +181,6 @@ static void func_8025EC44(Gfx **gfxp, s32 x0, s32 y0, s32 x1, s32 y1, s32 mode, 
                 case 1:
                     s = (s32) RNDF((f32) (i * tileW + tileW - 1)) << 5;
                     t = ((s32) RNDD(j * tileH + 0.5) << 5) & 0xFFFF;
-                    if (!(tileH - i)) {} /* fake: keeps uopt's temp slots (header) */
                     dsdx = (s32) RNDF(-1.0f / scaleX * 1023.0f) & 0xFFFF;
                     dtdy = RNDI(th / scaleY / (th + 1) * 1023.0f);
                     k = (nx - i - 1) * tw;

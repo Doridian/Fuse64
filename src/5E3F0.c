@@ -721,12 +721,12 @@ void func_802510C8() {
 
 void func_80250E2C(s32 arg0) {
     s32 id;
-    s32 pad[3];
+    s32 pad[3]; /* fake: frame-tuned (unused locals) */
     s32 ipos[3];
     f32 fpos[3];
     f32 cur[3];
     f32 tgt[3];
-    s32 pad2[2];
+    s32 pad2[2]; /* fake: frame-tuned */
     f32 dir[2];
     Obj88 *obj;
     s32 v;
@@ -784,7 +784,7 @@ void func_80250DC8() {
 }
 
 void func_802506B8(u8 *str) {
-    s32 pad[1];
+    s32 pad[1]; /* fake: frame-tuned */
     u8 *s;
     s32 id = func_80243DDC();
     s32 n;
@@ -993,7 +993,7 @@ void func_8025068C(s32 arg0) {
 s32 func_80250398(s32 arg0) {
     s32 ret = 0;
     UnkObj *obj = (UnkObj *)func_802443F4(arg0);
-    s32 pad[3];
+    s32 pad[3]; /* fake: frame-tuned */
     s32 c[3];
     s32 dx;
     s32 dz;
@@ -1057,9 +1057,9 @@ void func_802502BC(s32 arg0) {
 }
 
 void func_802500D4() {
-    s32 padN[2];
+    s32 padN[2]; /* fake: frame-tuned */
     UnkObj *objs[4];
-    s32 pad[2];
+    s32 pad[2]; /* fake: frame-tuned */
     Tbl4_5E3F0 tbl;
     f32 pos[3];
     Vec3f off;
@@ -1072,7 +1072,7 @@ void func_802500D4() {
         objs[i] = NULL;
         if (D_800AEDF0[i].unk14 != 0 && D_800AEDF0[i].unk24 != 0) {
             r = func_80234248(3);
-            if (!r && !r) {}
+            if (!r && !r) {} /* fake: dead read (uses up a ugen temporary) */
             if (r != 0) {
                 obj = D_800AEDF0[i].unk28;
                 pos[2] = 50.0f;
@@ -1122,21 +1122,21 @@ void func_8024E088(s32 arg0) {
     Obj88 *sp118;
     s32 sp114;
     s32 sp110;
-    s32 pad10C;
+    s32 pad10C; /* fake: frame slot at the original's 0x10C */
     s32 sp108;
-    s32 pad100[2];
+    s32 pad100[2]; /* fake: frame slots */
     s32 spFC;
-    s32 padF4[2];
+    s32 padF4[2]; /* fake: frame slots */
     s32 spF0;
-    s32 padE4[3];
+    s32 padE4[3]; /* fake: frame slots */
     s32 spD8[3];
     f32 spD4;
     f32 spD0;
     f32 spCC;
-    s32 padC4[2];
+    s32 padC4[2]; /* fake: frame slots */
     f32 spC0;
     f32 spB4[3];
-    s32 padAC[2];
+    s32 padAC[2]; /* fake: frame slots */
     f32 ang;
     f32 spA4;
     f32 spA0;
@@ -1302,7 +1302,7 @@ void func_8024E088(s32 arg0) {
                     spB4[0] = WRAP360(180.0f - spB4[0]);
                 }
                 ang = WRAP360(spB4[0] + sp9C);
-                if (!spA0 && !spA0) {}
+                if (!spA0 && !spA0) {} /* fake: dead read (ugen temporaries) */
                 if (func_802452AC(arg0, 0x2000C20)) {
                     if (spB4[2] > 20.0f && spB4[2] < 35.0f) {
                         spD4 = 2.0f;
@@ -1749,7 +1749,7 @@ void func_8024D8C4(Ctl58 *arg0) {
     s32 b1;
     s32 b0;
     s32 id;
-    s32 pad[1];
+    s32 pad[1]; /* fake: frame-tuned */
 
     id = func_80243DDC();
     b0 = D_802AC968[id] & 1;
@@ -1839,7 +1839,7 @@ void func_8024D8C4(Ctl58 *arg0) {
                 dy = -D_802AC8C4;
                 break;
             }
-            if (!dx && !dx) {}
+            if (!dx && !dx) {} /* fake: dead read (ugen temporaries) */
             func_8026DCAC(obj->unk40->unk10 + dx * 100.0f, obj->unk40->unk14 + dy * 100.0f,
                           obj->unk40->unk18 + dz * 100.0f, ipos, 2);
             func_8026E338(ipos[0], ipos[1], ipos[2], res, 0);
@@ -1917,12 +1917,12 @@ void func_8024D5D0(Ctl58 *arg0) {
     f32 y;
     f32 z;
     s32 dir;
-    s32 padN[1];
+    s32 padN[1]; /* fake: frame-tuned */
     s32 tilt;
-    s32 pad[2];
+    s32 pad[2]; /* fake: frame-tuned */
     f32 s;
 
-    if (!arg0->unk0 && !arg0->unk0) {}
+    if (!arg0->unk0 && !arg0->unk0) {} /* fake: dead read (ugen temporaries, see the header) */
     dir = arg0->unk4;
     tilt = arg0->unk8;
     dist = arg0->unk0;
@@ -2109,7 +2109,7 @@ void func_8024D108(s32 arg0, s32 arg1) {
 
 void func_8024CEB8(s32 arg0) {
     Obj88 *obj;
-    s32 pad[3];
+    s32 pad[3]; /* fake: frame-tuned */
     f32 pos[3];
     UnkStruct_800AEDF0 *p;
     s32 hit;
@@ -2119,7 +2119,7 @@ void func_8024CEB8(s32 arg0) {
     obj = (Obj88 *)p->unk28;
     hit = 0;
     v = p->unk44;
-    if (!p && !p) {}
+    if (!p && !p) {} /* fake: dead read (ugen temporaries) */
     switch (v) {
     case 1:
     case 13:
@@ -2143,7 +2143,7 @@ void func_8024CEB8(s32 arg0) {
         }
         break;
     }
-    if (D_802ACF60) {}
+    if (D_802ACF60) {} /* fake: dead read (ugen temporaries) */
     if (hit) {
         D_802ACF60 = func_8023A840();
         if (D_802ACF60[1] == 3 && D_802ACF60[2] == 0) {
@@ -2209,9 +2209,9 @@ void func_8024CC58(s32 arg0) {
 void func_8024C884(s32 arg0, f32 arg1, s32 arg2) {
     Tbl4_5E3F0 tbl;
     s32 level;
-    s32 pad;
+    s32 pad; /* fake: frame-tuned */
     Obj88 *obj;
-    s32 pad2;
+    s32 pad2; /* fake: frame-tuned */
     f32 vec[3];
 
     tbl = *(Tbl4_5E3F0 *)D_802A0D94;
@@ -2339,12 +2339,12 @@ s32 func_8024C4EC(UnkObj *obj, s32 arg1) {
 }
 
 void func_8024C334(s32 arg0, s32 arg1, u16 arg2, f32 *arg3) {
-    s32 pad[6];
+    s32 pad[6]; /* fake: frame-tuned */
     UnkStruct_800AEDF0 *e = &D_800AEDF0[arg0];
     s32 obj = (s32) e->unk28;
 
     if (!func_80244BA4(arg0, 2)) {
-        func_80243D54(arg0);
+        func_80243D54(arg0); /* fake: unused call: its R2 store frees v0 for the flag (header) */
         if (!((UnkObj *)obj)->unk40 && !((UnkObj *)obj)->unk40) {} /* fake: keeps unk28 loaded (t0) */
         if (!(e->unk38 & 0x1000)) {
             func_802444B8(arg0, 8);
@@ -2418,7 +2418,7 @@ void func_8024C0D8(s32 arg0) {
 void func_8024C04C(s32 arg0) {
     UnkStruct_800AEDF0 *p = &D_800AEDF0[arg0];
 
-    func_802443F4(arg0);
+    func_802443F4(arg0); /* fake: result dropped: the inlined call takes v0/v1 in the entry block (header) */
     if (func_80270714((s16)arg0) == 0) {
         func_80244354(arg0, 0x8000, 0);
         func_802444B8(arg0, 0);
@@ -2454,7 +2454,7 @@ void func_8024BD1C(s32 arg0) {
     UnkStruct_800AEDF0 *e = &D_800AEDF0[arg0];
     UnkObj *o = e->unk28;
 
-    if (!D_800AEDF0[arg0].unk10 && !D_800AEDF0[arg0].unk10) {}
+    if (!D_800AEDF0[arg0].unk10 && !D_800AEDF0[arg0].unk10) {} /* fake: dead read (ugen temporaries, see the header) */
     if (e->unk64 > 360.0f) {
         e->unk64 -= 360.0f;
     }
@@ -2511,10 +2511,10 @@ void func_8024BBA4(s32 arg0) {
 }
 
 void func_8024B444(s32 arg0, f32 *arg1) {
-    s32 pad0[2];
+    s32 pad0[2]; /* fake: frame-tuned */
     UnkObj *o2;
     f32 old;
-    s32 pad1[3];
+    s32 pad1[3]; /* fake: frame-tuned */
     f32 posA[3];
     f32 posB[3];
     f32 vec[3];
@@ -2689,7 +2689,7 @@ void func_8024B028(s32 arg0) {
     s32 r;
     s32 g;
     s32 b;
-    s32 pad[2];
+    s32 pad[2]; /* fake: frame-tuned */
     UnkStruct_800AEDF0 *e = &D_800AEDF0[arg0];
     UnkObj *o = e->unk28;
 
@@ -2729,7 +2729,7 @@ void func_8024AFD4(s32 arg0) {
 }
 
 void func_8024AF24(s32 arg0, f32 *arg1) {
-    if (!D_800AEDF0[arg0].unk10 && !D_800AEDF0[arg0].unk10) {}
+    if (!D_800AEDF0[arg0].unk10 && !D_800AEDF0[arg0].unk10) {} /* fake: dead read (ugen temporaries, see the header) */
     D_802AC998[arg0]--;
     if (arg1[2] > 60.0 && arg1[0] != D_802ACA30[arg0]) {
         D_802AC9B0[arg0]--;
@@ -2742,7 +2742,7 @@ void func_8024AF24(s32 arg0, f32 *arg1) {
 void func_8024ABA8(s32 arg0) {
     s32 flag;
 
-    if (!D_800AEDF0[arg0].unk10 && !D_800AEDF0[arg0].unk10) {}
+    if (!D_800AEDF0[arg0].unk10 && !D_800AEDF0[arg0].unk10) {} /* fake: dead read (ugen temporaries, see the header) */
     if (D_802AC960 != 0) {
         if (D_800AF1D8[D_802AC960] == -1) {
             D_800AF1D8[D_802AC960] = D_800AF1D8[D_802AC960 - 1];
@@ -2840,13 +2840,13 @@ void func_8024A824(s32 arg0, s32 arg1, f32 arg2, s32 arg3, s32 arg4, s32 arg5, s
     s32 id;
     f32 angle;
     f32 dist;
-    s32 pad[3];
+    s32 pad[3]; /* fake: frame-tuned */
     s32 ipos[3];
     f32 fpos[3];
     f32 cur[3];
     f32 tgt[3];
     Obj88 *obj;
-    s32 pad2[2];
+    s32 pad2[2]; /* fake: frame-tuned */
     f32 dir;
 
     id = func_80243DDC();
@@ -2964,9 +2964,9 @@ void func_8024A6B4(s32 arg0, f32 arg1) {
 
 void func_8024A0DC(s32 arg0) {
     Obj88 *obj;
-    s32 pad[7];
+    s32 pad[7]; /* fake: frame-tuned */
     s32 ipos[3];
-    s32 pad2[1];
+    s32 pad2[1]; /* fake: frame-tuned */
     s32 id;
     s32 flags;
     s16 sid;
@@ -3060,7 +3060,7 @@ void func_8024A0DC(s32 arg0) {
     case 0x400000:
         if (D_802AC8BC != 0 && D_802AC8BC != 0x20 && D_802AC8BC != 0x40 && D_802AC8BC != 0x60 &&
             D_802AC8BC != 0x80 && D_802AC8BC != 0xA0) {
-        if (!flags && !flags) {}
+        if (!flags && !flags) {} /* fake: dead read in an empty if (ugen temporaries) */
         }
         func_80244354(id, 0x420, 0);
         if (!func_80244BA4(id, 0x02000000)) {
@@ -3144,9 +3144,9 @@ void func_80249D30(s32 arg0) {
 }
 
 void func_80249AD4(s32 arg0) {
-    s32 pad;
+    s32 pad; /* fake: frame-tuned */
     s32 cur = func_80243DDC();
-    s32 pad2;
+    s32 pad2; /* fake: frame-tuned */
     s32 flag;
 
     switch (D_802AC980[cur]) {
@@ -3186,7 +3186,7 @@ void func_80249AD4(s32 arg0) {
 }
 
 void func_80249A30(s32 arg0) {
-    s32 pad[3];
+    s32 pad[3]; /* fake: frame-tuned */
     s32 ipos[3];
     UnkObj *obj;
 
@@ -3475,7 +3475,7 @@ void func_80248864(s32 arg0) {
 }
 
 void func_8024878C(s32 arg0) {
-    s32 pad[3];
+    s32 pad[3]; /* fake: frame-tuned */
 
     func_80244354(arg0, 2, 0);
     do {} while (0); /* fake: splits the block */
@@ -3492,7 +3492,7 @@ void func_8024878C(s32 arg0) {
 }
 
 void func_8024857C(s32 arg0) {
-    s32 pad;
+    s32 pad; /* fake: frame-tuned */
     Cell5_5E3F0 c;
     UnkObj *obj;
     s32 r;
@@ -3542,9 +3542,9 @@ void func_8024857C(s32 arg0) {
 void func_80248148(s32 arg0, s32 arg1) {
     Obj88 *obj;
     s32 link;
-    s32 pad;
+    s32 pad; /* fake: frame-tuned */
     s32 other;
-    s32 pad2[3];
+    s32 pad2[3]; /* fake: frame-tuned */
 
     if (D_800AEDF0[arg0].unk24 != 3) {
         if (arg1 == 3 || arg1 == 5) {
@@ -3553,8 +3553,8 @@ void func_80248148(s32 arg0, s32 arg1) {
             D_800AEDF0[arg0].unk14--;
         }
         func_802444B8(arg0, 0);
-        if (!D_800AEDF0[arg0].unk28 && !D_800AEDF0[arg0].unk28) {}
-        if (!D_802ACF60 && !D_802ACF60) {}
+        if (!D_800AEDF0[arg0].unk28 && !D_800AEDF0[arg0].unk28) {} /* fake: dead read (ugen temporaries) */
+        if (!D_802ACF60 && !D_802ACF60) {} /* fake: dead read (ugen temporaries) */
         obj = (Obj88 *)D_800AEDF0[arg0].unk28;
         func_80244354(arg0, 0x21C0, 0);
         link = D_802AC5D0 & 4;
@@ -3648,7 +3648,7 @@ void func_80247F90(s32 arg0) {
     UnkStruct_800AEDF0 *p;
 
     p = &D_800AEDF0[arg0];
-    if (p->unk28) {}
+    if (p->unk28) {} /* fake: dead read: obj kept (see the header, 8024C334's) */
     self = p->unk28;
     other = (Obj88 *)func_802443F4(p->unkA8);
     vec[2] = p->unkC0 + 100.0f;
@@ -3852,12 +3852,12 @@ void func_80247614() {
 }
 
 void func_80246F00(s32 arg0, s32 arg1) {
-    s32 pad0;
+    s32 pad0; /* fake: frame slot */
     s32 x;
-    s32 pad[3];
+    s32 pad[3]; /* fake: frame slots */
     s32 flags;
     s32 hit;
-    s32 pad1;
+    s32 pad1; /* fake: frame slot */
     f32 pos[3];
     UnkStruct_800AEDF0 *e;
     s32 i;
@@ -4086,9 +4086,9 @@ void func_8024694C(s32 arg0, s32 arg1, s32 arg2) {
         }
     }
     if (func_80243EB4(arg0, 0x2000)) {
-        if (D_800AEDF0[arg0].unk28) {}
+        if (D_800AEDF0[arg0].unk28) {} /* fake: dead read (ugen temporaries) */
         obj = D_800AEDF0[arg0].unk28;
-        if (!obj && !obj) {}
+        if (!obj && !obj) {} /* fake: dead read: obj crosses the call (s0) */
         q = &D_800AEDF0[other];
         q->unkC0 = 70.0f;
         if (obj->unk40->unk28 > 1.0f) {
@@ -4149,11 +4149,11 @@ void func_80246604() {
 }
 
 void func_80246078() {
-    s32 pad0[2];
+    s32 pad0[2]; /* fake: frame-tuned */
     s32 used[5];
     s32 n;
     s32 c[3];
-    s32 pad1;
+    s32 pad1; /* fake: frame-tuned */
     s32 flags[5];
     f32 x[5];
     f32 y[5];
@@ -4215,7 +4215,7 @@ void func_80246078() {
     for (i = 0; i < 4; i++) {
         p = &D_800AEDF0[i];
         if ((p->unk24 == 1 || p->unk24 == 2) && p->unk14 != 0 && !func_80244BA4(i, 0x1000) && !func_80243EF0(i)) {
-            func_80243D54(i);
+            func_80243D54(i); /* fake: unused call: the inlined test result gets v0 (header) */
             if (func_80232D18(p->unk28, 0x10) != 0) {
                 c[0]++;
             }
@@ -4267,7 +4267,7 @@ void func_80245FD4() {
 void func_80245FA0(s32 arg0, s32 arg1) {
     s32 v;
 
-    if (!D_800AEDF0[arg0].unk10) {}
+    if (!D_800AEDF0[arg0].unk10) {} /* fake: dead read (ugen temporaries, see the header) */
     v = D_802AC9E8;
 
     if (arg1 == 1) {
@@ -4341,7 +4341,7 @@ void func_80245CDC() {
 }
 
 void func_802459BC(s32 arg0) {
-    s32 pad;
+    s32 pad; /* fake: frame-tuned */
     s32 m;
     UnkStruct_800AEDF0 *p;
     UnkObj *v;
@@ -4486,7 +4486,7 @@ void func_8024557C(s32 *arg0) {
 }
 
 void func_802454F8(s32 arg0, s32 *arg1) {
-    s32 pad[3];
+    s32 pad[3]; /* fake: frame-tuned */
     s32 out[3];
     UnkModel *m = ((UnkObj *)func_802443F4(arg0))->unk40;
 
@@ -4521,7 +4521,7 @@ s32 func_80245408(s32 arg0) {
 void func_802452E8(s32 arg0) {
     s32 id = func_80243DDC();
     void *obj;
-    s32 pad;
+    s32 pad; /* fake: frame-tuned */
 
     if (id != -1) {
         obj = (void *)func_802443F4(id);
@@ -4665,7 +4665,7 @@ void func_80244E04(void *arg0) {
 
 void func_80244C30(s32 arg0, s32 arg1) {
     UnkObj *obj;
-    s32 pad;
+    s32 pad; /* fake: frame-tuned */
     f32 vec[3];
     UnkStruct_800AEDF0 *p;
 
@@ -4896,7 +4896,7 @@ f32 func_8024441C(s32 arg0, s32 arg1) {
     s32 v;
 
     if (arg1 == D_802AC9F8[arg0]) {
-        if (!D_800AEDF0[arg0].unk10 && !D_800AEDF0[arg0].unk10) {}
+        if (!D_800AEDF0[arg0].unk10 && !D_800AEDF0[arg0].unk10) {} /* fake: dead read (ugen temporaries, see the header) */
         switch (func_802443CC(arg0)) {
             case 1:
             case 2:
@@ -4946,7 +4946,7 @@ void func_80244354(s32 arg0, s32 arg1, s32 arg2) {
         v &= arg1 ^ -1;
     }
     D_800AEDF0[arg0].unk10 = v;
-    if (0) {
+    if (0) { /* fake: keeps func_80244354 out of line, as in the original (see the header) */
         func_80237664();
     }
 }

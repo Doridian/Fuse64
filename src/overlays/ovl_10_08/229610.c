@@ -1449,24 +1449,23 @@ void func_ovl10_08_80044448(s32 arg0, s32 arg1) {
 /* opens (arg1 1) or closes the gate */
 void func_ovl10_08_80044238(s32 arg0, s32 arg1) {
     s32 id;
-    f32 k100;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f pos;
 
-    k100 = 100.0f;
     if (arg1 != D_ovl10_08_8004A004[arg0]) {
         if (D_ovl10_08_8004A10C[arg0] == 0) {
             id = func_ovl10_08_80043150(func_ovl10_08_8004701C);
             D_ovl10_08_8004A008[id] = arg0;
         }
         if (arg1 != 0) {
-            D_ovl10_08_8004A114[arg0] = D_ovl10_08_80049FFC[arg0]->unk40->unk18 - k100;
-            D_ovl10_08_8004A118[arg0] = D_ovl10_08_8004A000[arg0]->unk40->unk18 + k100;
+            D_ovl10_08_8004A114[arg0] = D_ovl10_08_80049FFC[arg0]->unk40->unk18 - 100.0f;
+            D_ovl10_08_8004A118[arg0] = D_ovl10_08_8004A000[arg0]->unk40->unk18 + 100.0f;
             D_ovl10_08_8004A110[arg0] = -5.0f;
             func_ovl10_08_80047F20(D_ovl10_08_80049FF0[arg0][0], D_ovl10_08_80049FF0[arg0][1], D_ovl10_08_80049FF0[arg0][2] + 1, 0);
             func_ovl10_08_80047F20(D_ovl10_08_80049FF0[arg0][0], D_ovl10_08_80049FF0[arg0][1], D_ovl10_08_80049FF0[arg0][2] + 2, 0);
         } else {
-            D_ovl10_08_8004A114[arg0] = D_ovl10_08_80049FFC[arg0]->unk40->unk18 + k100;
-            D_ovl10_08_8004A118[arg0] = D_ovl10_08_8004A000[arg0]->unk40->unk18 - k100;
+            D_ovl10_08_8004A114[arg0] = D_ovl10_08_80049FFC[arg0]->unk40->unk18 + 100.0f;
+            D_ovl10_08_8004A118[arg0] = D_ovl10_08_8004A000[arg0]->unk40->unk18 - 100.0f;
             D_ovl10_08_8004A110[arg0] = 5.0f;
             func_ovl10_08_80047F20(D_ovl10_08_80049FF0[arg0][0], D_ovl10_08_80049FF0[arg0][1], D_ovl10_08_80049FF0[arg0][2] + 1, 9);
             func_ovl10_08_80047F20(D_ovl10_08_80049FF0[arg0][0], D_ovl10_08_80049FF0[arg0][1], D_ovl10_08_80049FF0[arg0][2] + 2, 9);

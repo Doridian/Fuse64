@@ -787,7 +787,7 @@ void func_ovl10_06_80048110(void) {
 
 void func_ovl10_06_80047E10(void) {
     s32 j;
-    f32 k6_8;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f player;
     Vec3f pos;
     Vec3f sp3C;
@@ -796,7 +796,6 @@ void func_ovl10_06_80047E10(void) {
     f32 speed;
     f32 a;
 
-    k6_8 = 6.8f;
     func_ovl10_06_8004A068(D_ovl10_06_8004ADBC, &player);
     for (j = 0; j < 9; j++) {
         D_ovl10_06_8004AFA8[10 - j - 1] = D_ovl10_06_8004AFA8[10 - j - 2];
@@ -815,8 +814,8 @@ void func_ovl10_06_80047E10(void) {
         func_ovl10_06_80049F28(&pos.x, &player.x, &angle.x);
         angle.y -= 90.0f;
         dist = func_ovl10_06_80049F40(&player, &pos);
-        if (dist > k6_8) {
-            speed = k6_8;
+        if (dist > 6.8f) {
+            speed = 6.8f;
         } else {
             speed = dist;
         }
@@ -1085,12 +1084,9 @@ void func_ovl10_06_80047110(s32 arg0) {
     s32 id;
     Vec3f a;
     Vec3f b;
-    f32 k50;
-    f32 k56;
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
     f32 angle;
 
-    k50 = 50.0f;
-    k56 = 56.0f;
     D_ovl10_06_8004B8F8 = 0;
     D_ovl10_06_8004BBD0[arg0] = func_ovl10_06_80049FC0(0x106, 0x01000040, 0xD0, 0);
     D_ovl10_06_8004BBD0[arg0]->unk40->unk10 = D_ovl10_06_8004B9B0[arg0]->unk40->unk10;
@@ -1098,21 +1094,21 @@ void func_ovl10_06_80047110(s32 arg0) {
     D_ovl10_06_8004BBD0[arg0]->unk40->unk18 = D_ovl10_06_8004B9B0[arg0]->unk40->unk18;
     D_ovl10_06_8004BBD0[arg0]->unk40->unk20 = 270.0f;
     D_ovl10_06_8004BBD0[arg0]->unk30 = 1;
-    D_ovl10_06_8004BBD0[arg0]->unk34 = k50;
-    D_ovl10_06_8004BBD0[arg0]->unk38 = k50;
+    D_ovl10_06_8004BBD0[arg0]->unk34 = 50.0f;
+    D_ovl10_06_8004BBD0[arg0]->unk38 = 50.0f;
     func_ovl10_06_8004A068(D_ovl10_06_8004ADBC, &a);
     func_ovl10_06_8004A068(D_ovl10_06_8004BBD0[arg0], &b);
     func_ovl10_06_80049F28(&b.x, &a.x, &angle);
-    D_ovl10_06_8004BBD0[arg0]->unk38 = k50;
+    D_ovl10_06_8004BBD0[arg0]->unk38 = 50.0f;
     D_ovl10_06_8004BBD0[arg0]->unk40->unk20 = angle;
-    D_ovl10_06_8004B010[arg0] = (a.x - b.x) / k56;
-    D_ovl10_06_8004B110[arg0] = (a.z - b.z) / k56;
+    D_ovl10_06_8004B010[arg0] = (a.x - b.x) / 56.0f;
+    D_ovl10_06_8004B110[arg0] = (a.z - b.z) / 56.0f;
     D_ovl10_06_8004BBD0[arg0]->unk68 = 40.0f;
     func_ovl10_06_80049FD0(D_ovl10_06_8004BBD0[arg0]);
     id = func_ovl10_06_800430A8(func_ovl10_06_80047810);
     D_ovl10_06_8004B7F8[id] = arg0;
     func_ovl10_06_8004A068(D_ovl10_06_8004BBD0[arg0], &a);
-    a.y += k50;
+    a.y += 50.0f;
     func_ovl10_06_8004A540(0xE, &a.x, 0);
     func_ovl10_06_8004A698(0x16F, &a.x);
 }
@@ -1534,21 +1530,20 @@ s32 func_ovl10_06_80045C20(void (*arg0)()) {
 void func_ovl10_06_80045888(void) {
     s32 i;
     s32 r;
-    f32 k360;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     s32 effects[10] = { 12, 13, 14, 15, 16, 19, 20, 22, 23, 24 };
     Vec3f ang;
     Vec3f pos;
     s32 pad2[1]; /* fake: unused, frame space the original has (no source for it found) */
 
-    k360 = 360.0f;
     i = D_ovl10_06_8004B290[D_ovl10_06_8004ACA8];
     D_ovl10_06_8004B7D8[i]--;
     D_ovl10_06_8004AFF8[i] -= D_ovl10_06_8004AFA4;
     D_ovl10_06_8004ADC0[i]->unk40->unk36 = D_ovl10_06_8004AFF8[i];
     D_ovl10_06_8004ADD0[i]->unk40->unk36 = D_ovl10_06_8004AFF8[i];
     ang.z = (f32)func_ovl10_06_8004A2A0() * 250.0f;
-    ang.x = (f32)func_ovl10_06_8004A2A0() * k360;
-    ang.y = (f32)func_ovl10_06_8004A2A0() * k360;
+    ang.x = (f32)func_ovl10_06_8004A2A0() * 360.0f;
+    ang.y = (f32)func_ovl10_06_8004A2A0() * 360.0f;
     r = func_ovl10_06_8004A2A8(9);
     func_ovl10_06_80049F30(&ang.x, &pos.x);
     pos.x += D_ovl10_06_8004ADC0[i]->unk40->unk10;

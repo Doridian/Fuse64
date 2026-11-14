@@ -282,16 +282,15 @@ void func_ovl0D_05_80044290(void) {
     s32 r;
     f32 ang;
     Vec3f tgt;
-    f32 k150;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     s32 timer;
 
-    k150 = 150.0f;
     idx = (s32) func_ovl0D_05_80045770();
     e = &D_ovl0D_05_80045FD4[idx];
     flag = D_ovl0D_05_8004607C[idx];
-    pos.x = e->unk14 * 10.0f + k150;
+    pos.x = e->unk14 * 10.0f + 150.0f;
     pos.y = e->unk18 * 10.0f;
-    pos.z = e->unk1C * 10.0f + k150;
+    pos.z = e->unk1C * 10.0f + 150.0f;
     cnt = 0;
     timer = 240 / (idx + 1);
     func_ovl0D_05_80044C50(pos.x, pos.y, pos.z, grid, 0);

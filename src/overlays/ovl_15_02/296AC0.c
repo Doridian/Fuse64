@@ -3839,18 +3839,17 @@ void func_ovl15_02_80044FDC(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     f32 ang[3];
     f32 dx;
     f32 dy;
-    f32 k360;
+    f32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
 
-    k360 = 360.0f;
     func_ovl15_02_80050548((Vec3f *) arg0, (Vec3f *) arg3, (Vec3f *) ang);
-    ang[1] = ((ang[1] - 90.0f) >= k360) ? (ang[1] - 90.0f) - k360 : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + k360 : (ang[1] - 90.0f);
-    dx = ((0 <= ang[0] && ang[0] <= 180.0f) ? ang[0] : (k360 - ang[0]) * -1.0f)
-       - ((0 <= arg1[0] && arg1[0] <= 180.0f) ? arg1[0] : (k360 - arg1[0]) * -1.0f);
+    ang[1] = ((ang[1] - 90.0f) >= 360.0f) ? (ang[1] - 90.0f) - 360.0f : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + 360.0f : (ang[1] - 90.0f);
+    dx = ((0 <= ang[0] && ang[0] <= 180.0f) ? ang[0] : (360.0f - ang[0]) * -1.0f)
+       - ((0 <= arg1[0] && arg1[0] <= 180.0f) ? arg1[0] : (360.0f - arg1[0]) * -1.0f);
     if (dx > 180.0f) {
-        dx -= k360;
+        dx -= 360.0f;
     }
     if (dx < -180.0f) {
-        dx += k360;
+        dx += 360.0f;
     }
     if (dx >= 0.0f) {
         if (dx > arg2) {
@@ -3859,13 +3858,13 @@ void func_ovl15_02_80044FDC(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     } else if (dx < arg2 * -1.0f) {
         dx = arg2 * -1.0f;
     }
-    dy = ((0 <= ang[1] && ang[1] <= 180.0f) ? ang[1] : (k360 - ang[1]) * -1.0f)
-       - ((0 <= arg1[1] && arg1[1] <= 180.0f) ? arg1[1] : (k360 - arg1[1]) * -1.0f);
+    dy = ((0 <= ang[1] && ang[1] <= 180.0f) ? ang[1] : (360.0f - ang[1]) * -1.0f)
+       - ((0 <= arg1[1] && arg1[1] <= 180.0f) ? arg1[1] : (360.0f - arg1[1]) * -1.0f);
     if (dy > 180.0f) {
-        dy -= k360;
+        dy -= 360.0f;
     }
     if (dy < -180.0f) {
-        dy += k360;
+        dy += 360.0f;
     }
     if (dy >= 0.0f) {
         if (dy > arg2) {

@@ -688,14 +688,12 @@ static void func_ovl0C_10_80043070(void) {
     UnkStructA *obj1;
     UnkStructA *obj;
     f32 angle;
-    f32 k180;
+    s32 pad0; /* fake: unused, frame space the original has (no source for it found) */
     s32 flag;
-    f32 k800;
+    s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
     s32 task;
     UnkStruct_ovl0C_10_80045DB0 snd;
 
-    k800 = 800.0f;
-    k180 = 180.0f;
     func_ovl0C_10_80045458(1);
     func_ovl0C_10_80045B10(0x1F);
     func_ovl0C_10_80046408(0);
@@ -727,9 +725,9 @@ static void func_ovl0C_10_80043070(void) {
         target.y = 0.0f;
         target.z = 1550.0f;
         func_ovl0C_10_80045BF8(&pos.x, &target.x, &angle);
-        target.x = func_ovl0C_10_80045F60(angle) * k800 + pos.x;
+        target.x = func_ovl0C_10_80045F60(angle) * 800.0f + pos.x;
         target.y = pos.y;
-        target.z = func_ovl0C_10_80045F68(angle) * k800 + pos.z;
+        target.z = func_ovl0C_10_80045F68(angle) * 800.0f + pos.z;
         pos.x = obj->unk40->unk10;
         pos.y = obj->unk40->unk14;
         pos.z = obj->unk40->unk18;
@@ -756,7 +754,7 @@ static void func_ovl0C_10_80043070(void) {
     obj->unk40->unk20 = func_ovl0C_10_80043010(obj->unk40, obj0->unk40);
     obj0->unk40->unk20 = func_ovl0C_10_80043010(obj0->unk40, obj->unk40);
     func_ovl0C_10_80045AA8(obj->unk40->unk10, 200.0f, obj->unk40->unk18);
-    func_ovl0C_10_80045AC8(obj0->unk40->unk20, 20.0f, k800);
+    func_ovl0C_10_80045AC8(obj0->unk40->unk20, 20.0f, 800.0f);
     for (i = 0; i < 30; i++) {
         obj->unk40->unk14 += 2.0f;
         func_ovl0C_10_80045E00();
@@ -793,10 +791,10 @@ static void func_ovl0C_10_80043070(void) {
         d = obj->unk40->unk10 < obj0->unk40->unk10 ? -(obj->unk40->unk10 - obj0->unk40->unk10)
                                                     : obj->unk40->unk10 - obj0->unk40->unk10;
         if (d < 20.0f && flag) {
-            if (obj0->unk40->unk20 + k180 >= 360.0f) {
-                obj0->unk40->unk20 = obj0->unk40->unk20 + k180 - 360.0f;
+            if (obj0->unk40->unk20 + 180.0f >= 360.0f) {
+                obj0->unk40->unk20 = obj0->unk40->unk20 + 180.0f - 360.0f;
             } else {
-                d = (obj0->unk40->unk20 + k180 < 0.0f) ? obj0->unk40->unk20 + k180 + 360.0f : obj0->unk40->unk20 + k180;
+                d = (obj0->unk40->unk20 + 180.0f < 0.0f) ? obj0->unk40->unk20 + 180.0f + 360.0f : obj0->unk40->unk20 + 180.0f;
                 obj0->unk40->unk20 = d;
             }
             flag = FALSE;
@@ -805,7 +803,7 @@ static void func_ovl0C_10_80043070(void) {
     }
     obj = func_ovl0C_10_800454A8(0);
     func_ovl0C_10_80045AA8(obj->unk40->unk10, 50.0f, obj->unk40->unk18);
-    func_ovl0C_10_80045AC8(obj->unk40->unk20, 20.0f, k800);
+    func_ovl0C_10_80045AC8(obj->unk40->unk20, 20.0f, 800.0f);
     func_ovl0C_10_80045458(0);
     func_ovl0C_10_80045408(32);
     func_ovl0C_10_80045FE0();

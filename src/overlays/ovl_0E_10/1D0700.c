@@ -217,14 +217,11 @@ void func_ovl0E_10_800434F4(f32 arg0) {
 }
 
 void func_ovl0E_10_8004353C(void) {
-    f32 k32768;
-    f32 k360;
+    f32 pad[2]; /* fake: unused, the original's frame is 8 bytes bigger. The -O3 overlays' copy of this function calls the angle helper above, inlined, which accounts for them; at -O2 nothing is inlined, and its body in a block (or as a macro) keeps the slots only with sp20/sp1C declared unused here too */
     f32 angle;
     f32 sp20;
     f32 sp1C;
 
-    k32768 = 32768.0f;
-    k360 = 360.0f;
     func_ovl0E_10_800443A8();
     switch (D_ovl0E_10_800455A0.unk8) {
         case 0:
@@ -241,15 +238,15 @@ void func_ovl0E_10_8004353C(void) {
             break;
         case 1:
         default:
-            angle = k360;
+            angle = 360.0f;
             break;
     }
-    if (angle != k360) {
-        func_ovl0E_10_800449F8(angle, k32768, k32768);
+    if (angle != 360.0f) {
+        func_ovl0E_10_800449F8(angle, 32768.0f, 32768.0f);
     } else {
         sp20 = D_ovl0E_10_800455A0.unkC;
         func_ovl0E_10_80044A00(&sp1C, NULL, NULL);
-        func_ovl0E_10_800449F8(sp1C + sp20, k32768, k32768);
+        func_ovl0E_10_800449F8(sp1C + sp20, 32768.0f, 32768.0f);
     }
     func_ovl0E_10_80044390(D_ovl0E_10_800455A0.unk4);
 }

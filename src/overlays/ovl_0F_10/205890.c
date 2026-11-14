@@ -453,7 +453,7 @@ void func_ovl0F_10_80044AD4(void) {
 }
 
 void func_ovl0F_10_800448A0(void) {
-    f32 k32768;
+    s32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
     f32 x;
     f32 y;
     f32 z;
@@ -462,7 +462,6 @@ void func_ovl0F_10_800448A0(void) {
     f32 rz;
     s32 i;
 
-    k32768 = 32768.0f;
     x = 2898.7f;
     y = 3582.5f;
     z = 1940.3f;
@@ -472,13 +471,13 @@ void func_ovl0F_10_800448A0(void) {
     for (i = 0; i < 300; i++) {
         x += -2.7783334f;
         z += -1.1396668f;
-        func_ovl0F_10_80045BF8(x, k32768, z);
+        func_ovl0F_10_80045BF8(x, 32768.0f, z);
         func_ovl0F_10_80045F50();
     }
     func_ovl0F_10_80045F28(110);
     for (i = 0; i < 500; i++) {
         rx += 0.18460001f;
-        func_ovl0F_10_80045C18(rx, k32768, k32768);
+        func_ovl0F_10_80045C18(rx, 32768.0f, 32768.0f);
         func_ovl0F_10_80045F50();
     }
     func_ovl0F_10_80045F28(120);
@@ -489,7 +488,7 @@ void func_ovl0F_10_800448A0(void) {
         ry += 0.14222221f;
         rz += 14.183333f;
         func_ovl0F_10_80045BF8(x, y, z);
-        func_ovl0F_10_80045C18(k32768, ry, rz);
+        func_ovl0F_10_80045C18(32768.0f, ry, rz);
         func_ovl0F_10_80045F50();
     }
     func_ovl0F_10_80045F28(360);

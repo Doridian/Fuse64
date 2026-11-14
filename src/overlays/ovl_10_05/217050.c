@@ -676,11 +676,10 @@ void func_ovl10_05_80043E00(void) {
     Vec3f spC4;
     Vec3f angle;
     f32 a;
-    f32 k700;
+    s32 pad; /* fake: unused; the original's frame has the slot */
 
-    k700 = 700.0f;
     func_ovl10_05_800464D8(func_ovl10_05_80045C48(0), &player);
-    if (player.y == k700 || D_ovl10_05_80046F20 != 0) {
+    if (player.y == 700.0f || D_ovl10_05_80046F20 != 0) {
         for (i = 0; i < 2; i++) {
             for (j = 0; j < 9; j++) {
                 D_ovl10_05_80047358[i][10 - j - 1] = D_ovl10_05_80047358[i][10 - j - 2];
@@ -689,13 +688,13 @@ void func_ovl10_05_80043E00(void) {
             D_ovl10_05_80047358[i][0] = D_ovl10_05_80047208[i]->unk40->unk10;
             D_ovl10_05_800473A8[i][0] = D_ovl10_05_80047208[i]->unk40->unk18;
             func_ovl10_05_800464D8(D_ovl10_05_80047200[i], &pos);
-            pos.y = k700;
+            pos.y = 700.0f;
             if (func_ovl10_05_800463B0(&player, &pos) < 1500.0f) {
                 if (!(D_ovl10_05_80047230[i] & 1)) {
                     func_ovl10_05_80043CC0(i);
                 }
                 func_ovl10_05_800464D8(D_ovl10_05_80047208[i], &pos);
-                pos.y = k700;
+                pos.y = 700.0f;
                 func_ovl10_05_80046398(&pos, &player, &angle);
                 angle.y -= 90.0f;
                 dist = func_ovl10_05_800463B0(&player, &pos);

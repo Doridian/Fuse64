@@ -652,11 +652,8 @@ static void func_ovl0F_05_80043018(s32 count, UnkStruct_ovl0F_05_800461E0 *p) {
 
 /* The overlay's handler: the entry returns it to the loader. */
 void func_ovl0F_05_800430BC(s32 arg0) {
-    f32 k3200;
-    f32 k16;
+    s32 pad[2]; /* fake: unused; the original's frame is 8 bytes bigger */
 
-    k3200 = 3200.0f;
-    k16 = 16.0f;
     switch (arg0) {
         case 2:
             D_ovl0F_05_8004655C = func_ovl0F_05_80044F58();
@@ -674,9 +671,9 @@ void func_ovl0F_05_800430BC(s32 arg0) {
             func_ovl0F_05_80045550(D_ovl0F_05_800464E0[5]->unk40, 0x61);
             func_ovl0F_05_80045550(D_ovl0F_05_800464E0[7]->unk40, 0x61);
             func_ovl0F_05_80045550(D_ovl0F_05_800464E0[8]->unk40, 0x61);
-            D_ovl0F_05_800464E0[8]->unk40->unk14 -= k3200;
-            D_ovl0F_05_800464E0[9]->unk40->unk14 -= k3200;
-            D_ovl0F_05_800464E0[10]->unk40->unk14 -= k3200;
+            D_ovl0F_05_800464E0[8]->unk40->unk14 -= 3200.0f;
+            D_ovl0F_05_800464E0[9]->unk40->unk14 -= 3200.0f;
+            D_ovl0F_05_800464E0[10]->unk40->unk14 -= 3200.0f;
 #line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
             D_ovl0F_05_8004654C = func_ovl0F_05_80045A30(0x279);
             func_ovl0F_05_80045A40(D_ovl0F_05_8004654C, 0x20000000);
@@ -687,9 +684,9 @@ void func_ovl0F_05_800430BC(s32 arg0) {
             D_ovl0F_05_800464E0[2]->unk40->unk10 = 2400.0f;
             D_ovl0F_05_800464E0[2]->unk40->unk14 = 2600.0f;
             D_ovl0F_05_800464E0[2]->unk40->unk18 = -2000.0f;
-            D_ovl0F_05_800464E0[2]->unk40->unk28 = k16;
-            D_ovl0F_05_800464E0[2]->unk40->unk2C = k16;
-            D_ovl0F_05_800464E0[2]->unk40->unk30 = k16;
+            D_ovl0F_05_800464E0[2]->unk40->unk28 = 16.0f;
+            D_ovl0F_05_800464E0[2]->unk40->unk2C = 16.0f;
+            D_ovl0F_05_800464E0[2]->unk40->unk30 = 16.0f;
             D_ovl0F_05_80046164 = 0.0f;
             if (D_ovl0F_05_80046188 == 0) {
                 D_ovl0F_05_80046170 = func_ovl0F_05_80045098(func_ovl0F_05_80045038());

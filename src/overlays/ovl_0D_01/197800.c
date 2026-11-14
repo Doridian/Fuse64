@@ -1404,17 +1404,16 @@ static void func_ovl0D_01_800434BC(Ent_0D01 *arg0) {
 void func_ovl0D_01_80043134(void) {
     s32 i;
     s32 n;
-    f32 k2300;
+    s32 pad; /* fake: unused, its slot puts pos at sp+96 */
     Vec3f pos;
 
-    k2300 = 2300.0f;
     while (TRUE) {
         D_ovl0D_01_80047B0C->unk30 = 1;
         D_ovl0D_01_80047B0C->unk34 = 75.0f;
         D_ovl0D_01_80047B0C->unk38 = 50.0f;
         D_ovl0D_01_80047B0C->unk40->unk10 = 2000.0f;
         D_ovl0D_01_80047B0C->unk40->unk14 = 400.0f;
-        D_ovl0D_01_80047B0C->unk40->unk18 = k2300;
+        D_ovl0D_01_80047B0C->unk40->unk18 = 2300.0f;
         D_ovl0D_01_80047B0C->unk14 = 0;
         if (func_ovl0D_01_80046C20(D_ovl0D_01_80047B0C, 0x4040) != 0) {
             break;
@@ -1426,9 +1425,9 @@ void func_ovl0D_01_80043134(void) {
         D_ovl0D_01_80047B0C->unk30 = 1;
         D_ovl0D_01_80047B0C->unk34 = 75.0f;
         D_ovl0D_01_80047B0C->unk38 = 50.0f;
-        D_ovl0D_01_80047B0C->unk40->unk10 = 2300; /* an int: its own .rodata k2300 */
+        D_ovl0D_01_80047B0C->unk40->unk10 = 2300; /* an int: its own .rodata 2300.0f */
         D_ovl0D_01_80047B0C->unk40->unk14 = 400.0f;
-        D_ovl0D_01_80047B0C->unk40->unk18 = k2300;
+        D_ovl0D_01_80047B0C->unk40->unk18 = 2300.0f;
         D_ovl0D_01_80047B0C->unk14 = 0;
         if (func_ovl0D_01_80046C20(D_ovl0D_01_80047B0C, 0x4040) != 0) {
             break;

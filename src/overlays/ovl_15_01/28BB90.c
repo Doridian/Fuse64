@@ -1436,18 +1436,17 @@ void func_ovl15_01_80049358(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     f32 ang[3];
     f32 dx;
     f32 dy;
-    f32 k360;
+    f32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
 
-    k360 = 360.0f;
     func_ovl15_01_8004D368((Vec3f *) arg0, (Vec3f *) arg3, (Vec3f *) ang);
-    ang[1] = ((ang[1] - 90.0f) >= k360) ? (ang[1] - 90.0f) - k360 : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + k360 : (ang[1] - 90.0f);
-    dx = ((0 <= ang[0] && ang[0] <= 180.0f) ? ang[0] : (k360 - ang[0]) * -1.0f)
-       - ((0 <= arg1[0] && arg1[0] <= 180.0f) ? arg1[0] : (k360 - arg1[0]) * -1.0f);
+    ang[1] = ((ang[1] - 90.0f) >= 360.0f) ? (ang[1] - 90.0f) - 360.0f : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + 360.0f : (ang[1] - 90.0f);
+    dx = ((0 <= ang[0] && ang[0] <= 180.0f) ? ang[0] : (360.0f - ang[0]) * -1.0f)
+       - ((0 <= arg1[0] && arg1[0] <= 180.0f) ? arg1[0] : (360.0f - arg1[0]) * -1.0f);
     if (dx > 180.0f) {
-        dx -= k360;
+        dx -= 360.0f;
     }
     if (dx < -180.0f) {
-        dx += k360;
+        dx += 360.0f;
     }
     if (dx >= 0.0f) {
         if (dx > arg2) {
@@ -1456,13 +1455,13 @@ void func_ovl15_01_80049358(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     } else if (dx < arg2 * -1.0f) {
         dx = arg2 * -1.0f;
     }
-    dy = ((0 <= ang[1] && ang[1] <= 180.0f) ? ang[1] : (k360 - ang[1]) * -1.0f)
-       - ((0 <= arg1[1] && arg1[1] <= 180.0f) ? arg1[1] : (k360 - arg1[1]) * -1.0f);
+    dy = ((0 <= ang[1] && ang[1] <= 180.0f) ? ang[1] : (360.0f - ang[1]) * -1.0f)
+       - ((0 <= arg1[1] && arg1[1] <= 180.0f) ? arg1[1] : (360.0f - arg1[1]) * -1.0f);
     if (dy > 180.0f) {
-        dy -= k360;
+        dy -= 360.0f;
     }
     if (dy < -180.0f) {
-        dy += k360;
+        dy += 360.0f;
     }
     if (dy >= 0.0f) {
         if (dy > arg2) {
@@ -2068,13 +2067,12 @@ void func_ovl15_01_80046D18(void) {
     f32 stepX;
     f32 baseX;
     f32 s;
-    f32 k60;
+    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
     f32 y;
     f32 stepY;
     f32 baseY;
     Vec3f pos;
 
-    k60 = 60.0f;
     count = func_ovl15_01_8004D550();
     a = 5.4545455f / D_ovl15_01_8004E0CC;
     b = 225.0f / D_ovl15_01_8004E0CC;
@@ -2104,9 +2102,9 @@ void func_ovl15_01_80046D18(void) {
                     y += b;
                     b *= 0.8f;
                 }
-                stepX = x / k60;
+                stepX = x / 60.0f;
                 baseX = D_ovl15_01_8004E0C0 - x;
-                stepY = y / k60;
+                stepY = y / 60.0f;
                 baseY = D_ovl15_01_8004E0B0.y - y;
                 t = 60;
                 *count -= n;
@@ -2120,7 +2118,7 @@ void func_ovl15_01_80046D18(void) {
                 }
             }
         } else {
-            s = func_ovl15_01_8004D6D0((1.0f - (f32) t / k60) * 270.0f + 90.0f);
+            s = func_ovl15_01_8004D6D0((1.0f - (f32) t / 60.0f) * 270.0f + 90.0f);
             D_ovl15_01_8004E0C0 = s * x + baseX;
             D_ovl15_01_8004E0B0.y = s * y + baseY;
             t--;

@@ -872,7 +872,7 @@ static void func_ovl14_02_8004D638(s16 x, s16 z, Vec3f *vel) {
 
 void func_ovl14_02_8004D640(UnkStructA *obj) {
     UnkStructA *spark;
-    f32 k0_707;
+    f32 pad0; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f pos2;
     Vec3f dir;
     f32 pad1[4]; /* fake: unused, frame space the original has (no source for it found) */
@@ -881,7 +881,6 @@ void func_ovl14_02_8004D640(UnkStructA *obj) {
     f32 dz;
     Vec3f pos;
 
-    k0_707 = 0.707f;
     func_ovl14_02_8004D630();
     func_ovl14_02_8004D628();
     dx = obj->unk40->unk10 - obj->unk58;
@@ -904,13 +903,13 @@ void func_ovl14_02_8004D640(UnkStructA *obj) {
         if ((s32) dx != (s32) vel.x) {
             obj->unk40->unk10 = obj->unk58;
             if ((s32) dx < (s32) vel.x) {
-                vel.x -= (dz != 0.0f ? k0_707 : 1.0f) * (dx != 0.0f ? D_ovl14_02_8004FF04 : D_ovl14_02_8004FF00);
+                vel.x -= (dz != 0.0f ? 0.707f : 1.0f) * (dx != 0.0f ? D_ovl14_02_8004FF04 : D_ovl14_02_8004FF00);
                 if (vel.x < dx) {
                     vel.x = dx;
                 }
                 func_ovl14_02_8004D580(dx);
             } else if ((s32) vel.x < (s32) dx) {
-                vel.x += (dz != 0.0f ? k0_707 : 1.0f) * (dx != 0.0f ? D_ovl14_02_8004FF04 : D_ovl14_02_8004FF00);
+                vel.x += (dz != 0.0f ? 0.707f : 1.0f) * (dx != 0.0f ? D_ovl14_02_8004FF04 : D_ovl14_02_8004FF00);
                 if (dx < vel.x) {
                     vel.x = dx;
                 }
@@ -921,13 +920,13 @@ void func_ovl14_02_8004D640(UnkStructA *obj) {
         if ((s32) dz != (s32) vel.z) {
             obj->unk40->unk18 = obj->unk60;
             if ((s32) dz < (s32) vel.z) {
-                vel.z -= (dx != 0.0f ? k0_707 : 1.0f) * (dz != 0.0f ? D_ovl14_02_8004FF04 : D_ovl14_02_8004FF00);
+                vel.z -= (dx != 0.0f ? 0.707f : 1.0f) * (dz != 0.0f ? D_ovl14_02_8004FF04 : D_ovl14_02_8004FF00);
                 if (vel.z < dz) {
                     vel.z = dz;
                 }
                 func_ovl14_02_8004D580(dz);
             } else if ((s32) vel.z < (s32) dz) {
-                vel.z += (dx != 0.0f ? k0_707 : 1.0f) * (dz != 0.0f ? D_ovl14_02_8004FF04 : D_ovl14_02_8004FF00);
+                vel.z += (dx != 0.0f ? 0.707f : 1.0f) * (dz != 0.0f ? D_ovl14_02_8004FF04 : D_ovl14_02_8004FF00);
                 if (dz < vel.z) {
                     vel.z = dz;
                 }
@@ -2795,18 +2794,17 @@ void func_ovl14_02_80048830(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     f32 ang[3];
     f32 dx;
     f32 dy;
-    f32 k360;
+    f32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
 
-    k360 = 360.0f;
     func_ovl14_02_8004F598((Vec3f *) arg0, (Vec3f *) arg3, (Vec3f *) ang);
-    ang[1] = ((ang[1] - 90.0f) >= k360) ? (ang[1] - 90.0f) - k360 : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + k360 : (ang[1] - 90.0f);
-    dx = ((0 <= ang[0] && ang[0] <= 180.0f) ? ang[0] : (k360 - ang[0]) * -1.0f)
-       - ((0 <= arg1[0] && arg1[0] <= 180.0f) ? arg1[0] : (k360 - arg1[0]) * -1.0f);
+    ang[1] = ((ang[1] - 90.0f) >= 360.0f) ? (ang[1] - 90.0f) - 360.0f : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + 360.0f : (ang[1] - 90.0f);
+    dx = ((0 <= ang[0] && ang[0] <= 180.0f) ? ang[0] : (360.0f - ang[0]) * -1.0f)
+       - ((0 <= arg1[0] && arg1[0] <= 180.0f) ? arg1[0] : (360.0f - arg1[0]) * -1.0f);
     if (dx > 180.0f) {
-        dx -= k360;
+        dx -= 360.0f;
     }
     if (dx < -180.0f) {
-        dx += k360;
+        dx += 360.0f;
     }
     if (dx >= 0.0f) {
         if (dx > arg2) {
@@ -2815,13 +2813,13 @@ void func_ovl14_02_80048830(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     } else if (dx < arg2 * -1.0f) {
         dx = arg2 * -1.0f;
     }
-    dy = ((0 <= ang[1] && ang[1] <= 180.0f) ? ang[1] : (k360 - ang[1]) * -1.0f)
-       - ((0 <= arg1[1] && arg1[1] <= 180.0f) ? arg1[1] : (k360 - arg1[1]) * -1.0f);
+    dy = ((0 <= ang[1] && ang[1] <= 180.0f) ? ang[1] : (360.0f - ang[1]) * -1.0f)
+       - ((0 <= arg1[1] && arg1[1] <= 180.0f) ? arg1[1] : (360.0f - arg1[1]) * -1.0f);
     if (dy > 180.0f) {
-        dy -= k360;
+        dy -= 360.0f;
     }
     if (dy < -180.0f) {
-        dy += k360;
+        dy += 360.0f;
     }
     if (dy >= 0.0f) {
         if (dy > arg2) {
@@ -3804,13 +3802,12 @@ void func_ovl14_02_80044C60(void) {
     s32 j;
     f32 t;
     f32 scale;
-    f32 k360;
+    f32 pad4; /* fake: unused, frame space the original has (no source for it found) */
     f32 sign;
     f32 pad5[2]; /* fake: unused, frame space the original has (no source for it found) */
     f32 b;
     f32 fn;
 
-    k360 = 360.0f;
     saved = D_ovl14_02_80050410;
     saved70 = D_ovl14_02_800503C0->unk70;
     D_ovl14_02_80050410 = 1600.0f;
@@ -3824,26 +3821,26 @@ void func_ovl14_02_80044C60(void) {
     if (r[0] >= 180.0f && r[0] - 180.0f <= 180.0f) {
         a = r[0] - 180.0f;
     } else {
-        a = (k360 - (r[0] - 180.0f)) * -1.0f;
+        a = (360.0f - (r[0] - 180.0f)) * -1.0f;
     }
     if (D_ovl14_02_800503F0 >= 0.0f && D_ovl14_02_800503F0 <= 180.0f) {
         b = D_ovl14_02_800503F0;
     } else {
-        b = (k360 - D_ovl14_02_800503F0) * -1.0f;
+        b = (360.0f - D_ovl14_02_800503F0) * -1.0f;
     }
     d = a - b;
     if (d >= 180.0f) {
-        d -= k360;
+        d -= 360.0f;
     }
     fn = n;
     if (d < -180.0f) {
-        d += k360;
+        d += 360.0f;
     }
     d /= fn;
     if ((&D_ovl14_02_800503F0)[1] >= 0.0f && (&D_ovl14_02_800503F0)[1] <= 180.0f) {
         b = (&D_ovl14_02_800503F0)[1];
     } else {
-        b = (k360 - (&D_ovl14_02_800503F0)[1]) * -1.0f;
+        b = (360.0f - (&D_ovl14_02_800503F0)[1]) * -1.0f;
     }
     r[1] = 0.0f;
     r[2] = D_ovl14_02_80050410 / fn;
@@ -3883,7 +3880,7 @@ void func_ovl14_02_80044C60(void) {
             do {} while (0); /* trick: empty loop = uopt block boundary */
             r[0] = (t = r[0]) + 0.5f * sign; /* trick: dead copy t moves the product to $f2 */
         }
-        r[1] = (r[1] - 90.0f >= k360) ? r[1] - 90.0f - k360 : (r[1] < 90.0f ? r[1] - 90.0f + k360 : r[1] - 90.0f);
+        r[1] = (r[1] - 90.0f >= 360.0f) ? r[1] - 90.0f - 360.0f : (r[1] < 90.0f ? r[1] - 90.0f + 360.0f : r[1] - 90.0f);
         r[2] = D_ovl14_02_80050410;
         func_ovl14_02_8004F5A0((Vec3f *) r, &step);
         D_ovl14_02_800503E0.x = D_ovl14_02_800502EC->x + step.x;

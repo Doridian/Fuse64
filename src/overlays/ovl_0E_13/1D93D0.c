@@ -404,7 +404,7 @@ void func_ovl0E_13_80044F30(UnkStructA *arg0) {
 
 void func_ovl0E_13_800449CC(void) {
     s16 moving;
-    f32 k100;
+    s32 pad; /* fake: unused; the original's frame has one more slot */
     UnkStruct_ovl0E_13_80046A3C *rec;
     UnkStructA *obj;
     s16 doneX;
@@ -412,7 +412,6 @@ void func_ovl0E_13_800449CC(void) {
     s32 flags;
     f32 pos[3];
 
-    k100 = 100.0f;
     moving = 0;
     rec = func_ovl0E_13_80046020();
     rec->unk8 = func_ovl0E_13_80045EF0(0x1BB, 0x30, rec->unk14, rec->unk18, rec->unk1C);
@@ -480,8 +479,8 @@ void func_ovl0E_13_800449CC(void) {
         flags = func_ovl0E_13_80045E58(obj, 0xC0);
         if (flags != 0) {
             if (flags & 0x6000) {
-                func_ovl0E_13_80046448(0x14, obj->unk40->unk10, obj->unk40->unk14 + k100, obj->unk40->unk18, 0);
-                func_ovl0E_13_80046448(0x12, obj->unk40->unk10, obj->unk40->unk14 + k100, obj->unk40->unk18, 0);
+                func_ovl0E_13_80046448(0x14, obj->unk40->unk10, obj->unk40->unk14 + 100.0f, obj->unk40->unk18, 0);
+                func_ovl0E_13_80046448(0x12, obj->unk40->unk10, obj->unk40->unk14 + 100.0f, obj->unk40->unk18, 0);
                 func_ovl0E_13_800465A0(0x168, obj->unk40->unk10, obj->unk40->unk14, obj->unk40->unk18);
                 pos[0] = obj->unk40->unk10;
                 pos[1] = obj->unk40->unk14;

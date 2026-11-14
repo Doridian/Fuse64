@@ -55,6 +55,12 @@ s32 func_802391F0(void);
 s32 func_80239208(UnkStruct_802AB200 *arg0);
 void func_80239430(void);
 
+#ifdef TARGET_PC
+/* the tasks as coroutines with host stacks: setjmp and longjmp are the
+ * port's (port/include/port_task.h) */
+#include "port_task.h"
+#endif
+
 extern UnkStruct_802AB200 D_80063370[80];
 /* D_802AB200 and D_802ABAA0 are the list heads (running and free); the
  * asm's D_802ABA9C and D_802AC33C are their unk89C. */

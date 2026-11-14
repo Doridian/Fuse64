@@ -1,0 +1,26 @@
+/*
+ * The port's own SDK headers (PR/ultratypes.h has the why): the VR4300's
+ * address segments.
+ */
+#ifndef PORT_SDK_R4300_H
+#define PORT_SDK_R4300_H
+
+#include <PR/ultratypes.h>
+
+#define K0BASE 0x80000000       /* cached, unmapped */
+#define K1BASE 0xA0000000       /* uncached, unmapped */
+
+#define K0_TO_K1(x) ((u32)(x) | 0xA0000000)
+/* The port's display lists, segment bases and audio commands hold the
+   pointers where the N64's hold physical addresses: the renderer and the
+   audio take them as they are (port/host/gfx.h, "display-list commands").
+   So K0_TO_PHYS is a pointer's value, an integer as wide as it (it takes a
+   pointer: an address kept in a narrower integer would lose its top in
+   where pointers are 8 bytes), here and in os.h, osVirtualToPhysical
+   (ultra.c) and common.h's STATIC_K0_TO_PHYS and K0_TO_PHYS_ADD. */
+#define K0_TO_PHYS(x) ((__UINTPTR_TYPE__)(const void *)(x))
+#define K1_TO_PHYS(x) ((u32)(x) & 0x1FFFFFFF)
+#define PHYS_TO_K0(x) ((u32)(x) | 0x80000000)
+#define PHYS_TO_K1(x) ((u32)(x) | 0xA0000000)
+
+#endif

@@ -83,7 +83,11 @@ void func_80225840(s32 arg0) {
 
     count = 8;
     func_80297D20();
+#ifndef TARGET_PC
+    /* main_code's .bss: in the port its variables are wherever the linker
+     * put them, zero at the start (main_code runs once) */
     func_80225C7C(D_802A5300, 0, D_802B36D0 - D_802A5300);
+#endif
     func_80225C7C(D_80063000, 0, D_800BEA60 - D_80063000);
     func_80225CA8();
     func_80297D30(4, D_8029F570);

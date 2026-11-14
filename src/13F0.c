@@ -25,7 +25,12 @@ void func_8000083C(s32 seg, void *entry, void *arg) {
     void (*fn[1])(void *);
 
     func_800007F0(seg, entry);
+#ifdef TARGET_PC
+    /* the segment's code is linked in (port/src/boot.c) */
+    fn[0] = (void (*)(void *))port_segment_entry(seg);
+#else
     fn[0] = (void (*)(void *))entry;
+#endif
     fn[0](arg);
 }
 

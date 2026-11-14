@@ -11,6 +11,7 @@ says where they come from and on what terms they are here.
 | decompals/ultralib (libultra reconstruction) | `include/ultralib/`, `src/libultra/` | no licence file; see below |
 | GNU malloc (`gmalloc.c`, 1995) | `src/libmalloc/` | GNU GPL v2 or later (from the LGPL v2 or later); see below |
 | Blast Corps decomp tools | `tools/elf_mips2.py` and others adapted from `../BlastCorps` | AGPL-3.0, same author |
+| Blast Corps PC port | parts of `port/` copied or adapted from `../BlastCorps/port` | AGPL-3.0, same author; see below |
 
 ---
 
@@ -68,3 +69,21 @@ headers (`include/`) and `pc_names.h` are the project's own (AGPL-3.0).
 Tools adapted from `../BlastCorps` (`tools/libmatch.py`,
 `tools/gen_symbols.py`, `tools/elf_mips2.py`, ...) are the same author's
 work under AGPL-3.0, like this project.
+
+The PC port (`port/`, docs/PORT.md) reuses the game-agnostic parts of
+Blast Corps' port (`../BlastCorps/port`, commit `9203a91e`), the same
+author's work under AGPL-3.0 (its `LICENSE`, the same licence as this
+project's). Copied with small changes (includes, what this game doesn't
+have taken out): `port/include/sdk/` (the port's own SDK headers, with
+F3DEX 1.x's vertex and triangle commands, the scheduler's `sched.h` and
+the few macros this game uses added), `port/host/fiber*.c` and
+`fiber.h` (the game's threads as fibers), `port/host/threads.c` (their
+scheduling), `port/src/gu.c` (the graphics utilities, checked bit for bit
+against libultra 2.0I's), `port/libaudio/` (the audio library: its
+synthesizer, compact sequence player and reverb, with its bank file
+parser renamed `port_alBnkfParse`), `port/include/libaudio_heap.h`,
+`port/include/audio_log.h`, `port/tools/gen_sintable.py` and
+`port/tools/cross-*.cmake`. Adapted (rewritten in part for this game):
+`port/src/ultra.c` (libultra on the host), `port/host/main.c`,
+`port/host/runtime.c`, `port/include/port.h`. Each file's header says
+where it comes from.

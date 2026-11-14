@@ -49,6 +49,15 @@ void func_8022691C(s32 arg0) {
         func_80226368(file);
         file = func_80226604(id, 1);
         func_8022616C((u8 *) &size, 4, 1, file);
+#ifdef TARGET_PC
+        /* the overlay's code is linked in (port/src/overlay.c): it is
+         * inflated where the N64 has it all the same, for the time it
+         * takes and what it leaves in the archive's buffers */
+        func_80292BD0(file, port_addr(0x80043000), size);
+        func_80226368(file);
+        func_802267E0(0x18);
+        D_802A532C = (s32) port_overlay_load(D_8019B0D0[arg0].unk0, id);
+#else
         func_80297D58((void *) 0x80043000, 0x20000);
         func_80297D50((void *) 0x80043000, 0x20000);
         func_80292BD0(file, (void *) 0x80043000, size);
@@ -56,6 +65,7 @@ void func_8022691C(s32 arg0) {
         func_80226368(file);
         func_802267E0(0x18);
         D_802A532C = ((s32 (*)(void)) 0x80043000)();
+#endif
     }
 }
 

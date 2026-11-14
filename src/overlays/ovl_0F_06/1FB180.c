@@ -89,7 +89,7 @@ void func_ovl0F_06_800430FC(s32 arg0, UnkStructA *arg1) {
     UnkStructA_40 *p;
 
     p = arg1->unk40;
-    if (1) { /* fake, as in ovl_09_01: without it arg1 is spilled */
+    if (1) { /* fake: a uopt block boundary; at -O2 a one-block body homes arg1 to the stack (do/while(0) and goto work alike; an initializer, one expression, a copy of arg0 or a struct-field array do not; at -O3 it is not needed) */
     }
     func_ovl0F_06_80044690(arg0, p->unk10, p->unk14, p->unk18);
 }

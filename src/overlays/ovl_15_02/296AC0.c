@@ -4118,8 +4118,6 @@ s32 func_ovl15_02_80044378(s32 arg0, UnkStructA *arg1) {
     UnkStructA_40 *p;
 
     p = arg1->unk40;
-    if (1) { /* fake, as in ovl_0A_05's func_ovl0A_05_80047DF4 */
-    }
     return func_ovl15_02_80050CB0(arg0, p->unk10, p->unk14, p->unk18);
 }
 

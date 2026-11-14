@@ -118,7 +118,7 @@ void func_ovl09_04_800431CC(s32 arg0, UnkStruct_ovl09_04_800431CC *arg1) {
     UnkStruct_ovl09_04_800431CC_Inner *p;
 
     p = arg1->unk40;
-    if (1) { /* fake, as in 80420.c's func_80265C20: without it arg1 is spilled */
+    if (1) { /* fake: a uopt block boundary; at -O2 a one-block body homes arg1 to the stack (do/while(0) and goto work alike; an initializer, one expression, a copy of arg0 or a struct-field array do not; at -O3 it is not needed) */
     }
     func_ovl09_04_80044760(arg0, p->unk10, p->unk14, p->unk18);
 }

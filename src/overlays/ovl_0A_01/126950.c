@@ -610,8 +610,6 @@ void func_ovl0A_01_80046DB8(s32 arg0, UnkStruct_ovl0A_01_B04 *arg1) {
     UnkStruct_ovl0A_01_B04_Inner *p;
 
     p = arg1->unk40;
-    if (1) { /* fake, as in ovl_09_01's func_ovl09_01_800431C8 */
-    }
     func_ovl0A_01_80048530(arg0, p->unk10, p->unk14, p->unk18);
 }
 

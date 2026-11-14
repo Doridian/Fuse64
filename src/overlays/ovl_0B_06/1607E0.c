@@ -662,7 +662,7 @@ void COPY_FILE(void);
 static void func_ovl0B_06_800464C0(s32 arg0);
 static void func_ovl0B_06_80046558(s32 arg1, s32 arg0);
 static void func_ovl0B_06_800465E0(UnkStructA_40 *obj, s16 alpha);
-static void func_ovl0B_06_80046624(void);
+static void func_ovl0B_06_80046624(s16 alpha);
 static void func_ovl0B_06_8004662C(void);
 static void func_ovl0B_06_80046634(s32 arg0);
 static void func_ovl0B_06_80046850(void);
@@ -1626,7 +1626,6 @@ static void func_ovl0B_06_80046634(s32 arg0) {
     s32 i;
     s32 j;
 
-    func_ovl0B_06_80046624();
     func_ovl0B_06_8004662C();
     if (arg0 & 1) {
         D_ovl0B_06_80049CAC[4].unk0->unkC |= 1;
@@ -1650,17 +1649,12 @@ static void func_ovl0B_06_80046634(s32 arg0) {
         }
     }
     alpha = arg0 == 0 ? 0x3C : 0xFF;
-    for (j = 0; j < 3; j++) {
-        if (D_ovl0B_06_8004A5D0[j] == 1) {
-            func_ovl0B_06_800465E0(D_ovl0B_06_80049F20[j][0].unk0, alpha);
-        }
-    }
+    func_ovl0B_06_80046624(alpha);
     b = arg0 == 0 ? 0x3C : 0xFF;
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 6; j++) {
             if (D_ovl0B_06_8004A5E0[i].unk[j] == 1) {
                 func_ovl0B_06_800465E0(D_ovl0B_06_80049F20[i][j + 1].unk0, b);
-                if (i) {} /* fake: dead read; 140/alpha/i in t0/t1 */
             }
         }
     }
@@ -1670,7 +1664,16 @@ static void func_ovl0B_06_80046634(s32 arg0) {
 static void func_ovl0B_06_8004662C(void) {
 }
 
-static void func_ovl0B_06_80046624(void) {
+/* the slots' fade (a guess which of the two stubs it is: the other order
+ * matches too; it replaced a dead read of i in the caller's loop below) */
+static void func_ovl0B_06_80046624(s16 alpha) {
+    s32 j;
+
+    for (j = 0; j < 3; j++) {
+        if (D_ovl0B_06_8004A5D0[j] == 1) {
+            func_ovl0B_06_800465E0(D_ovl0B_06_80049F20[j][0].unk0, alpha);
+        }
+    }
 }
 
 static void func_ovl0B_06_800465E0(UnkStructA_40 *obj, s16 alpha) {

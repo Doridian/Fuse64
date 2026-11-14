@@ -8,8 +8,9 @@
  *   through D_800BC770[id]); that reorders ugen's spills around the jalr.
  * - func_8028EE78: parameters (o, grow, speed, limit, flag), from the order
  *   its callers set s4 before s3; `speed * 100.0f / 2` (int 2 keeps div.s).
- * - func_8028F5E0: its body's lines are below its opening line (#line),
- *   which puts `sw a0,48(sp)` where the original has it.
+ * - func_8028F5E0 calls func_8028ED18 (the same code, inlined: an inlined
+ *   static keeps its own .loc lines, which puts `sw a0,48(sp)` where the
+ *   original has it; written out it needed two #lines).
  * D_802A1D08 and D_802A1D30 are defined after the functions so that the
  * function-local D_802A1D00 comes first in .data.
  */
@@ -426,15 +427,8 @@ static void func_8028F55C(UnkStruct_800BC770 *o) {
     func_8028F1F0(o, 1.0f, 80);
 }
 
-/* The body's lines are below the opening line's (as1 then puts `sw a0,48(sp)` early, as the original). */
-#line 1000 /* fake: see above */
 static void func_8028F5E0(UnkStruct_800BC770 *o) {
-#line 999 /* fake: see above */
-    if (func_8028EB70(o, 100, 10.0f)) {
-        func_8028ECB0(o);
-    } else {
-        func_8028EC08(o, 10.0f);
-    }
+    func_8028ED18(o);
 }
 
 /* Inlined into the D_802A1D30 functions that make one model (its stub is before 8028F66C). */

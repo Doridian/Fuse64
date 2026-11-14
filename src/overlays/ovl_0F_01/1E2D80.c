@@ -506,7 +506,7 @@ char D_ovl0F_01_800485B0[] = "WM1 WG1 WSH WAP WDS WB2 ST30";
 char D_ovl0F_01_800485D0[] = "WM1 WG1 WSH WAP WDE WB1 ST30";
 
 /* unused: the stubs IDO -O3 leaves at the end of the object */
-static void func_ovl0F_01_80046A78(void) { if (0) { D_ovl0F_01_8004874C[0] = D_ovl0F_01_8004875C[0] = D_ovl0F_01_80048770[0] = D_ovl0F_01_8004877C[0] = D_ovl0F_01_80048794[0] = D_ovl0F_01_80048934[0] = 0; } /* the unused .bss keeps its place */
+static void func_ovl0F_01_80046A78(void) { D_ovl0F_01_8004874C[0] = D_ovl0F_01_8004875C[0] = D_ovl0F_01_80048770[0] = D_ovl0F_01_8004877C[0] = D_ovl0F_01_80048794[0] = D_ovl0F_01_80048934[0] = 0; /* unused (body dropped): the reference keeps the unused .bss in place */
 }
 
 static void func_ovl0F_01_80046A80(void) {

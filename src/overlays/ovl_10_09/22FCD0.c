@@ -1267,7 +1267,7 @@ void func_ovl10_09_80044DDC(s32 arg0) {
     s32 w;
     s32 t;
     s32 h;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    s32 *pos;
 
     if (D_ovl10_09_80049F60[arg0] != 0) {
         v = 1;
@@ -1287,8 +1287,9 @@ void func_ovl10_09_80044DDC(s32 arg0) {
         h = w;
         w = t;
     }
-    func_ovl10_09_800481B8(D_ovl10_09_80049F00[arg0][0], D_ovl10_09_80049F00[arg0][1], D_ovl10_09_80049F00[arg0][2],
-                           D_ovl10_09_80049F00[arg0][0] + w, D_ovl10_09_80049F00[arg0][2] + h, v);
+    pos = D_ovl10_09_80049F00[arg0];
+    func_ovl10_09_800481B8(pos[0], pos[1], pos[2],
+                           pos[0] + w, pos[2] + h, v);
 }
 
 void func_ovl10_09_80044C70(s32 *arg0) {

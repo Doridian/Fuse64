@@ -289,7 +289,7 @@ f32 D_ovl12_05_8004AC80;
 UnkStructA *D_ovl12_05_8004AC84;
 
 /* unused: the stubs IDO -O3 leaves at the end of the object */
-static void func_ovl12_05_8004934C(void) { if (0) { D_ovl12_05_8004AC10 = 0; D_ovl12_05_8004AC1C = 0; }
+static void func_ovl12_05_8004934C(void) { D_ovl12_05_8004AC10 = 0; D_ovl12_05_8004AC1C = 0; /* unused (body dropped): the reference keeps the unused .bss in place */
 }
 
 static void func_ovl12_05_80049344(void) {

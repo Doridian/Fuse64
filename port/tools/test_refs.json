@@ -22,7 +22,7 @@
    "6000": "27145102",
    "900": "f8e64efe"
   },
-  "eeprom": "62cfa5e360368c5fe58c71c454a1a86da891fb40",
+  "eeprom": "5b7b5f53592bb3c8023106383a3cafadab913b1b",
   "frames": "bd12b7f87dcbd02313221c3ea76d6e1070e4bf16",
   "wav": "088d175675a5897019160f8db4e1a5c6c3ba0d6d"
  },
@@ -30,26 +30,26 @@
   "checkpoints": {
    "300": "d5f91080"
   },
-  "eeprom": "62cfa5e360368c5fe58c71c454a1a86da891fb40",
+  "eeprom": "5b7b5f53592bb3c8023106383a3cafadab913b1b",
   "frames": "3370d65a285ff8ac4be86167b4d9dc004fad5fa2",
   "wav": "eb1feca8f1e719d868478d07888589e02add39c9"
  },
  "eu/menus": {
   "checkpoints": {
-   "1200": "32f0d73b",
-   "1500": "1d51f68f",
-   "1800": "c9926a37",
-   "2100": "6002d5b3",
-   "2400": "8c5ed0c5",
-   "2700": "34db6441",
+   "1200": "91d3fc72",
+   "1500": "425024f8",
+   "1800": "1b0f0623",
+   "2100": "cd51b0d2",
+   "2400": "229d70ae",
+   "2700": "b9ba7afa",
    "300": "d5f91080",
-   "3000": "ce72a83e",
+   "3000": "cff15a4a",
    "600": "99bd00df",
-   "900": "b2708770"
+   "900": "a4a8b408"
   },
-  "eeprom": "62cfa5e360368c5fe58c71c454a1a86da891fb40",
-  "frames": "cb4459fb1212ca1bdfa1d44b77e62c21bf8bfca1",
-  "wav": "ee4733c7fcae21bcdc4ed09c8d5c13eb300ac3a1"
+  "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
+  "frames": "d523769192e514ccf94bf782a7e1526925e0fafa",
+  "wav": "fb70ec3d98d9889eb8b32b28d2a3679ea27cf3c7"
  },
  "jp/legal": {
   "checkpoints": {

@@ -15,9 +15,9 @@ As of 2026-11-14:
 |---|---|---|
 | Linux i386 (`-m32`), us | yes | the legal screen, title, file select, the opening, the world select, the first stage played; battle mode against three CPU players. `test.py`'s four scenarios pass |
 | Linux i386, eu | yes | as us (legal, menus and battle scenarios recorded) |
-| Linux i386, jp | yes | the legal screen and menus.txt; battle.jp.txt stops in ovl_0A_05 (below) |
+| Linux i386, jp | yes | the legal screen and menus.txt (recorded); battle.jp.txt stops in the opening logo scene that jp plays by itself (ovl_0A_05, "What's left") |
 | big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | the legal scenario's frames, sound and save are x86's |
-| WebAssembly (emscripten, node) | yes | the legal scenario is x86's; menus.txt stops when ovl_0A_05 starts (below) |
+| WebAssembly (emscripten, node) | yes | the legal scenario is x86's; menus.txt is x86's but for the coverage bit of 67 retraces' pixels ("What's left") |
 | 64-bit hosts (x86-64, aarch64, macOS) | no | needs the pointer pass ("32-bit hosts and 64-bit hosts", below) |
 | Windows | not tried | i386 with zig (`x86-windows-gnu`) or mingw should be close: fiber_win32.c is there |
 
@@ -113,7 +113,7 @@ sound (`--wav`) and the EEPROM file.
 `--save` records them. `test.py same A B` compares two builds' runs with
 each other (a cross build under qemu, a sanitized build, the WebAssembly
 build against x86). Recorded: us legal, menus, battle and story; eu
-legal, menus and battle; jp none yet. The headless clock is virtual (it
+legal, menus and battle; jp legal and menus. The headless clock is virtual (it
 moves from one event to the next when every thread waits), so a run is
 the same on every host.
 
@@ -222,21 +222,37 @@ follow, so the changes are macros on the same line, from
 include/common.h: `PORT_V0(x)`, `PORT_RET(ido, pc)`, `PORT_ONLY(x)`,
 `PORT_PAD(n)`/`PORT_MORE(n)` (room a host write needs past an N64
 array), `PORT_SPAN2`, `PORT_WORD_BYTE0`, `PORT_BE32_GET`/`SET`,
-`PORT_BE16_GET`/`SET`, `PORT_DCAC_LEN`. Besides: a task switch's
+`PORT_BE16_GET`/`SET`, `PORT_DCAC_LEN`, `PORT_ORDER()`. Besides: a task switch's
 macros (530C0), the overlay loader's call (40FB0), the byte-order calls
 where data arrives, and declarations a host needs.
 
 ## What's left
 
-- **ovl_0A_05 in jp's battle and in WebAssembly's menus** ("Status"): the
-  first story stage's intro reads player 0's object (`D_800AEDF0[0].unk28`)
-  before it is made. TBD.
+- **jp's battle.jp.txt**: jp plays the opening logo scene (ovl_0A_05) by
+  itself after the title, and in the port its func_ovl0A_05_80047608
+  finds no object with flag 2 (func_8022F77C, ZeroJump 0x1832) and
+  crashes in func_8022F808; only the player's object is in the list then.
+  The port reaches the scene at retrace ~210, the N64 at 360: the port
+  loads faster, so a wait on the N64 that a load covers may be what the
+  scene depends on. Not found yet.
+- **Names inside another name's object** (`D_800AEE14` is
+  `D_800AEDF0[0].unk24`; the C names 18 inside the players' array
+  alone): a host compiler may reorder their accesses. 54E40's
+  func_8023D0F8 had it (`PORT_ORDER()`, which WebAssembly needed); the
+  others are unchecked. Their own fields in the C would end it.
+- **WebAssembly's coverage bits**: in menus.txt, retraces 739-805 differ
+  from x86 in the framebuffer's coverage bit (what the screenshots don't
+  show). Somewhere the renderer's coverage depends on the host.
+- **`port_v0`**: a `void` function whose callers use a value returns what
+  the last `PORT_V0` saved; each such function's last call needs one
+  (five were missing, which a run under gdb showed). The ZeroJump
+  stubs' list is host_check's; the direct callers' isn't complete.
 - **64-bit**: Blast Corps' pointer pass over the 617 casts and 2273
   `M2C_FIELD`s ("32-bit hosts and 64-bit hosts"). macOS and aarch64 need
   it.
 - **Windows** (zig `x86-windows-gnu` or mingw, i386) and a WebAssembly
   page (canvas, WebAudio, the save in IndexedDB), as Blast Corps' port.
-- jp's test references; the qemu builds through menus and battle.
+- The qemu builds through menus and battle; eu and jp under qemu.
 - The renderer: what the first stage and the menus show is checked by eye
   against an emulator, not pixel for pixel.
 - Phase 7 and 8 (docs/ROADMAP.md, docs/NETPLAY.md): the input and the RNG

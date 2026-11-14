@@ -61,9 +61,14 @@
  * moves a spill slot (8024BC20, 80244E04, 80246C3C, 80249648). An
  * empty `do {} while (0);` splits a block and changes uopt's choices
  * (8024B444, 8024878C, 80244FF8).
- * 8024C04C calls func_802443F4 and drops the result: the inlined
- * copy emits nothing, but its R2 store and its return value's range
- * take v0 and v1 in the entry block, so the entry pointer gets a1 there.
+ * 8024C04C's unused `o = func_802443F4(arg0)` (as 8024AF24's): the
+ * inlined copy emits nothing, but its R2 store and its return value's
+ * range take v0 and v1 in the entry block.
+ * Fakes pass 4: more dead reads and pads were inlined getters, each with
+ * its frame area, the entry pointer local gone (D_800AEDF0[arg0] direct):
+ * 80248148 (func_802443F4 for obj), 8024694C, 8024BD1C, 80247F90,
+ * 8024CEB8 (func_802443F4 and func_802443CC); 8024C334's pad is
+ * func_8024C314 inlined. A match only shows equivalence.
  * In 8024C334 the unused func_80243D54 call in the first branch does
  * the same for the first flag: its R2 store makes the flag's own R2
  * store dead (a store to R2 that reaches a call keeps a range), so the
@@ -2452,13 +2457,12 @@ void func_8024C0D8(s32 arg0) {
 }
 
 void func_8024C04C(s32 arg0) {
-    UnkStruct_800AEDF0 *p = &D_800AEDF0[arg0];
+    UnkObj *o = (UnkObj *)func_802443F4(arg0); /* unused (its inlined load is the original's) */
 
-    func_802443F4(arg0); /* fake: result dropped: the inlined call takes v0/v1 in the entry block (header) */
     if (func_80270714((s16)arg0) == 0) {
         func_80244354(arg0, 0x8000, 0);
         func_802444B8(arg0, 0);
-        p->unk2C = 0;
+        D_800AEDF0[arg0].unk2C = 0;
         func_80244354(arg0, 0x120, 0);
     }
 }

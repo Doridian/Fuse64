@@ -331,7 +331,7 @@ s32 func_8027BA80(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg4, s32 arg5) {
 }
 
 s32 func_8027B8D4(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
-    s16 pad0; /* fake: the pads give the original's stack layout */
+    s16 pad0; /* fake: the pads give the original's stack layout; the tail as func_8027B7C4 or the whole as func_8027B828 (inlined, any pad/t2 count) puts x/y/z 4 high or grows the frame */
     s16 type;
     s16 t1;
     UnkStruct_800BB4A8 * t2;
@@ -514,7 +514,9 @@ s32 func_8027B480(s32 arg0) {
 void func_8027B440(UnkStruct_80279050_14 *arg0) {
     UnkStruct_800BB4A8 *node = func_8027A1A0(arg0);
 
-    if (node) {} /* fake: (permuter) without it the registers come out swapped */
+    if (node == NULL) {
+        DEBUG_PRINT(("node == NULL\n"));
+    }
     func_8027036C(&node->unk54, 1);
     node->unk3C = 0.0f;
 }

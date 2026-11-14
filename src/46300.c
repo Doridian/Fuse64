@@ -340,7 +340,7 @@ UnkAnim *func_8022C8B8(UnkInst *arg0, s32 arg1) {
         D_802A5504->unk4 = t = D_802A54FC[D_802A54D4].unk0;
         switch (t) {
             case 0x2F:
-                if (D_802A54FC[D_802A54D4].unk0) { /* fake: see the header */
+                if (D_802A54FC[D_802A54D4].unk0) { /* fake: see the header (a chan pointer at the loop head or in the case: no) */
                 }
                 k = (UnkChanKeys *)&D_802A54FC[D_802A54D4].unk4;
                 D_802A54E8 = k->unk4;
@@ -583,7 +583,7 @@ f32 func_8022BE48(UnkCurve *arg0, f32 arg1) {
             ret = vals[i];
         } else {
             ret = vals[i - 1]; /* (ret = ret) below: the add.s operand order */
-            ret = (ret = ret) + ((vals[i] - vals[i - 1]) / (keys[i] - keys[i - 1])) * (arg1 - keys[i - 1]); /* fake: `(ret = ret)` for the add operand order (header; `ret +=` swaps it) */
+            ret = (ret = ret) + ((vals[i] - vals[i - 1]) / (keys[i] - keys[i - 1])) * (arg1 - keys[i - 1]); /* fake: `(ret = ret)` for the add operand order (header; `ret +=` swaps it, also with the mul operands swapped; a slope temp moves registers) */
         }
     }
     return ret;
@@ -632,7 +632,7 @@ void func_8022BB88(UnkAnim *arg0) {
             case 0x30:
                 break;
         }
-        if (!arg0->unk10) {} /* fake: count before count * 40 */
+        if (!arg0->unk10) {} /* fake: count before count * 40 (a while loop, a track pointer, `return;` in func_8022BB00: no) */
     }
     free(arg0->unk14);
     free(arg0);

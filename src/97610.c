@@ -308,7 +308,7 @@ s32 func_8027E8EC(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
 void func_8027E6C4(void) {
     UnkStruct_80090440 *node;
     s16 i;
-    s64 m; /* fake: s64, a separate -1 (not one register for both unk1A stores) */
+    s64 m; /* fake: s64, a separate -1 (not one register for both unk1A stores); (s16)/(u16) casts, 0xFFFF, ~0, -1U on either store: no */
 
     if (D_802B0188 != 1) {
         D_802B0188 = 1;
@@ -424,7 +424,7 @@ void func_8027DFAC(void) {
     s16 nx;
     s16 ny;
     s16 nz;
-    s16 pad; /* fake: frame slot */
+    s16 delay;
     s16 tries;
     s16 xs[3];
     s16 ys[3];
@@ -504,13 +504,13 @@ void func_8027DFAC(void) {
             tries++;
         }
         if (count == 3) {
-            for (k = 0, i = 20, ok = 0; k < 10; k++, i--) {
+            for (k = 0, delay = 20, ok = 0; k < 10; k++, delay--) {
                 for (count = 0; count < 3; count++) {
                     func_8027404C(xs[count], ys[count], zs[count], &pos[0], &pos[1], &pos[2]);
                     pos[1] += 50.0f;
                     func_8028A7CC(12, pos, 0);
                 }
-                func_8023903C(i);
+                func_8023903C(delay);
             }
             for (count = 0; count < 3; count++) {
                 func_8027404C(xs[count], ys[count], zs[count], &pos[0], &pos[1], &pos[2]);

@@ -48,7 +48,9 @@
  * dead and as1 drops it, but it used up a ugen temp) and the script id
  * lost its inner (u8) cast (one `and` fewer). 80267A18's `case 2:
  * break;` is the jump table's: the text is the same without it, but
- * op 0x82 then goes to the default.
+ * op 0x82 then goes to the default. 802691A0 opens with a single test of
+ * the sequence header's revision around a compiled-out DEBUG_PRINT (any
+ * one-variable condition matches; `== 0` is a guess).
  */
 #include "common.h"
 
@@ -1393,7 +1395,9 @@ static void func_802691A0(void) {
     s32 table;
     u8 bank;
 
-    if (D_802AD22C->revision) {} /* fake: dead read */
+    if (D_802AD22C->revision == 0) {
+        DEBUG_PRINT(("no sequence file\n"));
+    }
     if (D_802AD22C->revision == 0x5331 || D_802AD22C->revision == 0x5332) {
         sd = &D_802AD22C->seqArray[D_802AD244];
         len = sd->len;
@@ -1776,7 +1780,7 @@ static void func_80267A18(s16 idx) {
                 s->wait = (pc[1] << 8) + pc[2];
                 pc += 3;
                 if (op == 0x105) {} /* fake: dead test: constants in s-registers (header) */
-                if (op == ~2) {} /* fake: dead test (header) */
+                if (op == ~2) {} /* fake: dead test (header; `return;` in each callee: no) */
                 switch (op - 0x80) {
                     case 3:
                         num = (pc[0] << 8) + pc[1];
@@ -1964,7 +1968,7 @@ static void func_802679A8(VoiceScript *s) {
         s->unk32 = 0;
     }
     if ((s->flags & 2) && s->unk1D == 1) {
-        if (s->unk20) {} /* fake: dead read */
+        if (s->unk20) {} /* fake: dead read; any DEBUG_PRINT test of unk20 matches here but none reads naturally, no `return;` in the callees */
         s->unk20 += 2;
         if (s->unk20 >= s->unk22) {
             s->unk20 = 0;

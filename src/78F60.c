@@ -18,7 +18,11 @@
  *   makes scaleY the float kept in memory. `if (flags == 3) {}` first in
  *   the outer body lowers the shared count at node 23 (Chow's
  *   addadjacents), so j + 1's split piece reaches the outer head and
- *   lives in v0. The unused pad1/q0/q1 locals are frame slots. (The
+ *   lives in v0. Both resisted DEBUG_PRINT conditions (only `flags == 3`
+ *   and any scaleX test match) and a `return;` in each callee. The
+ *   tile corners lrs/lrt are held before the LoadTile call, and l is
+ *   the y offset as k is the x one (their slots; a guess among held
+ *   values). (The
  *   first match also had a dead `pad1 = i + 1`, `if (!(height)) {}` and
  *   `if (!(tileH - i)) {}`, which the others made unnecessary.)
  */
@@ -107,7 +111,7 @@ static void func_8025EC44(Gfx **gfxp, s32 x0, s32 y0, s32 x1, s32 y1, s32 mode, 
     s32 tileW;
     s32 tileH;
     s32 k;
-    s32 pad1; /* fake: frame slot */
+    s32 l;
     s32 flags;
     f32 scaleX;
     f32 scaleY;
@@ -121,8 +125,8 @@ static void func_8025EC44(Gfx **gfxp, s32 x0, s32 y0, s32 x1, s32 y1, s32 mode, 
     s32 yl;
     s32 xh;
     s32 yh;
-    s32 q0; /* fake: frame slot */
-    s32 q1; /* fake: frame slot */
+    s32 lrs;
+    s32 lrt;
 
     gfx = *gfxp;
 
@@ -164,7 +168,9 @@ static void func_8025EC44(Gfx **gfxp, s32 x0, s32 y0, s32 x1, s32 y1, s32 mode, 
             if (th < 0) {
                 th = 1;
             }
-            func_8025E760(&gfx, x, mode, y, height, x + tw - 1, y + th - 1, img, width);
+            lrs = x + tw - 1;
+            lrt = y + th - 1;
+            func_8025E760(&gfx, x, mode, y, height, lrs, lrt, img, width);
             if (!scaleX) {} /* fake: makes scaleY the float kept in memory */
             switch (flags) {
                 case 0:
@@ -202,10 +208,10 @@ static void func_8025EC44(Gfx **gfxp, s32 x0, s32 y0, s32 x1, s32 y1, s32 mode, 
                     dsdx = RNDI(tw / scaleX / (tw + 1) * 1023.0f);
                     dtdy = (s32) RNDF(-1.0f / scaleY * 1023.0f) & 0xFFFF;
                     xl = RNDI(x0 + x * scaleX);
-                    k = (ny - j - 1) * th;
-                    yl = RNDI(k * scaleY + y1);
+                    l = (ny - j - 1) * th;
+                    yl = RNDI(l * scaleY + y1);
                     xh = RNDI(x0 + (x + tw) * scaleX);
-                    yh = RNDI((k + tileH) * scaleY + y1);
+                    yh = RNDI((l + tileH) * scaleY + y1);
                     if (xh >= 0 && yh >= 0) {
                         if (xl < 0) {
                             gSPScisTextureRectangle(gfx++, xl << 2, yl << 2, xh << 2, yh << 2, 0, s, t, dsdx, dtdy);
@@ -221,10 +227,10 @@ static void func_8025EC44(Gfx **gfxp, s32 x0, s32 y0, s32 x1, s32 y1, s32 mode, 
                     dtdy = (s32) RNDF(-1023.0f / scaleY) & 0xFFFF;
                     k = (nx - i - 1) * tw;
                     xl = RNDI(k * scaleX + x1);
-                    yl = (ny - j - 1) * th;
-                    yl = RNDI(yl * scaleY + y1);
+                    l = (ny - j - 1) * th;
+                    yl = RNDI(l * scaleY + y1);
                     xh = RNDI((k + tileW) * scaleX + x1);
-                    yh = RNDI(((ny - j - 1) * th + tileH) * scaleY + y1);
+                    yh = RNDI((l + tileH) * scaleY + y1);
                     if (xh >= 0 && yh >= 0) {
                         gSPTextureRectangle(gfx++, xl << 2, yl << 2, xh << 2, yh << 2, 0, s, t, dsdx, dtdy);
                     }

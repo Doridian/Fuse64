@@ -2,7 +2,10 @@
  * main_code's A1EA0, IDO -O3; it matches in us, eu and jp: the two
  * D_802B0260 entries and the task that updates them. Its .data
  * (D_802A1B50, the D_802A1B54 table) and .bss (D_802B0260, D_802B0300,
- * D_802B0308) are its own, placed in data_split.txt.
+ * D_802B0308) are its own, placed in data_split.txt. func_802876A0's
+ * task table is a static of its own (as A4CE0's func_8028A87C has): a
+ * function with a static isn't inlined, so the registration stays out of
+ * line in func_80287FD4 (dead calls stood in for it).
  */
 #include "common.h"
 
@@ -408,7 +411,6 @@ void func_80287698();
 #define DEC_80284CA4(a_) ((--(a_)->unk6D == 0) ? 1 : 0)
 
 s32 D_802A1B50 = -1;
-void *D_802A1B54[] = { func_80287DC0, func_8028773C, func_802878E0, func_802878BC };
 UnkStruct_802B0260 D_802B0260[2];
 UnkStruct_802B0300 *D_802B0300[2];
 UnkStruct_802B0308 *D_802B0308[2];
@@ -640,10 +642,8 @@ void func_802876C8(UnkStruct_802B0260 *arg0) {
 }
 
 void func_802876A0(void) {
+    static void *D_802A1B54[] = { func_80287DC0, func_8028773C, func_802878E0, func_802878BC };
+
     func_80297D30(0x1A, D_802A1B54);
-    if (0) { /* fake: dead calls */
-        func_80297D30(0, 0);
-        func_80297D30(0, 0);
-    }
 }
 

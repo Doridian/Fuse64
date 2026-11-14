@@ -13,14 +13,20 @@
  * of 80288654, taking (o, px, pz)), 80288190/80288198 and 80289758 are
  * inlined and leave stubs.
  *
- * func_80288654's diagonal cases keep a dead
- * `if (0) { func_8028863C(...); }` (keeps the inline frame area), test
+ * func_80288654's diagonal cases hold the two distances in block locals
+ * (dx, dz: their slots are the 8 bytes per case in the inline area;
+ * function-level locals give only 8 in all), test
  * z then x with the loads in the condition, and reload x and z from
  * the object inside the distance arguments
  * (`(px < (x = ...->unk10)) ? ...`, `func_8028863C(pz, z = ...->unk18)`):
  * an indirect load in a block keeps uopt from giving player.x/player.z
  * (address-taken by func_80250338) a live range there, so they are
  * read from the stack in each block as in the original.
+ *
+ * func_80288C40 writes its vector through a pointer (`Vec3f *v = &pos`):
+ * the address keeps pos in its home (stored, x and z read back), as the
+ * original does. A guess among matching spellings (a pointer used only
+ * for the three copies also matches).
  */
 #include "common.h"
 
@@ -536,7 +542,8 @@ s32 func_802890CC(UnkStruct_80288040 *arg0) {
 
 s32 func_80288C40(UnkStruct_80288040 *arg0) {
     s32 k;
-    Vec3f v;
+    Vec3f pos;
+    Vec3f *v = &pos;
     f32 x;
     f32 z;
     s32 i;
@@ -547,47 +554,47 @@ s32 func_80288C40(UnkStruct_80288040 *arg0) {
         k = D_800BA8EA[arg0->unk84].unk0;
         if (k == e->unk0 + 0xDE) {
             if (e->unk1 == arg0->unk4C) {
-                v.x = e->pos.x;
-                v.y = e->pos.y;
-                v.z = e->pos.z;
-                x = v.x;
-                z = v.z;
+                v->x = e->pos.x;
+                v->y = e->pos.y;
+                v->z = e->pos.z;
+                x = v->x;
+                z = v->z;
                 switch (arg0->unk50.b[1]) {
                     case 0x80:
-                        v.x = arg0->unk0->unk40->unk10 + x;
-                        v.z = arg0->unk0->unk40->unk18 + z;
+                        v->x = arg0->unk0->unk40->unk10 + x;
+                        v->z = arg0->unk0->unk40->unk18 + z;
                         break;
                     case 0x60:
-                        v.x = arg0->unk0->unk40->unk10 + x * 0.707106781 + z * 0.707106781;
-                        v.z = arg0->unk0->unk40->unk18 + z * 0.707106781 - x * 0.707106781;
+                        v->x = arg0->unk0->unk40->unk10 + x * 0.707106781 + z * 0.707106781;
+                        v->z = arg0->unk0->unk40->unk18 + z * 0.707106781 - x * 0.707106781;
                         break;
                     case 0x40:
-                        v.x = arg0->unk0->unk40->unk10 + z;
-                        v.z = arg0->unk0->unk40->unk18 - x;
+                        v->x = arg0->unk0->unk40->unk10 + z;
+                        v->z = arg0->unk0->unk40->unk18 - x;
                         break;
                     case 0x20:
-                        v.x = arg0->unk0->unk40->unk10 - x * 0.707106781 + z * 0.707106781;
-                        v.z = arg0->unk0->unk40->unk18 - z * 0.707106781 - x * 0.707106781;
+                        v->x = arg0->unk0->unk40->unk10 - x * 0.707106781 + z * 0.707106781;
+                        v->z = arg0->unk0->unk40->unk18 - z * 0.707106781 - x * 0.707106781;
                         break;
                     case 0x00:
-                        v.x = arg0->unk0->unk40->unk10 - x;
-                        v.z = arg0->unk0->unk40->unk18 - z;
+                        v->x = arg0->unk0->unk40->unk10 - x;
+                        v->z = arg0->unk0->unk40->unk18 - z;
                         break;
                     case 0xE0:
-                        v.x = arg0->unk0->unk40->unk10 - x * 0.707106781 - z * 0.707106781;
-                        v.z = arg0->unk0->unk40->unk18 - z * 0.707106781 + x * 0.707106781;
+                        v->x = arg0->unk0->unk40->unk10 - x * 0.707106781 - z * 0.707106781;
+                        v->z = arg0->unk0->unk40->unk18 - z * 0.707106781 + x * 0.707106781;
                         break;
                     case 0xC0:
-                        v.x = arg0->unk0->unk40->unk10 - z;
-                        v.z = arg0->unk0->unk40->unk18 + x;
+                        v->x = arg0->unk0->unk40->unk10 - z;
+                        v->z = arg0->unk0->unk40->unk18 + x;
                         break;
                     case 0xA0:
-                        v.x = arg0->unk0->unk40->unk10 + x * 0.707106781 - z * 0.707106781;
-                        v.z = arg0->unk0->unk40->unk18 + z * 0.707106781 + x * 0.707106781;
+                        v->x = arg0->unk0->unk40->unk10 + x * 0.707106781 - z * 0.707106781;
+                        v->z = arg0->unk0->unk40->unk18 + z * 0.707106781 + x * 0.707106781;
                         break;
                 }
-                v.y += arg0->unk0->unk40->unk14;
-                func_8028E8A4(arg0->unk50.b[0], v.x, v.y, v.z, (arg0->unk50.b[1] >> 5) + 1);
+                v->y += arg0->unk0->unk40->unk14;
+                func_8028E8A4(arg0->unk50.b[0], v->x, v->y, v->z, (arg0->unk50.b[1] >> 5) + 1);
             } else if (arg0->unk4C >= e->unk2) {
                 return 0;
             }
@@ -599,7 +606,6 @@ s32 func_80288C40(UnkStruct_80288040 *arg0) {
         func_8028E8A4(arg0->unk50.b[0], arg0->unk0->unk40->unk10, arg0->unk0->unk40->unk14,
                       arg0->unk0->unk40->unk18, (arg0->unk50.b[1] >> 5) + 1);
     }
-    if (0) { D_802A1B70 = (s32) &v; } /* fake: takes v's address in dead code: v stays in its home */
     if (func_80288C08(arg0, 180.0f)) {
         return 0;
     }
@@ -687,13 +693,17 @@ static s32 func_80288644(UnkStruct_80288040 *arg0, f32 px, f32 pz) {
                 ret = 1;
             }
             break;
-        case 0x20:
-            if (0) { func_8028863C(px, x); } /* fake: a dead call */
+        case 0x20: {
+            f32 dx;
+            f32 dz;
+
             if (pz < (z = arg0->unk0->unk40->unk18) && (x = arg0->unk0->unk40->unk10) < px
-                && func_802885E4(arg0, 8.0f, (px < (x = arg0->unk0->unk40->unk10)) ? x - px : px - x, func_8028863C(pz, z = arg0->unk0->unk40->unk18))) {
+                && func_802885E4(arg0, 8.0f, dx = (px < (x = arg0->unk0->unk40->unk10)) ? x - px : px - x,
+                                 dz = func_8028863C(pz, z = arg0->unk0->unk40->unk18))) {
                 ret = 1;
             }
             break;
+        }
         case 0x40:
             x = arg0->unk0->unk40->unk10;
             if (x < px
@@ -701,13 +711,17 @@ static s32 func_80288644(UnkStruct_80288040 *arg0, f32 px, f32 pz) {
                 ret = 1;
             }
             break;
-        case 0x60:
-            if (0) { func_8028863C(px, x); } /* fake: a dead call */
+        case 0x60: {
+            f32 dx;
+            f32 dz;
+
             if ((z = arg0->unk0->unk40->unk18) < pz && (x = arg0->unk0->unk40->unk10) < px
-                && func_802885E4(arg0, 8.0f, (px < (x = arg0->unk0->unk40->unk10)) ? x - px : px - x, func_8028863C(pz, z = arg0->unk0->unk40->unk18))) {
+                && func_802885E4(arg0, 8.0f, dx = (px < (x = arg0->unk0->unk40->unk10)) ? x - px : px - x,
+                                 dz = func_8028863C(pz, z = arg0->unk0->unk40->unk18))) {
                 ret = 1;
             }
             break;
+        }
         case 0x80:
             z = arg0->unk0->unk40->unk18;
             if (z < pz
@@ -715,13 +729,17 @@ static s32 func_80288644(UnkStruct_80288040 *arg0, f32 px, f32 pz) {
                 ret = 1;
             }
             break;
-        case 0xA0:
-            if (0) { func_8028863C(px, x); } /* fake: a dead call */
+        case 0xA0: {
+            f32 dx;
+            f32 dz;
+
             if ((z = arg0->unk0->unk40->unk18) < pz && px < (x = arg0->unk0->unk40->unk10)
-                && func_802885E4(arg0, 8.0f, (px < (x = arg0->unk0->unk40->unk10)) ? x - px : px - x, func_8028863C(pz, z = arg0->unk0->unk40->unk18))) {
+                && func_802885E4(arg0, 8.0f, dx = (px < (x = arg0->unk0->unk40->unk10)) ? x - px : px - x,
+                                 dz = func_8028863C(pz, z = arg0->unk0->unk40->unk18))) {
                 ret = 1;
             }
             break;
+        }
         case 0xC0:
             x = arg0->unk0->unk40->unk10;
             if (px < x
@@ -729,13 +747,17 @@ static s32 func_80288644(UnkStruct_80288040 *arg0, f32 px, f32 pz) {
                 ret = 1;
             }
             break;
-        case 0xE0:
-            if (0) { func_8028863C(px, x); } /* fake: a dead call */
+        case 0xE0: {
+            f32 dx;
+            f32 dz;
+
             if (pz < (z = arg0->unk0->unk40->unk18) && px < (x = arg0->unk0->unk40->unk10)
-                && func_802885E4(arg0, 8.0f, (px < (x = arg0->unk0->unk40->unk10)) ? x - px : px - x, func_8028863C(pz, z = arg0->unk0->unk40->unk18))) {
+                && func_802885E4(arg0, 8.0f, dx = (px < (x = arg0->unk0->unk40->unk10)) ? x - px : px - x,
+                                 dz = func_8028863C(pz, z = arg0->unk0->unk40->unk18))) {
                 ret = 1;
             }
             break;
+        }
     }
     return ret;
 }

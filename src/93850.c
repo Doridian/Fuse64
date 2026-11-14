@@ -5,12 +5,14 @@
  * fakes in func_802797BC: the dead `if (sound) {}` that ends case 3
  * (case 2's is no longer needed) lets as1 fill the delay slot after the func_80243DDC compare
  * with li a1,32 as the original does (without it, a nop and one word
- * more), and the dead `if (&D_800BA8A0[i] == 0) {}` after their
- * D_800AEDF0 store makes the D_800BA8A0 address live across that store,
- * so the D_800AEDF0 address (one live range over cases 2, 3 and 4) takes
- * v1 as in the original; it also keeps the D_800BA8A0 load after the
- * store (without a dead read there, ugen marks the two tables .noalias
- * and as1 moves the load up). func_8027036C is declared s32 here, as an
+ * more; moving case 3's `sound = 5` doesn't replace it). The player's
+ * D_800BA8A0 entry is taken once before the switch (`stats`): its
+ * address is then live across the cases' D_800AEDF0 stores, so the
+ * D_800AEDF0 address (one live range over cases 2, 3 and 4) takes v1 as
+ * in the original, and the counter's load stays after the store (with
+ * `D_800BA8A0[i].unkN++` in each case, ugen marks the two tables
+ * .noalias and as1 moves the load up; dead `&D_800BA8A0[i]` tests stood
+ * in for the pointer before). func_8027036C is declared s32 here, as an
  * implicit declaration would make it (it returns nothing): with void,
  * func_80279DC8's arg0->unk14 reload took v0 where the original has v1.
  */
@@ -388,6 +390,7 @@ void func_802797BC(UnkStruct_80279050_14 *arg0, UnkStruct_800BB4A8 *arg1) {
     UnkStruct_8023A840 *st;
     s16 x;
     s16 y;
+    UnkStruct_800BA8A0 *stats;
 
     for (i = 0; i < 5; i++) {
         if (func_802443F4(i) == arg0) {
@@ -402,28 +405,27 @@ void func_802797BC(UnkStruct_80279050_14 *arg0, UnkStruct_800BB4A8 *arg1) {
         func_80270B20(arg1->unk18);
     }
     if (func_80243EF0(i) != 1) {
+    stats = &D_800BA8A0[i];
     switch (arg1->unk20) {
         case 0:
             func_80278E84(i, 1);
-            D_800BA8A0[i].unk0++;
+            stats->unk0++;
             sound = 4;
             break;
         case 1:
             func_80277AF8(i, 1);
-            D_800BA8A0[i].unk2++;
+            stats->unk2++;
             sound = 4;
             break;
         case 2:
             D_800AEDF0[i].unk18 |= 1;
-            if (&D_800BA8A0[i] == 0) {} /* fake: see the header */
             sound = 5;
-            D_800BA8A0[i].unk4++;
+            stats->unk4++;
             break;
         case 3:
             D_800AEDF0[i].unk18 |= 2;
-            if (&D_800BA8A0[i] == 0) {} /* fake: see the header */
             sound = 5;
-            D_800BA8A0[i].unk6++;
+            stats->unk6++;
             if (sound) { /* fake: see the header */
             }
             break;
@@ -433,17 +435,17 @@ void func_802797BC(UnkStruct_80279050_14 *arg0, UnkStruct_800BB4A8 *arg1) {
             } else {
                 func_8024512C(i, 2);
             }
-            D_800BA8A0[i].unk8++;
+            stats->unk8++;
             sound = 5;
             break;
         case 5:
             func_80279780(i, 0);
-            D_800BA8A0[i].unkA++;
+            stats->unkA++;
             sound = 9;
             break;
         case 6:
             func_80279560();
-            D_800BA8A0[i].unkC++;
+            stats->unkC++;
             sound = 0x2B;
             break;
         case 7:

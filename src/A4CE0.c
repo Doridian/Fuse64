@@ -564,7 +564,7 @@ static void func_8028B670(UnkStruct_800BC528 *e, s32 kind, s32 mode, f32 scale, 
     s32 step;
     f32 t;
     s32 dir;
-    s32 pad; /* fake: frame slot */
+    s32 pad; /* fake: frame slot (the kill as func_8028A9CC(e) instead of written out: +8, pad or not; the spawn as a real static: not inlined) */
 
     step = 1;
     t = 0.0f;

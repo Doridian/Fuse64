@@ -1733,7 +1733,7 @@ static u8 func_ovl0B_04_80044BE8(u8 arg0, u16 arg1) {
     s32 i;
     s32 j;
 #if !VERSION_JP
-    s32 pad[2]; /* fake: frame-tuned (p2) */
+    s32 pad[2]; /* fake: frame-tuned (p2; fakes p9: D_ovl0B_04_8004A060[0].unk0 held in an Obj * for case 1's two stores drops a reload) */
 #endif
 
     if ((arg1 & 0x20) || (arg1 & 0x40)) {
@@ -2539,7 +2539,7 @@ void func_ovl0B_04_80043ADC(void) {
 #endif
     func_ovl0B_04_800477F0(0x1F, 0x11, 0);
     func_ovl0B_04_80048258();
-    if (0) { /* fake: dead calls: the emission order (header) */
+    if (0) { /* fake: dead calls: the emission order (header). Fakes p9: without them only the 80043AD4 stub moves (ahead of 800438FC, by its last call); an inlined helper for the stores at the top or for the page set-up adds a stub (em.py models) */
 #if !VERSION_JP
         func_ovl0B_04_80043A7C(0, 0, 0);
 #endif
@@ -2557,7 +2557,7 @@ void func_ovl0B_04_80043CD0(s32 arg0, Gfx0B04 **arg1) {
     { Gfx0B04 *g = gfx++; g->w0 = 0xF7000000; g->w1 = 0x10001; }
     { Gfx0B04 *g = gfx++; g->w0 = 0xF6000000 | (((D_ovl0B_04_8004A3E4->unk2C + (s32) D_ovl0B_04_8004A3E4->unk34) & 0x3FF) << 14) | (((D_ovl0B_04_8004A3E4->unk30 + (s32) (D_ovl0B_04_8004A3E4->unk34 * D_ovl0B_04_8004A3E4->unk20)) & 0x3FF) << 2); g->w1 = (((D_ovl0B_04_8004A3E4->unk2C - (s32) D_ovl0B_04_8004A3E4->unk34) & 0x3FF) << 14) | (((D_ovl0B_04_8004A3E4->unk30 - (s32) (D_ovl0B_04_8004A3E4->unk34 * D_ovl0B_04_8004A3E4->unk20)) & 0x3FF) << 2); }
     *arg1 = gfx;
-    if (0) { func_ovl0B_04_80043ADC(); } /* fake: a dead call: 80043ADC comes out before 80043CD0 (header) */
+    if (0) { func_ovl0B_04_80043ADC(); } /* fake: a dead call: 80043ADC comes out before 80043CD0 (header). Fakes p9: without it 80043CD0 comes out after 800436C8; defined before 80043ADC, the indirect call pulls it in front of 80043ADC */
 }
 
 #if !VERSION_JP
@@ -2698,7 +2698,9 @@ static void func_ovl0B_04_H4(void) {
  * ($v1).
  * fake: the calls pass `(x += 1, x - 1)` for the original's `addiu a2,v1,0`
  * copy, and the first one (&D_ovl0B_04_8004A16C)[1] for A170 (the plain
- * name makes &A170 the $s0 base). */
+ * name makes &A170 the $s0 base). Fakes p9: the four tests as an inlined
+ * (n, v) helper (the copy as its parameter's) cost 24 bytes of frame,
+ * prototyped or K&R. */
 static void func_ovl0B_04_H5b(void) {
     s32 a;
     s32 x;

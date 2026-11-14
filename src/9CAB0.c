@@ -1068,7 +1068,7 @@ static s32 func_8028556C(s32 arg0) {
     func_8028555C();
     func_80285554();
     p = D_800BB484;
-#line 1031 /* fake: numbering for as1 order (the load before the 0x2000 test) */
+#line 1031 /* fake: numbering for as1 order (the load before the 0x2000 test); p9: p from a getter static defined after this function (as one of the three stubs) gets the order but colours p->unk24 into a1, not v1 (21 words); the global read directly, a getter of the flags word: worse */
     if ((arg0 & 0x2000) ||
         (!(p->unk24 & 0x20) && ((arg0 & 0xF) == 0xF)) ||
         (!(p->unk24 & 0x10) && (arg0 & 0x60)) ||
@@ -1572,7 +1572,7 @@ static void func_8028425C(UnkStruct_80288040 *arg0) {
         arg0->unk10 = x;
         arg0->unk18 = (u8) (s32) ((arg0->unk0->unk40->unk18 + 50.0f) * 0.01);
         n = func_80284254(arg0);
-        if (x) {} /* fake: dead read */
+        if (x) {} /* fake: dead read; p9: x as an inlined helper in the stub func_8028422C (s32 or u8, with or without a local, x u8): 9 words, the original's `move a1,t7` copy of the masked value is missing */
         arg0->unk20++;
         if (n == 0) {
             arg0->unk1C |= 1;
@@ -1808,14 +1808,14 @@ static void func_8028378C() {
 static s32 func_80283794(UnkStruct_80288040 *arg0, u8 arg1) {
     s32 pos[3];
     s32 t1;
-    s32 pad[6]; /* fake: frame-tuned */
+    s32 pad[6]; /* fake: frame-tuned; p9: the direction switch and the cell position as the stubs func_80283784/8028378C (inlined, with parameters): no frame of their own here, and a register differs */
     s8 range[2];
     s8 gx;
     s8 gz;
     s32 flags;
 
     func_8028378C();
-    if (arg1) {} /* fake: dead read */
+    if (arg1) {} /* fake: dead read; p9: as a DEBUG_PRINT check only `!arg1`/`arg1` match (`arg1 & 0x1F`, `> 0xE0` no), and arg1 passed to an inlined stub helper doesn't replace it */
     func_80283784();
     pos[0] = (arg0->unk0->unk40->unk10 + 50.0f) * 0.01;
     pos[2] = (arg0->unk0->unk40->unk18 + 50.0f) * 0.01;
@@ -2209,7 +2209,7 @@ static void func_80285F8C(void) {
     s32 t1;
     UnkStructA *t2;
     Vec3f pos2;
-    s32 padB[2]; /* fake: frame-tuned */
+    s32 padB[2]; /* fake: frame-tuned; p9: case 1's and case 3's locals as block locals (every order tried): the slots run on, the frame stays 24 short, so these five words are locals not in this code */
     UnkStruct_80288040 *a;
     s32 pad[3]; /* fake: frame-tuned */
     Vec3f pos;

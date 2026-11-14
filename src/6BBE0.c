@@ -1277,7 +1277,7 @@ void func_8025C590(s32 arg0) {
 }
 
 s32 func_80255224(f32 *arg0, f32 *arg1, s32 arg2) {
-    s32 pad; /* fake: frame-tuned */
+    s32 pad; /* fake: frame-tuned; p9: for-loop forms (with p, &arg1[i * 3], a count) change the code */
     s32 best;
     f32 *p;
     f32 d;
@@ -3397,7 +3397,7 @@ block_873:
     M2C_FIELD(M2C_FIELD(var_fp, void **, 0x9C), f32 *, 8) = 0.0f;
     M2C_FIELD(M2C_FIELD(var_fp, void **, 0x9C), f32 *, 0) = (f32) M2C_FIELD(var_fp, f32 *, 0x74);
     func_80239430();
-    if (0) {  /* fake: emission order */
+    if (0) {  /* fake: emission order. Fakes p9: without the list (the first line kept) all but three things come out in place: 80254FA0 (an empty global, emitted here only if this task calls it: a call after func_80254FA8's and before func_80254F20's last does), 80254E00/80254E20 swapped (E20's last call at the end of case 0xF3 follows E00's), and 80252380 inlined into 802523E0 (not kept out by a ret local, else, separate tests or an unused static); a short list at the end reorders the rest */
         /* fake: five nested calls = 16 bytes of front-end int temporaries after the W360 statements, putting the W360 ?: temps on the original's slots (sp 0xA0/0xAC/0xC4) */
         func_80229C90(func_8023AA60(0), func_8023AA60(0), func_8023AA60(0), func_8023AA60(0), func_8023AA60(0), 0);
         func_80255350(0);

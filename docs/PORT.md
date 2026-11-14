@@ -16,8 +16,8 @@ As of 2026-11-14:
 | Linux i386 (`-m32`), us | yes | the legal screen, title, file select, the opening, the world select, the first stage played; battle mode against three CPU players. `test.py`'s four scenarios pass |
 | Linux i386, eu | yes | as us (legal, menus and battle scenarios recorded) |
 | Linux i386, jp | yes | the legal screen and menus.txt (recorded); battle.jp.txt stops in the opening logo scene that jp plays by itself (ovl_0A_05, "What's left") |
-| big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | the legal scenario's frames, sound and save are x86's |
-| WebAssembly (emscripten, node) | yes | the legal scenario is x86's; menus.txt is x86's but for the coverage bit of 67 retraces' pixels ("What's left") |
+| big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | the legal scenario's frames, sound and save are x86's; mips's menus.txt differs from x86 by retrace 900 ("What's left") |
+| WebAssembly (emscripten, node) | yes | legal and battle are x86's; menus.txt is x86's but for the coverage bit of 67 retraces' pixels ("What's left") |
 | 64-bit hosts (x86-64, aarch64, macOS) | no | needs the pointer pass ("32-bit hosts and 64-bit hosts", below) |
 | Windows | not tried | i386 with zig (`x86-windows-gnu`) or mingw should be close: fiber_win32.c is there |
 
@@ -252,7 +252,9 @@ where data arrives, and declarations a host needs.
   it.
 - **Windows** (zig `x86-windows-gnu` or mingw, i386) and a WebAssembly
   page (canvas, WebAudio, the save in IndexedDB), as Blast Corps' port.
-- The qemu builds through menus and battle; eu and jp under qemu.
+- **Big-endian past the title**: build-port-mips's menus.txt differs from x86's
+  between retraces 600 and 900 (some data still in the wrong order, or a
+  host difference; not looked at). Then battle, and eu and jp under qemu.
 - The renderer: what the first stage and the menus show is checked by eye
   against an emulator, not pixel for pixel.
 - Phase 7 and 8 (docs/ROADMAP.md, docs/NETPLAY.md): the input and the RNG

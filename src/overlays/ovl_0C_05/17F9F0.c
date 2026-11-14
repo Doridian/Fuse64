@@ -185,7 +185,7 @@ static void func_ovl0C_05_800442D0(void) {
 }
 
 void func_ovl0C_05_800442C8(void) {
-    /* a fake: the reference keeps the two unused words in .bss, which would
+    /* fake: the reference keeps the two unused words in .bss, which would
      * otherwise be common; it builds to nothing */
     if (0) {
         D_ovl0C_05_80045A80[0] = D_ovl0C_05_80045A8C[0];
@@ -278,9 +278,9 @@ void func_ovl0C_05_80043EB0(void) {
 }
 
 void func_ovl0C_05_80043CE4(UnkStructA *arg0) {
-    s32 pad0[1]; /* unused: they put hit at sp+0x38 in a 0x40 frame */
+    s32 pad0[1]; /* fake: unused; they put hit at sp+0x38 in a 0x40 frame */
     s32 hit;
-    s32 pad1[1];
+    s32 pad1[1]; /* fake: unused, frame space the original has (no source for it found) */
     f32 x;
     f32 y;
     f32 z;
@@ -340,9 +340,9 @@ void func_ovl0C_05_80043CE4(UnkStructA *arg0) {
 }
 
 void func_ovl0C_05_80043B18(UnkStructA *arg0) {
-    s32 pad0[1]; /* unused: they put hit at sp+0x38 in a 0x40 frame */
+    s32 pad0[1]; /* fake: unused; they put hit at sp+0x38 in a 0x40 frame */
     s32 hit;
-    s32 pad1[1];
+    s32 pad1[1]; /* fake: unused, frame space the original has (no source for it found) */
     f32 x;
     f32 y;
     f32 z;

@@ -337,7 +337,7 @@ static void func_ovl10_12_800471F0(void) {
 }
 
 void func_ovl10_12_800471E8(void) {
-    /* a fake: the reference keeps the unused words in .bss, which would
+    /* fake: the reference keeps the unused words in .bss, which would
      * otherwise be common; it builds to nothing */
     if (0) {
         D_ovl10_12_80048C30[0] = D_ovl10_12_80048C5C[0] + D_ovl10_12_80048C6C[0] + D_ovl10_12_80048D24[0] +
@@ -849,7 +849,7 @@ void func_ovl10_12_80045924(void) {
 }
 
 void func_ovl10_12_800457C0(s32 arg0, s32 arg1) {
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f pos;
     s32 i;
     s32 n;
@@ -870,7 +870,7 @@ void func_ovl10_12_800457C0(s32 arg0, s32 arg1) {
 }
 
 f32 func_ovl10_12_80045768(s32 arg0) {
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f a;
     Vec3f b;
 
@@ -1042,7 +1042,7 @@ void func_ovl10_12_80044C68(s32 *arg0) {
     s32 i;
     s32 j;
     s32 flags;
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f pos;
 
     i = 0;
@@ -1117,7 +1117,7 @@ void func_ovl10_12_80044A58(s32 arg0) {
     s32 w;
     s32 t;
     s32 h;
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
 
     if (D_ovl10_12_80048FC8[arg0] != 0) {
         v = 1;
@@ -1312,7 +1312,7 @@ void func_ovl10_12_80044168(void) {
 void func_ovl10_12_80043F14(s32 arg0, s32 arg1) {
     s32 j;
     s32 v;
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
     if (arg1 != (D_ovl10_12_80048D58[arg0] & 1)) {
         if (arg1 != 0) {
@@ -1556,8 +1556,8 @@ void func_ovl10_12_8004339C(void) {
 
 void func_ovl10_12_800432B0(void) {
     s32 out[6];
-    s32 pad1;
-    s32 pad2;
+    s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
     s32 a;
 
     D_ovl10_12_80049550 = -1.0f;
@@ -1571,7 +1571,7 @@ void func_ovl10_12_800432B0(void) {
     func_ovl10_12_80047778(1);
     func_ovl10_12_800431C8(D_ovl10_12_800493E4, D_ovl10_12_80049540, D_ovl10_12_80049544, -1.0f);
     func_ovl10_12_800480F8(0x78);
-    /* fakes (the permuter): a, and the test of D_ovl10_12_8004946C, on a's line */
+    /* fake: (the permuter) a, and the test of D_ovl10_12_8004946C, on a's line */
     a = D_ovl10_12_80049468; if (D_ovl10_12_8004946C && D_ovl10_12_8004946C && D_ovl10_12_8004946C) {}
     D_ovl10_12_80048C54 = a;
     D_ovl10_12_80048C58 = D_ovl10_12_8004946C;

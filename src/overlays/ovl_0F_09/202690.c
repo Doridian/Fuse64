@@ -511,7 +511,7 @@ static void func_ovl0F_09_8004342C(void) {
 }
 
 static void func_ovl0F_09_80043424(void) {
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
     D_ovl0F_09_80045F68 = 0;
     func_ovl0F_09_800430BC();
@@ -625,7 +625,7 @@ void func_ovl0F_09_8004343C(s32 arg0) {
             func_ovl0F_09_80043424();
             func_ovl0F_09_8004341C(7, D_ovl0F_09_80045FC0);
             func_ovl0F_09_80043390();
-            /* fake (as in ovl_0F_08): ends the block, so the call is not
+            /* fake: (as in ovl_0F_08) ends the block, so the call is not
              * scheduled into the stores before it */
             if (D_ovl0F_09_80045F5C && D_ovl0F_09_80045F5C && D_ovl0F_09_80045F5C) {}
             if (func_ovl0F_09_80045A30(0x405) == 0) {

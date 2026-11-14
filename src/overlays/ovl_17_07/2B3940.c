@@ -390,7 +390,7 @@ void func_ovl17_07_8004376C(s32 arg0, f32 arg1) {
                 x = -(10 - (s32) t);
             }
             D_ovl17_07_800457C0 = (x < 0 ? -x : x) / 2;
-            do { /* fake */
+            do { /* fake: (the permuter) puts the 10 in s5 and &D_ovl17_07_800457C0 in s4 */
             } while (0);
         }
         func_ovl17_07_80044AD8(D_ovl17_07_800456B0.unk4);
@@ -412,7 +412,7 @@ void func_ovl17_07_8004376C(s32 arg0, f32 arg1) {
 }
 
 void func_ovl17_07_8004354C(UnkStructA *arg0) {
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     s32 moved;
     UnkStructA *other;
     f32 x;

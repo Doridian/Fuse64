@@ -383,7 +383,7 @@ s32 D_ovl15_01_8004DCF8 = 0;
 
 /* unused: the stubs IDO -O3 leaves after the tail */
 static void func_ovl15_01_8004C63C(void) {
-    if (0) { D_ovl15_01_8004DF3C[0] = 0; D_ovl15_01_8004DF50[0] = 0; D_ovl15_01_8004DF5C[0] = 0; D_ovl15_01_8004DF6C[0] = 0; D_ovl15_01_8004DFBC[0] = 0; D_ovl15_01_8004DFDC[0] = 0; D_ovl15_01_8004DFE4[0] = 0; D_ovl15_01_8004DFE8[0] = 0; D_ovl15_01_8004E04C[0] = 0; D_ovl15_01_8004E05C[0] = 0; D_ovl15_01_8004E074[0] = 0; D_ovl15_01_8004E084[0] = 0; D_ovl15_01_8004E088[0] = 0; D_ovl15_01_8004E0AC[0] = 0; D_ovl15_01_8004E0D4[0] = 0; }
+    if (0) { D_ovl15_01_8004DF3C[0] = 0; D_ovl15_01_8004DF50[0] = 0; D_ovl15_01_8004DF5C[0] = 0; D_ovl15_01_8004DF6C[0] = 0; D_ovl15_01_8004DFBC[0] = 0; D_ovl15_01_8004DFDC[0] = 0; D_ovl15_01_8004DFE4[0] = 0; D_ovl15_01_8004DFE8[0] = 0; D_ovl15_01_8004E04C[0] = 0; D_ovl15_01_8004E05C[0] = 0; D_ovl15_01_8004E074[0] = 0; D_ovl15_01_8004E084[0] = 0; D_ovl15_01_8004E088[0] = 0; D_ovl15_01_8004E0AC[0] = 0; D_ovl15_01_8004E0D4[0] = 0; } /* fake: dead code, for the order or allocation it gives (no code) */
 }
 
 static void func_ovl15_01_8004C644(void) {
@@ -928,7 +928,7 @@ void func_ovl15_01_8004AD60(void) {
 
 void func_ovl15_01_8004AC68(void) {
     f32 y;
-    f32 pad;
+    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
 
     if (0) {
         func_ovl15_01_8004ABE0();
@@ -1236,7 +1236,7 @@ void func_ovl15_01_80049ADC(void) {
     f32 pos[3];
     f32 tgt[3];
     f32 rot[3];
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
     src = func_ovl15_01_8004D550();
     obj = func_ovl15_01_8004D400(0x2CB, 0x01401014, 0xC0, src);
@@ -1436,7 +1436,7 @@ void func_ovl15_01_80049358(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     f32 ang[3];
     f32 dx;
     f32 dy;
-    f32 pad[1];
+    f32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl15_01_8004D368((Vec3f *) arg0, (Vec3f *) arg3, (Vec3f *) ang);
     ang[1] = ((ang[1] - 90.0f) >= 360.0f) ? (ang[1] - 90.0f) - 360.0f : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + 360.0f : (ang[1] - 90.0f);
@@ -1739,7 +1739,7 @@ void func_ovl15_01_80047D8C(void) {
     f32 dy;
     f32 y;
     s32 n;
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     s32 flag;
     Vec3f rot;
     f32 speed;
@@ -2067,7 +2067,7 @@ void func_ovl15_01_80046D18(void) {
     f32 stepX;
     f32 baseX;
     f32 s;
-    f32 pad;
+    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
     f32 y;
     f32 stepY;
     f32 baseY;
@@ -2918,7 +2918,7 @@ void func_ovl15_01_80044468(void) {
     f32 step;
     s32 n;
     s32 i;
-    f32 pad;
+    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f a;
 
     func_ovl15_01_80044088(&a.x, &D_ovl15_01_8004DFD0.x, &D_ovl15_01_8004DCD0);
@@ -3216,8 +3216,8 @@ void func_ovl15_01_80043248(void) {
     f32 speed;
     f32 acc;
     f32 t;
-    f32 pad;
-    f32 pad2;
+    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 pad2; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f pos;
     Vec3f rot;
 

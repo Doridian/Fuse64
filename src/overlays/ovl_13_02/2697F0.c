@@ -372,7 +372,7 @@ f32 D_ovl13_02_8004D938[6] = { -200.0f, -100.0f, -0.0f, 200.0f, 100.0f, 0.0f };
  * the first refers to the .bss words nothing else uses, which would
  * otherwise be common and leave .bss short */
 static void func_ovl13_02_8004BE60(void) {
-    if (0) {
+    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
         D_ovl13_02_8004DC9C[0] = D_ovl13_02_8004DCB0[0] = D_ovl13_02_8004DCBC[0] = D_ovl13_02_8004DCD4[0] = D_ovl13_02_8004DCE4[0] = D_ovl13_02_8004DCE8[0] = D_ovl13_02_8004DD04[0] = D_ovl13_02_8004DD0C[0] = D_ovl13_02_8004DD18[0] = D_ovl13_02_8004DE7C[0] = D_ovl13_02_8004DED0[0] = D_ovl13_02_8004DEE0[0] = D_ovl13_02_8004DF14[0] = 0;
         D_ovl13_02_8004DEDC = 0.0f;
     }
@@ -424,7 +424,7 @@ void func_ovl13_02_8004BDA4(f32 arg0) {
 }
 
 void func_ovl13_02_80048FBC(s32 arg0) {
-    s32 pad[8];
+    s32 pad[8]; /* fake: unused, frame space the original has (no source for it found) */
     f32 *p;
     f32 dx;
     f32 dy;
@@ -507,7 +507,7 @@ void func_ovl13_02_80048FBC(s32 arg0) {
 static void func_ovl13_02_8004BD28(void) {
     void *sp1C;
 
-    if (0) { func_ovl13_02_8004CD48(func_ovl13_02_8004BD28, (void *)0x28, 0, 0, 0x150); }
+    if (0) { func_ovl13_02_8004CD48(func_ovl13_02_8004BD28, (void *)0x28, 0, 0, 0x150); } /* fake: dead code, for the order or allocation it gives (no code) */
     sp1C = func_ovl13_02_8004CD70();
     if (func_ovl13_02_8004CFD0(0x424) == 0) {
         do {
@@ -895,7 +895,7 @@ void func_ovl13_02_8004AB3C(void) {
 }
 
 void func_ovl13_02_8004A8E0(void) {
-    s32 pad[3];
+    s32 pad[3]; /* fake: unused, frame space the original has (no source for it found) */
     s32 p[3];
     UnkStructA *obj;
     s32 i;
@@ -1107,7 +1107,7 @@ void func_ovl13_02_80049F1C(UnkStructA *arg0) {
 }
 
 void func_ovl13_02_80049D50(void) {
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
 
     ((Vec3f *) D_ovl13_02_8004DF18)[0].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x;
     ((Vec3f *) D_ovl13_02_8004DF18)[0].y = (*(Vec3f *) &D_ovl13_02_8004DD10).y;
@@ -1151,7 +1151,7 @@ void func_ovl13_02_80049D50(void) {
 }
 
 void func_ovl13_02_800499A0(void) {
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     D_ovl13_02_8004D4F8[0].unk24[0] = (M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4)) / D_ovl13_02_8004D4F8[0].unk0;
     D_ovl13_02_8004D4F8[0].unk24[1] = (M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4)) / D_ovl13_02_8004D4F8[0].unk0;
     D_ovl13_02_8004D4F8[0].unk24[2] = (M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4)) / D_ovl13_02_8004D4F8[0].unk0;
@@ -1337,7 +1337,7 @@ void func_ovl13_02_80049468(s32 *arg0, s32 *arg1) {
 static void func_ovl13_02_80049400(void) {
     void *sp1C;
 
-    if (0) { func_ovl13_02_80048FBC(0); }
+    if (0) { func_ovl13_02_80048FBC(0); } /* fake: dead code, for the order or allocation it gives (no code) */
     sp1C = func_ovl13_02_8004CD70();
     if (M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 0) == 0.0f) {}
     func_ovl13_02_8004CD68((func_ovl13_02_8004CF08(2) * 0xA) + 0xA);
@@ -1346,10 +1346,10 @@ static void func_ovl13_02_80049400(void) {
 }
 
 void func_ovl13_02_800489C0(s32 arg0) {
-    s32 padt[1];
+    s32 padt[1]; /* fake: unused, frame space the original has (no source for it found) */
     f32 spA0[3];
     f32 sp94[3];
-    f32 pad[7];
+    f32 pad[7]; /* fake: unused, frame space the original has (no source for it found) */
     s32 var_s0;
     s32 var_s1;
     s32 var_s5;
@@ -1578,7 +1578,7 @@ void func_ovl13_02_800484B4(arg0) UnkStructA *arg0; {
 void func_ovl13_02_800480EC(s32 arg0) {
     f32 sp44[3];
     f32 sp38[3];
-    f32 pad[3];
+    f32 pad[3]; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl13_02_8004CBF8(D_ovl13_02_8004DE3C, 0x08000000);
     func_ovl13_02_8004511C();
@@ -1767,7 +1767,7 @@ void func_ovl13_02_80046E10(s32 arg0) {
     f32 save;
     f32 w;
     s32 found;
-    s32 pad[34];
+    s32 pad[34]; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl13_02_8004CBF8(D_ovl13_02_8004DE3C, 0x08000000);
     func_ovl13_02_8004511C();
@@ -2129,10 +2129,10 @@ void func_ovl13_02_8004640C(void) {
     f32 ry;
     f32 a;
     f32 rad;
-    s32 pad0;
+    s32 pad0; /* fake: unused, frame space the original has (no source for it found) */
     f32 dr;
     f32 pos[3];
-    s32 pad1[10];
+    s32 pad1[10]; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl13_02_8004D2E8();
     func_ovl13_02_8004CC00(D_ovl13_02_8004DE3C, 0x04000000);
@@ -2528,7 +2528,7 @@ void func_ovl13_02_80045460(void) {
 }
 
 void func_ovl13_02_8004521C(void) {
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
     UnkStructA *objs[24];
     s32 i;
     Vec3f a;
@@ -2891,7 +2891,7 @@ void func_ovl13_02_80043B64(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     f32 ang[3];
     f32 dx;
     f32 dy;
-    f32 pad[1];
+    f32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl13_02_8004CB88(arg0, arg3, ang);
     ang[1] = ((ang[1] - 90.0f) >= 360.0f) ? (ang[1] - 90.0f) - 360.0f : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + 360.0f : (ang[1] - 90.0f);
@@ -3023,7 +3023,7 @@ void func_ovl13_02_80043698(void) {
 }
 
 static void func_ovl13_02_80043970(void) {
-    if (0) { func_ovl13_02_80043698(); }
+    if (0) { func_ovl13_02_80043698(); } /* fake: dead code, for the order or allocation it gives (no code) */
     if (!(*D_ovl13_02_8004DCDC & 2)) {
         if (func_ovl13_02_8004CFB0(0xA4) == 0) {
             func_ovl13_02_8004CD68(0xE6);
@@ -3081,7 +3081,7 @@ void func_ovl13_02_800434C0(f32 *arg0) {
 
 void func_ovl13_02_800430CC(f32 *arg0, s32 arg1, s32 arg2) {
     f32 sp3C[3];
-    f32 pad;
+    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
     f32 dy;
     f32 dx;
     s32 i;
@@ -3120,7 +3120,7 @@ void func_ovl13_02_80043098(s32 arg0, UnkStructA *arg1) {
 
     temp_v0 = arg1->unk40;
     func_ovl13_02_8004D2F0(arg0, temp_v0->unk10, temp_v0->unk14, temp_v0->unk18);
-    if (0) { func_ovl13_02_80043040(D_ovl13_02_8004DE3C); }
+    if (0) { func_ovl13_02_80043040(D_ovl13_02_8004DE3C); } /* fake: dead code, for the order or allocation it gives (no code) */
 }
 
 static void func_ovl13_02_80043040(UnkStructA *arg0) {

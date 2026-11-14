@@ -360,7 +360,7 @@ static void func_ovl10_09_80047D70(void) {
 }
 
 void func_ovl10_09_80047D68(void) {
-    /* a fake: the reference keeps the unused words in .bss, which would
+    /* fake: the reference keeps the unused words in .bss, which would
      * otherwise be common; it builds to nothing */
     if (0) {
         D_ovl10_09_800499B0[0] = D_ovl10_09_800499DC[0] + D_ovl10_09_800499EC[0] + D_ovl10_09_80049AA4[0] + D_ovl10_09_80049C0C[0] + D_ovl10_09_80049DDC[0] + D_ovl10_09_80049EE4[0] + D_ovl10_09_8004A07C[0] + D_ovl10_09_8004A0F4[0] + D_ovl10_09_8004A13C[0] + D_ovl10_09_8004A184[0] + D_ovl10_09_8004A24C[0] + D_ovl10_09_8004A2E4[0] + D_ovl10_09_8004A414[0] + D_ovl10_09_8004A63C[0] + D_ovl10_09_8004A824[0];
@@ -842,7 +842,7 @@ void func_ovl10_09_80046428(void) {
 }
 
 void func_ovl10_09_800462C4(s32 arg0, s32 arg1) {
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f pos;
     s32 i;
     s32 n;
@@ -863,7 +863,7 @@ void func_ovl10_09_800462C4(s32 arg0, s32 arg1) {
 }
 
 f32 func_ovl10_09_8004626C(s32 arg0) {
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f a;
     Vec3f b;
 
@@ -1189,7 +1189,7 @@ void func_ovl10_09_80044FEC(s32 *arg0) {
     s32 i;
     s32 j;
     s32 flags;
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f pos;
 
     i = 0;
@@ -1264,7 +1264,7 @@ void func_ovl10_09_80044DDC(s32 arg0) {
     s32 w;
     s32 t;
     s32 h;
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
 
     if (D_ovl10_09_80049F60[arg0] != 0) {
         v = 1;
@@ -1575,7 +1575,7 @@ void func_ovl10_09_80043D88(void) {
 /* opens (arg1 1) or closes the gate */
 void func_ovl10_09_80043B78(s32 arg0, s32 arg1) {
     s32 id;
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f pos;
 
     if (arg1 != D_ovl10_09_8004A2FC[arg0]) {
@@ -1604,7 +1604,7 @@ void func_ovl10_09_80043B78(s32 arg0, s32 arg1) {
 void func_ovl10_09_80043924(s32 arg0, s32 arg1) {
     s32 j;
     s32 v;
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
     if (arg1 != (D_ovl10_09_80049AD8[arg0] & 1)) {
         if (arg1 != 0) {
@@ -1778,9 +1778,9 @@ void func_ovl10_09_80043324(void) {
 
 void func_ovl10_09_80043238(void) {
     s32 out[6];
-    s32 pad1;
+    s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
     s32 b;
-    s32 pad3;
+    s32 pad3; /* fake: unused, frame space the original has (no source for it found) */
 
     D_ovl10_09_8004A2E0 = -1.0f;
     func_ovl10_09_80048330(0x40);

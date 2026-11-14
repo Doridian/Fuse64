@@ -560,7 +560,7 @@ void func_ovl0E_12_80043A64(void) {
             D_ovl0E_12_80045F94[i].unk0->unk40->unk28 = D_ovl0E_12_80045F94[i].unk2C;
             D_ovl0E_12_80045F94[i].unk0->unk40->unk2C = D_ovl0E_12_80045F94[i].unk30;
             D_ovl0E_12_80045F94[i].unk0->unk40->unk30 = D_ovl0E_12_80045F94[i].unk34;
-            /* a fake (ends the block): without it `move a1` for the next call is
+            /* fake: (ends the block): without it `move a1` for the next call is
              * scheduled into a load delay slot above, not the call's delay slot */
             if (!D_ovl0E_12_80045F94[i].unkE && !D_ovl0E_12_80045F94[i].unkE && !D_ovl0E_12_80045F94[i].unkE) {
             }

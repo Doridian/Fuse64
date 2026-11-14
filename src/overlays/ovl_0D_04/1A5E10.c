@@ -458,7 +458,7 @@ void func_ovl0D_04_80044D98(void) {
     func_ovl0D_04_80044D70();
     D_ovl0D_04_80047078 = func_ovl0D_04_80045A58();
     func_ovl0D_04_800467A0(1);
-    /* a fake (see the top): 1600.0f in $f16 */
+    /* fake: (see the top): 1600.0f in $f16 */
 #line 1 "panels.c"
     func_ovl0D_04_80044D40();
 #line 474 "1A5E10.c"
@@ -776,7 +776,7 @@ static s32 func_ovl0D_04_80043F1C(Ent_0D04 *e) {
 void func_ovl0D_04_80044318(void) {
     s32 i;
 
-    /* a fake (as in ovl_0D_02's 80043510): keeps the first call out of the prologue */
+    /* fake: (as in ovl_0D_02's 80043510): keeps the first call out of the prologue */
     if (!D_ovl0D_04_80047044 && !D_ovl0D_04_80047044 && !D_ovl0D_04_80047044) {
     }
     func_ovl0D_04_80044310();
@@ -846,7 +846,7 @@ static void func_ovl0D_04_80043F24(Ent_0D04 *e) {
 
     p = e->obj->unk40;
     func_ovl0D_04_80045960(p->unk10, p->unk14, p->unk18, grid, 0);
-    len = x1 + z1; /* a fake (see the top) */
+    len = x1 + z1; /* fake: (see the top) */
     x0 = grid[0];
     y0 = grid[1];
     z0 = grid[2];
@@ -867,7 +867,7 @@ static void func_ovl0D_04_80043F24(Ent_0D04 *e) {
     y1 = grid[1] + 2;
     switch (func_ovl0D_04_80043F1C(e)) {
         case 0:
-            /* a fake (see the top) */
+            /* fake: (see the top) */
 #line 1 "panels.c"
             x0 = grid[0] - 1;
 #line 882 "1A5E10.c"

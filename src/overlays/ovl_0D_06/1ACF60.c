@@ -527,7 +527,7 @@ void func_ovl0D_06_8004518C(void) {
     func_ovl0D_06_80045164();
     D_ovl0D_06_80047608 = func_ovl0D_06_80045ED8();
     func_ovl0D_06_80046C20(1);
-    /* a fake (see the top): 1600.0f in $f16 */
+    /* fake: (see the top): 1600.0f in $f16 */
 #line 1 "panels.c"
     func_ovl0D_06_8004515C();
 #line 533 "1ACF60.c"
@@ -694,7 +694,7 @@ void func_ovl0D_06_80044D50(void) {
 static void func_ovl0D_06_80044D48(void) {
     Ent_0D06 *p;
 
-    /* a fake (see the top) */
+    /* fake: (see the top) */
 #line 1 "panels.c"
     func_ovl0D_06_800467A0(D_ovl0D_06_800475EC);
 #line 700 "1ACF60.c"
@@ -801,7 +801,7 @@ void func_ovl0D_06_80044B14(void) {
 void func_ovl0D_06_80044808(void) {
     s32 i;
 
-    /* a fake (as in ovl_0D_02's 80043510): keeps the first call out of the prologue */
+    /* fake: (as in ovl_0D_02's 80043510): keeps the first call out of the prologue */
     if (!D_ovl0D_06_80047080 && !D_ovl0D_06_80047080 && !D_ovl0D_06_80047080) {
     }
     func_ovl0D_06_80044800();
@@ -884,7 +884,7 @@ static void func_ovl0D_06_80044414(Ent_0D06 *e) {
 
     p = e->obj->unk40;
     func_ovl0D_06_80045DE0(p->unk10, p->unk14, p->unk18, grid, 0);
-    len = x1 + z1; /* a fake (see the top) */
+    len = x1 + z1; /* fake: (see the top) */
     x0 = grid[0];
     y0 = grid[1];
     z0 = grid[2];
@@ -905,7 +905,7 @@ static void func_ovl0D_06_80044414(Ent_0D06 *e) {
     y1 = grid[1] + 2;
     switch (func_ovl0D_06_8004440C(e)) {
         case 0:
-            /* a fake (see the top) */
+            /* fake: (see the top) */
 #line 1 "panels.c"
             x0 = grid[0] - 1;
 #line 910 "1ACF60.c"
@@ -1227,7 +1227,7 @@ static void func_ovl0D_06_8004355C(s32 id, s32 x, s32 n, s32 z) {
 }
 
 void func_ovl0D_06_80043500(f32 arg0, f32 arg1, f32 arg2) {
-    /* a fake (see the top): 800435FC's address taken */
+    /* fake: (see the top): 800435FC's address taken */
     if (0) {
         func_ovl0D_06_800468D8(func_ovl0D_06_800435FC, NULL, 0, 0, 0);
     }
@@ -1305,12 +1305,12 @@ void func_ovl0D_06_8004305C(void) {
 
     if (func_ovl0D_06_80046B60(0x409) != 0) {
         func_ovl0D_06_80043018(D_ovl0D_06_800472BC[0].obj);
-        /* a fake (see the top) */
+        /* fake: (see the top) */
 #line 1 "panels.c"
         j = D_ovl0D_06_80047604 = func_ovl0D_06_80045E58(0x15B);
 #line 1307 "1ACF60.c"
         func_ovl0D_06_80045E60(j, 0, 0, D_ovl0D_06_800475F8[0] - 1, D_ovl0D_06_800475F8[2] - 1, 0, 0, 0);
-        func_ovl0D_06_80043010(); /* a fake (see the top) */
+        func_ovl0D_06_80043010(); /* fake: (see the top) */
         i = 0;
         func_ovl0D_06_80046790(D_ovl0D_06_800470BC[i++].obj, 0x01000000);
         D_ovl0D_06_800470BC[i].unk18 = 180.0f;

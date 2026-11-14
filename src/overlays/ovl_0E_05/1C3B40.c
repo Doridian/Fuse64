@@ -405,12 +405,12 @@ void func_ovl0E_05_8004433C(void) {
 }
 
 void func_ovl0E_05_80043EDC(void) {
-    f32 pad[3];
+    f32 pad[3]; /* fake: unused, frame space the original has (no source for it found) */
     UnkStruct_ovl0E_05_80046124 *rec;
     s32 up;
     f32 a[3];
     f32 b[3];
-    f32 pad2[1];
+    f32 pad2[1]; /* fake: unused, frame space the original has (no source for it found) */
 
     rec = func_ovl0E_05_800457D0();
     rec->unk0 = func_ovl0E_05_80045680(0x1BE, 0x01000040, 0x20, 0);
@@ -585,7 +585,7 @@ void func_ovl0E_05_80043860(void) {
         D_ovl0E_05_8004615C[i].unk0->unk40->unk28 = D_ovl0E_05_8004615C[i].unk2C;
         D_ovl0E_05_8004615C[i].unk0->unk40->unk2C = D_ovl0E_05_8004615C[i].unk30;
         D_ovl0E_05_8004615C[i].unk0->unk40->unk30 = D_ovl0E_05_8004615C[i].unk34;
-        /* a fake (ends the block): without it `move a1` for the next call is
+        /* fake: (ends the block): without it `move a1` for the next call is
          * scheduled into a load delay slot above, not the call's delay slot */
         if (!D_ovl0E_05_8004615C[i].unkE && !D_ovl0E_05_8004615C[i].unkE && !D_ovl0E_05_8004615C[i].unkE) {
         }

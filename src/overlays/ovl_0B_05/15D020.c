@@ -330,7 +330,7 @@ static void func_ovl0B_05_80044D80(void) {
 static void func_ovl0B_05_80044D78(void) {
 }
 
-/* fakes: a second (dead) caller keeps each fade from being inlined into
+/* fake: a second (dead) caller keeps each fade from being inlined into
  * its only real one */
 static void func_ovl0B_05_80044D70(void) {
     func_ovl0B_05_80043904(&D_ovl0B_05_8004669C);

@@ -726,9 +726,9 @@ void func_ovl0C_02_8004797C(void) {
 }
 
 void func_ovl0C_02_800477B0(UnkStructA *arg0) {
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     s32 moved;
-    s32 pad2; /* unused: pad and pad2 place the original's locals */
+    s32 pad2; /* fake: unused; pad and pad2 place the original's locals */
     f32 x;
     f32 y;
     f32 z;
@@ -780,9 +780,9 @@ void func_ovl0C_02_800477B0(UnkStructA *arg0) {
 }
 
 void func_ovl0C_02_800475BC(UnkStructA *arg0) {
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     s32 moved;
-    s32 pad2; /* unused: pad and pad2 place the original's locals */
+    s32 pad2; /* fake: unused; pad and pad2 place the original's locals */
     f32 x;
     f32 y;
     f32 z;
@@ -876,7 +876,7 @@ void func_ovl0C_02_80047410(void) {
 }
 
 void func_ovl0C_02_80046DD0(void) {
-    s32 pad[5];
+    s32 pad[5]; /* fake: unused, frame space the original has (no source for it found) */
     f32 pos[3];
     UnkStructA *obj;
     UnkStructA *fade;
@@ -1336,7 +1336,7 @@ void func_ovl0C_02_80046038(void) {
     func_ovl0C_02_80049498(0x404);
 }
 
-void func_ovl0C_02_80046030(void) { if (0) { D_ovl0C_02_8004A0FC[0] = 0; } /* a fake: keeps the unused word in .bss */
+void func_ovl0C_02_80046030(void) { if (0) { D_ovl0C_02_8004A0FC[0] = 0; } /* fake: keeps the unused word in .bss */
 }
 
 void func_ovl0C_02_80045E8C(void) {

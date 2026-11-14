@@ -678,7 +678,7 @@ static void func_ovl0D_07_80043028(void) {
  * which puts 80043010's stub (case 11 calls it last) with 80043030's three */
 void func_ovl0D_07_80043660(s32 arg0) {
     UnkStructA *o;
-    s32 pad[3]; /* a guess: the frame has three more words here */
+    s32 pad[3]; /* fake: unused; a guess: the frame has three more words here */
     s32 i;
     s32 kind;
     UnkStructA *obj[2];

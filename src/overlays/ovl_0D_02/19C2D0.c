@@ -371,7 +371,7 @@ void func_ovl0D_02_8004596C(void) {
     s32 r;
     f32 ang;
     Vec3f tgt;
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     s32 timer;
 
     idx = (s32) func_ovl0D_02_80046E70();
@@ -808,7 +808,7 @@ void func_ovl0D_02_800444FC(void) {
     func_ovl0D_02_800463E0(func_ovl0D_02_80044CA0);
     func_ovl0D_02_800444D4();
     D_ovl0D_02_80047A54 = func_ovl0D_02_80046448();
-    /* a fake (see the top): the call's delay slot stays empty */
+    /* fake: (see the top): the call's delay slot stays empty */
 #line 1 "panels.c"
     func_ovl0D_02_80044474();
 #line 829 "19C2D0.c"
@@ -892,7 +892,7 @@ static void func_ovl0D_02_80044444(void) {
         if (func_ovl0D_02_800470D0(D_ovl0D_02_8004770C[i]) != 0) {
             e = &D_ovl0D_02_800476D4[i];
             o = e->obj;
-            /* a fake (see the top) */
+            /* fake: (see the top) */
 #line 1 "panels.c"
             o->unk40->unk48->unk4->unk4 = func_ovl0D_02_80046A38(o->unk40, 0) - 0.001f;
 #line 913 "19C2D0.c"
@@ -907,7 +907,7 @@ static void func_ovl0D_02_8004421C(Vec3f *corner, Vec3f (*rows)[4]) {
     s32 j;
     s32 k;
 
-    /* a fake (see the top): j = 0 after the loop's line */
+    /* fake: (see the top): j = 0 after the loop's line */
 #line 3000 "19C2D0.c"
     j = 0;
 #line 928 "19C2D0.c"
@@ -1229,7 +1229,7 @@ void func_ovl0D_02_8004381C(void) {
 void func_ovl0D_02_80043510(void) {
     s32 i;
 
-    /* a fake (as in ovl_0D_05's 80043210): keeps the first call out of the prologue */
+    /* fake: (as in ovl_0D_05's 80043210): keeps the first call out of the prologue */
     if (!D_ovl0D_02_80047A40 && !D_ovl0D_02_80047A40 && !D_ovl0D_02_80047A40) {
     }
     func_ovl0D_02_80043508();
@@ -1312,7 +1312,7 @@ static void func_ovl0D_02_8004311C(Ent_0D02 *e) {
 
     p = e->obj->unk40;
     func_ovl0D_02_80046350(p->unk10, p->unk14, p->unk18, grid, 0);
-    len = x1 + z1; /* a fake (see the top) */
+    len = x1 + z1; /* fake: (see the top) */
     x0 = grid[0];
     y0 = grid[1];
     z0 = grid[2];
@@ -1333,7 +1333,7 @@ static void func_ovl0D_02_8004311C(Ent_0D02 *e) {
     y1 = grid[1] + 2;
     switch (func_ovl0D_02_80043114(e)) {
         case 0:
-            /* a fake (see the top) */
+            /* fake: (see the top) */
 #line 1 "panels.c"
             x0 = grid[0] - 1;
 #line 1353 "19C2D0.c"

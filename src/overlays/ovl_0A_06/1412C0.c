@@ -803,7 +803,7 @@ void func_ovl0A_06_80045268(void) {
 }
 
 void func_ovl0A_06_80045260(void) {
-    if (0) {
+    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
         D_ovl0A_06_800474F0.x = 0;
         D_ovl0A_06_800474FC[0] = 0;
         D_ovl0A_06_80047500.x = 0;

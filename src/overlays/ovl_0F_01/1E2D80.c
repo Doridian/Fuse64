@@ -849,7 +849,7 @@ static f32 func_ovl0F_01_8004464C_inl0(UnkStruct_ovl0F_01_80048264 *p) {
 }
 
 static void func_ovl0F_01_8004464C_inl1(UnkStruct_ovl0F_01_80048264 *p) {
-    s32 padP; /* unused: pos at sp+0xA8 */
+    s32 padP; /* fake: unused; pos at sp+0xA8 */
     f32 pos[3];
 
     pos[0] = (*p->unk0)->unk40->unk10;
@@ -870,7 +870,7 @@ void func_ovl0F_01_8004464C(void) {
     s32 hit;
     s32 j; /* fake: a copy of i for the loop's body (from the permuter; it puts i in s0 and
             * the record in s2), but for the store to D_ovl0F_01_80048938.unk16 */
-    f32 padA[2]; /* unused: the frame (0x100) and tilt/slope at sp+0xC4/0xC0 */
+    f32 padA[2]; /* fake: unused; the frame (0x100) and tilt/slope at sp+0xC4/0xC0 */
     f32 z; /* fake: the mover's x, so the x compares get f0 and f2 as in the original */
 
     active = TRUE;
@@ -1176,17 +1176,17 @@ static void func_ovl0F_01_80043B04(void) {
 
 /* a task: the platforms, once the player reaches them */
 void func_ovl0F_01_80043B0C(void) {
-    s32 pad0[6];
+    s32 pad0[6]; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f a;
     Vec3f b;
-    s32 pad1[5];
+    s32 pad1[5]; /* fake: unused, frame space the original has (no source for it found) */
     f32 x;
     UnkStructA *pl;
     UnkStructA *obj;
     s32 state;
     s32 i;
     s32 j;
-    s32 pad2;
+    s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
     f32 sv[3];
 
     D_ovl0F_01_80048420 = 0;
@@ -1439,7 +1439,7 @@ void func_ovl0F_01_8004324C(void) {
 }
 
 static void func_ovl0F_01_800430F8(UnkStruct_ovl0F_01_80048508 *p) {
-    s32 pad[12];
+    s32 pad[12]; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl0F_01_80047038(p->unk0, p->unk4, p->unk8, p->unkC, p->unk10, p->unk14, p->unk18);
 }
@@ -1499,7 +1499,7 @@ static void func_ovl0F_01_80043028(void) {
 }
 
 static void func_ovl0F_01_80043020(void) {
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 }
 
 /* the cut-scene: a task counts n frames while a message shows */

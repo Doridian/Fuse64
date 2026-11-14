@@ -280,7 +280,7 @@ void func_ovl0D_05_80044290(void) {
     s32 r;
     f32 ang;
     Vec3f tgt;
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     s32 timer;
 
     idx = (s32) func_ovl0D_05_80045770();
@@ -362,7 +362,7 @@ static void func_ovl0D_05_80044280(Ent05 *e, s32 flag) {
 /* every few seconds, when the player is near, the model throws a bomb */
 static void func_ovl0D_05_80044288(Ent05 *e, s32 *timer) {
     UnkStructA_40 *p;
-    s32 pad; /* a fake (see the top) */
+    s32 pad; /* fake: (see the top) */
     s32 grid[6];
 
     if (*timer == 0) {
@@ -555,7 +555,7 @@ void func_ovl0D_05_80043790(void) {
     D_ovl0D_05_80046180 = func_ovl0D_05_80044D48();
     func_ovl0D_05_800459C0(0x407);
 #line 1 "panels.c"
-    func_ovl0D_05_80043760(); /* a fake (see the top) */
+    func_ovl0D_05_80043760(); /* fake: (see the top) */
 #line 563 "1A9E30.c"
     UNK_MACRO_ovl0D_05_800430CC();
     func_ovl0D_05_80043758();
@@ -785,7 +785,7 @@ void func_ovl0D_05_80043018(void) {
     s32 j;
 
     if (func_ovl0D_05_800459D0(0x409) != 0) {
-        /* a fake (see the top) */
+        /* fake: (see the top) */
 #line 1 "panels.c"
         j = D_ovl0D_05_8004617C = func_ovl0D_05_80044CC8(0x15A);
 #line 795 "1A9E30.c"

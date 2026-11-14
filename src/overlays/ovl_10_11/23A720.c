@@ -223,7 +223,7 @@ static void func_ovl10_11_80044E10(void) {
 }
 
 void func_ovl10_11_80044E08(void) {
-    /* a fake: the reference keeps the unused words in .bss, which would
+    /* fake: the reference keeps the unused words in .bss, which would
      * otherwise be common; it builds to nothing */
     if (0) {
         D_ovl10_11_800466A0[0] = D_ovl10_11_800466CC[0] + D_ovl10_11_800467EC[0] + D_ovl10_11_800468F4[0] +
@@ -814,8 +814,8 @@ void func_ovl10_11_80043298(void) {
 
 void func_ovl10_11_800431AC(void) {
     s32 out[6];
-    s32 pad1;
-    s32 pad2;
+    s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
     s32 a;
 
     D_ovl10_11_80046AE0 = -1.0f;
@@ -829,7 +829,7 @@ void func_ovl10_11_800431AC(void) {
     func_ovl10_11_80045398(1);
     func_ovl10_11_800430C4(D_ovl10_11_80046974, D_ovl10_11_80046AD0, D_ovl10_11_80046AD4, -1.0f);
     func_ovl10_11_80045D18(0x78);
-    /* fakes (the permuter): a, and the test of D_ovl10_11_800469FC, on a's line */
+    /* fake: (the permuter) a, and the test of D_ovl10_11_800469FC, on a's line */
     a = D_ovl10_11_800469F8; if (D_ovl10_11_800469FC && D_ovl10_11_800469FC && D_ovl10_11_800469FC) {}
     D_ovl10_11_800466C4 = a;
     D_ovl10_11_800466C8 = D_ovl10_11_800469FC;

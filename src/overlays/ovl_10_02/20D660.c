@@ -180,7 +180,7 @@ static void func_ovl10_02_80044550(void) {
 }
 
 void func_ovl10_02_80044548(void) {
-    /* a fake: the reference keeps the unused words in .bss, which would
+    /* fake: the reference keeps the unused words in .bss, which would
      * otherwise be common; it builds to nothing */
     if (0) {
         D_ovl10_02_80045D30[0] = D_ovl10_02_80045D5C[0] + D_ovl10_02_80045D74[0] + D_ovl10_02_80045E7C[0] +
@@ -458,7 +458,7 @@ void func_ovl10_02_800439B8(s32 arg0) {
 void func_ovl10_02_80043760(void) {
     s32 i;
     UnkStruct_ovl10_02_80045400 *p;
-    s32 pad; /* unused: the original's frame has the slot */
+    s32 pad; /* fake: unused; the original's frame has the slot */
     f32 x;
 
     for (i = 0; i < 8; i++) {

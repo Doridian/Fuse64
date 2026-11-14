@@ -389,7 +389,7 @@ s32 D_ovl13_01_8004BF44 = 0;
  * the first refers to the .bss words nothing else uses (but C3DC), which
  * would otherwise be common and leave .bss short */
 static void func_ovl13_01_8004A898(void) {
-    if (0) {
+    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
         D_ovl13_01_8004C20C[0] = D_ovl13_01_8004C220[0] = D_ovl13_01_8004C22C[0] = D_ovl13_01_8004C26C[0] = D_ovl13_01_8004C2D4[0] = D_ovl13_01_8004C2EC[0] = D_ovl13_01_8004C304[0] = D_ovl13_01_8004C32C[0] = D_ovl13_01_8004C344[0] = D_ovl13_01_8004C364[0] = D_ovl13_01_8004C374[0] = D_ovl13_01_8004C384[0] = D_ovl13_01_8004C394[0] = D_ovl13_01_8004C3A4[0] = 0;
     }
 }
@@ -635,7 +635,7 @@ void func_ovl13_01_800493EC(UnkStructA *arg0) {
         }
     }
     /* keeps arg0 in its home slot (the original reloads it from 0x48(sp)) */
-    if (0) {
+    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
         func_ovl13_01_8004B708((UnkStructA *) &arg0, NULL);
     }
 }
@@ -1779,7 +1779,7 @@ void func_ovl13_01_80046800(void) {
 void func_ovl13_01_800465FC(f32 *arg0, f32 *arg1) {
     f32 d;
     f32 lim;
-    f32 pad;
+    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f sp38;
     Vec3f sp2C;
 
@@ -2033,7 +2033,7 @@ void func_ovl13_01_800455D0(s32 arg0) {
     Vec3f sp6C;
     Vec3f sp60;
     Vec3f sp54;
-    f32 pad;
+    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
     f32 sp4C;
     f32 speed;
     s32 i;
@@ -2244,7 +2244,7 @@ void func_ovl13_01_800446FC(void) {
     f32 z;
     f32 step;
     Vec3f sp84;
-    f32 pad80;
+    f32 pad80; /* fake: unused, frame space the original has (no source for it found) */
     f32 sp7C;
     s32 i;
     s32 n;
@@ -2315,7 +2315,7 @@ void func_ovl13_01_800446FC(void) {
             d += 360.0f;
         }
         /* the clamp's result is never used: only the compare is left */
-        if (!a) {} /* fake */
+        if (!a) {} /* fake: dead read, for the register allocation */
         if (d >= 0.0f) {
             if (D_ovl13_01_8004C2A8 < d) {
                 d = D_ovl13_01_8004C2A8;
@@ -2811,7 +2811,7 @@ void func_ovl13_01_8004306C(s32 arg0) {
 
 void func_ovl13_01_80043010(void) {
     /* keeps D_ovl13_01_8004C3DC out of common (see its definition) */
-    if (0) {
+    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
         D_ovl13_01_8004C3DC[0] = 0;
     }
     if (!(*D_ovl13_01_8004C23C & 2)) {

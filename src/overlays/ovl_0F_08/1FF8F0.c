@@ -458,7 +458,7 @@ static void func_ovl0F_08_800433CC(void) {
 }
 
 static void func_ovl0F_08_800433C4(void) {
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
     D_ovl0F_08_80045B38 = 0;
     func_ovl0F_08_800430BC();

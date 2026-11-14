@@ -231,7 +231,7 @@ static void func_ovl0B_01_800445F4(void) {
 static void func_ovl0B_01_800445EC(void) {
 }
 
-/* a fake: a second (dead) caller keeps func_ovl0B_01_800430A4 from being
+/* fake: a second (dead) caller keeps func_ovl0B_01_800430A4 from being
  * inlined into its only real one */
 static void func_ovl0B_01_800445DC(void) {
     func_ovl0B_01_800430A4(&D_ovl0B_01_80045E34);
@@ -571,7 +571,7 @@ static void func_ovl0B_01_8004376C(s32 *ids, s32 mode) {
 }
 
 void func_ovl0B_01_80043660(void) {
-    s32 pad[3]; /* unused: the original's frame has the slots */
+    s32 pad[3]; /* fake: unused; the original's frame has the slots */
     UnkStruct_ovl0B_01_80044C58 *state;
     s32 presses;
     s32 idle;

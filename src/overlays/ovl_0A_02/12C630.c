@@ -1102,7 +1102,7 @@ void func_ovl0A_02_80043E68(void) {
     f32 dz;
     f32 t;
     s32 i;
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
     obj = func_ovl0A_02_80047A20(0x1CB, 0x01480000, 0xD0, NULL);
     obj->unk40->unk30 = 0.5f;
@@ -1274,7 +1274,7 @@ void func_ovl0A_02_80043070(void) {
     func_ovl0A_02_80047A30(obj);
     func_ovl0A_02_80047720(obj->unk40, 0x16, 0);
     func_ovl0A_02_80043068(obj);
-    if (!D_ovl0A_02_800483E4 && !D_ovl0A_02_800483E4 && !D_ovl0A_02_800483E4) { /* fake */
+    if (!D_ovl0A_02_800483E4 && !D_ovl0A_02_800483E4 && !D_ovl0A_02_800483E4) { /* fake: a dead test that ends the block (the calls around it are scheduled otherwise) */
     }
     func_ovl0A_02_80047AD0((Obj02 *) D_ovl0A_02_800483E4, obj);
     func_ovl0A_02_80047AC8(obj, pos);

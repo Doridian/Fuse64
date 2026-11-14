@@ -563,12 +563,12 @@ void func_ovl0E_03_800443DC(UnkStruct_ovl0E_03_80046C50 *arg0, s16 arg1, s16 arg
 }
 
 void func_ovl0E_03_80043F7C(void) {
-    f32 pad[3];
+    f32 pad[3]; /* fake: unused, frame space the original has (no source for it found) */
     UnkStruct_ovl0E_03_80046910 *rec;
     s32 up;
     f32 a[3];
     f32 b[3];
-    f32 pad2[1];
+    f32 pad2[1]; /* fake: unused, frame space the original has (no source for it found) */
 
     rec = func_ovl0E_03_80045F90();
     rec->unk0 = func_ovl0E_03_80045E40(0x1BE, 0x01000040, 0x20, 0);

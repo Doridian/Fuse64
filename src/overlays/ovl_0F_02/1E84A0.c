@@ -585,7 +585,7 @@ void func_ovl0F_02_80046D20(s32 arg0, UnkStructA *arg1) {
 
 /* case 2's: the door, closed or already open */
 static void func_ovl0F_02_80046160(UnkStruct_ovl0F_02_800489F4 *door) {
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
     if (func_ovl0F_02_800480C0(door->unk0[0].unk28) == 0) {
         func_ovl0F_02_80047E38(func_ovl0F_02_80045024, door, 0, 0, 0x110);
     } else {
@@ -966,7 +966,7 @@ static f32 func_ovl0F_02_80043FEC_inl0(UnkStruct_ovl0F_02_80048734 *p) {
 }
 
 static void func_ovl0F_02_80043FEC_inl1(UnkStruct_ovl0F_02_80048734 *p) {
-    s32 padP; /* unused: pos at sp+0xA8 */
+    s32 padP; /* fake: unused; pos at sp+0xA8 */
     f32 pos[3];
 
     pos[0] = (*p->unk0)->unk40->unk10;
@@ -1068,7 +1068,7 @@ void func_ovl0F_02_80043FEC(void) {
     s32 hit;
     s32 j; /* fake: a copy of i for the loop's body (from the permuter; it puts i in s0 and
             * the record in s2), but for the store to D_ovl0F_02_80048F20.unk16 */
-    f32 padA[2]; /* unused: the frame (0x100) and tilt/slope at sp+0xC4/0xC0 */
+    f32 padA[2]; /* fake: unused; the frame (0x100) and tilt/slope at sp+0xC4/0xC0 */
     f32 z; /* fake: the mover's x, so the x compares get f0 and f2 as in the original */
 
     active = TRUE;
@@ -1659,7 +1659,7 @@ static void func_ovl0F_02_80043020(s32 count, UnkStruct_ovl0F_02_80048734 *p) {
 #line 1654 "1E84A0.c"
 
 static void func_ovl0F_02_800462F8_inl1(void) {
-    s32 pad[8];
+    s32 pad[8]; /* fake: unused, frame space the original has (no source for it found) */
 
     if (func_ovl0F_02_800480C0(0x406) == 0) {
         func_ovl0F_02_80047DC8(0.0f);
@@ -1676,7 +1676,7 @@ static void func_ovl0F_02_800462F8_inl1(void) {
 }
 
 static void func_ovl0F_02_800462F8_inl2(void) {
-    s32 pad[3];
+    s32 pad[3]; /* fake: unused, frame space the original has (no source for it found) */
     if (func_ovl0F_02_800480C0(0x406) != 0) {
         func_ovl0F_02_80047DC8(40.0f);
         func_ovl0F_02_80047DD0(30);

@@ -242,7 +242,7 @@ static void func_ovl10_05_80045670(void) {
 }
 
 void func_ovl10_05_80045668(void) {
-    /* a fake: the reference keeps the unused words in .bss, which would
+    /* fake: the reference keeps the unused words in .bss, which would
      * otherwise be common; it builds to nothing */
     if (0) {
         D_ovl10_05_80046EE0[0] = D_ovl10_05_80046F0C[0] + D_ovl10_05_80046F24[0] + D_ovl10_05_8004702C[0] +
@@ -506,7 +506,7 @@ void func_ovl10_05_80044B88(s32 arg0) {
 void func_ovl10_05_80044930(void) {
     s32 i;
     UnkStruct_ovl10_05_80046520 *p;
-    s32 pad; /* unused: the original's frame has the slot */
+    s32 pad; /* fake: unused; the original's frame has the slot */
     f32 x;
 
     for (i = 0; i < 8; i++) {
@@ -676,7 +676,7 @@ void func_ovl10_05_80043E00(void) {
     Vec3f spC4;
     Vec3f angle;
     f32 a;
-    s32 pad; /* unused: the original's frame has the slot */
+    s32 pad; /* fake: unused; the original's frame has the slot */
 
     func_ovl10_05_800464D8(func_ovl10_05_80045C48(0), &player);
     if (player.y == 700.0f || D_ovl10_05_80046F20 != 0) {

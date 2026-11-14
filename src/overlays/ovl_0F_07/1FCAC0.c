@@ -490,7 +490,7 @@ static void func_ovl0F_07_80043394(void) {
 }
 
 static void func_ovl0F_07_8004338C(void) {
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl0F_07_80044F10(D_ovl0F_07_80045E30[0]->unk40, 0x61);
     func_ovl0F_07_80044F10(D_ovl0F_07_80045E30[3]->unk40, 0x61);
@@ -527,7 +527,7 @@ static void func_ovl0F_07_800430A4(void) {
 }
 
 static void func_ovl0F_07_80043094(void) {
-    s32 pad2[2];
+    s32 pad2[2]; /* fake: unused, frame space the original has (no source for it found) */
 
     switch (func_ovl0F_07_80044918()) {
         case 0x12:

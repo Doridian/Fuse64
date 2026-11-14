@@ -1614,7 +1614,7 @@ static void func_ovl12_05_80044534(void) {
 static f32 func_ovl12_05_800444D4(UnkStructA_40 *from, UnkStructA_40 *to) {
     Vec3f a;
     Vec3f b;
-    f32 pad[2]; /* unused: the original's frame is 8 bytes bigger */
+    f32 pad[2]; /* fake: unused; the original's frame is 8 bytes bigger */
     f32 angle;
 
     a.x = from->unk10;
@@ -1962,20 +1962,20 @@ static void func_ovl12_05_80043018(void) {
 }
 
 void func_ovl12_05_80045D3C(s32 arg0) {
-    s32 pad0;
-    s32 pad1;
-    s32 pad2;
+    s32 pad0; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
     UnkStruct_ovl12_05_8004A840 *spC0;
     UnkStruct_ovl12_05_800497F8 *spBC;
     Vec3f spB0;
-    s32 pad3;
-    s32 pad4;
-    s32 pad5;
+    s32 pad3; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad4; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad5; /* fake: unused, frame space the original has (no source for it found) */
     UnkStruct_ovl12_05_8004A840 *spA0;
     UnkStruct_ovl12_05_800497F8 *sp9C;
     Vec3f sp90;
-    s32 pad6;
-    s32 pad7;
+    s32 pad6; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad7; /* fake: unused, frame space the original has (no source for it found) */
     UnkStructA_40 *temp_v1;
     UnkStructA_40 *temp_v1_3;
 

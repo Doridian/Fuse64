@@ -350,7 +350,7 @@ void func_ovl15_02_80049784(UnkStructA *obj);
 void func_ovl15_02_8004B14C(void);
 static void func_ovl15_02_80049A04(void) {
     static s32 D_ovl15_02_80051530;
-    f32 pad;
+    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f v;
     Vec3f d;
     s32 ok;
@@ -591,7 +591,7 @@ u32 D_ovl15_02_8005102C[5] = { 0x00020001, 0x42AE0000, 0x3DCCCCCD, 0x3D4CCCCD, 0
 
 /* unused: the stubs IDO -O3 leaves after the tail */
 static void func_ovl15_02_8004F820(void) {
-    if (0) { D_ovl15_02_80051324[0] = 0; D_ovl15_02_80051334[0] = 0; D_ovl15_02_80051348[0] = 0; D_ovl15_02_80051354[0] = 0; D_ovl15_02_80051364[0] = 0; D_ovl15_02_800513BC[0] = 0; D_ovl15_02_800513C0[0] = 0; D_ovl15_02_800513C4[0] = 0; D_ovl15_02_800513D4[0] = 0; D_ovl15_02_800513E4[0] = 0; D_ovl15_02_800513EC[0] = 0; D_ovl15_02_800513F0[0] = 0; D_ovl15_02_80051494[0] = 0; D_ovl15_02_800514A4[0] = 0; D_ovl15_02_800514B4[0] = 0; D_ovl15_02_800514EC[0] = 0; D_ovl15_02_800514FC[0] = 0; D_ovl15_02_8005150C[0] = 0; D_ovl15_02_80051534[0] = 0; D_ovl15_02_80051548[0] = 0; }
+    if (0) { D_ovl15_02_80051324[0] = 0; D_ovl15_02_80051334[0] = 0; D_ovl15_02_80051348[0] = 0; D_ovl15_02_80051354[0] = 0; D_ovl15_02_80051364[0] = 0; D_ovl15_02_800513BC[0] = 0; D_ovl15_02_800513C0[0] = 0; D_ovl15_02_800513C4[0] = 0; D_ovl15_02_800513D4[0] = 0; D_ovl15_02_800513E4[0] = 0; D_ovl15_02_800513EC[0] = 0; D_ovl15_02_800513F0[0] = 0; D_ovl15_02_80051494[0] = 0; D_ovl15_02_800514A4[0] = 0; D_ovl15_02_800514B4[0] = 0; D_ovl15_02_800514EC[0] = 0; D_ovl15_02_800514FC[0] = 0; D_ovl15_02_8005150C[0] = 0; D_ovl15_02_80051534[0] = 0; D_ovl15_02_80051548[0] = 0; } /* fake: dead code, for the order or allocation it gives (no code) */
 }
 
 static void func_ovl15_02_8004F828(void) {
@@ -1357,14 +1357,14 @@ void func_ovl15_02_8004D818() {
 }
 
 void func_ovl15_02_8004D660() {
-    f32 pad0[3];
+    f32 pad0[3]; /* fake: unused, frame space the original has (no source for it found) */
     f32 v[3];
-    s32 pad1[2];
+    s32 pad1[2]; /* fake: unused, frame space the original has (no source for it found) */
     s32 a;
     s32 b;
     s32 c;
     f32 s;
-    s32 pad2[4];
+    s32 pad2[4]; /* fake: unused, frame space the original has (no source for it found) */
     f32 p[3];
 
     a = 0;
@@ -1399,7 +1399,7 @@ void func_ovl15_02_8004D660() {
 void func_ovl15_02_8004D3BC(s32 *arg0, s32 *arg1, s32 *arg2) {
     s32 n;
     Vec3f pos;
-    s32 pad[4];
+    s32 pad[4]; /* fake: unused, frame space the original has (no source for it found) */
 
     if (*arg0 == 0 && D_ovl15_02_80051408 != 0) {
         n = func_ovl15_02_80047AF4(D_ovl15_02_8005140C);
@@ -1843,7 +1843,7 @@ void func_ovl15_02_8004BE64() {
 }
 
 void func_ovl15_02_8004BC88() {
-    f32 pad;
+    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f pos;
     UnkStructA *obj;
     f32 sx;
@@ -2487,7 +2487,7 @@ void func_ovl15_02_80049C90() {
     f32 a;
     f32 i;
 
-    if (0) {
+    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
         func_ovl15_02_80049A04();
     }
     self = func_ovl15_02_80050730();
@@ -2533,7 +2533,7 @@ void func_ovl15_02_80049784(UnkStructA *obj) {
         obj->unk40->unk20 = d.x;
         func_ovl15_02_80050750();
     }
-    if (0) {
+    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
         func_ovl15_02_80050708(func_ovl15_02_80049A04, NULL, 0, 0, 0);
     }
 }
@@ -2599,7 +2599,7 @@ void func_ovl15_02_8004928C() {
     UnkStructA *self;
     s32 i;
     UnkStructA *objs[10];
-    s32 pad[4];
+    s32 pad[4]; /* fake: unused, frame space the original has (no source for it found) */
     s32 tasks[10];
     s32 snd;
 
@@ -2842,7 +2842,7 @@ void func_ovl15_02_80048630() {
 }
 
 void func_ovl15_02_800481A0() {
-    f32 pad[2];
+    f32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
     s32 *flag;
     s32 i;
     s32 j;
@@ -3346,9 +3346,9 @@ void func_ovl15_02_80046D3C(void) {
 }
 
 void func_ovl15_02_80046AEC(UnkStructA *arg0, f32 *arg1) {
-    f32 pad0[2];
+    f32 pad0[2]; /* fake: unused, frame space the original has (no source for it found) */
     f32 dz;
-    f32 pad;
+    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
     f32 dx;
     Vec3f ang;
     f32 kx;
@@ -3575,7 +3575,7 @@ void func_ovl15_02_80046250(f32 *pos, f32 *target, f32 dist) {
     s32 i;
     s32 again;
 
-    if (0) {
+    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
         func_ovl15_02_80046194();
     }
     pos[1] = D_ovl15_02_800513D8.y;
@@ -3736,7 +3736,7 @@ void func_ovl15_02_80045330(void) {
     UnkStructA *obj;
     UnkStructA *obj2;
     f32 step;
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
     f32 pos[3];
     f32 ang[3];
     f32 r;
@@ -3840,7 +3840,7 @@ void func_ovl15_02_80044FDC(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     f32 ang[3];
     f32 dx;
     f32 dy;
-    f32 pad[1];
+    f32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl15_02_80050548((Vec3f *) arg0, (Vec3f *) arg3, (Vec3f *) ang);
     ang[1] = ((ang[1] - 90.0f) >= 360.0f) ? (ang[1] - 90.0f) - 360.0f : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + 360.0f : (ang[1] - 90.0f);
@@ -3884,7 +3884,7 @@ void func_ovl15_02_80044C40() {
     s32 kind;
     f32 rot[3];
     Vec3f vel;
-    s32 pad[10];
+    s32 pad[10]; /* fake: unused, frame space the original has (no source for it found) */
 
     obj = func_ovl15_02_80050730();
     kind = func_ovl15_02_800508C8(9);
@@ -4047,7 +4047,7 @@ s16 arg2;
 
 void func_ovl15_02_800443AC(void) {
     s32 n;
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
     s32 alpha;
     s32 i;
     s32 j;
@@ -4215,7 +4215,7 @@ void func_ovl15_02_80043E38() {
 
 void func_ovl15_02_80043688(void) {
     UnkStructA *obj;
-    s32 pad[5];
+    s32 pad[5]; /* fake: unused, frame space the original has (no source for it found) */
     f32 u;
     s32 i;
     f32 t;

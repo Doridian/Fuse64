@@ -377,7 +377,7 @@ static void func_ovl0C_07_80045EAC(void) {
 }
 
 void func_ovl0C_07_80045EA4(void) {
-    /* a fake: the reference keeps the unused words in .bss, which would
+    /* fake: the reference keeps the unused words in .bss, which would
      * otherwise be common; it builds to nothing */
     if (0) {
         D_ovl0C_07_80047970[0] = D_ovl0C_07_8004797C[0] + D_ovl0C_07_8004798C[0];

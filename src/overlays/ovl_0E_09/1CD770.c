@@ -278,7 +278,7 @@ void func_ovl0E_09_800444F0(UnkStructA *arg0) {
 
 void func_ovl0E_09_80043F8C(void) {
     s16 moving;
-    s32 pad; /* unused: the original's frame has one more slot */
+    s32 pad; /* fake: unused; the original's frame has one more slot */
     UnkStruct_ovl0E_09_80045DCC *rec;
     UnkStructA *obj;
     s16 doneX;

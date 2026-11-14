@@ -1376,7 +1376,7 @@ void func_ovl0A_01_800442B4(void) {
 #line 1347
     func_ovl0A_01_80047530(0x1A, 0x12, 4);
     func_ovl0A_01_80047F98();
-    if (0) { s32 *p = &v; }
+    if (0) { s32 *p = &v; } /* fake: dead code, for the order or allocation it gives (no code) */
 }
 
 static void func_ovl0A_01_8004428C(void) {
@@ -1599,7 +1599,7 @@ void func_ovl0A_01_8004364C(void) {
                 e->obj->unk40->unk18 = e->unk14;
                 e->obj->unk40->unk20 = e->unk20;
             }
-                if (0) {
+                if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
                     func_ovl0A_01_80043380(tbl, n);
                 }
             }

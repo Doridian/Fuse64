@@ -241,7 +241,7 @@ Vtx_ovl0B_07 D_ovl0B_07_80046CF0[4] = {
  * `if (0)` in this one refers to the .bss nothing else uses, which would
  * otherwise be common */
 static void func_ovl0B_07_80045504(void) {
-    if (0) {
+    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
         D_ovl0B_07_80046DF0[0] = D_ovl0B_07_80046E1C[0] = D_ovl0B_07_80046F38[0] = 0;
     }
 }

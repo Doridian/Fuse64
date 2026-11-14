@@ -304,7 +304,7 @@ void func_ovl10_13_80049230(void) {
 }
 
 void func_ovl10_13_80049228(void) {
-    if (0) { D_ovl10_13_8004AB50[0] = D_ovl10_13_8004AB7C = D_ovl10_13_8004AB94 = 0; } /* the unused .bss keeps its place */ }
+    if (0) { D_ovl10_13_8004AB50[0] = D_ovl10_13_8004AB7C = D_ovl10_13_8004AB94 = 0; } /* the unused .bss keeps its place */ } /* fake: dead code, for the order or allocation it gives (no code) */
 
 void func_ovl10_13_80049210(void) {
     D_ovl10_13_8004AB74 = -1;
@@ -1465,8 +1465,8 @@ static void func_ovl10_13_80044E48(void) {
     s32 i;
     f32 a;
     f32 angle;
-    s32 pad1;
-    s32 pad2;
+    s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl10_13_800497C8(1);
     if (D_ovl10_13_8004ADA8 != 0x1E) {

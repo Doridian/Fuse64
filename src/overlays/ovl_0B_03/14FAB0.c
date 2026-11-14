@@ -431,7 +431,7 @@ u8 D_ovl0B_03_8004A418[8];
  * refers to the .bss words nothing else uses, which would otherwise be
  * common and leave .bss short. */
 static void func_ovl0B_03_80047464(void) {
-    if (0) {
+    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
         D_ovl0B_03_800492E0[0] = D_ovl0B_03_8004930C[0] = D_ovl0B_03_8004A33C[0] = D_ovl0B_03_8004A3FC[0] = D_ovl0B_03_8004A418[0] = 0;
     }
 }

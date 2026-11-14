@@ -333,7 +333,7 @@ static void func_ovl0C_09_8004614C(void) {
 }
 
 void func_ovl0C_09_80046144(void) {
-    /* a fake: the reference keeps the unused words in .bss, which would
+    /* fake: the reference keeps the unused words in .bss, which would
      * otherwise be common; it builds to nothing */
     if (0) {
         D_ovl0C_09_80047B0C[0] = D_ovl0C_09_80047B24[0];
@@ -714,7 +714,7 @@ void func_ovl0C_09_80044DC4(void) {
 }
 
 void func_ovl0C_09_80044BA4(void) {
-    s32 pad[2]; /* unused: the original's frame is 8 bytes bigger */
+    s32 pad[2]; /* fake: unused; the original's frame is 8 bytes bigger */
     UnkStructA *obj;
     UnkStructA_40 *p;
     s32 hit;

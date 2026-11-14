@@ -1200,7 +1200,7 @@ void func_ovl0B_06_8004747C(void) {
     s32 state;
     s32 r;
     s32 slot;
-    s32 pad[14];
+    s32 pad[14]; /* fake: unused, frame space the original has (no source for it found) */
 
     loop = 1;
     sel = 0;
@@ -1357,9 +1357,9 @@ static s32 ERASE_ASK(s32 slot, Col_ovl0B_06 *off, Col_ovl0B_06 *on) {
     s32 i;
     /* fake: size-tuned: jp frame 112, us ERASE 200 as the originals */
 #if VERSION_JP
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 #else
-    s32 pad[1];
+    s32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
 #endif
 
     keep = 1;
@@ -1578,7 +1578,7 @@ static s32 LEVEL_FILE(s32 slot) {
     s32 ret;
     s32 result;
 #if !VERSION_JP
-    s32 pad[9];
+    s32 pad[9]; /* fake: unused, frame space the original has (no source for it found) */
 #endif
 
     ret = 10;
@@ -1800,7 +1800,7 @@ static s32 COPY_ASK(void) {
     do {
         sub = func_ovl0B_06_80045F20(&D_ovl0B_06_8004A244, &D_ovl0B_06_8004A264, 3, sub & 0xFU);
 #if !VERSION_JP
-        if (0) { D_ovl0B_06_8004A5B4 = (s32) &sub; }
+        if (0) { D_ovl0B_06_8004A5B4 = (s32) &sub; } /* fake: dead code, for the order or allocation it gives (no code) */
 #endif
         if ((sub & 0xF0) == 0x30) {
             loop = 0;
@@ -2011,7 +2011,7 @@ static void func_ovl0B_06_80045D20(s32 a) {
     s32 state;
     pj = 0;
     x = a;
-    if (0) { func_ovl0B_06_80048E28(0, &x); }
+    if (0) { func_ovl0B_06_80048E28(0, &x); } /* fake: dead code, for the order or allocation it gives (no code) */
     state = func_ovl0B_06_80045100(func_ovl0B_06_80048E28(0, &slot));
     if (state == 7 || state == 8 || state == 9) {
         func_ovl0B_06_80044BE4(2);
@@ -2928,7 +2928,7 @@ static void CLOSE_B(s32 n, Box_ovl0B_06 *box) {
         func_ovl0B_06_80048CF0();
     }
 #if VERSION_JP
-    if (0) { D_ovl0B_06_8004A5B8 = (s32) k; }
+    if (0) { D_ovl0B_06_8004A5B8 = (s32) k; } /* fake: dead code, for the order or allocation it gives (no code) */
 #endif
 }
 
@@ -2987,7 +2987,7 @@ static void func_ovl0B_06_80043480(s32 arg0) {
     u8 buf[4];
     s32 i;
     s32 j;
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl0B_06_80043460();
     func_ovl0B_06_80043468();

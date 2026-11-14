@@ -201,7 +201,7 @@ static void func_ovl0E_15_8004516C(void) {
 }
 
 void func_ovl0E_15_80045164(void) {
-    /* a fake: the reference keeps the unused words in .bss, which would
+    /* fake: the reference keeps the unused words in .bss, which would
      * otherwise be common; it builds to nothing */
     if (0) {
         D_ovl0E_15_80046920[0] = D_ovl0E_15_8004692C[0];
@@ -474,7 +474,7 @@ void func_ovl0E_15_800444C4(void) {
 /* a task: an object at the one it is given, scaled up and turned for 500
  * frames, its unk36 lowered after 300 */
 void func_ovl0E_15_80044290(void) {
-    s32 pad; /* unused: the original's frame is 8 bytes bigger (one slot, aligned) */
+    s32 pad; /* fake: unused; the original's frame is 8 bytes bigger (one slot, aligned) */
     UnkStructA *src;
     UnkStructA *obj;
     UnkStructA_40 *p;
@@ -789,7 +789,7 @@ void func_ovl0E_15_80043010(void) {
 /* Case 11: a static inlined into the handler (as in ovl_12_06); its stub
  * is the one at 80043068. */
 static void func_ovl0E_15_80043068(void) {
-    s32 pad; /* unused: places the block (the handler's frame 0xA0) */
+    s32 pad; /* fake: unused; places the block (the handler's frame 0xA0) */
     UnkStructA *obj0;
     UnkStructA *obj1;
     s32 i;

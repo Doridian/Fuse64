@@ -435,7 +435,7 @@ void func_ovl0D_03_80045EF0(void) {
     s32 r;
     f32 ang;
     Vec3f tgt;
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     s32 timer;
 
     idx = (s32) func_ovl0D_03_80047560();
@@ -998,7 +998,7 @@ static void func_ovl0D_03_8004449C(Vec3f *corner, Vec3f (*rows)[4]) {
     s32 j;
     s32 k;
 
-    /* a fake (as in ovl_0D_02): j = 0 after the loop's line */
+    /* fake: (as in ovl_0D_02): j = 0 after the loop's line */
 #line 3000 "1A0CD0.c"
     j = 0;
 #line 1008 "1A0CD0.c"
@@ -1253,7 +1253,7 @@ static void func_ovl0D_03_80043C1C(void) {
 static void func_ovl0D_03_80043C14(void) {
     Ent_0D03 *p;
 
-    /* a fake (see the top) */
+    /* fake: (see the top) */
 #line 1 "panels.c"
     func_ovl0D_03_80047400(D_ovl0D_03_8004817C);
 #line 1263 "1A0CD0.c"
@@ -1310,7 +1310,7 @@ void func_ovl0D_03_80043770(void) {
 static void func_ovl0D_03_80043768(void) {
     s32 i;
 
-    /* a fake (as in ovl_0D_05's 80043210): keeps the first call out of the prologue */
+    /* fake: (as in ovl_0D_05's 80043210): keeps the first call out of the prologue */
     if (!D_ovl0D_03_80048180 && !D_ovl0D_03_80048180 && !D_ovl0D_03_80048180) {
     }
     UNK_MACRO_ovl0D_03_80043770();
@@ -1389,7 +1389,7 @@ static void func_ovl0D_03_8004337C(Ent_0D03 *e) {
 
     p = e->obj->unk40;
     func_ovl0D_03_80046A40(p->unk10, p->unk14, p->unk18, grid, 0);
-    len = x1 + z1; /* a fake (see the top) */
+    len = x1 + z1; /* fake: (see the top) */
     x0 = grid[0];
     y0 = grid[1];
     z0 = grid[2];
@@ -1410,7 +1410,7 @@ static void func_ovl0D_03_8004337C(Ent_0D03 *e) {
     y1 = grid[1] + 2;
     switch (func_ovl0D_03_80043374(e)) {
         case 0:
-            /* a fake (see the top) */
+            /* fake: (see the top) */
 #line 1 "panels.c"
             x0 = grid[0] - 1;
 #line 1420 "1A0CD0.c"
@@ -1493,7 +1493,7 @@ static void func_ovl0D_03_80043300(s32 axis, s32 *v, s32 *size) {
 /* the models' state from the flags already set */
 void func_ovl0D_03_8004305C(void) {
     s32 i;
-    s32 pad[5]; /* a fake: the frame */
+    s32 pad[5]; /* fake: the frame */
 
     if (func_ovl0D_03_800477C0(0x407) != 0) {
         func_ovl0D_03_80043054();

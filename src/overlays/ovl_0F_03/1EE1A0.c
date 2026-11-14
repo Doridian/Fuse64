@@ -911,7 +911,7 @@ static void func_ovl0F_03_80043030(UnkStruct_ovl0F_03_80046E88 *arg0) {
 static void func_ovl0F_03_80043434(void) {
     UnkStructA *obj;
 
-    if (0) {
+    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
         func_ovl0F_03_80046648(func_ovl0F_03_80044C20, NULL, 0, 0, 0);
     }
     D_ovl0F_03_80046DF0 = func_ovl0F_03_800461C8(0x258);
@@ -922,7 +922,7 @@ static void func_ovl0F_03_80043434(void) {
 
 /* case 2's: the door, closed or already open */
 static void func_ovl0F_03_80044C7C(UnkStruct_ovl0F_03_80046F0C *door) {
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
     if (func_ovl0F_03_800468D0(door->unk0[0].unk28) == 0) {
         func_ovl0F_03_80046648(func_ovl0F_03_80043F38, door, 0, 0, 0x110);
     } else {
@@ -967,7 +967,7 @@ static void func_ovl0F_03_80043274(s32 *p) {
 }
 
 static void func_ovl0F_03_8004327C(void) {
-    s32 pad[10];
+    s32 pad[10]; /* fake: unused, frame space the original has (no source for it found) */
     if (func_ovl0F_03_800468D0(0x404) != 0 && func_ovl0F_03_80045CC0(0x16, 7, 0x16, 7) != 0) {
         func_ovl0F_03_80045D10(1);
         func_ovl0F_03_80045C70(0);

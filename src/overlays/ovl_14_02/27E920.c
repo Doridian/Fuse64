@@ -497,7 +497,7 @@ void func_ovl14_02_8004E80C(void);
 /* .data */
 /* unused: the stubs IDO -O3 leaves after the tail */
 static void func_ovl14_02_8004E824(void) {
-    if (0) { D_ovl14_02_8005027C[0] = 0; D_ovl14_02_80050290[0] = 0; D_ovl14_02_8005029C[0] = 0; D_ovl14_02_800502E4[0] = 0; D_ovl14_02_800503DC[0] = 0; D_ovl14_02_800503EC[0] = 0; D_ovl14_02_800503F8[0] = 0; D_ovl14_02_80050414[0] = 0; D_ovl14_02_80050418[0] = 0; D_ovl14_02_8005041C[0] = 0; D_ovl14_02_800502D8 = 0; D_ovl14_02_800502DC = 0; }
+    if (0) { D_ovl14_02_8005027C[0] = 0; D_ovl14_02_80050290[0] = 0; D_ovl14_02_8005029C[0] = 0; D_ovl14_02_800502E4[0] = 0; D_ovl14_02_800503DC[0] = 0; D_ovl14_02_800503EC[0] = 0; D_ovl14_02_800503F8[0] = 0; D_ovl14_02_80050414[0] = 0; D_ovl14_02_80050418[0] = 0; D_ovl14_02_8005041C[0] = 0; D_ovl14_02_800502D8 = 0; D_ovl14_02_800502DC = 0; } /* fake: dead code, for the order or allocation it gives (no code) */
 }
 
 static void func_ovl14_02_8004E82C(void) {
@@ -834,7 +834,7 @@ static s32 func_ovl14_02_8004D578(UnkStructA *obj) {
     s32 saved;
     UnkStructA *other;
     s32 id;
-    s32 pad[6];
+    s32 pad[6]; /* fake: unused, frame space the original has (no source for it found) */
 
     hit = 0;
     other = NULL;
@@ -869,10 +869,10 @@ static void func_ovl14_02_8004D638(s16 x, s16 z, Vec3f *vel) {
 
 void func_ovl14_02_8004D640(UnkStructA *obj) {
     UnkStructA *spark;
-    f32 pad0;
+    f32 pad0; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f pos2;
     Vec3f dir;
-    f32 pad1[4];
+    f32 pad1[4]; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f vel;
     f32 dx;
     f32 dz;
@@ -1562,7 +1562,7 @@ void func_ovl14_02_8004B7E0(void) {
     static s32 D_ovl14_02_8004FF84 = 0;
     static s32 D_ovl14_02_8004FF88 = 0;
     s32 n;
-    s32 pad[7];
+    s32 pad[7]; /* fake: unused, frame space the original has (no source for it found) */
 
     if (D_ovl14_02_80050378 != 0) {
         if (D_ovl14_02_8004FF7C == 0) {
@@ -1877,7 +1877,7 @@ void func_ovl14_02_8004AD5C(f32 arg0) {
     f32 n;
     f32 hi;
     f32 t;
-    f32 pad[6];
+    f32 pad[6]; /* fake: unused, frame space the original has (no source for it found) */
 
     t = D_ovl14_02_800503C0->unk40->unk48->unk4->unk4;
     if (t < 35.0f) {
@@ -2791,7 +2791,7 @@ void func_ovl14_02_80048830(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     f32 ang[3];
     f32 dx;
     f32 dy;
-    f32 pad[1];
+    f32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl14_02_8004F598((Vec3f *) arg0, (Vec3f *) arg3, (Vec3f *) ang);
     ang[1] = ((ang[1] - 90.0f) >= 360.0f) ? (ang[1] - 90.0f) - 360.0f : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + 360.0f : (ang[1] - 90.0f);
@@ -3138,7 +3138,7 @@ void func_ovl14_02_80047704(void) {
 void func_ovl14_02_800471EC(void) {
     f32 pos[3];
     Vec3f rot;
-    f32 pad[10];
+    f32 pad[10]; /* fake: unused, frame space the original has (no source for it found) */
     f32 a;
     f32 b;
     f32 spd;
@@ -3658,7 +3658,7 @@ void func_ovl14_02_80045384(void) {
     f32 b;
     f32 t;
     s32 i;
-    f32 pad[3];
+    f32 pad[3]; /* fake: unused, frame space the original has (no source for it found) */
 
     if (D_ovl14_02_80050408 < D_ovl14_02_8005040C + 1) {
         func_ovl14_02_8004F768();
@@ -3801,9 +3801,9 @@ void func_ovl14_02_80044C60(void) {
     s32 j;
     f32 t;
     f32 scale;
-    f32 pad4;
+    f32 pad4; /* fake: unused, frame space the original has (no source for it found) */
     f32 sign;
-    f32 pad5[2];
+    f32 pad5[2]; /* fake: unused, frame space the original has (no source for it found) */
     f32 b;
     f32 fn;
 
@@ -4372,7 +4372,7 @@ void func_ovl14_02_800436F0(void) {
 void func_ovl14_02_8004338C(void) {
     s32 pa[1];
     s32 n;
-    s32 pad[4];
+    s32 pad[4]; /* fake: unused, frame space the original has (no source for it found) */
     UnkStructA *obj;
     f32 done;
     s32 a;
@@ -4456,7 +4456,7 @@ s32 func_ovl14_02_8004327C(void) {
 
 s32 func_ovl14_02_8004314C(void) {
     Vec3f sp2C;
-    f32 pad[2];
+    f32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
     f32 var_fv0;
     f32 var_fv1;
 

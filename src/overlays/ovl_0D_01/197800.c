@@ -568,7 +568,7 @@ void func_ovl0D_01_800455E0(void) {
     D_ovl0D_01_80047B30.x = 32768.0f;
     D_ovl0D_01_80047B30.y = 32768.0f;
     D_ovl0D_01_80047B30.z = 32768.0f;
-    /* a fake (see the top): its a0 after the stores */
+    /* fake: (see the top): its a0 after the stores */
 #line 1 "panels.c"
     func_ovl0D_01_80046278(D_ovl0D_01_80047B18);
 #line 581 "197800.c"
@@ -580,7 +580,7 @@ void func_ovl0D_01_800455E0(void) {
     func_ovl0D_01_80046350(func_ovl0D_01_80045CFC);
     func_ovl0D_01_800455B8();
     D_ovl0D_01_80047B2C = func_ovl0D_01_800463B8();
-    /* a fake (see the top): 1600.0f in $f16 */
+    /* fake: (see the top): 1600.0f in $f16 */
 #line 1 "panels.c"
     func_ovl0D_01_800455B0();
 #line 593 "197800.c"
@@ -919,7 +919,7 @@ void func_ovl0D_01_80044C0C(void) {
 void func_ovl0D_01_800448D4(void) {
     s32 i;
 
-    /* a fake: the region's .file keeps the first call out of the prologue */
+    /* fake: the region's .file keeps the first call out of the prologue */
 #line 1 "panels.c"
     func_ovl0D_01_800448CC();
 #line 932 "197800.c"
@@ -1005,7 +1005,7 @@ static void func_ovl0D_01_800444E0(Ent_0D01 *e) {
 
     p = e->obj->unk40;
     func_ovl0D_01_800462C0(p->unk10, p->unk14, p->unk18, grid, 0);
-    len = x1 + z1; /* a fake (see the top) */
+    len = x1 + z1; /* fake: (see the top) */
     x0 = grid[0];
     y0 = grid[1];
     z0 = grid[2];
@@ -1026,7 +1026,7 @@ static void func_ovl0D_01_800444E0(Ent_0D01 *e) {
     y1 = grid[1] + 2;
     switch (func_ovl0D_01_800444D8(e)) {
         case 0:
-            /* a fake (see the top) */
+            /* fake: (see the top) */
 #line 1 "panels.c"
             x0 = grid[0] - 1;
 #line 1039 "197800.c"
@@ -1404,7 +1404,7 @@ static void func_ovl0D_01_800434BC(Ent_0D01 *arg0) {
 void func_ovl0D_01_80043134(void) {
     s32 i;
     s32 n;
-    s32 pad; /* a fake: unused, its slot puts pos at sp+96 */
+    s32 pad; /* fake: unused, its slot puts pos at sp+96 */
     Vec3f pos;
 
     while (TRUE) {

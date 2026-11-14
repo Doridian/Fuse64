@@ -450,7 +450,7 @@ void func_ovl0F_10_80044AD4(void) {
 }
 
 void func_ovl0F_10_800448A0(void) {
-    s32 pad[1];
+    s32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
     f32 x;
     f32 y;
     f32 z;
@@ -531,7 +531,7 @@ void func_ovl0F_10_80044074(UnkStructA *arg0) {
     f32 dist;
     f32 angle;
     f32 pos[3];
-    s32 pad[12];
+    s32 pad[12]; /* fake: unused, frame space the original has (no source for it found) */
 
     bits = arg0->unk64 & 0x0FFFFFFF;
     flags = arg0->unk64 & 0xF0000000;

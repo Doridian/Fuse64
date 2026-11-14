@@ -719,9 +719,9 @@ void func_ovl0C_01_80048068(void) {
 }
 
 void func_ovl0C_01_80047E9C(UnkStructA *arg0) {
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     s32 moved;
-    s32 pad2; /* unused: pad and pad2 place the original's locals */
+    s32 pad2; /* fake: unused; pad and pad2 place the original's locals */
     f32 x;
     f32 y;
     f32 z;
@@ -773,9 +773,9 @@ void func_ovl0C_01_80047E9C(UnkStructA *arg0) {
 }
 
 void func_ovl0C_01_80047CA8(UnkStructA *arg0) {
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     s32 moved;
-    s32 pad2; /* unused: pad and pad2 place the original's locals */
+    s32 pad2; /* fake: unused; pad and pad2 place the original's locals */
     f32 x;
     f32 y;
     f32 z;
@@ -1745,7 +1745,7 @@ void func_ovl0C_01_800452F4(UnkStruct_ovl0C_01_8004A584 *arg0) {
     func_ovl0C_01_80048EB0(0x29, arg0->unk10, 0);
 }
 
-void func_ovl0C_01_800452EC(void) { if (0) { D_ovl0C_01_8004A9A0[0] = D_ovl0C_01_8004A9AC[0]; } /* a fake: keeps the unused words in .bss */
+void func_ovl0C_01_800452EC(void) { if (0) { D_ovl0C_01_8004A9A0[0] = D_ovl0C_01_8004A9AC[0]; } /* fake: keeps the unused words in .bss */
 }
 
 void func_ovl0C_01_80045194(void) {
@@ -2001,9 +2001,9 @@ void func_ovl0C_01_800446F8(s32 arg0) {
 }
 
 void func_ovl0C_01_800444DC(void) {
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     UnkStructA *obj;
-    s32 pad2;
+    s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
     Snd_ovl0C_01 snd;
     UnkStructA_40 *p;
     f32 end;
@@ -2206,9 +2206,9 @@ void func_ovl0C_01_80043BC0(void) {
 }
 
 void func_ovl0C_01_800439C0(void) {
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     UnkStructA *obj;
-    s32 pad2;
+    s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
     Snd_ovl0C_01 snd;
     UnkStructA_40 *p;
     f32 end;

@@ -448,14 +448,14 @@ void func_ovl12_06_800430D0(void) {
  * 800430C8.  The pads give its block of the handler's frame the original's
  * place (11 words above obj0, 7 below angle, frame 0xA0). */
 static void func_ovl12_06_800430C8(void) {
-    s32 pad0[1];
+    s32 pad0[1]; /* fake: unused, frame space the original has (no source for it found) */
     UnkStructA *obj0;
     Vec3f pos;
     Vec3f target;
     UnkStructA *obj1;
     s32 i;
     f32 angle;
-    s32 pad1[3];
+    s32 pad1[3]; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl12_06_80044D88(1);
     func_ovl12_06_80045440(0x1F);
@@ -572,7 +572,7 @@ void func_ovl12_06_80043164(s32 arg0) {
 static f32 func_ovl12_06_80043068(UnkStructA_40 *from, UnkStructA_40 *to) {
     Vec3f a;
     Vec3f b;
-    f32 pad[2]; /* unused: the original's frame is 8 bytes bigger */
+    f32 pad[2]; /* fake: unused; the original's frame is 8 bytes bigger */
     f32 angle;
 
     a.x = from->unk10;

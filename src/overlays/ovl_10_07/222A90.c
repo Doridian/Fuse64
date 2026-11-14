@@ -374,7 +374,7 @@ static void func_ovl10_07_80048290(void) {
 }
 
 void func_ovl10_07_80048288(void) {
-    /* a fake: the reference keeps the unused words in .bss, which would
+    /* fake: the reference keeps the unused words in .bss, which would
      * otherwise be common; it builds to nothing */
     if (0) {
         D_ovl10_07_80049B80[0] = D_ovl10_07_80049BAC[0] + D_ovl10_07_80049BBC[0] + D_ovl10_07_80049C74[0] + D_ovl10_07_80049DDC[0] + D_ovl10_07_80049FAC[0] + D_ovl10_07_8004A0B4[0] + D_ovl10_07_8004A24C[0] + D_ovl10_07_8004A2D4[0] + D_ovl10_07_8004A31C[0] + D_ovl10_07_8004A364[0] + D_ovl10_07_8004A42C[0] + D_ovl10_07_8004A4C4[0] + D_ovl10_07_8004A5F4[0] + D_ovl10_07_8004A81C[0] + D_ovl10_07_8004AA04[0];
@@ -856,7 +856,7 @@ void func_ovl10_07_80046954(void) {
 }
 
 void func_ovl10_07_800467F0(s32 arg0, s32 arg1) {
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f pos;
     s32 i;
     s32 n;
@@ -877,7 +877,7 @@ void func_ovl10_07_800467F0(s32 arg0, s32 arg1) {
 }
 
 f32 func_ovl10_07_80046798(s32 arg0) {
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f a;
     Vec3f b;
 
@@ -1272,7 +1272,7 @@ void func_ovl10_07_80044FD8(s32 *arg0) {
     s32 i;
     s32 j;
     s32 flags;
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f pos;
 
     i = 0;
@@ -1347,7 +1347,7 @@ void func_ovl10_07_80044DC8(s32 arg0) {
     s32 w;
     s32 t;
     s32 h;
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
 
     if (D_ovl10_07_8004A130[arg0] != 0) {
         v = 1;
@@ -1657,7 +1657,7 @@ void func_ovl10_07_80043DA8(void) {
 /* opens (arg1 1) or closes the gate */
 void func_ovl10_07_80043B98(s32 arg0, s32 arg1) {
     s32 id;
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f pos;
 
     if (arg1 != D_ovl10_07_8004A4DC[arg0]) {
@@ -1686,7 +1686,7 @@ void func_ovl10_07_80043B98(s32 arg0, s32 arg1) {
 void func_ovl10_07_80043944(s32 arg0, s32 arg1) {
     s32 j;
     s32 v;
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
     if (arg1 != (D_ovl10_07_80049CA8[arg0] & 1)) {
         if (arg1 != 0) {
@@ -1862,8 +1862,8 @@ void func_ovl10_07_80043340(void) {
 
 void func_ovl10_07_80043254(void) {
     s32 out[6];
-    s32 pad1;
-    s32 pad2;
+    s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
     s32 a;
 
     D_ovl10_07_8004A4C0 = -1.0f;
@@ -1877,7 +1877,7 @@ void func_ovl10_07_80043254(void) {
     func_ovl10_07_80048818(1);
     func_ovl10_07_8004316C(D_ovl10_07_8004A354, D_ovl10_07_8004A4B0, D_ovl10_07_8004A4B4, -1.0f);
     func_ovl10_07_80049198(0x78);
-    /* fakes (the permuter): a, and the test of D_ovl10_07_8004A3DC, on a's line */
+    /* fake: (the permuter) a, and the test of D_ovl10_07_8004A3DC, on a's line */
     a = D_ovl10_07_8004A3D8; if (D_ovl10_07_8004A3DC && D_ovl10_07_8004A3DC && D_ovl10_07_8004A3DC) {}
     D_ovl10_07_80049BA4 = a;
     D_ovl10_07_80049BA8 = D_ovl10_07_8004A3DC;

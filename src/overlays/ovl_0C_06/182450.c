@@ -493,7 +493,7 @@ static void func_ovl0C_06_8004782C(void) {
 }
 
 void func_ovl0C_06_80047824(void) {
-    /* a fake: the reference keeps the unused words in .bss, which would
+    /* fake: the reference keeps the unused words in .bss, which would
      * otherwise be common; it builds to nothing */
     if (0) {
         D_ovl0C_06_80049390[0] = D_ovl0C_06_8004939C[0];
@@ -962,7 +962,7 @@ void func_ovl0C_06_80045F44(void) {
 /* mover 0: swings its object round on a circle, drops limit 0's object
  * on the way */
 void func_ovl0C_06_80045BA0(void) {
-    f32 pad[2]; /* unused: the original's frame is 8 bytes bigger */
+    f32 pad[2]; /* fake: unused; the original's frame is 8 bytes bigger */
     UnkStructA *obj;
     UnkStructA *other;
     f32 lim;

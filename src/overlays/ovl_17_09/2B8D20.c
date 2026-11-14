@@ -426,7 +426,7 @@ void func_ovl17_09_80044A2C(UnkStructA *obj) {
 void func_ovl17_09_800448A0(UnkStructA *obj) {
     s32 idx;
     s16 k;
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl17_09_8004456C(obj, D_ovl17_09_800462A4 * 0.42857143f);
     if (obj->unk40->unk10 <= D_ovl17_09_80046570 || D_ovl17_09_80046574 <= obj->unk40->unk10 ||
@@ -465,7 +465,7 @@ static void func_ovl17_09_8004412C(UnkStruct_ovl17_09_800462DC *rec) {
 void func_ovl17_09_80044198(void) {
     UnkStructB *b;
     s32 i;
-    s32 pad[4];
+    s32 pad[4]; /* fake: unused, frame space the original has (no source for it found) */
     s32 cell;
     s32 last0;
     s32 last1;

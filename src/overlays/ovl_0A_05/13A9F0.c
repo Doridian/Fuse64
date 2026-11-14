@@ -622,7 +622,7 @@ void func_ovl0A_05_800473A0(void) {
 }
 
 void func_ovl0A_05_8004704C(void) {
-    s32 pad[2]; /* unused: the original frame has these slots */
+    s32 pad[2]; /* fake: unused; the original frame has these slots */
     s32 idx;
     UnkStruct_ovl0A_05_80049518 *slot;
     f32 sx;
@@ -778,7 +778,7 @@ void func_ovl0A_05_800469EC(void) {
 
 void func_ovl0A_05_800467FC(void) {
     s32 n;
-    f32 pad; /* unused: the original frame has this slot */
+    f32 pad; /* fake: unused; the original frame has this slot */
     s32 i;
     f32 x0;
     f32 y0;
@@ -1070,10 +1070,10 @@ void func_ovl0A_05_800459C8(void) {
     f32 s;
     f32 dv;
     UnkStruct_ovl0A_05_80048CA0 *objs[2];
-    s32 pad1; /* unused: the original's frame has these slots */
+    s32 pad1; /* fake: unused; the original's frame has these slots */
     f32 b[3];
     f32 a[3];
-    s32 pad2[2]; /* unused, as pad1 */
+    s32 pad2[2]; /* fake: unused; as pad1 */
 
     for (i = 0; i < 2; i++) {
         objs[i] = func_ovl0A_05_80048CA0(0x1CB, 0x01480000, 0xD0, NULL);
@@ -1630,7 +1630,7 @@ void func_ovl0A_05_800438A0(void) {
 }
 
 void func_ovl0A_05_8004333C(void) {
-    s32 pad; /* unused: the original frame has this slot */
+    s32 pad; /* fake: unused; the original frame has this slot */
     s32 flag;
     s32 i;
     f32 v;

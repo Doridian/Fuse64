@@ -652,7 +652,7 @@ static void func_ovl0F_05_80043018(s32 count, UnkStruct_ovl0F_05_800461E0 *p) {
 
 /* The overlay's handler: the entry returns it to the loader. */
 void func_ovl0F_05_800430BC(s32 arg0) {
-    s32 pad[2]; /* the original's frame is 8 bytes bigger */
+    s32 pad[2]; /* fake: unused; the original's frame is 8 bytes bigger */
 
     switch (arg0) {
         case 2:

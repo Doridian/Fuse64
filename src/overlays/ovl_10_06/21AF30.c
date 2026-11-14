@@ -449,7 +449,7 @@ static void func_ovl10_06_80049210(void) {
 }
 
 void func_ovl10_06_80049208(void) {
-    /* a fake: the reference keeps the unused words in .bss, which would
+    /* fake: the reference keeps the unused words in .bss, which would
      * otherwise be common; it builds to nothing */
     if (0) {
         D_ovl10_06_8004AB60[0] = D_ovl10_06_8004AB8C[0] + D_ovl10_06_8004ABA4[0] + D_ovl10_06_8004ACAC[0] +
@@ -717,7 +717,7 @@ void func_ovl10_06_80048110(void) {
     UnkStruct_ovl10_06_8004A0B0 *p;
     f32 x;
     f32 z;
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
     switch (D_ovl10_06_8004B3B8) {
     case 10:
@@ -787,7 +787,7 @@ void func_ovl10_06_80048110(void) {
 
 void func_ovl10_06_80047E10(void) {
     s32 j;
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f player;
     Vec3f pos;
     Vec3f sp3C;
@@ -915,7 +915,7 @@ void func_ovl10_06_80047B0C(void) {
 
 void func_ovl10_06_80047A50(void) {
     s32 i;
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f pos;
 
     while (TRUE) {
@@ -954,7 +954,7 @@ void func_ovl10_06_80047810(void) {
     Vec3f to;
     Vec3f ang;
     s32 i;
-    s32 pad[1];
+    s32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
 
     i = D_ovl10_06_8004B7F8[D_ovl10_06_8004ACA8];
     D_ovl10_06_8004B8F8++;
@@ -1011,7 +1011,7 @@ void func_ovl10_06_80047634(void) {
 void func_ovl10_06_80047450(void) {
     Vec3f pos;
     Vec3f target;
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
     f32 angle;
     f32 diff;
     f32 step;
@@ -1084,7 +1084,7 @@ void func_ovl10_06_80047110(s32 arg0) {
     s32 id;
     Vec3f a;
     Vec3f b;
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
     f32 angle;
 
     D_ovl10_06_8004B8F8 = 0;
@@ -1115,7 +1115,7 @@ void func_ovl10_06_80047110(s32 arg0) {
 
 void func_ovl10_06_80046D74(void) {
     s32 i;
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
     i = D_ovl10_06_8004B290[D_ovl10_06_8004ACA8];
     switch (D_ovl10_06_8004B210[i]) {
@@ -1439,11 +1439,11 @@ void func_ovl10_06_80045F9C(void) {
 }
 
 void func_ovl10_06_80045CE4(void) {
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
     s32 hit;
     s32 i;
     s32 flags;
-    s32 pad2[3];
+    s32 pad2[3]; /* fake: unused, frame space the original has (no source for it found) */
 
     i = D_ovl10_06_8004B290[D_ovl10_06_8004ACA8];
     hit = 0;
@@ -1530,11 +1530,11 @@ s32 func_ovl10_06_80045C20(void (*arg0)()) {
 void func_ovl10_06_80045888(void) {
     s32 i;
     s32 r;
-    s32 pad;
+    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     s32 effects[10] = { 12, 13, 14, 15, 16, 19, 20, 22, 23, 24 };
     Vec3f ang;
     Vec3f pos;
-    s32 pad2[1];
+    s32 pad2[1]; /* fake: unused, frame space the original has (no source for it found) */
 
     i = D_ovl10_06_8004B290[D_ovl10_06_8004ACA8];
     D_ovl10_06_8004B7D8[i]--;
@@ -1843,7 +1843,7 @@ void func_ovl10_06_80044AE4(void) {
 
 void func_ovl10_06_80044A54(void) {
     Vec3f sp2C;
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl10_06_800495F8(44.0f, 1.0f, 15.0f, &sp2C.x, 0);
     func_ovl10_06_80049DD8(sp2C.x, sp2C.y, sp2C.z);
@@ -1882,7 +1882,7 @@ void func_ovl10_06_800448EC(void) {
 
 void func_ovl10_06_80044804(void) {
     Vec3f sp2C;
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl10_06_80049E40(0x1F);
     if (func_ovl10_06_80049E28() & 1) {
@@ -1992,7 +1992,7 @@ void func_ovl10_06_8004411C(void) {
     Vec3f ang;
     Vec3f pos;
     Vec3f base;
-    s32 pad[2];
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
     D_ovl10_06_8004B970.z += D_ovl10_06_8004B980.z;
     D_ovl10_06_8004B970.x += D_ovl10_06_8004B980.x;

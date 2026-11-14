@@ -212,7 +212,7 @@ static void func_ovl0C_10_80044EC8(void) {
 }
 
 void func_ovl0C_10_80044EC0(void) {
-    /* a fake: the reference keeps the unused words in .bss, which would
+    /* fake: the reference keeps the unused words in .bss, which would
      * otherwise be common; it builds to nothing */
     if (0) {
         D_ovl0C_10_80046690[0] = D_ovl0C_10_8004669C[0];
@@ -289,10 +289,10 @@ void func_ovl0C_10_80044B90(void) {
 void func_ovl0C_10_80044A08(void) {
     UnkStructA *player;
     UnkStructA_40 *p;
-    f32 pad0;
+    f32 pad0; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f target;
     Vec3f pos;
-    f32 pad[2];
+    f32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
     f32 angle;
 
     player = func_ovl0C_10_800454A8(0);
@@ -688,9 +688,9 @@ static void func_ovl0C_10_80043070(void) {
     UnkStructA *obj1;
     UnkStructA *obj;
     f32 angle;
-    s32 pad0;
+    s32 pad0; /* fake: unused, frame space the original has (no source for it found) */
     s32 flag;
-    s32 pad1;
+    s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
     s32 task;
     UnkStruct_ovl0C_10_80045DB0 snd;
 

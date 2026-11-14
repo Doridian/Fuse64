@@ -696,7 +696,7 @@ UnkStruct_80288040 *func_802867E4(s32 arg0, f32 arg1, f32 arg2, f32 arg3) {
     special = func_802863E0();
     ret = NULL;
     slot = -1;
-    if (0) { D_800BC520 = (s32) &slot; } /* fake: takes slot's address in dead code: slot stays in its home */
+    if (0) { D_800BC520 = (s32) &slot; } /* fake: takes slot's address in dead code: slot stays in its home. p9: the special-slot tests as the stub func_802863E0(arg0, &slot) returning a local special, without task and the `slot * 0` block below: frame right, the code right, three spill slots 8 low (the helper's area is 8 more than the original has there); returning 1/0 directly changes the code */
     if ((arg0 == 0) && (D_800BA8E8[arg0].unk0 == 0x19) && (D_800BA8E8[arg0].unk2 == 0x1E)) {
         slot = 13;
         special = 1;

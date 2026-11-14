@@ -44,9 +44,29 @@ if(NOT CMAKE_SIZEOF_VOID_P EQUAL 4)
     message(FATAL_ERROR "the port builds for 4-byte pointers so far (-m32, i386; docs/PORT.md, \"Pointers\")")
 endif()
 
+# the width check (host/widthcheck.c): the game's C instrumented, every
+# load and store a call, to find the reads of another width than the store
+option(PORT_WIDTHCHECK "a debugging build: report loads of another width than their store (host/widthcheck.c)" OFF)
+set(WC_FLAGS)
+if(PORT_WIDTHCHECK)
+    set(WC_FLAGS -fsanitize=address -fno-sanitize-link-runtime
+        "SHELL:-mllvm -asan-instrumentation-with-call-threshold=0" "SHELL:-mllvm -asan-globals=0"
+        "SHELL:-mllvm -asan-stack=0" "SHELL:-mllvm -asan-use-after-scope=0"
+        -fsanitize-address-use-after-return=never
+        # (no store merged into a wider one, which would be reported)
+        -fno-vectorize -fno-slp-vectorize)
+    add_compile_definitions(PORT_WIDTHCHECK)
+    # (DW_OP_addr: port/tools/widthcheck.py data reads the variables' types)
+    add_compile_options(-gdwarf-4)
+    # the game's memset, memcpy and memmove through host/widthcheck.c's
+    add_link_options(-Wl,--wrap=func_80225C7C -Wl,--wrap=func_80225C44 -Wl,--wrap=func_80225BB8)
+endif()
+
 set(SAN_FLAGS)
 if(PORT_SANITIZE)
-    set(SAN_FLAGS -fsanitize=${PORT_SANITIZE} -fno-omit-frame-pointer -fno-sanitize-recover=all)
+    # (not -fsanitize=function: a call through another declaration of the
+    # function is the game's everyday, docs/PORT.md "Source changes")
+    set(SAN_FLAGS -fsanitize=${PORT_SANITIZE} -fno-sanitize=function -fno-omit-frame-pointer -fno-sanitize-recover=all)
     add_link_options(${SAN_FLAGS})
 endif()
 
@@ -85,7 +105,9 @@ endif()
 add_library(game_c OBJECT ${GAME_C})
 target_include_directories(game_c PRIVATE ${N64_INCLUDES})
 target_compile_definitions(game_c PRIVATE ${N64_DEFINES})
-target_compile_options(game_c PRIVATE ${N64_FLAGS})
+target_compile_options(game_c PRIVATE ${N64_FLAGS} ${WC_FLAGS})
+target_compile_definitions(game_c PRIVATE PORT_INNER)
+add_dependencies(game_c gen_inner)
 
 # each overlay's variables in sections of its own (port_ovl_section.h; in
 # WebAssembly each file through a wrapper that gives its variables the
@@ -113,8 +135,9 @@ if(EMSCRIPTEN)
 endif()
 add_library(ovl_c OBJECT ${OVL_SRC})
 target_include_directories(ovl_c PRIVATE ${N64_INCLUDES})
-target_compile_definitions(ovl_c PRIVATE ${N64_DEFINES})
-target_compile_options(ovl_c PRIVATE ${N64_FLAGS}
+target_compile_definitions(ovl_c PRIVATE ${N64_DEFINES} PORT_INNER)
+add_dependencies(ovl_c gen_inner)
+target_compile_options(ovl_c PRIVATE ${N64_FLAGS} ${WC_FLAGS}
     "SHELL:-include ${CMAKE_CURRENT_SOURCE_DIR}/include/port_ovl_section.h")
 foreach(f ${OVL_C})
     if(f MATCHES "/src/overlays/(ovl_[0-9A-F][0-9A-F]_[0-9][0-9])/")
@@ -145,6 +168,13 @@ add_custom_command(OUTPUT ${GEN}/zerojump.c
 add_custom_command(OUTPUT ${GEN}/regions.c
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_regions.py ${GEN}/regions.c
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_regions.py ${ROOT}/undefined_syms_auto.txt VERBATIM)
+# the names other names share memory with, through pointers in the game's C
+# (gen_inner.py; docs/PORT.md, "Names inside another name's object")
+add_custom_command(OUTPUT ${GEN}/port_inner.h ${GEN}/inner.c
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_inner.py ${GEN}/regions.c ${GEN}/asm_data.c
+            ${GEN}/port_inner.h ${GEN}/inner.c
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_inner.py ${GEN}/regions.c ${GEN}/asm_data.c VERBATIM)
+add_custom_target(gen_inner DEPENDS ${GEN}/port_inner.h)
 add_custom_command(OUTPUT ${GEN}/overlays.c
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_overlays.py ${GEN}/overlays.c
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_overlays.py VERBATIM)
@@ -156,7 +186,7 @@ add_custom_command(OUTPUT ${GEN}/sintable.h
 file(GLOB PORT_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
 file(GLOB LIBAUDIO_C ${CMAKE_CURRENT_SOURCE_DIR}/libaudio/*.c)
 add_library(port_n64 OBJECT ${PORT_SRC} ${LIBAUDIO_C} ${GEN}/asm_data.c ${GEN}/zerojump.c ${GEN}/regions.c
-    ${GEN}/overlays.c)
+    ${GEN}/overlays.c ${GEN}/inner.c)
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/gu.c PROPERTIES OBJECT_DEPENDS ${GEN}/sintable.h)
 target_include_directories(port_n64 PRIVATE ${N64_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/libaudio)
 target_compile_definitions(port_n64 PRIVATE ${N64_DEFINES})

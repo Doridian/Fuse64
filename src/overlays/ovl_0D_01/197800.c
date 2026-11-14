@@ -1038,7 +1038,7 @@ void func_ovl0D_01_80044154(void) {
          * uopt doesn't keep &[1] in a register for both
          */
         D_ovl0D_01_8004760C[1].unk18 = y;
-        D_ovl0D_01_800475D4[2].obj->unk40->unk14 = y * 10.0f;
+        PORT_HOST(D_ovl0D_01_800475D4[2], D_ovl0D_01_8004760C[1]).obj->unk40->unk14 = y * 10.0f;
         func_ovl0D_01_80046C70(D_ovl0D_01_8004767C[0].obj, 0x01000000);
         func_ovl0D_01_80046C70(D_ovl0D_01_8004767C[1].obj, 0x01000000);
         func_ovl0D_01_80046340(D_ovl0D_01_80047B24, 0, 0, D_ovl0D_01_80047B18[0] - 1, D_ovl0D_01_80047B18[2] - 1, 0, 1, 0);

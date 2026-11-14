@@ -61,4 +61,10 @@ void port_sndheader_native(void *p);
 void port_scripts_native(void *p, int size);
 void port_seqfile_native(void *p, int size);
 
+/* the game's C: the names that share memory with others, through pointers
+   (gen/port_inner.h, port/tools/gen_inner.py) */
+#ifdef PORT_INNER
+#include "port_inner.h"
+#endif
+
 #endif

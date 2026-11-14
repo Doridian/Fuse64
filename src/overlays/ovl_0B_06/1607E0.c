@@ -1577,7 +1577,7 @@ static s32 LEVEL_FILE(s32 slot) {
     SET_TEXT(D_ovl0B_06_80049A44[5].unk4, D_ovl0B_06_8004937C_jp, D_ovl0B_06_80049A44[5].unk14);
     func_ovl0B_06_800490B0(D_ovl0B_06_80049A44[5].unk4, -40, 0);
 #else
-    func_ovl0B_06_80045C24(&D_ovl0B_06_80049A44[0], D_ovl0B_06_800494A4, -0x1C, 0, D_ovl0B_06_800499F0[3].unk14, &D_ovl0B_06_80049A44[5], D_ovl0B_06_8004999C[11].unk14);
+    func_ovl0B_06_80045C24(&D_ovl0B_06_80049A44[0], D_ovl0B_06_800494A4, -0x1C, 0, PORT_HOST(D_ovl0B_06_800499F0[3].unk14, D_ovl0B_06_80049A44[0].unk14), &D_ovl0B_06_80049A44[5], PORT_HOST(D_ovl0B_06_8004999C[11].unk14, D_ovl0B_06_80049A44[5].unk14));
 #endif
     func_ovl0B_06_800433B0(&D_ovl0B_06_80049A44[5]);
     loop = 0; do { /* one line: the store's schedule */
@@ -1600,7 +1600,7 @@ static s32 LEVEL_FILE(s32 slot) {
         SET_TEXT(D_ovl0B_06_80049A44[5].unk4, D_ovl0B_06_80049480, D_ovl0B_06_80049A44[5].unk14);
         func_ovl0B_06_800490B0(D_ovl0B_06_80049A44[5].unk4, 40, 0);
 #else
-        func_ovl0B_06_80045C24(&D_ovl0B_06_80049A44[0], D_ovl0B_06_80049480, 0, 0, D_ovl0B_06_800499F0[3].unk14, &D_ovl0B_06_80049A44[5], D_ovl0B_06_8004999C[11].unk14);
+        func_ovl0B_06_80045C24(&D_ovl0B_06_80049A44[0], D_ovl0B_06_80049480, 0, 0, PORT_HOST(D_ovl0B_06_800499F0[3].unk14, D_ovl0B_06_80049A44[0].unk14), &D_ovl0B_06_80049A44[5], PORT_HOST(D_ovl0B_06_8004999C[11].unk14, D_ovl0B_06_80049A44[5].unk14));
 #endif
         func_ovl0B_06_800433B0(&D_ovl0B_06_80049A44[5]);
         func_ovl0B_06_800464C0(1);
@@ -1792,7 +1792,7 @@ static s32 COPY_ASK(void) {
         } else {
             slot = sub & 0xF;
             if (func_ovl0B_06_80049368(slot, 0) == 10) {
-                (&D_ovl0B_06_80049928)[1] = 0x1064;
+                PORT_HOST((&D_ovl0B_06_80049928)[1], D_ovl0B_06_8004992C) = 0x1064;
                 /* fake: SE written out with slot as its wait (us: slot and the wait share $s7) */
                 slot = 50;
                 if (slot && slot == 1) slot = 0;

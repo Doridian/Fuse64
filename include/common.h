@@ -90,6 +90,17 @@ extern uintptr_t port_v0;
 #endif
 
 /*
+ * An expression IDO compiles as it is and a host otherwise, on one line (a
+ * file with `#line`): an index past an array's end that reaches the next
+ * variable on the N64 (where the host's layout may differ), for one.
+ */
+#ifdef TARGET_PC
+#define PORT_HOST(ido, pc) (pc)
+#else
+#define PORT_HOST(ido, pc) ido
+#endif
+
+/*
  * A word the game keeps in the N64's byte order (the EEPROM's header, read
  * and written as an s32 where the rest of the save is bytes): in the port
  * read and written big-endian, so that a save is the same file on every
@@ -147,6 +158,32 @@ extern uintptr_t port_v0;
 #define PORT_WORD_BYTE0(p) ((u8)(*(u32 *)(p) >> 24))
 #else
 #define PORT_WORD_BYTE0(p) (*(u8 *)(p))
+#endif
+
+/* The s16 at offset 2 of a word the C stores as an s32 (the players'
+ * D_800AEDF0[].unk1C read through D_800AEE0E): IDO's code reads the low
+ * half where it is in the N64's order, a host the word it is part of. */
+/* A u16 of a data table that the C reads as two bytes (a menu entry's
+ * neighbours: 995C0's UnkStruct_8027F0C4), the byte `hi` first in memory
+ * on every host. */
+#if defined(TARGET_PC) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#define PORT_U16_BYTES(hi, lo) ((lo) << 8 | (hi))
+#else
+#define PORT_U16_BYTES(hi, lo) ((hi) << 8 | (lo))
+#endif
+
+/* The low half of an s32 variable, which IDO's code reads as the s16 at
+ * its offset 2 (`((s16 *)&arg5)[1]`). */
+#ifdef TARGET_PC
+#define PORT_LO16(x) ((s16)(x))
+#else
+#define PORT_LO16(x) (((s16 *)&(x))[1])
+#endif
+
+#ifdef TARGET_PC
+#define PORT_WORD_HALF1(p) ((s16) * (s32 *)((u8 *)(p) - 2))
+#else
+#define PORT_WORD_HALF1(p) (*(s16 *)(p))
 #endif
 
 #include "macros.h"

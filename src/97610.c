@@ -220,11 +220,23 @@ void func_8027EB5C(UnkStruct_802B0190 *arg0) {
     s16 i;
 
     for (i = 0; i < 3; i++) {
+#ifdef TARGET_PC
+        /* the tables (each overlay's u32 [][3], D_802A1570) are words whose
+           halves these are, in the N64's order */
+        const u32 *w = (const u32 *)arg0;
+        p->unk0 = w[0] >> 16;
+        p->unk2 = w[0];
+        p->unk4 = w[1] >> 16;
+        p->unk6 = w[1];
+        p->unk8 = w[2] >> 16;
+        p->unkA = w[2];
+#else
         p->unk0 = arg0->unk0;
         p->unk2 = arg0->unk2;
         p->unk4 = arg0->unk4;
         p->unk6 = arg0->unk6;
         *(s32 *)&p->unk8 = *(s32 *)&arg0->unk8;
+#endif
         arg0++;
         p++;
     }
@@ -236,8 +248,16 @@ void func_8027EB1C(UnkStruct_802B01B8 *arg0) {
     s16 i;
 
     for (i = 0; i < 3; i++) {
+#ifdef TARGET_PC
+        /* words, as func_8027EB5C's */
+        const u32 *w = (const u32 *)arg0;
+        p->unk0 = w[0] >> 16;
+        p->unk4 = w[1] >> 16;
+        p->unk6 = w[1];
+#else
         p->unk0 = arg0->unk0;
         *(s32 *)&p->unk4 = *(s32 *)&arg0->unk4;
+#endif
         arg0++;
         p++;
     }

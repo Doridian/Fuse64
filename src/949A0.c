@@ -83,12 +83,22 @@ typedef struct {
 } UnkStruct_800AEDF0; /* size 0xC8 */
 
 typedef struct {
+#ifdef TARGET_PC
+    /* 54E40 stores the words at 4, 8 and 0xC (D_802AC610's unk4..unkC) as
+       s32s, which IDO's code reads the low halves of: in the host's order
+       the word, which the s16 it is assigned to truncates */
+    /* 0x00 */ u8 unk0[0x4];
+    /* 0x04 */ s32 unk6;
+    /* 0x08 */ s32 unkA;
+    /* 0x0C */ s32 unkE;
+#else
     /* 0x00 */ u8 unk0[0x6];
     /* 0x06 */ s16 unk6;
     /* 0x08 */ u8 unk8[0x2];
     /* 0x0A */ s16 unkA;
     /* 0x0C */ u8 unkC[0x2];
     /* 0x0E */ s16 unkE;
+#endif
     /* 0x10 */ s32 unk10;
     /* 0x14 */ u8 unk14[0x4];
     /* 0x18 */ s32 unk18;
@@ -608,7 +618,11 @@ s32 func_8027B094(s16 arg0) {
 }
 
 void func_8027AFB8(s16 arg0) {
+#ifdef TARGET_PC
+    s16 state = D_802AFED0[arg0].unk8; /* the word's low half, wherever the host has it */
+#else
     s16 state = ((s16 *)&D_802AFED0[arg0].unk8)[1]; /* read as the s16 at 0xA */
+#endif
 
     switch (state) {
         case 3:
@@ -663,7 +677,7 @@ UnkStruct_800BB4A8 *func_8027AA74(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s32 ar
     s32 *flags;
 
     func_8027A950();
-    if ((D_802AC5D0 & 4) && ((s16 *)&arg5)[1] == 1 && func_8027A574(arg0) <= 0) {
+    if ((D_802AC5D0 & 4) && PORT_LO16(arg5) == 1 && func_8027A574(arg0) <= 0) {
         return NULL;
     }
     item = 0;
@@ -767,22 +781,22 @@ UnkStruct_800BB4A8 *func_8027AA74(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s32 ar
     func_8027036C(flags, 1);
     func_80270354(flags, 8);
     func_8027036C(flags, 0x10);
-    if (((s16 *)&arg5)[1] == 1) {
+    if (PORT_LO16(arg5) == 1) {
         func_80270354(flags, 0x40);
     } else {
         func_8027036C(flags, 0x40);
     }
-    if (((s16 *)&arg6)[1] == 1) {
+    if (PORT_LO16(arg6) == 1) {
         func_80270354(flags, 0x80);
     } else {
         func_8027036C(flags, 0x80);
     }
     func_8027036C(flags, 0x20);
-    if (((s16 *)&arg4)[1] == 1) {
+    if (PORT_LO16(arg4) == 1) {
         func_8028A81C(3, node->unk24, node->unk28 + 70.0f, node->unk2C, 0);
         func_8026C51C(3, node->unk24, node->unk28, node->unk2C);
     }
-    if ((D_802AC5D0 & 4) && ((s16 *)&arg5)[1] == 1) {
+    if ((D_802AC5D0 & 4) && PORT_LO16(arg5) == 1) {
         func_8027A380(arg0);
     }
     return node;

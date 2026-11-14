@@ -94,12 +94,21 @@ typedef struct {
 } UnkStruct_800AEDF0; /* size 0xC8 */
 
 typedef struct {
+#ifdef TARGET_PC
+    /* the words 54E40 stores (D_802AC610's unk4..unkC), whose low halves
+       IDO's code reads: as 949A0's */
+    /* 0x00 */ u8 unk0[0x4];
+    /* 0x04 */ s32 unk6;
+    /* 0x08 */ s32 unkA;
+    /* 0x0C */ s32 unkE;
+#else
     /* 0x00 */ u8 unk0[0x6];
     /* 0x06 */ s16 unk6;
     /* 0x08 */ u8 unk8[0x2];
     /* 0x0A */ s16 unkA;
     /* 0x0C */ u8 unkC[0x2];
     /* 0x0E */ s16 unkE;
+#endif
     /* 0x10 */ s32 unk10;
     /* 0x14 */ u8 unk14[0x4];
     /* 0x18 */ s32 unk18;

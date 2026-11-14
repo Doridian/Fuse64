@@ -357,9 +357,9 @@ Vec3f D_ovl0B_02_8004A168[3] = {
     { 242.0f, -923.0f, -1254.0f },
 };
 #if VERSION_JP
-u16 D_ovl0B_02_8004A18C[8] = { 0x4C, 0x82, 0, 2, 0xC0, 0x82, 0, 0x100 };
+u16 D_ovl0B_02_8004A18C[8] = { 0x4C, 0x82, 0, PORT_U16_BYTES(0, 2), 0xC0, 0x82, 0, PORT_U16_BYTES(1, 0) };
 #else
-u16 D_ovl0B_02_8004A18C[8] = { 0x64, 0x82, 0, 2, 0xAC, 0x82, 0, 0x100 };
+u16 D_ovl0B_02_8004A18C[8] = { 0x64, 0x82, 0, PORT_U16_BYTES(0, 2), 0xAC, 0x82, 0, PORT_U16_BYTES(1, 0) };
 #endif
 
 /* unused: the stubs IDO -O3 leaves after the tail */

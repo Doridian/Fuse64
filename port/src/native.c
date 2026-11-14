@@ -26,11 +26,13 @@ static uint32_t rd32(const uint8_t *p) { return port_be32(p); }
 static void sw32(uint8_t *p) {
     uint32_t v = port_be32(p);
     memcpy(p, &v, 4);
+    port_wc_mark(p, 4, 4);
 }
 
 static void sw16(uint8_t *p) {
     uint16_t v = port_be16(p);
     memcpy(p, &v, 2);
+    port_wc_mark(p, 2, 2);
 }
 
 void port_native32(void *p, uint32_t n) {

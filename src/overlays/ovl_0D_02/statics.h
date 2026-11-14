@@ -121,7 +121,7 @@ void func_ovl0D_02_80043010(void) {
     if (func_ovl0D_02_800470D0(0x407) != 0) {
         func_ovl0D_02_80046D00(D_ovl0D_02_8004762C[0].obj, 0x01000000);
         y = -105.0f;
-        D_ovl0D_02_8004762C[1].unk18 = y;
+        PORT_HOST(D_ovl0D_02_8004762C[1], D_ovl0D_02_80047664[0]).unk18 = y;
         D_ovl0D_02_80047664[0].obj->unk40->unk14 = y * 10.0f;
         func_ovl0D_02_80046D00(D_ovl0D_02_8004769C[0].obj, 0x01000000);
     }

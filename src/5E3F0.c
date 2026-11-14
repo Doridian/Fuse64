@@ -228,8 +228,15 @@ typedef struct {
 typedef struct {
     /* 0x00 */ u8 unk0[0xC];
     /* 0x0C */ f32 unkC;
+#ifdef TARGET_PC
+    /* the s32 at 0x18 (the players' unk18, stored whole elsewhere), whose
+       low half IDO's code reads: the word in the host's order */
+    /* 0x10 */ u8 unk10[0x18 - 0x10];
+    /* 0x18 */ s32 unk1A;
+#else
     /* 0x10 */ u8 unk10[0x1A - 0x10];
     /* 0x1A */ s16 unk1A;
+#endif
     /* 0x1C */ u8 unk1C[0x24 - 0x1C];
     /* 0x24 */ s32 unk24;
     /* 0x28 */ u8 unk28[4];
@@ -1288,6 +1295,11 @@ void func_8024E088(s32 arg0) {
                         if (!func_80270714((s16)arg0)) {
                             func_802313DC(obj, 1);
                             sp68 = (s32 *)func_80271540((s16)arg0);
+#ifdef TARGET_PC
+                            /* (nothing found: the N64 ors into the word at 0xC,
+                               in ZeroJump's page, which is mapped at 0) */
+                            if (sp68 != NULL)
+#endif
                             sp68[3] |= 0x10;
                             func_80231408(obj, 1);
                             if (sp68 != NULL) {

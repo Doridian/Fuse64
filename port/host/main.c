@@ -93,6 +93,7 @@ void host_rom_read(void *dst, uint32_t addr, uint32_t len) {
         len = rom_size - addr;
     }
     memcpy(dst, rom + addr, len);
+    port_wc_mark(dst, len, 0);
 }
 
 static void load_rom(const char *path) {

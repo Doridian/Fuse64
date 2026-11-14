@@ -18,6 +18,8 @@
 void *malloc(size_t n);
 void *calloc(size_t n, size_t m);
 
+extern unsigned host_vi_count;
+
 static char **initial;
 
 /* a section's bytes, redzones and all under AddressSanitizer (which puts
@@ -71,7 +73,7 @@ void *port_overlay_load(int bank, int entry) {
         if (o->bss && o->bss_end > o->bss)
             zero(o->bss, (size_t)(o->bss_end - o->bss), NULL);
         if (host_verbose)
-            host_log("overlay %s\n", o->name);
+            host_log("%u: overlay %s\n", host_vi_count, o->name);
         return o->start();
     }
     host_fatal("no overlay %02X_%02X", bank, entry);

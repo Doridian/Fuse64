@@ -232,8 +232,14 @@ typedef struct Ent88 {
 typedef struct {
     /* 0x00 */ u8 pad0[0x18];
     /* 0x18 */ s32 unk18;
+#ifdef TARGET_PC
+    /* the bomb count, which func_80277E1C stores as an s32 (Player8E) and
+       IDO's code reads the low half of: the word in the host's order */
+    /* 0x1C */ s32 unk1E;
+#else
     /* 0x1C */ s16 unk1C;
     /* 0x1E */ s16 unk1E;
+#endif
     /* 0x20 */ s32 unk20;
     /* 0x24 */ u8 pad24[4];
     /* 0x28 */ s32 unk28;
@@ -528,6 +534,11 @@ void func_80273E2C(s16 arg0) {
 
     if (arg0 >= 0 && arg0 < 5 && func_80270714(arg0) != 0) {
         p = func_802703B4((u8 *) func_80270714(arg0));
+#ifdef TARGET_PC
+        /* (what is held isn't a bomb, a player say: the N64 adds to the
+           half at 0x5C, in ZeroJump's page, which is mapped at 0) */
+        if (p != NULL)
+#endif
         p[0x2E] += 0x1E;
     }
 }
@@ -1876,7 +1887,7 @@ s32 func_80274994(s16 arg0) {
 
         e = ENT_HEAD;
         n = e->next;
-        cnt = *(s16 *)(D_800AEE0E + arg0 * 0xC8);
+        cnt = PORT_WORD_HALF1(D_800AEE0E + arg0 * 0xC8);
         while (n != NULL) {
             live = (e->x != 1e7f) ? 1 : 0;
             if (live && e->xf != NULL && arg0 == e->unkE) {
@@ -2038,7 +2049,7 @@ void func_802741D8(s16 arg0) {
         cur.y = obj->unk40->y;
         break;
     }
-    e = func_80273F30(*(s16 *)(D_800AEE0A + arg0 * 0xC8), obj->unk40->x + base.x, cur.y, obj->unk40->z + base.y, arg0);
+    e = func_80273F30(PORT_WORD_HALF1(D_800AEE0A + arg0 * 0xC8), obj->unk40->x + base.x, cur.y, obj->unk40->z + base.y, arg0);
     if (e != NULL) {
         t5 = func_80232D18(e->obj, 0x10);
         if (t5) {

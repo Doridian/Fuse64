@@ -40,6 +40,15 @@ extern "C" {
 #define PORT_RDRAM_SIZE 0x800000
 extern uint8_t port_rdram[];
 
+/* the width check's shadow (host/widthcheck.c, -DPORT_WIDTHCHECK=ON): what
+   the host writes into the game's memory, as stores of `width` bytes
+   (0: the ROM's bytes, unconverted; -1: any width) */
+#ifdef PORT_WIDTHCHECK
+void port_wc_mark(const void *p, size_t n, int width);
+#else
+#define port_wc_mark(p, n, width) ((void)0)
+#endif
+
 void *host_thread_stack(int idx, uint32_t *size);
 int host_in_thread_stack(const void *p);
 

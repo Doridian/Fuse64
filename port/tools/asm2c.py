@@ -44,8 +44,8 @@ LAYOUTS = {
     "D_802A04B4": "B", "D_802A08EC": "B",
     # UnkStruct_8027F0C4 (995C0.c): u16, u16, four u8
     "D_802A0B84": "HHBBBB",
-    # UnkStruct_802B0190 and UnkStruct_802B01B8 (97610.c): s16s
-    "D_802A1570": "H", "D_802A1594": "H",
+    # (D_802A1570 and D_802A1594, 97610.c's tables of halves, are words, as
+    # the overlays' tables for the same functions: func_8027EB5C splits them)
     # UnkStruct_802A15C0 (995C0.c): four pointers, three u16, a u8
     "D_802A15C0": "IIIIHHHBBBBB",
 }

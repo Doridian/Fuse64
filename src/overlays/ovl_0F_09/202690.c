@@ -554,8 +554,8 @@ void func_ovl0F_09_8004343C(s32 arg0) {
                                        D_ovl0F_09_800460F4[3]) != 0) {
                 func_ovl0F_09_80044D50(D_ovl0F_09_80046104, D_ovl0F_09_80046108, D_ovl0F_09_8004610C);
             }
-            if (func_ovl0F_09_80044E20(D_ovl0F_09_800460F4[7], D_ovl0F_09_800460F4[8], D_ovl0F_09_800460F4[9],
-                                       D_ovl0F_09_800460F4[10]) != 0) {
+            if (func_ovl0F_09_80044E20(PORT_HOST(D_ovl0F_09_800460F4[7], D_ovl0F_09_80046110), PORT_HOST(D_ovl0F_09_800460F4[8], D_ovl0F_09_80046114), PORT_HOST(D_ovl0F_09_800460F4[9], D_ovl0F_09_80046118),
+                                       PORT_HOST(D_ovl0F_09_800460F4[10], D_ovl0F_09_8004611C)) != 0) {
                 func_ovl0F_09_80044DC0(0);
                 func_ovl0F_09_80044E48(1);
                 func_ovl0F_09_80044E70(1);

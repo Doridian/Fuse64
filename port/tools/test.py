@@ -65,7 +65,11 @@ def run(build, name, qemu=None, timeout=7200):
         cmd = ([emu] if emu else []) + [exe, "--headless", "--deterministic", "--hash", "--frames", str(frames),
                                         "--save-dir", tmp, "--wav", wav]
         if script:
-            cmd += ["--input", os.path.join(ROOT, script.format(v=ver))]
+            script = script.format(v=ver)
+            # the port's own timing of a script, where the N64's doesn't fit
+            # it (port/tools/inputs: the port loads without the N64's waits)
+            own = os.path.join(ROOT, "port", script)
+            cmd += ["--input", own if os.path.exists(own) else os.path.join(ROOT, script)]
         cmd.append(os.path.join(ROOT, "baserom.%s.z64" % ver))
         r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
         if r.returncode != 0:

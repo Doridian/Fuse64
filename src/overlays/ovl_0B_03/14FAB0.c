@@ -333,12 +333,22 @@ Box_ovl0B_03 D_ovl0B_03_80048DA0[8] = {
     { 235.0f, 190.0f, 40.0f, 20.0f, 1.0f, NULL },
 };
 f32 D_ovl0B_03_80048E60[3] = { 114.0f, 170.0f, 190.0f };
+#ifdef TARGET_PC
+/* func_ovl0B_03_80043340 takes these two as one array of two (n = 2), which
+   a host compiler may not lay out together: one array, the second an alias */
+Box_ovl0B_03 D_ovl0B_03_80048E6C[2] = {
+    { 55.0f, 114.0f, 20.0f, 20.0f, 0.7f, NULL },
+    { 115.0f, 114.0f, 20.0f, 20.0f, 0.7f, NULL },
+};
+#define D_ovl0B_03_80048E84 (&D_ovl0B_03_80048E6C[1])
+#else
 Box_ovl0B_03 D_ovl0B_03_80048E6C[1] = {
     { 55.0f, 114.0f, 20.0f, 20.0f, 0.7f, NULL },
 };
 Box_ovl0B_03 D_ovl0B_03_80048E84[1] = {
     { 115.0f, 114.0f, 20.0f, 20.0f, 0.7f, NULL },
 };
+#endif
 Model_ovl0B_03 D_ovl0B_03_80048E9C[4] = {
     { 0x49, -75.0f, -10.0f, 0.0f, NULL },
     { 0x49, -24.0f, -10.0f, 0.0f, NULL },

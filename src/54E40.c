@@ -42,6 +42,11 @@
  * - func_8023F26C's last block is func_8023AE6C inlined (the global's
  *   arguments are its x/y loads before the test; its 16-byte area is
  *   the frame the x, y and pl locals used to fill).
+ * - The file's setters are inlined where its functions call them, each
+ *   with an 8-byte frame area: func_8023BBCC's func_8023A864(0) and
+ *   func_8023AED0(0x3C), and func_8023A870's func_8023A858(0), are the
+ *   frame their pads held (which store of func_8023A870's goes through
+ *   the setter is a guess: either of its two does).
  * - func_80241590, 80241BB0, 80242270 (digit counters over 16x16
  *   pictures) are written with the GBI macros (gDPLoadTLUT_pal256/pal16,
  *   gDPLoadTextureBlock_4b, gDPLoadTextureTile_4b, gSPTextureRectangle)
@@ -2899,7 +2904,6 @@ static void func_8023C170() {
 s32 func_8023BBCC() {
     s32 count;
     s32 * slot;
-    s32 pad[4]; /* fake: frame-tuned */
     s32 i;
     s32 var_v0;
 
@@ -2957,8 +2961,8 @@ s32 func_8023BBCC() {
             if (D_802AC810 == 2) {
                 func_8023903C(0x3C);
                 func_8023AA78(0);
-                D_802A01B8 = 0;
-                D_802AC7CC = 0x3C;
+                func_8023A864(0);
+                func_8023AED0(0x3C);
                 func_8026C8E8();
                 func_8026C894();
                 for (i = 0; i < 5; i++) {
@@ -3285,7 +3289,6 @@ s32 func_8023AA60(s32 arg0) {
 
 s32 func_8023A870(s32 arg0, s32 arg1) {
     u8 *obj;
-    s32 pad[2]; /* fake: frame-tuned */
 
     if (!(D_802A01B0 & 2)) {
         if (!(D_802AC5D0 & 1)) {
@@ -3295,7 +3298,7 @@ s32 func_8023A870(s32 arg0, s32 arg1) {
     if ((D_802AC5D0 & 4) || ((D_802AC5D0 & 8) && (arg0 != 0))) {
         ((s32 *) D_802AC714)[arg0] = 2;
         func_802313DC(obj, 0x7FFFF);
-        D_802A01BC = 0;
+        func_8023A858(0);
     } else {
         if (D_802A01BC != 0) {
             func_802350F8(1);

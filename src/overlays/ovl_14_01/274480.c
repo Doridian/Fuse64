@@ -116,7 +116,7 @@
  *
  * Several functions need an unused `pad` local for the original's frame.
  *
- * -O3 drops unreferenced .bss, so a dead `if (0)` in the unused stub
+ * -O3 drops unreferenced .bss, so the unused static (its body dropped)
  * 8004BB04 stores to every filler and to the unused 8004D614 and
  * 8004D66C (scratch/bsscheck.sh: every symbol at its address, .bss
  * 0x2C0). No filler needs splitting: none is 8 bytes or more but
@@ -417,9 +417,29 @@ Vec3f D_ovl14_01_8004D1CC[5] = {
     { 2847.9988f, 190.63454f, 857.0171f }
 };
 
-/* unused: the stubs IDO -O3 leaves after the tail */
+/* unused: the stubs IDO -O3 leaves after the tail (an unused static's
+ * body is dropped). The first is the one that used the .bss words nothing
+ * else uses: a reference from it keeps them out of common */
 static void func_ovl14_01_8004BB04(void) {
-    if (0) { D_ovl14_01_8004D4AC[0] = 0; D_ovl14_01_8004D4C0[0] = 0; D_ovl14_01_8004D4CC[0] = 0; D_ovl14_01_8004D4F4[0] = 0; D_ovl14_01_8004D504[0] = 0; D_ovl14_01_8004D514[0] = 0; D_ovl14_01_8004D524[0] = 0; D_ovl14_01_8004D52C[0] = 0; D_ovl14_01_8004D55C[0] = 0; D_ovl14_01_8004D59C[0] = 0; D_ovl14_01_8004D5FC[0] = 0; D_ovl14_01_8004D654[0] = 0; D_ovl14_01_8004D68C[0] = 0; D_ovl14_01_8004D69C[0] = 0; D_ovl14_01_8004D6AC[0] = 0; D_ovl14_01_8004D6EC[0] = 0; D_ovl14_01_8004D750[0] = 0; D_ovl14_01_8004D614 = 0; D_ovl14_01_8004D66C = 0; } /* fake: dead code, for the order or allocation it gives (no code) */
+    D_ovl14_01_8004D4AC[0] = 0;
+    D_ovl14_01_8004D4C0[0] = 0;
+    D_ovl14_01_8004D4CC[0] = 0;
+    D_ovl14_01_8004D4F4[0] = 0;
+    D_ovl14_01_8004D504[0] = 0;
+    D_ovl14_01_8004D514[0] = 0;
+    D_ovl14_01_8004D524[0] = 0;
+    D_ovl14_01_8004D52C[0] = 0;
+    D_ovl14_01_8004D55C[0] = 0;
+    D_ovl14_01_8004D59C[0] = 0;
+    D_ovl14_01_8004D5FC[0] = 0;
+    D_ovl14_01_8004D654[0] = 0;
+    D_ovl14_01_8004D68C[0] = 0;
+    D_ovl14_01_8004D69C[0] = 0;
+    D_ovl14_01_8004D6AC[0] = 0;
+    D_ovl14_01_8004D6EC[0] = 0;
+    D_ovl14_01_8004D750[0] = 0;
+    D_ovl14_01_8004D614 = 0;
+    D_ovl14_01_8004D66C = 0;
 }
 
 static void func_ovl14_01_8004BB0C(void) {

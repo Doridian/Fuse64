@@ -164,7 +164,7 @@
  *
  * Everything matches in every version.
  *
- * -O3 drops unreferenced .bss, so a dead `if (0)` in the unused stub
+ * -O3 drops unreferenced .bss, so the unused static (its body dropped)
  * 8004E824 stores to every filler (scratch/bsscheck.sh: every symbol at
  * its address, .bss 0x1B0). The 12-byte tail filler is split into three
  * [4] pieces, and the Vec3f 800502D4 (only its address is used) is three
@@ -499,9 +499,22 @@ void func_ovl14_02_8004E7B0(f32 arg0, f32 arg1, f32 arg2);
 void func_ovl14_02_8004E80C(void);
 
 /* .data */
-/* unused: the stubs IDO -O3 leaves after the tail */
+/* unused: the stubs IDO -O3 leaves after the tail (an unused static's
+ * body is dropped). The first is the one that used the .bss words nothing
+ * else uses: a reference from it keeps them out of common */
 static void func_ovl14_02_8004E824(void) {
-    if (0) { D_ovl14_02_8005027C[0] = 0; D_ovl14_02_80050290[0] = 0; D_ovl14_02_8005029C[0] = 0; D_ovl14_02_800502E4[0] = 0; D_ovl14_02_800503DC[0] = 0; D_ovl14_02_800503EC[0] = 0; D_ovl14_02_800503F8[0] = 0; D_ovl14_02_80050414[0] = 0; D_ovl14_02_80050418[0] = 0; D_ovl14_02_8005041C[0] = 0; D_ovl14_02_800502D8 = 0; D_ovl14_02_800502DC = 0; } /* fake: dead code, for the order or allocation it gives (no code) */
+    D_ovl14_02_8005027C[0] = 0;
+    D_ovl14_02_80050290[0] = 0;
+    D_ovl14_02_8005029C[0] = 0;
+    D_ovl14_02_800502E4[0] = 0;
+    D_ovl14_02_800503DC[0] = 0;
+    D_ovl14_02_800503EC[0] = 0;
+    D_ovl14_02_800503F8[0] = 0;
+    D_ovl14_02_80050414[0] = 0;
+    D_ovl14_02_80050418[0] = 0;
+    D_ovl14_02_8005041C[0] = 0;
+    D_ovl14_02_800502D8 = 0;
+    D_ovl14_02_800502DC = 0;
 }
 
 static void func_ovl14_02_8004E82C(void) {

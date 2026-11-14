@@ -3,16 +3,16 @@
  * is the same in every version). Its data: .data 0x460, .rodata 0x340,
  * .bss 0x3A0, the same in every version.
  *
- * 80043040, 80043970, 80049400, 8004BBE4 and 8004BD28 are static and
- * come out in the original's order: 80043040 (its argument in $s0),
- * 80043970 and 80049400 each hold a dead call to their referrer
- * (80043098 for 80043040), and 8004BD28 a dead use of its own address
- * (so it is first in the reverse order the deferred address-taken
- * statics are flushed in). 8004521C, 800460C0 and 8004A8E0 are
+ * The tasks 80043970 and 8004BBE4 are global (each comes out at its own
+ * turn: IDO -O3 holds back a static whose address is taken and flushes it
+ * later, in the order its takers were processed); 8004BD28 is static and
+ * comes out in that flush. 80043040 (its argument in $s0) and 80049400
+ * are static and hold a dead call to place them (80043098 calls 80043040,
+ * 80049400 its referrer 80048FBC). 8004521C, 800460C0 and 8004A8E0 are
  * global, as static they break that order or their temporaries. The
  * inlined stubs 8004B524, 8004B820/28/30 and the ten at
  * 8004BE60-8004BEA8 are empty statics. The .bss nothing uses would be
- * common: a dead `if (0)` in 8004BE60 refers to it.
+ * common: the unused 8004BE60 refers to it (its body is dropped).
  *
  * What it took, function by function:
  * - 80043E64: the phase step is `0.1f + 0.1f * ...` (a double from
@@ -265,7 +265,7 @@ void func_ovl13_02_800434C0(f32 *arg0);
 void func_ovl13_02_800435D4(s32 arg0, f32 arg1, f32 arg2, f32 arg3);
 void func_ovl13_02_8004362C(s32 arg0);
 void func_ovl13_02_80043698(void);
-static void func_ovl13_02_80043970(void);
+void func_ovl13_02_80043970(void);
 void func_ovl13_02_800439DC(void);
 void func_ovl13_02_80043B64(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3);
 void func_ovl13_02_80043E64(void);
@@ -338,7 +338,7 @@ void func_ovl13_02_8004B644(void);
 void func_ovl13_02_8004B690(void);
 void func_ovl13_02_8004B838(void);
 void func_ovl13_02_8004BAFC(s32 arg0);
-static void func_ovl13_02_8004BBE4(void);
+void func_ovl13_02_8004BBE4(void);
 static void func_ovl13_02_8004BD28(void);
 void func_ovl13_02_8004BDA4(f32 arg0);
 void func_ovl13_02_8004BDEC(f32 arg0, f32 arg1, f32 arg2);
@@ -368,14 +368,12 @@ Move_ovl13_02 D_ovl13_02_8004D8B0 = { 0x1E, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 
 Move_ovl13_02 D_ovl13_02_8004D8F4 = { 0x1E, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, NULL, NULL };
 f32 D_ovl13_02_8004D938[6] = { -200.0f, -100.0f, -0.0f, 200.0f, 100.0f, 0.0f };
 
-/* unused: the stubs IDO -O3 leaves after the tail; the dead `if (0)` in
- * the first refers to the .bss words nothing else uses, which would
- * otherwise be common and leave .bss short */
+/* unused: the stubs IDO -O3 leaves after the tail (an unused static's
+ * body is dropped). The first is the one that used the .bss words nothing
+ * else uses: a reference from it keeps them out of common */
 static void func_ovl13_02_8004BE60(void) {
-    if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
-        D_ovl13_02_8004DC9C[0] = D_ovl13_02_8004DCB0[0] = D_ovl13_02_8004DCBC[0] = D_ovl13_02_8004DCD4[0] = D_ovl13_02_8004DCE4[0] = D_ovl13_02_8004DCE8[0] = D_ovl13_02_8004DD04[0] = D_ovl13_02_8004DD0C[0] = D_ovl13_02_8004DD18[0] = D_ovl13_02_8004DE7C[0] = D_ovl13_02_8004DED0[0] = D_ovl13_02_8004DEE0[0] = D_ovl13_02_8004DF14[0] = 0;
-        D_ovl13_02_8004DEDC = 0.0f;
-    }
+    D_ovl13_02_8004DC9C[0] = D_ovl13_02_8004DCB0[0] = D_ovl13_02_8004DCBC[0] = D_ovl13_02_8004DCD4[0] = D_ovl13_02_8004DCE4[0] = D_ovl13_02_8004DCE8[0] = D_ovl13_02_8004DD04[0] = D_ovl13_02_8004DD0C[0] = D_ovl13_02_8004DD18[0] = D_ovl13_02_8004DE7C[0] = D_ovl13_02_8004DED0[0] = D_ovl13_02_8004DEE0[0] = D_ovl13_02_8004DF14[0] = 0;
+    D_ovl13_02_8004DEDC = 0.0f;
 }
 
 static void func_ovl13_02_8004BE68(void) {
@@ -507,7 +505,6 @@ void func_ovl13_02_80048FBC(s32 arg0) {
 static void func_ovl13_02_8004BD28(void) {
     void *sp1C;
 
-    if (0) { func_ovl13_02_8004CD48(func_ovl13_02_8004BD28, (void *)0x28, 0, 0, 0x150); } /* fake: dead code, for the order or allocation it gives (no code) */
     sp1C = func_ovl13_02_8004CD70();
     if (func_ovl13_02_8004CFD0(0x424) == 0) {
         do {
@@ -520,7 +517,7 @@ static void func_ovl13_02_8004BD28(void) {
     func_ovl13_02_8004CD58();
 }
 
-static void func_ovl13_02_8004BBE4(void) {
+void func_ovl13_02_8004BBE4(void) {
     s32 var_s0;
 
     func_ovl13_02_8004C3E8(1);
@@ -1337,7 +1334,7 @@ void func_ovl13_02_80049468(s32 *arg0, s32 *arg1) {
 static void func_ovl13_02_80049400(void) {
     void *sp1C;
 
-    if (0) { func_ovl13_02_80048FBC(0); } /* fake: dead code, for the order or allocation it gives (no code) */
+    if (0) { func_ovl13_02_80048FBC(0); } /* fake: dead code: it must come out between its referrer 80048FBC and 80049468 inside 80049468's turn; global (any place) or static at any place without it doesn't (scratch/fakes-ovl/p3/mv.py) */
     sp1C = func_ovl13_02_8004CD70();
     if (M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 0) == 0.0f) {}
     func_ovl13_02_8004CD68((func_ovl13_02_8004CF08(2) * 0xA) + 0xA);
@@ -2961,6 +2958,18 @@ void func_ovl13_02_800439DC(void) {
     }
 }
 
+void func_ovl13_02_80043970(void) {
+    if (!(*D_ovl13_02_8004DCDC & 2)) {
+        if (func_ovl13_02_8004CFB0(0xA4) == 0) {
+            func_ovl13_02_8004CD68(0xE6);
+        } else {
+            func_ovl13_02_8004CD68(0x64);
+        }
+        func_ovl13_02_8004D2E0(0x2A);
+    }
+    func_ovl13_02_8004CD58();
+}
+
 void func_ovl13_02_80043698(void) {
     f32 v;
     f32 k;
@@ -3020,19 +3029,6 @@ void func_ovl13_02_80043698(void) {
         func_ovl13_02_8004D0A0(0);
         func_ovl13_02_8004CC00(D_ovl13_02_8004DE3C, 0x0C000000);
     }
-}
-
-static void func_ovl13_02_80043970(void) {
-    if (0) { func_ovl13_02_80043698(); } /* fake: dead code, for the order or allocation it gives (no code) */
-    if (!(*D_ovl13_02_8004DCDC & 2)) {
-        if (func_ovl13_02_8004CFB0(0xA4) == 0) {
-            func_ovl13_02_8004CD68(0xE6);
-        } else {
-            func_ovl13_02_8004CD68(0x64);
-        }
-        func_ovl13_02_8004D2E0(0x2A);
-    }
-    func_ovl13_02_8004CD58();
 }
 
 void func_ovl13_02_8004362C(s32 arg0) {
@@ -3120,7 +3116,7 @@ void func_ovl13_02_80043098(s32 arg0, UnkStructA *arg1) {
 
     temp_v0 = arg1->unk40;
     func_ovl13_02_8004D2F0(arg0, temp_v0->unk10, temp_v0->unk14, temp_v0->unk18);
-    if (0) { func_ovl13_02_80043040(D_ovl13_02_8004DE3C); } /* fake: dead code, for the order or allocation it gives (no code) */
+    if (0) { func_ovl13_02_80043040(D_ovl13_02_8004DE3C); } /* fake: dead code: places the static 80043040 (it takes its argument in $s0, so not global) right before 80043098; no definition place does without it */
 }
 
 static void func_ovl13_02_80043040(UnkStructA *arg0) {

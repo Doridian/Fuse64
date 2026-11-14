@@ -116,7 +116,7 @@
  * of the f64 constants 900.0 and 1900.0. D_80051498 and D_800514B8
  * are Vec3f (80051498 has a 4-byte filler after it). 80043688 matches with dead reads
  * (`if (r == 60) {}` etc.) that make uopt colour each loop's divisor.
- * -O3 drops unreferenced .bss, so a dead `if (0)` in the unused stub
+ * -O3 drops unreferenced .bss, so the unused static (its body dropped)
  * 8004F820 stores to every filler; the 12- and 8-byte fillers are split
  * (800513BC/C0/C4, 800513EC/F0) because IDO 8-aligns arrays of 8 bytes
  * or more (scratch/bsscheck.sh: every symbol at its address, .bss 0x230).
@@ -589,9 +589,30 @@ u32 D_ovl15_02_80051004[5] = { 0x00020001, 0x42DC0000, 0x3DCCCCCD, 0x3D4CCCCD, 0
 u32 D_ovl15_02_80051018[5] = { 0x00020001, 0x42960000, 0x3DCCCCCD, 0x3D4CCCCD, 0x3F400000 };
 u32 D_ovl15_02_8005102C[5] = { 0x00020001, 0x42AE0000, 0x3DCCCCCD, 0x3D4CCCCD, 0x3F400000 };
 
-/* unused: the stubs IDO -O3 leaves after the tail */
+/* unused: the stubs IDO -O3 leaves after the tail (an unused static's
+ * body is dropped). The first is the one that used the .bss words nothing
+ * else uses: a reference from it keeps them out of common */
 static void func_ovl15_02_8004F820(void) {
-    if (0) { D_ovl15_02_80051324[0] = 0; D_ovl15_02_80051334[0] = 0; D_ovl15_02_80051348[0] = 0; D_ovl15_02_80051354[0] = 0; D_ovl15_02_80051364[0] = 0; D_ovl15_02_800513BC[0] = 0; D_ovl15_02_800513C0[0] = 0; D_ovl15_02_800513C4[0] = 0; D_ovl15_02_800513D4[0] = 0; D_ovl15_02_800513E4[0] = 0; D_ovl15_02_800513EC[0] = 0; D_ovl15_02_800513F0[0] = 0; D_ovl15_02_80051494[0] = 0; D_ovl15_02_800514A4[0] = 0; D_ovl15_02_800514B4[0] = 0; D_ovl15_02_800514EC[0] = 0; D_ovl15_02_800514FC[0] = 0; D_ovl15_02_8005150C[0] = 0; D_ovl15_02_80051534[0] = 0; D_ovl15_02_80051548[0] = 0; } /* fake: dead code, for the order or allocation it gives (no code) */
+    D_ovl15_02_80051324[0] = 0;
+    D_ovl15_02_80051334[0] = 0;
+    D_ovl15_02_80051348[0] = 0;
+    D_ovl15_02_80051354[0] = 0;
+    D_ovl15_02_80051364[0] = 0;
+    D_ovl15_02_800513BC[0] = 0;
+    D_ovl15_02_800513C0[0] = 0;
+    D_ovl15_02_800513C4[0] = 0;
+    D_ovl15_02_800513D4[0] = 0;
+    D_ovl15_02_800513E4[0] = 0;
+    D_ovl15_02_800513EC[0] = 0;
+    D_ovl15_02_800513F0[0] = 0;
+    D_ovl15_02_80051494[0] = 0;
+    D_ovl15_02_800514A4[0] = 0;
+    D_ovl15_02_800514B4[0] = 0;
+    D_ovl15_02_800514EC[0] = 0;
+    D_ovl15_02_800514FC[0] = 0;
+    D_ovl15_02_8005150C[0] = 0;
+    D_ovl15_02_80051534[0] = 0;
+    D_ovl15_02_80051548[0] = 0;
 }
 
 static void func_ovl15_02_8004F828(void) {

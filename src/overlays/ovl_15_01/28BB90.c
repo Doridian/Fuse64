@@ -94,7 +94,7 @@
  * Data: .data (the two Vec3f at 8004DCD0/DCDC and five zero words) and
  * .bss defined; the three command strings are literals. The bss types are
  * partly guesses (Vec3f groups); fillers keep the addresses. -O3 drops
- * unreferenced .bss, so a dead `if (0)` in the unused stub 8004C63C
+ * unreferenced .bss, so the unused static 8004C63C (its body dropped)
  * stores to every filler; the 8- and 20-byte fillers are split (DFE4/DFE8,
  * E084/E088) because IDO 8-aligns arrays of 8 bytes or more
  * (scratch/bsscheck.sh: every symbol at its address, .bss 0x1B0).
@@ -381,9 +381,25 @@ s32 D_ovl15_01_8004DCF0 = 0;
 s32 D_ovl15_01_8004DCF4 = 0;
 s32 D_ovl15_01_8004DCF8 = 0;
 
-/* unused: the stubs IDO -O3 leaves after the tail */
+/* unused: the stubs IDO -O3 leaves after the tail (an unused static's
+ * body is dropped). The first is the one that used the .bss words nothing
+ * else uses: a reference from it keeps them out of common */
 static void func_ovl15_01_8004C63C(void) {
-    if (0) { D_ovl15_01_8004DF3C[0] = 0; D_ovl15_01_8004DF50[0] = 0; D_ovl15_01_8004DF5C[0] = 0; D_ovl15_01_8004DF6C[0] = 0; D_ovl15_01_8004DFBC[0] = 0; D_ovl15_01_8004DFDC[0] = 0; D_ovl15_01_8004DFE4[0] = 0; D_ovl15_01_8004DFE8[0] = 0; D_ovl15_01_8004E04C[0] = 0; D_ovl15_01_8004E05C[0] = 0; D_ovl15_01_8004E074[0] = 0; D_ovl15_01_8004E084[0] = 0; D_ovl15_01_8004E088[0] = 0; D_ovl15_01_8004E0AC[0] = 0; D_ovl15_01_8004E0D4[0] = 0; } /* fake: dead code, for the order or allocation it gives (no code) */
+    D_ovl15_01_8004DF3C[0] = 0;
+    D_ovl15_01_8004DF50[0] = 0;
+    D_ovl15_01_8004DF5C[0] = 0;
+    D_ovl15_01_8004DF6C[0] = 0;
+    D_ovl15_01_8004DFBC[0] = 0;
+    D_ovl15_01_8004DFDC[0] = 0;
+    D_ovl15_01_8004DFE4[0] = 0;
+    D_ovl15_01_8004DFE8[0] = 0;
+    D_ovl15_01_8004E04C[0] = 0;
+    D_ovl15_01_8004E05C[0] = 0;
+    D_ovl15_01_8004E074[0] = 0;
+    D_ovl15_01_8004E084[0] = 0;
+    D_ovl15_01_8004E088[0] = 0;
+    D_ovl15_01_8004E0AC[0] = 0;
+    D_ovl15_01_8004E0D4[0] = 0;
 }
 
 static void func_ovl15_01_8004C644(void) {

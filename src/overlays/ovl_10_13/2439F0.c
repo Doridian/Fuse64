@@ -53,8 +53,9 @@
  * (scratch/10_13/ in the checkout has the scripts). .rodata (the two
  * strings, floats and jump tables) builds to the original's. The .bss
  * has the original's order; its unreferenced bytes (8004AB50, 0x24, and
- * the words at 8004AB7C and 8004AB94) are written in dead code in the
- * empty 80049228, as -O3 drops an unreferenced global's storage.
+ * the words at 8004AB7C and 8004AB94) are written by the unused static
+ * 80049228 (its body is dropped), as -O3 drops an unreferenced global's
+ * storage. 80049228-80049280 are unused statics, defined in ROM order.
  */
 #include "common.h"
 
@@ -229,18 +230,18 @@ void func_ovl10_13_80049138(s32 arg0, UnkStructA *arg1);
 void func_ovl10_13_8004916C(f32 arg0);
 void func_ovl10_13_800491B4(f32 arg0, f32 arg1, f32 arg2);
 void func_ovl10_13_80049210(void);
-void func_ovl10_13_80049228(void);
-void func_ovl10_13_80049230(void);
-void func_ovl10_13_80049238(void);
-void func_ovl10_13_80049240(void);
-void func_ovl10_13_80049248(void);
-void func_ovl10_13_80049250(void);
-void func_ovl10_13_80049258(void);
-void func_ovl10_13_80049260(void);
-void func_ovl10_13_80049268(void);
-void func_ovl10_13_80049270(void);
-void func_ovl10_13_80049278(void);
-void func_ovl10_13_80049280(void);
+static void func_ovl10_13_80049228(void);
+static void func_ovl10_13_80049230(void);
+static void func_ovl10_13_80049238(void);
+static void func_ovl10_13_80049240(void);
+static void func_ovl10_13_80049248(void);
+static void func_ovl10_13_80049250(void);
+static void func_ovl10_13_80049258(void);
+static void func_ovl10_13_80049260(void);
+static void func_ovl10_13_80049268(void);
+static void func_ovl10_13_80049270(void);
+static void func_ovl10_13_80049278(void);
+static void func_ovl10_13_80049280(void);
 
 u8 D_ovl10_13_8004AB50[0x24]; /* unused */
 s32 D_ovl10_13_8004AB74;
@@ -269,42 +270,6 @@ s32 D_ovl10_13_8004ADD8;
 s32 D_ovl10_13_8004ADDC;
 s32 D_ovl10_13_8004ADE0;
 s32 D_ovl10_13_8004ADE4;
-
-void func_ovl10_13_80049280(void) {
-}
-
-void func_ovl10_13_80049278(void) {
-}
-
-void func_ovl10_13_80049270(void) {
-}
-
-void func_ovl10_13_80049268(void) {
-}
-
-void func_ovl10_13_80049260(void) {
-}
-
-void func_ovl10_13_80049258(void) {
-}
-
-void func_ovl10_13_80049250(void) {
-}
-
-void func_ovl10_13_80049248(void) {
-}
-
-void func_ovl10_13_80049240(void) {
-}
-
-void func_ovl10_13_80049238(void) {
-}
-
-void func_ovl10_13_80049230(void) {
-}
-
-void func_ovl10_13_80049228(void) {
-    if (0) { D_ovl10_13_8004AB50[0] = D_ovl10_13_8004AB7C = D_ovl10_13_8004AB94 = 0; } /* the unused .bss keeps its place */ } /* fake: dead code, for the order or allocation it gives (no code) */
 
 void func_ovl10_13_80049210(void) {
     D_ovl10_13_8004AB74 = -1;
@@ -2023,4 +1988,44 @@ static f32 func_ovl10_13_80043010(UnkStructA_40 *from, UnkStructA_40 *to) {
     b.z = to->unk18;
     func_ovl10_13_80049F68(&a, &b, &angle.x);
     return angle.x;
+}
+
+/* unused: the shared code's statics (the stubs IDO -O3 leaves after the
+ * tail, in definition order). The first is the one that used the .bss
+ * nothing else uses: a reference from it keeps it out of common */
+static void func_ovl10_13_80049228(void) {
+    D_ovl10_13_8004AB50[0] = D_ovl10_13_8004AB7C = D_ovl10_13_8004AB94 = 0;
+}
+
+static void func_ovl10_13_80049230(void) {
+}
+
+static void func_ovl10_13_80049238(void) {
+}
+
+static void func_ovl10_13_80049240(void) {
+}
+
+static void func_ovl10_13_80049248(void) {
+}
+
+static void func_ovl10_13_80049250(void) {
+}
+
+static void func_ovl10_13_80049258(void) {
+}
+
+static void func_ovl10_13_80049260(void) {
+}
+
+static void func_ovl10_13_80049268(void) {
+}
+
+static void func_ovl10_13_80049270(void) {
+}
+
+static void func_ovl10_13_80049278(void) {
+}
+
+static void func_ovl10_13_80049280(void) {
 }

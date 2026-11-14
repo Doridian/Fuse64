@@ -13,10 +13,8 @@
  *   `len = x1 + z1` (a dead fake) ahead of x0's set-up (ovl_0D_02's header
  *   says why), and 80043F24 is defined in another file (statics.h), which
  *   replaces a "panels.c" region around case 0's first statement. Unlike
- *   ovl_0D_02,
- *   80045948's second and fourth calls pass 0x11 here (checked against the
- *   original). The `#line` regions need a function defined in "panels.c":
- *   the static 80044D90 is one.
+ *   ovl_0D_02, 80045948's second and fourth calls pass 0x11 here (checked
+ *   against the original). The file has no `#line`s left (2026-11-14).
  * - 80043700: CCC[0..2] are indexed by i (i = 0 before the first call to
  *   80046308, then i++): an incremented i is a run-time index (`li v1,1`
  *   and *56, CCC[2] as +0x38) while i = 0 still folds; the products are
@@ -26,14 +24,13 @@
  *   an s register. No `e` pointer and no float locals (each costs 8 bytes
  *   of frame).
  * - 80043C50: CCC[1]'s 55.0f through a local y (no reload, %lo per access).
- * - 80044D98: the 0x18 block in the static 80044D90 (in "panels.c"); the
+ * - 80044D98: the 0x18 block in the static 80044D90; the
  *   C24 loop starts at (Ent_0D04 *)(D_ovl0D_04_80046C00 + 3), the same
  *   address as another symbol, so uopt doesn't merge it with the block's
  *   &C24 into s4 (a fake); the camera static 80044D40 in statics.h
  *   puts 1600.0f in $f16 (as the original), and both its 1600s are floats.
  */
 #include "common.h"
-#line 44 "1A5E10.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0D_04's stage object, IDO -O3: the functions are written last to first
@@ -477,8 +474,6 @@ void func_ovl0D_04_80044D98(void) {
     func_ovl0D_04_80045988();
 }
 
-/* in "panels.c" (a fake, see the top) */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 static void func_ovl0D_04_80044D90(void) {
     if (func_ovl0D_04_80045A08() == 24) {
         func_ovl0D_04_800466D0(0x421);
@@ -489,7 +484,6 @@ static void func_ovl0D_04_80044D90(void) {
         D_ovl0D_04_80046C24[2].unk24 = 270.0f;
     }
 }
-#line 500 "1A5E10.c" /* fake: back from the other file, at the line numbers it matched with */
 
 static void func_ovl0D_04_80044D88(Trio_0D04 *t, s32 count) {
     s32 i;

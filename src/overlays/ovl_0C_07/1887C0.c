@@ -5,13 +5,13 @@
  * of func_ovl0C_07_8004455C then stays a call, and its empty case 0x53
  * is kept (both only together give the handler).
  *
- * func_ovl0C_07_80044178: the model placement it ends with is the
- *   static func_ovl0C_07_80044170, defined in another file (statics.h): the `.file`
- *   switch back at its closing `}` ends as1's block before the epilogue,
- *   which keeps ugen's restore order s0, s1, s2 (as1 reverses it when the
- *   last block ends in the lw, lw, store chain).  The stub of that static
- *   was an empty static before; the same static is ovl_0C_08's 800435D4
- *   and ovl_0D_07's 80043424.
+ * func_ovl0C_07_80044178: the model placement it ends with is the static
+ * func_ovl0C_07_80044170, defined in another file (statics.h): the `.file`
+ * switch back at its closing `}` ends as1's block before the epilogue,
+ * which keeps ugen's restore order s0, s1, s2 (as1 reverses it when the
+ * last block ends in the lw, lw, store chain).  The stub of that static
+ * was an empty static before; the same static is ovl_0C_08's 800435D4 and
+ * ovl_0D_07's 80043424.
  */
 #include "common.h"
 

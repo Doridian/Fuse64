@@ -26,8 +26,7 @@
  *   called after the 800455D0 rows (the frame); the 80046278 call in a
  *   "panels.c" region (its a0 after the three stores); 80046460 returns s32
  *   (v1, not v0, for the two inlined flag tests at the end).
- * - 80044154: 15.0f through a local y, its store in a "panels.c" region,
- *   and the model reached as D_ovl0D_01_800475D4[2] (the address of
+ * - 80044154: 15.0f through a local y, and the model reached as D_ovl0D_01_800475D4[2] (the address of
  *   D_ovl0D_01_8004760C[1]; a fake, so uopt doesn't keep &[1] in a
  *   register for both the store and the load).
  * - 80044464/800444D8/800444E0: ovl_0D_06's clamp (axis, v, size),
@@ -1034,13 +1033,10 @@ void func_ovl0D_01_80044154(void) {
         func_ovl0D_01_80046C70(D_ovl0D_01_8004760C[0].obj, 0x01000000);
         y = 15.0f;
         /*
-         * fakes: the store in a "panels.c" region (as1 keeps it ahead of
-         * the load below), and D_ovl0D_01_8004760C[1] reached from another
-         * symbol, so uopt doesn't keep &[1] in a register for both
+         * fake: D_ovl0D_01_8004760C[1] reached from another symbol, so
+         * uopt doesn't keep &[1] in a register for both
          */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
         D_ovl0D_01_8004760C[1].unk18 = y;
-#line 1150 "197800.c" /* fake: back from the other file, at the line numbers it matched with */
         D_ovl0D_01_800475D4[2].obj->unk40->unk14 = y * 10.0f;
         func_ovl0D_01_80046C70(D_ovl0D_01_8004767C[0].obj, 0x01000000);
         func_ovl0D_01_80046C70(D_ovl0D_01_8004767C[1].obj, 0x01000000);

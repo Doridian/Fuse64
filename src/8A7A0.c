@@ -1303,27 +1303,27 @@ s32 func_8027655C(Ent88 *arg0) {
 }
 
 void func_802763DC(s16 *arg0) {
-    s32 padT; /* fake: frame slot */
+    Ent88 *e = (Ent88 *) arg0;
     struct { f32 z, y, x; } v;
     s32 r;
     s16 f;
     s16 t;
 
-    if ((f = ((Ent88 *) arg0)->unk64 & 0x10) != 0) {
+    if ((f = e->unk64 & 0x10) != 0) {
         return;
     }
-    ((Ent88 *) arg0)->xf->x = ((Ent88 *) arg0)->x;
-    ((Ent88 *) arg0)->xf->y = ((Ent88 *) arg0)->y;
-    ((Ent88 *) arg0)->xf->z = ((Ent88 *) arg0)->z;
-    func_80271448(((Ent88 *) arg0)->xf->x, ((Ent88 *) arg0)->xf->y, ((Ent88 *) arg0)->xf->z, &v.x, &v.y, &v.z);
+    e->xf->x = e->x;
+    e->xf->y = e->y;
+    e->xf->z = e->z;
+    func_80271448(e->xf->x, e->xf->y, e->xf->z, &v.x, &v.y, &v.z);
     t = func_8026D7D8((s32) v.x, (s32) v.y, (s32) v.z);
     t &= 0x1C00;
     if (t != 0) {
-        func_8027F858((s32)(((Ent88 *) arg0)->obj), t >> 10);
+        func_8027F858((s32)(e->obj), t >> 10);
     }
-    ((Ent88 *) arg0)->x = ((Ent88 *) arg0)->xf->x;
-    ((Ent88 *) arg0)->y = ((Ent88 *) arg0)->xf->y;
-    ((Ent88 *) arg0)->z = ((Ent88 *) arg0)->xf->z;
+    e->x = e->xf->x;
+    e->y = e->xf->y;
+    e->z = e->xf->z;
 }
 
 void func_80276184(s16 *arg0, u8 *arg1) {
@@ -1589,28 +1589,22 @@ void func_80275C08(u8 *arg0, u8 *arg1) {
 }
 
 void func_80275948(s16 *arg0) {
+    Ent88 *e = (Ent88 *) arg0;
     u16 n;
     u16 i;
-    s32 t1;
     f32 x;
     f32 y;
     f32 z;
-    s16 t2;
-    s32 padB[1]; /* fake: frame slots */
     u16 snd;
     s16 f;
-    void *nd;
 
-    func_80270BA4((u8 *) ((Ent88 *) arg0)->obj);
-    t2 = func_802712A8(&((Ent88 *) arg0)->unk64, 0x200);
-    if ((f = t2) != 0) {
-        ((Ent88 *) arg0)->unk64 &= ~0x200;
-        func_802313DC(((Ent88 *) arg0)->obj, 0x20000);
-        nd = ((Ent88 *) arg0)->unk38;
-        func_80270A80(nd);
-        free(nd);
+    func_80270BA4((u8 *) e->obj);
+    if ((f = func_802712A8(&e->unk64, 0x200)) != 0) {
+        func_8027036C(&e->unk64, 0x200);
+        func_802313DC(e->obj, 0x20000);
+        func_80270B20(e->unk38);
     }
-    switch (((Ent88 *) arg0)->unk10 & ~0xC02) {
+    switch (e->unk10 & ~0xC02) {
     case 0x200:
         func_802752BC(arg0);
         n = 3;
@@ -1636,14 +1630,14 @@ void func_80275948(s16 *arg0) {
         n = 3;
         break;
     }
-    x = ((Ent88 *) arg0)->x;
-    y = ((Ent88 *) arg0)->y;
-    z = ((Ent88 *) arg0)->z;
+    x = e->x;
+    y = e->y;
+    z = e->z;
     func_80273414(arg0);
     snd = 11;
-    ((Ent88 *) arg0)->x = ((Ent88 *) arg0)->y = ((Ent88 *) arg0)->z = 1e7f;
-    if (((Ent88 *) arg0)->unk10 & 1) {
-        switch (((Ent88 *) arg0)->unk66) {
+    e->x = e->y = e->z = 1e7f;
+    if (e->unk10 & 1) {
+        switch (e->unk66) {
         case 3:
             snd = 15;
             break;
@@ -1666,11 +1660,11 @@ void func_80275948(s16 *arg0) {
             snd = 21;
             break;
         }
-        if (((Ent88 *) arg0)->unk10 & 0x100) {
+        if (e->unk10 & 0x100) {
             snd = 21;
         }
     } else {
-        switch (((Ent88 *) arg0)->unk66) {
+        switch (e->unk66) {
         case 3:
             break;
         case 4:
@@ -1680,26 +1674,25 @@ void func_80275948(s16 *arg0) {
             snd = 13;
             break;
         }
-        if (((Ent88 *) arg0)->unk10 & 0x100) {
+        if (e->unk10 & 0x100) {
             snd = 14;
         }
     }
     func_8026C51C(snd, x, y, z);
     for (;;) {
-        t1 = func_802750C0(arg0, n);
-        if (t1 != 0) {
+        if (func_802750C0(arg0, n) != 0) {
             break;
         }
         for (i = 0; i < n; i++) {
-            if (((Ent88 *) arg0)->unk24[i] != NULL) {
-                func_80278D54(((Ent88 *) arg0)->unk24[i]);
+            if (e->unk24[i] != NULL) {
+                func_80278D54(e->unk24[i]);
             }
         }
         func_80239094();
     }
     func_802733F8(arg0);
-    ((Ent88 *) arg0)->xf = NULL;
-    func_80238EA8(((Ent88 *) arg0)->unk4);
+    e->xf = NULL;
+    func_80238EA8(e->unk4);
     func_80239094();
 }
 
@@ -2968,36 +2961,22 @@ void func_80271448(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5
 }
 
 s32 func_8027130C(u8 *arg0) {
-    s16 t1;
-    s16 * t2;
-    s16 t3;
-    Obj8E *t4;
-    s16 t5;
-    s32 pad[5]; /* fake: frame-tuned; the frame is 0x50 */
     Ent88 *e;
-    void *p;
 
-    t2 = func_802703B4(arg0);
-    e = (Ent88 *) t2;
+    e = (Ent88 *) func_802703B4(arg0);
     if (e == NULL) {
         return 0;
     }
-    t1 = func_802712A8(&e->unk64, 0x80);
-    if (t1) {
+    if (func_802712A8(&e->unk64, 0x80)) {
         return 0;
     }
-    t3 = func_802712A8(&e->unk64, 0x10);
-    if (t3) {
+    if (func_802712A8(&e->unk64, 0x10)) {
         func_80270BA4(arg0);
     }
-    t5 = func_802712A8(&e->unk64, 0x200);
-    if (t5) {
+    if (func_802712A8(&e->unk64, 0x200)) {
         func_8027036C(&e->unk64, 0x200);
-        t4 = e->obj;
-        func_802313DC(t4, 0x20000);
-        p = e->unk38;
-        func_80270A80(p);
-        free(p);
+        func_802313DC(e->obj, 0x20000);
+        func_80270B20(e->unk38);
     }
     func_802712C4((s16 *) e);
     e->obj->unk6C = 1.0f;

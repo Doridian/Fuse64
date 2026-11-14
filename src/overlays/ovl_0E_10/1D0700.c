@@ -31,7 +31,7 @@ void func_ovl0E_10_80044F68(s32);
 s32 func_ovl0E_10_80044F70(s32);
 void func_ovl0E_10_80045140(s32, f32 *, s32);
 void func_ovl0E_10_80045270(s32);
-void func_ovl0E_10_80045290(s32, f32, f32, f32);
+s32 func_ovl0E_10_80045290(s32, f32, f32, f32);
 void func_ovl0E_10_80045298(s32, f32 *);
 
 /* The three statements are on one line, a macro: only then does IDO
@@ -424,14 +424,9 @@ void func_ovl0E_10_80043CC0(UnkStructA *arg0) {
     func_ovl0E_10_80045298(180, pos);
 }
 
-void func_ovl0E_10_80043D58(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
-
-    p = arg1->unk40;
-    if (1) { /* fake: a uopt block boundary; at -O2 a one-block body homes arg1 to the stack (do/while(0) and goto work alike; an initializer, one expression, a copy of arg0 or a struct-field array do not; at -O3 it is not needed) */
-    }
-    func_ovl0E_10_80045290(arg0, p->unk10, p->unk14, p->unk18);
-}
+#define CORE_FUNC_D func_ovl0E_10_80043D58
+#define CORE_ZJ_2B04 func_ovl0E_10_80045290
+#include "overlays/common/core_d.h"
 
 void func_ovl0E_10_80043D8C(f32 arg0, f32 arg1, f32 arg2) {
     func_ovl0E_10_800449D8(D_ovl0E_10_80045590.x, D_ovl0E_10_80045590.y, D_ovl0E_10_80045590.z);

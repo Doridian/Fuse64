@@ -3,14 +3,15 @@
  *
  * What fixed what (from 120 words), ovl_0D_02/04/06's levers:
  * - 80043790: the camera calls are in the static 80043760 (1600.0f in
- *   $f16, both its 1600s floats, as ovl_0D_04's 80044D40). Its call no
- *   longer needs a "panels.c" region of its own (2026-11-13).
+ *   $f16, both its 1600s floats, as ovl_0D_04's 80044D40), defined in
+ *   statics.h.
  * - 80043018: 80044CC8's result goes through a local j, and that statement
- *   ends the "panels.c" region that starts at the static 80043788 (a fake
- *   `#line`; the region needs a function defined in it), so as1 keeps the
- *   loads of D_80046170 after the store and passes j from v0 (ovl_0D_06's
- *   8004305C). The region's other end and 80043790's region went
- *   (2026-11-13: tried away one `#line` at a time against the sha1).
+ *   is statics.h's, included in the body (a fake: its `.file` switches end
+ *   as1's blocks), so as1 keeps the loads of D_80046170 after the store and
+ *   passes j from v0 (ovl_0D_06's 8004305C). The statics 80043788,
+ *   80043780 and 80043760 are statics.h's too, included where they are
+ *   (this replaces a "panels.c" #line region from 80043788 to that
+ *   statement, 2026-11-14).
  * - 80043210: the empty static 800431F8 it inlines first is defined in
  *   another file (statics.h): its `.file` keeps the first call out of the
  *   prologue (it replaces an `if (!D && !D && !D) {}` fake).
@@ -18,7 +19,6 @@
  *   so grid sits at sp+168 as in the original.
  */
 #include "common.h"
-#line 20 "1A9E30.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0D_05's stage object, IDO -O3: the functions are written last to first
@@ -581,25 +581,10 @@ void func_ovl0D_05_80043790(void) {
     func_ovl0D_05_80043524();
 }
 
-/* in "panels.c" (a fake: see the top) */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0D_05_80043788(void) {
-}
-
-static void func_ovl0D_05_80043780(Trio05 *t, s32 count) {
-    s32 i;
-
-    for (i = 0; i < count; i++) {
-        func_ovl0D_05_80045C58(t->unk0, t->unk4, t->unk8);
-        t++;
-    }
-}
-
-static void func_ovl0D_05_80043760(void) {
-    func_ovl0D_05_800454E8(2400.0f, 1600.0f, 800.0f, 1600.0f);
-    func_ovl0D_05_800454F8(1600.0f, 1600.0f, 3200.0f, 1600.0f);
-}
-
+/* in statics.h (a fake, see the top) */
+#define STATICS_PART 1
+#include "overlays/ovl_0D_05/statics.h"
+#undef STATICS_PART
 static void func_ovl0D_05_80043758(void) {
     Ent05 *p;
 
@@ -776,8 +761,9 @@ void func_ovl0D_05_80043018(void) {
 
     if (func_ovl0D_05_800459D0(0x409) != 0) {
         /* fake: (see the top) */
-        j = D_ovl0D_05_8004617C = func_ovl0D_05_80044CC8(0x15A);
-#line 795 "1A9E30.c" /* fake: back from the other file, at the line numbers it matched with */
+#define STATICS_PART 2
+#include "overlays/ovl_0D_05/statics.h"
+#undef STATICS_PART
         func_ovl0D_05_80044CD0(j, 0, 0, D_ovl0D_05_80046170[0] - 1, D_ovl0D_05_80046170[2] - 1, 0, 0, 0);
         func_ovl0D_05_80045600(D_ovl0D_05_80045F2C[0].obj, 0x01000000);
         func_ovl0D_05_80045600(D_ovl0D_05_80045F64[0].obj, 0x01000000);

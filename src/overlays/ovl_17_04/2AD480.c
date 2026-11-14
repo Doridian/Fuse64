@@ -4,7 +4,7 @@ void func_ovl17_04_800442A8(f32, f32, f32);
 void func_ovl17_04_800442C8(f32, f32, f32);
 void func_ovl17_04_800442D0(f32 *, f32 *, f32 *);
 void func_ovl17_04_800445D8(s32);
-void func_ovl17_04_80044B60(s32, f32, f32, f32);
+s32 func_ovl17_04_80044B60(s32, f32, f32, f32);
 
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
@@ -211,14 +211,9 @@ void func_ovl17_04_80043388(void) {
     }
 }
 
-void func_ovl17_04_800435D0(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
-
-    p = arg1->unk40;
-    if (1) { /* fake: a uopt block boundary; at -O2 a one-block body homes arg1 to the stack (do/while(0) and goto work alike; an initializer, one expression, a copy of arg0 or a struct-field array do not; at -O3 it is not needed) */
-    }
-    func_ovl17_04_80044B60(arg0, p->unk10, p->unk14, p->unk18);
-}
+#define CORE_FUNC_D func_ovl17_04_800435D0
+#define CORE_ZJ_2B04 func_ovl17_04_80044B60
+#include "overlays/common/core_d.h"
 
 void func_ovl17_04_80043604(f32 arg0) {
     f32 sp1C;

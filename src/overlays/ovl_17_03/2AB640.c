@@ -44,7 +44,7 @@ void func_ovl17_03_80044628(s32);
 void *func_ovl17_03_80044630(void);
 void func_ovl17_03_80044650(void);
 f32 func_ovl17_03_800447B0(f32);
-void func_ovl17_03_80044BB0(s32, f32, f32, f32);
+s32 func_ovl17_03_80044BB0(s32, f32, f32, f32);
 
 /* .bss */
 u8 D_ovl17_03_80044E40[0x24];
@@ -208,14 +208,9 @@ void func_ovl17_03_8004350C(void) {
     }
 }
 
-void func_ovl17_03_80043620(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
-
-    p = arg1->unk40;
-    if (1) { /* fake: a uopt block boundary; at -O2 a one-block body homes arg1 to the stack (do/while(0) and goto work alike; an initializer, one expression, a copy of arg0 or a struct-field array do not; at -O3 it is not needed) */
-    }
-    func_ovl17_03_80044BB0(arg0, p->unk10, p->unk14, p->unk18);
-}
+#define CORE_FUNC_D func_ovl17_03_80043620
+#define CORE_ZJ_2B04 func_ovl17_03_80044BB0
+#include "overlays/common/core_d.h"
 
 void func_ovl17_03_80043654(f32 arg0) {
     f32 sp1C;

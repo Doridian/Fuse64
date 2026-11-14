@@ -56,7 +56,7 @@ void func_ovl0E_08_80044E90(u32 (*)[3]);
 void func_ovl0E_08_80044F80(s32, f32 *, s32);
 void func_ovl0E_08_80045038(s32, s32, s32);
 void func_ovl0E_08_800450B0(s32);
-void func_ovl0E_08_800450D0(s32, f32, f32, f32);
+s32 func_ovl0E_08_800450D0(s32, f32, f32, f32);
 void func_ovl0E_08_800450D8(s32, f32 *);
 
 /* .bss, in first-seen order (docs/DECOMPILING.md, "Data") */
@@ -382,14 +382,9 @@ void func_ovl0E_08_80043B04(UnkStructA *arg0) {
     func_ovl0E_08_800450D8(180, pos);
 }
 
-void func_ovl0E_08_80043B9C(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
-
-    p = arg1->unk40;
-    if (1) { /* fake: a uopt block boundary; at -O2 a one-block body homes arg1 to the stack (do/while(0) and goto work alike; an initializer, one expression, a copy of arg0 or a struct-field array do not; at -O3 it is not needed) */
-    }
-    func_ovl0E_08_800450D0(arg0, p->unk10, p->unk14, p->unk18);
-}
+#define CORE_FUNC_D func_ovl0E_08_80043B9C
+#define CORE_ZJ_2B04 func_ovl0E_08_800450D0
+#include "overlays/common/core_d.h"
 
 void func_ovl0E_08_80043BD0(f32 arg0, f32 arg1, f32 arg2) {
     func_ovl0E_08_80044818(D_ovl0E_08_80045390.x, D_ovl0E_08_80045390.y, D_ovl0E_08_80045390.z);

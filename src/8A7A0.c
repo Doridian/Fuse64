@@ -615,7 +615,9 @@ void *func_8027361C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
     s32 flags;
     Ent88 *e;
     Obj8E *obj;
-    s32 pad[25]; /* fake: frame-tuned; the frame is 0xA8 */
+    s32 t1;
+    s32 t2;
+    s32 pad[23]; /* fake: frame-tuned; the frame is 0xA8 */
 
     idx = func_802735CC();
     if (idx == -1) {
@@ -640,7 +642,8 @@ void *func_8027361C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
     if (obj == NULL) {
         return NULL;
     }
-    if (func_802311E8(obj) == 0) {
+    t1 = func_802311E8(obj);
+    if (t1 == 0) {
         return NULL;
     }
     obj->unk30 = 0x21;
@@ -648,7 +651,8 @@ void *func_8027361C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
     obj->unk38 = 40.0f;
     e = &ENTS[idx];
     func_80273544((u8 *) e);
-    e->unk4 = func_80238A10(func_8027723C, (s32) e, 0, 0, 0xB0);
+    t2 = func_80238A10(func_8027723C, (s32) e, 0, 0, 0xB0);
+    e->unk4 = t2;
     if (e->unk4 == -1) {
         return NULL;
     }
@@ -1171,20 +1175,31 @@ void func_80276D68(Ent88 *arg0) {
 }
 
 s32 func_8027655C(Ent88 *arg0) {
-    s32 padT; /* fake: frame slot */
+    s16 t1;
     f32 sp168;
     struct { f32 z, y, x; } v;
     f32 sp158;
     void *sp154;
-    s32 pad[20]; /* fake: frame-tuned (header: the getter calls the original has) */
+    s16 t2;
+    s16 t3;
+    s16 t4;
+    s32 t5;
+    s16 t6;
+    s32 t7;
+    s16 t8;
+    s32 t9;
+    s16 t10;
+    s32 pad[11]; /* fake: frame-tuned (header: the getter calls the original has) */
     s16 fl;
     s32 f8;
-    s32 padB[2]; /* fake: frame slots */
+    s16 t11;
+    s32 padB[1]; /* fake: frame slots */
 
     if (D_802A14B4 == 1) {
         return 0;
     }
-    if (func_802712A8(&arg0->unk64, 2)) {
+    t1 = func_802712A8(&arg0->unk64, 2);
+    if (t1) {
         arg0->unk68--;
     }
     if (arg0->unk68 < 15) {
@@ -1202,21 +1217,25 @@ s32 func_8027655C(Ent88 *arg0) {
         func_80275948((s16 *) arg0);
     }
     sp168 = 0.0f;
-    if (func_802712A8(&arg0->unk64, 4)) {
+    t2 = func_802712A8(&arg0->unk64, 4);
+    if (t2) {
         sp168 = 15.0f;
     }
-    func_80291944(arg0->obj, func_80272024(arg0->unk74), sp168);
+    t7 = func_80272024(arg0->unk74);
+    func_80291944(arg0->obj, t7, sp168);
     arg0->x = arg0->xf->x;
     arg0->y = arg0->xf->y;
     arg0->z = arg0->xf->z;
     func_802763DC((s16 *) arg0);
-    if (!func_802712A8(&arg0->unk64, 0x200) && !func_802712A8(&arg0->unk64, 0x10)) {
+    t3 = func_802712A8(&arg0->unk64, 0x200);
+    if (!t3 && !func_802712A8(&arg0->unk64, 0x10)) {
         arg0->obj->unk70 = 1.6333334f;
         sp158 = arg0->obj->unk6C;
         arg0->unk64 &= ~8;
         func_80230914(arg0->obj);
         if (arg0->obj->unk6C == 0.0f && arg0->obj->unk68 == 0.0f) {
-            if (!func_802712A8(&arg0->unk64, 0x800)) {
+            t4 = func_802712A8(&arg0->unk64, 0x800);
+            if (!t4) {
                 arg0->unk64 |= 8;
                 arg0->unk64 |= 0x800;
             }
@@ -1234,7 +1253,8 @@ s32 func_8027655C(Ent88 *arg0) {
     }
     fl = arg0->unk64 & 0x10;
     if (!fl && !func_802712A8(&arg0->unk64, 0x200)) {
-        if (func_802909FC(arg0->obj, func_80277378) && func_8023369C(arg0->xf->x, arg0->obj->unk58, 1.0f)
+        t5 = func_802909FC(arg0->obj, func_80277378);
+        if (t5 && func_8023369C(arg0->xf->x, arg0->obj->unk58, 1.0f)
             && func_8023369C(arg0->xf->z, arg0->obj->unk60, 1.0f) && func_802712A8(&arg0->unk64, 4)) {
             func_802712C4((s16 *) arg0);
         }
@@ -1247,7 +1267,8 @@ s32 func_8027655C(Ent88 *arg0) {
     arg0->y = arg0->xf->y;
     arg0->z = arg0->xf->z;
     f8 = func_802712A8(&arg0->unk64, 8);
-    if (func_802712A8(&arg0->unk64, 4) || f8) {
+    t6 = func_802712A8(&arg0->unk64, 4);
+    if (t6 || f8) {
         func_802714C4();
         OBJ_DD8->unk40->x = OBJ_DD8->unk58 = arg0->x;
         OBJ_DD8->unk40->y = OBJ_DD8->unk5C = arg0->y;
@@ -1257,13 +1278,16 @@ s32 func_8027655C(Ent88 *arg0) {
         OBJ_DD8->unk30 = 1;
         OBJ_DD8->unk34 = 40.0f;
         OBJ_DD8->unk38 = 40.0f;
-        if (!func_802712A8(&arg0->unk64, 0x400) && !func_80232D18(OBJ_DD8, 1)) {
+        t8 = func_802712A8(&arg0->unk64, 0x400);
+        if (!t8 && !func_80232D18(OBJ_DD8, 1)) {
             arg0->unk64 |= 0x400;
         }
-        if (func_802712A8(&arg0->unk64, 0x400)) {
+        t10 = func_802712A8(&arg0->unk64, 0x400);
+        if (t10) {
             sp154 = func_802308B8(arg0->obj, 0x16);
         } else {
-            sp154 = (void *) func_8022F4AC((s32) arg0->obj, 0x16, (s32) func_802443F4(arg0->unkE));
+            t9 = func_8022F4AC((s32) arg0->obj, 0x16, (s32) func_802443F4(arg0->unkE));
+            sp154 = (void *) t9;
         }
         if (sp154 != NULL) {
             arg0->x = arg0->xf->x = arg0->obj->unk58;
@@ -1271,7 +1295,8 @@ s32 func_8027655C(Ent88 *arg0) {
             arg0->z = arg0->xf->z = arg0->obj->unk60;
             func_80276184((s16 *) arg0, sp154);
             func_802712C4((s16 *) arg0);
-            if (func_802712A8(&arg0->unk64, 8)) {
+            t11 = func_802712A8(&arg0->unk64, 8);
+            if (t11) {
                 void *r = func_802700EC((u8 *) arg0->obj, sp154, func_80272024(arg0->unk74), sp168);
                 arg0->unk64 |= 0x200;
                 arg0->unk38 = r;
@@ -1589,17 +1614,19 @@ void func_80275C08(u8 *arg0, u8 *arg1) {
 void func_80275948(s16 *arg0) {
     u16 n;
     u16 i;
-    s32 padT[1]; /* fake: frame slot */
+    s32 t1;
     f32 x;
     f32 y;
     f32 z;
-    s32 padB[2]; /* fake: frame slots */
+    s16 t2;
+    s32 padB[1]; /* fake: frame slots */
     u16 snd;
     s16 f;
     void *nd;
 
     func_80270BA4((u8 *) ((Ent88 *) arg0)->obj);
-    if ((f = func_802712A8(&((Ent88 *) arg0)->unk64, 0x200)) != 0) {
+    t2 = func_802712A8(&((Ent88 *) arg0)->unk64, 0x200);
+    if ((f = t2) != 0) {
         ((Ent88 *) arg0)->unk64 &= ~0x200;
         func_802313DC(((Ent88 *) arg0)->obj, 0x20000);
         nd = ((Ent88 *) arg0)->unk38;
@@ -1682,7 +1709,8 @@ void func_80275948(s16 *arg0) {
     }
     func_8026C51C(snd, x, y, z);
     for (;;) {
-        if (func_802750C0(arg0, n) != 0) {
+        t1 = func_802750C0(arg0, n);
+        if (t1 != 0) {
             break;
         }
         for (i = 0; i < n; i++) {
@@ -1860,10 +1888,10 @@ s16 func_80274F64(s16 arg0) {
 s32 func_80274994(s16 arg0) {
     s32 t;
     s32 spB8;
-    s32 padU[1]; /* fake: frame slot */
+    s32 t1;
     struct { f32 z, y, x; } base;
     struct { f32 z, y, x; } cur;
-    s32 pad98; /* fake: frame slot */
+    s32 t2;
     Obj8E *obj;
 
     func_802714C4();
@@ -1897,14 +1925,16 @@ s32 func_80274994(s16 arg0) {
     cur.y = base.y;
     cur.z = base.z;
     func_802740AC((s16) func_802704F8(obj->unk40->rot), 1.0f, 0.0f, &cur.x, &cur.z);
-    if (func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z) == 0) {
+    t1 = func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z);
+    if (t1 == 0) {
         return 0;
     }
     cur.x = base.x;
     cur.y = base.y;
     cur.z = base.z;
     func_802740AC((s16) func_802704F8(obj->unk40->rot), 0.0f, 1.0f, &cur.x, &cur.z);
-    if (func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z) == 0) {
+    t2 = func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z);
+    if (t2 == 0) {
         return 0;
     }
     func_802740AC((s16) func_802704F8(obj->unk40->rot), 1.0f, 1.0f, &base.x, &base.z);
@@ -1939,11 +1969,27 @@ void func_802741D8(s16 arg0) {
     Ent88 *e;
     Obj8E *obj;
     Obj8E *o;
-    s32 pad[3]; /* fake: frame-tuned */
+    s32 t1;
+    s32 t2;
+    int t3;
     f32 spA0;
-    s32 pad1[13]; /* fake: frame-tuned */
+    int t4;
+    s32 t5;
+    void * t6;
+    s32 t7;
+    int t8;
+    int t9;
+    s32 t10;
+    s32 t11;
+    s32 t12;
+    f32 t13;
+    f32 t14;
+    f32 t15;
+    s32 t16;
     s32 sp60[3];
-    s32 padA[6]; /* fake: frame-tuned */
+    f32 t17;
+    f32 t18;
+    s32 padA[4]; /* fake: frame-tuned */
     f32 sp3C[3];
     Slot30 *slot;
     s32 padC[1]; /* fake: frame-tuned */
@@ -1961,29 +2007,38 @@ void func_802741D8(s16 arg0) {
     cur.x = base.x;
     cur.y = base.y;
     cur.z = base.z;
-    func_802740AC((s16) func_802704F8(obj->unk40->rot), 1.0f, 0.0f, &cur.x, &cur.z);
-    if (func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z) == 0) {
+    t10 = func_802704F8(obj->unk40->rot);
+    func_802740AC((s16) t10, 1.0f, 0.0f, &cur.x, &cur.z);
+    t1 = func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z);
+    if (t1 == 0) {
         return;
     }
     cur.x = base.x;
     cur.y = base.y;
     cur.z = base.z;
-    func_802740AC((s16) func_802704F8(obj->unk40->rot), 0.0f, 1.0f, &cur.x, &cur.z);
-    if (func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z) == 0) {
+    t11 = func_802704F8(obj->unk40->rot);
+    func_802740AC((s16) t11, 0.0f, 1.0f, &cur.x, &cur.z);
+    t2 = func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z);
+    if (t2 == 0) {
         return;
     }
-    func_802740AC((s16) func_802704F8(obj->unk40->rot), 1.0f, 1.0f, &base.x, &base.z);
+    t12 = func_802704F8(obj->unk40->rot);
+    func_802740AC((s16) t12, 1.0f, 1.0f, &base.x, &base.z);
     spD4 = func_8026D7D8((s32) base.x, (s32) base.y, (s32) base.z);
     func_8026E338(base.x, base.y, base.z, sp3C, 0);
     cur.x = sp3C[0];
     cur.y = sp3C[1];
     cur.z = sp3C[2];
-    base.x = func_80234434(obj->unk40->rot) * 100.0f;
-    base.y = func_80234408(obj->unk40->rot) * 100.0f;
-    if (func_802336E4(base.x)) {
+    t13 = func_80234434(obj->unk40->rot);
+    base.x = t13 * 100.0f;
+    t14 = func_80234408(obj->unk40->rot);
+    base.y = t14 * 100.0f;
+    t3 = func_802336E4(base.x);
+    if (t3) {
         base.x = 0.0f;
     }
-    if (func_802336E4(base.y)) {
+    t4 = func_802336E4(base.y);
+    if (t4) {
         base.y = 0.0f;
     }
     OBJ_DD8->unk40->x = obj->unk40->x + base.x;
@@ -1994,7 +2049,8 @@ void func_802741D8(s16 arg0) {
     case 4:
     case 5:
     case 6:
-        cur.y = func_8026E938((u8 *) OBJ_DD8->unk40);
+        t15 = func_8026E938((u8 *) OBJ_DD8->unk40);
+        cur.y = t15;
         if (func_80270FC0((u8 *) obj) + obj->unk40->y <= cur.y) {
             return;
         }
@@ -2008,13 +2064,17 @@ void func_802741D8(s16 arg0) {
     }
     e = func_80273F30(*(s16 *)(D_800AEE0A + arg0 * 0xC8), obj->unk40->x + base.x, cur.y, obj->unk40->z + base.y, arg0);
     if (e != NULL) {
-        if (func_80232D18(e->obj, 0x10)) {
+        t5 = func_80232D18(e->obj, 0x10);
+        if (t5) {
             func_802734BC((u8 *) e->obj);
         } else {
-            o = (Obj8E *) func_80271540(arg0);
+            t16 = func_80271540(arg0);
+            o = (Obj8E *) t16;
             if (o != NULL) {
-                if (func_802716F8(arg0) != NULL) {
-                    if (func_8027130C((u8 *) o)) {
+                t6 = func_802716F8(arg0);
+                if (t6 != NULL) {
+                    t7 = func_8027130C((u8 *) o);
+                    if (t7) {
                         slot = &SLOTS[arg0];
                         slot->unk8 = o->unk8;
                         func_80231408(o, 0x10000);
@@ -2026,13 +2086,17 @@ void func_802741D8(s16 arg0) {
                         func_80271010((u8 *) o, arg0);
                         o->unk40->rot = obj->unk40->rot;
                         spA0 = func_80234434(obj->unk40->rot);
-                        base.x = func_80270F44((u8 *) obj) * spA0;
+                        t17 = func_80270F44((u8 *) obj);
+                        base.x = t17 * spA0;
                         spA0 = func_80234408(obj->unk40->rot);
-                        base.y = func_80270F44((u8 *) obj) * spA0;
-                        if (func_802336E4(base.x)) {
+                        t18 = func_80270F44((u8 *) obj);
+                        base.y = t18 * spA0;
+                        t8 = func_802336E4(base.x);
+                        if (t8) {
                             base.x = 0.0f;
                         }
-                        if (func_802336E4(base.y)) {
+                        t9 = func_802336E4(base.y);
+                        if (t9) {
                             base.y = 0.0f;
                         }
                         o->unk4C = base.x - slot->unk1C;
@@ -2199,11 +2263,13 @@ void func_802734BC(u8 *arg0) {
 
 void func_80273414(s16 *arg0) {
     Ent88 *e = (Ent88 *) arg0;
-    s32 pad[4]; /* fake: frame-tuned */
+    s16 t1;
+    s32 pad[3]; /* fake: frame-tuned */
     void *p;
 
     func_80270BA4((u8 *) e->obj);
-    if (func_802712A8(&e->unk64, 0x200)) {
+    t1 = func_802712A8(&e->unk64, 0x200);
+    if (t1) {
         func_8027036C(&e->unk64, 0x200);
         func_802313DC(e->obj, 0x20000);
         p = e->unk38;
@@ -2255,12 +2321,13 @@ void *func_80273370(s32 arg0) {
 
 void func_802731A4(Obj8E *arg0, s16 arg1) {
     s32 done;
-    s32 pad; /* fake: frame slot */
+    s32 t1;
     f32 y;
     Sub8E *t;
     Obj8E *cur;
 
-    if (func_802702BC(arg1) != 0) {
+    t1 = func_802702BC(arg1);
+    if (t1 != 0) {
         return;
     }
     cur = (Obj8E *) func_80270714(arg1);
@@ -2338,7 +2405,8 @@ void func_80272FC0(Obj8E *arg0, s16 arg1) {
 }
 
 void func_802727D8(Ctl87 *arg0) {
-    s32 pad[2]; /* fake: frame-tuned */
+    s32 t1;
+    int t2;
     s32 w;
     Obj8E *p;
     Obj8E *obj;
@@ -2360,7 +2428,8 @@ void func_802727D8(Ctl87 *arg0) {
     func_802720C8((u8 *) obj);
     obj->unk70 = 1.6333334f;
     func_80230914(obj);
-    if (func_802909FC(obj, func_80277378) != 0) {
+    t1 = func_802909FC(obj, func_80277378);
+    if (t1 != 0) {
         if (obj->unk40->x == obj->unk58 && obj->unk40->z == obj->unk60 && !(obj->unk8 & 1)) {
             arg0->unk1C = 0.0f;
         }
@@ -2412,7 +2481,8 @@ void func_802727D8(Ctl87 *arg0) {
                     obj->unk6C = 2.0f;
                     obj->unk68 = 22.5f;
                     if (obj->unk8 & 1) {
-                        if (!func_8023369C(arg0->unk34, obj->unk40->x, 0.9f) || !func_8023369C(arg0->unk38, obj->unk40->z, 0.9f)) {
+                        t2 = func_8023369C(arg0->unk34, obj->unk40->x, 0.9f);
+                        if (!t2 || !func_8023369C(arg0->unk38, obj->unk40->z, 0.9f)) {
                             arg0->unk30 = 0;
                             arg0->unk34 = obj->unk40->x;
                             arg0->unk38 = obj->unk40->z;
@@ -2494,7 +2564,8 @@ void func_80272494(Obj8E *arg0, Obj8E *arg1, Ctl87 *arg2) {
     s32 res;
     f32 a[3];
     f32 b[3];
-    s32 pad2[2]; /* fake: places ang at the original's offset */
+    s32 t1;
+    s16 t2;
     f32 ang;
 
     a[0] = arg0->unk40->x;
@@ -2504,7 +2575,8 @@ void func_80272494(Obj8E *arg0, Obj8E *arg1, Ctl87 *arg2) {
     b[1] = 0.0;
     b[2] = arg1->unk40->z;
     if (arg1->unk8 & 0x8000) {
-        arg2->unk14 = func_8027241C(arg2->unk14);
+        t2 = func_8027241C(arg2->unk14);
+        arg2->unk14 = t2;
     }
     if (arg2->unk14 == 9) {
         func_8022FF58(b, a, &ang);
@@ -2529,7 +2601,8 @@ void func_80272494(Obj8E *arg0, Obj8E *arg1, Ctl87 *arg2) {
         if (d <= r) {
             arg2->unk1C = d;
             arg2->unk14 = dir;
-            if (func_802721D4(arg0, (s32) arg1, arg2) == 1) {
+            t1 = func_802721D4(arg0, (s32) arg1, arg2);
+            if (t1 == 1) {
                 return;
             }
         }
@@ -2768,14 +2841,18 @@ void *func_802716F8(s16 arg0) {
     f32 dz;
     f32 r;
     f32 dist;
-    s32 pad[2]; /* fake: the pads place the locals at the original's offsets */
+    s32 t1;
+    s32 t2;
     f32 a[3];
     f32 b[3];
-    s32 pad2[2]; /* fake: frame slots */
+    s32 t3;
+    u16 t4;
     f32 ang;
-    s32 pad3; /* fake: frame slot */
+    f32 t5;
     f32 pr;
-    s32 pad4[4]; /* fake: frame slots */
+    f32 t6;
+    f32 t7;
+    s32 pad4[2]; /* fake: frame slots */
     Obj8E *pl;
     Obj8E *obj;
     Unk8026DCAC info;
@@ -2784,14 +2861,16 @@ void *func_802716F8(s16 arg0) {
     func_802714C4();
     if (1) {} /* fake: without it arg0 takes a third saved register */
     pl = func_802443F4(arg0);
-    obj = (Obj8E *) func_80271540(arg0);
+    t3 = func_80271540(arg0);
+    obj = (Obj8E *) t3;
     if (obj != NULL) {
         z = obj->unk40->z;
         func_8026DCAC(obj->unk40->x, obj->unk40->y, z, &info, 2);
         a[0] = info.i[0];
         a[1] = info.i[1];
         a[2] = info.i[2];
-        t = func_8026D7D8(a[0], a[1], a[2]) & 0xF;
+        t4 = func_8026D7D8(a[0], a[1], a[2]);
+        t = t4 & 0xF;
         if (t == 3 || t == 4 || t == 5 || t == 6) {
             return obj;
         }
@@ -2803,11 +2882,14 @@ void *func_802716F8(s16 arg0) {
         b[2] = obj->unk40->z;
         dist = func_8022DF68(a, b);
         pr = func_80270F44((u8 *) pl);
-        r = (func_80270F44((u8 *) obj) + pr) * 1.2f;
+        t5 = func_80270F44((u8 *) obj);
+        r = (t5 + pr) * 1.2f;
         if (dist < r) {
             func_8022FF58(a, b, &ang);
-            dx = func_80234434(ang) * r;
-            dz = func_80234408(ang) * r;
+            t6 = func_80234434(ang);
+            dx = t6 * r;
+            t7 = func_80234408(ang);
+            dz = t7 * r;
             OBJ_DD8->unk40->x = pl->unk40->x + dx;
             OBJ_DD8->unk40->y = obj->unk40->y;
             OBJ_DD8->unk40->z = pl->unk40->z + dz;
@@ -2817,7 +2899,8 @@ void *func_802716F8(s16 arg0) {
             OBJ_DD8->unk30 = obj->unk30;
             OBJ_DD8->unk34 = obj->unk34;
             OBJ_DD8->unk38 = obj->unk38;
-            if (func_8022F4AC((s32) OBJ_DD8, 0x10, (s32) obj) == 0 && func_802909FC(OBJ_DD8, func_80277378) == 0) {
+            t1 = func_8022F4AC((s32) OBJ_DD8, 0x10, (s32) obj);
+            if (t1 == 0 && func_802909FC(OBJ_DD8, func_80277378) == 0) {
                 obj->unk40->x = pl->unk40->x + dx;
                 obj->unk40->z = pl->unk40->z + dz;
             } else {
@@ -2830,7 +2913,8 @@ void *func_802716F8(s16 arg0) {
                 OBJ_DD8->unk30 = pl->unk30;
                 OBJ_DD8->unk34 = pl->unk34;
                 OBJ_DD8->unk38 = pl->unk38;
-                if (func_8022F4AC((s32) OBJ_DD8, 0x10, (s32) pl) == 0 && func_802909FC(OBJ_DD8, func_80277378) == 0) {
+                t2 = func_8022F4AC((s32) OBJ_DD8, 0x10, (s32) pl);
+                if (t2 == 0 && func_802909FC(OBJ_DD8, func_80277378) == 0) {
                     pl->unk40->x = OBJ_DD8->unk40->x;
                     pl->unk40->z = OBJ_DD8->unk40->z;
                 } else {
@@ -2843,7 +2927,7 @@ void *func_802716F8(s16 arg0) {
 }
 
 s32 func_80271540(s16 arg0) {
-    s32 pad[1]; /* fake: frame slot */
+    int t1;
     f32 sp28;
     f32 sp24;
     f32 temp_fv0;
@@ -2854,7 +2938,8 @@ s32 func_80271540(s16 arg0) {
     temp_v0 = func_802443F4((s32) arg0);
     sp28 = func_80234434(M2C_FIELD(M2C_FIELD(temp_v0, void **, 0x40), f32 *, 0x20)) * 100.0f * 0.8f;
     sp24 = func_80234408(M2C_FIELD(M2C_FIELD(temp_v0, void **, 0x40), f32 *, 0x20)) * 100.0f * 0.8f;
-    if (func_802336E4(sp28) != 0) {
+    t1 = func_802336E4(sp28);
+    if (t1 != 0) {
         sp28 = 0.0f;
     }
     if (func_802336E4(sp24) != 0) {
@@ -2897,18 +2982,24 @@ void func_80271448(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5
 }
 
 s32 func_8027130C(u8 *arg0) {
-    s32 pad[10]; /* fake: frame-tuned; the frame is 0x50 */
+    s16 t1;
+    s16 * t2;
+    s16 t3;
+    s32 pad[7]; /* fake: frame-tuned; the frame is 0x50 */
     Ent88 *e;
     void *p;
 
-    e = (Ent88 *) func_802703B4(arg0);
+    t2 = func_802703B4(arg0);
+    e = (Ent88 *) t2;
     if (e == NULL) {
         return 0;
     }
-    if (func_802712A8(&e->unk64, 0x80)) {
+    t1 = func_802712A8(&e->unk64, 0x80);
+    if (t1) {
         return 0;
     }
-    if (func_802712A8(&e->unk64, 0x10)) {
+    t3 = func_802712A8(&e->unk64, 0x10);
+    if (t3) {
         func_80270BA4(arg0);
     }
     if (func_802712A8(&e->unk64, 0x200)) {

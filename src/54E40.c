@@ -1320,7 +1320,7 @@ void func_8023FD08() {
     u8 *obj;
     s32 msg;
     void *model;
-    s32 pad1; /* fake: frame (header: pad1/pad2 keep the frame) */
+    s32 t1;
     u8 buf[12];
     UnkStruct_8023FD08 *o;
     f32 y4;
@@ -1328,7 +1328,7 @@ void func_8023FD08() {
     f32 y2;
     f32 y1;
     f32 dx;
-    s32 pad2; /* fake: frame (header) */
+    s32 t2;
 
     D_802AC5D0 |= 0x90;
     func_80270770(0, 1);
@@ -1349,7 +1349,8 @@ void func_8023FD08() {
     func_80247C50(0);
     func_802313DC(func_802443F4(0), 0x40000);
     for (i = 0, n = 0; i < 3; i++) {
-        if (func_8028A36C((D_802AC5E8 * 0x14) + (D_802AC5EC * 5) + i + 0x2C) != 0) {
+        t1 = func_8028A36C((D_802AC5E8 * 0x14) + (D_802AC5EC * 5) + i + 0x2C);
+        if (t1 != 0) {
             n++;
         }
     }
@@ -1419,7 +1420,8 @@ void func_8023FD08() {
         func_80295384();
     }
     for (j = 0; j < 0x78; j++) {
-        if (func_8028A36C(j + 0x2C) != 0) {
+        t2 = func_8028A36C(j + 0x2C);
+        if (t2 != 0) {
             i++;
         }
     }
@@ -1683,7 +1685,7 @@ void func_8023F26C() {
     s32 h;
     s32 k;
     s32 id;
-    s32 pad1; /* fake: frame-tuned */
+    s32 t1;
     u32 mode;
     s32 pad2; /* fake: frame-tuned */
     void *model;
@@ -1696,7 +1698,8 @@ void func_8023F26C() {
     s32 y;
 
     D_802A0B94 = 1;
-    id = *(s32 *) func_802391F0();
+    t1 = func_802391F0();
+    id = *(s32 *) t1;
     func_80247C50(id);
     if ((D_802AC5D0 & 4) || ((D_802AC5D0 & 8) && (id != 0))) {
         mode = (&D_802AC858)[id];
@@ -1998,7 +2001,8 @@ static void *func_8023EB28(s32 arg0) {
 }
 
 static void func_8023E8FC(f32 *pos) {
-    s32 padA[9]; /* fake: frame-tuned */
+    f32 t1;
+    s32 padA[8]; /* fake: frame-tuned */
     f32 x;
     f32 y;
     f32 z;
@@ -2032,7 +2036,8 @@ static void func_8023E8FC(f32 *pos) {
         if (a & 0x60) {
             continue;
         }
-        if (func_8026E938(&s) == 20000.0f) {
+        t1 = func_8026E938(&s);
+        if (t1 == 20000.0f) {
             continue;
         }
         if (((a & 0xF) != 0) && ((a & 0xF) != 1)) {
@@ -2464,7 +2469,7 @@ static s32 func_8023D0F8() {
     s32 k;
     s32 skip;
     Player54E40 *pl;
-    s32 pad; /* fake: frame-tuned */
+    s32 t1;
 
     if (0) { /* fake: a dead call: the emission order */
         func_8023D0F0();
@@ -2532,7 +2537,8 @@ static s32 func_8023D0F8() {
                 }
             }
             for (i = 0; i < 0x2C; i++) {
-                if (func_8028A36C(i) != 0) {
+                t1 = func_8028A36C(i);
+                if (t1 != 0) {
                     ((s32 *) D_800BE830)[i / 8] |= 1 << (i % 8);
                 } else {
                     ((s32 *) D_800BE830)[i / 8] &= ~(1 << (i % 8));
@@ -2766,7 +2772,7 @@ void func_8023C374() {
     s32 sp68;
     s32 sp64;
     s32 sp60;
-    s32 pad; /* fake: frame-tuned */
+    s32 t1;
     u8 *temp_a0;
 
     if (0) { /* fake: a dead call: the emission order */
@@ -2795,7 +2801,8 @@ void func_8023C374() {
     func_8023903C(0x1E);
     D_802AC5F0 = 1;
     D_802A01C4[6] = (s8) (D_802AC5EC + 0x11);
-    sp6C = func_802811F0(D_802A01C4, func_8023B2AC(D_802A01C4, 0.8f), 0x3CU, 0.8f, 0.8f, 0U);
+    t1 = func_8023B2AC(D_802A01C4, 0.8f);
+    sp6C = func_802811F0(D_802A01C4, t1, 0x3CU, 0.8f, 0.8f, 0U);
     sp68 = func_802811F0(D_802A01D0, func_8023B2AC(D_802A01D0, 0.8f), 0x5AU, 0.8f, 0.8f, 0U);
     temp_a0 = ((u8 **) D_802A08F8)[D_802AC5E8 * 4 + D_802AC5EC];
     sp60 = func_802811F0(temp_a0, func_8023B2AC(temp_a0, 0.6f), 0x78U, 0.6f, 0.8f, 0U);
@@ -2892,7 +2899,9 @@ static void func_8023C170() {
 }
 
 s32 func_8023BBCC() {
-    s32 pad[6]; /* fake: frame-tuned */
+    s32 t1;
+    s32 * t2;
+    s32 pad[4]; /* fake: frame-tuned */
     s32 i;
     s32 var_v0;
 
@@ -2911,7 +2920,8 @@ s32 func_8023BBCC() {
     D_802A0B80 = 1;
     func_8023AA78(1);
     func_80239094();
-    if (func_802362A8() & 0xF) {
+    t1 = func_802362A8();
+    if (t1 & 0xF) {
         func_80238CF8(0x401, 0x401);
         func_80238CF8(0x90, 0x90);
         func_80238CF8(0x170, 0x170);
@@ -2967,7 +2977,8 @@ s32 func_8023BBCC() {
                         func_8028A428(i);
                     }
                 }
-                *func_8028A060(1) = D_802AC610.unk38;
+                t2 = func_8028A060(1);
+                *t2 = D_802AC610.unk38;
                 func_8023AE6C(0x21, 0x11, 0);
                 func_8023ADD4(1);
                 func_80229280(1);

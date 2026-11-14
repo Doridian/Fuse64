@@ -1166,7 +1166,7 @@ loop_1:
 
 void func_8025C840() {
 
-    s32 pad[1]; /* fake: frame-tuned */
+    s32 t1;
     f32 spA0[3];
     f32 sp94[3];
     f32 *temp_s0;
@@ -1189,7 +1189,8 @@ void func_8025C840() {
             if (D_800AEDF0[M2C_FIELD(var_s1, s32 *, 0x134)].unk24 == 2) {
                 temp_fs0 = func_8026E938(M2C_FIELD(M2C_FIELD(temp_s0, void **, 0x18), void **, 0x40));
                 temp_fs1 = func_8026E938(M2C_FIELD(M2C_FIELD(temp_s0, void **, 0x1C), void **, 0x40));
-                if (((func_80244BA4(M2C_FIELD(temp_s0, s32 *, 0xC), 0x02000000) == 0) && ((func_8026E8B8() == temp_fs0) || (temp_fs0 == 20000.0f))) || (func_8026E8B8() == temp_fs1) || (temp_fs1 == 20000.0f)) {
+                t1 = func_80244BA4(M2C_FIELD(temp_s0, s32 *, 0xC), 0x02000000);
+                if (((t1 == 0) && ((func_8026E8B8() == temp_fs0) || (temp_fs0 == 20000.0f))) || (func_8026E8B8() == temp_fs1) || (temp_fs1 == 20000.0f)) {
                     func_802362B8(0x10);
                 }
                 spA0[0] = M2C_FIELD(M2C_FIELD(M2C_FIELD(temp_s0, void **, 0x18), void **, 0x40), f32 *, 0x10);
@@ -3568,16 +3569,19 @@ static void func_80254EC4(f32 *arg0) {
 }
 
 static s32 func_80254E20(f32 *arg0, s32 arg2, s32 arg1) {
-    s32 pad[2]; /* fake: frame-tuned */
+    s32 t1;
+    s32 t2;
     f32 sp24;
     s32 n;
     u8 *temp_v0;
 
     if (arg1 != M2C_FIELD(arg0, s32 *, 4)) {
-        if (func_80244BA4(M2C_FIELD(arg0, s32 *, 0xC), 0x8000) == 0) {
+        t1 = func_80244BA4(M2C_FIELD(arg0, s32 *, 0xC), 0x8000);
+        if (t1 == 0) {
             temp_v0 = func_8022FA88(M2C_FIELD(arg0, void **, 0x18), 2, &sp24);
             if (temp_v0 != NULL) {
-                n = ((s16) M2C_FIELD(func_802703B4((s32) temp_v0), s16 *, 0x66) >> 1) + arg2;
+                t2 = func_802703B4((s32) temp_v0);
+                n = ((s16) M2C_FIELD(t2, s16 *, 0x66) >> 1) + arg2;
                 if (sp24 <= n * 100.0f) {
                     M2C_FIELD(arg0, s32 *, 8) = M2C_FIELD(arg0, s32 *, 4);
                     M2C_FIELD(arg0, s32 *, 4) = arg1;
@@ -4524,7 +4528,8 @@ static s32 func_80252330(s32 *arg0, f32 arg1) {
 }
 
 static void func_80252174(f32 *arg0) {
-    s32 pad[6]; /* fake: frame-tuned */
+    s32 t1;
+    s32 pad[5]; /* fake: frame-tuned */
     f32 *temp_s1;
     f32 *temp_s2;
     f32 sp34;
@@ -4537,7 +4542,8 @@ static void func_80252174(f32 *arg0) {
     a = sp34;
     temp_fv0 = func_80251C48(temp_s1, temp_s2);
     func_8025216C(temp_fv0);
-    if (func_80251D30(arg0, 1, 1, 4) == 0) {
+    t1 = func_80251D30(arg0, 1, 1, 4);
+    if (t1 == 0) {
         *M2C_FIELD(M2C_FIELD(arg0, void **, 0x98), s32 **, 0x24) = 3;
         M2C_FIELD(M2C_FIELD(M2C_FIELD(arg0, void **, 0x98), s32 **, 0x24), f32 *, 0xC) = 60.0f;
         M2C_FIELD(M2C_FIELD(M2C_FIELD(arg0, void **, 0x98), s32 **, 0x24), f32 *, 4) = a;
@@ -4555,13 +4561,15 @@ static void func_80252174(f32 *arg0) {
 }
 
 static void func_80252048(f32 *arg0) {
-    s32 pad[6]; /* fake: frame-tuned */
+    s32 t1;
+    s32 pad[5]; /* fake: frame-tuned */
     f32 sp1C;
     f32 a;
 
     func_8022FF58((f32 *)((u8 *)arg0 + 0x20), (f32 *)((u8 *)arg0 + 0x2C), &sp1C);
     a = sp1C;
-    if (func_80251D30(arg0, 1, 0, 4) == 0) {
+    t1 = func_80251D30(arg0, 1, 0, 4);
+    if (t1 == 0) {
         *M2C_FIELD(M2C_FIELD(arg0, void **, 0x98), s32 **, 0x24) = 5;
         M2C_FIELD(M2C_FIELD(M2C_FIELD(arg0, void **, 0x98), s32 **, 0x24), f32 *, 0xC) = 60.0f;
         M2C_FIELD(M2C_FIELD(M2C_FIELD(arg0, void **, 0x98), s32 **, 0x24), f32 *, 4) = a;

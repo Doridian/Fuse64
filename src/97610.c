@@ -595,7 +595,7 @@ void func_8027D894(void) {
     s32 i;
     s16 n;
     s16 kind;
-    s32 pad; /* fake: frame slot */
+    s32 t1;
     f32 pos[3];
 
     if (D_80090440[0].unk4 != NULL) {
@@ -654,7 +654,8 @@ void func_8027D894(void) {
                     kind = 0;
                     break;
             }
-            if (func_80232D18(D_802B01D0, 0xC0) != 0) {
+            t1 = func_80232D18(D_802B01D0, 0xC0);
+            if (t1 != 0) {
                 func_8027D398(node);
                 func_8027D328(node);
                 func_8027404C(node->unk1C, node->unk20, node->unk24, &pos[0], &pos[1], &pos[2]);
@@ -711,7 +712,7 @@ void func_8027D774(UnkStruct_80090440 *arg0, UnkStruct_80090440 *arg1) {
 }
 
 void func_8027D398(UnkStruct_80090440 *arg0) {
-    s32 pad; /* fake: frame slot */
+    s32 t1;
     s32 mode = func_8023A840()->unk10;
     UnkStruct_8023A834 *t;
     u8 *p;
@@ -722,7 +723,8 @@ void func_8027D398(UnkStruct_80090440 *arg0) {
     if ((D_802AC5D0 & 4) && D_802B01D4 == 0) {
         t = func_8023A834();
         if (t->unk28 * 60 - t->unk2C * 60 - t->unk30 > 40) {
-            if (func_8027B828(6, arg0->unk1C, arg0->unk20, arg0->unk24)) {
+            t1 = func_8027B828(6, arg0->unk1C, arg0->unk20, arg0->unk24);
+            if (t1) {
                 D_802B01D4 = 1;
             }
             return;

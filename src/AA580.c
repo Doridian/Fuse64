@@ -663,7 +663,10 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
     s32 corner;
     Vec3i dirA;
     UnkStructA_40 *p;
-    s32 pad2[4]; /* fake: frame-tuned */
+    s32 t1;
+    s32 t2;
+    s32 t3;
+    s32 t4;
     s32 code;
     s32 codeX;
     s32 codeZ;
@@ -677,7 +680,8 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
     s32 below;
     s32 hitXZ;
     s32 code2;
-    s32 pad4[2]; /* fake: frame-tuned */
+    s32 t5;
+    f32 t6;
     f32 save[3];
     f32 h1;
     f32 h2;
@@ -842,7 +846,8 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
                 ctx.unkC -= ctx.unk24;
             }
         } else {
-            res |= func_8028FFA8(code, &ctx, &dirA, codeZ, 1) * 2;
+            t3 = func_8028FFA8(code, &ctx, &dirA, codeZ, 1);
+            res |= t3 * 2;
         }
     }
     if (res == 0) {
@@ -883,7 +888,8 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
             ctx.unk0->unk40->unk14 = ctx.unk0->unk5C;
             ctx.unk0->unk40->unk18 = ctx.unk0->unk60;
             h2 = func_8026E938(ctx.unk0->unk40);
-            code2 = func_8026D7D8((ctx.unk0->unk40->unk10 + 50.0f) * 0.01f, func_8026EE18(ctx.unk8),
+            t1 = func_8026EE18(ctx.unk8);
+            code2 = func_8026D7D8((ctx.unk0->unk40->unk10 + 50.0f) * 0.01f, t1,
                                   (ctx.unk0->unk40->unk18 + 50.0f) * 0.01f);
             ctx.unk0->unk40->unk10 = save[0];
             ctx.unk0->unk40->unk14 = save[1];
@@ -893,11 +899,13 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
                 (func_8026D7D8(ctx.unk10, ctx.unk14 - 1, ctx.unk18) & 0xF) != 4 &&
                 (func_8026D7D8(ctx.unk10, ctx.unk14 - 1, ctx.unk18) & 0xF) != 5 &&
                 (func_8026D7D8(ctx.unk10, ctx.unk14 - 1, ctx.unk18) & 0xF) != 6) {
-                if ((func_8026D7D8(ctx.unk10 + dirA.unk0, ctx.unk14, ctx.unk18) & 0xF) == 1) {
+                t4 = func_8026D7D8(ctx.unk10 + dirA.unk0, ctx.unk14, ctx.unk18);
+                if ((t4 & 0xF) == 1) {
                     res |= 0x41;
                     ctx.unk4 -= ctx.unk1C;
                 }
-                if ((func_8026D7D8(ctx.unk10, ctx.unk14, ctx.unk18 + dirA.unk8) & 0xF) == 1) {
+                t5 = func_8026D7D8(ctx.unk10, ctx.unk14, ctx.unk18 + dirA.unk8);
+                if ((t5 & 0xF) == 1) {
                     res |= 0x42;
                     ctx.unkC -= ctx.unk24;
                 }
@@ -905,7 +913,8 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
         }
     }
     if (c == 0xF) {
-        if (ctx.unk30(func_8026D7D8(ctx.unk10 + dirB.unk0, ctx.unk14, ctx.unk18 + dirB.unk8))) {
+        t2 = func_8026D7D8(ctx.unk10 + dirB.unk0, ctx.unk14, ctx.unk18 + dirB.unk8);
+        if (ctx.unk30(t2)) {
             ctx.unk4 += dirB.unk0 * 100.0f;
             ctx.unkC += dirB.unk8 * 100.0f;
             res = 0x51;
@@ -924,7 +933,8 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
                 (b == 270.0f && (dirA.unk0 * 1) == 1 && dirB.unk0 == 1) ||
                 (b == 0.0f && dirA.unk8 == -1 && dirB.unk8 == -1) ||
                 (b == 180.0f && (dirA.unk8 * 1) == 1 && dirB.unk8 == 1)) {
-                ctx.unk8 = func_8026EAF8(ctx.unk0);
+                t6 = func_8026EAF8(ctx.unk0);
+                ctx.unk8 = t6;
                 ctx.unk0->unk6C = 0.0f;
             }
         }
@@ -942,7 +952,7 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
     f32 sdir;
     Vec3i d;
     f32 sp;
-    s32 pad; /* fake: frame-tuned */
+    f32 t5;
     f32 y0;
     f32 a;
     f32 b;
@@ -951,10 +961,10 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
     f32 c;
     f32 e;
     f32 h;
-    s32 pad2; /* fake: frame-tuned */
+    f32 t6;
     UnkStruct_8026DCAC t1;
     UnkStruct_8026DCAC t2;
-    s32 pad3; /* fake: frame-tuned */
+    f32 t7;
     UnkStruct_8026DCAC t4;
     UnkStruct_8026DCAC t3;
     f32 g;
@@ -966,7 +976,8 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
     }
     func_8026E6E4(obj->unk40, &angle, &sdir);
     if (obj->unk6C == 0.0f) {
-        sp = func_80234408(angle) * speed;
+        t5 = func_80234408(angle);
+        sp = t5 * speed;
     } else {
         sp = speed;
     }
@@ -985,9 +996,11 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
                 func_8026E6E4(obj->unk40, &a, &b);
                 if (a != 0.0f) {
                     if (sdir == 0.0f) {
-                        obj->unk40->unk14 -= d.unk8 * sp * func_80234434(angle);
+                        t6 = func_80234434(angle);
+                        obj->unk40->unk14 -= d.unk8 * sp * t6;
                     } else if (sdir == 180.0f) {
-                        obj->unk40->unk14 += d.unk8 * sp * func_80234434(angle);
+                        t7 = func_80234434(angle);
+                        obj->unk40->unk14 += d.unk8 * sp * t7;
                     }
                 } else {
                     obj->unk40->unk14 = y0;

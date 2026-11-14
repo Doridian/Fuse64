@@ -888,7 +888,7 @@ f32 func_8026EAF8(u8 *arg0) {
 }
 
 f32 func_8026E938(u8 *arg0) {
-    s32 padA[1]; /* fake: frame slot */
+    s32 t1;
     f32 fx;
     f32 fy;
     f32 fz;
@@ -922,7 +922,8 @@ f32 func_8026E938(u8 *arg0) {
             }
         } while (((a & 0xF) == 0) && !(b & 0x60) && (y >= 0));
         if (y >= 0) {
-            if (func_8026E278(a) != 0) {
+            t1 = func_8026E278(a);
+            if (t1 != 0) {
                 r = func_8026E3AC(fx + 50.0f, fy, fz + 50.0f);
             } else {
                 v[0] = x * 100.0f;
@@ -964,7 +965,9 @@ f32 func_8026E8B8() {
 }
 
 void func_8026E6E4(u8 *arg0, f32 *arg1, f32 *arg2) {
-    s32 pad[3]; /* fake: frame-tuned */
+    s32 t1;
+    f32 t2;
+    s32 pad[1]; /* fake: frame-tuned */
     s32 sp78[3];
     f32 sp6C[3];
     f32 temp_fs3;
@@ -1001,9 +1004,11 @@ void func_8026E6E4(u8 *arg0, f32 *arg1, f32 *arg2) {
     default:
         *arg2 = 0.0f;
     }
-    if (func_8026E278(temp_v0) != 0) {
+    t1 = func_8026E278(temp_v0);
+    if (t1 != 0) {
         func_8026DFB8(temp_fs3 + 50.0f, var_fs0, temp_fs4 + 50.0f, sp6C);
-        *arg1 = (f32) ((f64) func_8029CB40(sp6C[2]) * 57.29577951308232);
+        t2 = func_8029CB40(sp6C[2]);
+        *arg1 = (f32) ((f64) t2 * 57.29577951308232);
     }
 }
 
@@ -1065,7 +1070,8 @@ s32 func_8026E5CC(s32 arg0) {
 
 f32 func_8026E3AC(f32 arg0, f32 arg1, f32 arg2) {
     s32 attr;
-    s32 pad[3]; /* fake: frame-tuned */
+    s32 t1;
+    s32 pad[2]; /* fake: frame-tuned */
     Unk8026DCAC sp90;
     f32 pos[3];
     f32 sp78[3];
@@ -1087,7 +1093,8 @@ f32 func_8026E3AC(f32 arg0, f32 arg1, f32 arg2) {
             arg1 -= 100.0f;
         }
     } while ((attr & 0xF) == 0 && arg1 >= 0.0f);
-    if (func_8026E278(attr) != 0) {
+    t1 = func_8026E278(attr);
+    if (t1 != 0) {
         func_8026DFB8(arg0, arg1, arg2, sp78);
         switch (attr & 0xF) {
         case 3:

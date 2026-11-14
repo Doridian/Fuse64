@@ -687,7 +687,8 @@ UnkStruct_80288040 *func_802867E4(s32 arg0, f32 arg1, f32 arg2, f32 arg3) {
     s32 special;
     s32 t;
     UnkStruct_800BB340 *task;
-    s32 pad[2]; /* fake: frame-tuned */
+    s32 t1;
+    s32 pad[1]; /* fake: frame-tuned */
 
     special = func_802863E0();
     ret = NULL;
@@ -717,7 +718,8 @@ UnkStruct_80288040 *func_802867E4(s32 arg0, f32 arg1, f32 arg2, f32 arg3) {
         if (D_800BB480 + 1 < 16) {
             { s32 c = D_800BB480 + 1; D_800BB480 = c; }
             if ((t = func_802863E8(2)) != -1) {
-                if (func_80285658(&D_800BA900[slot], &D_800BB340[t]) == 0) {
+                t1 = func_80285658(&D_800BA900[slot], &D_800BB340[t]);
+                if (t1 == 0) {
                     func_802867DC(&D_800BA900[slot]);
                     /* fake: the original has 8 bytes of frame (an inlined
                      * call's area) here; uopt deletes the call itself */
@@ -781,7 +783,8 @@ static void func_80285F84(void) {
 
 static void func_80285F8C(void) {
     UnkStruct_800BB340 *task;
-    s32 padA[2]; /* fake: frame-tuned */
+    s32 t1;
+    s32 padA[1]; /* fake: frame-tuned */
     Vec3f pos2;
     s32 padB[2]; /* fake: frame-tuned */
     UnkStruct_80288040 *a;
@@ -815,7 +818,8 @@ static void func_80285F8C(void) {
             if (far) {
                 func_80282598(task, 0);
             } else {
-                task->unkC = func_80284FD4(a);
+                t1 = func_80284FD4(a);
+                task->unkC = t1;
                 if (task->unkC != 1) {
                     func_802313DC(a->unk0, 0x3FFFF);
                     if (((u8) (a->unk7A & 0xF)) == 1) {
@@ -1876,7 +1880,8 @@ static void func_8028378C() {
 
 static s32 func_80283794(UnkStruct_80288040 *arg0, u8 arg1) {
     s32 pos[3];
-    s32 pad[7]; /* fake: frame-tuned */
+    s32 t1;
+    s32 pad[6]; /* fake: frame-tuned */
     s8 range[2];
     s8 gx;
     s8 gz;
@@ -1887,7 +1892,8 @@ static s32 func_80283794(UnkStruct_80288040 *arg0, u8 arg1) {
     func_80283784();
     pos[0] = (arg0->unk0->unk40->unk10 + 50.0f) * 0.01;
     pos[2] = (arg0->unk0->unk40->unk18 + 50.0f) * 0.01;
-    pos[1] = func_8026EE18(arg0->unk0->unk40->unk14);
+    t1 = func_8026EE18(arg0->unk0->unk40->unk14);
+    pos[1] = t1;
     switch (arg1) {
     case 0x00:
         pos[2]--;

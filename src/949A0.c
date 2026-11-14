@@ -333,7 +333,9 @@ s32 func_8027BA80(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg4, s32 arg5) {
 s32 func_8027B8D4(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
     s16 pad0; /* fake: the pads give the original's stack layout */
     s16 type;
-    s32 pad[5]; /* fake: frame slots */
+    s16 t1;
+    UnkStruct_800BB4A8 * t2;
+    s32 pad[3]; /* fake: frame slots */
     f32 x;
     f32 y;
     f32 z;
@@ -342,7 +344,8 @@ s32 func_8027B8D4(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
     s16 sum;
     s32 pad2[4]; /* fake: frame slots */
 
-    if (func_8027AF70() >= 8) {
+    t1 = func_8027AF70();
+    if (t1 >= 8) {
         return 0;
     }
     r = func_80234248(100);
@@ -385,7 +388,8 @@ s32 func_8027B8D4(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
             return 1;
     }
     func_8027404C(arg0, arg1, arg2, &x, &y, &z);
-    if (func_8027AA74(type, x, y, z, 1, 1, 0) == NULL) {
+    t2 = func_8027AA74(type, x, y, z, 1, 1, 0);
+    if (t2 == NULL) {
         return 0;
     }
     return 1;

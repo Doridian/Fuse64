@@ -1715,7 +1715,8 @@ static void *func_80268438(s16 num) {
 static void func_80268440(s16 idx) {
     Voice *v;
     SndDef def;
-    s32 pad[2]; /* fake: frame-tuned (header) */
+    void * t1;
+    s16 t2;
 
     v = &D_802AD654[idx];
     v->flags &= ~0x1000;
@@ -1724,11 +1725,13 @@ static void func_80268440(s16 idx) {
         func_8026706C(v->num, &def);
         v->sound = def.sound;
     } else {
-        v->sound = func_80268438(v->num);
+        t1 = func_80268438(v->num);
+        v->sound = t1;
         def.script = -1;
     }
     if (v->sound != NULL) {
-        v->sndId = func_802986E0(D_802AD64C, v->sound);
+        t2 = func_802986E0(D_802AD64C, v->sound);
+        v->sndId = t2;
         if (v->sndId >= 0) {
             func_80298730(D_802AD64C, v->sndId, v->unk1A + 11);
             func_80268430(idx, def.script, v->unk1F);

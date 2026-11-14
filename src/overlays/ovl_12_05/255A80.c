@@ -1082,36 +1082,14 @@ void func_ovl12_05_800464F0(void) {
     func_ovl12_05_800498A8(D_ovl12_05_8004AC30.unk4, 3, 4.0f, D_ovl12_05_8004AC30.unk10, 0, 1, 1);
 }
 
-/* twin of 12_03:800439A4 (nonmatching/overlays/ovl_12_03/250B70.c) */
-void func_ovl12_05_800463D8(void) {
-    f32 angle;
-
-    func_ovl12_05_800498B8();
-    switch (D_ovl12_05_8004AC30.unk8) {
-        case 0:
-            angle = 0.0f;
-            break;
-        case 0x80:
-            angle = 180.0f;
-            break;
-        case 0xC0:
-            angle = 90.0f;
-            break;
-        case 0x40:
-            angle = 270.0f;
-            break;
-        case 1:
-        default:
-            angle = 360.0f;
-            break;
-    }
-    if (angle != 360.0f) {
-        func_ovl12_05_80049F08(angle, 32768.0f, 32768.0f);
-    } else {
-        func_ovl12_05_80046390(D_ovl12_05_8004AC30.unkC);
-    }
-    func_ovl12_05_800498A0(D_ovl12_05_8004AC30.unk4);
-}
+/* the names src/overlays/common/angle.h's code has here */
+#define ANGLE_80043A30 func_ovl12_05_80046390
+#define ANGLE_80043A78 func_ovl12_05_800463D8
+#define ANGLE_800458B0 func_ovl12_05_800498A0
+#define ANGLE_800458C8 func_ovl12_05_800498B8
+#define ANGLE_80045F18 func_ovl12_05_80049F08
+#define ANGLE_D_80046D28 D_ovl12_05_8004AC30
+#include "overlays/common/angle.h"
 
 /* twin of 17_09:80044ACC (nonmatching/overlays/ovl_17_09/2B8D20.c) */
 /* twin of 12_04:80043068 (src/overlays/ovl_12_04/253A10.c) */

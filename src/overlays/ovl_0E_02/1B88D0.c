@@ -747,35 +747,14 @@ void func_ovl0E_02_80043460(void) {
     func_ovl0E_02_80043348();
 }
 
-void func_ovl0E_02_80043348(void) {
-    f32 angle;
-
-    func_ovl0E_02_800452B8();
-    switch (D_ovl0E_02_800467A8.unk8) {
-        case 0:
-            angle = 0.0f;
-            break;
-        case 0x80:
-            angle = 180.0f;
-            break;
-        case 0xC0:
-            angle = 90.0f;
-            break;
-        case 0x40:
-            angle = 270.0f;
-            break;
-        case 1:
-        default:
-            angle = 360.0f;
-            break;
-    }
-    if (angle != 360.0f) {
-        func_ovl0E_02_80045908(angle, 32768.0f, 32768.0f);
-    } else {
-        func_ovl0E_02_80043300(D_ovl0E_02_800467A8.unkC);
-    }
-    func_ovl0E_02_800452A0(D_ovl0E_02_800467A8.unk4);
-}
+/* the names src/overlays/common/angle.h's code has here */
+#define ANGLE_80043A30 func_ovl0E_02_80043300
+#define ANGLE_80043A78 func_ovl0E_02_80043348
+#define ANGLE_800458B0 func_ovl0E_02_800452A0
+#define ANGLE_800458C8 func_ovl0E_02_800452B8
+#define ANGLE_80045F18 func_ovl0E_02_80045908
+#define ANGLE_D_80046D28 D_ovl0E_02_800467A8
+#include "overlays/common/angle.h"
 
 void func_ovl0E_02_80043258(void) {
     UNK_MACRO_ovl0E_02_80043258();

@@ -115,8 +115,10 @@
  * The pointer arrays at 80051538 [4] and 80051458 [8] are one symbol
  * each (mkdraft.py MERGE, merge.py). 8005118C/8005120C are the low words
  * of the f64 constants 900.0 and 1900.0. D_80051498 and D_800514B8
- * are Vec3f (80051498 has a 4-byte filler after it). 80043688 matches with dead reads
- * (`if (r == 60) {}` etc.) that make uopt colour each loop's divisor.
+ * are Vec3f (80051498 has a 4-byte filler after it). 80043688's fades
+ * count to a local (m = 60, n = 180, u = 120: `t < u`, `r = t / u`),
+ * which uopt colours as the original (it took dead reads, `if (r == 60)
+ * {}` etc., before the counts were found).
  * -O3 drops unreferenced .bss, so the unused static (its body dropped)
  * 8004F820 stores to every filler; the 12- and 8-byte fillers are split
  * (800513BC/C0/C4, 800513EC/F0) because IDO 8-aligns arrays of 8 bytes
@@ -420,11 +422,11 @@ void func_ovl15_02_800443AC(void);
 void func_ovl15_02_8004475C();
 void func_ovl15_02_80044840(UnkStructA *arg0, Vec3f *arg1);
 void func_ovl15_02_80044A08(UnkStructA *obj, Vec3f *vel);
-void func_ovl15_02_80044B58(UnkStructA *arg0);
-void func_ovl15_02_80044B84(UnkStructA *arg0);
-void func_ovl15_02_80044BB4(UnkStructA *arg0);
-void func_ovl15_02_80044BE4(UnkStructA *arg0);
-void func_ovl15_02_80044C14(UnkStructA *arg0, s32 arg1);
+UnkStructA *func_ovl15_02_80044B58(UnkStructA *arg0);
+UnkStructA *func_ovl15_02_80044B84(UnkStructA *arg0);
+UnkStructA *func_ovl15_02_80044BB4(UnkStructA *arg0);
+UnkStructA *func_ovl15_02_80044BE4(UnkStructA *arg0);
+UnkStructA *func_ovl15_02_80044C14(UnkStructA *arg0, s32 arg1);
 void func_ovl15_02_80044C40();
 void func_ovl15_02_80044FDC(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3);
 void func_ovl15_02_800452DC(f32 *pos, f32 *ang, f32 speed);
@@ -696,10 +698,7 @@ void func_ovl15_02_8004F544(s32 arg0) {
         if (func_ovl15_02_80050990(0x401) == 0) {
             func_ovl15_02_80050930();
         }
-        func_ovl15_02_800506F8();
-        if (*D_ovl15_02_800513AC & 2) {
-            func_ovl15_02_80050E10();
-        }
+        func_ovl15_02_8004F084();
         break;
     case 17:
         break;
@@ -799,9 +798,7 @@ void func_ovl15_02_8004F0DC(void) {
 
 void func_ovl15_02_8004F084(void) {
     func_ovl15_02_800506F8();
-    if (*D_ovl15_02_800513AC & 2) {
-        func_ovl15_02_80050E10();
-    }
+    func_ovl15_02_8004F048();
 }
 
 void func_ovl15_02_8004F048(void) {
@@ -1069,18 +1066,13 @@ void func_ovl15_02_8004E048(void) {
             func_ovl15_02_8004DBDC();
             break;
         case 5:
-            D_ovl15_02_80051478 = 0;
-            D_ovl15_02_8005147C = func_ovl15_02_800508C8(2) + 2;
-            if (*D_ovl15_02_800513AC & 2) {
-                D_ovl15_02_8005147C = 4;
-            }
+            func_ovl15_02_8004DB80();
             break;
         case 6:
             func_ovl15_02_8004DCA4();
             break;
         case 7:
-            D_ovl15_02_80051478 = 7;
-            D_ovl15_02_8005147C = func_ovl15_02_800508C8(5) + 1;
+            func_ovl15_02_8004DB4C();
             break;
         case 8:
             func_ovl15_02_8004DE84();
@@ -1097,11 +1089,7 @@ void func_ovl15_02_8004E048(void) {
             break;
         }
         if (*D_ovl15_02_800513AC & 2) {
-            D_ovl15_02_80051478 = 0;
-            D_ovl15_02_8005147C = func_ovl15_02_800508C8(2) + 2;
-            if (*D_ovl15_02_800513AC & 2) {
-                D_ovl15_02_8005147C = 4;
-            }
+            func_ovl15_02_8004DB80();
         }
     } else {
         D_ovl15_02_80051478 = 11;
@@ -1356,9 +1344,6 @@ void func_ovl15_02_8004D660() {
     s32 a;
     s32 b;
     s32 c;
-    f32 s;
-    s32 pad2[4]; /* fake: unused, frame space the original has (no source for it found) */
-    f32 p[3];
 
     a = 0;
     b = 0;
@@ -1373,11 +1358,7 @@ void func_ovl15_02_8004D660() {
         func_ovl15_02_8004D3BC(&a, &b, &c);
         switch (D_ovl15_02_800514CC) {
         case 1:
-            s = D_ovl15_02_800514D0;
-            p[0] = D_ovl15_02_80051328.x;
-            p[1] = D_ovl15_02_80051328.y + 51.0f;
-            p[2] = D_ovl15_02_80051328.z;
-            func_ovl15_02_80044FDC(&D_ovl15_02_800514A8.x, &D_ovl15_02_800514B8.x, s, p);
+            func_ovl15_02_800452DC(&D_ovl15_02_800514A8.x, &D_ovl15_02_800514B8.x, D_ovl15_02_800514D0);
             break;
         case 2:
             func_ovl15_02_80050500(v);
@@ -3337,24 +3318,22 @@ void func_ovl15_02_80046D3C(void) {
 
 void func_ovl15_02_80046AEC(UnkStructA *arg0, f32 *arg1) {
     f32 pad0[2]; /* fake: unused, frame space the original has (no source for it found) */
-    f32 dz;
-    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
-    f32 dx;
+    Vec3f d;
     Vec3f ang;
     f32 kx;
     f32 kz;
     f32 x;
     f32 z;
 
-    dx = D_ovl15_02_80051488.x - D_ovl15_02_800513D8.x;
-    dz = D_ovl15_02_80051488.z - D_ovl15_02_800513D8.z;
-    if (func_ovl15_02_800508F8(dz) == 0) {
-        kx = dx / dz;
+    d.x = D_ovl15_02_80051488.x - D_ovl15_02_800513D8.x;
+    d.z = D_ovl15_02_80051488.z - D_ovl15_02_800513D8.z;
+    if (func_ovl15_02_800508F8(d.z) == 0) {
+        kx = d.x / d.z;
     } else {
         kx = 1.0f;
     }
-    if (func_ovl15_02_800508F8(dx) == 0) {
-        kz = dz / dx;
+    if (func_ovl15_02_800508F8(d.x) == 0) {
+        kz = d.z / d.x;
     } else {
         kz = 1.0f;
     }
@@ -3830,7 +3809,7 @@ void func_ovl15_02_80044FDC(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     f32 ang[3];
     f32 dx;
     f32 dy;
-    f32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 lo; /* the clamp's lower limit (a guess among matching placements: any point after dx's wrap) */
 
     func_ovl15_02_80050548((Vec3f *) arg0, (Vec3f *) arg3, (Vec3f *) ang);
     ang[1] = ((ang[1] - 90.0f) >= 360.0f) ? (ang[1] - 90.0f) - 360.0f : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + 360.0f : (ang[1] - 90.0f);
@@ -3842,12 +3821,13 @@ void func_ovl15_02_80044FDC(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     if (dx < -180.0f) {
         dx += 360.0f;
     }
+    lo = arg2 * -1.0f;
     if (dx >= 0.0f) {
         if (dx > arg2) {
             dx = arg2;
         }
-    } else if (dx < arg2 * -1.0f) {
-        dx = arg2 * -1.0f;
+    } else if (dx < lo) {
+        dx = lo;
     }
     dy = ((0 <= ang[1] && ang[1] <= 180.0f) ? ang[1] : (360.0f - ang[1]) * -1.0f)
        - ((0 <= arg1[1] && arg1[1] <= 180.0f) ? arg1[1] : (360.0f - arg1[1]) * -1.0f);
@@ -3861,8 +3841,8 @@ void func_ovl15_02_80044FDC(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
         if (dy > arg2) {
             dy = arg2;
         }
-    } else if (dy < arg2 * -1.0f) {
-        dy = arg2 * -1.0f;
+    } else if (dy < lo) {
+        dy = lo;
     }
     arg1[0] += dx;
     arg1[1] += dy;
@@ -3874,7 +3854,6 @@ void func_ovl15_02_80044C40() {
     s32 kind;
     f32 rot[3];
     Vec3f vel;
-    s32 pad[10]; /* fake: unused, frame space the original has (no source for it found) */
 
     obj = func_ovl15_02_80050730();
     kind = func_ovl15_02_800508C8(9);
@@ -3885,19 +3864,19 @@ void func_ovl15_02_80044C40() {
     case 3:
     case 4:
     case 5:
-        child = func_ovl15_02_800505E0(kind + 0x12, 0x400000, 0xB0, obj);
+        child = func_ovl15_02_80044C14(obj, kind);
         break;
     case 6:
-        child = func_ovl15_02_800505E0(0x312, 0x400030, 0x30, obj);
+        child = func_ovl15_02_80044BE4(obj);
         break;
     case 7:
-        child = func_ovl15_02_800505E0(0x313, 0x400410, 0x60, obj);
+        child = func_ovl15_02_80044BB4(obj);
         break;
     case 8:
-        child = func_ovl15_02_800505E0(0x314, 0x400110, 0x50, obj);
+        child = func_ovl15_02_80044B84(obj);
         break;
     case 9:
-        child = func_ovl15_02_800505E0(0x315, 0x04400000, 0xB0, obj);
+        child = func_ovl15_02_80044B58(obj);
         break;
     default:
         break;
@@ -3927,24 +3906,24 @@ void func_ovl15_02_80044C40() {
     func_ovl15_02_80050718();
 }
 
-void func_ovl15_02_80044C14(UnkStructA *arg0, s32 arg1) {
-    func_ovl15_02_800505E0(arg1 + 0x12, 0x400000, 0xB0, arg0);
+UnkStructA *func_ovl15_02_80044C14(UnkStructA *arg0, s32 arg1) {
+    return func_ovl15_02_800505E0(arg1 + 0x12, 0x400000, 0xB0, arg0);
 }
 
-void func_ovl15_02_80044BE4(UnkStructA *arg0) {
-    func_ovl15_02_800505E0(0x312, 0x400030, 0x30, arg0);
+UnkStructA *func_ovl15_02_80044BE4(UnkStructA *arg0) {
+    return func_ovl15_02_800505E0(0x312, 0x400030, 0x30, arg0);
 }
 
-void func_ovl15_02_80044BB4(UnkStructA *arg0) {
-    func_ovl15_02_800505E0(0x313, 0x400410, 0x60, arg0);
+UnkStructA *func_ovl15_02_80044BB4(UnkStructA *arg0) {
+    return func_ovl15_02_800505E0(0x313, 0x400410, 0x60, arg0);
 }
 
-void func_ovl15_02_80044B84(UnkStructA *arg0) {
-    func_ovl15_02_800505E0(0x314, 0x400110, 0x50, arg0);
+UnkStructA *func_ovl15_02_80044B84(UnkStructA *arg0) {
+    return func_ovl15_02_800505E0(0x314, 0x400110, 0x50, arg0);
 }
 
-void func_ovl15_02_80044B58(UnkStructA *arg0) {
-    func_ovl15_02_800505E0(0x315, 0x04400000, 0xB0, arg0);
+UnkStructA *func_ovl15_02_80044B58(UnkStructA *arg0) {
+    return func_ovl15_02_800505E0(0x315, 0x04400000, 0xB0, arg0);
 }
 
 void func_ovl15_02_80044A08(UnkStructA *obj, Vec3f *vel) {
@@ -4198,7 +4177,8 @@ void func_ovl15_02_80043E38() {
 
 void func_ovl15_02_80043688(void) {
     UnkStructA *obj;
-    s32 pad[5]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 m;
     f32 u;
     s32 i;
     f32 t;
@@ -4206,7 +4186,6 @@ void func_ovl15_02_80043688(void) {
     f32 r;
     s32 a;
     s32 played;
-    f32 max = 255.0f;
 
     func_ovl15_02_8004351C();
     func_ovl15_02_80050A08(0, 0, 0, 0.0f);
@@ -4216,26 +4195,24 @@ void func_ovl15_02_80043688(void) {
         func_ovl15_02_80050708(func_ovl15_02_80043E38, NULL, 0, 0, 0x150);
         func_ovl15_02_80050728(0x3C);
         obj = func_ovl15_02_800505E0(0x2F0, 0x01080000, 0xD0, NULL);
-        if (r == 60) {} /* fake: a dead test, for the register allocation or schedule */
         obj->unk40->unk30 = 7.0f;
         obj->unk40->unk28 = obj->unk40->unk2C = obj->unk40->unk30;
         obj->unk40->unk10 = D_ovl15_02_80051424->unk40->unk10;
         obj->unk40->unk14 = D_ovl15_02_80051424->unk40->unk14;
         obj->unk40->unk18 = D_ovl15_02_80051424->unk40->unk18;
         obj->unk40->unk36 = 0;
-        for (t = 0.0f; t < 60.0f; t += 1.0f) {
-            r = t / 60;
+        m = 60.0f;
+        for (t = 0.0f; t < m; t += 1.0f) {
+            r = t / m;
             obj->unk40->unk36 = 255.0f * r;
             func_ovl15_02_80050750();
         }
         func_ovl15_02_80050728(0x1E);
         func_ovl15_02_80050C90(0x15D);
-        func_ovl15_02_80050A60(1);
-        D_ovl15_02_800513FC = max * 0.8f;
-        func_ovl15_02_80050A68(D_ovl15_02_800513FC);
-        if (n == 180.0f) {} /* fake: a dead test, for the register allocation or schedule */
-        for (t = 0.0f; t < 180; t += 1.0f) {
-            r = t / 180.0f;
+        func_ovl15_02_80043078(0.8f);
+        n = 180.0f;
+        for (t = 0.0f; t < n; t += 1.0f) {
+            r = t / n;
             obj->unk40->unk28 = obj->unk40->unk2C = obj->unk40->unk30 = (1.0f - r) * 6.0f + 1.0f;
             obj->unk40->unk24 = r * 1080.0f;
             obj->unk40->unk36 = 255 - r;
@@ -4293,9 +4270,9 @@ void func_ovl15_02_80043688(void) {
         func_ovl15_02_80043128(0);
         func_ovl15_02_800505B8(D_ovl15_02_800513F4, 0x01080000);
         func_ovl15_02_80050C90(0x160);
-        if (u == 120) {} /* fake: a dead test, for the register allocation or schedule */
-        for (t = 0.0f; t < 120.0f; t += 1.0f) {
-            r = t / 120;
+        u = 120.0f;
+        for (t = 0.0f; t < u; t += 1.0f) {
+            r = t / u;
             D_ovl15_02_800513F4->unk40->unk36 = 255.0f * r;
             func_ovl15_02_80050A08(0xFF, 0xFF, 0xFF, (1.0f - r) * 100.0f);
             func_ovl15_02_80050750();
@@ -4303,9 +4280,7 @@ void func_ovl15_02_80043688(void) {
         func_ovl15_02_800505C0(D_ovl15_02_800513F4, 0x80000);
         func_ovl15_02_80050728(0x1E);
         func_ovl15_02_80050430(&D_ovl15_02_80051368, 0x170, 0);
-        func_ovl15_02_80050A60(1);
-        D_ovl15_02_800513FC = max * 0.75f;
-        func_ovl15_02_80050A68(D_ovl15_02_800513FC);
+        func_ovl15_02_80043078(0.75f);
         func_ovl15_02_80050450();
         func_ovl15_02_800503F8(2300.0f, 287.0f, 1531.0f);
         func_ovl15_02_80050408(2349.0f, 1000.0f, 3850.0f);

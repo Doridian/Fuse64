@@ -1157,7 +1157,7 @@ void func_ovl14_01_80049BE0(u32 arg0, s32 arg1) {
         func_ovl14_01_8004515C();
         return;
     case 10:
-        func_ovl14_01_8004CA30();
+        func_ovl14_01_80049BC0();
         return;
     case 5:
         func_ovl14_01_80046CE8();

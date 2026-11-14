@@ -4116,7 +4116,6 @@ void func_80246C3C(s32 arg0, s32 arg1, s32 arg2) {
 void func_8024694C(s32 arg0, s32 arg1, s32 arg2) {
     s32 other;
     UnkObj *obj;
-    UnkStruct_800AEDF0 *q;
 
     if (func_80243EB4(arg0, 0x2000)) {
         other = D_800AEDF0[arg0].unkA8;
@@ -4158,16 +4157,13 @@ void func_8024694C(s32 arg0, s32 arg1, s32 arg2) {
         }
     }
     if (func_80243EB4(arg0, 0x2000)) {
-        if (D_800AEDF0[arg0].unk28) {} /* fake: dead read (ugen temporaries) */
-        obj = D_800AEDF0[arg0].unk28;
-        if (!obj && !obj) {} /* fake: dead read: obj crosses the call (s0) */
-        q = &D_800AEDF0[other];
-        q->unkC0 = 70.0f;
+        obj = (void *)func_802443F4(arg0);
+        D_800AEDF0[other].unkC0 = 70.0f;
         if (obj->unk40->unk28 > 1.0f) {
-            q->unkC0 += 30.0f;
+            D_800AEDF0[other].unkC0 += 30.0f;
         }
         if (obj->unk40->unk28 < 1.0f) {
-            q->unkC0 -= 40.0f;
+            D_800AEDF0[other].unkC0 -= 40.0f;
         }
     }
     func_80243D90(arg0, 2, 1);

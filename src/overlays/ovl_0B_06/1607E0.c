@@ -1348,12 +1348,7 @@ static s32 ERASE_ASK(s32 slot, Col_ovl0B_06 *off, Col_ovl0B_06 *on) {
     s32 held;
     s32 pressed;
     s32 i;
-    /* fake: size-tuned: jp frame 112, us ERASE 200 as the originals */
-#if VERSION_JP
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
-#else
     s32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
-#endif
 
     keep = 1;
     side = 1;

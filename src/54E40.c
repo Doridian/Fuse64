@@ -51,8 +51,8 @@
  * - Empty stubs before a function are statics inlined into it, written
  *   out where the function had them: func_8023D840 (func_8023D848's
  *   three resets), func_8023D9FC (func_8023DB0C's reset of D_802AC660),
- *   func_8023D0F0 (func_8023D0F8's eight player words; a do/while still
- *   splits the block before it). func_8023DA04, which the task table
+ *   func_8023D0F0 (func_8023D0F8's eight player words; its explicit
+ *   `return;` ends a uopt block, as a do/while before the call did). func_8023DA04, which the task table
  *   D_802A0CF4 names, is a static too: func_8023DB0C calls it first
  *   (inlined there), and the table keeps its body, emitted as
  *   func_8023DB0C's callee. Their places in the file give the inlined
@@ -3129,7 +3129,6 @@ static s32 func_8023D0F8() {
         skip = 0;
     }
     D_802AC5D0 &= ~0x6E;
-    do {} while (0); /* fake: splits the block before func_8023D0F0 (without it uopt puts D_802AC5D0 in a3) */
     func_8023D0F0();
     PORT_ORDER(); PLAYERS[0].unk24 = 1;
     M2C_FIELD(D_800AEDF0, s32 *, 0x344) = 0;
@@ -3255,6 +3254,7 @@ static void func_8023D0F0(void) {
     D_800AEFE8 = 0;
     D_800AF06C = 0;
     D_800AF0B0 = 0;
+    return; /* the explicit return ends the inlined copy's block (without it uopt puts D_802AC5D0 in a3 in func_8023D0F8) */
 }
 
 static void func_8023CECC() {

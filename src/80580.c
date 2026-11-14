@@ -26,8 +26,11 @@
  * volume), 80266928 (a script's reset), 80268430/38 (80268440's script
  * setup and bank search), 80269A7C/84 (80269AFC's table loads),
  * 802699C0 (the sounds of a 'T1' file counted, for 80269AFC), the
- * recursive setters' stubs 80266154/298/3D8/508 (empty, the setters
- * recurse themselves). 80269144, the DMA, takes the ROM address first.
+ * recursive setters' stubs 80266154/298/3D8/508 (statics called first
+ * thing, inlined; the setters recurse themselves). Their bodies are
+ * unknown: an explicit `return;` alone (a uopt block end in each inlined
+ * copy) gives 298/3D8/508's setters the original's registers, where a
+ * dead read of idx stood before (pass 6); 154's matches either way. 80269144, the DMA, takes the ROM address first.
  * func_80265FBC is a static too (callers keep registers live across
  * it), inlined only into 80265FF8: its dead initialiser (`s32 v = 0;`)
  * is what keeps IDO from inlining it into the others (umerge counts the
@@ -2532,7 +2535,6 @@ void func_80266510(s16 idx, s8 vol) {
     s16 i;
 
     func_80266508();
-    if (!idx) {} /* fake: dead read */
     v = &D_802AD654[idx];
     if (v->state == 1) {
         if (!(v->flags & 0x1000)) {
@@ -2553,6 +2555,7 @@ void func_80266510(s16 idx, s8 vol) {
 }
 
 static void func_80266508() {
+    return;
 }
 
 void func_802663E0(s16 idx, u8 pan) {
@@ -2561,7 +2564,6 @@ void func_802663E0(s16 idx, u8 pan) {
     s16 i;
 
     func_802663D8();
-    if (!idx) {} /* fake: dead read */
     v = &D_802AD654[idx];
     if (v->state == 1) {
         if (pan >= 0x80) {
@@ -2585,6 +2587,7 @@ void func_802663E0(s16 idx, u8 pan) {
 }
 
 static void func_802663D8() {
+    return;
 }
 
 void func_802662A0(s16 idx, s16 pitch) {
@@ -2593,7 +2596,6 @@ void func_802662A0(s16 idx, s16 pitch) {
     s16 i;
 
     func_80266298();
-    if (!idx) {} /* fake: dead read */
     v = &D_802AD654[idx];
     if (v->state == 1) {
         if (pitch >= 0x4B1) {
@@ -2617,6 +2619,7 @@ void func_802662A0(s16 idx, s16 pitch) {
 }
 
 static void func_80266298() {
+    return;
 }
 
 void func_8026615C(s16 idx, s8 vol) {
@@ -2648,6 +2651,7 @@ void func_8026615C(s16 idx, s8 vol) {
 }
 
 static void func_80266154() {
+    return;
 }
 
 void func_80266118(s8 arg0) {

@@ -90,7 +90,7 @@
  *   bytes below the second FreeEntries that the end-pointer spill's place
  *   needs); case 12 calls 800487E8 directly (no H12), which keeps the stub
  *   count; H5a's i is at the original's 132 (H5a K&R, frame-tuned; p4: no
- *   pad, H1 (void), four dead calls in H4). H5b: the slots are plain
+ *   pad, H1 (void), MakeEntries/FreeEntries' explicit returns). H5b: the slots are plain
  *   names except &D_ovl0B_04_8004A17C's copy load (a volatile cast, fake: plain, uopt's
  *   PRE keeps the pointer from the copy to the second test along its skip
  *   edge, which lowers &A17C's uses until &A180 takes $s0); the first test
@@ -1228,6 +1228,7 @@ static void func_ovl0B_04_MakeEntries(s32 n, Entry *e, Desc *d) {
     for (i = 0; i < n; i++) {
         func_ovl0B_04_80043050(&e[i], d);
     }
+    return;
 }
 
 /* fake: (n, e, x) with x unused (frame-tuned): 80043110's FreeEntries n
@@ -1238,6 +1239,7 @@ static void func_ovl0B_04_80043010(s32 n, Entry *e, s32 x) {
     for (i = 0; i < n; i++) {
         func_ovl0B_04_80047DE0(e[i].unk0);
     }
+    return;
 }
 
 /* The shared code's statics (with 80043E4C..80043F24), none of them used
@@ -2671,17 +2673,13 @@ static void func_ovl0B_04_80043640(f32 d) {
     }
 }
 
-/* The handler's cases (inlined). */
-/* fake: the dead calls in H4 only add uopt basic blocks: 80043110 needs
- * enough of them (zdbug count) for the original's registers (uopt's
- * first-use cost of a saved register is blocks/4; p4: four suffice since
- * FreeEntry). More than six here, or any in 80043110/H1, stop umerge
- * inlining H5. */
+/* The handler's cases (inlined). 80043110 needs enough uopt basic blocks
+ * (zdbug count) for the original's registers (uopt's first-use cost of a
+ * saved register is blocks/4): MakeEntries and FreeEntries end in an
+ * explicit `return;` (each a block of its own in every inlined copy;
+ * pass 6). They replace four dead calls here; returns in other pairs
+ * of these statics match too, so which ones the original had is a guess. */
 static void func_ovl0B_04_H4(void) {
-    if (0) { func_ovl0B_04_80048290(); }
-    if (0) { func_ovl0B_04_80048290(); }
-    if (0) { func_ovl0B_04_80048290(); }
-    if (0) { func_ovl0B_04_80048290(); }
     func_ovl0B_04_MakeEntries(20, D_ovl0B_04_80049D40, &D_ovl0B_04_80049C38[0]);
     func_ovl0B_04_MakeEntries(20, D_ovl0B_04_80049ED0, &D_ovl0B_04_80049C38[1]);
     func_ovl0B_04_80043050(&D_ovl0B_04_8004A060[12], &D_ovl0B_04_80049C38[7]);

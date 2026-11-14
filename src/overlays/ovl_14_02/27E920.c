@@ -1033,7 +1033,9 @@ void func_ovl14_02_8004CDE0(void) {
 
     n = (s32) func_ovl14_02_8004F780();
     h = func_ovl14_02_8004EC30() + 150.0f;
-    if (!h) {} /* fake: a dead test, for the register allocation or schedule */
+    if (n <= 0) { /* a compiled-out debug check (the condition is a guess: tests of n or h match) */
+        DEBUG_PRINT(("n <= 0\n"));
+    }
     obj = func_ovl14_02_8004EE48(func_ovl14_02_8004EDE8());
     obj2 = func_ovl14_02_8004F630(0x328, 4, 0xD0, NULL);
     func_ovl14_02_8004F330(obj2->unk40, 0x16, 0);

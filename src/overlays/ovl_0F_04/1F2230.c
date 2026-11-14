@@ -52,8 +52,8 @@
  * 80044084 matches: _inl0 has the locals tilt and slope and returns the
  * product the caller stores, _inl1 has pos (after an unused padP, so at
  * 0xA8). Its fakes: `j = i;` first in the loop, j used everywhere but the
- * unk16 store (from the permuter: i in s0, the record in s2); z, a
- * temporary for the mover's x in the x test (6 words); the unused padA[2]
+ * unk16 store (from the permuter: i in s0, the record in s2); the
+ * mover's x is a local, mx, read before the x test (not a fake); padA[2]
  * (the frame, 2 words); and at least three of the unused st, rec, step,
  * player (else the unk16 store addresses the symbol, 2 words).
  * 80043028 has one fake: an empty `if (D_ovl0F_04_8004848C) {}` after the
@@ -1105,7 +1105,7 @@ void func_ovl0F_04_80044084(void) {
     s32 j; /* fake: a copy of i for the loop's body (from the permuter; it puts i in s0 and
             * the record in s2), but for the store to D_ovl0F_04_80048C90.unk16 */
     f32 padA[2]; /* fake: unused; the frame (0x100) and tilt/slope at sp+0xC4/0xC0 */
-    f32 z; /* fake: the mover's x, so the x compares get f0 and f2 as in the original */
+    f32 mx; /* the mover's x */
 
     active = TRUE;
     do {
@@ -1137,8 +1137,9 @@ void func_ovl0F_04_80044084(void) {
             j = i;
             if (D_ovl0F_04_80048534[j].unk11 == 1) {
                 func_ovl0F_04_80047C88((*D_ovl0F_04_800485C4[j].unk0));
-                if (D_ovl0F_04_80048C90.unk0->unk40->unk10 <= (z = (*D_ovl0F_04_800485C4[j].unk0)->unk40->unk10) + 300.0f &&
-                    z - 300.0f <= D_ovl0F_04_80048C90.unk0->unk40->unk10 &&
+                mx = (*D_ovl0F_04_800485C4[j].unk0)->unk40->unk10;
+                if (D_ovl0F_04_80048C90.unk0->unk40->unk10 <= mx + 300.0f &&
+                    mx - 300.0f <= D_ovl0F_04_80048C90.unk0->unk40->unk10 &&
                     D_ovl0F_04_80048C90.unk0->unk40->unk18 <= (*D_ovl0F_04_800485C4[j].unk0)->unk40->unk18 + 300.0f &&
                     (*D_ovl0F_04_800485C4[j].unk0)->unk40->unk18 - 300.0f <= D_ovl0F_04_80048C90.unk0->unk40->unk18) {
                     if (D_ovl0F_04_80048534[j].unk14 != 0) {

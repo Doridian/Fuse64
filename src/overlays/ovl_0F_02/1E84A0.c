@@ -1069,7 +1069,7 @@ void func_ovl0F_02_80043FEC(void) {
     s32 j; /* fake: a copy of i for the loop's body (from the permuter; it puts i in s0 and
             * the record in s2), but for the store to D_ovl0F_02_80048F20.unk16 */
     f32 padA[2]; /* fake: unused; the frame (0x100) and tilt/slope at sp+0xC4/0xC0 */
-    f32 z; /* fake: the mover's x, so the x compares get f0 and f2 as in the original */
+    f32 mx; /* the mover's x */
 
     active = TRUE;
     do {
@@ -1101,8 +1101,9 @@ void func_ovl0F_02_80043FEC(void) {
             j = i;
             if (D_ovl0F_02_800486A4[j].unk11 == 1) {
                 func_ovl0F_02_80047DF8((*D_ovl0F_02_80048734[j].unk0));
-                if (D_ovl0F_02_80048F20.unk0->unk40->unk10 <= (z = (*D_ovl0F_02_80048734[j].unk0)->unk40->unk10) + 300.0f &&
-                    z - 300.0f <= D_ovl0F_02_80048F20.unk0->unk40->unk10 &&
+                mx = (*D_ovl0F_02_80048734[j].unk0)->unk40->unk10;
+                if (D_ovl0F_02_80048F20.unk0->unk40->unk10 <= mx + 300.0f &&
+                    mx - 300.0f <= D_ovl0F_02_80048F20.unk0->unk40->unk10 &&
                     D_ovl0F_02_80048F20.unk0->unk40->unk18 <= (*D_ovl0F_02_80048734[j].unk0)->unk40->unk18 + 300.0f &&
                     (*D_ovl0F_02_80048734[j].unk0)->unk40->unk18 - 300.0f <= D_ovl0F_02_80048F20.unk0->unk40->unk18) {
                     if (D_ovl0F_02_800486A4[j].unk14 != 0) {

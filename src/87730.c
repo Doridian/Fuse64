@@ -104,7 +104,8 @@ void func_8026CFF4(s32 arg0, s32 arg1, s32 arg2) {
         if (--arg1 == 0) {
             break;
         }
-        if (D_802A13E0 == NULL || D_802AFC44 == NULL) { /* fake: dead test */
+        if (D_802A13E0 == NULL || D_802AFC44 == NULL) {
+            DEBUG_PRINT(("D_802A13E0 or D_802AFC44 == NULL\n"));
         }
         for (i = 0; i < 48; i++) {
             if (D_802AFC40 != 0) {

@@ -1,11 +1,5 @@
 #include "common.h"
 
-/* The original's debug output, compiled out of the ROM (C89: one
- * parenthesised argument list). The tests around the calls stay in the
- * code (uopt keeps an emptied if's load and branch here). The messages are
- * placeholders: only the tests are known. */
-#define DEBUG_PRINT(args)
-
 typedef struct {
     /* 0x00 */ u8 unk0[0x8];
     /* 0x08 */ s32 unk8;

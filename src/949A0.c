@@ -795,7 +795,9 @@ void func_8027A950(void) {
     }
     D_802AFEC4 = 1;
     D_802AFEC8 = func_80238A10(func_8027A144, 0, D_800BD818, 0x1000, 0x50);
-    if (D_802AFEC8 == -1) {} /* fake: dead test */
+    if (D_802AFEC8 == -1) {
+        DEBUG_PRINT(("D_802AFEC8 == -1\n"));
+    }
     p = D_800BB4A0;
     for (i = 0; i < 48; i++, p++) {
         p->unk0 = i;
@@ -850,7 +852,9 @@ void func_8027A640(void) {
     z = st->unkE;
     mode = st->unk10;
     D_802AFE80 = malloc(func_802266DC(file));
-    if (D_802AFE80 == NULL) {} /* fake: dead test */
+    if (D_802AFE80 == NULL) {
+        DEBUG_PRINT(("D_802AFE80 == NULL\n"));
+    }
     func_8022616C(D_802AFE80, 1, func_802266DC(file), file);
     p = D_802AFE80;
     D_802AFE84 = p;

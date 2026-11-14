@@ -202,7 +202,6 @@ f32 sinf(f32);
 extern u8 D_800BA90C[];
 extern u8 D_800BB488[20];
 extern s32 D_800BC520;
-extern u8 D_802A1AB4[];
 extern s32 D_802A1AF0[][4];
 extern UnkStruct_802B0260 D_802B0260[2];
 extern UnkStruct_802B0300 *D_802B0300[2];

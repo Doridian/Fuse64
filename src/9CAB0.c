@@ -15,7 +15,10 @@
  * D_802A1AB4, the table D_802A1AF0) and .rodata (0x300, 151 of its 192
  * words jump-table entries) are its own and placed in data_split.txt. It
  * has no .bss: D_800BA8E8, D_800BA900, D_800BB340.. are outside
- * main_code, and D_802A1B50.., D_802B0260.. are A1EA0's.
+ * main_code, and D_802A1B50.., D_802B0260.. are A1EA0's. D_802A1AB4 is
+ * func_80286F70's static, as A1EA0's func_802876A0 has its table: a
+ * function with a static isn't inlined, so the registration stays out of
+ * line in func_80286F98 (a dead loop stood in for it).
  */
 #include "common.h"
 
@@ -346,18 +349,11 @@ static void func_80287690();
 static void func_80287698();
 
 /* .data (0xA0, from the boundary after 9BFD0's table): a word nothing
- * references, the table of the object functions handed to func_80297D30,
- * then func_802829A4's table, indexed by func_8023A840()'s unk4 and unk8. */
+ * references, the table of the object functions handed to func_80297D30
+ * (func_80286F70's own static), then func_802829A4's table, indexed by
+ * func_8023A840()'s unk4 and unk8 (defined after func_80286F70, so that
+ * IDO places it after the static; next to its user is a guess). */
 u8 D_802A1AB0[4] = { 0 };
-void *D_802A1AB4[] = {
-    func_80287008, func_80286CA8, func_802867E4, func_80286E60, func_802822B0,
-    func_802875B0, func_80287440, func_802872E0, func_802871D0, func_80287150,
-    func_802870A8, func_802863B0, func_80282934, func_8028275C, func_80282978,
-};
-s32 D_802A1AF0[][4] = {
-    { 0x2D, -1, 0x2E, -1 }, { 0x2F, -1, 0x30, -1 }, { 0x31, -1, 0x32, -1 },
-    { 0x33, -1, 0x34, -1 }, { 0x35, -1, 0x36, -1 }, { 0x37, -1, 0x38, -1 },
-};
 
 #define DEC_80284CA4(a_) ((--(a_)->unk6D == 0) ? 1 : 0)
 
@@ -575,15 +571,13 @@ void func_80286F98(void) {
 }
 
 void func_80286F70(void) {
-    s32 i;
+    static void *D_802A1AB4[] = {
+        func_80287008, func_80286CA8, func_802867E4, func_80286E60, func_802822B0,
+        func_802875B0, func_80287440, func_802872E0, func_802871D0, func_80287150,
+        func_802870A8, func_802863B0, func_80282934, func_8028275C, func_80282978,
+    };
 
     func_80297D30(0x2A, D_802A1AB4);
-    if (0) { /* fake: dead code */
-        for (i = 0; i < 6; i++) {
-            D_800BA8E8[i].unk0 = -1;
-            D_800BA8E8[i].unk2 = -1;
-        }
-    }
 }
 
 void func_80286F04(void) {
@@ -2318,6 +2312,11 @@ static s32 func_80282AF0(UnkStruct_800BB340 *arg0, s32 arg1) {
 static void func_80282AD0() {
 }
 
+
+s32 D_802A1AF0[][4] = {
+    { 0x2D, -1, 0x2E, -1 }, { 0x2F, -1, 0x30, -1 }, { 0x31, -1, 0x32, -1 },
+    { 0x33, -1, 0x34, -1 }, { 0x35, -1, 0x36, -1 }, { 0x37, -1, 0x38, -1 },
+};
 
 static s32 func_802829A4() {
     UnkStruct_8023A840 *p;

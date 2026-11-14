@@ -10,7 +10,7 @@
  *   in the handler, back to "1FCAC0.c" after the break), which puts
  *   `lui at,0x4516` ahead of `lw t6,8(v1)`.
  * - func_ovl0F_07_80044208 (97 to 0): the inlined static 80044200 is
- *   defined in "panels.c": the `.file` at its body keeps `move s1,v0` out
+ *   defined in another file (statics.h): the `.file` at its body keeps `move s1,v0` out
  *   of the first call's delay slot (the missing word).
  * The `#line N "1FCAC0.c"` lines are the physical line numbers (the file
  * named the same whatever path it is compiled by).
@@ -168,6 +168,8 @@ extern UnkStruct_ovl0F_07_80045D90 D_ovl0F_07_80045D90;
 #define UNK_MACRO_ovl0F_07_80043948() \
     D_ovl0F_07_80045E6C = func_ovl0F_07_800449F8(); func_ovl0F_07_800449D8(&D_ovl0F_07_80045E60); func_ovl0F_07_80044A00(D_ovl0F_07_80045E6C, D_ovl0F_07_80045E50)
 
+#include "statics.h"
+
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
 static void func_ovl0F_07_800444C0(void) {
@@ -252,26 +254,6 @@ static void func_ovl0F_07_800441F8(UnkStruct_ovl0F_07_80045390 *task, UnkStructA
         func_ovl0F_07_800453B0();
     }
 }
-
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0F_07_80044200(void) {
-    func_ovl0F_07_800452F8(0.0f);
-    func_ovl0F_07_80045300(0x7F);
-    if (D_ovl0F_07_80045B28 != -1) {
-        func_ovl0F_07_800457C8(D_ovl0F_07_80045B28);
-    }
-    func_ovl0F_07_80045388(250);
-    func_ovl0F_07_80044A30(1);
-    func_ovl0F_07_80044A60(1);
-    func_ovl0F_07_800450E0(30.0f);
-    func_ovl0F_07_800450E8(1.0f);
-    func_ovl0F_07_80045100(10.0f);
-    func_ovl0F_07_80044A18(D_ovl0F_07_80045D90.unk0, D_ovl0F_07_80045D90.unk4, D_ovl0F_07_80045D90.unk8,
-                           D_ovl0F_07_80045D90.unkC, D_ovl0F_07_80045D90.unk10, D_ovl0F_07_80045D90.unk14,
-                           D_ovl0F_07_80045D90.unk18);
-    func_ovl0F_07_800458F0(0x8E);
-}
-#line 281 "1FCAC0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 /* .data after func_ovl0F_07_800441F8's static */
 /* passed to func_ovl0F_07_800456D0: three 12-byte records */
@@ -423,7 +405,6 @@ static void func_ovl0F_07_800439A8(f32 arg0) {
         }
     }
 }
-
 
 static s32 func_ovl0F_07_800439A0(UnkStructA *arg0) {
     s32 hit;

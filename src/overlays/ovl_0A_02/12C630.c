@@ -6,11 +6,11 @@
  * inlined into every caller leave a `jr ra; nop` stub just before their first
  * caller; the unused ones at the end of the object leave one each.
  *
- * Two fakes end basic blocks where the original's scheduling and register
- * choice need it: in func_ovl0A_02_80043070 after the animation-end static
- * (the address of its table is formed before the store), and in
- * func_ovl0A_02_800447CC after rot is computed (rot, not the loop bound, is
- * the value spilled).
+ * The animation-end static func_ovl0A_02_80043068 is defined in another file
+ * (statics.h): the `.file` where func_ovl0A_02_80043070 inlines it ends a
+ * basic block (the address of its table is formed before the store; it
+ * replaces a dead-test fake).  A fake ends a block in func_ovl0A_02_800447CC
+ * after rot is computed (rot, not the loop bound, is the value spilled).
  */
 
 typedef struct {
@@ -285,6 +285,8 @@ static void func_ovl0A_02_80046C88(void);
 static void func_ovl0A_02_80046C90(void);
 static void func_ovl0A_02_80046C98(void);
 static void func_ovl0A_02_80046CA0(void);
+
+#include "statics.h"
 
 static void func_ovl0A_02_80046CA0(void) {
 }
@@ -1274,8 +1276,6 @@ void func_ovl0A_02_80043070(void) {
     func_ovl0A_02_80047A30(obj);
     func_ovl0A_02_80047720(obj->unk40, 0x16, 0);
     func_ovl0A_02_80043068(obj);
-    if (!D_ovl0A_02_800483E4 && !D_ovl0A_02_800483E4 && !D_ovl0A_02_800483E4) { /* fake: a dead test that ends the block (the calls around it are scheduled otherwise) */
-    }
     func_ovl0A_02_80047AD0((Obj02 *) D_ovl0A_02_800483E4, obj);
     func_ovl0A_02_80047AC8(obj, pos);
     func_ovl0A_02_80047AC8(obj, obj->unk58);
@@ -1381,10 +1381,6 @@ void func_ovl0A_02_80043070(void) {
     }
     func_ovl0A_02_80047A10(obj);
     func_ovl0A_02_80047B58();
-}
-
-static void func_ovl0A_02_80043068(Obj02 *obj) {
-    obj->unk40->unk48->unk4->unk4 = func_ovl0A_02_80047738(obj->unk40, 0) - 0.001f;
 }
 
 /* Waits for the object's animation to end; IDO passes obj in s0. */

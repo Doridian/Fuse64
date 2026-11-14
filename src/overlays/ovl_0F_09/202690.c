@@ -18,6 +18,9 @@
  *   register arguments (IDO passes them to the static in s2, $f20, $f22
  *   and s0) gives the original's schedule at its three calls.
  * - func_ovl0F_09_80044528: its padding follows once the rest matches.
+ * - Case 2's static 80043390 is defined in another file (statics.h): its
+ *   `.file` keeps the next call out of its stores (it replaces a dead
+ *   `if (D && D && D) {}` fake; ovl_0F_08's needed neither).
  *
  * - func_ovl0F_09_80043010 (2 to 0): func_ovl0F_09_80043200's loop. The
  *   original tests `slt v1,zero,s2; beqz v1` on entry and `slt v1,s0,s2`
@@ -212,6 +215,8 @@ UnkStruct_ovl0F_09_8004612C D_ovl0F_09_8004612C[2] = {
     { 0x40, 3, 8.5f, 2, 0, 1, 0 },
     { 0xC0, 3, 8.5f, 3, 0, 1, 0 },
 };
+
+#include "statics.h"
 
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
@@ -482,7 +487,6 @@ static void func_ovl0F_09_80043CD8(f32 arg0) {
     }
 }
 
-
 void func_ovl0F_09_800432CC(f32 arg0) {
     f32 sp1C;
 
@@ -532,12 +536,6 @@ static void func_ovl0F_09_8004341C(s32 arg1, UnkStruct_ovl0F_09_80045FC0 *arg0) 
     }
 }
 #line 540 "202690.c" /* fake: back from the other file, at the line numbers it matched with */
-
-static void func_ovl0F_09_80043390(void) {
-    D_ovl0F_09_80046200[4]->unk40->unk14 -= 3200.0f;
-    D_ovl0F_09_80046200[5]->unk40->unk14 -= 3200.0f;
-    D_ovl0F_09_80046200[6]->unk40->unk10 += 50.0f;
-}
 
 static void func_ovl0F_09_800432AC(f32 arg0, f32 arg1) {
     D_ovl0F_09_80045F50 = arg0;
@@ -625,9 +623,6 @@ void func_ovl0F_09_8004343C(s32 arg0) {
             func_ovl0F_09_80043424();
             func_ovl0F_09_8004341C(7, D_ovl0F_09_80045FC0);
             func_ovl0F_09_80043390();
-            /* fake: (as in ovl_0F_08) ends the block, so the call is not
-             * scheduled into the stores before it */
-            if (D_ovl0F_09_80045F5C && D_ovl0F_09_80045F5C && D_ovl0F_09_80045F5C) {}
             if (func_ovl0F_09_80045A30(0x405) == 0) {
                 func_ovl0F_09_80043314(0x279);
             } else {

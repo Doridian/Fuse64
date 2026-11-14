@@ -163,6 +163,8 @@ UnkStruct_ovl17_07_800456E8 D_ovl17_07_800456E8[2] = {
     { NULL, 0x213, 0.0f, 0.0f, 0.0f, -700.0f, 0x1E, 8, 0x16 },
 };
 
+#include "statics.h"
+
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
 static void func_ovl17_07_80044030(void) {
@@ -475,33 +477,6 @@ void func_ovl17_07_8004354C(UnkStructA *arg0) {
             arg0->unk40->unk14 = y;
             arg0->unk40->unk18 = z;
         }
-    }
-}
-
-static void func_ovl17_07_80043204(UnkStruct_ovl17_07_800456B0 *e) {
-    e->unk0 = func_ovl17_07_80044DD0(e->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
-    func_ovl17_07_80044D88(e->unk0, 0x01080000);
-    func_ovl17_07_80044D90(e->unk0, 0x02000000);
-    if (e->unkC != -1 && e->unkE != -1 && e->unk10 != -1 &&
-        e->unk12 != -1) {
-        e->unk4 =
-            func_ovl17_07_80044AD0(e->unk0->unk40, 0, e->unkC,
-                                   e->unkE, e->unk10, e->unk12);
-        if (e->unk4 == -1) {
-            while (TRUE) {
-            }
-        }
-    }
-    e->unk0->unk40->unk10 = e->unk14 * 10.0f;
-    e->unk0->unk40->unk14 = e->unk18 * 10.0f;
-    e->unk0->unk40->unk18 = e->unk1C * 10.0f;
-    e->unk0->unk40->unk1C = e->unk20;
-    e->unk0->unk40->unk20 = e->unk24;
-    e->unk0->unk40->unk24 = e->unk28;
-    e->unk0->unk40->unk28 = e->unk2C;
-    e->unk0->unk40->unk2C = e->unk30;
-    e->unk0->unk40->unk30 = e->unk34;
-    if (e && e && e) { /* fake: without it the handler's next call is scheduled into these stores */
     }
 }
 

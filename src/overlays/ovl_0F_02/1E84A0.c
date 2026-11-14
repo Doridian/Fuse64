@@ -345,8 +345,6 @@ static void func_ovl0F_02_80043028(void);
 static void func_ovl0F_02_80043020(s32 count, UnkStruct_ovl0F_02_80048734 *p);
 void func_ovl0F_02_80043010(void);
 
-
-
 /* .bss */
 UnkStructA *D_ovl0F_02_80048D00[6];
 UnkStructA *D_ovl0F_02_80048D18[8];
@@ -480,6 +478,7 @@ u32 D_ovl0F_02_80048AC4[17] = {
 };
 s32 D_ovl0F_02_80048B08[2] = { 0, 0 };
 
+#include "statics.h"
 
 /* unused: the stubs IDO -O3 leaves at the end of the object */
 static void func_ovl0F_02_80046E10(void) {
@@ -692,21 +691,6 @@ static void func_ovl0F_02_80045F14(void) {
         D_ovl0F_02_80048734[i].unk1C = 90.0f;
     }
 }
-
-static void func_ovl0F_02_80045F0C(UnkStruct_ovl0F_02_80048734 *p, s32 count) {
-    s32 i;
-
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-    for (i = 0; i < count; i++) {
-        *p->unk0 = func_ovl0F_02_80047D10(p->unk4, p->unk24 | 0x01000000, 0x30, p->unk8);
-        func_ovl0F_02_80044C94(p);
-        (*p->unk0)->unk40->unk1C = p->unk18;
-        (*p->unk0)->unk40->unk20 = p->unk1C;
-        (*p->unk0)->unk40->unk24 = p->unk20;
-        p++;
-    }
-}
-#line 700 "1E84A0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 /* case 2's: the movers and their script */
 static void func_ovl0F_02_80045F24(UnkStructA **arg0) {
@@ -1492,7 +1476,6 @@ void func_ovl0F_02_80043618(void) {
     func_ovl0F_02_80047E48();
 }
 
-
 void func_ovl0F_02_800434F8(UnkStructA *arg0) {
     f32 dx;
     f32 dy;
@@ -1514,11 +1497,6 @@ void func_ovl0F_02_800434F8(UnkStructA *arg0) {
     }
     func_ovl0F_02_80047CF0(arg0, 0x01000000);
 }
-
-
-
-
-
 
 static void func_ovl0F_02_800433EC(void) {
 }
@@ -1705,8 +1683,6 @@ static void func_ovl0F_02_800462F8_inl4(void) {
     func_ovl0F_02_80046150(5, D_ovl0F_02_8004883C, D_ovl0F_02_80048918);
 }
 #line 1707 "1E84A0.c" /* fake: back from the other file, at the line numbers it matched with */
-
-
 
 /* The overlay's handler: the entry returns it to the loader. */
 void func_ovl0F_02_800462F8(s32 arg0) {

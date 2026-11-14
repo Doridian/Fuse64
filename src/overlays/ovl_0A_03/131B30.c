@@ -6,8 +6,10 @@
  * inlined into every caller leave a `jr ra; nop` stub just before their first
  * caller; the unused ones at the end of the object leave one each.
  *
- * The `if (!obj && !obj && !obj) {}` in the animation wait is a fake: it ends
- * a basic block, which the original's scheduling needs (as in ovl_0A_04).  In
+ * The animation wait, func_ovl0A_03_80043010, is defined in another file
+ * (statics.h): the `.file` where it is inlined ends a basic block, which the
+ * original's scheduling needs (it replaces an `if (!obj && !obj && !obj) {}`
+ * fake; ovl_0A_02's twin is in its statics.h too).  In
  * func_ovl0A_03_800442AC the 700s are double literals: written 700.0f, IDO
  * keeps 1200.0f in a saved register and rebuilds 700 at each call, where the
  * original keeps 700 and 850 and rebuilds 1200.
@@ -257,6 +259,8 @@ static void func_ovl0A_03_80047090(void);
 static void func_ovl0A_03_80047098(void);
 static void func_ovl0A_03_800470A0(void);
 static void func_ovl0A_03_800470A8(void);
+
+#include "statics.h"
 
 static void func_ovl0A_03_800470A8(void) {
 }
@@ -1422,14 +1426,5 @@ void func_ovl0A_03_8004305C(void) {
 
 static void func_ovl0A_03_80043018(Obj03 *obj) {
     obj->unk40->unk48->unk4->unk4 = func_ovl0A_03_80047B38(obj->unk40, 0) - 0.001f;
-}
-
-/* Waits for the object's animation to end; IDO passes obj in s0. */
-static void func_ovl0A_03_80043010(Obj03 *obj) {
-    if (!obj && !obj && !obj) { /* fake: a block boundary */
-    }
-    while (!(obj->unk40->unkC & 0x40)) {
-        func_ovl0A_03_80047F90();
-    }
 }
 

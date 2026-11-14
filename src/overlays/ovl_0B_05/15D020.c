@@ -1,8 +1,6 @@
 /*
  * ovl_0B_05's game object (a menu of four options with a level number,
- * over ovl_0A_04's scene), IDO -O3; it matches in us, eu and jp. Its
- * `#line`s give the line numbers it matched with, a little below the
- * lines they stand on.
+ * over ovl_0A_04's scene), IDO -O3; it matches in us, eu and jp.
  *
  * IDO -O3: the functions are written last to first. The scene
  * (800439B0-80043CE8, the two shadow tasks 80044094/8004431C, 800448C8 and
@@ -24,14 +22,12 @@
  *
  * The fade's display-list callback 80044DD8 is a static of its own
  * (80044DD0, whose stub is the one before it) inlined into it, defined in
- * a `#line 1 "panels.c"` region: the `.file` switches end as1's blocks
- * around the body, so &D_ovl0B_05_8004669C is taken before arg0's home
- * store and the final store stays out of the delay slot of `jr ra`, as in
- * the original. The `#line` after the include names this file the way
- * the one after the region does, whatever path it is compiled by.
+ * another file (statics.h): the `.file` switches end as1's blocks around
+ * the body, so &D_ovl0B_05_8004669C is taken before arg0's home store and
+ * the final store stays out of the delay slot of `jr ra`, as in the
+ * original.
  */
 #include "common.h"
-#line 34 "15D020.c" /* fake: names this file as the build does, for the #line regions below */
 
 typedef struct {
     /* 0x00 */ u8 unk0[4];
@@ -297,6 +293,8 @@ static void func_ovl0B_05_80043438(s32 arg0);
 static void func_ovl0B_05_800439A8(void);
 static void func_ovl0B_05_800444F0(void);
 
+#include "statics.h"
+
 static void func_ovl0B_05_80044DC8(void) {
 }
 
@@ -346,18 +344,6 @@ static void func_ovl0B_05_80044D60(void) {
     D_ovl0B_05_800467C0[0] = D_ovl0B_05_800467EC[0] + D_ovl0B_05_80046824[0];
 }
 
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0B_05_80044DD0(UnkStruct_ovl0B_05_8004669C *fade, Gfx_ovl0B_05 **arg1) {
-    Gfx_ovl0B_05 *gfx = *arg1;
-
-    { Gfx_ovl0B_05 *g = gfx++; g->w0 = 0xFA000000; g->w1 = ((fade->unk4 & 0xFF) << 24) | ((fade->unk8 & 0xFF) << 16) | ((fade->unkC & 0xFF) << 8) | (fade->unk10 & 0xFF); }
-    { Gfx_ovl0B_05 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFDF6FB; }
-    { Gfx_ovl0B_05 *g = gfx++; g->w0 = 0xF7000000; g->w1 = 0x10001; }
-    { Gfx_ovl0B_05 *g = gfx++; g->w0 = 0xF6000000 | (((fade->unk2C + (s32) fade->unk34) & 0x3FF) << 14) | (((fade->unk30 + (s32) (fade->unk34 * fade->unk20)) & 0x3FF) << 2); g->w1 = (((fade->unk2C - (s32) fade->unk34) & 0x3FF) << 14) | (((fade->unk30 - (s32) (fade->unk34 * fade->unk20)) & 0x3FF) << 2); }
-    *arg1 = gfx;
-}
-
-#line 352 "15D020.c" /* fake: back from the other file, at the line numbers it matched with */
 static void func_ovl0B_05_80044DD8(s32 arg0, Gfx_ovl0B_05 **arg1) {
     func_ovl0B_05_80044DD0(&D_ovl0B_05_8004669C, arg1);
 }
@@ -367,7 +353,6 @@ static void func_ovl0B_05_80044F54(void) {
 
 static void func_ovl0B_05_80044F4C(void) {
 }
-
 
 void func_ovl0B_05_80044D48(void) {
     D_ovl0B_05_800467E4 = -1;
@@ -459,7 +444,6 @@ void func_ovl0B_05_800448C8(Obj04 **arg0, s32 *arg1, Obj04 **arg2, s32 *arg3, Ob
     }
     D_ovl0B_05_80046804 = func_ovl0B_05_80045DF8(func_ovl0B_05_80044094, *arg0, 0, 0, 0x150);
 }
-
 
 /* The menu's callback: arg0 the item, arg1 the buttons. */
 s32 func_ovl0B_05_800445F4(u8 arg0, u16 arg1) {
@@ -653,7 +637,6 @@ void func_ovl0B_05_80044094(void) {
     }
 }
 
-
 void func_ovl0B_05_80043CE8(void) {
     D_ovl0B_05_800467FC = func_ovl0B_05_80045E80(0x33B);
     func_ovl0B_05_80045E90(D_ovl0B_05_800467FC, 0x20000001);
@@ -718,7 +701,6 @@ void func_ovl0B_05_800439B0(f32 arg0, f32 arg1, f32 arg2) {
     obj->unk40->unk18 = arg2;
     func_ovl0B_05_80045CD0(0x98, 0x01480000, 0xD0, obj)->unk40->unk36 = 0x80;
 }
-
 
 /* The overlay's handler: the entry returns it to the loader. */
 void func_ovl0B_05_80043E04(s32 arg0) {

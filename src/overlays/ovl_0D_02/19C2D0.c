@@ -25,8 +25,9 @@
  *   s1, x1 s2, z1 s3 (41 words). Reading x1 and z1 before it gives the
  *   original's x0 s0, x1 s1, z1 s2, z0 s3. (Moving z0's set-up after case
  *   0's x1 and z1, or making its store volatile, shows the same order.)
- * - 800444FC: `#line 1 "panels.c"` regions (as in ovl_0D_07): around the
- *   probe static 800444EC (its store stays ahead of the next call), around
+ * - 800444FC: the probe static 800444EC is defined in another file
+ *   (statics.h; its store stays ahead of the next call), and `#line 1
+ *   "panels.c"` regions (as in ovl_0D_07): around
  *   the 80044474 call (the store of D_ovl0D_02_80047A54 is lui/%lo and the
  *   call's delay slot stays empty; it replaces the `if ((D = f())) {}`
  *   fake), and around the gate's store in 80044444 (the arguments of the
@@ -38,6 +39,10 @@
  *   order of the case's ugen instructions fed to as1 by hand did that; a
  *   .file at the block's start did). The `#line` after the include gives
  *   the file one name.
+ * - 800438FC and 80043510: the statics they inline first, 800438D8 and
+ *   80043508, are defined in another file (statics.h): the `.file` keeps
+ *   the first call out of the prologue (they replace two
+ *   `if (!D && !D && !D) {}` fakes).
  * - 80045964: grid[7] (not [6]) puts the timer static's grid at sp+168.
  */
 #include "common.h"
@@ -332,6 +337,8 @@ Trio_0D02 D_ovl0D_02_80047890[4] = {
     { 2, 8, 0xE6 },
     { 3, 0, 0xDE },
 };
+
+#include "statics.h"
 
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
@@ -827,15 +834,6 @@ void func_ovl0D_02_800444FC(void) {
     func_ovl0D_02_80046378();
 }
 
-/* the probe: an invisible object moved about to test for hits; in
- * "panels.c" (a fake, see the top) */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0D_02_800444EC(void) {
-    D_ovl0D_02_80047A3C = func_ovl0D_02_80046D40(-1, 0x80, 0.0f, 0.0f, 0.0f);
-    D_ovl0D_02_80047A3C->unkC = 0x3FFFF;
-}
-
-#line 853 "19C2D0.c" /* fake: back from the other file, at the line numbers it matched with */
 static void func_ovl0D_02_800444F4(Trio_0D02 *t, s32 count) {
     s32 i;
 
@@ -1149,8 +1147,6 @@ static void func_ovl0D_02_80043A68(void) {
 
 /* the stage's clean-up (the handler's case 1) */
 void func_ovl0D_02_800438FC(void) {
-    if (!D_ovl0D_02_80047A24 && !D_ovl0D_02_80047A24 && !D_ovl0D_02_80047A24) { /* fake: a dead test, for the register allocation or schedule */
-    }
     func_ovl0D_02_800438D8();
     func_ovl0D_02_800438E0();
     func_ovl0D_02_800438E8();
@@ -1199,17 +1195,6 @@ static void func_ovl0D_02_800438E0(void) {
     }
 }
 
-static void func_ovl0D_02_800438D8(void) {
-    Ent_0D02 *p;
-
-    func_ovl0D_02_80046D10(D_ovl0D_02_80047A3C);
-    for (p = D_ovl0D_02_8004762C; p < D_ovl0D_02_8004762C + 2; p++) {
-        if (p->obj != NULL) {
-            func_ovl0D_02_80043858(p);
-        }
-    }
-}
-
 static void func_ovl0D_02_80043858(Ent_0D02 *arg0) {
     func_ovl0D_02_80046D10(arg0->obj);
     if (arg0->unkC != 0xFFFF && arg0->unkE != 0xFFFF && arg0->unk10 != 0xFFFF && arg0->unk12 != 0xFFFF) {
@@ -1229,18 +1214,11 @@ void func_ovl0D_02_8004381C(void) {
 void func_ovl0D_02_80043510(void) {
     s32 i;
 
-    /* fake: (as in ovl_0D_05's 80043210): keeps the first call out of the prologue */
-    if (!D_ovl0D_02_80047A40 && !D_ovl0D_02_80047A40 && !D_ovl0D_02_80047A40) {
-    }
     func_ovl0D_02_80043508();
     func_ovl0D_02_80043500();
     for (i = 0; i < 1; i++) {
         func_ovl0D_02_800434F8(&D_ovl0D_02_800476D4[i], D_ovl0D_02_8004770C[i]);
     }
-}
-
-static void func_ovl0D_02_80043508(void) {
-    UNK_MACRO_ovl0D_02_80043510();
 }
 
 static void func_ovl0D_02_80043500(void) {

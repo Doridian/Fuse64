@@ -15,13 +15,13 @@
  *   three statements on their own lines; 80045194 has them on one line,
  *   UNK_MACRO_ovl0C_01_8004514C); 800452EC is an empty *external*
  *   function, defined between 800452F4 and 80045194 and called by no one
- *   (an inlined static would cost 800452F4 8 bytes of frame); 800468E4
- *   is an empty static in "panels.c", inlined at the 0x41A block.
- * - 800468EC (the set-up): `rec->` for the first call, the -1 checks and
- *   the stores, the global by name in the 0x41A block, and "panels.c"
- *   regions (`#line`) around `rec = &...` and from the 0x41A block to
- *   800468E4: their `.file`s end as1's blocks where the original's do
- *   (lui s1 before the mtc1; no `li a0` in the stores).
+ *   (an inlined static would cost 800452F4 8 bytes of frame).
+ * - 800468EC (the set-up): its model placement is the static 800468E4
+ *   (`rec->` for the first call, the -1 checks and the stores), defined in
+ *   another file (statics.h; ovl_0C_04's 8004365C, ovl_0C_07's 80044170):
+ *   the `.file`s around its body end as1's blocks where the original's do
+ *   (lui s1 before the mtc1; no `li a0` in the stores).  The 0x41A block
+ *   names the global.
  * - 800452F4: pos is a Vec3f declared after the scalars (an array goes on
  *   top of the frame), and `t = ... * 1000.0f; base + t` for the add.s
  *   operand order.  80044D3C has no `pos` local (its frame).
@@ -32,7 +32,6 @@
  * - 800459FC declares obj before pos.
  */
 #include "common.h"
-#line 46 "16BB60.c" /* fake: names this file as the build does, for the #line regions below */
 
 /* the handler's state (ovl_0C_07's D_ovl0C_07_80047990) */
 typedef struct {
@@ -122,7 +121,6 @@ typedef struct {
     /* 0x22 */ s16 unk22;
     /* 0x24 */ s32 unk24;
 } UnkStruct_ovl0C_01_8004A22C;
-
 
 /* a list of these ends at the one whose unk2 is 0; unk20 points into
  * another list */
@@ -508,6 +506,8 @@ UnkStruct_ovl0C_01_8004A584 D_ovl0C_01_8004A59C[] = {
 UnkStruct_ovl0C_01_8004A5B4 D_ovl0C_01_8004A5B4[] = {
     { NULL, 400.0f, 300.0f, 1500.0f, 0, 0, 0 },
 };
+
+#include "statics.h"
 
 /* unused: the stubs IDO -O3 leaves at the end of the object */
 static void func_ovl0C_01_80048A68(void) {
@@ -1232,7 +1232,6 @@ void func_ovl0C_01_80046B98(void) {
 }
 
 void func_ovl0C_01_800468EC(void) {
-    UnkStruct_ovl0C_01_8004A54C *rec;
     u32 (*p)[3];
     s32 i;
     s32 count;
@@ -1252,29 +1251,6 @@ void func_ovl0C_01_800468EC(void) {
     func_ovl0C_01_80046740();
     func_ovl0C_01_800464F8();
     func_ovl0C_01_800463E0();
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-    rec = &D_ovl0C_01_8004A54C;
-#line 1265 "16BB60.c" /* fake: back from the other file, at the line numbers it matched with */
-    rec->unk0 = func_ovl0C_01_80049800(rec->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
-    func_ovl0C_01_800497B8(rec->unk0, 0x01080000);
-    func_ovl0C_01_800497C0(rec->unk0, 0x02000000);
-    if (rec->unkC != -1 && rec->unkE != -1 && rec->unk10 != -1 && rec->unk12 != -1) {
-        rec->unk4 = func_ovl0C_01_80049500(rec->unk0->unk40, 0, rec->unkC, rec->unkE, rec->unk10, rec->unk12);
-        if (rec->unk4 == -1) {
-            for (;;) {
-            }
-        }
-    }
-    rec->unk0->unk40->unk10 = rec->unk14 * 10.0f;
-    rec->unk0->unk40->unk14 = rec->unk18 * 10.0f;
-    rec->unk0->unk40->unk18 = rec->unk1C * 10.0f;
-    rec->unk0->unk40->unk1C = rec->unk20;
-    rec->unk0->unk40->unk20 = rec->unk24;
-    rec->unk0->unk40->unk24 = rec->unk28;
-    rec->unk0->unk40->unk28 = rec->unk2C;
-    rec->unk0->unk40->unk2C = rec->unk30;
-    rec->unk0->unk40->unk30 = rec->unk34;
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     func_ovl0C_01_800468E4();
     if (func_ovl0C_01_80049B90(0x41A) != 0) {
         func_ovl0C_01_80049508(D_ovl0C_01_8004A54C.unk4);
@@ -1282,11 +1258,6 @@ void func_ovl0C_01_800468EC(void) {
     }
     func_ovl0C_01_80049C58(0x37, 0x4D, 0xFF);
 }
-
-static void func_ovl0C_01_800468E4(void) {
-
-}
-#line 1297 "16BB60.c" /* fake: back from the other file, at the line numbers it matched with */
 
 void func_ovl0C_01_80046740(void) {
     UnkStruct_ovl0C_01_8004A104 *p;
@@ -2445,3 +2416,4 @@ void func_ovl0C_01_80043018(void) {
 void func_ovl0C_01_80043010(void) {
 
 }
+

@@ -11,7 +11,9 @@
  *   clamp 80043EA8 is (axis, v, size), the direction 80043F1C takes the
  *   entity (`c.eq.s const, a`), 80043F24's case 1 computes z2 as z0 + 1 with
  *   `len = x1 + z1` (a dead fake) ahead of x0's set-up (ovl_0D_02's header
- *   says why), and case 0's first statement is in a "panels.c" region. Unlike ovl_0D_02,
+ *   says why), and 80043F24 is defined in another file (statics.h), which
+ *   replaces a "panels.c" region around case 0's first statement. Unlike
+ *   ovl_0D_02,
  *   80045948's second and fourth calls pass 0x11 here (checked against the
  *   original). The `#line` regions need a function defined in "panels.c":
  *   the static 80044D90 is one.
@@ -27,7 +29,7 @@
  * - 80044D98: the 0x18 block in the static 80044D90 (in "panels.c"); the
  *   C24 loop starts at (Ent_0D04 *)(D_ovl0D_04_80046C00 + 3), the same
  *   address as another symbol, so uopt doesn't merge it with the block's
- *   &C24 into s4 (a fake); the camera static's call in a "panels.c" region
+ *   &C24 into s4 (a fake); the camera static 80044D40 in statics.h
  *   puts 1600.0f in $f16 (as the original), and both its 1600s are floats.
  */
 #include "common.h"
@@ -318,6 +320,8 @@ Trio_0D04 D_ovl0D_04_80046F08[5] = {
     { 4, 0, 0xDE },
 };
 
+#include "statics.h"
+
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
 static void func_ovl0D_04_800455B8(void) {
@@ -459,9 +463,7 @@ void func_ovl0D_04_80044D98(void) {
     D_ovl0D_04_80047078 = func_ovl0D_04_80045A58();
     func_ovl0D_04_800467A0(1);
     /* fake: (see the top): 1600.0f in $f16 */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
     func_ovl0D_04_80044D40();
-#line 474 "1A5E10.c" /* fake: back from the other file, at the line numbers it matched with */
     func_ovl0D_04_80044310();
     func_ovl0D_04_80044D68();
     func_ovl0D_04_80044D60();
@@ -543,11 +545,6 @@ static void func_ovl0D_04_80044D48(void) {
         func_ovl0D_04_80043010(&D_ovl0D_04_80046E20[i]);
         func_ovl0D_04_80046310(D_ovl0D_04_80046E20[i].obj, 0x80000);
     }
-}
-
-static void func_ovl0D_04_80044D40(void) {
-    func_ovl0D_04_800461F8(2400.0f, 1600.0f, 800.0f, 1600.0f);
-    func_ovl0D_04_80046208(1600.0f, 1600.0f, 3200.0f, 1600.0f);
 }
 
 static void func_ovl0D_04_80044D38(void) {
@@ -686,8 +683,6 @@ static void func_ovl0D_04_80044884(void) {
 }
 
 void func_ovl0D_04_800446E8(void) {
-    if (!D_ovl0D_04_80047044 && !D_ovl0D_04_80047044 && !D_ovl0D_04_80047044) { /* fake: a dead test, for the register allocation or schedule */
-    }
     func_ovl0D_04_800446C0();
     func_ovl0D_04_800446C8();
     func_ovl0D_04_800446D0();
@@ -732,17 +727,6 @@ static void func_ovl0D_04_800446C8(void) {
     for (i = 0; i < 3; i++) {
         if (D_ovl0D_04_80046CCC[i].obj != NULL) {
             func_ovl0D_04_80044644(&D_ovl0D_04_80046CCC[i]);
-        }
-    }
-}
-
-static void func_ovl0D_04_800446C0(void) {
-    Ent_0D04 *p;
-
-    func_ovl0D_04_80046320(D_ovl0D_04_8004705C);
-    for (p = D_ovl0D_04_80046C24; p < D_ovl0D_04_80046C24 + 3; p++) {
-        if (p->obj != NULL) {
-            func_ovl0D_04_80044644(p);
         }
     }
 }
@@ -826,103 +810,6 @@ static void func_ovl0D_04_80044300(Ent_0D04 *e, s32 flag) {
         func_ovl0D_04_800466D0(flag);
         func_ovl0D_04_800469E0(0x68);
     }
-}
-
-/* the tiles under a gate: solid, and the frame around its opening */
-static void func_ovl0D_04_80043F24(Ent_0D04 *e) {
-    s32 grid[6];
-    s32 x0;
-    s32 y0;
-    s32 z0;
-    s32 x1;
-    s32 y1;
-    s32 z1;
-    s32 x2;
-    s32 z2;
-    s32 x3;
-    s32 z3;
-    s32 len;
-    Obj40_0D04 *p;
-
-    p = e->obj->unk40;
-    func_ovl0D_04_80045960(p->unk10, p->unk14, p->unk18, grid, 0);
-    len = x1 + z1; /* fake: (see the top) */
-    x0 = grid[0];
-    y0 = grid[1];
-    z0 = grid[2];
-    switch (e->obj->unk28) {
-        case 0x15C:
-            len = 5;
-            break;
-        case 0x15D:
-            len = 7;
-            break;
-        case 0x15E:
-            len = 10;
-            break;
-        default:
-            while (1) {
-            }
-    }
-    y1 = grid[1] + 2;
-    switch (func_ovl0D_04_80043F1C(e)) {
-        case 0:
-            /* fake: (see the top) */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-            x0 = grid[0] - 1;
-#line 882 "1A5E10.c" /* fake: back from the other file, at the line numbers it matched with */
-            x1 = x0 + 4;
-            z1 = grid[2] + len;
-            x2 = x0 + 1;
-            x3 = x1 - 1;
-            z2 = grid[2];
-            z3 = z1;
-            break;
-        case 1:
-            z1 = grid[2] + 1;
-            z0 = grid[2] - 4;
-            x1 = grid[0] + len;
-            x3 = x1;
-            z2 = z0 + 1;
-            z3 = z1 - 1;
-            x2 = grid[0];
-            break;
-        case 2:
-            x1 = grid[0] + 1;
-            x0 = grid[0] - 3;
-            z0 = grid[2] - len;
-            x2 = x0 + 1;
-            x3 = x1 - 1;
-            z2 = z0;
-            z1 = grid[2];
-            z3 = grid[2];
-            break;
-        case 3:
-            z1 = grid[2] + 3;
-            z0 = grid[2] - 1;
-            x0 = grid[0] - len;
-            x2 = x0;
-            z2 = z0 + 1;
-            z3 = z1 - 1;
-            x3 = grid[0];
-            x1 = grid[0];
-            break;
-    }
-    func_ovl0D_04_80043EA8(0, &x0, D_ovl0D_04_80047068);
-    func_ovl0D_04_80043EA8(1, &y0, D_ovl0D_04_80047068);
-    func_ovl0D_04_80043EA8(2, &z0, D_ovl0D_04_80047068);
-    func_ovl0D_04_80043EA8(0, &x1, D_ovl0D_04_80047068);
-    func_ovl0D_04_80043EA8(1, &y1, D_ovl0D_04_80047068);
-    func_ovl0D_04_80043EA8(2, &z1, D_ovl0D_04_80047068);
-    func_ovl0D_04_80043EA8(0, &x2, D_ovl0D_04_80047068);
-    func_ovl0D_04_80043EA8(2, &z2, D_ovl0D_04_80047068);
-    func_ovl0D_04_80043EA8(0, &x3, D_ovl0D_04_80047068);
-    func_ovl0D_04_80043EA8(2, &z3, D_ovl0D_04_80047068);
-    func_ovl0D_04_80045950(x0, y0, z0, x1, y1, z1, 0x10);
-    func_ovl0D_04_80045948(x0, y0 + 1, z0, x1, z1, 0x11);
-    func_ovl0D_04_80045948(x0, y0, z0, x1, z1, 0xF);
-    func_ovl0D_04_80045948(x2, y0, z2, x3, z3, 0x11);
-    func_ovl0D_04_80045948(x2, y0 + 1, z2, x3, z3, 0x10);
 }
 
 static void func_ovl0D_04_80043EA8(s32 axis, s32 *v, s32 *size) {

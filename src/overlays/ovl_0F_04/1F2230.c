@@ -126,8 +126,8 @@
  *   setup 80045E80 (so unk4 gets its own `lui at`), the 36/13/90 init
  *   loop 80045E78 (defined after the setup, for the line numbers as1
  *   reads: 6 words), and the panel loop 80045E70 (p, count), ovl_0F_01's
- *   80043588 (not inlined there, with four callers), its body in
- *   "panels.c" (14 words without). Its arguments are set up in 1F2230.c,
+ *   80043588 (not inlined there, with four callers), defined in another
+ *   file (statics.h; 14 words without). Its arguments are set up in 1F2230.c,
  *   ahead of the file switch, which is the original's `la s1` / `li s3, 6`.
  *   The table is passed as `&D_ovl0F_04_80048534[6]`, one past the 0x18-
  *   byte table before it (a fake): written from D_ovl0F_04_800485C4 (or
@@ -431,7 +431,6 @@ static void func_ovl0F_04_80043028(void);
 static void func_ovl0F_04_80043020(s32 count, UnkStruct_ovl0F_04_800485C4 *p);
 void func_ovl0F_04_80043010(void);
 
-
 /* .bss */
 UnkStructA *D_ovl0F_04_80048A70[6];
 UnkStructA *D_ovl0F_04_80048A88[8];
@@ -547,6 +546,8 @@ UnkStruct_ovl0F_04_80048918 D_ovl0F_04_80048918[2] = {
     { 0x40, 3, 8.5f, 3, 0, 1, 0 },
     { 0xE0, 3, 8.5f, 2, 0, 1, 0 },
 }; /* the scripts' strings, .rodata in this order */ const char D_ovl0F_04_80048950[] = "MA"; const char D_ovl0F_04_80048954[] = "MA"; const char D_ovl0F_04_80048958[] = "WM1 WG1 WSH WAP WDW WB3 ST10"; const char D_ovl0F_04_80048978[] = "WM1 WG1 WSH WAP WDE WB2 ST30";
+
+#include "statics.h"
 
 /* unused: the stubs IDO -O3 leaves at the end of the object */
 static void func_ovl0F_04_80046C70(void) {
@@ -753,21 +754,6 @@ static void func_ovl0F_04_80045E78(void) {
         D_ovl0F_04_800485C4[i].unk1C = 90.0f;
     }
 }
-
-static void func_ovl0F_04_80045E70(UnkStruct_ovl0F_04_800485C4 *p, s32 count) {
-    s32 i;
-
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-    for (i = 0; i < count; i++) {
-        *p->unk0 = func_ovl0F_04_80047BA0(p->unk4, p->unk24 | 0x01000000, 0x30, p->unk8);
-        func_ovl0F_04_800433FC(p);
-        (*p->unk0)->unk40->unk1C = p->unk18;
-        (*p->unk0)->unk40->unk20 = p->unk1C;
-        (*p->unk0)->unk40->unk24 = p->unk20;
-        p++;
-    }
-}
-#line 700 "1F2230.c" /* fake: back from the other file, at the line numbers it matched with */
 
 /* case 2's: the movers and their script */
 static void func_ovl0F_04_80045E88(UnkStructA **arg0) {
@@ -1743,8 +1729,6 @@ static void func_ovl0F_04_8004624C_inl4(void) {
     func_ovl0F_04_80043578(5, D_ovl0F_04_800486CC, D_ovl0F_04_800487A8);
 }
 #line 1707 "1F2230.c" /* fake: back from the other file, at the line numbers it matched with */
-
-
 
 /* The overlay's handler: the entry returns it to the loader. */
 void func_ovl0F_04_8004624C(s32 arg0) {

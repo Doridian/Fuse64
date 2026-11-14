@@ -11,6 +11,9 @@
  *   loads of D_80046170 after the store and passes j from v0 (ovl_0D_06's
  *   8004305C). The region's other end and 80043790's region went
  *   (2026-11-13: tried away one `#line` at a time against the sha1).
+ * - 80043210: the empty static 800431F8 it inlines first is defined in
+ *   another file (statics.h): its `.file` keeps the first call out of the
+ *   prologue (it replaces an `if (!D && !D && !D) {}` fake).
  * - 80044290: the inlined static 80044288 has a pad local ahead of grid,
  *   so grid sits at sp+168 as in the original.
  */
@@ -237,6 +240,8 @@ Trio05 D_ovl0D_05_80046088[5] = {
     { 3, 0, 0xDE },
     { 4, 2, 0xE0 },
 };
+
+#include "statics.h"
 
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
@@ -708,8 +713,6 @@ static void func_ovl0D_05_800432EC(void) {
 }
 
 void func_ovl0D_05_80043210(void) {
-    if (!D_ovl0D_05_80046154 && !D_ovl0D_05_80046154 && !D_ovl0D_05_80046154) { /* fake: a dead test, for the register allocation or schedule */
-    }
     func_ovl0D_05_800431F8();
     func_ovl0D_05_80043200();
     func_ovl0D_05_80043208();
@@ -731,17 +734,6 @@ static void func_ovl0D_05_80043200(void) {
     for (i = 0; i < 2; i++) {
         if (D_ovl0D_05_80045F64[i].obj != NULL) {
             func_ovl0D_05_8004317C(&D_ovl0D_05_80045F64[i]);
-        }
-    }
-}
-
-static void func_ovl0D_05_800431F8(void) {
-    Ent05 *p;
-
-    func_ovl0D_05_80045610(D_ovl0D_05_8004616C);
-    for (p = D_ovl0D_05_80045F2C; p < D_ovl0D_05_80045F2C + 1; p++) {
-        if (p->obj != NULL) {
-            func_ovl0D_05_8004317C(p);
         }
     }
 }

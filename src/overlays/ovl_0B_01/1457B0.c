@@ -16,10 +16,11 @@
  *
  * What made the last ones match:
  * - func_ovl0B_01_8004464C: the empty static 800445E4 is defined in
- *   "panels.c" (a fake `#line`) and inlined after `fade`'s address is
- *   taken: its `.file` ends as1's block there, so the address comes before
- *   arg0's home store. Its closing `}` and 800445BC are in "panels.c" too,
- *   which keeps the final store out of `jr ra`'s delay slot.
+ *   another file (statics.h) and inlined after `fade`'s address is taken:
+ *   its `.file` ends as1's block there, so the address comes before arg0's
+ *   home store (ovl_0B_05's twin has the whole callback in its statics.h).
+ *   Its closing `}` and 800445BC are in "panels.c" (a fake `#line`), which
+ *   keeps the final store out of `jr ra`'s delay slot.
  * - func_ovl0B_01_8004376C (static, called only from 80043998): its scalars
  *   are declared before its arrays (the original's frame has them at the
  *   top). The first loop is a do-while (`++i < 4` gives the original's
@@ -195,6 +196,8 @@ void func_ovl0B_01_80043448(void);
 void func_ovl0B_01_80043660(void);
 void func_ovl0B_01_80043998(void);
 
+#include "statics.h"
+
 static void func_ovl0B_01_80044644(void) {
 }
 
@@ -243,11 +246,6 @@ static void func_ovl0B_01_800445D4(void) {
     D_ovl0B_01_80045F80[0] = D_ovl0B_01_80045FAC[0];
 }
 
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0B_01_800445E4(void) {
-}
-
-#line 238 "1457B0.c" /* fake: back from the other file, at the line numbers it matched with */
 static void func_ovl0B_01_8004464C(s32 arg0, Gfx_ovl0B_01 **arg1) {
     UnkStruct_ovl0B_01_80045E34 *fade = &D_ovl0B_01_80045E34;
     Gfx_ovl0B_01 *gfx;

@@ -4,16 +4,15 @@
  * - func_ovl0E_13_80043110: the D80 position set-up is the static it
  *   inlines, func_ovl0E_13_80043108 (the stub before it), with x, z and the
  *   count as arguments, as ovl_0E_04's func_ovl0E_04_8004399C. It is
- *   defined in "panels.c" (a fake `#line`; the `#line` after it returns to
- *   the file's own numbers, and the one after the include gives the file
- *   one name however it is compiled): the `.file` ugen emits where the
+ *   defined in another file (statics.h): the `.file` ugen emits where the
  *   inlined body starts ends an as1 block right after the hoisted
  *   invariants (&D80 in s1, 100.0f in fs0, the count in s2), in 80043110
  *   and where it is inlined in 8004439C and 80043444. The macro it was
  *   and its `p += 0` fake go.
- * - func_ovl0E_13_80043940: its closing brace and func_ovl0E_13_800437C0
- *   are in "panels.c" too (as ovl_0C_08's 80043654): the block boundary
- *   before the epilogue makes it restore s0 before s1.
+ * - func_ovl0E_13_80043940 ends with the model removal 800437B8, which is
+ *   in statics.h too with the model placement 800437C0 (as ovl_0D_07's
+ *   pair): the block boundary before the epilogue makes it restore s0
+ *   before s1.
  * IDO's scheduling follows source lines: 80043444 matches only with its
  * two camera pans on one line (UNK_MACRO_ovl0E_13_80043444), the second
  * reusing the first's a and y.
@@ -23,7 +22,6 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
-#line 30 "1D93D0.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0E_13's game object, IDO -O3: the functions are written last to first
@@ -338,6 +336,8 @@ UnkStruct_ovl0E_13_80046B5C D_ovl0E_13_80046B5C[15] = {
     { -7.071068f, 7.071068f, 315.0f, 4100.0f, 2750.0f, 2, 1 },
     { -10.0f, 0.0f, 270.0f, 2800.0f, 2750.0f, 2, 0 },
 };
+
+#include "statics.h"
 
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
@@ -853,41 +853,6 @@ void func_ovl0E_13_80043940(s16 arg0) {
     func_ovl0E_13_80046040();
     func_ovl0E_13_800437B8(f);
     /* the brace in "panels.c": the epilogue restores s0 before s1 */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-}
-
-static void func_ovl0E_13_800437C0(UnkStruct_ovl0E_13_80046800 *e) {
-    e->unk0 = func_ovl0E_13_80045EF0(e->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
-    func_ovl0E_13_80045EA8(e->unk0, 0x01080000);
-    func_ovl0E_13_80045EB0(e->unk0, 0x02000000);
-    if (e->unkC != -1 && e->unkE != -1 && e->unk10 != -1 && e->unk12 != -1) {
-        e->unk4 = func_ovl0E_13_80045BF0(e->unk0->unk40, 0, e->unkC, e->unkE, e->unk10, e->unk12);
-        if (e->unk4 == -1) {
-            while (TRUE) {
-            }
-        }
-    }
-    e->unk0->unk40->unk10 = e->unk14 * 10.0f;
-    e->unk0->unk40->unk14 = e->unk18 * 10.0f;
-    e->unk0->unk40->unk18 = e->unk1C * 10.0f;
-    e->unk0->unk40->unk1C = e->unk20;
-    e->unk0->unk40->unk20 = e->unk24;
-    e->unk0->unk40->unk24 = e->unk28;
-    e->unk0->unk40->unk28 = e->unk2C;
-    e->unk0->unk40->unk2C = e->unk30;
-    e->unk0->unk40->unk30 = e->unk34;
-}
-
-#line 890 "1D93D0.c" /* fake: back from the other file, at the line numbers it matched with */
-static void func_ovl0E_13_800437B8(UnkStruct_ovl0E_13_80046800 *e) {
-    func_ovl0E_13_80045EB0(e->unk0, 0x01000000);
-    func_ovl0E_13_80045EC0(e->unk0);
-    /* 0xFFFF, not -1: never equal to the s16 fields */
-    if (e->unkC != 0xFFFF && e->unkE != 0xFFFF && e->unk10 != 0xFFFF && e->unk12 != 0xFFFF) {
-        func_ovl0E_13_80045BF8(e->unk4);
-    }
-    e->unk0 = NULL;
-    e->unk4 = -1;
 }
 
 s32 func_ovl0E_13_80043754(void) {
@@ -964,23 +929,6 @@ void func_ovl0E_13_800431E4(void) {
 
 void func_ovl0E_13_80043110(void) {
     func_ovl0E_13_80043108(22.0f, 30, 3);
-}
-
-/* Inlined into func_ovl0E_13_80043110 only, which is inlined into its
- * callers in turn; in "panels.c" for the block boundary where its body
- * starts. */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0E_13_80043108(f32 x, s32 z, s32 count) {
-    s32 i;
-
-    D_ovl0E_13_80046D80.x = x * 100.0f;
-    D_ovl0E_13_80046D80.y = 0.0f;
-    for (i = 0; i < count; i++) {
-        D_ovl0E_13_80046D80.y += func_ovl0E_13_80045510(i) * 100.0f;
-    }
-    D_ovl0E_13_80046D80.y += 100.0f;
-    D_ovl0E_13_80046D80.z = z * 100.0f;
-    D_ovl0E_13_80046D70 = func_ovl0E_13_80046450(0x27, &D_ovl0E_13_80046D80.x, 0);
 }
 
 void func_ovl0E_13_800430E8(void) {

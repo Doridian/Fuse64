@@ -5,14 +5,13 @@
  * of func_ovl0C_07_8004455C then stays a call, and its empty case 0x53
  * is kept (both only together give the handler).
  *
- * func_ovl0C_07_80044178's closing `}` and the empty static
- * func_ovl0C_07_80044170 after it are in "panels.c" (a fake `#line`,
- * to the end of the file).  The `.file` ugen then
- * emits ends as1's block before the epilogue, which keeps ugen's restore
- * order s0, s1, s2 (as1 reverses it when the last block ends in the
- * lw, lw, store chain).  ugen drops a `#line` file whose region holds no
- * function definition, hence the static in it (the `}` alone does
- * nothing).
+ * func_ovl0C_07_80044178: the model placement it ends with is the
+ *   static func_ovl0C_07_80044170, defined in another file (statics.h): the `.file`
+ *   switch back at its closing `}` ends as1's block before the epilogue,
+ *   which keeps ugen's restore order s0, s1, s2 (as1 reverses it when the
+ *   last block ends in the lw, lw, store chain).  The stub of that static
+ *   was an empty static before; the same static is ovl_0C_08's 800435D4
+ *   and ovl_0D_07's 80043424.
  */
 #include "common.h"
 
@@ -350,6 +349,8 @@ UnkStruct_ovl0C_07_800476D0 D_ovl0C_07_800476D0[] = {
 UnkStruct_ovl0C_07_800477A8 D_ovl0C_07_800477A8 = {
     NULL, -1, 0x2B9, -5, -0x400, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 };
+
+#include "statics.h"
 
 /* unused: the stubs IDO -O3 leaves at the end of the object */
 static void func_ovl0C_07_80045EE4(void) {
@@ -904,7 +905,6 @@ void func_ovl0C_07_800443AC(void) {
 }
 
 void func_ovl0C_07_80044178(void) {
-    UnkStruct_ovl0C_07_800477A8 *rec;
     u32 (*p)[3];
     s32 i;
     s32 count;
@@ -920,33 +920,9 @@ void func_ovl0C_07_80044178(void) {
     }
     func_ovl0C_07_80046250(0x252);
     func_ovl0C_07_800463E8();
-    func_ovl0C_07_80044170();
     func_ovl0C_07_80044024();
     func_ovl0C_07_80043E38();
-    rec = &D_ovl0C_07_800477A8;
-    rec->unk0 = func_ovl0C_07_80046C80(rec->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
-    func_ovl0C_07_80046C38(rec->unk0, 0x01080000);
-    func_ovl0C_07_80046C40(rec->unk0, 0x02000000);
-    if (rec->unkC != -1 && rec->unkE != -1 && rec->unk10 != -1 && rec->unk12 != -1) {
-        rec->unk4 = func_ovl0C_07_80046980(rec->unk0->unk40, 0, rec->unkC, rec->unkE, rec->unk10, rec->unk12);
-        if (rec->unk4 == -1) {
-            for (;;) {
-            }
-        }
-    }
-    rec->unk0->unk40->unk10 = rec->unk14 * 10.0f;
-    rec->unk0->unk40->unk14 = rec->unk18 * 10.0f;
-    rec->unk0->unk40->unk18 = rec->unk1C * 10.0f;
-    rec->unk0->unk40->unk1C = rec->unk20;
-    rec->unk0->unk40->unk20 = rec->unk24;
-    rec->unk0->unk40->unk24 = rec->unk28;
-    rec->unk0->unk40->unk28 = rec->unk2C;
-    rec->unk0->unk40->unk2C = rec->unk30;
-    rec->unk0->unk40->unk30 = rec->unk34;
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-}
-
-static void func_ovl0C_07_80044170(void) {
+    func_ovl0C_07_80044170();
 }
 
 void func_ovl0C_07_80044024(void) {

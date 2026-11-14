@@ -1,12 +1,11 @@
 /*
  * ovl_0C_08's game object, IDO -O3; it matches in us, eu and jp. The
  * functions are written last to first (IDO -O3 emits a file's functions
- * in reverse). One fake: `#line 1 "panels.c"` before
- * func_ovl0C_08_80043654's closing brace. The change of file (ugen's
- * `.file`) ends an as1 block there, and the epilogue then restores s0,
- * s1, s2 in order, as the original does (without it, s2, s1, s0).
- * Switching back to "18D110.c" after the brace undoes it, so the rest of
- * the file stays "panels.c".
+ * in reverse). func_ovl0C_08_80043654 ends with the model placement, the
+ * static func_ovl0C_08_800435D4, defined in another file (statics.h): the
+ * change of file back at the closing brace (ugen's `.file`) ends an as1
+ * block there, and the epilogue then restores s0, s1, s2 in order, as the
+ * original does (without it, s2, s1, s0).
  */
 #include "common.h"
 
@@ -153,6 +152,8 @@ UnkStruct_ovl0C_08_800454FC D_ovl0C_08_800454FC = {
     NULL, -1, 0x2BA, -5, -0x400, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 };
 
+#include "statics.h"
+
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
 static void func_ovl0C_08_80043E78(void) {
@@ -283,28 +284,6 @@ void func_ovl0C_08_8004361C(void) {
     func_ovl0C_08_80044300(func_ovl0C_08_80043AA4);
 }
 
-static void func_ovl0C_08_800435D4(UnkStruct_ovl0C_08_800454FC *e) {
-    e->unk0 = func_ovl0C_08_80044C10(e->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
-    func_ovl0C_08_80044BC8(e->unk0, 0x01080000);
-    func_ovl0C_08_80044BD0(e->unk0, 0x02000000);
-    if (e->unkC != -1 && e->unkE != -1 && e->unk10 != -1 && e->unk12 != -1) {
-        e->unk4 = func_ovl0C_08_80044910(e->unk0->unk40, 0, e->unkC, e->unkE, e->unk10, e->unk12);
-        if (e->unk4 == -1) {
-            while (TRUE) {
-            }
-        }
-    }
-    e->unk0->unk40->unk10 = e->unk14 * 10.0f;
-    e->unk0->unk40->unk14 = e->unk18 * 10.0f;
-    e->unk0->unk40->unk18 = e->unk1C * 10.0f;
-    e->unk0->unk40->unk1C = e->unk20;
-    e->unk0->unk40->unk20 = e->unk24;
-    e->unk0->unk40->unk24 = e->unk28;
-    e->unk0->unk40->unk28 = e->unk2C;
-    e->unk0->unk40->unk2C = e->unk30;
-    e->unk0->unk40->unk30 = e->unk34;
-}
-
 void func_ovl0C_08_80043654(void) {
     u32 (*p)[3];
     s32 i;
@@ -322,7 +301,6 @@ void func_ovl0C_08_80043654(void) {
     func_ovl0C_08_800441E0(0x253);
     func_ovl0C_08_80044378();
     func_ovl0C_08_800435D4(&D_ovl0C_08_800454FC);
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
 }
 
 /* The overlay's handler: the entry returns it to the loader. */

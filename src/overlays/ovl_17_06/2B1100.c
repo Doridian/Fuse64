@@ -368,7 +368,7 @@ void func_ovl17_06_800435CC(void) {
 }
 
 void func_ovl17_06_80043234(UnkStruct_ovl17_06_80045880 *arg0, s16 arg1, s16 arg2) {
-    s32 pad; /* unused: the original's frame is 4 bytes bigger */
+    f32 xoff;
     s16 xs[3];
     s16 ys[3];
     s16 i;
@@ -397,8 +397,9 @@ void func_ovl17_06_80043234(UnkStruct_ovl17_06_80045880 *arg0, s16 arg1, s16 arg
             }
         }
     }
+    xoff = 16.0f;
     for (i = 0; i < 3; i++) {
-        arg0[i].unk2 = xs[i] + 16.0f;
+        arg0[i].unk2 = xs[i] + xoff;
         arg0[i].unk4 = ys[i] + 9.0f;
     }
 }

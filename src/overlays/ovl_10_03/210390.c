@@ -579,12 +579,13 @@ void func_ovl10_03_800447E4(UnkStructA *arg0) {
 
 void func_ovl10_03_800446F0(void) {
     s32 i;
-    s32 pad; /* unused: the original's frame has the slot */
+    UnkStructA *obj;
     Vec3f ang;
     Vec3f a;
     Vec3f b;
 
-    if (func_ovl10_03_80045D08(0)->unk40->unk14 == 700.0f) {
+    obj = func_ovl10_03_80045D08(0);
+    if (obj->unk40->unk14 == 700.0f) {
         for (i = 0; i < 2; i++) {
             if (D_ovl10_03_800472D8[i] != NULL) {
                 func_ovl10_03_80046598(D_ovl10_03_800472D0[i], &a);

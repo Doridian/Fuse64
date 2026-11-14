@@ -49,8 +49,9 @@
  * swapped saved regs), 800468A0 42 -> 39.
  * Pass 11: 80045A58 192 -> 64 (first loop an index loop; a dead
  * `if (p == D_80051538) {}` in the second), 80048C1C/8004B6E4 (local
- * order), 8004D660 (case 1's float through a local `s`), 8004B7E0
- * 12 -> 6 (`c->unk4C = c->unk54 = s = ...` in the first loop),
+ * order), 8004D660 (case 1's float through a local `s`; pass 6: a
+ * call), 8004B7E0 12 -> 6 (`c->unk4C = c->unk54 = s = ...` in the first
+ * loop),
  * 80046520 (us/eu pass 0x1D0 in both cases).
  * Pass 12 (all match): 80046194 and 80049A04 are static functions whose
  * flags (80051320, 80051530) are function-scope statics, each defined
@@ -95,6 +96,13 @@
  * dead `if (D_80051538[i]->unk40->unk28 + 1.0f + 1.0f == 1.0f) {}` in
  * the inner loop (as1 drops it) adds three uses of 1.0f at frequency
  * 100, so 1.0f (27.1 -> 70) is coloured before b (60): f22/f24.
+ * Fakes pass 6: written-out copies of the file's own globals are calls
+ * (IDO -O3 inlines a small same-file global and keeps its frame area):
+ * 8004D660's case 1 is 800452DC (its old `s` and two pads were the
+ * area), 80044C40's spawn switch the five spawners 80044B58..80044C14
+ * (pad[10]), 80043688's fade level 80043078 (its `max = 255.0f` and four
+ * pad words); 8004DB80/8004DB4C and 8004F084/8004F048 likewise (no
+ * fakes there). 80046AEC's dx/pad/dz is a Vec3f d.
  *
  * jp: 8004B6E4's first loop scales the beam's 0x2C by i / 20 (us sets it
  * to 0), and its second loop leaves it alone; 8004C400 picks a different

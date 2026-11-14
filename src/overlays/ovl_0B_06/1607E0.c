@@ -189,9 +189,9 @@
  *   original. jp LABELS walks the labels by index (its pointer becomes
  *   the uopt temporary at 124(sp)) with a referenced `s32 pj2 = 0`;
  *   case 1 calls the (void) stub 80043218 where us frees D_8004A660/664
- *   (+8 at its place); CLOSE_B has `s32 k[15]` taken by a dead
- *   `if (0) D_8004A5B8 = (s32)k;` after its loop (+64 at the bottom;
- *   before the loop its test becomes bne). All size-tuned (flagged).
+ *   (+8 at its place); CLOSE_B has an unused `volatile s32 k[15]`
+ *   (+64 at the bottom; p3: it replaced a dead `if (0)` taking k's
+ *   address). All size-tuned (flagged).
  *   Left: OPEN_A/OPEN_B's counter in v0 for v1, the 368/364 store order,
  *   80043040's `mtc1 zero,f20` schedule, case 2's D_8004A668 store.
  * - jp MSG_TASK group (800445BC_jp) 115 -> 29: jp COPY_ASK is its own
@@ -393,8 +393,8 @@
  *   eu .data, .rodata and the jump tables (relocations by target) match,
  *   and .bss now does too (0xF0, every symbol at its address): the four
  *   arrays nothing here uses (8004A590, 5CC, 63C, 648) were dropped by
- *   -O3 (.bss was 0xC0, later symbols out of place) until a dead store in
- *   80045F20's `if (0)` (fake) referenced them. jp's .bss symbols are in
+ *   -O3 (.bss was 0xC0, later symbols out of place) until something
+ *   referenced them (p3: the unused static 80047B38). jp's .bss symbols are in
  *   place, and its .data and .rodata match too (move-06): jp's strings
  *   are one array per jp label (its five own `_jp`), the tables that
  *   differ are `#if VERSION_JP` (generated from jp's asm), and the level
@@ -647,7 +647,7 @@ static s32 func_ovl0B_06_80045100(s32 arg0);
 static void func_ovl0B_06_80045184(void);
 static u16 func_ovl0B_06_8004518C(void);
 static void func_ovl0B_06_80045340(u8 *save, s32 arg0);
-static s32 func_ovl0B_06_80045794(s32 arg0, s32 mode, s32 arg2);
+static s32 func_ovl0B_06_80045794(volatile s32 arg0, s32 mode, s32 arg2);
 static void func_ovl0B_06_800459D0(s32 y, s32 x);
 static void func_ovl0B_06_800459D8(s32 arg0);
 #if !VERSION_JP
@@ -695,12 +695,12 @@ static void func_ovl0B_06_80047B98(s32 x, Gfx_ovl0B_06 **arg0, Box_ovl0B_06 *box
 #if !VERSION_JP
 static void func_ovl0B_06_80047D00(void);
 #endif
-void func_ovl0B_06_80047D08(s32 arg0, Gfx_ovl0B_06 **arg1);
-void func_ovl0B_06_80047D34(s32 arg0, Gfx_ovl0B_06 **arg1);
-void func_ovl0B_06_80047D60(s32 arg0, Gfx_ovl0B_06 **arg1);
-void func_ovl0B_06_80047D8C(s32 arg0, Gfx_ovl0B_06 **arg1);
-void func_ovl0B_06_80047DB8(s32 arg0, Gfx_ovl0B_06 **arg1);
-void func_ovl0B_06_80047DE4(s32 arg0, Gfx_ovl0B_06 **arg1);
+static void func_ovl0B_06_80047D08(s32 arg0, Gfx_ovl0B_06 **arg1);
+static void func_ovl0B_06_80047D34(s32 arg0, Gfx_ovl0B_06 **arg1);
+static void func_ovl0B_06_80047D60(s32 arg0, Gfx_ovl0B_06 **arg1);
+static void func_ovl0B_06_80047D8C(s32 arg0, Gfx_ovl0B_06 **arg1);
+static void func_ovl0B_06_80047DB8(s32 arg0, Gfx_ovl0B_06 **arg1);
+static void func_ovl0B_06_80047DE4(s32 arg0, Gfx_ovl0B_06 **arg1);
 
 /*
  * Labels are drawn through ZeroJump 0x250C in us and eu, 0x2501 in jp, and
@@ -1011,77 +1011,14 @@ s32 D_ovl0B_06_8004A480[1] = { 0 };
 s32 D_ovl0B_06_8004A480[4] = { 0, 0, 0, 0 };
 #endif
 
-/* @80047DE4 */
-void func_ovl0B_06_80047DE4(s32 arg0, Gfx_ovl0B_06 **arg1) {
-    func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[5]);
-}
-
-/* @80047DB8 */
-void func_ovl0B_06_80047DB8(s32 arg0, Gfx_ovl0B_06 **arg1) {
-    func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[4]);
-}
-
-
-/* @80047D8C */
-void func_ovl0B_06_80047D8C(s32 arg0, Gfx_ovl0B_06 **arg1) {
-    func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[3]);
-}
-
-
-/* @80047D60 */
-void func_ovl0B_06_80047D60(s32 arg0, Gfx_ovl0B_06 **arg1) {
-    func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[2]);
-}
-
-
-/* @80047D34 */
-void func_ovl0B_06_80047D34(s32 arg0, Gfx_ovl0B_06 **arg1) {
-    func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[1]);
-}
-
-
-/* @80047D08 */
-void func_ovl0B_06_80047D08(s32 arg0, Gfx_ovl0B_06 **arg1) {
-#if !VERSION_JP
-    func_ovl0B_06_80047D00();
-#endif
-    func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[0]);
-}
-
-
-#if !VERSION_JP
-/* @80047D00 */
-static void func_ovl0B_06_80047D00(void) {
-}
-#endif
-
-
-/* @80047B98 */
-static void func_ovl0B_06_80047B98(s32 x, Gfx_ovl0B_06 **arg0, Box_ovl0B_06 *box) {
-    Gfx_ovl0B_06 *gfx = *arg0;
-
-    func_ovl0B_06_80047B38();
-    func_ovl0B_06_80047B40();
-    func_ovl0B_06_80047B48();
-    func_ovl0B_06_80047B50();
-    func_ovl0B_06_80047B58();
-    func_ovl0B_06_80047B60();
-    func_ovl0B_06_80047B68();
-    func_ovl0B_06_80047B70();
-    func_ovl0B_06_80047B78();
-    func_ovl0B_06_80047B80();
-    func_ovl0B_06_80047B88();
-    func_ovl0B_06_80047B90();
-    { Gfx_ovl0B_06 *g = gfx++; g->w0 = 0xFA000000; g->w1 = ((box->unk4 & 0xFF) << 24) | ((box->unk8 & 0xFF) << 16) | ((box->unkC & 0xFF) << 8) | (box->unk10 & 0xFF); }
-    { Gfx_ovl0B_06 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFDF6FB; }
-    { Gfx_ovl0B_06 *g = gfx++; g->w0 = 0xF7000000; g->w1 = 0x10001; }
-    { Gfx_ovl0B_06 *g = gfx++; g->w0 = 0xF6000000 | (((box->unk2C + (s32) box->unk34) & 0x3FF) << 14) | (((box->unk30 + (s32) (box->unk34 * box->unk20)) & 0x3FF) << 2); g->w1 = (((box->unk2C - (s32) box->unk34) & 0x3FF) << 14) | (((box->unk30 - (s32) (box->unk34 * box->unk20)) & 0x3FF) << 2); }
-    *arg0 = gfx;
-}
-
-
+/* The tail: statics nothing in the code reaches, which IDO -O3 emits last,
+ * in definition order (each after its own callees). 80047B38-80047B90 are
+ * unused (bodies dropped; the first refers to the .bss nothing else uses,
+ * keeping it out of common), 80047D08-80047DE4 are only in the
+ * D_ovl0B_06_80049CAC table. */
 /* @80047B38 */
 static void func_ovl0B_06_80047B38(void) {
+    D_ovl0B_06_8004A590[0] = D_ovl0B_06_8004A5CC[0] = D_ovl0B_06_8004A63C[0] = D_ovl0B_06_8004A648[0] = 0;
 }
 
 static void func_ovl0B_06_80047B40(void) {
@@ -1116,6 +1053,63 @@ static void func_ovl0B_06_80047B88(void) {
 
 static void func_ovl0B_06_80047B90(void) {
 }
+
+/* @80047B98 */
+static void func_ovl0B_06_80047B98(s32 x, Gfx_ovl0B_06 **arg0, Box_ovl0B_06 *box) {
+    Gfx_ovl0B_06 *gfx = *arg0;
+
+    { Gfx_ovl0B_06 *g = gfx++; g->w0 = 0xFA000000; g->w1 = ((box->unk4 & 0xFF) << 24) | ((box->unk8 & 0xFF) << 16) | ((box->unkC & 0xFF) << 8) | (box->unk10 & 0xFF); }
+    { Gfx_ovl0B_06 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFDF6FB; }
+    { Gfx_ovl0B_06 *g = gfx++; g->w0 = 0xF7000000; g->w1 = 0x10001; }
+    { Gfx_ovl0B_06 *g = gfx++; g->w0 = 0xF6000000 | (((box->unk2C + (s32) box->unk34) & 0x3FF) << 14) | (((box->unk30 + (s32) (box->unk34 * box->unk20)) & 0x3FF) << 2); g->w1 = (((box->unk2C - (s32) box->unk34) & 0x3FF) << 14) | (((box->unk30 - (s32) (box->unk34 * box->unk20)) & 0x3FF) << 2); }
+    *arg0 = gfx;
+}
+
+/* @80047D08 */
+static void func_ovl0B_06_80047D08(s32 arg0, Gfx_ovl0B_06 **arg1) {
+#if !VERSION_JP
+    func_ovl0B_06_80047D00();
+#endif
+    func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[0]);
+}
+
+/* @80047D34 */
+static void func_ovl0B_06_80047D34(s32 arg0, Gfx_ovl0B_06 **arg1) {
+    func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[1]);
+}
+
+/* @80047D60 */
+static void func_ovl0B_06_80047D60(s32 arg0, Gfx_ovl0B_06 **arg1) {
+    func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[2]);
+}
+
+/* @80047D8C */
+static void func_ovl0B_06_80047D8C(s32 arg0, Gfx_ovl0B_06 **arg1) {
+    func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[3]);
+}
+
+/* @80047DB8 */
+static void func_ovl0B_06_80047DB8(s32 arg0, Gfx_ovl0B_06 **arg1) {
+    func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[4]);
+}
+
+/* @80047DE4 */
+static void func_ovl0B_06_80047DE4(s32 arg0, Gfx_ovl0B_06 **arg1) {
+    func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[5]);
+}
+
+
+
+
+
+
+#if !VERSION_JP
+/* @80047D00 */
+static void func_ovl0B_06_80047D00(void) {
+}
+#endif
+
+
 
 
 /* @80047B20 */
@@ -1797,9 +1791,6 @@ static s32 COPY_ASK(void) {
     func_ovl0B_06_800433B0(&D_ovl0B_06_80049B94[6]);
     do {
         sub = func_ovl0B_06_80045F20(&D_ovl0B_06_8004A244, &D_ovl0B_06_8004A264, 3, sub & 0xFU);
-#if !VERSION_JP
-        if (0) { D_ovl0B_06_8004A5B4 = (s32) &sub; } /* fake: dead code, for the order or allocation it gives (no code) */
-#endif
         if ((sub & 0xF0) == 0x30) {
             loop = 0;
         } else {
@@ -2005,11 +1996,10 @@ static void func_ovl0B_06_80045D28(s32 arg0, s32 arg1) {
 static void func_ovl0B_06_80045D20(s32 a) {
     s32 pj;
     s32 slot;
-    s32 x;
+    volatile s32 x; /* the original stores a to its home */
     s32 state;
     pj = 0;
     x = a;
-    if (0) { func_ovl0B_06_80048E28(0, &x); } /* fake: dead code, for the order or allocation it gives (no code) */
     state = func_ovl0B_06_80045100(func_ovl0B_06_80048E28(0, &slot));
     if (state == 7 || state == 8 || state == 9) {
         func_ovl0B_06_80044BE4(2);
@@ -2111,7 +2101,7 @@ static void func_ovl0B_06_800459D0(s32 y, s32 x) {
 
 
 /* @80045794 */
-static s32 func_ovl0B_06_80045794(s32 arg0, s32 mode, s32 arg2) {
+static s32 func_ovl0B_06_80045794(volatile s32 arg0, s32 mode, s32 arg2) { /* arg0 volatile: the original keeps it in its home slot */
     u8 *save;
     s32 ret; /* declared second: its home at 24 gives the frame 32 */
     UnkStructA_40 *a;
@@ -2122,7 +2112,6 @@ static s32 func_ovl0B_06_80045794(s32 arg0, s32 mode, s32 arg2) {
     ret = 0;
     D_ovl0B_06_8004992C = 0;
     func_ovl0B_06_80045340(save, mode);
-    if (0) { func_ovl0B_06_80048E28(0, &arg0); D_ovl0B_06_8004A590[0] = D_ovl0B_06_8004A5CC[0] = D_ovl0B_06_8004A63C[0] = D_ovl0B_06_8004A648[0] = 0; } /* fake: the four unreferenced .bss arrays, so -O3 keeps them in place */
     i = func_ovl0B_06_8004518C();
     if (D_ovl0B_06_8004A404 != 0 && ((u16)i & 0x8000)) { /* fake: the cast */
         SE(1, 15);
@@ -2914,7 +2903,7 @@ static void OPEN_B(s32 n, Box_ovl0B_06 *box) {
 static void CLOSE_B(s32 n, Box_ovl0B_06 *box) {
     s32 i;
 #if VERSION_JP
-    s32 k[15];
+    volatile s32 k[15]; /* fake: unused, 64 bytes of frame at the bottom (volatile keeps its slot) */
 #endif
     for (i = 0; i < n; i++, box++) {
         for (box->unk34 = box->unk24; box->unk34 > 0.0f; box->unk34 -= box->unk28) {
@@ -2924,7 +2913,6 @@ static void CLOSE_B(s32 n, Box_ovl0B_06 *box) {
         func_ovl0B_06_80048CF0();
     }
 #if VERSION_JP
-    if (0) { D_ovl0B_06_8004A5B8 = (s32) k; } /* fake: dead code, for the order or allocation it gives (no code) */
 #endif
 }
 

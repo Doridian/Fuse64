@@ -1315,7 +1315,7 @@ static void func_ovl0A_01_8004457C(void) {
 }
 
 void func_ovl0A_01_800442B4(void) {
-    s32 v;
+    volatile s32 v; /* kept in memory: the original stores and reloads it */
     s32 i;
     s32 j;
 
@@ -1372,7 +1372,6 @@ void func_ovl0A_01_800442B4(void) {
 #line 1347 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     func_ovl0A_01_80047530(0x1A, 0x12, 4);
     func_ovl0A_01_80047F98();
-    if (0) { s32 *p = &v; } /* fake: dead code: v's address taken keeps it in memory (no code) */
 }
 
 static void func_ovl0A_01_8004428C(void) {

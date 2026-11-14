@@ -187,7 +187,7 @@
  *   field again); dropping 9085C's `a` (td 4 short).
  * - The unk44 branch's empty test of ctx.unk0->unk40 is a check around a
  *   compiled-out debug print (DEBUG_PRINT; the condition is a guess, any
- *   test of the field matches). hitXZ's stays a fake: it is known 0 there,
+ *   test of the field matches). hitXZ's test stays marked: it is known 0 there,
  *   so no check would test it.
  */
 #include "common.h"

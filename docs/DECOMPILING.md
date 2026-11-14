@@ -1145,9 +1145,10 @@ staying asm; 9CAB0: .data and .rodata, its .bss
 outside main_code; 46300: all three, since
 func_8022C8B8's `static`s put its .bss in the C; 426E0: .rodata and
 .bss, since func_8022A328's and func_8022A6C4's `static`s do the same,
-its .data staying asm; 54E40: .rodata and part of its .bss,
-D_802AC7A0[10] and the two words after it, defined so as1 knows the
-array, the rest of its .bss and its .data staying asm; 48600: .rodata
+its .data staying asm; 54E40: .rodata, .data (its strings, text items and
+tables; jp's strings make its .data 0xB20 against us's 0xBA0, eu's times
+differ) and part of its .bss, D_802AC7A0[10] and the two words after it,
+defined so as1 knows the array, the rest of its .bss staying asm; 48600: .rodata
 and all of its .bss, 0x4D0 of globals and function-local statics that IDO
 interleaves, laid out by where the functions are defined: its header has
 how IDO orders a .bss; 6BBE0: all three, .data 0x2C0 of tables and

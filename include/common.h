@@ -107,6 +107,18 @@ extern uintptr_t port_v0;
 #define PORT_BE16_SET(ido, p, v) ((ido) = (v))
 #endif
 
+/*
+ * A static function a ZeroJump table names (54E40's func_8023DA04, entry
+ * 0x0C of module 0x0F's D_802A0CF4): the port binds the table's ids by
+ * name from another file (port/tools/gen_zerojump.py), so for the host it
+ * is global.  IDO's is static (its place in the object depends on it).
+ */
+#ifdef TARGET_PC
+#define PORT_STATIC
+#else
+#define PORT_STATIC static
+#endif
+
 /* a statement of the port's alone (after a load: port_native32 and the
  * like, port_game.h), on the line of what it follows */
 #ifdef TARGET_PC

@@ -15,12 +15,10 @@
  * the four zero bytes after it.
  *
  * What made the last ones match:
- * - func_ovl0B_01_8004464C: the empty static 800445E4 is defined in
- *   another file (statics.h) and inlined after `fade`'s address is taken:
- *   its `.file` ends as1's block there, so the address comes before arg0's
- *   home store (ovl_0B_05's twin has the whole callback in its statics.h).
- *   Its closing `}` and 800445BC are in "panels.c" (a fake `#line`), which
- *   keeps the final store out of `jr ra`'s delay slot.
+ * - func_ovl0B_01_8004464C: the fade's drawing is the static 80044644
+ *   from another file (statics.h, as in ovl_0B_05): its `.file` switches
+ *   end as1's blocks, which puts `fade`'s address before arg0's home store
+ *   and keeps the final store out of `jr ra`'s delay slot.
  * - func_ovl0B_01_8004376C (static, called only from 80043998): its scalars
  *   are declared before its arrays (the original's frame has them at the
  *   top). The first loop is a do-while (`++i < 4` gives the original's
@@ -35,7 +33,6 @@
  *   original's order and registers without a frame slot.
  */
 #include "common.h"
-#line 37 "1457B0.c" /* fake: names this file as the build does, for the #line regions below */
 
 typedef struct {
     u32 w0;
@@ -127,7 +124,7 @@ UnkStructA_40 *func_ovl0B_01_80045A78(s32); /* 0x2508 */
 s32 func_ovl0B_01_80045A40(u8 *, u16, u16, f32, f32, s32); /* jp 0x2501 */
 s32 func_ovl0B_01_80045A98(u8 *, u16, u16, f32, f32, s32); /* 0x250C */
 s32 func_ovl0B_01_80045BE0(s32); /* 0x2B00 */
-void func_ovl0B_01_80045C00(s32, s32, s32, s32); /* 0x2B04 */
+s32 func_ovl0B_01_80045C00(s32, f32, f32, f32); /* 0x2B04 */
 void func_ovl0B_01_80045D88(void); /* 0x3102 */
 void func_ovl0B_01_80045DE0(void); /* 0x310D */
 void func_ovl0B_01_80045DF0(s32); /* 0x310F */
@@ -198,7 +195,7 @@ void func_ovl0B_01_80043998(void);
 
 #include "statics.h"
 
-static void func_ovl0B_01_80044644(void) {
+static void func_ovl0B_01_800445E4(void) {
 }
 
 static void func_ovl0B_01_8004463C(void) {
@@ -247,42 +244,23 @@ static void func_ovl0B_01_800445D4(void) {
 }
 
 static void func_ovl0B_01_8004464C(s32 arg0, Gfx_ovl0B_01 **arg1) {
-    UnkStruct_ovl0B_01_80045E34 *fade = &D_ovl0B_01_80045E34;
-    Gfx_ovl0B_01 *gfx;
-
-    func_ovl0B_01_800445E4();
-    gfx = *arg1;
-
-    { Gfx_ovl0B_01 *g = gfx++; g->w0 = 0xFA000000; g->w1 = ((fade->unk4 & 0xFF) << 24) | ((fade->unk8 & 0xFF) << 16) | ((fade->unkC & 0xFF) << 8) | (fade->unk10 & 0xFF); }
-    { Gfx_ovl0B_01 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFDF6FB; }
-    { Gfx_ovl0B_01 *g = gfx++; g->w0 = 0xF7000000; g->w1 = 0x10001; }
-    { Gfx_ovl0B_01 *g = gfx++; g->w0 = 0xF6000000 | (((fade->unk2C + (s32) fade->unk34) & 0x3FF) << 14) | (((fade->unk30 + (s32) (fade->unk34 * fade->unk20)) & 0x3FF) << 2); g->w1 = (((fade->unk2C - (s32) fade->unk34) & 0x3FF) << 14) | (((fade->unk30 - (s32) (fade->unk34 * fade->unk20)) & 0x3FF) << 2); }
-    *arg1 = gfx;
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
+    func_ovl0B_01_80044644(&D_ovl0B_01_80045E34, arg1);
 }
 
-void func_ovl0B_01_800445BC(void) {
-    D_ovl0B_01_80045FA4 = -1;
-    D_ovl0B_01_80045FA8 = -1;
-}
-#line 258 "1457B0.c" /* fake: back from the other file, at the line numbers it matched with */
-
-void func_ovl0B_01_80044560(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl0B_01_80045348(D_ovl0B_01_80045FB0.x, D_ovl0B_01_80045FB0.y, D_ovl0B_01_80045FB0.z);
-    func_ovl0B_01_80045368(arg0, arg1, arg2);
-    func_ovl0B_01_80045678(0xB4);
-}
-
-void func_ovl0B_01_80044518(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl0B_01_80045370(&sp1C, NULL, NULL);
-    func_ovl0B_01_80045368(sp1C + arg0, 32768.0f, 32768.0f);
-}
-
-void func_ovl0B_01_800444E4(s32 arg0, UnkStruct_ovl0B_01_B04 *arg1) {
-    func_ovl0B_01_80045C00(arg0, arg1->unk40->unk10, arg1->unk40->unk14, arg1->unk40->unk18);
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl0B_01_800445BC
+#define CORE_FUNC_B func_ovl0B_01_80044560
+#define CORE_FUNC_C func_ovl0B_01_80044518
+#define CORE_FUNC_D func_ovl0B_01_800444E4
+#define CORE_BSS_A0 D_ovl0B_01_80045FA4
+#define CORE_BSS_A1 D_ovl0B_01_80045FA8
+#define CORE_BSS_B D_ovl0B_01_80045FB0
+#define CORE_ZJ_1704 func_ovl0B_01_80045348
+#define CORE_ZJ_1708 func_ovl0B_01_80045368
+#define CORE_ZJ_1709 func_ovl0B_01_80045370
+#define CORE_ZJ_1904 func_ovl0B_01_80045678
+#define CORE_ZJ_2B04 func_ovl0B_01_80045C00
+#include "overlays/common/core.h"
 
 static void func_ovl0B_01_80043010(UnkStruct_ovl0B_01_80045E34 *arg0);
 void func_ovl0B_01_80043D64(void);

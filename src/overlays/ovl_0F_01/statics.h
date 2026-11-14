@@ -161,4 +161,18 @@ static void func_ovl0F_01_80045FB0(u32 (*p)[3], s32 count) {
             break;
         case 3:
             D_ovl0F_01_80048434 = 1;
+#elif STATICS_PART == 2
+/* 80043B0C's: the platform's position put back */
+static void func_ovl0F_01_80043AFC(UnkStructA *obj, f32 *sv) {
+    obj->unk40->unk10 = sv[0];
+    obj->unk40->unk14 = sv[1];
+    obj->unk40->unk18 = sv[2];
+}
+
+/* 80043B0C's: the platform's position kept */
+static void func_ovl0F_01_80043AF4(UnkStructA *obj, f32 *sv) {
+    sv[0] = obj->unk40->unk10;
+    sv[1] = obj->unk40->unk14;
+    sv[2] = obj->unk40->unk18;
+}
 #endif

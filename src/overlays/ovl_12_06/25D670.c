@@ -15,8 +15,6 @@
  *   call order), so func_ovl12_06_800430D0's wait loop is written inline.
  * - Case 2: D_ovl12_06_80045FBC stored in the delay slot of the second
  *   call: a `#line` giving that call an earlier line than the store.
- *   `#line 30 "25D670.c"` after the include keeps the numbering whatever
- *   the header's length.
  * - func_ovl12_06_800439D4: the a/b/c loop counts in k and its inner loop
  *   in i (40 in $s0, the count in $s3).
  *
@@ -25,7 +23,6 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
-#line 30 "25D670.c" /* fake: names this file as the build does, for the #line regions below */
 
 /* What func_ovl12_06_80045770 returns (D_ovl12_06_80045FCC). */
 typedef struct {

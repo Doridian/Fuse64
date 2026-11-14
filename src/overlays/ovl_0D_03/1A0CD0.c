@@ -35,7 +35,6 @@
  *   (a fake) so it keeps its word and 80048164..8004816C their addresses.
  */
 #include "common.h"
-#line 42 "1A0CD0.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0D_03's stage object, IDO -O3: the functions are written last to first
@@ -999,9 +998,9 @@ static void func_ovl0D_03_8004449C(Vec3f *corner, Vec3f (*rows)[4]) {
     s32 k;
 
     /* fake: (as in ovl_0D_02): j = 0 after the loop's line */
-#line 3000 "1A0CD0.c" /* fake: back from the other file, at the line numbers it matched with */
+#line 3000 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     j = 0;
-#line 1008 "1A0CD0.c" /* fake: back from the other file, at the line numbers it matched with */
+#line 1008 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     for (; j < 3; j++) {
         for (k = 0; k < 4; k++) {
             rows[j][k].x = corner->x * 10.0f - k * 200.0f;

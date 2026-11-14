@@ -204,4 +204,8 @@ static void func_ovl17_09_80043010(void) {
     }
 }
 
+#elif STATICS_PART == 3
+    pos[0] = obj->unk40->unk10;
+    pos[1] = obj->unk40->unk14;
+    pos[2] = obj->unk40->unk18;
 #endif

@@ -1393,30 +1393,9 @@ static void func_ovl0F_02_800436D8(UnkStructA *obj, f32 speed) {
     UnkStructA *other;
     s32 k;
 
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-    pos[0] = obj->unk40->unk10;
-    pos[1] = obj->unk40->unk14;
-    pos[2] = obj->unk40->unk18;
-    dir = 0x40;
-    if (func_ovl0F_02_800473A8(obj->unk40) == obj->unk40->unk14) {
-        func_ovl0F_02_80048338(obj, dir, speed);
-    } else {
-        switch (dir) {
-            case 0x00:
-                func_ovl0F_02_800436D0(obj, speed);
-                break;
-            case 0x40:
-                func_ovl0F_02_800436C8(obj, speed);
-                break;
-            case 0x80:
-                func_ovl0F_02_800436C0(obj, speed);
-                break;
-            case 0xC0:
-                func_ovl0F_02_800436B8(obj, speed);
-                break;
-        }
-    }
-#line 1434 "1E84A0.c" /* fake: back from the other file, at the line numbers it matched with */
+#define STATICS_PART 1
+#include "overlays/ovl_0F_02/statics.h"
+#undef STATICS_PART
     saved = obj->unkC;
     hit = FALSE;
     other = NULL;
@@ -1783,31 +1762,10 @@ void func_ovl0F_02_800462F8(s32 arg0) {
         case 1:
             func_ovl0F_02_800479D8(D_ovl0F_02_80048F1C);
             func_ovl0F_02_800479C0(0x258);
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-            func_ovl0F_02_80043020(5, D_ovl0F_02_8004883C);
-            func_ovl0F_02_80043020(1, &D_ovl0F_02_800489C4);
-            if (func_ovl0F_02_800480C0(D_ovl0F_02_800489F4.unk0[0].unk28) == 0) {
-                func_ovl0F_02_80043020(2, D_ovl0F_02_800489F4.unk0);
-            } else {
-                func_ovl0F_02_80043020(1, &D_ovl0F_02_800489F4.unk0[1]);
-            }
-            *D_ovl0F_02_800489F4.unk0[0].unk0 = NULL;
-            if (D_ovl0F_02_80048954 == 1) {
-                func_ovl0F_02_80048540();
-            }
-            break;
-        case 12:
-            func_ovl0F_02_80047530(1);
-            break;
-        case 3:
-            D_ovl0F_02_80048D54 = func_ovl0F_02_800474C8();
-            func_ovl0F_02_800474A8(&D_ovl0F_02_80048D48);
-            func_ovl0F_02_800474D0(D_ovl0F_02_80048D54, D_ovl0F_02_80048D38);
-            D_ovl0F_02_80048B08[0] = 1;
-            func_ovl0F_02_80043028();
-            break;
+#define STATICS_PART 2
+#include "overlays/ovl_0F_02/statics.h"
+#undef STATICS_PART
     }
-}
-
-void func_ovl0F_02_80043010(void) {
-}
+#define STATICS_PART 3
+#include "overlays/ovl_0F_02/statics.h"
+#undef STATICS_PART

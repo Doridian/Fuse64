@@ -1432,30 +1432,9 @@ static void func_ovl0F_04_80043770(UnkStructA *obj, f32 speed) {
     UnkStructA *other;
     s32 k;
 
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-    pos[0] = obj->unk40->unk10;
-    pos[1] = obj->unk40->unk14;
-    pos[2] = obj->unk40->unk18;
-    dir = 0x40;
-    if (func_ovl0F_04_80047238(obj->unk40) == obj->unk40->unk14) {
-        func_ovl0F_04_800481C8(obj, dir, speed);
-    } else {
-        switch (dir) {
-            case 0x00:
-                func_ovl0F_04_80043768(obj, speed);
-                break;
-            case 0x40:
-                func_ovl0F_04_80043760(obj, speed);
-                break;
-            case 0x80:
-                func_ovl0F_04_80043758(obj, speed);
-                break;
-            case 0xC0:
-                func_ovl0F_04_80043750(obj, speed);
-                break;
-        }
-    }
-#line 1434 "1F2230.c" /* fake: back from the other file, at the line numbers it matched with */
+#define STATICS_PART 1
+#include "overlays/ovl_0F_04/statics.h"
+#undef STATICS_PART
     saved = obj->unkC;
     hit = FALSE;
     other = NULL;
@@ -1812,16 +1791,9 @@ void func_ovl0F_04_8004624C(s32 arg0) {
         case 1:
             func_ovl0F_04_80047868(D_ovl0F_04_80048C8C);
             func_ovl0F_04_80047850(0x258);
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-            func_ovl0F_04_80043020(5, D_ovl0F_04_800486CC);
-            func_ovl0F_04_80043020(1, &D_ovl0F_04_80048850);
-            if (func_ovl0F_04_80047F50(D_ovl0F_04_80048880.unk0[0].unk28) == 0) {
-                func_ovl0F_04_80043020(2, D_ovl0F_04_80048880.unk0);
-            } else {
-                func_ovl0F_04_80043020(1, &D_ovl0F_04_80048880.unk0[1]);
-            }
-            *D_ovl0F_04_80048880.unk0[0].unk0 = NULL;
-#line 1800 "1F2230.c" /* fake: back from the other file, at the line numbers it matched with */
+#define STATICS_PART 2
+#include "overlays/ovl_0F_04/statics.h"
+#undef STATICS_PART
             break;
         case 12:
             func_ovl0F_04_800473C0(1);

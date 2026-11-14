@@ -29,9 +29,10 @@
  *   update turns by the wind's angle D_ovl17_09_80046298, not view[0].
  * - 8004456C (the pusher) matches: ovl_0F_04's 80043770 with the
  *   direction from D_ovl17_09_8004629C and all eight cases; pos is f32[3];
- *   from `pos[0] = ...` to the end of the switch it is in statics.h,
- *   with `dir = D_ovl17_09_8004629C;` alone back in "2B8D20.c" (else its
- *   load is hoisted into the first block). So 80044828, 800448A0 and
+ *   from `pos[0] = ...` to the end of the switch it is in statics.h
+ *   (included in the body), but for `dir = D_ovl17_09_8004629C;` in
+ *   2B8D20.c between two parts (else its load is hoisted into the first
+ *   block). So 80044828, 800448A0 and
  *   80044A2C, which inline it, match too; 800448A0 has an unused pad[2]
  *   (its frame, 0x60).
  * - 80044198 matches: an unused pad[4] declared before cell (its frame,
@@ -351,10 +352,9 @@ static void func_ovl17_09_8004456C(UnkStructA *obj, f32 speed) {
     UnkStructA *other;
     s32 k;
 
-    pos[0] = obj->unk40->unk10;
-    pos[1] = obj->unk40->unk14;
-    pos[2] = obj->unk40->unk18;
-#line 4 "2B8D20.c" /* fake: names this file as the build does, for the #line regions below */
+#define STATICS_PART 3
+#include "overlays/ovl_17_09/statics.h"
+#undef STATICS_PART
     dir = D_ovl17_09_8004629C;
 #define STATICS_PART 1
 #include "overlays/ovl_17_09/statics.h"

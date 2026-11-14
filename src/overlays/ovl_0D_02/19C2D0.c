@@ -37,8 +37,7 @@
  *   region: as1 then computes z1 right after x1 and stores z2 in order,
  *   with x0's home store in the branch's delay slot, as the original (no
  *   order of the case's ugen instructions fed to as1 by hand did that; a
- *   .file at the block's start did). The `#line` after the include gives
- *   the file one name.
+ *   .file at the block's start did).
  * - 800438FC and 80043510: the statics they inline first, 800438D8 and
  *   80043508, are defined in another file (statics.h): the `.file` keeps
  *   the first call out of the prologue (they replace two
@@ -46,7 +45,6 @@
  * - 80045964: grid[7] (not [6]) puts the timer static's grid at sp+168.
  */
 #include "common.h"
-#line 59 "19C2D0.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0D_02's stage object, IDO -O3: the functions are written last to first
@@ -904,9 +902,9 @@ static void func_ovl0D_02_8004421C(Vec3f *corner, Vec3f (*rows)[4]) {
     s32 k;
 
     /* fake: (see the top): j = 0 after the loop's line */
-#line 3000 "19C2D0.c" /* fake: back from the other file, at the line numbers it matched with */
+#line 3000 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     j = 0;
-#line 928 "19C2D0.c" /* fake: back from the other file, at the line numbers it matched with */
+#line 928 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     for (; j < 3; j++) {
         for (k = 0; k < 4; k++) {
             rows[j][k].x = corner->x * 10.0f - k * 200.0f;

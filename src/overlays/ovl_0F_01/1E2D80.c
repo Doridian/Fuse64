@@ -64,12 +64,11 @@
  * - 80043B0C (363 to 0): the platforms' first loop has its own j (with
  *   i, p shared the last loop's s0); the frame (0x110: a at 0xEC, b 0xE0,
  *   x 0xC8, sv 0xA4) takes the unused pad0[6], pad1[5] and pad2 and only
- *   three inlined statics (above); the statics' bodies are in the file
- *   before `#line 1149 "1E2D80.c"` (a file change between them and the
- *   function: the copy `move v0, v1` and the reloads), but 80043B04 is
- *   after it (the prologue's `li s3, 3`); the D_ovl0F_01_80048420 = 2 store
- *   is renumbered one line past its loop's `for` (`#line 1230` /
- *   `#line 1229`, 7 words).
+ *   three inlined statics (above); 80043AFC and 80043AF4 are statics.h's,
+ *   included where they are (a file change between them and the function:
+ *   the copy `move v0, v1` and the reloads), but 80043B04 is after it (the
+ *   prologue's `li s3, 3`); the loop after the D_ovl0F_01_80048420 = 2
+ *   store is renumbered below it (`#line 1229`, 7 words).
  * - 800452CC: obj and the last stores read `*D_ovl0F_01_80048264[idx].unk0`
  *   (not through p), and ovl_0F_04's empty `if (!idx) {}`, here after the
  *   800452C4 call (61 to 0).
@@ -1156,20 +1155,9 @@ static void func_ovl0F_01_80043ACC(void) {
     }
 }
 
-/* 80043B0C's: the platform's position put back */
-static void func_ovl0F_01_80043AFC(UnkStructA *obj, f32 *sv) {
-    obj->unk40->unk10 = sv[0];
-    obj->unk40->unk14 = sv[1];
-    obj->unk40->unk18 = sv[2];
-}
-
-/* 80043B0C's: the platform's position kept */
-static void func_ovl0F_01_80043AF4(UnkStructA *obj, f32 *sv) {
-    sv[0] = obj->unk40->unk10;
-    sv[1] = obj->unk40->unk14;
-    sv[2] = obj->unk40->unk18;
-}
-#line 1149 "1E2D80.c" /* fake: names this file as the build does, for the #line regions below */
+#define STATICS_PART 2
+#include "overlays/ovl_0F_01/statics.h"
+#undef STATICS_PART
 static void func_ovl0F_01_80043B04(void) {
     func_ovl0F_01_80043588(D_ovl0F_01_8004836C, 3);
 }
@@ -1249,7 +1237,6 @@ void func_ovl0F_01_80043B0C(void) {
     }
     func_ovl0F_01_80047760(50.0f, 50.0f, 50.0f);
     func_ovl0F_01_80047750(20);
-#line 1230 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     D_ovl0F_01_80048420 = 2;
 #line 1229 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     for (i = 0; i < 3; i++) {

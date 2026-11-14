@@ -1861,10 +1861,10 @@ s16 func_80274F64(s16 arg0) {
 s32 func_80274994(s16 arg0) {
     s32 t;
     s32 spB8;
-    s32 t1;
+    s32 open1;
     struct { f32 z, y, x; } base;
     struct { f32 z, y, x; } cur;
-    s32 t2;
+    s32 open2;
     Obj8E *obj;
 
     func_802714C4();
@@ -1898,16 +1898,16 @@ s32 func_80274994(s16 arg0) {
     cur.y = base.y;
     cur.z = base.z;
     func_802740AC((s16) func_802704F8(obj->unk40->rot), 1.0f, 0.0f, &cur.x, &cur.z);
-    t1 = func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z);
-    if (t1 == 0) {
+    open1 = func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z);
+    if (open1 == 0) {
         return 0;
     }
     cur.x = base.x;
     cur.y = base.y;
     cur.z = base.z;
     func_802740AC((s16) func_802704F8(obj->unk40->rot), 0.0f, 1.0f, &cur.x, &cur.z);
-    t2 = func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z);
-    if (t2 == 0) {
+    open2 = func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z);
+    if (open2 == 0) {
         return 0;
     }
     func_802740AC((s16) func_802704F8(obj->unk40->rot), 1.0f, 1.0f, &base.x, &base.z);
@@ -1942,30 +1942,30 @@ void func_802741D8(s16 arg0) {
     Ent88 *e;
     Obj8E *obj;
     Obj8E *o;
-    s32 t1;
-    s32 t2;
+    s32 open1;
+    s32 open2;
     int t3;
     f32 spA0;
     int t4;
     s32 t5;
-    void * t6;
+    void * found;
     s32 t7;
     int t8;
     int t9;
-    s32 t10;
-    s32 t11;
-    s32 t12;
-    f32 t13;
+    s32 oct1;
+    s32 oct2;
+    s32 oct3;
+    f32 sn;
     Unk8026DCAC sp60;
-    f32 t17;
-    f32 t18;
-    f32 t19;
-    f32 t20;
-    f32 t21;
-    f32 t22;
+    f32 rad1;
+    f32 rad2;
+    f32 px;
+    f32 py;
+    f32 fx;
+    f32 fz;
     f32 sp3C[3];
     Slot30 *slot;
-    f32 t23;
+    f32 fx2;
 
     func_802714C4();
     if (((arg0 >= 0 && arg0 < 5) ? 0 : 1) ? 0 : SLOTS[arg0].unkC) {
@@ -1973,42 +1973,42 @@ void func_802741D8(s16 arg0) {
     }
     obj = func_802443F4(arg0);
     { f32 z = obj->unk40->z;
-    t19 = obj->unk40->x;
-    t20 = obj->unk40->y;
-    func_8026DCAC(t19, t20, z, &sp60, 2); }
+    px = obj->unk40->x;
+    py = obj->unk40->y;
+    func_8026DCAC(px, py, z, &sp60, 2); }
     base.x = sp60.i[0];
     base.y = sp60.i[1];
     base.z = sp60.i[2];
     cur.x = base.x;
     cur.y = base.y;
     cur.z = base.z;
-    t10 = func_802704F8(obj->unk40->rot);
-    t21 = 1.0f;
-    t22 = 0.0f;
-    func_802740AC((s16) t10, t21, t22, &cur.x, &cur.z);
-    t1 = func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z);
-    if (t1 == 0) {
+    oct1 = func_802704F8(obj->unk40->rot);
+    fx = 1.0f;
+    fz = 0.0f;
+    func_802740AC((s16) oct1, fx, fz, &cur.x, &cur.z);
+    open1 = func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z);
+    if (open1 == 0) {
         return;
     }
     cur.x = base.x;
     cur.y = base.y;
     cur.z = base.z;
-    t11 = func_802704F8(obj->unk40->rot);
-    t23 = 0.0f;
-    func_802740AC((s16) t11, t23, 1.0f, &cur.x, &cur.z);
-    t2 = func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z);
-    if (t2 == 0) {
+    oct2 = func_802704F8(obj->unk40->rot);
+    fx2 = 0.0f;
+    func_802740AC((s16) oct2, fx2, 1.0f, &cur.x, &cur.z);
+    open2 = func_80273A5C((s32) cur.x, (s32) cur.y, (s32) cur.z);
+    if (open2 == 0) {
         return;
     }
-    t12 = func_802704F8(obj->unk40->rot);
-    func_802740AC((s16) t12, 1.0f, 1.0f, &base.x, &base.z);
+    oct3 = func_802704F8(obj->unk40->rot);
+    func_802740AC((s16) oct3, 1.0f, 1.0f, &base.x, &base.z);
     spD4 = func_8026D7D8((s32) base.x, (s32) base.y, (s32) base.z);
     func_8026E338(base.x, base.y, base.z, sp3C, 0);
     cur.x = sp3C[0];
     cur.y = sp3C[1];
     cur.z = sp3C[2];
-    t13 = func_80234434(obj->unk40->rot);
-    base.x = t13 * 100.0f;
+    sn = func_80234434(obj->unk40->rot);
+    base.x = sn * 100.0f;
     base.y = func_80234408(obj->unk40->rot) * 100.0f;
     t3 = func_802336E4(base.x);
     if (t3) {
@@ -2046,8 +2046,8 @@ void func_802741D8(s16 arg0) {
         } else {
             o = (Obj8E *) func_80271540(arg0);
             if (o != NULL) {
-                t6 = func_802716F8(arg0);
-                if (t6 != NULL) {
+                found = func_802716F8(arg0);
+                if (found != NULL) {
                     t7 = func_8027130C((u8 *) o);
                     if (t7) {
                         slot = &SLOTS[arg0];
@@ -2061,11 +2061,11 @@ void func_802741D8(s16 arg0) {
                         func_80271010((u8 *) o, arg0);
                         o->unk40->rot = obj->unk40->rot;
                         spA0 = func_80234434(obj->unk40->rot);
-                        t17 = func_80270F44((u8 *) obj);
-                        base.x = t17 * spA0;
+                        rad1 = func_80270F44((u8 *) obj);
+                        base.x = rad1 * spA0;
                         spA0 = func_80234408(obj->unk40->rot);
-                        t18 = func_80270F44((u8 *) obj);
-                        base.y = t18 * spA0;
+                        rad2 = func_80270F44((u8 *) obj);
+                        base.y = rad2 * spA0;
                         t8 = func_802336E4(base.x);
                         if (t8) {
                             base.x = 0.0f;
@@ -2380,8 +2380,8 @@ void func_80272FC0(Obj8E *arg0, s16 arg1) {
 }
 
 void func_802727D8(Ctl87 *arg0) {
-    s32 t1;
-    int t2;
+    s32 blocked;
+    int nearX;
     s32 w;
     Obj8E *p;
     Obj8E *obj;
@@ -2403,8 +2403,8 @@ void func_802727D8(Ctl87 *arg0) {
     func_802720C8((u8 *) obj);
     obj->unk70 = 1.6333334f;
     func_80230914(obj);
-    t1 = func_802909FC(obj, func_80277378);
-    if (t1 != 0) {
+    blocked = func_802909FC(obj, func_80277378);
+    if (blocked != 0) {
         if (obj->unk40->x == obj->unk58 && obj->unk40->z == obj->unk60 && !(obj->unk8 & 1)) {
             arg0->unk1C = 0.0f;
         }
@@ -2456,8 +2456,8 @@ void func_802727D8(Ctl87 *arg0) {
                     obj->unk6C = 2.0f;
                     obj->unk68 = 22.5f;
                     if (obj->unk8 & 1) {
-                        t2 = func_8023369C(arg0->unk34, obj->unk40->x, 0.9f);
-                        if (!t2 || !func_8023369C(arg0->unk38, obj->unk40->z, 0.9f)) {
+                        nearX = func_8023369C(arg0->unk34, obj->unk40->x, 0.9f);
+                        if (!nearX || !func_8023369C(arg0->unk38, obj->unk40->z, 0.9f)) {
                             arg0->unk30 = 0;
                             arg0->unk34 = obj->unk40->x;
                             arg0->unk38 = obj->unk40->z;
@@ -2826,12 +2826,12 @@ void *func_802716F8(s16 arg0) {
     f32 a[3];
     f32 b[3];
     f32 ang[3];
-    f32 t5;
+    f32 rad;
     f32 pr;
-    f32 t6;
-    f32 t7;
-    f32 t8;
-    f32 t9;
+    f32 sn;
+    f32 cs;
+    f32 px;
+    f32 py;
     Obj8E *pl;
     Obj8E *obj;
     Unk8026DCAC info;
@@ -2843,9 +2843,9 @@ void *func_802716F8(s16 arg0) {
     obj = (Obj8E *) func_80271540(arg0);
     if (obj != NULL) {
         z = obj->unk40->z;
-        t8 = obj->unk40->x;
-        t9 = obj->unk40->y;
-        func_8026DCAC(t8, t9, z, &info, 2);
+        px = obj->unk40->x;
+        py = obj->unk40->y;
+        func_8026DCAC(px, py, z, &info, 2);
         a[0] = info.i[0];
         a[1] = info.i[1];
         a[2] = info.i[2];
@@ -2861,14 +2861,14 @@ void *func_802716F8(s16 arg0) {
         b[2] = obj->unk40->z;
         dist = func_8022DF68(a, b);
         pr = func_80270F44((u8 *) pl);
-        t5 = func_80270F44((u8 *) obj);
-        r = (t5 + pr) * 1.2f;
+        rad = func_80270F44((u8 *) obj);
+        r = (rad + pr) * 1.2f;
         if (dist < r) {
             func_8022FF58(a, b, ang);
-            t6 = func_80234434(ang[0]);
-            dx = t6 * r;
-            t7 = func_80234408(ang[0]);
-            dz = t7 * r;
+            sn = func_80234434(ang[0]);
+            dx = sn * r;
+            cs = func_80234408(ang[0]);
+            dz = cs * r;
             OBJ_DD8->unk40->x = pl->unk40->x + dx;
             OBJ_DD8->unk40->y = obj->unk40->y;
             OBJ_DD8->unk40->z = pl->unk40->z + dz;

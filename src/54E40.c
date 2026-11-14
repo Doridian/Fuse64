@@ -1320,7 +1320,7 @@ void func_8023FD08() {
     u8 *obj;
     s32 msg;
     void *model;
-    s32 t1;
+    s32 flagI;
     u8 buf[12];
     UnkStruct_8023FD08 *o;
     f32 y4;
@@ -1328,7 +1328,7 @@ void func_8023FD08() {
     f32 y2;
     f32 y1;
     f32 dx;
-    s32 t2;
+    s32 flagJ;
 
     D_802AC5D0 |= 0x90;
     func_80270770(0, 1);
@@ -1349,8 +1349,8 @@ void func_8023FD08() {
     func_80247C50(0);
     func_802313DC(func_802443F4(0), 0x40000);
     for (i = 0, n = 0; i < 3; i++) {
-        t1 = func_8028A36C((D_802AC5E8 * 0x14) + (D_802AC5EC * 5) + i + 0x2C);
-        if (t1 != 0) {
+        flagI = func_8028A36C((D_802AC5E8 * 0x14) + (D_802AC5EC * 5) + i + 0x2C);
+        if (flagI != 0) {
             n++;
         }
     }
@@ -1420,8 +1420,8 @@ void func_8023FD08() {
         func_80295384();
     }
     for (j = 0; j < 0x78; j++) {
-        t2 = func_8028A36C(j + 0x2C);
-        if (t2 != 0) {
+        flagJ = func_8028A36C(j + 0x2C);
+        if (flagJ != 0) {
             i++;
         }
     }
@@ -1685,13 +1685,13 @@ void func_8023F26C() {
     s32 h;
     s32 k;
     s32 id;
-    s32 t1;
+    s32 idp;
     u32 mode;
-    s32 t2;
+    s32 entry;
     void *model;
-    f32 t3;
-    f32 t4;
-    f32 t5;
+    f32 ox;
+    f32 oy;
+    f32 oz;
     s32 i;
     s32 task;
     u8 *obj;
@@ -1700,8 +1700,8 @@ void func_8023F26C() {
     s32 y;
 
     D_802A0B94 = 1;
-    t1 = func_802391F0();
-    id = *(s32 *) t1;
+    idp = func_802391F0();
+    id = *(s32 *) idp;
     func_80247C50(id);
     if ((D_802AC5D0 & 4) || ((D_802AC5D0 & 8) && (id != 0))) {
         mode = (&D_802AC858)[id];
@@ -1778,18 +1778,18 @@ void func_8023F26C() {
             func_802313DC(obj, 0x01000000);
             func_8023903C(2);
             if ((D_802AC660.unk4[id] == 1) && (D_802AC660.unk40[id] == 1)) {
-                t2 = D_802AC660.unkE8[id];
-                func_80227EE0(t2);
+                entry = D_802AC660.unkE8[id];
+                func_80227EE0(entry);
             }
             func_8025C590(id);
             if ((D_802AC660.unk3C != 0) && (D_802AC660.unk2C > 0) && !(D_802AC5D0 & 0x10)) {
                 func_80243E90(id);
                 obj = func_8023EB28(id);
                 model = func_80231274(-1, 0x01000000, 0xD0, NULL);
-                t3 = 0.0f;
-                t4 = 20.0f;
-                t5 = 0.0f;
-                h = func_8028A81C(0x15, t3, t4, t5, (s32) model);
+                ox = 0.0f;
+                oy = 20.0f;
+                oz = 0.0f;
+                h = func_8028A81C(0x15, ox, oy, oz, (s32) model);
                 func_80245208(id, 1);
                 pl = D_800AEDF0 + id * 0xC8;
                 for (k = 0; k < 60; k++) {
@@ -2007,7 +2007,7 @@ static void *func_8023EB28(s32 arg0) {
 }
 
 static void func_8023E8FC(f32 *pos) {
-    f32 t1;
+    f32 h;
     s32 padA[8]; /* fake: frame-tuned */
     f32 x;
     f32 y;
@@ -2042,8 +2042,8 @@ static void func_8023E8FC(f32 *pos) {
         if (a & 0x60) {
             continue;
         }
-        t1 = func_8026E938(&s);
-        if (t1 == 20000.0f) {
+        h = func_8026E938(&s);
+        if (h == 20000.0f) {
             continue;
         }
         if (((a & 0xF) != 0) && ((a & 0xF) != 1)) {
@@ -2133,7 +2133,6 @@ void func_8023E1D8() {
                 M2C_FIELD(cur, f32 *, 0x14) = 126.0f;
                 M2C_FIELD(cur, f32 *, 0x1C) = 140.0f;
             } else if (func_802399AC(0) & 0x8000) {
-                do {} while (0); /* fake: splits the block */
                 func_8026C660(1);
                 if (sel == 0) {
                     D_802AC810 = 1;
@@ -2142,7 +2141,6 @@ void func_8023E1D8() {
                 }
                 break;
             } else if (func_802399AC(0) & 0x4000) {
-                do {} while (0); /* fake: splits the block */
                 D_802AC810 = -1;
                 break;
             }
@@ -2475,7 +2473,7 @@ static s32 func_8023D0F8() {
     s32 k;
     s32 skip;
     Player54E40 *pl;
-    s32 t1;
+    s32 flag;
 
     if (0) { /* fake: a dead call: the emission order */
         func_8023D0F0();
@@ -2543,8 +2541,8 @@ static s32 func_8023D0F8() {
                 }
             }
             for (i = 0; i < 0x2C; i++) {
-                t1 = func_8028A36C(i);
-                if (t1 != 0) {
+                flag = func_8028A36C(i);
+                if (flag != 0) {
                     ((s32 *) D_800BE830)[i / 8] |= 1 << (i % 8);
                 } else {
                     ((s32 *) D_800BE830)[i / 8] &= ~(1 << (i % 8));
@@ -2778,7 +2776,7 @@ void func_8023C374() {
     s32 sp68;
     s32 sp64;
     s32 sp60;
-    s32 t1;
+    s32 x;
     u8 *temp_a0;
 
     if (0) { /* fake: a dead call: the emission order */
@@ -2807,8 +2805,8 @@ void func_8023C374() {
     func_8023903C(0x1E);
     D_802AC5F0 = 1;
     D_802A01C4[6] = (s8) (D_802AC5EC + 0x11);
-    t1 = func_8023B2AC(D_802A01C4, 0.8f);
-    sp6C = func_802811F0(D_802A01C4, t1, 0x3CU, 0.8f, 0.8f, 0U);
+    x = func_8023B2AC(D_802A01C4, 0.8f);
+    sp6C = func_802811F0(D_802A01C4, x, 0x3CU, 0.8f, 0.8f, 0U);
     sp68 = func_802811F0(D_802A01D0, func_8023B2AC(D_802A01D0, 0.8f), 0x5AU, 0.8f, 0.8f, 0U);
     temp_a0 = ((u8 **) D_802A08F8)[D_802AC5E8 * 4 + D_802AC5EC];
     sp60 = func_802811F0(temp_a0, func_8023B2AC(temp_a0, 0.6f), 0x78U, 0.6f, 0.8f, 0U);
@@ -2905,8 +2903,8 @@ static void func_8023C170() {
 }
 
 s32 func_8023BBCC() {
-    s32 t1;
-    s32 * t2;
+    s32 count;
+    s32 * slot;
     s32 pad[4]; /* fake: frame-tuned */
     s32 i;
     s32 var_v0;
@@ -2926,8 +2924,8 @@ s32 func_8023BBCC() {
     D_802A0B80 = 1;
     func_8023AA78(1);
     func_80239094();
-    t1 = func_802362A8();
-    if (t1 & 0xF) {
+    count = func_802362A8();
+    if (count & 0xF) {
         func_80238CF8(0x401, 0x401);
         func_80238CF8(0x90, 0x90);
         func_80238CF8(0x170, 0x170);
@@ -2983,8 +2981,8 @@ s32 func_8023BBCC() {
                         func_8028A428(i);
                     }
                 }
-                t2 = func_8028A060(1);
-                *t2 = D_802AC610.unk38;
+                slot = func_8028A060(1);
+                *slot = D_802AC610.unk38;
                 func_8023AE6C(0x21, 0x11, 0);
                 func_8023ADD4(1);
                 func_80229280(1);

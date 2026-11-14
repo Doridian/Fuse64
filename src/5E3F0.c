@@ -23,8 +23,13 @@
  * The entry's unk58-unk64, unk6C, unk88, unk8C, unkC0 and unkC4 are
  * floats. An empty `if (!X && !X) {}` on a memory load at the top of a
  * function (X = D_800AEDF0[arg0].unk10, D_802AC9E8 or D_802AC8D0[arg0])
- * only uses up ugen temporaries: it puts the t-registers of 8024ABA8,
- * 8024AF24 and others in step with the original's.
+ * only uses up ugen temporaries: it puts the t-registers of 8024BD1C and
+ * others in step with the original's. ugen's listing (cc -K, ugen -l)
+ * shows what it does: `mul $14,arg0,200` (the D_800AEDF0 index, the FIFO's
+ * first temp t6) and the load into $2, which as1 drops as dead; a single
+ * `if (!X) {}` is removed by uopt, the `&&` pair isn't. In 8024ABA8,
+ * 8024AF24 and 8024441C (fakes pass 3) the original's was an unused
+ * `obj = func_802443F4(arg0)`: the inlined getter does exactly that.
  * 8024E088 is in clean C (frame and shape the original's); jp's
  * differences there are `#if VERSION_JP` arms. 80246F00 is in clean C
  * too: one switch in the original's case order, the arg1 == 0 copy of
@@ -1067,7 +1072,7 @@ void func_802500D4() {
     UnkObj *o;
     s32 kind;
     UnkObj *objs[4];
-    void * t1;
+    void * made;
     s32 pad[1]; /* fake: frame-tuned */
     Tbl4_5E3F0 tbl;
     f32 pos[3];
@@ -1089,8 +1094,8 @@ void func_802500D4() {
                 pos[1] = 0.0f;
                 func_8022FEAC(pos, &off.x);
                 kind = tbl.v[r];
-                t1 = func_80231274(-1, kind, 0x60, NULL);
-                objs[i] = (UnkObj *)t1;
+                made = func_80231274(-1, kind, 0x60, NULL);
+                objs[i] = (UnkObj *)made;
                 objs[i]->unk40->unk10 = obj->unk40->unk10 + off.x;
                 objs[i]->unk40->unk14 = obj->unk40->unk14 + off.y;
                 objs[i]->unk40->unk18 = obj->unk40->unk18 + off.z;
@@ -1941,9 +1946,9 @@ void func_8024D5D0(Ctl58 *arg0) {
     f32 y;
     f32 z;
     s32 dir;
-    f32 t1;
+    f32 cs;
     s32 tilt;
-    s32 t2;
+    s32 yawDir;
     s32 pad[1]; /* fake: frame-tuned */
     f32 s;
 
@@ -1998,8 +2003,8 @@ void func_8024D5D0(Ctl58 *arg0) {
     }
     s = func_80234434(yaw);
     x = func_80234434(pitch) * (dist * s);
-    t1 = func_80234408(pitch);
-    y = t1 * dist;
+    cs = func_80234408(pitch);
+    y = cs * dist;
     s = func_80234408(yaw);
     z = func_80234434(pitch) * (dist * s);
     if (x < 0.01 && x > -0.01) {
@@ -2018,8 +2023,8 @@ void func_8024D5D0(Ctl58 *arg0) {
     vec[2] = z;
     vec[0] = x;
     func_8022FF58(org, vec, &yaw);
-    t2 = func_80243F50(yaw);
-    arg0->unk4 = t2;
+    yawDir = func_80243F50(yaw);
+    arg0->unk4 = yawDir;
     arg0->unk0 = dist;
     arg0->unkC = y;
 }
@@ -2136,7 +2141,7 @@ void func_8024D108(s32 arg0, s32 arg1) {
 
 void func_8024CEB8(s32 arg0) {
     Obj88 *obj;
-    s32 t1;
+    s32 code;
     s32 pad[2]; /* fake: frame-tuned */
     f32 pos[3];
     UnkStruct_800AEDF0 *p;
@@ -2179,8 +2184,8 @@ void func_8024CEB8(s32 arg0) {
         }
         if (D_802ACF60[1] == 0) {
             func_8022F808(obj, pos);
-            t1 = func_8026DF74(pos[0], pos[1], pos[2]);
-            if ((t1 & 0x1C00) == 0x400) {
+            code = func_8026DF74(pos[0], pos[1], pos[2]);
+            if ((code & 0x1C00) == 0x400) {
                 func_8026C660(0x31);
             }
         }
@@ -2549,12 +2554,12 @@ void func_8024BBA4(s32 arg0) {
 
 void func_8024B444(s32 arg0, f32 *arg1) {
     s32 t1;
-    s32 t2;
+    s32 blocked;
     UnkObj *o2;
     f32 old;
     s32 t3;
-    f32 t4;
-    f32 *t5;
+    f32 dist;
+    f32 *out;
     f32 posA[3];
     f32 posB[3];
     f32 vec[3];
@@ -2595,8 +2600,8 @@ void func_8024B444(s32 arg0, f32 *arg1) {
         vec[2] = D_800AEDF0[other].unkC0;
         vec[1] = 60.0f;
         vec[0] = 180.0f;
-        t5 = o2->unk4C;
-        func_8022FEAC(vec, t5);
+        out = o2->unk4C;
+        func_8022FEAC(vec, out);
         func_80231434(o2);
     }
     o->unk40->unk28 += e->unk6C;
@@ -2613,8 +2618,8 @@ void func_8024B444(s32 arg0, f32 *arg1) {
             for (i = 0; i != 8; i++) {
                 func_80232BA0(posA, o);
                 func_80291944(o, i << 5, vec[2]);
-                t2 = func_802909FC(o, func_80245150);
-                if (!t2 && !func_8022F4AC((s32)o, 0x10, e->unk4C)) {
+                blocked = func_802909FC(o, func_80245150);
+                if (!blocked && !func_8022F4AC((s32)o, 0x10, e->unk4C)) {
                     M2C_FIELD(o, f32 *, 0x58) = o->unk40->unk10;
                     M2C_FIELD(o, f32 *, 0x5C) = o->unk40->unk14;
                     M2C_FIELD(o, f32 *, 0x60) = o->unk40->unk18;
@@ -2630,8 +2635,8 @@ void func_8024B444(s32 arg0, f32 *arg1) {
         func_80247D74(arg0, 22.5f, 8.0f, 1, NULL);
     found:
         func_8022F808(o, posB);
-        t4 = func_8022DF68(posA, posB);
-        arg1[0] = t4;
+        dist = func_8022DF68(posA, posB);
+        arg1[0] = dist;
         t3 = func_80243EB4(arg0, 0x2000);
         if (t3) {
             D_800AEDF0[other].unkC0 = old;
@@ -2734,8 +2739,8 @@ void func_8024B028(s32 arg0) {
     s32 r;
     s32 g;
     s32 b;
-    UnkModel *t1;
-    f32 t2;
+    UnkModel *model;
+    f32 level;
     UnkStruct_800AEDF0 *e = &D_800AEDF0[arg0];
     UnkObj *o = e->unk28;
 
@@ -2762,9 +2767,9 @@ void func_8024B028(s32 arg0) {
         e->unk8C = 0.0f;
         e->unk88 = -e->unk88;
     }
-    t1 = o->unk40;
-    t2 = e->unk8C;
-    func_8029279C(t1, r, g, b, t2);
+    model = o->unk40;
+    level = e->unk8C;
+    func_8029279C(model, r, g, b, level);
     if (--e->unk90 == 0 || !func_80243EB4(arg0, 0x10)) {
         func_80246C3C(arg0, 0, 0);
     }
@@ -2777,7 +2782,8 @@ void func_8024AFD4(s32 arg0) {
 }
 
 void func_8024AF24(s32 arg0, f32 *arg1) {
-    if (!D_800AEDF0[arg0].unk10 && !D_800AEDF0[arg0].unk10) {} /* fake: dead read (ugen temporaries, see the header) */
+    s32 obj = func_802443F4(arg0); /* unused (its inlined load is the original's) */
+
     D_802AC998[arg0]--;
     if (arg1[2] > 60.0 && arg1[0] != D_802ACA30[arg0]) {
         D_802AC9B0[arg0]--;
@@ -2789,8 +2795,8 @@ void func_8024AF24(s32 arg0, f32 *arg1) {
 
 void func_8024ABA8(s32 arg0) {
     s32 flag;
+    s32 obj = func_802443F4(arg0); /* unused (its inlined load is the original's) */
 
-    if (!D_800AEDF0[arg0].unk10 && !D_800AEDF0[arg0].unk10) {} /* fake: dead read (ugen temporaries, see the header) */
     if (D_802AC960 != 0) {
         if (D_800AF1D8[D_802AC960] == -1) {
             D_800AF1D8[D_802AC960] = D_800AF1D8[D_802AC960 - 1];
@@ -3010,7 +3016,7 @@ void func_8024A6B4(s32 arg0, f32 arg1) {
 
 void func_8024A0DC(s32 arg0) {
     Obj88 *obj;
-    s32 t1;
+    s32 hit;
     s32 t2;
     s32 t3;
     s32 t4;
@@ -3025,8 +3031,8 @@ void func_8024A0DC(s32 arg0) {
     D_802AC980[id] = arg0;
     switch (arg0) {
     case 0x200:
-        t1 = func_80232D18(obj, 2);
-        if (t1 != 0) {
+        hit = func_80232D18(obj, 2);
+        if (hit != 0) {
             func_80244354(id, 0x200, 0);
             D_800AEDF0[id].unk4C = 0;
             func_80249810(id, func_8022F550((s32)obj, 2), 2);
@@ -4975,7 +4981,8 @@ f32 func_8024441C(s32 arg0, s32 arg1) {
     s32 v;
 
     if (arg1 == D_802AC9F8[arg0]) {
-        if (!D_800AEDF0[arg0].unk10 && !D_800AEDF0[arg0].unk10) {} /* fake: dead read (ugen temporaries, see the header) */
+        s32 obj = func_802443F4(arg0); /* unused (its inlined load is the original's) */
+        
         switch (func_802443CC(arg0)) {
             case 1:
             case 2:

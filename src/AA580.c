@@ -572,8 +572,8 @@ static s32 func_80290498(UnkStruct_802909FC *ctx, s32 dx, s32 dy, s32 dz, s32 co
 static s32 func_80290708(UnkStruct_802909FC *ctx, s32 code, Vec3i *dirB, Vec3i *dir, s32 mode) {
     s32 res;
     s32 dy;
-    s32 t1;
-    s32 t2;
+    s32 codeX;
+    s32 codeZ;
     s32 c;
 
     res = 0;
@@ -585,15 +585,15 @@ static s32 func_80290708(UnkStruct_802909FC *ctx, s32 code, Vec3i *dirB, Vec3i *
             dy = -1;
             break;
     }
-    t1 = func_8026D7D8(ctx->unk10 + dir->unk0, ctx->unk14 + dy, ctx->unk18) & 0xF;
-    t2 = func_8026D7D8(ctx->unk10, ctx->unk14 + dy, ctx->unk18 + dir->unk8) & 0xF;
+    codeX = func_8026D7D8(ctx->unk10 + dir->unk0, ctx->unk14 + dy, ctx->unk18) & 0xF;
+    codeZ = func_8026D7D8(ctx->unk10, ctx->unk14 + dy, ctx->unk18 + dir->unk8) & 0xF;
     c = code & 0xF;
-    if ((5 == c && dirB->unk0 != -1 && dir->unk0 == 1 && t1 != 5) ||
-        (c == 6 && dirB->unk0 != 1 && dir->unk0 == -1 && t1 != 6)) {
+    if ((5 == c && dirB->unk0 != -1 && dir->unk0 == 1 && codeX != 5) ||
+        (c == 6 && dirB->unk0 != 1 && dir->unk0 == -1 && codeX != 6)) {
         res = 1;
     }
-    if ((c == 3 && dirB->unk8 != -1 && dir->unk8 == 1 && t2 != 3) ||
-        (c == 4 && dirB->unk8 != 1 && dir->unk8 == -1 && t2 != 4)) {
+    if ((c == 3 && dirB->unk8 != -1 && dir->unk8 == 1 && codeZ != 3) ||
+        (c == 4 && dirB->unk8 != 1 && dir->unk8 == -1 && codeZ != 4)) {
         res |= 2;
     }
     return res;
@@ -665,10 +665,10 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
     s32 corner;
     Vec3i dirA;
     UnkStructA_40 *p;
-    s32 t1;
-    s32 t2;
-    s32 t3;
-    s32 t4;
+    s32 layer;
+    s32 nextB;
+    s32 side;
+    s32 nextX;
     s32 code;
     s32 codeX;
     s32 codeZ;
@@ -682,12 +682,12 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
     s32 below;
     s32 hitXZ;
     s32 code2;
-    s32 t5;
-    f32 t6;
+    s32 nextZ;
+    f32 newAngle;
     f32 save[3];
     f32 h1;
     f32 h2;
-    UnkStructA_40 *t7;
+    UnkStructA_40 *pos;
     f32 a;
     f32 b;
     s32 c;
@@ -704,8 +704,8 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
     angle = 0.0f;
     sdir = 0.0f;
     if (ctx.unk0->unk6C == 0.0f && ctx.unk0->unk68 == 0.0f) {
-        t7 = ctx.unk0->unk40;
-        func_8026E6E4(t7, &angle, &sdir);
+        pos = ctx.unk0->unk40;
+        func_8026E6E4(pos, &angle, &sdir);
     }
     func_8029085C(&ctx, angle);
     ctx.unk1C = ctx.unk4 - (s32) (ctx.unk4 * 0.01f) * 100.0f;
@@ -849,8 +849,8 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
                 ctx.unkC -= ctx.unk24;
             }
         } else {
-            t3 = func_8028FFA8(code, &ctx, &dirA, codeZ, 1);
-            res |= t3 * 2;
+            side = func_8028FFA8(code, &ctx, &dirA, codeZ, 1);
+            res |= side * 2;
         }
     }
     if (res == 0) {
@@ -891,8 +891,8 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
             ctx.unk0->unk40->unk14 = ctx.unk0->unk5C;
             ctx.unk0->unk40->unk18 = ctx.unk0->unk60;
             h2 = func_8026E938(ctx.unk0->unk40);
-            t1 = func_8026EE18(ctx.unk8);
-            code2 = func_8026D7D8((ctx.unk0->unk40->unk10 + 50.0f) * 0.01f, t1,
+            layer = func_8026EE18(ctx.unk8);
+            code2 = func_8026D7D8((ctx.unk0->unk40->unk10 + 50.0f) * 0.01f, layer,
                                   (ctx.unk0->unk40->unk18 + 50.0f) * 0.01f);
             ctx.unk0->unk40->unk10 = save[0];
             ctx.unk0->unk40->unk14 = save[1];
@@ -902,13 +902,13 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
                 (func_8026D7D8(ctx.unk10, ctx.unk14 - 1, ctx.unk18) & 0xF) != 4 &&
                 (func_8026D7D8(ctx.unk10, ctx.unk14 - 1, ctx.unk18) & 0xF) != 5 &&
                 (func_8026D7D8(ctx.unk10, ctx.unk14 - 1, ctx.unk18) & 0xF) != 6) {
-                t4 = func_8026D7D8(ctx.unk10 + dirA.unk0, ctx.unk14, ctx.unk18);
-                if ((t4 & 0xF) == 1) {
+                nextX = func_8026D7D8(ctx.unk10 + dirA.unk0, ctx.unk14, ctx.unk18);
+                if ((nextX & 0xF) == 1) {
                     res |= 0x41;
                     ctx.unk4 -= ctx.unk1C;
                 }
-                t5 = func_8026D7D8(ctx.unk10, ctx.unk14, ctx.unk18 + dirA.unk8);
-                if ((t5 & 0xF) == 1) {
+                nextZ = func_8026D7D8(ctx.unk10, ctx.unk14, ctx.unk18 + dirA.unk8);
+                if ((nextZ & 0xF) == 1) {
                     res |= 0x42;
                     ctx.unkC -= ctx.unk24;
                 }
@@ -916,8 +916,8 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
         }
     }
     if (c == 0xF) {
-        t2 = func_8026D7D8(ctx.unk10 + dirB.unk0, ctx.unk14, ctx.unk18 + dirB.unk8);
-        if (ctx.unk30(t2)) {
+        nextB = func_8026D7D8(ctx.unk10 + dirB.unk0, ctx.unk14, ctx.unk18 + dirB.unk8);
+        if (ctx.unk30(nextB)) {
             ctx.unk4 += dirB.unk0 * 100.0f;
             ctx.unkC += dirB.unk8 * 100.0f;
             res = 0x51;
@@ -936,8 +936,8 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
                 (b == 270.0f && (dirA.unk0 * 1) == 1 && dirB.unk0 == 1) ||
                 (b == 0.0f && dirA.unk8 == -1 && dirB.unk8 == -1) ||
                 (b == 180.0f && (dirA.unk8 * 1) == 1 && dirB.unk8 == 1)) {
-                t6 = func_8026EAF8(ctx.unk0);
-                ctx.unk8 = t6;
+                newAngle = func_8026EAF8(ctx.unk0);
+                ctx.unk8 = newAngle;
                 ctx.unk0->unk6C = 0.0f;
             }
         }
@@ -955,7 +955,7 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
     f32 sdir;
     Vec3i d;
     f32 sp;
-    f32 t5;
+    f32 cs;
     f32 y0;
     f32 a;
     f32 b;
@@ -964,12 +964,12 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
     f32 c;
     f32 e;
     f32 h;
-    f32 t6;
-    UnkStruct_8026DCAC t1;
-    UnkStruct_8026DCAC t2;
-    f32 t7;
-    UnkStruct_8026DCAC t4;
-    UnkStruct_8026DCAC t3;
+    f32 sinA;
+    UnkStruct_8026DCAC cell;
+    UnkStruct_8026DCAC prevCell;
+    f32 sinB;
+    UnkStruct_8026DCAC prevCell2;
+    UnkStruct_8026DCAC cell2;
     f32 g;
 
     y0 = obj->unk40->unk14;
@@ -979,8 +979,8 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
     }
     func_8026E6E4(obj->unk40, &angle, &sdir);
     if (obj->unk6C == 0.0f) {
-        t5 = func_80234408(angle);
-        sp = t5 * speed;
+        cs = func_80234408(angle);
+        sp = cs * speed;
     } else {
         sp = speed;
     }
@@ -999,11 +999,11 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
                 func_8026E6E4(obj->unk40, &a, &b);
                 if (a != 0.0f) {
                     if (sdir == 0.0f) {
-                        t6 = func_80234434(angle);
-                        obj->unk40->unk14 -= d.unk8 * sp * t6;
+                        sinA = func_80234434(angle);
+                        obj->unk40->unk14 -= d.unk8 * sp * sinA;
                     } else if (sdir == 180.0f) {
-                        t7 = func_80234434(angle);
-                        obj->unk40->unk14 += d.unk8 * sp * t7;
+                        sinB = func_80234434(angle);
+                        obj->unk40->unk14 += d.unk8 * sp * sinB;
                     }
                 } else {
                     obj->unk40->unk14 = y0;
@@ -1050,12 +1050,12 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
                 }
             }
         } else if (angle == 0.0f && c != 0.0f) {
-            func_8026DCAC(obj->unk40->unk10, obj->unk40->unk14, obj->unk40->unk18, &t1, 2);
-            func_8026DCAC(obj->unk58, obj->unk5C, obj->unk60, &t2, 2);
-            if ((e == 0.0f && (t1.unk8 - 1 == t2.unk8 || dir == 0x80)) ||
-                (e == 90.0f && (t1.unk0 - 1 == t2.unk0 || dir == 0x40)) ||
-                (e == 180.0f && (t1.unk8 + 1 == t2.unk8 || dir == 0)) ||
-                (e == 270.0f && (t1.unk0 + 1 == t2.unk0 || dir == 0xC0))) {
+            func_8026DCAC(obj->unk40->unk10, obj->unk40->unk14, obj->unk40->unk18, &cell, 2);
+            func_8026DCAC(obj->unk58, obj->unk5C, obj->unk60, &prevCell, 2);
+            if ((e == 0.0f && (cell.unk8 - 1 == prevCell.unk8 || dir == 0x80)) ||
+                (e == 90.0f && (cell.unk0 - 1 == prevCell.unk0 || dir == 0x40)) ||
+                (e == 180.0f && (cell.unk8 + 1 == prevCell.unk8 || dir == 0)) ||
+                (e == 270.0f && (cell.unk0 + 1 == prevCell.unk0 || dir == 0xC0))) {
                 obj->unk40->unk14 = func_8026EAF8(obj);
                 h = func_8026E938(obj->unk40);
                 if (h != 20000.0f && obj->unk40->unk14 <= h + 100.0f) {
@@ -1065,9 +1065,9 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
         }
     } else if (obj->unk6C != 0.0f && angle != 0.0f) {
         g = func_8026EAF8(obj);
-        func_8026DCAC(obj->unk40->unk10, obj->unk40->unk14, obj->unk40->unk18, &t3, 2);
-        func_8026DCAC(obj->unk58, obj->unk5C, obj->unk60, &t4, 2);
-        if (t4.unk0 != t3.unk0 || t4.unk8 != t3.unk8) {
+        func_8026DCAC(obj->unk40->unk10, obj->unk40->unk14, obj->unk40->unk18, &cell2, 2);
+        func_8026DCAC(obj->unk58, obj->unk5C, obj->unk60, &prevCell2, 2);
+        if (prevCell2.unk0 != cell2.unk0 || prevCell2.unk8 != cell2.unk8) {
             if (obj->unk40->unk14 < g) {
                 obj->unk40->unk14 = g;
             }

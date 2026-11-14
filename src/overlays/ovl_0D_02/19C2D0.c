@@ -371,15 +371,16 @@ void func_ovl0D_02_8004596C(void) {
     s32 r;
     f32 ang;
     Vec3f tgt;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 k150;
     s32 timer;
 
+    k150 = 150.0f;
     idx = (s32) func_ovl0D_02_80046E70();
     e = &D_ovl0D_02_80047710[idx];
     flag = D_ovl0D_02_800477F0[idx];
-    pos.x = e->unk14 * 10.0f + 150.0f;
+    pos.x = e->unk14 * 10.0f + k150;
     pos.y = e->unk18 * 10.0f;
-    pos.z = e->unk1C * 10.0f + 150.0f;
+    pos.z = e->unk1C * 10.0f + k150;
     cnt = 0;
     timer = 240 / (idx + 1);
     func_ovl0D_02_80046350(pos.x, pos.y, pos.z, grid, 0);
@@ -1149,7 +1150,7 @@ static void func_ovl0D_02_80043A68(void) {
 
 /* the stage's clean-up (the handler's case 1) */
 void func_ovl0D_02_800438FC(void) {
-    if (!D_ovl0D_02_80047A24 && !D_ovl0D_02_80047A24 && !D_ovl0D_02_80047A24) {
+    if (!D_ovl0D_02_80047A24 && !D_ovl0D_02_80047A24 && !D_ovl0D_02_80047A24) { /* fake: a dead test, for the register allocation or schedule */
     }
     func_ovl0D_02_800438D8();
     func_ovl0D_02_800438E0();

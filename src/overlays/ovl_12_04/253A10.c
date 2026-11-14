@@ -362,7 +362,7 @@ void func_ovl12_04_800431B8(void) {
 void func_ovl12_04_80043170(void) {
     /* empty: what the other overlays fade in here (the test keeps the
      * function too big to inline) */
-    if (D_ovl12_04_800450B0.unk0 == 2) {
+    if (D_ovl12_04_800450B0.unk0 == 2) { /* fake: a dead test, for the register allocation or schedule */
     }
     func_ovl12_04_80043EC8(D_ovl12_04_800450B0.unk4, 3, 4.0f, D_ovl12_04_800450B0.unk10, 0, 1, 1);
 }

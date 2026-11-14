@@ -32,6 +32,10 @@
  *
  * The `#line N "1F7CA0.c"` lines are the physical line numbers (the file
  * named the same whatever path it is compiled by).
+ *
+ * 2026-11-13: 5 `#line`s that turned out redundant were removed (each tried away
+ * against the sha1 in us, eu and jp). Where the notes above name a `#line`,
+ * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
 #line 50 "1F7CA0.c"
@@ -408,7 +412,6 @@ static void func_ovl0F_05_8004409C() {
 static void func_ovl0F_05_80043FE4(s32 *dst, f32 x, f32 z) {
     *dst = ((s16)(x * 500.0f) << 16) | ((s16)(z * 500.0f) & 0xFFFF);
 }
-#line 425 "1F7CA0.c"
 
 static s32 func_ovl0F_05_80043FEC(UnkStructA *arg0) {
     s32 hit;
@@ -623,7 +626,6 @@ static void func_ovl0F_05_800430AC(void) {
     func_ovl0F_05_80045008();
 }
 
-#line 1 "panels.c"
 static void func_ovl0F_05_800430A4(s32 arg1, UnkStruct_ovl0F_05_800461E0 *arg0) {
     s32 i;
 
@@ -637,9 +639,7 @@ static void func_ovl0F_05_800430A4(s32 arg1, UnkStruct_ovl0F_05_800461E0 *arg0) 
         arg0++;
     }
 }
-#line 653 "1F7CA0.c"
 
-#line 1 "panels.c"
 static void func_ovl0F_05_80043018(s32 count, UnkStruct_ovl0F_05_800461E0 *p) {
     s32 i;
 
@@ -652,8 +652,11 @@ static void func_ovl0F_05_80043018(s32 count, UnkStruct_ovl0F_05_800461E0 *p) {
 
 /* The overlay's handler: the entry returns it to the loader. */
 void func_ovl0F_05_800430BC(s32 arg0) {
-    s32 pad[2]; /* fake: unused; the original's frame is 8 bytes bigger */
+    f32 k3200;
+    f32 k16;
 
+    k3200 = 3200.0f;
+    k16 = 16.0f;
     switch (arg0) {
         case 2:
             D_ovl0F_05_8004655C = func_ovl0F_05_80044F58();
@@ -671,9 +674,9 @@ void func_ovl0F_05_800430BC(s32 arg0) {
             func_ovl0F_05_80045550(D_ovl0F_05_800464E0[5]->unk40, 0x61);
             func_ovl0F_05_80045550(D_ovl0F_05_800464E0[7]->unk40, 0x61);
             func_ovl0F_05_80045550(D_ovl0F_05_800464E0[8]->unk40, 0x61);
-            D_ovl0F_05_800464E0[8]->unk40->unk14 -= 3200.0f;
-            D_ovl0F_05_800464E0[9]->unk40->unk14 -= 3200.0f;
-            D_ovl0F_05_800464E0[10]->unk40->unk14 -= 3200.0f;
+            D_ovl0F_05_800464E0[8]->unk40->unk14 -= k3200;
+            D_ovl0F_05_800464E0[9]->unk40->unk14 -= k3200;
+            D_ovl0F_05_800464E0[10]->unk40->unk14 -= k3200;
 #line 1 "panels.c"
             D_ovl0F_05_8004654C = func_ovl0F_05_80045A30(0x279);
             func_ovl0F_05_80045A40(D_ovl0F_05_8004654C, 0x20000000);
@@ -684,9 +687,9 @@ void func_ovl0F_05_800430BC(s32 arg0) {
             D_ovl0F_05_800464E0[2]->unk40->unk10 = 2400.0f;
             D_ovl0F_05_800464E0[2]->unk40->unk14 = 2600.0f;
             D_ovl0F_05_800464E0[2]->unk40->unk18 = -2000.0f;
-            D_ovl0F_05_800464E0[2]->unk40->unk28 = 16.0f;
-            D_ovl0F_05_800464E0[2]->unk40->unk2C = 16.0f;
-            D_ovl0F_05_800464E0[2]->unk40->unk30 = 16.0f;
+            D_ovl0F_05_800464E0[2]->unk40->unk28 = k16;
+            D_ovl0F_05_800464E0[2]->unk40->unk2C = k16;
+            D_ovl0F_05_800464E0[2]->unk40->unk30 = k16;
             D_ovl0F_05_80046164 = 0.0f;
             if (D_ovl0F_05_80046188 == 0) {
                 D_ovl0F_05_80046170 = func_ovl0F_05_80045098(func_ovl0F_05_80045038());
@@ -694,7 +697,6 @@ void func_ovl0F_05_800430BC(s32 arg0) {
             }
             D_ovl0F_05_80046180 = -1;
             break;
-#line 710 "1F7CA0.c"
         case 16:
             func_ovl0F_05_80045010(6, 0, 11);
             break;

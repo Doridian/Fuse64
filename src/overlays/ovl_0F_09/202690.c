@@ -30,6 +30,10 @@
  *   or with `c = d = i++ < count`, the end stays in v0.
  * The `#line N "202690.c"` lines are the physical line numbers (the file
  * named the same whatever path it is compiled by).
+ *
+ * 2026-11-13: 4 `#line`s that turned out redundant were removed (each tried away
+ * against the sha1 in us, eu and jp). Where the notes above name a `#line`,
+ * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
 #line 41 "202690.c"
@@ -429,7 +433,6 @@ void func_ovl0F_09_80043D88(UnkStructA *arg0) {
 static void func_ovl0F_09_80043CC8(s32 *dst, f32 x, f32 z) {
     *dst = ((s16)(x * 500.0f) << 16) | ((s16)(z * 500.0f) & 0xFFFF);
 }
-#line 438 "202690.c"
 
 static s32 func_ovl0F_09_80043CD0(UnkStructA *arg0) {
     s32 hit;
@@ -487,7 +490,6 @@ void func_ovl0F_09_800432CC(f32 arg0) {
     func_ovl0F_09_800454B8(sp1C + arg0, 32768.0f, 32768.0f);
 }
 
-#line 1 "panels.c"
 static void func_ovl0F_09_80043434(void) {
     s32 count;
     u32 (*p)[3];
@@ -502,7 +504,6 @@ static void func_ovl0F_09_80043434(void) {
         p++;
     }
 }
-#line 511 "202690.c"
 
 static void func_ovl0F_09_8004342C(void) {
     func_ovl0F_09_80044C58(0x230);
@@ -517,7 +518,6 @@ static void func_ovl0F_09_80043424(void) {
     func_ovl0F_09_800430BC();
 }
 
-#line 1 "panels.c"
 static void func_ovl0F_09_8004341C(s32 arg1, UnkStruct_ovl0F_09_80045FC0 *arg0) {
     s32 i;
 
@@ -755,7 +755,7 @@ static void func_ovl0F_09_80043200(s32 count, f32 dx, f32 dy, UnkStructA *ride) 
         obj->unk40->unk14 += dy;
         r = func_ovl0F_09_800457F0();
         d = i++ < count;
-        if (r) {}
+        if (r) {} /* fake: a dead test, for the register allocation or schedule */
         c = d;
     }
     if (c) {}

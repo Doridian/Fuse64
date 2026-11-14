@@ -2,6 +2,10 @@
  * ovl_12_01 matches in us, eu and jp. Two `#line`
  * regions in another file (panels.c) end as1's blocks where the
  * original's do (see func_ovl12_01_8004374C and func_ovl12_01_80043188).
+ *
+ * 2026-11-13: 1 `#line` that turned out redundant was removed (each tried away
+ * against the sha1 in us, eu and jp). Where the notes above name a `#line`,
+ * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
 #line 16 "24B540.c"
@@ -702,7 +706,7 @@ void func_ovl12_01_80043910(void) {
     /* empty, as in ovl_12_02's func_ovl12_02_80043258: without the test
      * the function is small enough to be inlined into the handler and
      * func_ovl12_01_80043958, where the original calls it */
-    if (D_ovl12_01_80046500.unk0 == 2) {
+    if (D_ovl12_01_80046500.unk0 == 2) { /* fake: a dead test, for the register allocation or schedule */
     }
     func_ovl12_01_80045138(D_ovl12_01_80046500.unk4, 3, 4.0f, D_ovl12_01_80046500.unk10, 0, 1, 1);
 }
@@ -851,7 +855,6 @@ static void func_ovl12_01_80043188(f32 x, s32 z, s32 count) {
     D_ovl12_01_800464E0 = func_ovl12_01_80045EE0(0x28, (Vec3f *) D_ovl12_01_800464F0, 0);
 }
 
-#line 863 "24B540.c"
 static void func_ovl12_01_80043180(void) {
     func_ovl12_01_800458A0();
     func_ovl12_01_80045868(D_ovl12_01_800464C0);

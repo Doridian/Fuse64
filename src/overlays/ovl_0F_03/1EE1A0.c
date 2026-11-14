@@ -68,6 +68,10 @@
  * they inline) before it, the functions it only takes the address of after
  * those, in the reverse of the order their references appear, the inlined
  * statics' (in the statics' definition order) before its own.
+ *
+ * 2026-11-13: 2 `#line`s that turned out redundant were removed (each tried away
+ * against the sha1 in us, eu and jp). Where the notes above name a `#line`,
+ * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
 
@@ -747,7 +751,7 @@ void func_ovl0F_03_800434AC(UnkStructA *arg0) {
     if ((s32)func_ovl0F_03_80043494(arg0)) {
         func_ovl0F_03_8004348C(arg0, pos);
     }
-    if (pos) {
+    if (pos) { /* fake: a dead test, for the register allocation or schedule */
     }
 }
 
@@ -757,7 +761,6 @@ static void func_ovl0F_03_800434A4(UnkStructA *arg0, f32 *pos) {
     pos[1] = arg0->unk40->unk14;
     pos[2] = arg0->unk40->unk18;
 }
-#line 719 "1EE1A0.c"
 
 static s64 func_ovl0F_03_80043494(UnkStructA *arg0) {
     union {
@@ -1015,7 +1018,6 @@ static void func_ovl0F_03_8004342C(void) {
     }
 }
 
-#line 1 "panels.c"
 static void func_ovl0F_03_800432E8(void) {
     func_ovl0F_03_80046440(&D_ovl0F_03_80047278);
 }

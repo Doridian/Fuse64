@@ -961,7 +961,8 @@ void func_ovl0C_06_80045F44(void) {
 /* mover 0: swings its object round on a circle, drops limit 0's object
  * on the way */
 void func_ovl0C_06_80045BA0(void) {
-    f32 pad[2]; /* fake: unused; the original's frame is 8 bytes bigger */
+    f32 k1200;
+    f32 k99;
     UnkStructA *obj;
     UnkStructA *other;
     f32 lim;
@@ -972,6 +973,8 @@ void func_ovl0C_06_80045BA0(void) {
     s32 dropped;
     s32 vol;
 
+    k1200 = 1200.0f;
+    k99 = 99.0f;
     func_ovl0C_06_800458A0(&D_ovl0C_06_80048FD0[0]);
     obj = D_ovl0C_06_80049030[0].unk4;
     snd = func_ovl0C_06_80048C90(0x4E);
@@ -987,10 +990,10 @@ void func_ovl0C_06_80045BA0(void) {
         }
         obj->unk40->unk14 -= obj->unk68;
         obj->unk40->unk14 += obj->unk6C;
-        if (obj->unk6C <= 99.0f) {
+        if (obj->unk6C <= k99) {
             obj->unk6C += obj->unk70;
         } else {
-            obj->unk6C = 99.0f;
+            obj->unk6C = k99;
         }
         if (dropped == 0 && D_ovl0C_06_80048FD0[0].unk18 < obj->unk40->unk10) {
             lim = D_ovl0C_06_80048FD0[0].unk14;
@@ -1003,16 +1006,16 @@ void func_ovl0C_06_80045BA0(void) {
             other->unk50 = lim;
             other->unk54 = 0.0f;
         }
-        obj->unk40->unk10 = func_ovl0C_06_800488B0(a) * 1200.0f + cx;
-        obj->unk40->unk18 = func_ovl0C_06_800488B8(a) * 1200.0f + cz;
+        obj->unk40->unk10 = func_ovl0C_06_800488B0(a) * k1200 + cx;
+        obj->unk40->unk18 = func_ovl0C_06_800488B8(a) * k1200 + cz;
         obj->unk40->unk20 = a + 90.0f;
         func_ovl0C_06_80048750();
         a += 0.85f;
     }
     vol = 0x7F;
     while (obj->unk40->unk10 > 1500.0f) {
-        obj->unk40->unk10 = func_ovl0C_06_800488B0(a) * 1200.0f + cx;
-        obj->unk40->unk18 = func_ovl0C_06_800488B8(a) * 1200.0f + cz;
+        obj->unk40->unk10 = func_ovl0C_06_800488B0(a) * k1200 + cx;
+        obj->unk40->unk18 = func_ovl0C_06_800488B8(a) * k1200 + cz;
         obj->unk40->unk20 = a + 90.0f;
         if (vol > 0) {
             vol -= 5;

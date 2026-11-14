@@ -45,6 +45,10 @@
  * There are no VERSION conditionals, as in ovl_0F_04's.
  * 800454E8 and its static 800454E0 are ovl_0F_04's 8004544C/80045444
  * renamed, nothing else changed.
+ *
+ * 2026-11-13: 8 `#line`s that turned out redundant were removed (each tried away
+ * against the sha1 in us, eu and jp). Where the notes above name a `#line`,
+ * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
 static void func_ovl0F_02_8004393C(void);
@@ -534,7 +538,6 @@ static void func_ovl0F_02_80046E80(void) {
     D_ovl0F_02_80048610 = 0;
 #line 1 "panels.c"
 }
-#line 564 "1E84A0.c"
 
 void func_ovl0F_02_80046DF8(void) {
     D_ovl0F_02_80048D5C = -1;
@@ -599,7 +602,6 @@ static void func_ovl0F_02_80046160(UnkStruct_ovl0F_02_800489F4 *door) {
 }
 
 /* case 2's: the panels and their tiles; one hides something */
-#line 1 "panels.c"
 static void func_ovl0F_02_80046150(s32 n, UnkStruct_ovl0F_02_80048734 *panels, UnkStruct_ovl0F_02_80048918 *flags) {
     s32 i;
     UnkStruct_ovl0F_02_80048734 *p;
@@ -607,7 +609,6 @@ static void func_ovl0F_02_80046150(s32 n, UnkStruct_ovl0F_02_80048734 *panels, U
     p = panels;
 #line 1 "panels.c"
     func_ovl0F_02_80044F74(n, panels);
-#line 8 "panels.c"
     for (i = 0; i < n; i++) {
         if (p->unk1C == 0.0f) {
             func_ovl0F_02_80047328((s32) p->unkC - 1, (s32) p->unk10,
@@ -1643,12 +1644,11 @@ static void func_ovl0F_02_80043028(void) {
     }
     d = D_ovl0F_02_800485FC * 0.5f;
     D_ovl0F_02_800485EC = d;
-    if (D_ovl0F_02_800485FC) {
+    if (D_ovl0F_02_800485FC) { /* fake: a dead test, for the register allocation or schedule */
     }
     D_ovl0F_02_800485F0 = 0.0f;
 }
 
-#line 1 "panels.c"
 static void func_ovl0F_02_80043020(s32 count, UnkStruct_ovl0F_02_80048734 *p) {
     s32 i;
 
@@ -1657,7 +1657,6 @@ static void func_ovl0F_02_80043020(s32 count, UnkStruct_ovl0F_02_80048734 *p) {
         p++;
     }
 }
-#line 1654 "1E84A0.c"
 
 static void func_ovl0F_02_800462F8_inl1(void) {
     s32 pad[8]; /* fake: unused, frame space the original has (no source for it found) */
@@ -1701,9 +1700,7 @@ static void func_ovl0F_02_800462F8_inl0(u32 (*p)[3], s32 count) {
         p++;
     }
 }
-#line 1701 "1E84A0.c"
 
-#line 1 "panels.c"
 static void func_ovl0F_02_800462F8_inl4(void) {
     func_ovl0F_02_80046150(5, D_ovl0F_02_8004883C, D_ovl0F_02_80048918);
 }
@@ -1821,7 +1818,6 @@ void func_ovl0F_02_800462F8(s32 arg0) {
                 func_ovl0F_02_80043020(1, &D_ovl0F_02_800489F4.unk0[1]);
             }
             *D_ovl0F_02_800489F4.unk0[0].unk0 = NULL;
-#line 1800 "1E84A0.c"
             if (D_ovl0F_02_80048954 == 1) {
                 func_ovl0F_02_80048540();
             }

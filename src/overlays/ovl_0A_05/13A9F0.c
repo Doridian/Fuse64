@@ -1070,11 +1070,12 @@ void func_ovl0A_05_800459C8(void) {
     f32 s;
     f32 dv;
     UnkStruct_ovl0A_05_80048CA0 *objs[2];
-    s32 pad1; /* fake: unused; the original's frame has these slots */
+    f32 k60;
     f32 b[3];
     f32 a[3];
     s32 pad2[2]; /* fake: unused; as pad1 */
 
+    k60 = 60.0f;
     for (i = 0; i < 2; i++) {
         objs[i] = func_ovl0A_05_80048CA0(0x1CB, 0x01480000, 0xD0, NULL);
         objs[i]->unk40->unk30 = 0.1f;
@@ -1084,17 +1085,17 @@ void func_ovl0A_05_800459C8(void) {
     func_ovl0A_05_80048D48(D_ovl0A_05_80049968, a);
     dv = 5.0f;
     v = 0.0f;
-    a[1] += 60.0f;
+    a[1] += k60;
     while (1) {
         D_ovl0A_05_80049968->unk40->unk18 += v;
         v += dv;
-        if (v > 60.0f) {
-            v = 60.0f;
+        if (v > k60) {
+            v = k60;
         }
         s = 1.0f;
         for (i = 0; i < 2; i++) {
             func_ovl0A_05_80048D48(D_ovl0A_05_80049968, b);
-            a[1] = b[1] += 60.0f;
+            a[1] = b[1] += k60;
             a[0] = b[0] += 150.0f * s;
             func_ovl0A_05_800458DC(objs[i], b, a);
             func_ovl0A_05_80048D50((UnkStruct_ovl0A_05_80048CA0 *) b, objs[i]);

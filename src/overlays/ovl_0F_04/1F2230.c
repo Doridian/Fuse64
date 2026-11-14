@@ -144,6 +144,10 @@
  *   a3), 800438F0, 8004394C, 80043590, 80044BC0, 80044D04, 80046BC8,
  *   80046BFC and 80045308 (its abs's test against an integer 0)
  *   match; 80043480 nearly.
+ *
+ * 2026-11-13: 7 `#line`s that turned out redundant were removed (each tried away
+ * against the sha1 in us, eu and jp). Where the notes above name a `#line`,
+ * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
 #line 108 "1F2230.c"
@@ -601,7 +605,6 @@ static void func_ovl0F_04_80046D14(void) {
     D_ovl0F_04_800484A0 = 0;
 #line 1 "panels.c"
 }
-#line 564 "1F2230.c"
 
 void func_ovl0F_04_80046C58(void) {
     D_ovl0F_04_80048ACC = -1;
@@ -659,7 +662,6 @@ static void func_ovl0F_04_80046244(UnkStruct_ovl0F_04_80048880 *door) {
 }
 
 /* case 2's: the panels and their tiles; one hides something */
-#line 1 "panels.c"
 static void func_ovl0F_04_80043578(s32 n, UnkStruct_ovl0F_04_800485C4 *panels, UnkStruct_ovl0F_04_800487A8 *flags) {
     s32 i;
     s32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
@@ -668,7 +670,6 @@ static void func_ovl0F_04_80043578(s32 n, UnkStruct_ovl0F_04_800485C4 *panels, U
     p = panels;
 #line 1 "panels.c"
     func_ovl0F_04_80043480(n, panels);
-#line 8 "panels.c"
     for (i = 0; i < n; i++) {
         if (p->unk1C == 0.0f) {
             func_ovl0F_04_800471B8((s32) p->unkC - 1, (s32) p->unk10,
@@ -1681,12 +1682,11 @@ static void func_ovl0F_04_80043028(void) {
     }
     d = D_ovl0F_04_8004848C * 0.5f;
     D_ovl0F_04_8004847C = d;
-    if (D_ovl0F_04_8004848C) {
+    if (D_ovl0F_04_8004848C) { /* fake: a dead test, for the register allocation or schedule */
     }
     D_ovl0F_04_80048480 = 0.0f;
 }
 
-#line 1 "panels.c"
 static void func_ovl0F_04_80043020(s32 count, UnkStruct_ovl0F_04_800485C4 *p) {
     s32 i;
 
@@ -1695,7 +1695,6 @@ static void func_ovl0F_04_80043020(s32 count, UnkStruct_ovl0F_04_800485C4 *p) {
         p++;
     }
 }
-#line 1654 "1F2230.c"
 
 static void func_ovl0F_04_8004624C_inl1(void) {
     s32 pad[8]; /* fake: unused, frame space the original has (no source for it found) */
@@ -1739,9 +1738,7 @@ static void func_ovl0F_04_8004624C_inl0(u32 (*p)[3], s32 count) {
         p++;
     }
 }
-#line 1701 "1F2230.c"
 
-#line 1 "panels.c"
 static void func_ovl0F_04_8004624C_inl4(void) {
     func_ovl0F_04_80043578(5, D_ovl0F_04_800486CC, D_ovl0F_04_800487A8);
 }

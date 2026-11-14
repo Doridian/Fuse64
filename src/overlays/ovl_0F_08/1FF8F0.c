@@ -18,6 +18,10 @@
  *   stores.
  * The `#line N "1FF8F0.c"` lines are the physical line numbers (the file
  * named the same whatever path it is compiled by).
+ *
+ * 2026-11-13: 4 `#line`s that turned out redundant were removed (each tried away
+ * against the sha1 in us, eu and jp). Where the notes above name a `#line`,
+ * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
 #line 30 "1FF8F0.c"
@@ -379,7 +383,6 @@ void func_ovl0F_08_80043A28(UnkStructA *arg0) {
 static void func_ovl0F_08_80043968(s32 *dst, f32 x, f32 z) {
     *dst = ((s16)(x * 500.0f) << 16) | ((s16)(z * 500.0f) & 0xFFFF);
 }
-#line 389 "1FF8F0.c"
 
 static s32 func_ovl0F_08_80043970(UnkStructA *arg0) {
     s32 hit;
@@ -464,7 +467,6 @@ static void func_ovl0F_08_800433C4(void) {
     func_ovl0F_08_800430BC();
 }
 
-#line 1 "panels.c"
 static void func_ovl0F_08_800433BC(s32 arg1, UnkStruct_ovl0F_08_80045B90 *arg0) {
     s32 i;
 
@@ -478,7 +480,6 @@ static void func_ovl0F_08_800433BC(s32 arg1, UnkStruct_ovl0F_08_80045B90 *arg0) 
         arg0++;
     }
 }
-#line 488 "1FF8F0.c"
 
 static void func_ovl0F_08_80043330(void) {
     func_ovl0F_08_80044F20(D_ovl0F_08_80045DA0[3]->unk40, 0x61);
@@ -529,7 +530,6 @@ static void func_ovl0F_08_800431F8(void) {
     D_ovl0F_08_80045B28 = 0;
 }
 
-#line 1 "panels.c"
 static void func_ovl0F_08_80043020(s32 count, UnkStruct_ovl0F_08_80045B90 *p) {
     s32 i;
 

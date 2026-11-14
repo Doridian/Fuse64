@@ -1226,7 +1226,6 @@ void func_ovl0B_06_8004747C(void) {
                     }
                 } else {
                     D_ovl0B_06_80049924 = sel & 0xF;
-                    if (!loop) {}
                     sel = 2;
                 }
             }
@@ -2476,7 +2475,6 @@ static void func_ovl0B_06_80044BE4(s32 arg0) {
         if (arg0 == 3) {
             D_ovl0B_06_80049B94[6].unk18->unk36 = 100;
             for (i = 7; i < 10; i++) {
-                if (!D_ovl0B_06_80049B94[6].unk18) {}
                 D_ovl0B_06_80049B94[i].unk18->unk36 = 0x82;
             }
             D_ovl0B_06_80049CAC[4].unk0->unkC &= ~0x400;
@@ -3026,7 +3024,7 @@ static void func_ovl0B_06_80043480(s32 arg0) {
                 } else {
                     func_ovl0B_06_80043040(&D_ovl0B_06_80049F20[i][0], &D_ovl0B_06_8004A0C4[11], i * 40);
                 }
-                if (!D_ovl0B_06_8004A5D0[i]) {}
+                if (!D_ovl0B_06_8004A5D0[i]) {} /* fake: a dead test, for the register allocation or schedule */
                 for (j = 0; j < 6; j++) {
                     kind = func_ovl0B_06_80049368(i, j + 2);
                     if (kind != 0) {

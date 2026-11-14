@@ -686,7 +686,7 @@ static void func_ovl0D_04_80044884(void) {
 }
 
 void func_ovl0D_04_800446E8(void) {
-    if (!D_ovl0D_04_80047044 && !D_ovl0D_04_80047044 && !D_ovl0D_04_80047044) {
+    if (!D_ovl0D_04_80047044 && !D_ovl0D_04_80047044 && !D_ovl0D_04_80047044) { /* fake: a dead test, for the register allocation or schedule */
     }
     func_ovl0D_04_800446C0();
     func_ovl0D_04_800446C8();

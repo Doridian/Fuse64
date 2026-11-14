@@ -1947,7 +1947,7 @@ void func_ovl15_02_8004B7E0(UnkStructA *arg0) {
         b->unk40->unk2C = s;
         b->unk40->unk28 = s;
         c->unk4C = c->unk54 = s = a->unk40->unk28;
-        if (s == t) {}
+        if (s == t) {} /* fake: a dead test, for the register allocation or schedule */
         al = 63.0f * t;
         a->unk40->unk36 = al;
         b->unk40->unk36 = al;
@@ -3137,7 +3137,6 @@ void func_ovl15_02_800475BC() {
         func_ovl15_02_80050750();
     }
     dist = 0.0f;
-    if (dist2 == 127.0f) {}
     func_ovl15_02_800505B8((&D_ovl15_02_80051410)[0], 0x01000000);
     (&D_ovl15_02_80051410)[1]->unk40->unk36 = 0x7F;
     (&D_ovl15_02_80051410)[0]->unk40->unk36 = (&D_ovl15_02_80051410)[1]->unk40->unk36;
@@ -3840,17 +3839,18 @@ void func_ovl15_02_80044FDC(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     f32 ang[3];
     f32 dx;
     f32 dy;
-    f32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 k360;
 
+    k360 = 360.0f;
     func_ovl15_02_80050548((Vec3f *) arg0, (Vec3f *) arg3, (Vec3f *) ang);
-    ang[1] = ((ang[1] - 90.0f) >= 360.0f) ? (ang[1] - 90.0f) - 360.0f : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + 360.0f : (ang[1] - 90.0f);
-    dx = ((0 <= ang[0] && ang[0] <= 180.0f) ? ang[0] : (360.0f - ang[0]) * -1.0f)
-       - ((0 <= arg1[0] && arg1[0] <= 180.0f) ? arg1[0] : (360.0f - arg1[0]) * -1.0f);
+    ang[1] = ((ang[1] - 90.0f) >= k360) ? (ang[1] - 90.0f) - k360 : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + k360 : (ang[1] - 90.0f);
+    dx = ((0 <= ang[0] && ang[0] <= 180.0f) ? ang[0] : (k360 - ang[0]) * -1.0f)
+       - ((0 <= arg1[0] && arg1[0] <= 180.0f) ? arg1[0] : (k360 - arg1[0]) * -1.0f);
     if (dx > 180.0f) {
-        dx -= 360.0f;
+        dx -= k360;
     }
     if (dx < -180.0f) {
-        dx += 360.0f;
+        dx += k360;
     }
     if (dx >= 0.0f) {
         if (dx > arg2) {
@@ -3859,13 +3859,13 @@ void func_ovl15_02_80044FDC(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     } else if (dx < arg2 * -1.0f) {
         dx = arg2 * -1.0f;
     }
-    dy = ((0 <= ang[1] && ang[1] <= 180.0f) ? ang[1] : (360.0f - ang[1]) * -1.0f)
-       - ((0 <= arg1[1] && arg1[1] <= 180.0f) ? arg1[1] : (360.0f - arg1[1]) * -1.0f);
+    dy = ((0 <= ang[1] && ang[1] <= 180.0f) ? ang[1] : (k360 - ang[1]) * -1.0f)
+       - ((0 <= arg1[1] && arg1[1] <= 180.0f) ? arg1[1] : (k360 - arg1[1]) * -1.0f);
     if (dy > 180.0f) {
-        dy -= 360.0f;
+        dy -= k360;
     }
     if (dy < -180.0f) {
-        dy += 360.0f;
+        dy += k360;
     }
     if (dy >= 0.0f) {
         if (dy > arg2) {
@@ -4233,7 +4233,7 @@ void func_ovl15_02_80043688(void) {
         func_ovl15_02_80050708(func_ovl15_02_80043E38, NULL, 0, 0, 0x150);
         func_ovl15_02_80050728(0x3C);
         obj = func_ovl15_02_800505E0(0x2F0, 0x01080000, 0xD0, NULL);
-        if (r == 60) {}
+        if (r == 60) {} /* fake: a dead test, for the register allocation or schedule */
         obj->unk40->unk30 = 7.0f;
         obj->unk40->unk28 = obj->unk40->unk2C = obj->unk40->unk30;
         obj->unk40->unk10 = D_ovl15_02_80051424->unk40->unk10;
@@ -4250,7 +4250,7 @@ void func_ovl15_02_80043688(void) {
         func_ovl15_02_80050A60(1);
         D_ovl15_02_800513FC = max * 0.8f;
         func_ovl15_02_80050A68(D_ovl15_02_800513FC);
-        if (n == 180.0f) {}
+        if (n == 180.0f) {} /* fake: a dead test, for the register allocation or schedule */
         for (t = 0.0f; t < 180; t += 1.0f) {
             r = t / 180.0f;
             obj->unk40->unk28 = obj->unk40->unk2C = obj->unk40->unk30 = (1.0f - r) * 6.0f + 1.0f;
@@ -4310,7 +4310,7 @@ void func_ovl15_02_80043688(void) {
         func_ovl15_02_80043128(0);
         func_ovl15_02_800505B8(D_ovl15_02_800513F4, 0x01080000);
         func_ovl15_02_80050C90(0x160);
-        if (u == 120) {}
+        if (u == 120) {} /* fake: a dead test, for the register allocation or schedule */
         for (t = 0.0f; t < 120.0f; t += 1.0f) {
             r = t / 120;
             D_ovl15_02_800513F4->unk40->unk36 = 255.0f * r;

@@ -722,10 +722,11 @@ void func_ovl14_01_8004AF68(void) {
 }
 
 void func_ovl14_01_8004A914(void) {
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 k31;
     Vec3f angle;
     s32 i;
 
+    k31 = 31.0f;
     D_ovl14_01_8004D4E4 = -1;
     D_ovl14_01_8004D4E8 = -1;
     D_ovl14_01_8004D4EC = D_ovl14_01_8004D4F0 = -1;
@@ -764,9 +765,9 @@ void func_ovl14_01_8004A914(void) {
     D_ovl14_01_8004D690.x = D_ovl14_01_8004D6F0[D_ovl14_01_8004D6C8].x;
     D_ovl14_01_8004D690.y = D_ovl14_01_8004D6F0[D_ovl14_01_8004D6C8].y;
     D_ovl14_01_8004D690.z = D_ovl14_01_8004D6F0[D_ovl14_01_8004D6C8].z;
-    D_ovl14_01_8004D62C = 31.0f;
-    D_ovl14_01_8004D630 = 31.0f;
-    D_ovl14_01_8004D634 = 31.0f;
+    D_ovl14_01_8004D62C = k31;
+    D_ovl14_01_8004D630 = k31;
+    D_ovl14_01_8004D634 = k31;
     D_ovl14_01_8004D684 = 0.0f;
     D_ovl14_01_8004D638 = 0;
     D_ovl14_01_8004D63C = 0;
@@ -1207,7 +1208,7 @@ void func_ovl14_01_80049814(s32 id, UnkStructA **parts, Link_ovl14_01 *links) {
         a = (uintptr_t) D_ovl14_01_8004D1CC;
         D_ovl14_01_8004D4DC = (Vec3f *) a;
     }
-    if (a) {}
+    if (a) {} /* fake: a dead test, for the register allocation or schedule */
     M2C_FIELD(*parts, Link_ovl14_01 **, 0x3C) = links;
     parts++;
     *parts = func_ovl14_01_8004C8F0(-1, 0x500000, parts[-1]);
@@ -1447,12 +1448,13 @@ void func_ovl14_01_80048CE8(Vec3f *arg0, s32 arg1) {
 }
 
 void func_ovl14_01_80048ABC(UnkStructA **arg0, Link_ovl14_01 *arg1) {
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 k360;
     Vec3f out;
     Vec3f from;
     Vec3f to;
     f32 f;
 
+    k360 = 360.0f;
     arg1->unk0 = 2;
     arg1->unkC = 1.0f;
     arg1->unk10 = 0.0f;
@@ -1481,11 +1483,11 @@ void func_ovl14_01_80048ABC(UnkStructA **arg0, Link_ovl14_01 *arg1) {
     arg0++;
     func_ovl14_01_8004C8A0(*arg0, 0x500000);
     func_ovl14_01_8004C898(*arg0, 0x300000);
-    if (out.y >= 360.0f) {
-        (*arg0)->unk50 = out.y - 360.0f;
+    if (out.y >= k360) {
+        (*arg0)->unk50 = out.y - k360;
     } else {
         if (out.y < 0.0f) {
-            f = out.y + 360.0f;
+            f = out.y + k360;
         } else {
             f = out.y;
         }
@@ -1596,8 +1598,9 @@ void func_ovl14_01_80048454(void) {
     f32 w;
     Vec3f ang;
     Vec3f out;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 k90;
 
+    k90 = 90.0f;
     func_ovl14_01_80044B38(&D_ovl14_01_8004D4A0, 10);
     func_ovl14_01_80046648(D_ovl14_01_8004D600, D_ovl14_01_8004D560);
     func_ovl14_01_80046648(D_ovl14_01_8004D618, D_ovl14_01_8004D5A0);
@@ -1619,13 +1622,13 @@ void func_ovl14_01_80048454(void) {
         s *= 0.5f;
     }
     func_ovl14_01_8004C828(&D_ovl14_01_8004D518, &D_ovl14_01_8004D690, &ang);
-    if (ang.y - 90.0f >= 360.0f) {
-        ang.y = ang.y - 90.0f - 360.0f;
+    if (ang.y - k90 >= 360.0f) {
+        ang.y = ang.y - k90 - 360.0f;
     } else {
-        if (ang.y < 90.0f) {
-            w = ang.y - 90.0f + 360.0f;
+        if (ang.y < k90) {
+            w = ang.y - k90 + 360.0f;
         } else {
-            w = ang.y - 90.0f;
+            w = ang.y - k90;
         }
         ang.y = w;
     }
@@ -2212,17 +2215,18 @@ void func_ovl14_01_8004697C(void) {
 }
 
 void func_ovl14_01_800467C0(UnkStructA **arg0, Link_ovl14_01 *arg1) {
-    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 km45;
     f32 y;
     f32 x;
     f32 d;
     s32 i;
     f32 k;
 
+    km45 = -45.0f;
     y = D_ovl14_01_8004D6A0.y;
     x = D_ovl14_01_8004D6A0.x;
     if (arg1 == D_ovl14_01_8004D560) {
-        d = -45.0f;
+        d = km45;
     } else {
         d = 45.0f;
     }
@@ -2244,7 +2248,7 @@ void func_ovl14_01_800467C0(UnkStructA **arg0, Link_ovl14_01 *arg1) {
     if (arg1 == D_ovl14_01_8004D560) {
         d = 45.0f;
     } else {
-        d = -45.0f;
+        d = km45;
     }
     d /= 30.0f;
     k = 0.33333334f;

@@ -1465,9 +1465,11 @@ static void func_ovl10_13_80044E48(void) {
     s32 i;
     f32 a;
     f32 angle;
-    s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
-    s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
+    f32 dist;
+    f32 steps;
 
+    dist = 800.0f;
+    steps = 90.0f;
     func_ovl10_13_800497C8(1);
     if (D_ovl10_13_8004ADA8 != 0x1E) {
         func_ovl10_13_80049E80(0x1F);
@@ -1492,9 +1494,9 @@ static void func_ovl10_13_80044E48(void) {
         to.y = 0.0f;
         to.z = 1550.0f;
         func_ovl10_13_80049F68(&from, &to, &angle);
-        to.x = func_ovl10_13_8004A2D0(angle) * 800.0f + from.x;
+        to.x = func_ovl10_13_8004A2D0(angle) * dist + from.x;
         to.y = from.y;
-        to.z = (func_ovl10_13_8004A2D8(angle) * 800.0f) + from.z;
+        to.z = (func_ovl10_13_8004A2D8(angle) * dist) + from.z;
         from.x = D_ovl10_13_8004ADC4->unk40->unk10;
         from.y = D_ovl10_13_8004ADC4->unk40->unk14;
         from.z = D_ovl10_13_8004ADC4->unk40->unk18;
@@ -1506,8 +1508,8 @@ static void func_ovl10_13_80044E48(void) {
         i = 0;
         D_ovl10_13_8004ADC4->unk6C = 16.333334f;
         do {
-            D_ovl10_13_8004ADC4->unk40->unk10 += (to.x - from.x) / 90.0f;
-            D_ovl10_13_8004ADC4->unk40->unk18 += (to.z - from.z) / 90.0f;
+            D_ovl10_13_8004ADC4->unk40->unk10 += (to.x - from.x) / steps;
+            D_ovl10_13_8004ADC4->unk40->unk18 += (to.z - from.z) / steps;
             if (D_ovl10_13_8004ADC4->unk40->unk14 < 0.0f) {
                 D_ovl10_13_8004ADC4->unk70 = 0.0f;
                 D_ovl10_13_8004ADC4->unk68 = D_ovl10_13_8004ADC4->unk70;

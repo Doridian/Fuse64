@@ -1239,7 +1239,7 @@ static void func_ovl0A_01_80044798(f32 speed, f32 *fall) {
     Inner *m;
 
     func_ovl0A_01_80044790();
-    if (fall) {}
+    if (fall) {} /* fake: a dead test, for the register allocation or schedule */
     m = D_ovl0A_01_800488D8[0].obj->unk40;
     if (m->unk20 > 72.0f) {
         m->unk10 += 12.0f * speed * 0.4f;

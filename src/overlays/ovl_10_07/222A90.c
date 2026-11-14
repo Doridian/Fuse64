@@ -856,19 +856,22 @@ void func_ovl10_07_80046954(void) {
 }
 
 void func_ovl10_07_800467F0(s32 arg0, s32 arg1) {
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 lim;
+    UnkStructA *obj;
     Vec3f pos;
     s32 i;
     s32 n;
 
+    lim = 300.0f;
     n = 0;
     for (i = 0; i < D_ovl10_07_80049DD8; i++) {
-        if ((D_ovl10_07_80049CA8[i] & 2) && func_ovl10_07_80046798(i) <= 300.0f) {
+        if ((D_ovl10_07_80049CA8[i] & 2) && func_ovl10_07_80046798(i) <= lim) {
             n++;
         }
     }
     if (arg1 != 0 && n == 1 && D_ovl10_07_80049E6C == -1) {
-        func_ovl10_07_800490F8(D_ovl10_07_80049BC0[arg0], &pos);
+        obj = D_ovl10_07_80049BC0[arg0];
+        func_ovl10_07_800490F8(obj, &pos);
         D_ovl10_07_80049E6C = func_ovl10_07_80049728(0x9D, &pos);
     }
     if (arg1 == 0 && n == 0 && D_ovl10_07_80049E6C != -1) {
@@ -877,13 +880,14 @@ void func_ovl10_07_800467F0(s32 arg0, s32 arg1) {
 }
 
 f32 func_ovl10_07_80046798(s32 arg0) {
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 d;
     Vec3f a;
     Vec3f b;
 
     func_ovl10_07_800490F8(D_ovl10_07_80049BC0[arg0], &a);
     func_ovl10_07_800490F8(func_ovl10_07_80048868(func_ovl10_07_80048808()), &b);
-    return func_ovl10_07_80048FD0(&a, &b);
+    d = func_ovl10_07_80048FD0(&a, &b);
+    return d;
 }
 
 void func_ovl10_07_800465E0(void) {
@@ -1252,7 +1256,7 @@ void func_ovl10_07_800452A8(s32 *arg0) {
             D_ovl10_07_8004A4D8[i]->unk34 = 50.0f;
             D_ovl10_07_8004A4D8[i]->unk38 = 50.0f;
             if (D_ovl10_07_8004A4DC[i] != 0) {
-                if (!arg0 && !arg0) {} /* keeps arg0 in s3 (the permuter) */
+                if (!arg0 && !arg0) {} /* fake: keeps arg0 in s3 (the permuter) */
                 v = 1;
                 D_ovl10_07_8004A4D4[i]->unk40->unk18 -= 100.0f;
                 D_ovl10_07_8004A4D8[i]->unk40->unk18 += 100.0f;
@@ -1272,9 +1276,10 @@ void func_ovl10_07_80044FD8(s32 *arg0) {
     s32 i;
     s32 j;
     s32 flags;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 off;
     Vec3f pos;
 
+    off = 5.0f;
     i = 0;
     do {
         if (arg0[0] != -1) {
@@ -1293,16 +1298,16 @@ void func_ovl10_07_80044FD8(s32 *arg0) {
             D_ovl10_07_80049BC0[i]->unk40->unk14 = pos.y;
             D_ovl10_07_80049BC0[i]->unk40->unk18 = pos.z;
             if (D_ovl10_07_80049C78[i] & 2) {
-                D_ovl10_07_80049BC0[i]->unk40->unk10 = pos.x + 5.0f;
+                D_ovl10_07_80049BC0[i]->unk40->unk10 = pos.x + off;
                 D_ovl10_07_80049BC0[i]->unk40->unk20 = 270.0f;
             } else {
-                D_ovl10_07_80049BC0[i]->unk40->unk18 = pos.z - 5.0f;
+                D_ovl10_07_80049BC0[i]->unk40->unk18 = pos.z - off;
             }
             func_ovl10_07_80048D70(D_ovl10_07_80049BC0[i]->unk40, 0, 0x28, 0x190, 0, 0);
             D_ovl10_07_80049CA8[i] = 0;
             if (D_ovl10_07_80049C78[i] & 1) {
                 for (j = 0; j < D_ovl10_07_80049E70[i]; j++) {
-                    if (arg0) {} /* keeps arg0 in s4 (the permuter) */
+                    if (arg0) {} /* fake: keeps arg0 in s4 (the permuter) */
                     func_ovl10_07_80048660(D_ovl10_07_80049BF0[i][0] + j, D_ovl10_07_80049BF0[i][1], D_ovl10_07_80049BF0[i][2], 1);
                 }
             } else {
@@ -1657,23 +1662,24 @@ void func_ovl10_07_80043DA8(void) {
 /* opens (arg1 1) or closes the gate */
 void func_ovl10_07_80043B98(s32 arg0, s32 arg1) {
     s32 id;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 k100;
     Vec3f pos;
 
+    k100 = 100.0f;
     if (arg1 != D_ovl10_07_8004A4DC[arg0]) {
         if (D_ovl10_07_8004A5E4[arg0] == 0) {
             id = func_ovl10_07_800430F4(func_ovl10_07_80047630);
             D_ovl10_07_8004A4E0[id] = arg0;
         }
         if (arg1 != 0) {
-            D_ovl10_07_8004A5EC[arg0] = D_ovl10_07_8004A4D4[arg0]->unk40->unk18 - 100.0f;
-            D_ovl10_07_8004A5F0[arg0] = D_ovl10_07_8004A4D8[arg0]->unk40->unk18 + 100.0f;
+            D_ovl10_07_8004A5EC[arg0] = D_ovl10_07_8004A4D4[arg0]->unk40->unk18 - k100;
+            D_ovl10_07_8004A5F0[arg0] = D_ovl10_07_8004A4D8[arg0]->unk40->unk18 + k100;
             D_ovl10_07_8004A5E8[arg0] = -5.0f;
             func_ovl10_07_80048660(D_ovl10_07_8004A4C8[arg0][0], D_ovl10_07_8004A4C8[arg0][1], D_ovl10_07_8004A4C8[arg0][2] + 1, 0);
             func_ovl10_07_80048660(D_ovl10_07_8004A4C8[arg0][0], D_ovl10_07_8004A4C8[arg0][1], D_ovl10_07_8004A4C8[arg0][2] + 2, 0);
         } else {
-            D_ovl10_07_8004A5EC[arg0] = D_ovl10_07_8004A4D4[arg0]->unk40->unk18 + 100.0f;
-            D_ovl10_07_8004A5F0[arg0] = D_ovl10_07_8004A4D8[arg0]->unk40->unk18 - 100.0f;
+            D_ovl10_07_8004A5EC[arg0] = D_ovl10_07_8004A4D4[arg0]->unk40->unk18 + k100;
+            D_ovl10_07_8004A5F0[arg0] = D_ovl10_07_8004A4D8[arg0]->unk40->unk18 - k100;
             D_ovl10_07_8004A5E8[arg0] = 5.0f;
             func_ovl10_07_80048660(D_ovl10_07_8004A4C8[arg0][0], D_ovl10_07_8004A4C8[arg0][1], D_ovl10_07_8004A4C8[arg0][2] + 1, 9);
             func_ovl10_07_80048660(D_ovl10_07_8004A4C8[arg0][0], D_ovl10_07_8004A4C8[arg0][1], D_ovl10_07_8004A4C8[arg0][2] + 2, 9);
@@ -1708,7 +1714,7 @@ void func_ovl10_07_80043944(s32 arg0, s32 arg1) {
                 v = 1;
                 func_ovl10_07_800437EC(arg0);
             }
-            /* Nothing, but it keeps arg0 in v1 for the loops. */
+            /* fake: nothing, but it keeps arg0 in v1 for the loops */
             if (arg0) {
             }
             if (D_ovl10_07_80049C78[arg0] & 1) {
@@ -1862,20 +1868,22 @@ void func_ovl10_07_80043340(void) {
 
 void func_ovl10_07_80043254(void) {
     s32 out[6];
-    s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
-    s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
+    f32 off;
+    s32 mode;
     s32 a;
 
-    D_ovl10_07_8004A4C0 = -1.0f;
+    off = -1.0f;
+    mode = 2;
+    D_ovl10_07_8004A4C0 = off;
     func_ovl10_07_80048850(0x40);
     func_ovl10_07_80048840(1);
     D_ovl10_07_8004A3C8 = func_ovl10_07_80048868(func_ovl10_07_80048808());
     D_ovl10_07_8004A3C8->unk70 = 0.0f;
     func_ovl10_07_80048680(D_ovl10_07_8004A3C8->unk40->unk10, D_ovl10_07_8004A3C8->unk40->unk14,
-                           D_ovl10_07_8004A3C8->unk40->unk18, out, 2);
+                           D_ovl10_07_8004A3C8->unk40->unk18, out, mode);
     func_ovl10_07_80048660(out[0], out[1], out[2], 0);
     func_ovl10_07_80048818(1);
-    func_ovl10_07_8004316C(D_ovl10_07_8004A354, D_ovl10_07_8004A4B0, D_ovl10_07_8004A4B4, -1.0f);
+    func_ovl10_07_8004316C(D_ovl10_07_8004A354, D_ovl10_07_8004A4B0, D_ovl10_07_8004A4B4, off);
     func_ovl10_07_80049198(0x78);
     /* fake: (the permuter) a, and the test of D_ovl10_07_8004A3DC, on a's line */
     a = D_ovl10_07_8004A3D8; if (D_ovl10_07_8004A3DC && D_ovl10_07_8004A3DC && D_ovl10_07_8004A3DC) {}

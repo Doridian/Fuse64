@@ -57,6 +57,10 @@
  *   (its eight angles cycle f4, f6, f8, f10, as the original's), where an
  *   external one also takes f16 and f18 (ovl_0A_06's static 800434E4
  *   shows the same).
+ *
+ * 2026-11-13: 3 `#line`s that turned out redundant were removed (each tried away
+ * against the sha1 in us, eu and jp). Where the notes above name a `#line`,
+ * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
 
@@ -348,7 +352,6 @@ static void func_ovl17_09_8004456C(UnkStructA *obj, f32 speed) {
     UnkStructA *other;
     s32 k;
 
-#line 1 "panels.c"
     pos[0] = obj->unk40->unk10;
     pos[1] = obj->unk40->unk14;
     pos[2] = obj->unk40->unk18;
@@ -630,7 +633,7 @@ static void func_ovl17_09_8004312C(void) {
     } else {
         t = D_ovl17_09_800462A0;
     }
-    if (D_ovl17_09_800462A0) {
+    if (D_ovl17_09_800462A0) { /* fake: a dead test, for the register allocation or schedule */
     }
     d = func_ovl17_09_80043124(t);
     D_ovl17_09_800462A4 += d;
@@ -642,7 +645,7 @@ static void func_ovl17_09_8004312C(void) {
     }
     d = D_ovl17_09_800462A4 * 0.5f;
     D_ovl17_09_8004628C = d;
-    if (D_ovl17_09_800462A4) {
+    if (D_ovl17_09_800462A4) { /* fake: a dead test, for the register allocation or schedule */
     }
     D_ovl17_09_80046290 = 0.0f;
 }
@@ -652,7 +655,6 @@ static void func_ovl17_09_8004313C(void) {
     D_ovl17_09_800462B0 = 0.0f;
 #line 1 "panels.c"
     func_ovl17_09_80043010();
-#line 614 "2B8D20.c"
 }
 
 static void func_ovl17_09_80043134(void) {
@@ -739,7 +741,6 @@ void func_ovl17_09_80043290(s32 arg0) {
             break;
         case 3:
             func_ovl17_09_8004312C();
-#line 1 "panels.c"
             if (D_ovl17_09_800462A0 == 0) {
                 func_ovl17_09_80043010();
             }

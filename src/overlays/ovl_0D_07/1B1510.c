@@ -678,7 +678,9 @@ static void func_ovl0D_07_80043028(void) {
  * which puts 80043010's stub (case 11 calls it last) with 80043030's three */
 void func_ovl0D_07_80043660(s32 arg0) {
     UnkStructA *o;
-    s32 pad[3]; /* fake: unused; a guess: the frame has three more words here */
+    f32 k180;
+    f32 k360;
+    f32 k32768;
     s32 i;
     s32 kind;
     UnkStructA *obj[2];
@@ -687,6 +689,9 @@ void func_ovl0D_07_80043660(s32 arg0) {
     Vec3f mid;
     Vec3f pos;
 
+    k180 = 180.0f;
+    k360 = 360.0f;
+    k32768 = 32768.0f;
     switch (arg0) {
         case 2:
             D_ovl0D_07_8004671C = func_ovl0D_07_800453A8();
@@ -746,12 +751,12 @@ void func_ovl0D_07_80043660(s32 arg0) {
             dist = func_ovl0D_07_80045C50(&mid, &pos);
             func_ovl0D_07_80045B10(&angle.x, NULL, NULL);
             if (dist <= 500.0f) {
-                angle.x = angle.x + 180.0f >= 360.0f ? angle.x + 180.0f - 360.0f
-                        : angle.x + 180.0f < 0.0f    ? angle.x + 180.0f + 360.0f
-                                                     : angle.x + 180.0f;
+                angle.x = angle.x + k180 >= k360 ? angle.x + k180 - k360
+                        : angle.x + k180 < 0.0f    ? angle.x + k180 + k360
+                                                     : angle.x + k180;
             }
             obj[1]->unk40->unk20 = angle.x;
-            func_ovl0D_07_80045B08(angle.x, 32768.0f, 32768.0f);
+            func_ovl0D_07_80045B08(angle.x, k32768, k32768);
             func_ovl0D_07_80045448(50);
             func_ovl0D_07_80046398();
             func_ovl0D_07_80046380(0x21A);
@@ -771,7 +776,7 @@ void func_ovl0D_07_80043660(s32 arg0) {
             func_ovl0D_07_80045E18(10);
             func_ovl0D_07_80045CB0(obj[1], 0x01000000);
             for (i = 0; i != 60; i++) {
-                func_ovl0D_07_80045B08(32768.0f, 45.0f, i * 16.666666f + 1500.0f);
+                func_ovl0D_07_80045B08(k32768, 45.0f, i * 16.666666f + 1500.0f);
                 func_ovl0D_07_80045E40();
             }
             func_ovl0D_07_80045E18(60);
@@ -790,12 +795,12 @@ void func_ovl0D_07_80043660(s32 arg0) {
             dist = func_ovl0D_07_80045C50(&mid, &pos);
             func_ovl0D_07_80045B10(&angle.x, NULL, NULL);
             if (dist <= 500.0f) {
-                angle.x = angle.x + 180.0f >= 360.0f ? angle.x + 180.0f - 360.0f
-                        : angle.x + 180.0f < 0.0f    ? angle.x + 180.0f + 360.0f
-                                                     : angle.x + 180.0f;
+                angle.x = angle.x + k180 >= k360 ? angle.x + k180 - k360
+                        : angle.x + k180 < 0.0f    ? angle.x + k180 + k360
+                                                     : angle.x + k180;
             }
             obj[0]->unk40->unk20 = angle.x;
-            func_ovl0D_07_80045B08(angle.x, 32768.0f, 32768.0f);
+            func_ovl0D_07_80045B08(angle.x, k32768, k32768);
             func_ovl0D_07_80045498(0);
             func_ovl0D_07_80045448(32);
             func_ovl0D_07_80046020();

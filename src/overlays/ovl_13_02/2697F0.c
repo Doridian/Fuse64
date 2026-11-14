@@ -1107,24 +1107,25 @@ void func_ovl13_02_80049F1C(UnkStructA *arg0) {
 }
 
 void func_ovl13_02_80049D50(void) {
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 k300;
 
+    k300 = 300.0f;
     ((Vec3f *) D_ovl13_02_8004DF18)[0].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x;
     ((Vec3f *) D_ovl13_02_8004DF18)[0].y = (*(Vec3f *) &D_ovl13_02_8004DD10).y;
     ((Vec3f *) D_ovl13_02_8004DF18)[0].z = (*(Vec3f *) &D_ovl13_02_8004DD10).z - 1400.0f;
-    ((Vec3f *) D_ovl13_02_8004DF18)[1].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x - 300.0f;
+    ((Vec3f *) D_ovl13_02_8004DF18)[1].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x - k300;
     ((Vec3f *) D_ovl13_02_8004DF18)[1].y = (*(Vec3f *) &D_ovl13_02_8004DD10).y;
     ((Vec3f *) D_ovl13_02_8004DF18)[1].z = ((Vec3f *) D_ovl13_02_8004DF18)[0].z;
-    ((Vec3f *) D_ovl13_02_8004DF18)[2].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x + 300.0f;
+    ((Vec3f *) D_ovl13_02_8004DF18)[2].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x + k300;
     ((Vec3f *) D_ovl13_02_8004DF18)[2].y = (*(Vec3f *) &D_ovl13_02_8004DD10).y;
     ((Vec3f *) D_ovl13_02_8004DF18)[2].z = ((Vec3f *) D_ovl13_02_8004DF18)[0].z;
     ((Vec3f *) D_ovl13_02_8004DF18)[3].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x;
     ((Vec3f *) D_ovl13_02_8004DF18)[3].y = (*(Vec3f *) &D_ovl13_02_8004DD10).y;
     ((Vec3f *) D_ovl13_02_8004DF18)[3].z = (*(Vec3f *) &D_ovl13_02_8004DD10).z - 1700.0f;
-    ((Vec3f *) D_ovl13_02_8004DF18)[4].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x - 300.0f;
+    ((Vec3f *) D_ovl13_02_8004DF18)[4].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x - k300;
     ((Vec3f *) D_ovl13_02_8004DF18)[4].y = (*(Vec3f *) &D_ovl13_02_8004DD10).y;
     ((Vec3f *) D_ovl13_02_8004DF18)[4].z = ((Vec3f *) D_ovl13_02_8004DF18)[3].z;
-    ((Vec3f *) D_ovl13_02_8004DF18)[5].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x + 300.0f;
+    ((Vec3f *) D_ovl13_02_8004DF18)[5].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x + k300;
     ((Vec3f *) D_ovl13_02_8004DF18)[5].y = (*(Vec3f *) &D_ovl13_02_8004DD10).y;
     ((Vec3f *) D_ovl13_02_8004DF18)[5].z = ((Vec3f *) D_ovl13_02_8004DF18)[3].z;
     ((Vec3f *) D_ovl13_02_8004DF60)->x = (*(Vec3f *) &D_ovl13_02_8004DD10).x;
@@ -1346,7 +1347,7 @@ static void func_ovl13_02_80049400(void) {
 }
 
 void func_ovl13_02_800489C0(s32 arg0) {
-    s32 padt[1]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 k1000;
     f32 spA0[3];
     f32 sp94[3];
     f32 pad[7]; /* fake: unused, frame space the original has (no source for it found) */
@@ -1354,11 +1355,12 @@ void func_ovl13_02_800489C0(s32 arg0) {
     s32 var_s1;
     s32 var_s5;
 
+    k1000 = 1000.0f;
     func_ovl13_02_8004CBF8(D_ovl13_02_8004DE3C, 0x08000000);
     func_ovl13_02_8004511C();
     spA0[0] = M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 0);
     spA0[1] = M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 4);
-    spA0[2] = M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 8) + 1000.0f;
+    spA0[2] = M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 8) + k1000;
     func_ovl13_02_800430CC(&spA0[0], 0x1E, 1);
     func_ovl13_02_8004CA70(D_ovl13_02_8004D4F8, 0x170, 0);
     spA0[0] = M2C_FIELD(&D_ovl13_02_8004DF60, f32 *, 0);
@@ -1370,7 +1372,7 @@ void func_ovl13_02_800489C0(s32 arg0) {
     func_ovl13_02_8004CAA0(0x20);
     spA0[0] = M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 0);
     spA0[1] = M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 4);
-    spA0[2] = M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 8) + 1000.0f;
+    spA0[2] = M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 8) + k1000;
     func_ovl13_02_800434C0(&spA0[0]);
     func_ovl13_02_8004CC00(D_ovl13_02_8004DE3C, 0x08000000);
     if (!(D_ovl13_02_8004DE3C->unk40->unkC & 0x40)) {
@@ -1808,7 +1810,7 @@ void func_ovl13_02_80046E10(s32 arg0) {
         D_ovl13_02_8004DE50[6]->unk34 *= 0.6f;
     }
     for (i = 0; i < arg0; i++) {
-        if (D_ovl13_02_8004DE80.unk0 == 0) {}
+        if (D_ovl13_02_8004DE80.unk0 == 0) {} /* fake: a dead test, for the register allocation or schedule */
         if (D_ovl13_02_8004DE98.unk0 == 0) {}
         if (D_ovl13_02_8004DEB0.unk0 == 0) {}
         if (M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 0) >= 360.0f) {
@@ -2436,7 +2438,7 @@ s32 func_ovl13_02_800458D8(UnkStructA *arg0) {
        bit first, so the 0x40 test gets $v0 and flags $v1 */
     r = 0;
     flags = arg0->unk10;
-    if (r) {}
+    if (r) {} /* fake: a dead test, for the register allocation or schedule */
     r = arg0->unk10 & 0x40;
     if (r == 0) {
         return 0;
@@ -2891,17 +2893,18 @@ void func_ovl13_02_80043B64(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     f32 ang[3];
     f32 dx;
     f32 dy;
-    f32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 k360;
 
+    k360 = 360.0f;
     func_ovl13_02_8004CB88(arg0, arg3, ang);
-    ang[1] = ((ang[1] - 90.0f) >= 360.0f) ? (ang[1] - 90.0f) - 360.0f : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + 360.0f : (ang[1] - 90.0f);
-    dx = ((0 <= ang[0] && ang[0] <= 180.0f) ? ang[0] : (360.0f - ang[0]) * -1.0f)
-       - ((0 <= arg1[0] && arg1[0] <= 180.0f) ? arg1[0] : (360.0f - arg1[0]) * -1.0f);
+    ang[1] = ((ang[1] - 90.0f) >= k360) ? (ang[1] - 90.0f) - k360 : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + k360 : (ang[1] - 90.0f);
+    dx = ((0 <= ang[0] && ang[0] <= 180.0f) ? ang[0] : (k360 - ang[0]) * -1.0f)
+       - ((0 <= arg1[0] && arg1[0] <= 180.0f) ? arg1[0] : (k360 - arg1[0]) * -1.0f);
     if (dx > 180.0f) {
-        dx -= 360.0f;
+        dx -= k360;
     }
     if (dx < -180.0f) {
-        dx += 360.0f;
+        dx += k360;
     }
     if (dx >= 0.0f) {
         if (dx > arg2) {
@@ -2910,13 +2913,13 @@ void func_ovl13_02_80043B64(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     } else if (dx < arg2 * -1.0f) {
         dx = arg2 * -1.0f;
     }
-    dy = ((0 <= ang[1] && ang[1] <= 180.0f) ? ang[1] : (360.0f - ang[1]) * -1.0f)
-       - ((0 <= arg1[1] && arg1[1] <= 180.0f) ? arg1[1] : (360.0f - arg1[1]) * -1.0f);
+    dy = ((0 <= ang[1] && ang[1] <= 180.0f) ? ang[1] : (k360 - ang[1]) * -1.0f)
+       - ((0 <= arg1[1] && arg1[1] <= 180.0f) ? arg1[1] : (k360 - arg1[1]) * -1.0f);
     if (dy > 180.0f) {
-        dy -= 360.0f;
+        dy -= k360;
     }
     if (dy < -180.0f) {
-        dy += 360.0f;
+        dy += k360;
     }
     if (dy >= 0.0f) {
         if (dy > arg2) {
@@ -3081,18 +3084,19 @@ void func_ovl13_02_800434C0(f32 *arg0) {
 
 void func_ovl13_02_800430CC(f32 *arg0, s32 arg1, s32 arg2) {
     f32 sp3C[3];
-    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 k90;
     f32 dy;
     f32 dx;
     s32 i;
 
+    k90 = 90.0f;
     M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 0) = W360(M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 0));
     M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) = W360(M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4));
     sp3C[2] = sp3C[0] = sp3C[1] = 0.0f;
     func_ovl13_02_8004CB88(&D_ovl13_02_8004DEC8, arg0, sp3C);
     dx = (A180(sp3C[0]) - A180(M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 0))) / (f32) arg1;
     if (arg2 != 0) {
-        sp3C[1] = (sp3C[1] - 90.0f >= 360.0f) ? sp3C[1] - 90.0f - 360.0f : (sp3C[1] < 90.0f) ? sp3C[1] - 90.0f + 360.0f : sp3C[1] - 90.0f;
+        sp3C[1] = (sp3C[1] - k90 >= 360.0f) ? sp3C[1] - k90 - 360.0f : (sp3C[1] < k90) ? sp3C[1] - k90 + 360.0f : sp3C[1] - k90;
         if (!(sp3C[1] >= 0.0f && sp3C[1] <= 180.0f)) {
             sp3C[1] = (360.0f - sp3C[1]) * -1.0f;
         }

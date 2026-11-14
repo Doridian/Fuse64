@@ -471,8 +471,6 @@ void func_ovl0B_07_8004400C(void) {
     if (D_ovl0B_07_80046F18->unk0 == 0) {
         i = D_ovl0B_07_80046E2C - 0x11;
         for (j = 0; j < D_ovl0B_07_80046F1C; j++) {
-            if (!i) { /* a dead read: uopt's register order */
-            }
             if (i == D_ovl0B_07_80046F20[j]) {
                 break;
             }
@@ -486,8 +484,6 @@ void func_ovl0B_07_8004400C(void) {
     obj->unk14 = -200.0f;
     obj->unk18 = 1200.0f;
     x = D_ovl0B_07_80046F18->unkA4[i] * 120.0f + 120.0f;
-    if (!i) { /* a dead read: uopt's register order */
-    }
     if (D_ovl0B_07_80046F18->unk0 == 0) {
         y = 170.0f - 720.0f / D_ovl0B_07_80046F1C / 2 - step * j;
     } else if (i == 0) {
@@ -601,7 +597,7 @@ void func_ovl0B_07_800435FC(void) {
         }
         j = 0;
         for (n = 0; n < 4; n++) {
-            if (!j) { /* a dead read: uopt's register order */
+            if (!j) { /* fake: dead read, uopt's register order */
             }
             if (D_ovl0B_07_80046F18->unk4[n] != 0 && i == D_ovl0B_07_80046F18->unk90[n]) {
                 D_ovl0B_07_80046F20[j] = n;

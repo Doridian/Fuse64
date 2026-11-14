@@ -773,8 +773,6 @@ void func_ovl0E_15_80043070(void) {
     }
     /* empty: without it the function is small enough to be inlined into
      * the handler (ovl_12_06's 800430D0 keeps the same test) */
-    if (D_ovl0E_15_80046954 == 2) {
-    }
 }
 
 void func_ovl0E_15_80043010(void) {
@@ -789,12 +787,13 @@ void func_ovl0E_15_80043010(void) {
 /* Case 11: a static inlined into the handler (as in ovl_12_06); its stub
  * is the one at 80043068. */
 static void func_ovl0E_15_80043068(void) {
-    s32 pad; /* fake: unused; places the block (the handler's frame 0xA0) */
+    f32 k80;
     UnkStructA *obj0;
     UnkStructA *obj1;
     s32 i;
     s32 id;
 
+    k80 = 80.0f;
     if (func_ovl0E_15_800456A0(1) == 3) {
         return;
     }
@@ -828,9 +827,9 @@ static void func_ovl0E_15_80043068(void) {
         } else {
             id = 0x18;
         }
-        func_ovl0E_15_800464A8(id, func_ovl0E_15_80046210() * 160.0 + (obj1->unk40->unk10 - 80.0f),
+        func_ovl0E_15_800464A8(id, func_ovl0E_15_80046210() * 160.0 + (obj1->unk40->unk10 - k80),
                                func_ovl0E_15_80046210() * 50.0 + obj1->unk40->unk14 + 50.0,
-                               func_ovl0E_15_80046210() * 160.0 + (obj1->unk40->unk18 - 80.0f), 0);
+                               func_ovl0E_15_80046210() * 160.0 + (obj1->unk40->unk18 - k80), 0);
         func_ovl0E_15_80046078(4);
     }
     func_ovl0E_15_800465E0(0x230);

@@ -19,6 +19,10 @@
  *   the header's length.
  * - func_ovl12_06_800439D4: the a/b/c loop counts in k and its inner loop
  *   in i (40 in $s0, the count in $s3).
+ *
+ * 2026-11-13: 1 `#line` that turned out redundant was removed (each tried away
+ * against the sha1 in us, eu and jp). Where the notes above name a `#line`,
+ * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
 #line 30 "25D670.c"
@@ -376,7 +380,6 @@ static void func_ovl12_06_80043144(void) {
     D_ovl12_06_80045FBC = func_ovl12_06_80044C98();
 #line 374
     func_ovl12_06_80044B98(0x236);
-#line 383
     func_ovl12_06_80044BB0(0x241);
     func_ovl12_06_80044D48();
     D_ovl12_06_80045FCC = func_ovl12_06_80045770(0x279);
@@ -440,8 +443,6 @@ void func_ovl12_06_800430D0(void) {
     }
     /* empty: without it the function is small enough to be inlined into
      * the handler (ovl_12_02's and 12_04's case 5 keep the same test) */
-    if (D_ovl12_06_80045FBC == 2) {
-    }
 }
 
 /* Case 11: a static inlined into the handler; its stub is the one at

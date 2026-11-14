@@ -12,6 +12,10 @@
  * delay slots lose their `li t3,-1`). A `#line` after the include names
  * the file 1D6120.c, so every function is in the same file whatever path
  * it's compiled from.
+ *
+ * 2026-11-13: 1 `#line` that turned out redundant was removed (each tried away
+ * against the sha1 in us, eu and jp). Where the notes above name a `#line`,
+ * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
 #line 21 "1D6120.c"
@@ -773,7 +777,6 @@ void func_ovl0E_12_80043164(void) {
 static void func_ovl0E_12_8004315C(s16 i) {
     func_ovl0E_12_8004311C(&D_ovl0E_12_80045FCC[i]);
 }
-#line 785 "1D6120.c"
 
 void func_ovl0E_12_8004311C(UnkStruct_ovl0E_12_80045FCC *arg0) {
     func_ovl0E_12_80044C88(arg0->unk14, arg0->unk16, arg0->unk18, arg0->unk1A, arg0->unk1C, arg0->unk1E);

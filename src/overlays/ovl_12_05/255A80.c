@@ -1962,7 +1962,7 @@ static void func_ovl12_05_80043018(void) {
 }
 
 void func_ovl12_05_80045D3C(s32 arg0) {
-    s32 pad0; /* fake: unused, frame space the original has (no source for it found) */
+    f32 k50;
     s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
     s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
     UnkStruct_ovl12_05_8004A840 *spC0;
@@ -1979,6 +1979,7 @@ void func_ovl12_05_80045D3C(s32 arg0) {
     UnkStructA_40 *temp_v1;
     UnkStructA_40 *temp_v1_3;
 
+    k50 = 50.0f;
     switch (arg0) {
     case 2:
         D_ovl12_05_8004AC4C = func_ovl12_05_800497A8();
@@ -2003,7 +2004,7 @@ void func_ovl12_05_80045D3C(s32 arg0) {
         func_ovl12_05_800498A0(0);
         func_ovl12_05_80049918(0);
         temp_v1 = func_ovl12_05_800498E8(1)->unk40;
-        temp_v1->unk10 += 50.0f;
+        temp_v1->unk10 += k50;
         func_ovl12_05_80049830(0x7E, 0x13);
         func_ovl12_05_800498B8();
         func_ovl12_05_80049F50(0xF);
@@ -2030,7 +2031,7 @@ void func_ovl12_05_80045D3C(s32 arg0) {
         func_ovl12_05_800498A0(0);
         func_ovl12_05_80049918(0);
         temp_v1_3 = func_ovl12_05_800498E8(1)->unk40;
-        temp_v1_3->unk10 += 50.0f;
+        temp_v1_3->unk10 += k50;
         func_ovl12_05_800498B8();
         func_ovl12_05_80049F50(0xF);
         spA0 = func_ovl12_05_8004A840(1);

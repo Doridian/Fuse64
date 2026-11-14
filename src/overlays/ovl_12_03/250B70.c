@@ -4,6 +4,10 @@
  * func_ovl12_03_80043100 and func_ovl12_03_8004316C), as in ovl_12_01
  * (src/overlays/ovl_12_01/24B540.c), and func_ovl12_03_80044B98 is called
  * with no arguments (see its declaration).
+ *
+ * 2026-11-13: 2 `#line`s that turned out redundant were removed (each tried away
+ * against the sha1 in us, eu and jp). Where the notes above name a `#line`,
+ * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
 #line 16 "250B70.c"
@@ -685,7 +689,6 @@ static void func_ovl12_03_8004316C(f32 x, s32 z, s32 count) {
     D_ovl12_03_80045EC0 = func_ovl12_03_80045890(0x28, (Vec3f *) D_ovl12_03_80045ED0, 0);
 }
 
-#line 700 "250B70.c"
 void func_ovl12_03_80043138(s32 arg0) {
     func_ovl12_03_80045250();
     func_ovl12_03_80045218(D_ovl12_03_80045EA0);
@@ -701,7 +704,6 @@ void func_ovl12_03_80043108(void) {
 
 /* In panels.c: its inlined (empty) body's `.file` ends the block before
  * the load of D_ovl12_03_80045EC0, so `sw ra` comes first (2 words to 0). */
-#line 1 "panels.c"
 static void func_ovl12_03_80043100(void) {
 }
 #line 719 "250B70.c"

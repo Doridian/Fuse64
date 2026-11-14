@@ -88,6 +88,10 @@
  *   case 15 and case 4 statics, the unused pad[12] in 800430F8 and pad[2]
  *   in 80043020.
  * There are no VERSION conditionals.
+ *
+ * 2026-11-13: 6 `#line`s that turned out redundant were removed (each tried away
+ * against the sha1 in us, eu and jp). Where the notes above name a `#line`,
+ * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
 
@@ -751,7 +755,7 @@ void func_ovl0F_01_800452CC(s32 idx, s32 flag) {
 
     func_ovl0F_01_800452BC();
     func_ovl0F_01_800452C4(idx);
-    if (!idx) {
+    if (!idx) { /* fake: a dead test, for the register allocation or schedule */
     }
     m = &D_ovl0F_01_800481D4[idx];
     m->unkC = 0;
@@ -1343,7 +1347,6 @@ void func_ovl0F_01_80043628(void) {
 static void func_ovl0F_01_80043588(UnkStruct_ovl0F_01_80048264 *p, s32 count) {
     s32 i;
 
-#line 1 "panels.c"
     for (i = 0; i < count; i++) {
         *p->unk0 = func_ovl0F_01_80047860(p->unk4, p->unk24 | 0x01000000, 0x30, p->unk8);
         func_ovl0F_01_80043504(p);
@@ -1354,7 +1357,6 @@ static void func_ovl0F_01_80043588(UnkStruct_ovl0F_01_80048264 *p, s32 count) {
     }
     func_ovl0F_01_800434F4();
 }
-#line 1301 "1E2D80.c"
 
 static void func_ovl0F_01_800434FC(void) {
 }
@@ -1514,7 +1516,6 @@ static void func_ovl0F_01_80043030(s32 n, char *msg) {
 }
 
 /* case 1's: the models' tasks end */
-#line 1 "panels.c"
 static void func_ovl0F_01_80043018(s32 count, UnkStruct_ovl0F_01_80048264 *p) {
     s32 i;
 
@@ -1523,7 +1524,6 @@ static void func_ovl0F_01_80043018(s32 count, UnkStruct_ovl0F_01_80048264 *p) {
         p++;
     }
 }
-#line 1457 "1E2D80.c"
 
 /* case 2's: the stage's tables */
 #line 1 "panels.c"
@@ -1560,7 +1560,6 @@ void func_ovl0F_01_80045FB8(s32 arg0) {
             D_ovl0F_01_8004841C = func_ovl0F_01_80047988(func_ovl0F_01_80043B0C, NULL, 0, 0, 0x110);
 #line 1 "panels.c"
             break;
-#line 1493 "1E2D80.c"
         case 16:
             func_ovl0F_01_80046FF0(0x18, 3, 0x10);
             break;
@@ -1705,7 +1704,6 @@ void func_ovl0F_01_80045FB8(s32 arg0) {
             func_ovl0F_01_80047080(1);
             break;
         case 3:
-#line 1 "panels.c"
             D_ovl0F_01_80048434 = 1;
 #line 1654 "1E2D80.c"
             D_ovl0F_01_8004876C = func_ovl0F_01_80047018();

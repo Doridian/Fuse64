@@ -42,6 +42,10 @@
  * (80046B18, 80046B24, 80046B38) in place: unreferenced, it would be common.
  * The `#line N "205890.c"` lines are the physical line numbers (the file
  * named the same whatever path it is compiled by).
+ *
+ * 2026-11-13: 2 `#line`s that turned out redundant were removed (each tried away
+ * against the sha1 in us, eu and jp). Where the notes above name a `#line`,
+ * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
 #line 56 "205890.c"
@@ -379,7 +383,6 @@ static void func_ovl0F_10_80044B84(void) {
                            D_ovl0F_10_800468C0.unk18);
     func_ovl0F_10_80046490(0x8E);
 }
-#line 391 "205890.c"
 
 /* .data after func_ovl0F_10_80044B7C's static */
 s32 D_ovl0F_10_800466C8 = 0;
@@ -450,7 +453,7 @@ void func_ovl0F_10_80044AD4(void) {
 }
 
 void func_ovl0F_10_800448A0(void) {
-    s32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 k32768;
     f32 x;
     f32 y;
     f32 z;
@@ -459,6 +462,7 @@ void func_ovl0F_10_800448A0(void) {
     f32 rz;
     s32 i;
 
+    k32768 = 32768.0f;
     x = 2898.7f;
     y = 3582.5f;
     z = 1940.3f;
@@ -468,13 +472,13 @@ void func_ovl0F_10_800448A0(void) {
     for (i = 0; i < 300; i++) {
         x += -2.7783334f;
         z += -1.1396668f;
-        func_ovl0F_10_80045BF8(x, 32768.0f, z);
+        func_ovl0F_10_80045BF8(x, k32768, z);
         func_ovl0F_10_80045F50();
     }
     func_ovl0F_10_80045F28(110);
     for (i = 0; i < 500; i++) {
         rx += 0.18460001f;
-        func_ovl0F_10_80045C18(rx, 32768.0f, 32768.0f);
+        func_ovl0F_10_80045C18(rx, k32768, k32768);
         func_ovl0F_10_80045F50();
     }
     func_ovl0F_10_80045F28(120);
@@ -485,7 +489,7 @@ void func_ovl0F_10_800448A0(void) {
         ry += 0.14222221f;
         rz += 14.183333f;
         func_ovl0F_10_80045BF8(x, y, z);
-        func_ovl0F_10_80045C18(32768.0f, ry, rz);
+        func_ovl0F_10_80045C18(k32768, ry, rz);
         func_ovl0F_10_80045F50();
     }
     func_ovl0F_10_80045F28(360);
@@ -761,7 +765,6 @@ void func_ovl0F_10_80043344(f32 arg0) {
 }
 
 /* case 2's: the models of D_ovl0F_10_80046AE0[1] */
-#line 1 "panels.c"
 static void func_ovl0F_10_80043408(void) {
     func_ovl0F_10_80045AB0(D_ovl0F_10_80046AE0[1]->unk40, 0x61);
     D_ovl0F_10_80046AE0[1]->unk40->unk14 += 3200.0f;

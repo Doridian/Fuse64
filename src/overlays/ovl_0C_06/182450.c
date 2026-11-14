@@ -514,53 +514,23 @@ static void func_ovl0C_06_80047824(void) {
 
 
 
-void func_ovl0C_06_8004766C(void) {
-    f32 scale28;
-    f32 scale2C;
-    UnkStructA *src;
-    UnkStructA *obj;
-    s32 i;
-    s32 count;
+/* the names src/overlays/common/core_0c.h's code has here */
+#define CORE0C_80048694 func_ovl0C_06_80047490
+#define CORE0C_80048754 func_ovl0C_06_80047550
+#define CORE0C_80048798 func_ovl0C_06_80047594
+#define CORE0C_80048870 func_ovl0C_06_8004766C
+#define CORE0C_80048E40 func_ovl0C_06_80047C40
+#define CORE0C_800497C0 func_ovl0C_06_800485C0
+#define CORE0C_800497D0 func_ovl0C_06_800485D0
+#define CORE0C_800497E0 func_ovl0C_06_800485E0
+#define CORE0C_80049908 func_ovl0C_06_80048708
+#define CORE0C_80049918 func_ovl0C_06_80048718
 
-    src = func_ovl0C_06_80048730();
-    func_ovl0C_06_80048CB0(0xB3, src->unk40->unk10, src->unk40->unk14, src->unk40->unk18);
-    obj = func_ovl0C_06_800485E0(0x183, 0x11080000, 0xD0, 0);
-    obj->unk40->unk10 = src->unk40->unk10;
-    obj->unk40->unk14 = src->unk40->unk14;
-    obj->unk40->unk18 = src->unk40->unk18;
-    scale28 = 2.0f;
-    scale2C = 4.0f;
-    count = 20;
-    for (i = 0; i < count; i++) {
-        func_ovl0C_06_80047594(obj, i, count, scale28, scale2C);
-        func_ovl0C_06_80048750();
-    }
-    func_ovl0C_06_800485D0(obj);
-    func_ovl0C_06_80048718();
-}
+#define CORE0C_80049930 func_ovl0C_06_80048730
+#define CORE0C_80049950 func_ovl0C_06_80048750
+#define CORE0C_80049AB0 func_ovl0C_06_800488B0
 
-void func_ovl0C_06_80047594(UnkStructA *arg0, s32 arg1, s32 arg2, f32 arg3, f32 arg4) {
-    arg0->unk40->unk28 = func_ovl0C_06_800488B0((f32) arg1 / (f32) arg2 * 90.0f) * arg3;
-    arg0->unk40->unk2C = func_ovl0C_06_800488B0((f32) arg1 / (f32) arg2 * 180.0f) * arg4;
-    arg0->unk40->unk36 = (s32) ((1.0f - (f32) arg1 / (f32) arg2) * 63.0f) + 0x80;
-}
-
-void func_ovl0C_06_80047550(UnkStructA *arg0) {
-    func_ovl0C_06_800485C0(arg0, 0x01000000);
-    func_ovl0C_06_80048708(func_ovl0C_06_8004766C, arg0, 0, 0, 0x150);
-}
-
-void func_ovl0C_06_80047490(UnkStructA *arg0) {
-    func_ovl0C_06_80048728(10);
-    func_ovl0C_06_80047C40(arg0->unk40, &arg0->unk40->unk1C, &arg0->unk40->unk20);
-    arg0->unk40->unk28 *= 2.0f;
-    arg0->unk40->unk30 *= 2.0f;
-    arg0->unk40->unk2C *= 0.1f;
-    arg0->unk40->unk14 += 20.0f;
-    arg0->unk6C = 0.0f;
-    arg0->unk70 = 0.0f;
-    func_ovl0C_06_80048728(60);
-}
+#include "overlays/common/core_0c.h"
 
 /* a lift: rises while something stands on it, falls back otherwise */
 void func_ovl0C_06_80046FFC(void) {

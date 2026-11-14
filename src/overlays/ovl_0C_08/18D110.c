@@ -198,54 +198,21 @@ void func_ovl0C_08_80043E38(void) {
 #define CORE_ZJ_2B04 func_ovl0C_08_800452C0
 #include "overlays/common/core.h"
 
-void func_ovl0C_08_80043C80(void) {
-    f32 scale28;
-    f32 scale2C;
-    UnkStructA *src;
-    UnkStructA *obj;
-    s32 i;
-    s32 count;
-
-    src = func_ovl0C_08_80044D40();
-    func_ovl0C_08_800452C0(0xB3, src->unk40->unk10, src->unk40->unk14, src->unk40->unk18);
-    obj = func_ovl0C_08_80044BF0(0x183, 0x11080000, 0xD0, 0);
-    obj->unk40->unk10 = src->unk40->unk10;
-    obj->unk40->unk14 = src->unk40->unk14;
-    obj->unk40->unk18 = src->unk40->unk18;
-    scale28 = 2.0f;
-    scale2C = 4.0f;
-    count = 20;
-    for (i = 0; i < count; i++) {
-        func_ovl0C_08_80043BA8(obj, i, count, scale28, scale2C);
-        func_ovl0C_08_80044D60();
-    }
-    func_ovl0C_08_80044BE0(obj);
-    func_ovl0C_08_80044D28();
-}
-
-void func_ovl0C_08_80043BA8(UnkStructA *arg0, s32 arg1, s32 arg2, f32 arg3, f32 arg4) {
-    /* the ratio is spelled out three times: with a variable for it, IDO
-     * spills it to another stack slot */
-    arg0->unk40->unk28 = func_ovl0C_08_80044EC0((f32) arg1 / (f32) arg2 * 90.0f) * arg3;
-    arg0->unk40->unk2C = func_ovl0C_08_80044EC0((f32) arg1 / (f32) arg2 * 180.0f) * arg4;
-    arg0->unk40->unk36 = (s32) ((1.0f - (f32) arg1 / (f32) arg2) * 63.0f) + 0x80;
-}
-
-void func_ovl0C_08_80043AA4(UnkStructA *arg0) {
-    func_ovl0C_08_80044D38(10);
-    func_ovl0C_08_80044250(arg0->unk40, &arg0->unk40->unk1C, &arg0->unk40->unk20);
-    arg0->unk40->unk28 *= 2.0f;
-    arg0->unk40->unk30 *= 2.0f;
-    arg0->unk40->unk2C *= 0.1f;
-    arg0->unk40->unk14 += 20.0f;
-    arg0->unk6C = 0.0f;
-    arg0->unk70 = 0.0f;
-    func_ovl0C_08_80044D38(60);
-}
-void func_ovl0C_08_80043B64(UnkStructA *arg0) {
-    func_ovl0C_08_80044BD0(arg0, 0x01000000);
-    func_ovl0C_08_80044D18(func_ovl0C_08_80043C80, arg0, 0, 0, 0x150);
-}
+/* the names src/overlays/common/core_0c.h's code has here */
+#define CORE0C_80048694 func_ovl0C_08_80043AA4
+#define CORE0C_80048754 func_ovl0C_08_80043B64
+#define CORE0C_80048798 func_ovl0C_08_80043BA8
+#define CORE0C_80048870 func_ovl0C_08_80043C80
+#define CORE0C_80048E40 func_ovl0C_08_80044250
+#define CORE0C_800497C0 func_ovl0C_08_80044BD0
+#define CORE0C_800497D0 func_ovl0C_08_80044BE0
+#define CORE0C_800497E0 func_ovl0C_08_80044BF0
+#define CORE0C_80049908 func_ovl0C_08_80044D18
+#define CORE0C_80049918 func_ovl0C_08_80044D28
+#define CORE0C_80049930 func_ovl0C_08_80044D40
+#define CORE0C_80049950 func_ovl0C_08_80044D60
+#define CORE0C_80049AB0 func_ovl0C_08_80044EC0
+#include "overlays/common/core_0c.h"
 
 void func_ovl0C_08_80043A20(void) {
     UnkStructA *obj;

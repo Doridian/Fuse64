@@ -396,53 +396,21 @@ static void func_ovl0C_07_80045EA4(void) {
 #define CORE_ZJ_2B04 func_ovl0C_07_80047330
 #include "overlays/common/core.h"
 
-void func_ovl0C_07_80045CEC(void) {
-    f32 scale28;
-    f32 scale2C;
-    UnkStructA *src;
-    UnkStructA *obj;
-    s32 i;
-    s32 count;
-
-    src = func_ovl0C_07_80046DB0();
-    func_ovl0C_07_80047330(0xB3, src->unk40->unk10, src->unk40->unk14, src->unk40->unk18);
-    obj = func_ovl0C_07_80046C60(0x183, 0x11080000, 0xD0, 0);
-    obj->unk40->unk10 = src->unk40->unk10;
-    obj->unk40->unk14 = src->unk40->unk14;
-    obj->unk40->unk18 = src->unk40->unk18;
-    scale28 = 2.0f;
-    scale2C = 4.0f;
-    count = 20;
-    for (i = 0; i < count; i++) {
-        func_ovl0C_07_80045C14(obj, i, count, scale28, scale2C);
-        func_ovl0C_07_80046DD0();
-    }
-    func_ovl0C_07_80046C50(obj);
-    func_ovl0C_07_80046D98();
-}
-
-void func_ovl0C_07_80045C14(UnkStructA *arg0, s32 arg1, s32 arg2, f32 arg3, f32 arg4) {
-    arg0->unk40->unk28 = func_ovl0C_07_80046F30((f32) arg1 / (f32) arg2 * 90.0f) * arg3;
-    arg0->unk40->unk2C = func_ovl0C_07_80046F30((f32) arg1 / (f32) arg2 * 180.0f) * arg4;
-    arg0->unk40->unk36 = (s32) ((1.0f - (f32) arg1 / (f32) arg2) * 63.0f) + 0x80;
-}
-
-void func_ovl0C_07_80045BD0(UnkStructA *arg0) {
-    func_ovl0C_07_80046C40(arg0, 0x01000000);
-    func_ovl0C_07_80046D88(func_ovl0C_07_80045CEC, arg0, 0, 0, 0x150);
-}
-
-void func_ovl0C_07_80045B10(UnkStructA *arg0) {
-    func_ovl0C_07_80046DA8(10);
-    func_ovl0C_07_800462C0(arg0->unk40, &arg0->unk40->unk1C, &arg0->unk40->unk20);
-    arg0->unk40->unk28 *= 2.0f;
-    arg0->unk40->unk30 *= 2.0f;
-    arg0->unk40->unk2C *= 0.1f;
-    arg0->unk40->unk14 += 20.0f;
-    arg0->unk6C = 0.0f;
-    arg0->unk70 = 0.0f;
-    func_ovl0C_07_80046DA8(60);
-}
+/* the names src/overlays/common/core_0c.h's code has here */
+#define CORE0C_80048694 func_ovl0C_07_80045B10
+#define CORE0C_80048754 func_ovl0C_07_80045BD0
+#define CORE0C_80048798 func_ovl0C_07_80045C14
+#define CORE0C_80048870 func_ovl0C_07_80045CEC
+#define CORE0C_80048E40 func_ovl0C_07_800462C0
+#define CORE0C_800497C0 func_ovl0C_07_80046C40
+#define CORE0C_800497D0 func_ovl0C_07_80046C50
+#define CORE0C_800497E0 func_ovl0C_07_80046C60
+#define CORE0C_80049908 func_ovl0C_07_80046D88
+#define CORE0C_80049918 func_ovl0C_07_80046D98
+#define CORE0C_80049930 func_ovl0C_07_80046DB0
+#define CORE0C_80049950 func_ovl0C_07_80046DD0
+#define CORE0C_80049AB0 func_ovl0C_07_80046F30
+#include "overlays/common/core_0c.h"
 
 /* a lift: rises while something stands on it, falls back otherwise */
 void func_ovl0C_07_80045694(void) {

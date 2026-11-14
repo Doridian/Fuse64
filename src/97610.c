@@ -1,5 +1,11 @@
 #include "common.h"
 
+/* The original's debug output, compiled out of the ROM (C89: one
+ * parenthesised argument list). The tests around the calls stay in the
+ * code (uopt keeps an emptied if's load and branch here). The messages are
+ * placeholders: only the tests are known. */
+#define DEBUG_PRINT(args)
+
 typedef struct {
     /* 0x00 */ u8 unk0[0x8];
     /* 0x08 */ s32 unk8;
@@ -283,11 +289,15 @@ s32 func_8027E8EC(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
     node->unk2 = 0;
     node->unk14 = D_802B0190[kind].unk2;
     node->unkC = func_8022A6C4(model, 0x40);
-    if (node->unkC == NULL) {} /* fake: dead read */
+    if (node->unkC == NULL) {
+        DEBUG_PRINT(("node->unkC == NULL\n"));
+    }
     node->unkC->unkC = func_8027CF64(arg0);
     if (D_802B01B8[kind].unk0 != 0) {
         node->unk10 = func_8022A6C4(model2, 0x60);
-        if (node->unk10 == NULL) {} /* fake: dead read */
+        if (node->unk10 == NULL) {
+            DEBUG_PRINT(("node->unk10 == NULL\n"));
+        }
         node->unk10->unkC = func_8027E5F8(arg0);
     } else {
         node->unk10 = NULL;
@@ -310,19 +320,33 @@ void func_8027E6C4(void) {
         D_802B0188 = 1;
         D_802B018C = 300;
         D_802B0180 = func_80238A10(func_8027DCB8, 0, 0, 0, 0x30);
-        if (D_802B0180 == 0) {} /* fake: dead read */
+        if (D_802B0180 == 0) {
+            DEBUG_PRINT(("D_802B0180 == 0\n"));
+        }
         D_802B01D8 = (D_802B0190[0].unk0 == 0) ? NULL : func_8026CE28(D_802B0190[0].unk0);
-        if (D_802B01D8 == NULL) {} /* fake: dead read */
+        if (D_802B01D8 == NULL) {
+            DEBUG_PRINT(("D_802B01D8 == NULL\n"));
+        }
         D_802B01DC = (D_802B0190[1].unk0 == 0) ? NULL : func_8026CE28(D_802B0190[1].unk0);
-        if (D_802B01DC == NULL) {} /* fake: dead read */
+        if (D_802B01DC == NULL) {
+            DEBUG_PRINT(("D_802B01DC == NULL\n"));
+        }
         D_802B01E0 = (D_802B0190[2].unk0 == 0) ? NULL : func_8026CE28(D_802B0190[2].unk0);
-        if (D_802B01E0 == NULL) {} /* fake: dead read */
+        if (D_802B01E0 == NULL) {
+            DEBUG_PRINT(("D_802B01E0 == NULL\n"));
+        }
         D_802B01E4 = (D_802B01B8[0].unk0 == 0) ? NULL : func_8026CE28(D_802B01B8[0].unk0);
-        if (D_802B01E4 == NULL) {} /* fake: dead read */
+        if (D_802B01E4 == NULL) {
+            DEBUG_PRINT(("D_802B01E4 == NULL\n"));
+        }
         D_802B01E8 = (D_802B01B8[1].unk0 == 0) ? NULL : func_8026CE28(D_802B01B8[1].unk0);
-        if (D_802B01E8 == NULL) {} /* fake: dead read */
+        if (D_802B01E8 == NULL) {
+            DEBUG_PRINT(("D_802B01E8 == NULL\n"));
+        }
         D_802B01EC = (D_802B01B8[2].unk0 == 0) ? NULL : func_8026CE28(D_802B01B8[2].unk0);
-        if (D_802B01EC == NULL) {} /* fake: dead read */
+        if (D_802B01EC == NULL) {
+            DEBUG_PRINT(("D_802B01EC == NULL\n"));
+        }
         D_802B01D0 = func_80231274(-1, 0, 0xD0, 0);
         node = D_80090440;
         for (i = 0; i < 50; i++, node++) {
@@ -386,7 +410,9 @@ s16 func_8027E5F8(s32 arg0) {
             break;
         default:
             ret = 0;
-            if (kind) {} /* fake: dead read */
+            if (kind) {
+                DEBUG_PRINT(("kind\n"));
+            }
             break;
     }
     return ret;
@@ -535,7 +561,9 @@ s16 func_8027DF40(s32 arg0) {
             break;
         default:
             ret = 0;
-            if (kind) {} /* fake: dead read */
+            if (kind) {
+                DEBUG_PRINT(("kind\n"));
+            }
             break;
     }
     return ret;
@@ -582,8 +610,12 @@ void func_8027DCB8(void) {
         if ((D_802AC5D0 & 4) && D_802B018A == 0 && func_8027D10C() == 0) {
             D_802B018A = 1;
             D_802B0184 = func_80238A10(func_8027DFAC, 0, 0, 0, 0x110);
-            if (D_802B0184 == 0) {} /* fake: dead read */
-            if (D_802B0188) {} /* fake: dead read */
+            if (D_802B0184 == 0) {
+                DEBUG_PRINT(("D_802B0184 == 0\n"));
+            }
+            if (D_802B0188) {
+                DEBUG_PRINT(("D_802B0188\n"));
+            }
         }
         func_8027CFC0();
         func_80239094();
@@ -882,7 +914,9 @@ s16 func_8027CF64(s32 arg0) {
             break;
         default:
             ret = 0;
-            if (kind) {} /* fake: dead read */
+            if (kind) {
+                DEBUG_PRINT(("kind\n"));
+            }
             break;
     }
     return ret;

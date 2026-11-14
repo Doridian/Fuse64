@@ -30,6 +30,15 @@ static inline unsigned int port_get_be32(const void *p) {
     const unsigned char *b = (const unsigned char *)p;
     return ((unsigned int)b[0] << 24) | ((unsigned int)b[1] << 16) | ((unsigned int)b[2] << 8) | b[3];
 }
+static inline unsigned short port_get_be16(const void *p) {
+    const unsigned char *b = (const unsigned char *)p;
+    return (unsigned short)((b[0] << 8) | b[1]);
+}
+static inline void port_set_be16(void *p, unsigned int v) {
+    unsigned char *b = (unsigned char *)p;
+    b[0] = v >> 8;
+    b[1] = v;
+}
 static inline void port_set_be32(void *p, unsigned int v) {
     unsigned char *b = (unsigned char *)p;
     b[0] = v >> 24;

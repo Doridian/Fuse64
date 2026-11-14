@@ -234,13 +234,13 @@ s32 func_80292418(UnkStruct_8029279C_3C *arg0, s32 arg1, s32 arg2, s32 arg3, s32
         src = D_80090080[slot].unk4;
         dst = (u16 *) (entry->unk8 + (u8 *) arg0);
         for (i = 0; i < entry->unk4; i++) {
-            r = *src >> 11;
-            g = (*src >> 6) & 0x1F;
-            b = (*src >> 1) & 0x1F;
+            r = PORT_BE16_GET(*src, src) >> 11; /* (a palette's colours: the RDP's, big-endian) */
+            g = (PORT_BE16_GET(*src, src) >> 6) & 0x1F;
+            b = (PORT_BE16_GET(*src, src) >> 1) & 0x1F;
             r = (s32) ROUND((arg2 - r) * arg5) + r;
             g = (s32) ROUND((arg3 - g) * arg5) + g;
             b = (s32) ROUND((arg4 - b) * arg5) + b;
-            *dst = (*src & 1) + (r << 11) + (g << 6) + (b << 1);
+            PORT_BE16_SET(*dst, dst, (PORT_BE16_GET(*src, src) & 1) + (r << 11) + (g << 6) + (b << 1));
             src++;
             dst++;
         }

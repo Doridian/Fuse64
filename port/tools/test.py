@@ -35,6 +35,8 @@ SCENARIOS = {
     "legal": (300, None),
     "menus": (3000, "tools/inputs/menus.txt"),
     "battle": (6000, "tools/inputs/battle.{v}.txt"),
+    # (not by default: the opening, the world select and the first stage)
+    "story": (12000, "tools/inputs/menus.txt"),
 }
 DEFAULT = ["legal", "menus", "battle"]
 

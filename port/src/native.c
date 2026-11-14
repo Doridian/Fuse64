@@ -72,7 +72,9 @@ static void claim(uint32_t s, uint32_t e, int kind) {
             unit[i] = (uint8_t)kind;
 }
 
-static int is_pic(uint32_t t) { return t == 0x12 || t == 0x15 || t == 0x16 || t == 0x19 || t == 0x1A; }
+/* a picture's record (its a: the width and height, halves); a palette's (0x1A)
+   a is its colours, a word (ACA00.c's func_80292410) */
+static int is_pic(uint32_t t) { return t == 0x12 || t == 0x15 || t == 0x16 || t == 0x19; }
 
 static uint8_t dl_seen[MAX_FILE / 8];
 

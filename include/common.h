@@ -98,9 +98,13 @@ extern uintptr_t port_v0;
 #ifdef TARGET_PC
 #define PORT_BE32_GET(ido, p) ((s32)port_get_be32(p))
 #define PORT_BE32_SET(ido, p, v) port_set_be32((p), (v))
+#define PORT_BE16_GET(ido, p) ((u16)port_get_be16(p))
+#define PORT_BE16_SET(ido, p, v) port_set_be16((p), (v))
 #else
 #define PORT_BE32_GET(ido, p) (ido)
 #define PORT_BE32_SET(ido, p, v) ((ido) = (v))
+#define PORT_BE16_GET(ido, p) (ido)
+#define PORT_BE16_SET(ido, p, v) ((ido) = (v))
 #endif
 
 /* a statement of the port's alone (after a load: port_native32 and the

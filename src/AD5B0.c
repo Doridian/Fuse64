@@ -864,7 +864,7 @@ void func_802930F8(u8 *buf, s32 kind) {
     w[i++] = 0x82820000; w[i++] = 0xFB;
     w[i++] = 0;
     w[i++] = 0xFF;
-    w[i++] = 0xF0; w[i++] = 0xF0F0F03F;
+    w[i++] = 0xF0; w[i++] = 0xF0F0F03F; PORT_ONLY(port_native32(buf, i * 4)); /* (the words in the save's byte order) */
     func_8028A3D0(1);
     func_8028A3D0(12);
     func_8028A3D0(23);

@@ -3704,13 +3704,9 @@ void func_80247F90(s32 arg0) {
     Obj88 *other;
     UnkObj *self;
     f32 vec[3];
-    UnkStruct_800AEDF0 *p;
-
-    p = &D_800AEDF0[arg0];
-    if (p->unk28) {} /* fake: dead read: obj kept (see the header, 8024C334's) */
-    self = p->unk28;
-    other = (Obj88 *)func_802443F4(p->unkA8);
-    vec[2] = p->unkC0 + 100.0f;
+    self = (UnkObj *)func_802443F4(arg0);
+    other = (Obj88 *)func_802443F4(D_800AEDF0[arg0].unkA8);
+    vec[2] = D_800AEDF0[arg0].unkC0 + 100.0f;
     vec[1] = 60.0f;
     vec[0] = 180.0f;
     func_8022FEAC(vec, other->unk4C);
@@ -3725,12 +3721,12 @@ void func_80247F90(s32 arg0) {
     }
     func_80243D90(arg0, 0x2000, 0);
     if (func_80244BA4(arg0, 0x80)) {
-        func_802444B8(p->unkA8, 0xC);
+        func_802444B8(D_800AEDF0[arg0].unkA8, 0xC);
     } else {
-        func_802444B8(p->unkA8, 0);
+        func_802444B8(D_800AEDF0[arg0].unkA8, 0);
     }
     other->unk40->unk14 += 5.0f;
-    func_80247D74(p->unkA8, 22.5f, 8.0f, 1, self);
+    func_80247D74(D_800AEDF0[arg0].unkA8, 22.5f, 8.0f, 1, self);
     other->unk70 = 1.6333334f;
     func_80244354(arg0, 0x21C0, 0);
 }

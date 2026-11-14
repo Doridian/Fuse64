@@ -2593,9 +2593,7 @@ void func_80272494(Obj8E *arg0, Obj8E *arg1, Ctl87 *arg2) {
     s32 res;
     f32 a[3];
     f32 b[3];
-    s32 t1;
-    s16 t2;
-    f32 ang;
+    f32 ang[3];
 
     a[0] = arg0->unk40->x;
     a[1] = 0.0; /* doubles: a 0.0f would share ABSF's register */
@@ -2604,12 +2602,11 @@ void func_80272494(Obj8E *arg0, Obj8E *arg1, Ctl87 *arg2) {
     b[1] = 0.0;
     b[2] = arg1->unk40->z;
     if (arg1->unk8 & 0x8000) {
-        t2 = func_8027241C(arg2->unk14);
-        arg2->unk14 = t2;
+        arg2->unk14 = func_8027241C(arg2->unk14);
     }
     if (arg2->unk14 == 9) {
-        func_8022FF58(b, a, &ang);
-        arg2->unk14 = func_802704F8(ang);
+        func_8022FF58(b, a, ang);
+        arg2->unk14 = func_802704F8(ang[0]);
     }
     dir = arg2->unk14;
     arg2->unk2C = arg2->unk1C;
@@ -2630,8 +2627,7 @@ void func_80272494(Obj8E *arg0, Obj8E *arg1, Ctl87 *arg2) {
         if (d <= r) {
             arg2->unk1C = d;
             arg2->unk14 = dir;
-            t1 = func_802721D4(arg0, (s32) arg1, arg2);
-            if (t1 == 1) {
+            if (func_802721D4(arg0, (s32) arg1, arg2) == 1) {
                 return;
             }
         }
@@ -2880,9 +2876,7 @@ void *func_802716F8(s16 arg0) {
     s32 t2;
     f32 a[3];
     f32 b[3];
-    s32 t3;
-    u16 t4;
-    f32 ang;
+    f32 ang[3];
     f32 t5;
     f32 pr;
     f32 t6;
@@ -2897,8 +2891,7 @@ void *func_802716F8(s16 arg0) {
     func_802714C4();
     if (1) {} /* fake: without it arg0 takes a third saved register */
     pl = func_802443F4(arg0);
-    t3 = func_80271540(arg0);
-    obj = (Obj8E *) t3;
+    obj = (Obj8E *) func_80271540(arg0);
     if (obj != NULL) {
         z = obj->unk40->z;
         t8 = obj->unk40->x;
@@ -2907,8 +2900,7 @@ void *func_802716F8(s16 arg0) {
         a[0] = info.i[0];
         a[1] = info.i[1];
         a[2] = info.i[2];
-        t4 = func_8026D7D8(a[0], a[1], a[2]);
-        t = t4 & 0xF;
+        t = func_8026D7D8(a[0], a[1], a[2]) & 0xF;
         if (t == 3 || t == 4 || t == 5 || t == 6) {
             return obj;
         }
@@ -2923,10 +2915,10 @@ void *func_802716F8(s16 arg0) {
         t5 = func_80270F44((u8 *) obj);
         r = (t5 + pr) * 1.2f;
         if (dist < r) {
-            func_8022FF58(a, b, &ang);
-            t6 = func_80234434(ang);
+            func_8022FF58(a, b, ang);
+            t6 = func_80234434(ang[0]);
             dx = t6 * r;
-            t7 = func_80234408(ang);
+            t7 = func_80234408(ang[0]);
             dz = t7 * r;
             OBJ_DD8->unk40->x = pl->unk40->x + dx;
             OBJ_DD8->unk40->y = obj->unk40->y;

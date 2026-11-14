@@ -69,7 +69,7 @@ void func_8027F658(s32 (*arg0)(u8, u16), UnkStruct_8027F0C4 *arg1, u16 arg2, u16
     D_802A15C0.unkC = arg0;
     D_802A15C0.unk14 = arg4;
     D_802A15D8 = 0;
-    func_8027F4B0(arg2);
+    PORT_V0(func_8027F4B0(arg2));
 }
 
 void func_8027F64C(s32 arg0) {
@@ -249,7 +249,7 @@ UnkStruct_8027EFD8 *func_8027EFC8(void) {
 }
 
 void func_8027EFA8(void) {
-    func_8027EDC8(0);
+    PORT_V0(func_8027EDC8(0));
 }
 
 s32 func_8027EDC8(s32 arg0) {

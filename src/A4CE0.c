@@ -209,7 +209,7 @@ void func_8028A81C(s32 kind, f32 x, f32 y, f32 z, s32 arg4) {
 }
 
 void func_8028A7CC(s32 kind, f32 *pos, s32 arg2) {
-    func_8028A5C4(func_8028A690(kind), kind, pos, arg2, 0);
+    PORT_V0(func_8028A5C4(func_8028A690(kind), kind, pos, arg2, 0));
 }
 
 void func_8028A584(void) {

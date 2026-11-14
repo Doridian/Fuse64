@@ -25,4 +25,11 @@ void *port_overlay_load(int bank, int entry);
 /* 13F0's segment loader: the entry of ROM segment seg (main_code's, 2) */
 void *port_segment_entry(int seg);
 
+/* Byte order (port/src/native.c): ROM bytes that arrived, put in the
+   host's order: n bytes of 32-bit or 16-bit data, and a file of the asset
+   cache by what it is.  The identity on a big-endian host. */
+void port_native32(void *p, unsigned int n);
+void port_native16(void *p, unsigned int n);
+void port_asset_native(int id, void *p, int size);
+
 #endif

@@ -121,6 +121,10 @@ void *func_8026CE28(s32 arg0) {
         func_8022616C((u8 *) &size, 4, 1, file);
         D_800A7F30[i].unk4 = malloc(size);
         func_80292BD0(file, D_800A7F30[i].unk4, size);
+#ifdef TARGET_PC
+        /* the file in the host's byte order, by what it is */
+        port_asset_native(arg0, D_800A7F30[i].unk4, size);
+#endif
         func_80226368(file);
     }
     D_800A7F30[i].unkC++;

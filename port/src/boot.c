@@ -45,6 +45,8 @@ __asm__(".globl " PORT_ULP "zerojump_ROM_START\n.set " PORT_ULP "zerojump_ROM_ST
 void func_80297D00(void) { }
 void func_80297D20(void) { }
 
+uintptr_t port_v0;
+
 /* a ZeroJump stub whose id no table has (0x1F03, ovl_13_01's
    func_ovl13_01_8004BA40): the N64 would print "ZeroJump Error" and stop */
 void port_zerojump_unset(int id, const char *name) {

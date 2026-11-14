@@ -255,6 +255,8 @@ void port_task_jump(int *buf, int v) {
                 host_fatal("tasks: no memory for a stack");
         }
         c->entry = (void (*)(void))(uintptr_t)(uint32_t)buf[3];
+        if (host_verbose > 1)
+            host_log("task %p: entry %p\n", (void *)buf, (void *)c->entry);
         c->live = 1;
         coro_start(c);
         b->owner = c;

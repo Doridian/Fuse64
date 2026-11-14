@@ -1272,7 +1272,7 @@ void func_802312AC(u8 *arg0) {
 }
 
 void func_80231274(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
-    func_80230CB4(arg0, -1, arg1, arg2, (void *) arg3);
+    PORT_V0(func_80230CB4(arg0, -1, arg1, arg2, (void *) arg3));
 }
 
 void func_80231244(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
@@ -1323,7 +1323,7 @@ void *func_802310F4(s32 arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
 }
 
 void func_802310BC(s32 arg0, s32 arg1, u8 *arg2) {
-    func_80230CB4(arg0, -1, arg1, M2C_FIELD(arg2, s32 *, 4) + 1, arg2);
+    PORT_V0(func_80230CB4(arg0, -1, arg1, M2C_FIELD(arg2, s32 *, 4) + 1, arg2));
 }
 
 void *func_80231048(s32 arg0, u8 *arg1, s32 arg2, f32 arg3, f32 arg4, f32 arg5) {
@@ -1375,7 +1375,7 @@ void *func_80230E9C(u8 *arg0) {
 }
 
 void func_80230E6C(s32 arg0, s32 arg1) {
-    func_80230CB4(arg0, -1, 0, 0xD0, (void *) arg1);
+    PORT_V0(func_80230CB4(arg0, -1, 0, 0xD0, (void *) arg1));
 }
 
 void *func_80230CB4(s32 arg0, s32 arg1, s32 arg2, s32 arg3, u8 *arg4) {

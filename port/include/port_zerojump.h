@@ -8,4 +8,6 @@ void port_zerojump_unset(int id, const char *name);
 /* libultra's sprintf, as the stubs reach it (port/src/libc.c) */
 int port_vsprintf(char *dst, const char *fmt, va_list ap);
 int port_sprintf(char *dst, const char *fmt, ...);
+/* what a void function left in $v0 (PORT_V0, include/common.h) */
+extern uintptr_t port_v0;
 #endif

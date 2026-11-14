@@ -213,7 +213,7 @@ void func_802390B4(void) {
 }
 
 void func_80239094(void) {
-    func_8023903C(1);
+    PORT_V0(func_8023903C(1));
 }
 
 s32 func_8023903C(u32 arg0) {

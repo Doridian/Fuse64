@@ -82,6 +82,8 @@ const uint8_t *host_rom(void) { return rom; }
 
 void host_rom_read(void *dst, uint32_t addr, uint32_t len) {
     addr &= 0x0FFFFFFF;
+    if (host_verbose > 2)
+        host_log("rom %06X %X -> %p\n", (unsigned)addr, (unsigned)len, dst);
     if (addr >= rom_size) {
         memset(dst, 0, len);
         return;
@@ -270,6 +272,10 @@ int main(int argc, char **argv) {
         char path[1024];
         snprintf(path, sizeof path, "%s_%05u.bmp", host_screenshot_prefix, host_vi_count);
         host_frame_shot(path);
+    }
+    if (host_verbose) {
+        host_log("%u retraces, %llu triangles\n", host_vi_count, (unsigned long long)host_gfx_tris());
+        host_threads_dump();
     }
     host_audio_shutdown();
     host_video_shutdown();

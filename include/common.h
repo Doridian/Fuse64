@@ -33,6 +33,19 @@
 typedef u32 uintptr_t;
 #endif
 
+/*
+ * A void function whose callers use what it leaves in $v0 (the value of
+ * its last call, which IDO's code doesn't touch after it): the port's
+ * ZeroJump stubs give them port_v0, which PORT_V0 sets (port/tools/
+ * gen_zerojump.py).  For IDO it is the expression as it is.
+ */
+#ifdef TARGET_PC
+extern uintptr_t port_v0;
+#define PORT_V0(x) (port_v0 = (uintptr_t)(x))
+#else
+#define PORT_V0(x) (x)
+#endif
+
 #include "macros.h"
 #include "structs.h"
 #include "functions.h"

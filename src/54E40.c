@@ -681,7 +681,7 @@ void func_802437E0() {
 }
 
 void func_802437C0() {
-    func_802399AC(0);
+    PORT_V0(func_802399AC(0));
 }
 
 s32 func_80243798(s32 arg0) {

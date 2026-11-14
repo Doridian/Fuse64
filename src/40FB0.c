@@ -69,9 +69,17 @@ void func_8022691C(s32 arg0) {
     }
 }
 
+#ifdef TARGET_PC
+/* The overlay's main function takes the message its callers (54E40.c)
+ * pass here: IDO leaves it in $a0 for the call. */
+void func_802268F4(s32 arg0) {
+    ((void (*)(s32)) D_802A532C)(arg0);
+}
+#else
 void func_802268F4(void) {
     ((void (*)(void)) D_802A532C)();
 }
+#endif
 
 void func_80226860(void) {
     func_80297D30(11, D_8029F5D0);

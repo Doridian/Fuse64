@@ -186,7 +186,7 @@ void func_8026D4B0(void *arg0, s32 arg1) {
     s32 i = func_8026D428();
 
     D_800BCDE8[i].unk0 = -1;
-    D_800BCDE8[i].unk4 = func_8022A328(arg0, arg1 + 0x40, 1, 0, 0);
+    PORT_V0(D_800BCDE8[i].unk4 = func_8022A328(arg0, arg1 + 0x40, 1, 0, 0));
 }
 
 void func_8026D518(s32 arg0, s32 arg1) {
@@ -197,5 +197,5 @@ void func_8026D518(s32 arg0, s32 arg1) {
     i = func_8026D428();
 
     D_800BCDE8[i].unk0 = arg0;
-    D_800BCDE8[i].unk4 = func_8022A6C4(data, arg1 + 0x40);
+    PORT_V0(D_800BCDE8[i].unk4 = func_8022A6C4(data, arg1 + 0x40));
 }

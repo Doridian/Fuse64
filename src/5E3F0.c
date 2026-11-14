@@ -4539,7 +4539,7 @@ void func_802457D8(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     s32 id = func_80243DDC();
 
     func_8024557C(D_802ACEC8[id]);
-    func_80245430(D_802ACEC8[id], arg0, arg1, arg2, arg3);
+    PORT_V0(func_80245430(D_802ACEC8[id], arg0, arg1, arg2, arg3));
 }
 
 s32 func_802456FC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {

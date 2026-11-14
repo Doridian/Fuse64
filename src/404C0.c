@@ -79,6 +79,9 @@ void func_802266E8(s32 arg0) {
         D_8014B808[i].unk10 = 0;
     }
     func_80297EC0(&D_8014B000, 8, arg0);
+#ifdef TARGET_PC
+    port_native32(&D_8014B000, 8);     /* the archive's header: two words */
+#endif
     D_802A5300 = arg0 + 8;
     D_8014B000.unk0 += arg0;
     D_8029F5B0 = 0;
@@ -241,6 +244,15 @@ s32 func_8022616C(u8 *arg0, s32 arg1, s32 arg2, UnkStruct_80225CC0 *arg3) {
         left -= n;
     }
     arg3->unk8 += size;
+#ifdef TARGET_PC
+    /* elements of 4 or 2 bytes are the ROM's words or halves (the
+     * callers' sizes and counts) */
+    if (arg1 == 4) {
+        port_native32(arg0 - size, size);
+    } else if (arg1 == 2) {
+        port_native16(arg0 - size, size);
+    }
+#endif
     D_8029F5C0 = 0;
     return size;
 }
@@ -322,6 +334,9 @@ void func_80225E2C(s32 arg0) {
         D_802A530C = 0;
         D_802A5310 = arg0;
         func_80297EC0(D_8014B008, 0x800, (arg0 << 11) + D_802A5300);
+#ifdef TARGET_PC
+        port_native32(D_8014B008, 0x800);  /* the table's page: (offset, size) words */
+#endif
     }
 }
 

@@ -51,11 +51,21 @@ void func_8027F7E0(void) {
 void func_8027F818(s32 arg0) {
 }
 
+#ifdef TARGET_PC
+/* 54E40.c's caller passes the object on to the callback: IDO leaves it in
+ * $a0 for the call */
+void func_8027F820(void *arg0) {
+    if (D_802B0214 != NULL) {
+        ((void (*)(void *))D_802B0214)(arg0);
+    }
+}
+#else
 void func_8027F820(void) {
     if (D_802B0214 != NULL) {
         D_802B0214();
     }
 }
+#endif
 
 void func_8027F84C(void (*arg0)(void)) {
     D_802B0214 = arg0;

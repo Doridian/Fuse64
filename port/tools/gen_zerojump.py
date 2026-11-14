@@ -99,6 +99,17 @@ def main():
             tables.setdefault(cur, ents)
     for k, v in regs_0.items():
         regs.setdefault(k, set()).update(v)
+    # the void functions that leave their last call's value for their
+    # callers (PORT_V0, include/common.h): what the stub returns
+    v0_funcs = set()
+    for f in hc.game_files():
+        cur = None
+        for line in open(f, errors="replace"):
+            m = re.match(r"^[A-Za-z_][^;=]*?\b(func_\w+)\s*\([^;]*\)\s*\{\s*$", line)
+            if m:
+                cur = m.group(1)
+            if "PORT_V0(" in line and cur and not line.lstrip().startswith("#"):
+                v0_funcs.add(cur)
     called = {c[3] for c in calls}
     declared = sorted(n for n in funcs if n in stubs)
     declared = [n for n in declared if any(e[0] == "decl" for e in funcs[n])]
@@ -165,6 +176,9 @@ def main():
             call = "%s(%s)" % (t, ", ".join(cargs))
             if sret == "void":
                 body.append("    %s;" % call)
+            elif tret == "void" and t in v0_funcs:
+                body.append("    %s;" % call)
+                body.append("    return (%s)port_v0;    /* what it left in $v0 */" % sret)
             elif tret == "void":
                 body.append("    %s;" % call)
                 body.append("    return (%s)0;" % sret)

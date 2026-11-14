@@ -258,7 +258,7 @@ void func_8028124C(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 #if !VERSION_JP
 void func_802811F0(u8 *arg0, u16 arg1, u16 arg2, f32 arg3, f32 arg4, u8 arg5) {
     D_802A1A44 = 1;
-    func_802810A0(arg0, arg1, arg2, arg3, arg4, arg5);
+    PORT_V0(func_802810A0(arg0, arg1, arg2, arg3, arg4, arg5));
     D_802A1A44 = 0;
 }
 #endif
@@ -363,7 +363,7 @@ s32 func_80280C08(u8 *arg0) {
 #if !VERSION_JP
 void func_80280BD0(s32 arg0, u8 *arg1, u8 arg2) {
     D_802A1A44 = 1;
-    func_80280A74(arg0, arg1, arg2);
+    PORT_V0(func_80280A74(arg0, arg1, arg2));
     D_802A1A44 = 0;
 }
 #endif
@@ -544,6 +544,9 @@ void func_802800B4_jp(u8 *arg0, u8 *arg1, u16 arg2, u16 arg3) {
     file = func_80226604(D_802A1A34, 1);
     func_80225CCC(file, 4, 0);
     func_8022616C((u8 *) &base, 1, 4, file);
+#ifdef TARGET_PC
+    port_native32(&base, 4);          /* the glyphs' offset: a word */
+#endif
     for (row = 0, i = 0; row < arg3; row++) {
         for (col = 0; col < arg2; col++) {
             if (arg0[i] == 0) {
@@ -576,6 +579,9 @@ void func_80280358(u8 *arg0, u8 *arg1, u16 arg2, u16 arg3) {
     D_802B0220 = D_802A1A38;
     func_80225CCC(file, 4, 0);
     func_8022616C((u8 *) &base, 1, 4, file);
+#ifdef TARGET_PC
+    port_native32(&base, 4);          /* the glyphs' offset: a word */
+#endif
     for (row = 0, i = 0; row < arg3; row++) {
         x = 0;
         for (col = 0; col < arg2; col++) {

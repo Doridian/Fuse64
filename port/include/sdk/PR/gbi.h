@@ -74,6 +74,15 @@
 #define G_RDPHALF_1 (G_IMMFIRST - 11)
 #define G_RDPHALF_2 (G_IMMFIRST - 12)
 #define G_RDPHALF_CONT (G_IMMFIRST - 13)    /* 0xB2 */
+/* the texture rectangle's two following commands: Fast3D's RDPHALF_2 and
+   RDPHALF_CONT, F3DEX's RDPHALF_1 and RDPHALF_2 (0xB2 is its MODIFYVTX) */
+#ifdef F3DEX_GBI
+#define G_TRECT_ST G_RDPHALF_1
+#define G_TRECT_STEP G_RDPHALF_2
+#else
+#define G_TRECT_ST G_RDPHALF_2
+#define G_TRECT_STEP G_RDPHALF_CONT
+#endif
 
 #define G_SETCIMG 0xff
 #define G_SETZIMG 0xfe
@@ -387,17 +396,17 @@ typedef union {
     {                                                                                                       \
         G_CMD(pkt, (_SHIFTL(G_TEXRECT, 24, 8) | _SHIFTL(xh, 12, 12) | _SHIFTL(yh, 0, 12)),                  \
               (_SHIFTL(tile, 24, 3) | _SHIFTL(xl, 12, 12) | _SHIFTL(yl, 0, 12)));                           \
-        gImmp1(pkt, G_RDPHALF_2, (_SHIFTL(s, 16, 16) | _SHIFTL(t, 0, 16)));                                 \
-        gImmp1(pkt, G_RDPHALF_CONT, (_SHIFTL(dsdx, 16, 16) | _SHIFTL(dtdy, 0, 16)));                        \
+        gImmp1(pkt, G_TRECT_ST, (_SHIFTL(s, 16, 16) | _SHIFTL(t, 0, 16)));                                 \
+        gImmp1(pkt, G_TRECT_STEP, (_SHIFTL(dsdx, 16, 16) | _SHIFTL(dtdy, 0, 16)));                        \
     }
 #define gSPScisTextureRectangle(pkt, xl, yl, xh, yh, tile, s, t, dsdx, dtdy)                                \
     {                                                                                                       \
         G_CMD(pkt, (_SHIFTL(G_TEXRECT, 24, 8) | _SHIFTL(MAX(xh, 0), 12, 12) | _SHIFTL(MAX(yh, 0), 0, 12)),  \
               (_SHIFTL(tile, 24, 3) | _SHIFTL(MAX(xl, 0), 12, 12) | _SHIFTL(MAX(yl, 0), 0, 12)));           \
-        gImmp1(pkt, G_RDPHALF_2,                                                                            \
+        gImmp1(pkt, G_TRECT_ST,                                                                            \
                (_SHIFTL((s) - MIN(((xl) * (dsdx)) >> 7, 0), 16, 16) |                                       \
                 _SHIFTL((t) - MIN(((yl) * (dtdy)) >> 7, 0), 0, 16)));                                       \
-        gImmp1(pkt, G_RDPHALF_CONT, (_SHIFTL(dsdx, 16, 16) | _SHIFTL(dtdy, 0, 16)));                        \
+        gImmp1(pkt, G_TRECT_STEP, (_SHIFTL(dsdx, 16, 16) | _SHIFTL(dtdy, 0, 16)));                        \
     }
 
 /* ---- the RDP's other modes ---------------------------------------------------------

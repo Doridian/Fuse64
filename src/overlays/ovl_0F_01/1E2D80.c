@@ -749,7 +749,8 @@ void func_ovl0F_01_800452CC(s32 idx, s32 flag) {
 
     func_ovl0F_01_800452BC();
     func_ovl0F_01_800452C4(idx);
-    if (!idx) { /* fake: a dead test, for the register allocation or schedule */
+    if (idx < 0) { /* a compiled-out debug check (as ovl_0F_04's; any test of idx matches here) */
+        DEBUG_PRINT(("idx < 0\n"));
     }
     m = &D_ovl0F_01_800481D4[idx];
     m->unkC = 0;

@@ -69,13 +69,13 @@
  * D_8004D5F4 load, so both take v0); 80043010 has one after `arg0++`
  * (arg1 stays in a1, not forbidden by the call's a1, with the dead `addiu
  * a1,a1,40`), and its first two links store unk10, unkC, unk8, unk4 as
- * the third does. 800437B8 alternates `#line N "x.c"` / `#line N "y.c"`
- * before the 80043250 call, the D_8004D5DC load, the store and the 0x414
- * call (fake): as1 ends a scheduling block where the source switches back
- * to a file it has seen (a first switch to a new name does nothing), which
- * gives the original's two block boundaries; the rest of the file is then
- * "y.c" to the compiler (debug info only). That also fixes 80043B20's
- * alignment. 800432D8 writes `(-((f32) i / 120.0f) + 1.0f) * 100.0f`
+ * the third does. 800437B8's frame store is code from another file
+ * (statics.h part 2, a fake in place), as is 80043250 (part 1, included
+ * where it is defined): as1 ends a scheduling block where the source
+ * switches back to a file it has seen (a first switch to a new name does
+ * nothing), so with 80043250 emitted first the store is a block of its
+ * own, the original's two boundaries (pass 6; it was an alternation of
+ * `#line N "x.c"` / `#line N "y.c"` before). 800432D8 writes `(-((f32) i / 120.0f) + 1.0f) * 100.0f`
  * (the same value as `100 * (1 - i / 120)` in IEEE arithmetic): 120.0 is
  * then the first constant seen and 1.0 gets f22 as in the original.
  *
@@ -3172,14 +3172,12 @@ void func_ovl14_01_800437B8(void) {
         D_ovl14_01_8004D688 = 1.0f;
         func_ovl14_01_80043688(D_ovl14_01_8004D600, D_ovl14_01_8004D560);
         func_ovl14_01_80043688(D_ovl14_01_8004D618, D_ovl14_01_8004D5A0);
-/* fake: alternating #line files end as1 scheduling blocks */
-#line 3150 "x.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
         func_ovl14_01_80043250(0);
-#line 3151 "y.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
         temp_s0 = D_ovl14_01_8004D5DC;
-#line 3152 "x.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-        temp_s0->unk40->unk48->unk4->unk4 = func_ovl14_01_8004C5D8(temp_s0->unk40, 0) - 0.001f;
-#line 3153 "y.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
+        /* fake: in statics.h, from another file (the old #line x.c/y.c alternation) */
+#define STATICS_PART 2
+#include "overlays/ovl_14_01/statics.h"
+#undef STATICS_PART
         func_ovl14_01_8004CC60(0x414);
         D_ovl14_01_8004D4F8.y = 8.0f;
         func_ovl14_01_8004C790(D_ovl14_01_8004D4F8.y, D_ovl14_01_8004D4F8.y);
@@ -3244,11 +3242,9 @@ void func_ovl14_01_80043624(void) {
 
 
 
-void func_ovl14_01_80043250(s32 arg0) {
-    func_ovl14_01_8004C5C0(D_ovl14_01_8004D5DC->unk40, arg0, 0);
-    D_ovl14_01_8004D558 = (s32) (func_ovl14_01_8004C5D8(D_ovl14_01_8004D5DC->unk40, 0) - 0.001f);
-    func_ovl14_01_8004C8A0(D_ovl14_01_8004D5DC, 0x04000000);
-}
+#define STATICS_PART 1
+#include "overlays/ovl_14_01/statics.h"
+#undef STATICS_PART
 
 void func_ovl14_01_800432D8(void) {
     s32 i;

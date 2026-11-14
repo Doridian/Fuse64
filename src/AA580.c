@@ -167,7 +167,7 @@
  *   swap s2/s3): 52. An empty K&R inlined call costs nothing (160).
  *   Tried without effect: a local obj, dz before dx, res = 0 first,
  *   !res, an if (res != 0) block, a second result variable, return 0.
- * Fakes pass 7 (no code change; 13 -> 9 fake markers):
+ * Fakes pass 7 (no code change; 13 -> 8 fake markers):
  * - func_8029085C, defined after 09FC, computes the cell and the offsets
  *   in it (unk1C/unk24 with their wraps): an inlined static's lines come
  *   from its definition and as1 orders by them, so its body placed after
@@ -183,8 +183,12 @@
  *   taking (ctx, obj) does too), so nothing picks one.
  * - Not found: 90490 as the D7D8 call wrapper (frame +16, the size of sv,
  *   but without sv t takes s6), as the slope test or the res == 1 floor
- *   test; the dead reads as null checks (single tests vanish); dropping
- *   9085C's `a` (td 4 short).
+ *   test; p's null check read through p (5 words: it must read the
+ *   field again); dropping 9085C's `a` (td 4 short).
+ * - The unk44 branch's empty test of ctx.unk0->unk40 is a check around a
+ *   compiled-out debug print (DEBUG_PRINT; the condition is a guess, any
+ *   test of the field matches). hitXZ's stays a fake: it is known 0 there,
+ *   so no check would test it.
  */
 #include "common.h"
 
@@ -874,7 +878,9 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
             res |= 0x20;
         } else if (*(s32 *) ctx.unk0->unk44 == 0) {
             p = ctx.unk0->unk40;
-            if (!ctx.unk0->unk40) {} /* fake: dead read */
+            if (ctx.unk0->unk40 == NULL) {
+                DEBUG_PRINT(("ctx.unk0->unk40 == NULL\n"));
+            }
             save[0] = p->unk10;
             save[1] = p->unk14;
             save[2] = p->unk18;

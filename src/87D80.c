@@ -17,10 +17,11 @@
  * func_8026E938's tail calls the getters func_8026E8C8 (the map's sign
  * bit, inlined as `lui v0; lb`) and func_8026E8B8.
  * func_8026DCAC and func_8026EE18 add the layer heights through the
- * getter func_8026DC74 (its inlined result is the original's v0); a
- * dead `&D_800B15D8[layer] == NULL` test in the loop head puts the
+ * getter func_8026DC74 (its inlined result is the original's v0); an
+ * empty `&D_800B15D8[layer] == NULL` test in the loop head puts the
  * address in every pass, so uopt strength-reduces it as the original
- * does (a single use at the loop's end keeps a multu).
+ * does (a single use at the loop's end keeps a multu; the getter's value
+ * taken there instead moves the load).
  * In func_8026DCAC uopt hoists iy out of the loop; a dead
  * `if (iy && iy) {}` adds two loop uses, so iy outranks the layer
  * pointer (tie, lower bit) and takes a0 as in the original.
@@ -30,6 +31,12 @@
  * passes `(p[-2] << 8) + p[-1]` (uopt reverses the sum, so the source
  * has the shift first): ugen then emits the cell's two loads last, and
  * as1 schedules them, j % 8 and the increment as the original does.
+ * Fakes pass 7: the empty tests (the layer address in func_8026EE18 and
+ * func_8026DCAC, the map after func_8026EAF8's loop, z at the end of
+ * func_8026E938) are checks around compiled-out debug prints (DEBUG_PRINT,
+ * include/macros.h; messages are placeholders). Their conditions are
+ * guesses: any test of the same value gives the same code, except that
+ * the map's must be `!D_800B15D8` (`== NULL` changes it).
  */
 #include "common.h"
 
@@ -771,8 +778,8 @@ s32 func_8026EE18(f32 arg0) {
     iy = (s32) (arg0 * 0.01f);
     h = 0;
     for (layer = 0; layer < D_800B15D8->unk0 + 1; layer++) {
-        if (&D_800B15D8[layer] == NULL) { /* fake: puts &D_800B15D8[layer] in the
-                                            * loop head, so it is strength-reduced */
+        if (&D_800B15D8[layer] == NULL) {
+            DEBUG_PRINT(("D_800B15D8[layer] == NULL\n"));
         }
         if (iy < h) {
             if (layer > 0) {
@@ -867,7 +874,8 @@ f32 func_8026EAF8(u8 *arg0) {
                 more = 1;
             }
         } while (more);
-        if (D_800B15D8) { /* fake: lifts the map address above the 0xF constant (s1) */
+        if (!D_800B15D8) {
+            DEBUG_PRINT(("D_800B15D8 == NULL\n"));
         }
         if (pos.i[1] >= D_800B15D8->unk0) {
             r = ((Obj8E *) arg0)->unk40->y;
@@ -934,7 +942,8 @@ f32 func_8026E938(u8 *arg0) {
         } else {
             r = func_8026E8B8();
         }
-        if (z) { /* fake: keeps z live (permuter find) */
+        if (z < 0) {
+            DEBUG_PRINT(("z < 0\n"));
         }
     }
     return r;
@@ -1273,6 +1282,7 @@ void func_8026DCAC(f32 arg0, f32 arg1, f32 arg2, void *arg3, s32 arg4) {
                          * loop) raise it over the layer pointer */
         }
         if (&D_800B15D8[layer] == NULL) {
+            DEBUG_PRINT(("D_800B15D8[layer] == NULL\n"));
         }
         if (iy < h) {
             if (layer > 0) {

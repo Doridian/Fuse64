@@ -2286,8 +2286,7 @@ void func_ovl14_01_80046648(UnkStructA **arg0, Link_ovl14_01 *arg1) {
 }
 
 void func_ovl14_01_8004654C(void) {
-    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
-    f32 sp38;
+    Vec3f save;
     f32 k;
     s32 var_s0;
     s32 var_s0_2;
@@ -2297,7 +2296,7 @@ void func_ovl14_01_8004654C(void) {
     func_ovl14_01_8004C9E8(func_ovl14_01_80047A10, NULL, 0, 0, 0x150);
     var_s0 = 0;
     k = -2.0f; /* fake: a propagated local makes uopt fold the store (own lui) */
-    sp38 = D_ovl14_01_8004D6A0.y;
+    save.y = D_ovl14_01_8004D6A0.y;
     do {
         D_ovl14_01_8004D6A0.y = D_ovl14_01_8004D6A0.y + k;
         func_ovl14_01_8004CA30();
@@ -2311,7 +2310,7 @@ void func_ovl14_01_8004654C(void) {
         func_ovl14_01_8004CA30();
         var_s0 += 1;
     } while (var_s0 != 0x1E);
-    D_ovl14_01_8004D6A0.y = sp38;
+    D_ovl14_01_8004D6A0.y = save.y;
 }
 
 void func_ovl14_01_80046004(s32 arg0) {

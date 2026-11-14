@@ -44,6 +44,8 @@
  *   before alpha, func_8028B670's dz before dx) come from which argument
  *   the callers set up first; `= 1` where the original keeps 1.0 apart
  *   from another 1.0f (int and float constants are separate to uopt).
+ * - func_8028B670 holds mode 1's drift speed in a local: its frame slot
+ *   (a guess among held values).
  */
 #include "common.h"
 
@@ -564,7 +566,7 @@ static void func_8028B670(UnkStruct_800BC528 *e, s32 kind, s32 mode, f32 scale, 
     s32 step;
     f32 t;
     s32 dir;
-    s32 pad; /* fake: frame slot (the kill as func_8028A9CC(e) instead of written out: +8, pad or not; the spawn as a real static: not inlined) */
+    f32 speed = 1.5f;
 
     step = 1;
     t = 0.0f;
@@ -620,7 +622,7 @@ static void func_8028B670(UnkStruct_800BC528 *e, s32 kind, s32 mode, f32 scale, 
             e->unk10 += -0.059375;
         }
         if (mode == 1) {
-            func_80291944(m, dir << 5, 1.5f);
+            func_80291944(m, dir << 5, speed);
             func_8028A980(m, 0.02f);
         } else if (mode == 2 && t > 16.0f) {
             func_8028A980(m, 0.018f);

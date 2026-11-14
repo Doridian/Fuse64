@@ -31,7 +31,7 @@ void func_8022691C(s32 arg0) {
     struct UnkStruct_80225CC0 *file;
     s32 size;
     s32 id;
-    s32 pad[2]; /* fake: unused, the original's frame has 8 more bytes of locals (pad[1] is enough; a separate file or size local for the overlay moves slots; possibly another inlined helper's area, as func_802267B0/func_802267E0 leave theirs below) */
+    void *ovl = (void *) 0x80043000; /* where every overlay runs (its frame slot; a guess among held values) */
 
     if (D_802A5328 != arg0) {
         D_802A5328 = arg0;
@@ -58,13 +58,13 @@ void func_8022691C(s32 arg0) {
         func_802267E0(0x18);
         D_802A532C = (s32) port_overlay_load(D_8019B0D0[arg0].unk0, id);
 #else
-        func_80297D58((void *) 0x80043000, 0x20000);
-        func_80297D50((void *) 0x80043000, 0x20000);
-        func_80292BD0(file, (void *) 0x80043000, size);
-        func_80297D60((void *) 0x80043000, 0x20000);
+        func_80297D58(ovl, 0x20000);
+        func_80297D50(ovl, 0x20000);
+        func_80292BD0(file, ovl, size);
+        func_80297D60(ovl, 0x20000);
         func_80226368(file);
         func_802267E0(0x18);
-        D_802A532C = ((s32 (*)(void)) 0x80043000)();
+        D_802A532C = ((s32 (*)(void)) ovl)();
 #endif
     }
 }

@@ -571,7 +571,7 @@ void func_80286F70(void) {
     s32 i;
 
     func_80297D30(0x2A, D_802A1AB4);
-    if (0) {
+    if (0) { /* fake: dead code */
         for (i = 0; i < 6; i++) {
             D_800BA8E8[i].unk0 = -1;
             D_800BA8E8[i].unk2 = -1;
@@ -687,12 +687,12 @@ UnkStruct_80288040 *func_802867E4(s32 arg0, f32 arg1, f32 arg2, f32 arg3) {
     s32 special;
     s32 t;
     UnkStruct_800BB340 *task;
-    s32 pad[2];
+    s32 pad[2]; /* fake: frame-tuned */
 
     special = func_802863E0();
     ret = NULL;
     slot = -1;
-    if (0) { D_800BC520 = (s32) &slot; }
+    if (0) { D_800BC520 = (s32) &slot; } /* fake: takes slot's address in dead code: slot stays in its home */
     if ((arg0 == 0) && (D_800BA8E8[arg0].unk0 == 0x19) && (D_800BA8E8[arg0].unk2 == 0x1E)) {
         slot = 13;
         special = 1;
@@ -781,11 +781,11 @@ static void func_80285F84(void) {
 
 static void func_80285F8C(void) {
     UnkStruct_800BB340 *task;
-    s32 padA[2];
+    s32 padA[2]; /* fake: frame-tuned */
     Vec3f pos2;
-    s32 padB[2];
+    s32 padB[2]; /* fake: frame-tuned */
     UnkStruct_80288040 *a;
-    s32 pad[3];
+    s32 pad[3]; /* fake: frame-tuned */
     Vec3f pos;
     UnkStruct_80288040 *a2;
     s32 far;
@@ -1032,7 +1032,7 @@ static void func_80285A9C(UnkStruct_800BB340 *arg0) {
     if (r != NULL) {
         a = &r->unk14;
         func_80285A7C(a, &D_800BA8E8[a->unk84]);
-        if (D_800BA8E8[0].unk0) {}
+        if (D_800BA8E8[0].unk0) {} /* fake: dead read */
         a->unk0->unk40->unk28 = 1.0f;
         a->unk0->unk40->unk2C = 1.0f;
         a->unk0->unk40->unk30 = 1.0f;
@@ -1096,7 +1096,7 @@ static s32 func_80285658(UnkStruct_800BA900 *arg0, UnkStruct_800BB340 *arg1) {
         D_800BA900[a->unk80].unk8.z = a->unk0->unk40->unk18;
     }
     if (!ok) {
-        if (ok) {}
+        if (ok) {} /* fake: dead read */
         func_802313DC(a->unk0, func_80282524(a));
         return 0;
     }
@@ -1133,7 +1133,7 @@ static s32 func_8028556C(s32 arg0) {
     func_8028555C();
     func_80285554();
     p = D_800BB484;
-#line 1115
+#line 1115 /* fake: numbering for as1 order (the load before the 0x2000 test) */
     if ((arg0 & 0x2000) ||
         (!(p->unk24 & 0x20) && ((arg0 & 0xF) == 0xF)) ||
         (!(p->unk24 & 0x10) && (arg0 & 0x60)) ||
@@ -1637,7 +1637,7 @@ static void func_8028425C(UnkStruct_80288040 *arg0) {
         arg0->unk10 = x;
         arg0->unk18 = (u8) (s32) ((arg0->unk0->unk40->unk18 + 50.0f) * 0.01);
         n = func_80284254(arg0);
-        if (x) {}
+        if (x) {} /* fake: dead read */
         arg0->unk20++;
         if (n == 0) {
             arg0->unk1C |= 1;
@@ -1840,7 +1840,7 @@ void func_80283B04(UnkStruct_80288040 *arg0, Vec3f *arg1) {
 
     failed = 1;
     dir = func_80283AFC(arg0->unk0->unk40, arg1) & 0xFF;
-    if (dir) {}
+    if (dir) {} /* fake: dead read */
     for (i = 0; i < 4; i++) {
         d = dir + i;
         if (d >= 8) {
@@ -1864,7 +1864,7 @@ void func_80283B04(UnkStruct_80288040 *arg0, Vec3f *arg1) {
     if ((failed != 0) || (func_80283794(arg0, arg0->unk1C) != 0)) {
         arg0->unk1C = func_80283314(arg0, 1, 1) << 5;
     }
-    if (0) {
+    if (0) { /* fake: a dead call: the emission order */
         func_802836F0(NULL, 0);
     }
 }
@@ -1876,14 +1876,14 @@ static void func_8028378C() {
 
 static s32 func_80283794(UnkStruct_80288040 *arg0, u8 arg1) {
     s32 pos[3];
-    s32 pad[7];
+    s32 pad[7]; /* fake: frame-tuned */
     s8 range[2];
     s8 gx;
     s8 gz;
     s32 flags;
 
     func_8028378C();
-    if (arg1) {}
+    if (arg1) {} /* fake: dead read */
     func_80283784();
     pos[0] = (arg0->unk0->unk40->unk10 + 50.0f) * 0.01;
     pos[2] = (arg0->unk0->unk40->unk18 + 50.0f) * 0.01;
@@ -2107,7 +2107,7 @@ static u8 func_80283314(UnkStruct_80288040 *arg2, s32 arg0, s32 arg1) {
 }
 
 f32 func_8028322C(UnkStruct_80288040 *arg0) {
-    if (0) {
+    if (0) { /* fake: a dead call: the emission order */
         func_802831A8(NULL);
     }
     switch (arg0->unk1C) {
@@ -2188,7 +2188,7 @@ void func_8028301C(UnkStruct_80288040 *arg0, s32 arg1, f32 arg2, f32 arg3, f32 a
     arg0->unk0->unk68 = arg2;
     arg0->unk0->unk6C = arg3;
     arg0->unk0->unk70 = arg4;
-    if (0) {
+    if (0) { /* fake: a dead call: the emission order */
         func_80282F44(NULL, 0);
     }
 }
@@ -2510,9 +2510,6 @@ void func_80282454(UnkStruct_80288040 *arg0) {
     func_80229E38(arg0->unk0->unk40, 0, 0);
     arg0->unk0->unk40->unk48->unk4->unk4 = 0.0f;
     func_80282430(arg0, 0xF, 0);
-    if (0) {
-        D_800BC520 = (s32) func_80282454;
-    }
 }
 
 void func_80282430(arg0, arg1, arg2)
@@ -2523,7 +2520,7 @@ void func_80282430(arg0, arg1, arg2)
     func_80282428();
     arg0->unk7A &= ~arg1;
     arg0->unk7A |= arg2;
-    if (0) {
+    if (0) { /* fake: dead calls: the emission order */
         func_80282340(NULL);
         func_802822E0(NULL);
         func_802822BC(NULL);

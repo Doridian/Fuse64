@@ -1975,7 +1975,6 @@ void func_ovl12_05_80045D3C(s32 arg0) {
     UnkStruct_ovl12_05_800497F8 *sp9C;
     Vec3f sp90;
     s32 pad6; /* fake: unused, frame space the original has (no source for it found) */
-    s32 pad7; /* fake: unused, frame space the original has (no source for it found) */
     UnkStructA_40 *temp_v1;
     UnkStructA_40 *temp_v1_3;
 

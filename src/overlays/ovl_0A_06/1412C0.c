@@ -1178,7 +1178,6 @@ static s32 func_ovl0A_06_80044534(s32 arg0) {
 #if VERSION_JP
         func_ovl0A_06_80046950(D_ovl0A_06_80047738[3], D_ovl0A_06_80046DE0, 0);
 #else
-#line 1200 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
         func_ovl0A_06_800469A0(D_ovl0A_06_80047738[3], D_ovl0A_06_80046DE0, 0);
 #endif
         D_ovl0A_06_80047748[3] = func_ovl0A_06_80046978(D_ovl0A_06_80047738[3]);
@@ -1724,7 +1723,6 @@ static void func_ovl0A_06_80043020(s32 sfx, s32 sel) {
     no = func_ovl0A_06_80046940(D_ovl0A_06_80046D2C, noX, noY, noScale, noScale, noFlag);
     yes = func_ovl0A_06_80046940(D_ovl0A_06_80046D24, yesX, yesY, yesScale, yesScale, yesFlag);
 #else
-#line 1740 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     no = func_ovl0A_06_80046998(D_ovl0A_06_80046D2C, noX, noY, noScale, noScale, noFlag);
     yes = func_ovl0A_06_80046998(D_ovl0A_06_80046D24, yesX, yesY, yesScale, yesScale, yesFlag);
 #endif

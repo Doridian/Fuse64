@@ -68,8 +68,9 @@
  * 800505B8 loop and the fade's inner loop, so one strength-reduced
  * pointer), loop 1 calls before it fills lim[i] (lim's pointer then
  * drives loop 3's test), the wrap is W360() with no `a` local (the
- * frame), and three no-code fakes: a dead `if (arms[j]) {}` before the
- * 60-frame loop, an empty `do {} while (0);` after its 800495F8 call.
+ * frame), and no-code fakes: an empty `do {} while (0);` after its
+ * 800495F8 call (a dead `if (arms[j]) {}` before the 60-frame loop went
+ * stale, p3).
  * 80045A58 64 -> 13: loop 2 counts with its own `k` (so `i` no longer
  * spans loop 3, and 0x01080000 keeps s3 from the 800431AC call on), and
  * its inner loop is the index loop `D_80051538[i]` like loops 1 and 3
@@ -2073,7 +2074,6 @@ void func_ovl15_02_8004B14C(void) {
     D_ovl15_02_80051500.z = src->unk40->unk18;
     root->unk40->unk20 = W360(src->unk40->unk20 + 180.0f);
     func_ovl15_02_80050CB0(0x157, D_ovl15_02_80051500.x, D_ovl15_02_80051500.y, D_ovl15_02_80051500.z);
-    if (arms[j]) {} /* fake: dead read */
     for (j = 0; j != 60; j++) {
         func_ovl15_02_800495F8(root, &D_ovl15_02_80051500);
         for (i = 0; i < 5; i++) {

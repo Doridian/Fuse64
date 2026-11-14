@@ -158,8 +158,8 @@
  *   interferes with both, takes $a1 as in the original (one index: $v0
  *   only, and the piece took $a0).
  *   80043F24 0/0 (matches; 80044394: `n - 1` in its own m with a dead read, fake,
- *   gives the original's addiu v0,v1,-1; its header line numbered after
- *   the body's (`#line`, fake) lets as1 put the `sw ra` in the first
+ *   gives the original's addiu v0,v1,-1; the body numbered below its
+ *   header line (`#line`, fake) lets as1 put the `sw ra` in the first
  *   branch's delay slot, and `n = 0` numbered before the [8] store puts
  *   `move v1,zero` where the original has it), 80046180 0/0 (p5: 800438FC
  *   takes (id, mode, item): IPA keeps mode in $a0, but every call now
@@ -1170,6 +1170,10 @@ static void func_ovl0B_04_80046294(u8 item);
 static void func_ovl0B_04_80046600(u8 item, u16 buttons);
 static void func_ovl0B_04_80046734(u8 item, u16 buttons);
 static void func_ovl0B_04_800468F0(s32 base);
+static void func_ovl0B_04_80047164();
+static void func_ovl0B_04_80046A98();
+static void func_ovl0B_04_80046CE4();
+static void func_ovl0B_04_80046F18();
 static void func_ovl0B_04_80045540(u8 item, u16 buttons, u8 *ret);
 static void func_ovl0B_04_800458F4(s32 id0, s32 id1);
 static void func_ovl0B_04_80045958(s32 id0, s32 id1);
@@ -1319,18 +1323,6 @@ static void func_ovl0B_04_800468E0(void) {
 static void func_ovl0B_04_800468E8(void) {
 }
 
-static void func_ovl0B_04_80046CE4(void) {
-}
-
-static void func_ovl0B_04_80046A98(void) {
-}
-
-static void func_ovl0B_04_80046F18(void) {
-}
-
-static void func_ovl0B_04_80047164(void) {
-}
-
 /* The objects of a run of entries, and their removal (inlined). */
 /* n first: its home is at the top of the inlined copy's slots, as in the
  * original's 80043110 (with (e, n, d) it sits 4 bytes higher). */
@@ -1386,10 +1378,11 @@ u8 func_ovl0B_04_800471F4(u8 arg0, u16 arg1) {
 }
 
 void func_ovl0B_04_8004716C(Obj *arg0) {
+    func_ovl0B_04_80047164();
+}
+
+static void func_ovl0B_04_80047164() {
     func_ovl0B_04_800468F0(33);
-    if (0) {
-        func_ovl0B_04_80047164();
-    }
 }
 
 u8 func_ovl0B_04_80046FA8(u8 arg0, u16 arg1) {
@@ -1418,10 +1411,11 @@ u8 func_ovl0B_04_80046FA8(u8 arg0, u16 arg1) {
 }
 
 void func_ovl0B_04_80046F20(Obj *arg0) {
+    func_ovl0B_04_80046F18();
+}
+
+static void func_ovl0B_04_80046F18() {
     func_ovl0B_04_800468F0(22);
-    if (0) {
-        func_ovl0B_04_80046F18();
-    }
 }
 
 u8 func_ovl0B_04_80046D74(u8 arg0, u16 arg1) {
@@ -1449,10 +1443,11 @@ u8 func_ovl0B_04_80046D74(u8 arg0, u16 arg1) {
 }
 
 void func_ovl0B_04_80046CEC(Obj *arg0) {
+    func_ovl0B_04_80046CE4();
+}
+
+static void func_ovl0B_04_80046CE4() {
     func_ovl0B_04_800468F0(11);
-    if (0) {
-        func_ovl0B_04_80046CE4();
-    }
 }
 
 u8 func_ovl0B_04_80046B28(u8 arg0, u16 arg1) {
@@ -1481,19 +1476,18 @@ u8 func_ovl0B_04_80046B28(u8 arg0, u16 arg1) {
 }
 
 void func_ovl0B_04_80046AA0(Obj *arg0) {
-    if (0) {
-        func_ovl0B_04_80046A98();
-    }
-    func_ovl0B_04_800468F0(0);
+    func_ovl0B_04_80046A98();
     if (0) {
         func_ovl0B_04_800468E8();
         func_ovl0B_04_800468E0();
         func_ovl0B_04_80046734(0, 0);
-        func_ovl0B_04_80046600(0, 0);
-        func_ovl0B_04_80046294(0);
         func_ovl0B_04_8004628C();
         func_ovl0B_04_80046284();
     }
+}
+
+static void func_ovl0B_04_80046A98() {
+    func_ovl0B_04_800468F0(0);
 }
 
 /* Pages 5-8's set-up: which of the ten choices from base + 1 are open. */
@@ -2354,9 +2348,7 @@ static void func_ovl0B_04_8004447C(s32 id, s32 alpha) {
 }
 
 /* The name's two texts centred. */
-#line 2314
 static void func_ovl0B_04_80044394(s32 a, s32 b) {
-#line 2291
     s32 n;
 #if VERSION_JP
     u16 x;
@@ -2366,11 +2358,10 @@ static void func_ovl0B_04_80044394(s32 a, s32 b) {
     Obj *o;
     s32 m;
 
-#line 2300
+#line 2300 /* fake: the body below the header's line (sw ra's slot) */
     D_ovl0B_04_80048A20[8] = 0;
-#line 2299
+#line 2299 /* fake: n = 0 numbered before the [8] store */
     n = 0;
-#line 2302
     while (D_ovl0B_04_80048A20[n] != 0) {
         n++;
     }
@@ -2680,9 +2671,8 @@ void func_ovl0B_04_800436C8(void) {
             if (++D_ovl0B_04_8004A1E4 >= 14) {
                 D_ovl0B_04_8004A1E4 = 0;
             }
-#line 2579
+#line 2579 /* fake: see the next line */
             b = a = -1; /* fake: numbered above the loop head so as1 hoists li a1 into its load delay */
-#line 2599
             switch (D_ovl0B_04_8004A1AC[D_ovl0B_04_8004A1E4]) {
                 case 0:
                     a = 0;
@@ -2764,10 +2754,10 @@ static void func_ovl0B_04_H5a() {
     func_ovl0B_04_80047E28(D_ovl0B_04_8004A164, -1);
     D_ovl0B_04_8004A164->unkC |= 0x20;
     /* fake: the store numbered below the line after it, for its place in the jal's delay slot */
-#line 2704
+#line 2704 /* fake: see above */
     D_ovl0B_04_8004A170 = func_ovl0B_04_80047E68(D_ovl0B_04_8004A164, 0xF);
 }
-#line 2686
+#line 2686 /* fake: back to the file's numbering */
 
 /* The tests reread each slot through its pointer, as the original does;
  * the first test's value is its own variable (a: $a3, the later ones x:

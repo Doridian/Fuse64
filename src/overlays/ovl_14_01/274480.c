@@ -2202,15 +2202,13 @@ void func_ovl14_01_8004697C(void) {
 }
 
 void func_ovl14_01_800467C0(UnkStructA **arg0, Link_ovl14_01 *arg1) {
-    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
-    f32 y;
-    f32 x;
+    Vec3f save;
     f32 d;
     s32 i;
     f32 k;
 
-    y = D_ovl14_01_8004D6A0.y;
-    x = D_ovl14_01_8004D6A0.x;
+    save.y = D_ovl14_01_8004D6A0.y;
+    save.x = D_ovl14_01_8004D6A0.x;
     if (arg1 == D_ovl14_01_8004D560) {
         d = -45.0f;
     } else {
@@ -2243,8 +2241,8 @@ void func_ovl14_01_800467C0(UnkStructA **arg0, Link_ovl14_01 *arg1) {
         D_ovl14_01_8004D6A0.y = D_ovl14_01_8004D6A0.y + k;
         func_ovl14_01_8004CA30();
     }
-    D_ovl14_01_8004D6A0.y = y;
-    D_ovl14_01_8004D6A0.x = x;
+    D_ovl14_01_8004D6A0.y = save.y;
+    D_ovl14_01_8004D6A0.x = save.x;
 }
 
 void func_ovl14_01_80046648(UnkStructA **arg0, Link_ovl14_01 *arg1) {

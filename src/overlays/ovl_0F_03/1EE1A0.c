@@ -278,15 +278,12 @@ static void func_ovl0F_03_800432D8(void);
 /* .bss */
 UnkStructA *D_ovl0F_03_80047090[6];
 f32 D_ovl0F_03_800470A8[3];
-u8 D_ovl0F_03_800470B4[0x4];
 Vec3f D_ovl0F_03_800470B8;
 s32 D_ovl0F_03_800470C4;
 u8 D_ovl0F_03_800470C8[0x4];
 s32 D_ovl0F_03_800470CC;
 s32 D_ovl0F_03_800470D0;
-u8 D_ovl0F_03_800470D4[0x4];
 Vec3f D_ovl0F_03_800470D8;
-u8 D_ovl0F_03_800470E4[0x4];
 UnkStruct_ovl0F_03_800470E8 D_ovl0F_03_800470E8[20];
 Vec3f D_ovl0F_03_80047278;
 UnkStructA *D_ovl0F_03_80047284;
@@ -319,7 +316,7 @@ extern UnkStruct_ovl0F_03_80046FE4 D_ovl0F_03_80046FE4;
 /* A second caller keeps func_ovl0F_03_80043030 from being inlined. */
 static void func_ovl0F_03_80045678(void) {
     func_ovl0F_03_80043030(D_ovl0F_03_80046EB4);
-    D_ovl0F_03_800470C8[0] = D_ovl0F_03_800470B4[0] = D_ovl0F_03_800470D4[0] = D_ovl0F_03_800470E4[0] = 0;
+    D_ovl0F_03_800470C8[0] = 0;
 }
 
 static void func_ovl0F_03_80045670(void) {

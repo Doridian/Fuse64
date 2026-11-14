@@ -179,7 +179,6 @@ s32 D_ovl0E_11_800464DC;
 u8 D_ovl0E_11_800464E0[0x4]; /* unused (func_ovl0E_11_80044BD0) */
 s32 D_ovl0E_11_800464E4;
 s32 D_ovl0E_11_800464E8;
-u8 D_ovl0E_11_800464EC[0x4]; /* unused (func_ovl0E_11_80044BD0) */
 Vec3f D_ovl0E_11_800464F0;
 UnkStructA *D_ovl0E_11_800464FC;
 UnkStruct_ovl0E_11_80046500 D_ovl0E_11_80046500;
@@ -216,7 +215,7 @@ UnkStruct_ovl0E_11_800463AC D_ovl0E_11_800463AC[4] = {
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
 static void func_ovl0E_11_80044BD0(void) {
-    D_ovl0E_11_800464E0[0] = D_ovl0E_11_800464EC[0];
+    D_ovl0E_11_800464E0[0] = 0;
 }
 
 /* Its reference to func_ovl0E_11_80044A5C keeps the tasks

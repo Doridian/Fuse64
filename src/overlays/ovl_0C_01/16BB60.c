@@ -439,7 +439,6 @@ s32 D_ovl0C_01_8004A99C;
 u8 D_ovl0C_01_8004A9A0[0x4];
 s32 D_ovl0C_01_8004A9A4;
 s32 D_ovl0C_01_8004A9A8;
-u8 D_ovl0C_01_8004A9AC[0x4];
 Vec3f D_ovl0C_01_8004A9B0;
 UnkStructA *D_ovl0C_01_8004A9BC;
 s32 D_ovl0C_01_8004A9C0;
@@ -527,7 +526,7 @@ static void func_ovl0C_01_80048A38(void) {
 static void func_ovl0C_01_80048A30(void) {
 }
 static void func_ovl0C_01_80048A28(void) {
-    D_ovl0C_01_8004A9A0[0] = D_ovl0C_01_8004A9AC[0]; /* the reference keeps the unused .bss in place */
+    D_ovl0C_01_8004A9A0[0] = 0; /* the reference keeps the unused .bss in place */
 }
 
 /* the names src/overlays/common/core.h's code has here */

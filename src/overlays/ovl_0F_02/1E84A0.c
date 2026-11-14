@@ -349,13 +349,11 @@ void func_ovl0F_02_80043010(void);
 UnkStructA *D_ovl0F_02_80048D00[6];
 UnkStructA *D_ovl0F_02_80048D18[8];
 f32 D_ovl0F_02_80048D38[3];
-u8 D_ovl0F_02_80048D44[0x4];
 Vec3f D_ovl0F_02_80048D48;
 s32 D_ovl0F_02_80048D54;
 u8 D_ovl0F_02_80048D58[0x4];
 s32 D_ovl0F_02_80048D5C;
 s32 D_ovl0F_02_80048D60;
-u8 D_ovl0F_02_80048D64[0x4];
 Vec3f D_ovl0F_02_80048D68;
 s32 D_ovl0F_02_80048D74;
 u8 D_ovl0F_02_80048D78[0x4];
@@ -555,7 +553,7 @@ static void func_ovl0F_02_80046E80(void) {
 
 static void func_ovl0F_02_80046170(void) {
     /* fake: first references in descending address order (the header) */
-    if (0) { D_ovl0F_02_80048D44[0] = D_ovl0F_02_80048D58[0] = D_ovl0F_02_80048D64[0] = D_ovl0F_02_80048D78[0] = 0; /* the unused .bss keeps its place */
+    if (0) { D_ovl0F_02_80048D58[0] = D_ovl0F_02_80048D78[0] = 0; /* the unused .bss keeps its place */
         func_ovl0F_02_800473C8((void (*)(UnkStructA *)) func_ovl0F_02_80045EB0, 0);
         func_ovl0F_02_800473C8((void (*)(UnkStructA *)) func_ovl0F_02_800454E8, 0);
         func_ovl0F_02_800473C8((void (*)(UnkStructA *)) func_ovl0F_02_8004533C, 0);

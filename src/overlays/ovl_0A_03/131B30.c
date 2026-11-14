@@ -185,7 +185,6 @@ void func_ovl0A_03_80048658(s32); /* 0x3002 */
 u8 D_ovl0A_03_80048800[0x24];
 s32 D_ovl0A_03_80048824;
 s32 D_ovl0A_03_80048828;
-u8 D_ovl0A_03_8004882C[4];
 Vec3f_ovl0A_03 D_ovl0A_03_80048830;
 UnkStruct_ovl0A_03_80047FD0 *D_ovl0A_03_8004883C;
 s32 D_ovl0A_03_80048840;
@@ -292,7 +291,6 @@ static void func_ovl0A_03_80047070(void) {
  * functions defined before their spawner move). */
 static void func_ovl0A_03_80047068(void) {
     D_ovl0A_03_80048800[0] = 0;
-    D_ovl0A_03_8004882C[0] = 0;
     func_ovl0A_03_80047F48(func_ovl0A_03_80047060, NULL, 0, 0, 0);
 }
 

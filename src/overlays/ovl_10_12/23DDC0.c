@@ -198,17 +198,13 @@ static void func_ovl10_12_800471E8(void);
 u8 D_ovl10_12_80048C30[0x24]; /* unused (func_ovl10_12_800471E8) */
 s32 D_ovl10_12_80048C54;
 s32 D_ovl10_12_80048C58;
-u8 D_ovl10_12_80048C5C[0x4]; /* unused (func_ovl10_12_800471E8) */
 Vec3f D_ovl10_12_80048C60;
-u8 D_ovl10_12_80048C6C[0x4]; /* unused (func_ovl10_12_800471E8) */
 UnkStructA *D_ovl10_12_80048C70[12];
 s32 D_ovl10_12_80048CA0[11][3];
-u8 D_ovl10_12_80048D24[0x4]; /* unused (func_ovl10_12_800471E8) */
 s32 D_ovl10_12_80048D28[12];
 s32 D_ovl10_12_80048D58[12];
 s32 D_ovl10_12_80048D88[64];
 s32 D_ovl10_12_80048E88;
-u8 D_ovl10_12_80048E8C[0x4]; /* unused (func_ovl10_12_800471E8) */
 s32 D_ovl10_12_80048E90[12];
 s32 D_ovl10_12_80048EC0[12];
 s32 D_ovl10_12_80048EF0[11];
@@ -220,11 +216,9 @@ s32 D_ovl10_12_80048FB0[6];
 s32 D_ovl10_12_80048FC8[6];
 s32 D_ovl10_12_80048FE0[64];
 s32 D_ovl10_12_800490E0;
-u8 D_ovl10_12_800490E4[0x4]; /* unused (func_ovl10_12_800471E8) */
 s32 D_ovl10_12_800490E8[6];
 s32 D_ovl10_12_80049100[6];
 s32 D_ovl10_12_80049118;
-u8 D_ovl10_12_8004911C[0x4]; /* unused (func_ovl10_12_800471E8) */
 f32 D_ovl10_12_80049120[6];
 f32 D_ovl10_12_80049138[6];
 s32 D_ovl10_12_80049150;
@@ -232,14 +226,12 @@ s32 D_ovl10_12_80049154;
 /* the tasks: a countdown and a function each */
 s32 D_ovl10_12_80049158[64];
 s32 D_ovl10_12_80049258; /* the running task */
-u8 D_ovl10_12_8004925C[0x4]; /* unused (func_ovl10_12_800471E8) */
 void (*D_ovl10_12_80049260[64])(void);
 UnkStruct_ovl10_12_80048160 *D_ovl10_12_80049360;
 s32 *D_ovl10_12_80049364;
 s32 D_ovl10_12_80049368[4][3];
 UnkStructA *D_ovl10_12_80049398[4];
 s32 D_ovl10_12_800493A8;
-u8 D_ovl10_12_800493AC[0x4]; /* unused (func_ovl10_12_800471E8) */
 s32 D_ovl10_12_800493B0[4];
 s32 D_ovl10_12_800493C0[4];
 s32 D_ovl10_12_800493D0[5];
@@ -247,7 +239,6 @@ s32 D_ovl10_12_800493E4;
 f32 D_ovl10_12_800493E8;
 f32 D_ovl10_12_800493EC;
 f32 D_ovl10_12_800493F0;
-u8 D_ovl10_12_800493F4[0x4]; /* unused (func_ovl10_12_800471E8) */
 s32 D_ovl10_12_800493F8[6][3];
 UnkStructA *D_ovl10_12_80049440[6];
 UnkStructA *D_ovl10_12_80049458;
@@ -260,7 +251,6 @@ s32 D_ovl10_12_80049470[6];
 s32 D_ovl10_12_80049488[6];
 s32 D_ovl10_12_800494A0[6];
 s32 D_ovl10_12_800494B8;
-u8 D_ovl10_12_800494BC[0x4]; /* unused (func_ovl10_12_800471E8) */
 s32 D_ovl10_12_800494C0[6];
 s32 D_ovl10_12_800494D8[6];
 s32 D_ovl10_12_800494F0[6];
@@ -273,16 +263,13 @@ f32 D_ovl10_12_80049544;
 f32 D_ovl10_12_80049548;
 f32 D_ovl10_12_8004954C;
 f32 D_ovl10_12_80049550;
-u8 D_ovl10_12_80049554[0x4]; /* unused (func_ovl10_12_800471E8) */
 UnkStructA *D_ovl10_12_80049558[28];
 UnkStructA *D_ovl10_12_800495C8[28];
 s32 D_ovl10_12_80049638[27][3];
-u8 D_ovl10_12_8004977C[0x4]; /* unused (func_ovl10_12_800471E8) */
 s32 D_ovl10_12_80049780[28];
 s32 D_ovl10_12_800497F0[28];
 s32 D_ovl10_12_80049860[64];
 s32 D_ovl10_12_80049960;
-u8 D_ovl10_12_80049964[0x4]; /* unused (func_ovl10_12_800471E8) */
 s32 D_ovl10_12_80049968[28];
 s32 D_ovl10_12_800499D8[28];
 s32 D_ovl10_12_80049A48[27][4];
@@ -339,11 +326,7 @@ static void func_ovl10_12_800471F0(void) {
 /* unused (its body is dropped): the reference keeps the unused words in
  * .bss, which would otherwise be common */
 static void func_ovl10_12_800471E8(void) {
-    D_ovl10_12_80048C30[0] = D_ovl10_12_80048C5C[0] + D_ovl10_12_80048C6C[0] + D_ovl10_12_80048D24[0] +
-                             D_ovl10_12_80048E8C[0] + D_ovl10_12_800490E4[0] + D_ovl10_12_8004911C[0] +
-                             D_ovl10_12_8004925C[0] + D_ovl10_12_800493AC[0] + D_ovl10_12_800493F4[0] +
-                             D_ovl10_12_800494BC[0] + D_ovl10_12_80049554[0] + D_ovl10_12_8004977C[0] +
-                             D_ovl10_12_80049964[0];
+    D_ovl10_12_80048C30[0] = 0;
 }
 
 /* the names src/overlays/common/core.h's code has here */

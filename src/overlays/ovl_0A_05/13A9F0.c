@@ -205,13 +205,11 @@ void func_ovl0A_05_80049548(void); /* 0x310C */
 
 /* .bss */
 Vec3f_ovl0A_05 D_ovl0A_05_800498D0;
-u8 D_ovl0A_05_800498DC[4];
 Vec3f_ovl0A_05 D_ovl0A_05_800498E0;
 s32 D_ovl0A_05_800498EC;
 u8 D_ovl0A_05_800498F0[4];
 s32 D_ovl0A_05_800498F4;
 s32 D_ovl0A_05_800498F8;
-u8 D_ovl0A_05_800498FC[4];
 Vec3f_ovl0A_05 D_ovl0A_05_80049900;
 UnkStruct_ovl0A_05_80048958 *D_ovl0A_05_8004990C;
 UnkStruct_ovl0A_05_80048958 *D_ovl0A_05_80049910;
@@ -221,7 +219,6 @@ UnkStruct_ovl0A_05_80048E50 *D_ovl0A_05_8004991C;
 s32 D_ovl0A_05_80049920;
 UnkStruct_ovl0A_05_80048CA0 *D_ovl0A_05_80049924;
 UnkStruct_ovl0A_05_80048E50 *D_ovl0A_05_80049928;
-u8 D_ovl0A_05_8004992C[4];
 UnkStruct_ovl0A_05_80049518 *D_ovl0A_05_80049930[4];
 UnkStruct_ovl0A_05_80048CA0 *D_ovl0A_05_80049940;
 UnkStruct_ovl0A_05_80048CA0 *D_ovl0A_05_80049944;
@@ -231,9 +228,7 @@ UnkStruct_ovl0A_05_80048CA0 *D_ovl0A_05_80049950[4];
 UnkStruct_ovl0A_05_800494E8 *D_ovl0A_05_80049960;
 UnkStruct_ovl0A_05_80048CA0 *D_ovl0A_05_80049964;
 UnkStruct_ovl0A_05_80048CA0 *D_ovl0A_05_80049968;
-u8 D_ovl0A_05_8004996C[4];
 Vec3f_ovl0A_05 D_ovl0A_05_80049970;
-u8 D_ovl0A_05_8004997C[4];
 
 /* .data */
 Vec3f_ovl0A_05 D_ovl0A_05_80049570 = { 5000.0f, 5000.0f, 5000.0f };
@@ -354,12 +349,7 @@ static void func_ovl0A_05_80047EF4(void) {
  * stand for whatever referenced the .bss the code doesn't (or it
  * becomes common). */
 static void func_ovl0A_05_80047EEC(void) {
-    D_ovl0A_05_800498DC[0] = 0;
     D_ovl0A_05_800498F0[0] = 0;
-    D_ovl0A_05_800498FC[0] = 0;
-    D_ovl0A_05_8004992C[0] = 0;
-    D_ovl0A_05_8004996C[0] = 0;
-    D_ovl0A_05_8004997C[0] = 0;
 }
 
 void func_ovl0A_05_80047EE4(void) {

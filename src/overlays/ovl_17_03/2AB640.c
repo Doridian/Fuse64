@@ -50,7 +50,6 @@ void func_ovl17_03_80044BB0(s32, f32, f32, f32);
 u8 D_ovl17_03_80044E40[0x24];
 s32 D_ovl17_03_80044E64;
 s32 D_ovl17_03_80044E68;
-u8 D_ovl17_03_80044E6C[0x4]; /* not referenced here */
 Vec3f D_ovl17_03_80044E70;
 UnkStructC *D_ovl17_03_80044E7C;
 

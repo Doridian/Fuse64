@@ -720,7 +720,6 @@ u8 D_ovl0B_06_8004A590[0x24]; /* not referenced here */
 s32 D_ovl0B_06_8004A5B4;
 s32 D_ovl0B_06_8004A5B8;
 Vec3f D_ovl0B_06_8004A5C0;
-u8 D_ovl0B_06_8004A5CC[4]; /* not referenced here */
 s32 D_ovl0B_06_8004A5D0[4];
 Unk18_ovl0B_06 D_ovl0B_06_8004A5E0[3];
 UnkStructA_40 *D_ovl0B_06_8004A628;
@@ -728,7 +727,6 @@ UnkStructA_40 *D_ovl0B_06_8004A62C;
 UnkStructA_40 *D_ovl0B_06_8004A630;
 UnkStructA_40 *D_ovl0B_06_8004A634;
 UnkStructC *D_ovl0B_06_8004A638;
-u8 D_ovl0B_06_8004A63C[4]; /* not referenced here */
 u8 D_ovl0B_06_8004A640[8];
 u8 D_ovl0B_06_8004A648[8];
 s32 D_ovl0B_06_8004A650[4];
@@ -1018,7 +1016,7 @@ s32 D_ovl0B_06_8004A480[4] = { 0, 0, 0, 0 };
  * D_ovl0B_06_80049CAC table. */
 /* @80047B38 */
 static void func_ovl0B_06_80047B38(void) {
-    D_ovl0B_06_8004A590[0] = D_ovl0B_06_8004A5CC[0] = D_ovl0B_06_8004A63C[0] = D_ovl0B_06_8004A648[0] = 0;
+    D_ovl0B_06_8004A590[0] = D_ovl0B_06_8004A648[0] = 0;
 }
 
 static void func_ovl0B_06_80047B40(void) {

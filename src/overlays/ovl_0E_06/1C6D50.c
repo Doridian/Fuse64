@@ -66,9 +66,7 @@ s32 D_ovl0E_06_8004537C;
 u8 D_ovl0E_06_80045380[4]; /* not referenced here */
 s32 D_ovl0E_06_80045384;
 s32 D_ovl0E_06_80045388;
-u8 D_ovl0E_06_8004538C[4]; /* not referenced here */
 Vec3f D_ovl0E_06_80045390;
-u8 D_ovl0E_06_8004539C[4]; /* not referenced here */
 UnkStruct_ovl0E_06_800453A0 D_ovl0E_06_800453A0;
 UnkStructA *D_ovl0E_06_800453B4;
 u8 D_ovl0E_06_800453B8[8]; /* not referenced here */

@@ -137,7 +137,6 @@ void func_ovl10_11_80043044(void);
 u8 D_ovl10_11_800466A0[0x24];
 s32 D_ovl10_11_800466C4;
 s32 D_ovl10_11_800466C8;
-u8 D_ovl10_11_800466CC[0x4]; /* unused (func_ovl10_11_80044E08) */
 Vec3f D_ovl10_11_800466D0;
 s32 D_ovl10_11_800466DC;
 s32 D_ovl10_11_800466E0;
@@ -145,14 +144,11 @@ s32 D_ovl10_11_800466E4;
 /* the tasks: a countdown and a function each */
 s32 D_ovl10_11_800466E8[64];
 s32 D_ovl10_11_800467E8; /* the running task */
-u8 D_ovl10_11_800467EC[0x4]; /* unused (func_ovl10_11_80044E08) */
 void (*D_ovl10_11_800467F0[64])(void);
 UnkStruct_ovl10_11_80045D80 *D_ovl10_11_800468F0;
-u8 D_ovl10_11_800468F4[0x4]; /* unused (func_ovl10_11_80044E08) */
 s32 D_ovl10_11_800468F8[4][3];
 UnkStructA *D_ovl10_11_80046928[4];
 s32 D_ovl10_11_80046938;
-u8 D_ovl10_11_8004693C[0x4]; /* unused (func_ovl10_11_80044E08) */
 s32 D_ovl10_11_80046940[4];
 s32 D_ovl10_11_80046950[4];
 s32 D_ovl10_11_80046960[5];
@@ -160,7 +156,6 @@ s32 D_ovl10_11_80046974;
 f32 D_ovl10_11_80046978;
 f32 D_ovl10_11_8004697C;
 f32 D_ovl10_11_80046980;
-u8 D_ovl10_11_80046984[0x4]; /* unused (func_ovl10_11_80044E08) */
 s32 D_ovl10_11_80046988[6][3];
 UnkStructA *D_ovl10_11_800469D0[6];
 UnkStructA *D_ovl10_11_800469E8;
@@ -173,7 +168,6 @@ s32 D_ovl10_11_80046A00[6];
 s32 D_ovl10_11_80046A18[6];
 s32 D_ovl10_11_80046A30[6];
 s32 D_ovl10_11_80046A48;
-u8 D_ovl10_11_80046A4C[0x4]; /* unused (func_ovl10_11_80044E08) */
 s32 D_ovl10_11_80046A50[6];
 s32 D_ovl10_11_80046A68[6];
 s32 D_ovl10_11_80046A80[6];
@@ -225,8 +219,7 @@ static void func_ovl10_11_80044E10(void) {
 /* unused (its body is dropped): the reference keeps the unused words in
  * .bss, which would otherwise be common */
 static void func_ovl10_11_80044E08(void) {
-    D_ovl10_11_800466A0[0] = D_ovl10_11_800466CC[0] + D_ovl10_11_800467EC[0] + D_ovl10_11_800468F4[0] +
-                             D_ovl10_11_8004693C[0] + D_ovl10_11_80046984[0] + D_ovl10_11_80046A4C[0];
+    D_ovl10_11_800466A0[0] = 0;
 }
 
 /* the names src/overlays/common/core.h's code has here */

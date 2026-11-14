@@ -78,9 +78,7 @@ s32 D_ovl0E_10_8004557C;
 u8 D_ovl0E_10_80045580[0x4]; /* split for alignment */
 s32 D_ovl0E_10_80045584;
 s32 D_ovl0E_10_80045588;
-u8 D_ovl0E_10_8004558C[0x4]; /* not referenced here */
 Vec3f D_ovl0E_10_80045590;
-u8 D_ovl0E_10_8004559C[0x4]; /* not referenced here */
 UnkStruct_ovl0E_10_800455A0 D_ovl0E_10_800455A0;
 UnkStructA *D_ovl0E_10_800455B4;
 u8 D_ovl0E_10_800455B8[0x8]; /* split for alignment */

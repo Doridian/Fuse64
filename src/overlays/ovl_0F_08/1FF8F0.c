@@ -139,7 +139,6 @@ s32 D_ovl0F_08_80045DD4;
 u8 D_ovl0F_08_80045DD8[0x4];
 s32 D_ovl0F_08_80045DDC;
 s32 D_ovl0F_08_80045DE0;
-u8 D_ovl0F_08_80045DE4[0x4];
 Vec3f D_ovl0F_08_80045DE8;
 UnkStructC *D_ovl0F_08_80045DF4;
 
@@ -184,7 +183,7 @@ u8 D_ovl0F_08_80045D08[0x8] = { 0 }; /* nothing uses it */
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
 static void func_ovl0F_08_800444CC(void) {
-    D_ovl0F_08_80045DD8[0] = D_ovl0F_08_80045DE4[0];
+    D_ovl0F_08_80045DD8[0] = 0;
 }
 
 /* Taking the task's address here (as well as in 80043028/800430C4) makes

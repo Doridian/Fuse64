@@ -170,7 +170,6 @@ void func_ovl0A_02_800482C0(void); /* 0x310B */
 u8 D_ovl0A_02_80048500[0x24];
 s32 D_ovl0A_02_80048524;
 s32 D_ovl0A_02_80048528;
-u8 D_ovl0A_02_8004852C[4];
 Vec3f_ovl0A_02 D_ovl0A_02_80048530;
 UnkStruct_ovl0A_02_80047BD0 *D_ovl0A_02_8004853C;
 s32 D_ovl0A_02_80048540;
@@ -316,7 +315,7 @@ static void func_ovl0A_02_80046C68(void) {
  * refers to the .bss nothing else uses, which would otherwise be common,
  * and takes the tasks' addresses, which keeps them after the handler */
 static void func_ovl0A_02_80046C60(void) {
-    D_ovl0A_02_80048500[0] = D_ovl0A_02_8004852C[0];
+    D_ovl0A_02_80048500[0] = 0;
     func_ovl0A_02_80047B48(func_ovl0A_02_80046724, NULL, 0, 0, 0);
     func_ovl0A_02_80047B48(func_ovl0A_02_8004699C, NULL, 0, 0, 0);
 }

@@ -215,7 +215,6 @@ void func_ovl0A_01_800486F8(void); /* 0x310A */
 u8 D_ovl0A_01_80048CE0[0x24];
 s32 D_ovl0A_01_80048D04;
 s32 D_ovl0A_01_80048D08;
-u8 D_ovl0A_01_80048D0C[4];
 Vec3f_ovl0A_01 D_ovl0A_01_80048D10;
 s32 D_ovl0A_01_80048D1C;
 s32 *D_ovl0A_01_80048D20;
@@ -559,7 +558,6 @@ static void func_ovl0A_01_80046EB8(void) {
 /* Unused: IDO -O3 drops their bodies and leaves a `jr ra` each. */
 static void func_ovl0A_01_80046EB0(void) {
     D_ovl0A_01_80048CE0[0] = 0;
-    D_ovl0A_01_80048D0C[0] = 0;
     D_ovl0A_01_80048D28[0] = 0;
     func_ovl0A_01_80047F88(func_ovl0A_01_80046EA8, NULL, 0, 0, 0);
 }

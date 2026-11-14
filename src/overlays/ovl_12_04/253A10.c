@@ -95,9 +95,7 @@ s32 D_ovl12_04_8004508C;
 u8 D_ovl12_04_80045090[0x4]; /* unused (func_ovl12_04_80043978) */
 s32 D_ovl12_04_80045094;
 s32 D_ovl12_04_80045098;
-u8 D_ovl12_04_8004509C[0x4]; /* unused (func_ovl12_04_80043978) */
 Vec3f D_ovl12_04_800450A0;
-u8 D_ovl12_04_800450AC[0x4]; /* unused (func_ovl12_04_80043978) */
 UnkStruct_ovl12_04_800450B0 D_ovl12_04_800450B0;
 
 /* .data */
@@ -121,7 +119,7 @@ u32 D_ovl12_04_80044FFC[][3] = {
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
 static void func_ovl12_04_80043978(void) {
-    D_ovl12_04_80045090[0] = D_ovl12_04_8004509C[0] + D_ovl12_04_800450AC[0];
+    D_ovl12_04_80045090[0] = 0;
 }
 
 static void func_ovl12_04_80043970(void) {

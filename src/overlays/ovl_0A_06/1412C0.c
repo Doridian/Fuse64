@@ -218,20 +218,17 @@ static void func_ovl0A_06_80043018(s32 id, s32 wait);
 
 /* .bss */
 Vec3f_ovl0A_06 D_ovl0A_06_800474F0;
-u8 D_ovl0A_06_800474FC[4];
 Vec3f_ovl0A_06 D_ovl0A_06_80047500;
 s32 D_ovl0A_06_8004750C;
 u8 D_ovl0A_06_80047510[4];
 s32 D_ovl0A_06_80047514;
 s32 D_ovl0A_06_80047518;
-u8 D_ovl0A_06_8004751C[4];
 Vec3f_ovl0A_06 D_ovl0A_06_80047520;
 UnkStruct_ovl0A_06_800460E8 *D_ovl0A_06_8004752C;
 UnkStruct_ovl0A_06_800460E8 *D_ovl0A_06_80047530;
 UnkStruct_ovl0A_06_800460E8 *D_ovl0A_06_80047534;
 #if !VERSION_JP
 UnkStruct_ovl0A_06_800460E8 *D_ovl0A_06_80047538;
-u8 D_ovl0A_06_8004753C[4];
 #endif
 UnkStruct_ovl0A_06_80047540 D_ovl0A_06_80047540[16];
 u8 D_ovl0A_06_80047700[8];
@@ -241,7 +238,6 @@ s32 D_ovl0A_06_80047728[4];
 s32 D_ovl0A_06_80047738[4];
 UnkStruct_ovl0A_06_800460E8 *D_ovl0A_06_80047748[4];
 s32 D_ovl0A_06_80047758;
-u8 D_ovl0A_06_8004775C[4];
 
 /* .data */
 #if VERSION_JP
@@ -721,16 +717,12 @@ static void func_ovl0A_06_80045258(void) {
 
 static void func_ovl0A_06_80045260(void) {
     D_ovl0A_06_800474F0.x = 0;
-    D_ovl0A_06_800474FC[0] = 0;
     D_ovl0A_06_80047500.x = 0;
     D_ovl0A_06_8004750C = 0;
     D_ovl0A_06_80047510[0] = 0;
-    D_ovl0A_06_8004751C[0] = 0;
 #if !VERSION_JP
-    D_ovl0A_06_8004753C[0] = 0;
 #endif
     D_ovl0A_06_80047700[0] = 0;
-    D_ovl0A_06_8004775C[0] = 0;
 }
 
 static void func_ovl0A_06_80045268(void) {

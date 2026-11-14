@@ -299,9 +299,7 @@ s32 D_ovl0C_07_8004796C;
 u8 D_ovl0C_07_80047970[0x4]; /* unused (func_ovl0C_07_80045EA4) */
 s32 D_ovl0C_07_80047974;
 s32 D_ovl0C_07_80047978;
-u8 D_ovl0C_07_8004797C[0x4]; /* unused (func_ovl0C_07_80045EA4) */
 Vec3f D_ovl0C_07_80047980;
-u8 D_ovl0C_07_8004798C[0x4]; /* unused (func_ovl0C_07_80045EA4) */
 UnkStruct_ovl0C_07_80047990 D_ovl0C_07_80047990;
 UnkStructA *D_ovl0C_07_800479A4;
 UnkStructA *D_ovl0C_07_800479A8[2];
@@ -380,7 +378,7 @@ static void func_ovl0C_07_80045EAC(void) {
 /* unused (its body is dropped): the reference keeps the unused words in
  * .bss, which would otherwise be common */
 static void func_ovl0C_07_80045EA4(void) {
-    D_ovl0C_07_80047970[0] = D_ovl0C_07_8004797C[0] + D_ovl0C_07_8004798C[0];
+    D_ovl0C_07_80047970[0] = 0;
 }
 
 /* the names src/overlays/common/core.h's code has here */

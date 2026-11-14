@@ -197,23 +197,18 @@ s32 D_ovl10_01_8004730C;
 u8 D_ovl10_01_80047310[0x4]; /* unused (func_ovl10_01_80045980) */
 s32 D_ovl10_01_80047314;
 s32 D_ovl10_01_80047318;
-u8 D_ovl10_01_8004731C[0x4]; /* unused (func_ovl10_01_80045980) */
 Vec3f D_ovl10_01_80047320;
 s32 D_ovl10_01_8004732C;
 s32 D_ovl10_01_80047330;
-u8 D_ovl10_01_80047334[0x4]; /* unused (func_ovl10_01_80045980) */
 /* the tasks: a countdown and a function each */
 s32 D_ovl10_01_80047338[64];
 s32 D_ovl10_01_80047438; /* the running task */
-u8 D_ovl10_01_8004743C[0x4]; /* unused (func_ovl10_01_80045980) */
 void (*D_ovl10_01_80047440[64])(void);
 UnkStruct_ovl10_01_80047540 *D_ovl10_01_80047540;
-u8 D_ovl10_01_80047544[0x4]; /* unused (func_ovl10_01_80045980) */
 UnkStructA *D_ovl10_01_80047548[8];
 UnkStructA *D_ovl10_01_80047568[8];
 void *D_ovl10_01_80047588[8];
 s32 D_ovl10_01_800475A8;
-u8 D_ovl10_01_800475AC[0x4]; /* unused (func_ovl10_01_80045980) */
 s32 D_ovl10_01_800475B0[8];
 s32 D_ovl10_01_800475D0[8];
 s32 D_ovl10_01_800475F0[8];
@@ -286,8 +281,7 @@ static void func_ovl10_01_80045988(void) {
 /* unused (its body is dropped): the reference keeps the unused words in
  * .bss, which would otherwise be common */
 static void func_ovl10_01_80045980(void) {
-    D_ovl10_01_80047310[0] = D_ovl10_01_8004731C[0] + D_ovl10_01_80047334[0] + D_ovl10_01_8004743C[0] +
-                             D_ovl10_01_80047544[0] + D_ovl10_01_800475AC[0];
+    D_ovl10_01_80047310[0] = 0;
 }
 
 /* the names src/overlays/common/core.h's code has here */

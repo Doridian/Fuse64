@@ -170,13 +170,11 @@ void func_ovl13_02_8004D450(void); /* 0x3001 */
 
 /* .bss */
 Vec3f D_ovl13_02_8004DC90;
-u8 D_ovl13_02_8004DC9C[4];
 s32 D_ovl13_02_8004DCA0[3];
 s32 D_ovl13_02_8004DCAC;
 u8 D_ovl13_02_8004DCB0[0x4];
 s32 D_ovl13_02_8004DCB4;
 s32 D_ovl13_02_8004DCB8;
-u8 D_ovl13_02_8004DCBC[0x4];
 Vec3f D_ovl13_02_8004DCC0;
 u8 D_ovl13_02_8004DCCC[0x4]; /* unused (func_ovl13_02_8004BE60) */
 s32 D_ovl13_02_8004DCD0;
@@ -222,7 +220,6 @@ UnkStructA *D_ovl13_02_8004DE50[8];
 UnkStructA * D_ovl13_02_8004DE70;
 f32 D_ovl13_02_8004DE74;
 f32 D_ovl13_02_8004DE78;
-u8 D_ovl13_02_8004DE7C[0x4];
 Sub18_ovl13_02 D_ovl13_02_8004DE80;
 Sub18_ovl13_02 D_ovl13_02_8004DE98;
 Sub18_ovl13_02 D_ovl13_02_8004DEB0;
@@ -244,7 +241,6 @@ f32 D_ovl13_02_8004DF04;
 f32 D_ovl13_02_8004DF08;
 f32 D_ovl13_02_8004DF0C;
 f32 D_ovl13_02_8004DF10;
-u8 D_ovl13_02_8004DF14[0x4];
 s32 D_ovl13_02_8004DF18[18];
 s32 D_ovl13_02_8004DF60[4];
 s32 D_ovl13_02_8004DF70[4];
@@ -373,7 +369,7 @@ f32 D_ovl13_02_8004D938[6] = { -200.0f, -100.0f, -0.0f, 200.0f, 100.0f, 0.0f };
  * body is dropped). The first is the one that used the .bss words nothing
  * else uses: a reference from it keeps them out of common */
 static void func_ovl13_02_8004BE60(void) {
-    D_ovl13_02_8004DC9C[0] = D_ovl13_02_8004DCB0[0] = D_ovl13_02_8004DCBC[0] = D_ovl13_02_8004DCCC[0] = D_ovl13_02_8004DCD4[0] = D_ovl13_02_8004DCE4[0] = D_ovl13_02_8004DCE8[0] = D_ovl13_02_8004DD04[0] = D_ovl13_02_8004DD0C[0] = D_ovl13_02_8004DD18[0] = D_ovl13_02_8004DE7C[0] = D_ovl13_02_8004DED0[0] = D_ovl13_02_8004DEE0[0] = D_ovl13_02_8004DF14[0] = 0;
+    D_ovl13_02_8004DCB0[0] = D_ovl13_02_8004DCCC[0] = D_ovl13_02_8004DCD4[0] = D_ovl13_02_8004DCE4[0] = D_ovl13_02_8004DCE8[0] = D_ovl13_02_8004DD04[0] = D_ovl13_02_8004DD0C[0] = D_ovl13_02_8004DD18[0] = D_ovl13_02_8004DED0[0] = D_ovl13_02_8004DEE0[0] = 0;
     D_ovl13_02_8004DEDC = 0.0f;
 }
 

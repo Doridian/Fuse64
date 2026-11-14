@@ -50,9 +50,7 @@ void func_ovl17_04_80044A78(s16, s32);
 u8 D_ovl17_04_80044E30[0x24];
 s32 D_ovl17_04_80044E54;
 s32 D_ovl17_04_80044E58;
-u8 D_ovl17_04_80044E5C[0x4]; /* not referenced here */
 Vec3f D_ovl17_04_80044E60;
-u8 D_ovl17_04_80044E6C[0x4]; /* not referenced here */
 
 /* .data */
 /* passed to func_ovl17_04_80044920: three 12-byte records */

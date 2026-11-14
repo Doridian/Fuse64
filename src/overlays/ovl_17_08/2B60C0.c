@@ -94,9 +94,7 @@ void func_ovl17_08_800440F4(void);
 u8 D_ovl17_08_80045C60[0x24];
 s32 D_ovl17_08_80045C84;
 s32 D_ovl17_08_80045C88;
-u8 D_ovl17_08_80045C8C[0x4];
 Vec3f D_ovl17_08_80045C90;
-u8 D_ovl17_08_80045C9C[0x4];
 UnkStruct_ovl17_08_80045CA0 D_ovl17_08_80045CA0[3];
 UnkStruct_ovl17_08_80045CB8 D_ovl17_08_80045CB8[3];
 f32 D_ovl17_08_80045CE8;
@@ -131,7 +129,7 @@ UnkStruct_ovl17_08_80045A94 D_ovl17_08_80045B3C[3] = {
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
 static void func_ovl17_08_80044428(void) {
-    D_ovl17_08_80045C60[0] = D_ovl17_08_80045C8C[0] + D_ovl17_08_80045C9C[0];
+    D_ovl17_08_80045C60[0] = 0;
 }
 
 static void func_ovl17_08_80044420(void) {

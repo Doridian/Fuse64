@@ -117,7 +117,6 @@ static void func_ovl12_06_800430C8(void);
 u8 D_ovl12_06_80045F80[0x24];
 s32 D_ovl12_06_80045FA4;
 s32 D_ovl12_06_80045FA8;
-u8 D_ovl12_06_80045FAC[0x4];
 Vec3f D_ovl12_06_80045FB0;
 s32 D_ovl12_06_80045FBC;
 s32 D_ovl12_06_80045FC0;
@@ -134,7 +133,7 @@ UnkStruct_ovl12_06_80045FCC *D_ovl12_06_80045FCC;
 /* unused: the stubs IDO -O3 leaves at the end of the object; the last one
  * refers to the .bss nothing else uses, which would otherwise be common */
 static void func_ovl12_06_80044848(void) {
-    D_ovl12_06_80045F80[0] = D_ovl12_06_80045FAC[0];
+    D_ovl12_06_80045F80[0] = 0;
 }
 
 static void func_ovl12_06_80044840(void) {

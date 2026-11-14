@@ -304,7 +304,6 @@ s32 D_ovl0D_06_800475CC;
 s32 D_ovl0D_06_800475D0;
 s32 D_ovl0D_06_800475D4;
 s32 D_ovl0D_06_800475D8;
-u8 D_ovl0D_06_800475DC[0x4]; /* unused */
 Vec3f D_ovl0D_06_800475E0;
 Obj_0D06 *D_ovl0D_06_800475EC;
 s32 D_ovl0D_06_800475F0;
@@ -378,7 +377,6 @@ Ent_0D06 D_ovl0D_06_80047508[1] = {
 
 /* unused: the stubs IDO -O3 leaves at the end of the object */
 static void func_ovl0D_06_80045A34(void) {
-    D_ovl0D_06_800475DC[0] = 0;
 }
 
 static void func_ovl0D_06_80045A2C(void) {

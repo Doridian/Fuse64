@@ -209,17 +209,13 @@ void func_ovl10_08_80043010(void);
 u8 D_ovl10_08_800496C0[0x24]; /* unused (func_ovl10_08_80047B48) */
 s32 D_ovl10_08_800496E4;
 s32 D_ovl10_08_800496E8;
-u8 D_ovl10_08_800496EC[0x4]; /* unused (func_ovl10_08_80047B48) */
 Vec3f D_ovl10_08_800496F0;
-u8 D_ovl10_08_800496FC[0x4]; /* unused (func_ovl10_08_80047B48) */
 UnkStructA *D_ovl10_08_80049700[12];
 s32 D_ovl10_08_80049730[11][3];
-u8 D_ovl10_08_800497B4[0x4]; /* unused (func_ovl10_08_80047B48) */
 s32 D_ovl10_08_800497B8[12];
 s32 D_ovl10_08_800497E8[12];
 s32 D_ovl10_08_80049818[64];
 s32 D_ovl10_08_80049918;
-u8 D_ovl10_08_8004991C[0x4]; /* unused (func_ovl10_08_80047B48) */
 s32 D_ovl10_08_80049920[12];
 s32 D_ovl10_08_80049950[12];
 s32 D_ovl10_08_80049980[11];
@@ -230,37 +226,30 @@ s32 D_ovl10_08_800499E0;
 s32 D_ovl10_08_800499E4;
 s32 D_ovl10_08_800499E8[64];
 s32 D_ovl10_08_80049AE8;
-u8 D_ovl10_08_80049AEC[0x4]; /* unused (func_ovl10_08_80047B48) */
 void (*D_ovl10_08_80049AF0[64])(void);
 UnkStruct_ovl10_08_80048AC0 *D_ovl10_08_80049BF0;
-u8 D_ovl10_08_80049BF4[0x4]; /* unused (func_ovl10_08_80047B48) */
 UnkStructA *D_ovl10_08_80049BF8[6];
 s32 D_ovl10_08_80049C10[6][3];
 s32 D_ovl10_08_80049C58[6];
 s32 D_ovl10_08_80049C70[6];
 s32 D_ovl10_08_80049C88[64];
 s32 D_ovl10_08_80049D88;
-u8 D_ovl10_08_80049D8C[0x4]; /* unused (func_ovl10_08_80047B48) */
 s32 D_ovl10_08_80049D90[6];
 s32 D_ovl10_08_80049DA8[6];
 f32 D_ovl10_08_80049DC0[6];
 f32 D_ovl10_08_80049DD8[6];
 s32 *D_ovl10_08_80049DF0;
-u8 D_ovl10_08_80049DF4[0x4]; /* unused (func_ovl10_08_80047B48) */
 s32 D_ovl10_08_80049DF8[4][3];
 UnkStructA *D_ovl10_08_80049E28[4];
 s32 D_ovl10_08_80049E38;
-u8 D_ovl10_08_80049E3C[0x4]; /* unused (func_ovl10_08_80047B48) */
 s32 D_ovl10_08_80049E40[4];
 s32 D_ovl10_08_80049E50[4];
 s32 D_ovl10_08_80049E60;
-u8 D_ovl10_08_80049E64[0x4]; /* unused (func_ovl10_08_80047B48) */
 s32 D_ovl10_08_80049E68[5];
 s32 D_ovl10_08_80049E7C;
 f32 D_ovl10_08_80049E80;
 f32 D_ovl10_08_80049E84;
 f32 D_ovl10_08_80049E88;
-u8 D_ovl10_08_80049E8C[0x4]; /* unused (func_ovl10_08_80047B48) */
 s32 D_ovl10_08_80049E90[6][3];
 UnkStructA *D_ovl10_08_80049ED8[6];
 UnkStructA *D_ovl10_08_80049EF0;
@@ -273,7 +262,6 @@ s32 D_ovl10_08_80049F08[6];
 s32 D_ovl10_08_80049F20[6];
 s32 D_ovl10_08_80049F38[6];
 s32 D_ovl10_08_80049F50;
-u8 D_ovl10_08_80049F54[0x4]; /* unused (func_ovl10_08_80047B48) */
 s32 D_ovl10_08_80049F58[6];
 s32 D_ovl10_08_80049F70[6];
 s32 D_ovl10_08_80049F88[6];
@@ -286,7 +274,6 @@ f32 D_ovl10_08_80049FDC;
 f32 D_ovl10_08_80049FE0;
 f32 D_ovl10_08_80049FE4;
 f32 D_ovl10_08_80049FE8;
-u8 D_ovl10_08_80049FEC[0x4]; /* unused (func_ovl10_08_80047B48) */
 s32 D_ovl10_08_80049FF0[1][3]; /* the gate: its tile */
 UnkStructA *D_ovl10_08_80049FFC[1]; /* its two halves */
 UnkStructA *D_ovl10_08_8004A000[1];
@@ -297,16 +284,13 @@ s32 D_ovl10_08_8004A10C[1]; /* moving */
 f32 D_ovl10_08_8004A110[1];
 f32 D_ovl10_08_8004A114[1];
 f32 D_ovl10_08_8004A118[1];
-u8 D_ovl10_08_8004A11C[0x4]; /* unused (func_ovl10_08_80047B48) */
 UnkStructA *D_ovl10_08_8004A120[28];
 UnkStructA *D_ovl10_08_8004A190[28];
 s32 D_ovl10_08_8004A200[27][3];
-u8 D_ovl10_08_8004A344[0x4]; /* unused (func_ovl10_08_80047B48) */
 s32 D_ovl10_08_8004A348[28];
 s32 D_ovl10_08_8004A3B8[28];
 s32 D_ovl10_08_8004A428[64];
 s32 D_ovl10_08_8004A528;
-u8 D_ovl10_08_8004A52C[0x4]; /* unused (func_ovl10_08_80047B48) */
 s32 D_ovl10_08_8004A530[28];
 s32 D_ovl10_08_8004A5A0[28];
 s32 D_ovl10_08_8004A610[27][4];
@@ -367,7 +351,7 @@ static void func_ovl10_08_80047B50(void) {
 /* unused (its body is dropped): the reference keeps the unused words in
  * .bss, which would otherwise be common */
 static void func_ovl10_08_80047B48(void) {
-    D_ovl10_08_800496C0[0] = D_ovl10_08_800496EC[0] + D_ovl10_08_800496FC[0] + D_ovl10_08_800497B4[0] + D_ovl10_08_8004991C[0] + D_ovl10_08_80049AEC[0] + D_ovl10_08_80049BF4[0] + D_ovl10_08_80049D8C[0] + D_ovl10_08_80049DF4[0] + D_ovl10_08_80049E3C[0] + D_ovl10_08_80049E64[0] + D_ovl10_08_80049E8C[0] + D_ovl10_08_80049F54[0] + D_ovl10_08_80049FEC[0] + D_ovl10_08_8004A11C[0] + D_ovl10_08_8004A344[0] + D_ovl10_08_8004A52C[0];
+    D_ovl10_08_800496C0[0] = 0;
 }
 
 /* the names src/overlays/common/core.h's code has here */

@@ -200,14 +200,12 @@ s32 func_ovl0B_05_800464E8(s32); /* 0x2F0F */
 u8 D_ovl0B_05_800467C0[0x24]; /* not referenced here */
 s32 D_ovl0B_05_800467E4;
 s32 D_ovl0B_05_800467E8;
-u8 D_ovl0B_05_800467EC[4]; /* not referenced here */
 Vec3f_ovl0B_05_800466F0 D_ovl0B_05_800467F0;
 UnkStruct_ovl0B_05_80045EE0 *D_ovl0B_05_800467FC;
 s32 D_ovl0B_05_80046800;
 s32 D_ovl0B_05_80046804;
 Obj04 *D_ovl0B_05_80046808[6];
 UnkStruct_ovl0B_05_80046820 *D_ovl0B_05_80046820;
-u8 D_ovl0B_05_80046824[4]; /* not referenced here */
 s32 D_ovl0B_05_80046828[8];
 s32 D_ovl0B_05_80046848[4];
 s32 D_ovl0B_05_80046858[2];
@@ -341,7 +339,7 @@ static void func_ovl0B_05_80044D68(void) {
 /* unused: refers to the .bss nothing else uses, which would otherwise be
  * common */
 static void func_ovl0B_05_80044D60(void) {
-    D_ovl0B_05_800467C0[0] = D_ovl0B_05_800467EC[0] + D_ovl0B_05_80046824[0];
+    D_ovl0B_05_800467C0[0] = 0;
 }
 
 static void func_ovl0B_05_80044DD8(s32 arg0, Gfx_ovl0B_05 **arg1) {

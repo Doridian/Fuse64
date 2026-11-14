@@ -150,7 +150,6 @@ static void func_ovl0B_07_8004359C(s32 arg0, s32 *arg1);
 u8 D_ovl0B_07_80046DF0[0x24]; /* not referenced here */
 s32 D_ovl0B_07_80046E14;
 s32 D_ovl0B_07_80046E18;
-u8 D_ovl0B_07_80046E1C[4]; /* not referenced here */
 Vec3f D_ovl0B_07_80046E20;
 s32 D_ovl0B_07_80046E2C;
 UnkStructA_40 *D_ovl0B_07_80046E30[4][5];
@@ -241,7 +240,7 @@ Vtx_ovl0B_07 D_ovl0B_07_80046CF0[4] = {
  * are dropped); this one refers to the .bss nothing else uses, which would
  * otherwise be common */
 static void func_ovl0B_07_80045504(void) {
-    D_ovl0B_07_80046DF0[0] = D_ovl0B_07_80046E1C[0] = D_ovl0B_07_80046F38[0] = 0;
+    D_ovl0B_07_80046DF0[0] = D_ovl0B_07_80046F38[0] = 0;
 }
 
 static void func_ovl0B_07_800454FC(void) {

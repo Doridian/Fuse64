@@ -133,7 +133,6 @@ void func_ovl0B_01_80045DF0(s32); /* 0x310F */
 u8 D_ovl0B_01_80045F80[0x24];
 s32 D_ovl0B_01_80045FA4;
 s32 D_ovl0B_01_80045FA8;
-u8 D_ovl0B_01_80045FAC[4];
 Vec3f D_ovl0B_01_80045FB0;
 UnkStructA_40 *D_ovl0B_01_80045FBC;
 UnkStructA_40 *D_ovl0B_01_80045FC0;
@@ -240,7 +239,7 @@ static void func_ovl0B_01_800445DC(void) {
 /* unused: the stubs IDO -O3 leaves at the end of the object; this one
  * refers to the .bss nothing else uses, which would otherwise be common */
 static void func_ovl0B_01_800445D4(void) {
-    D_ovl0B_01_80045F80[0] = D_ovl0B_01_80045FAC[0];
+    D_ovl0B_01_80045F80[0] = 0;
 }
 
 static void func_ovl0B_01_8004464C(s32 arg0, Gfx_ovl0B_01 **arg1) {

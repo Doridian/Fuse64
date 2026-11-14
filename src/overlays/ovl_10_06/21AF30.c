@@ -321,14 +321,11 @@ u8 D_ovl10_06_8004AB60[0x20]; /* unused */
 s32 D_ovl10_06_8004AB80;
 s32 D_ovl10_06_8004AB84;
 s32 D_ovl10_06_8004AB88;
-u8 D_ovl10_06_8004AB8C[0x4]; /* unused */
 Vec3f D_ovl10_06_8004AB90;
 s32 D_ovl10_06_8004AB9C;
 s32 D_ovl10_06_8004ABA0;
-u8 D_ovl10_06_8004ABA4[0x4]; /* unused */
 s32 D_ovl10_06_8004ABA8[64]; /* M2C_UNK */
 s32 D_ovl10_06_8004ACA8;
-u8 D_ovl10_06_8004ACAC[0x4]; /* unused */
 void (*D_ovl10_06_8004ACB0[64])(void);
 UnkStructC * D_ovl10_06_8004ADB0;
 s32 * D_ovl10_06_8004ADB4;
@@ -340,7 +337,6 @@ UnkStructA * D_ovl10_06_8004ADE0[2];
 UnkStructA *D_ovl10_06_8004ADE8[4];
 UnkStructA * D_ovl10_06_8004ADF8[72];
 UnkStructA * D_ovl10_06_8004AF18;
-u8 D_ovl10_06_8004AF1C[0x4]; /* unused */
 UnkStruct_ovl10_06_8004A0E0 D_ovl10_06_8004AF20;
 f32 D_ovl10_06_8004AF2C;
 f32 D_ovl10_06_8004AF30;
@@ -380,7 +376,6 @@ s32 D_ovl10_06_8004B27C;
 s32 D_ovl10_06_8004B280;
 s32 D_ovl10_06_8004B284;
 s32 D_ovl10_06_8004B288;
-u8 D_ovl10_06_8004B28C[0x4]; /* unused */
 s32 D_ovl10_06_8004B290[64]; /* M2C_UNK */
 s32 D_ovl10_06_8004B390[4]; /* M2C_UNK */
 s32 D_ovl10_06_8004B3A0[3]; /* M2C_UNK */
@@ -395,7 +390,6 @@ s32 D_ovl10_06_8004B4D0[64]; /* M2C_UNK */
 s32 D_ovl10_06_8004B5D0[64]; /* M2C_UNK */
 s32 D_ovl10_06_8004B6D0[64]; /* M2C_UNK */
 s32 D_ovl10_06_8004B7D0;
-u8 D_ovl10_06_8004B7D4[0x4]; /* unused */
 s32 D_ovl10_06_8004B7D8[3]; /* M2C_UNK */
 s32 D_ovl10_06_8004B7E4;
 s32 D_ovl10_06_8004B7E8;
@@ -418,7 +412,6 @@ UnkStruct_ovl10_06_8004A460 *D_ovl10_06_8004B990[2];
 s32 D_ovl10_06_8004B998[3]; /* M2C_UNK */
 UnkStructA * D_ovl10_06_8004B9A4;
 UnkStructA * D_ovl10_06_8004B9A8;
-u8 D_ovl10_06_8004B9AC[0x4]; /* unused */
 UnkStructA *D_ovl10_06_8004B9B0[64];
 UnkStructA * D_ovl10_06_8004BAB0[72];
 UnkStructA *D_ovl10_06_8004BBD0[4];
@@ -451,9 +444,7 @@ static void func_ovl10_06_80049210(void) {
 /* unused (its body is dropped): the reference keeps the unused words in
  * .bss, which would otherwise be common */
 static void func_ovl10_06_80049208(void) {
-    D_ovl10_06_8004AB60[0] = D_ovl10_06_8004AB8C[0] + D_ovl10_06_8004ABA4[0] + D_ovl10_06_8004ACAC[0] +
-                             D_ovl10_06_8004AF1C[0] + D_ovl10_06_8004B28C[0] + D_ovl10_06_8004B7D4[0] +
-                             D_ovl10_06_8004B9AC[0] + D_ovl10_06_8004B24C[0] + D_ovl10_06_8004B998[0];
+    D_ovl10_06_8004AB60[0] = D_ovl10_06_8004B24C[0] + D_ovl10_06_8004B998[0];
 }
 
 /* ovl_17_09's 80044B70 */

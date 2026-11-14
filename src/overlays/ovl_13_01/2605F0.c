@@ -219,13 +219,11 @@ void func_ovl13_01_8004BE90(void); /* 0x3001 */
 
 /* .bss */
 Vec3f D_ovl13_01_8004C200;
-u8 D_ovl13_01_8004C20C[4];
 Vec3f D_ovl13_01_8004C210;
 s32 D_ovl13_01_8004C21C;
 u8 D_ovl13_01_8004C220[4];
 s32 D_ovl13_01_8004C224;
 s32 D_ovl13_01_8004C228;
-u8 D_ovl13_01_8004C22C[4];
 Vec3f D_ovl13_01_8004C230;
 s32 *D_ovl13_01_8004C23C;
 Vec3f D_ovl13_01_8004C240;
@@ -235,7 +233,6 @@ UnkStructA *D_ovl13_01_8004C254;
 UnkStructA *D_ovl13_01_8004C258;
 UnkStructA *D_ovl13_01_8004C25C;
 Vec3f D_ovl13_01_8004C260;
-u8 D_ovl13_01_8004C26C[4];
 s32 D_ovl13_01_8004C270[3];
 UnkStructC *D_ovl13_01_8004C27C;
 s32 D_ovl13_01_8004C280;
@@ -253,35 +250,25 @@ s32 D_ovl13_01_8004C2AC;
 Vec3f D_ovl13_01_8004C2B0;
 f32 D_ovl13_01_8004C2BC;
 Link_ovl13_01 D_ovl13_01_8004C2C0;
-u8 D_ovl13_01_8004C2D4[4];
 Link_ovl13_01 D_ovl13_01_8004C2D8;
-u8 D_ovl13_01_8004C2EC[4];
 Link_ovl13_01 D_ovl13_01_8004C2F0;
-u8 D_ovl13_01_8004C304[4];
 Link_ovl13_01 D_ovl13_01_8004C308;
 UnkStructA *D_ovl13_01_8004C31C;
 UnkStructA *D_ovl13_01_8004C320;
 UnkStructA *D_ovl13_01_8004C324;
 UnkStructA *D_ovl13_01_8004C328;
-u8 D_ovl13_01_8004C32C[4];
 UnkStructA *D_ovl13_01_8004C330[2];
 UnkStructA *D_ovl13_01_8004C338;
 UnkStructA *D_ovl13_01_8004C33C;
 UnkStructA *D_ovl13_01_8004C340;
-u8 D_ovl13_01_8004C344[4];
 UnkStructA *D_ovl13_01_8004C348[4];
 UnkStructA *D_ovl13_01_8004C358;
 UnkStructA *D_ovl13_01_8004C35C;
 UnkStructA *D_ovl13_01_8004C360;
-u8 D_ovl13_01_8004C364[4];
 Vec3f D_ovl13_01_8004C368;
-u8 D_ovl13_01_8004C374[4];
 Vec3f D_ovl13_01_8004C378;
-u8 D_ovl13_01_8004C384[4];
 Vec3f D_ovl13_01_8004C388;
-u8 D_ovl13_01_8004C394[4];
 Vec3f D_ovl13_01_8004C398;
-u8 D_ovl13_01_8004C3A4[4];
 Vec3f D_ovl13_01_8004C3A8;
 s32 D_ovl13_01_8004C3B4;
 f32 D_ovl13_01_8004C3B8;
@@ -391,7 +378,7 @@ s32 D_ovl13_01_8004BF44 = 0;
  * body is dropped); the first refers to the .bss words nothing else uses
  * (but C3DC), which would otherwise be common and leave .bss short */
 static void func_ovl13_01_8004A898(void) {
-    D_ovl13_01_8004C20C[0] = D_ovl13_01_8004C220[0] = D_ovl13_01_8004C22C[0] = D_ovl13_01_8004C26C[0] = D_ovl13_01_8004C2D4[0] = D_ovl13_01_8004C2EC[0] = D_ovl13_01_8004C304[0] = D_ovl13_01_8004C32C[0] = D_ovl13_01_8004C344[0] = D_ovl13_01_8004C364[0] = D_ovl13_01_8004C374[0] = D_ovl13_01_8004C384[0] = D_ovl13_01_8004C394[0] = D_ovl13_01_8004C3A4[0] = 0;
+    D_ovl13_01_8004C220[0] = 0;
 }
 
 static void func_ovl13_01_8004A8A0(void) {
@@ -2125,7 +2112,6 @@ void func_ovl13_01_80045538(void) {
  * before the statics; one in 800450B4 changes that function's code). IDO
  * puts C3E0, used before its definition, after everything else, so the
  * unused word after it is part of it. */
-u8 D_ovl13_01_8004C3DC[4];
 Vec3fPad_ovl13_01 D_ovl13_01_8004C3E0;
 
 void func_ovl13_01_800450B4(s32 arg0) {
@@ -2808,5 +2794,4 @@ void func_ovl13_01_80043010(void) {
 
 /* the last unused static (stubs come out in definition order); it refers to C3DC */
 static void func_ovl13_01_8004A8E0(void) {
-    D_ovl13_01_8004C3DC[0] = 0;
 }

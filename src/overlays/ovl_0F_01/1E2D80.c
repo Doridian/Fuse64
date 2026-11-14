@@ -391,22 +391,17 @@ UnkStructA *D_ovl0F_01_80048720[6];
 UnkStructA *D_ovl0F_01_80048738[3];
 UnkStructA *D_ovl0F_01_80048744;
 UnkStructA *D_ovl0F_01_80048748;
-u8 D_ovl0F_01_8004874C[0x4];
 f32 D_ovl0F_01_80048750[3];
-u8 D_ovl0F_01_8004875C[0x4];
 Vec3f D_ovl0F_01_80048760;
 s32 D_ovl0F_01_8004876C;
 u8 D_ovl0F_01_80048770[0x4];
 s32 D_ovl0F_01_80048774;
 s32 D_ovl0F_01_80048778;
-u8 D_ovl0F_01_8004877C[0x4];
 Vec3f D_ovl0F_01_80048780;
 UnkStructA *D_ovl0F_01_8004878C;
 s32 *D_ovl0F_01_80048790;
-u8 D_ovl0F_01_80048794[0x4];
 UnkStruct_ovl0F_01_80048798 D_ovl0F_01_80048798[20];
 Vec3f D_ovl0F_01_80048928;
-u8 D_ovl0F_01_80048934[0x4];
 UnkStruct_ovl0F_01_80048938 D_ovl0F_01_80048938;
 
 /* .data */
@@ -506,7 +501,7 @@ char D_ovl0F_01_800485B0[] = "WM1 WG1 WSH WAP WDS WB2 ST30";
 char D_ovl0F_01_800485D0[] = "WM1 WG1 WSH WAP WDE WB1 ST30";
 
 /* unused: the stubs IDO -O3 leaves at the end of the object */
-static void func_ovl0F_01_80046A78(void) { D_ovl0F_01_8004874C[0] = D_ovl0F_01_8004875C[0] = D_ovl0F_01_80048770[0] = D_ovl0F_01_8004877C[0] = D_ovl0F_01_80048794[0] = D_ovl0F_01_80048934[0] = 0; /* unused (body dropped): the reference keeps the unused .bss in place */
+static void func_ovl0F_01_80046A78(void) { D_ovl0F_01_80048770[0] = 0; /* unused (body dropped): the reference keeps the unused .bss in place */
 }
 
 static void func_ovl0F_01_80046A80(void) {

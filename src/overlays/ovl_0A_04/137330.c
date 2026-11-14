@@ -148,7 +148,6 @@ void func_ovl0A_04_800448FC(void);
 u8 D_ovl0A_04_800466C0[0x24]; /* not referenced here */
 s32 D_ovl0A_04_800466E4;
 s32 D_ovl0A_04_800466E8;
-u8 D_ovl0A_04_800466EC[4]; /* not referenced here */
 Vec3f_ovl0A_04_800466F0 D_ovl0A_04_800466F0;
 UnkStruct_ovl0A_04_80045EE0 *D_ovl0A_04_800466FC;
 s32 D_ovl0A_04_80046700;
@@ -353,7 +352,7 @@ static void func_ovl0A_04_80044F70(void) {
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */
 static void func_ovl0A_04_80044F68(void) {
-    D_ovl0A_04_800466C0[0] = D_ovl0A_04_800466EC[0];
+    D_ovl0A_04_800466C0[0] = 0;
 }
 
 /* the names src/overlays/common/core.h's code has here */

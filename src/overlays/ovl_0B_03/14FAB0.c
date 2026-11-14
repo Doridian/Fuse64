@@ -406,7 +406,6 @@ u8 *D_ovl0B_03_80049194[10] = { D_ovl0B_03_80048B60 + 0x20, D_ovl0B_03_80048B60 
 u8 D_ovl0B_03_800492E0[0x24];
 s32 D_ovl0B_03_80049304;
 s32 D_ovl0B_03_80049308;
-u8 D_ovl0B_03_8004930C[4];
 Vec3f D_ovl0B_03_80049310;
 s32 D_ovl0B_03_8004931C;
 u8 D_ovl0B_03_80049320[0x1000];
@@ -417,11 +416,9 @@ s32 D_ovl0B_03_8004A32C;
 s32 D_ovl0B_03_8004A330;
 UnkStructA_40 *D_ovl0B_03_8004A334;
 UnkStructA_40 *D_ovl0B_03_8004A338;
-u8 D_ovl0B_03_8004A33C[4];
 Anim_ovl0B_03 D_ovl0B_03_8004A340[3][5];
 Inner *D_ovl0B_03_8004A3F4;
 UnkStructA_40 *D_ovl0B_03_8004A3F8;
-u8 D_ovl0B_03_8004A3FC[4];
 s32 D_ovl0B_03_8004A400[4];
 s32 D_ovl0B_03_8004A410;
 s32 D_ovl0B_03_8004A414;
@@ -431,7 +428,7 @@ u8 D_ovl0B_03_8004A418[8];
  * refers to the .bss words nothing else uses, which would otherwise be
  * common and leave .bss short. */
 static void func_ovl0B_03_80047464(void) {
-    D_ovl0B_03_800492E0[0] = D_ovl0B_03_8004930C[0] = D_ovl0B_03_8004A33C[0] = D_ovl0B_03_8004A3FC[0] = D_ovl0B_03_8004A418[0] = 0;
+    D_ovl0B_03_800492E0[0] = D_ovl0B_03_8004A418[0] = 0;
 }
 
 /* An unused empty static (the original keeps its stub). */

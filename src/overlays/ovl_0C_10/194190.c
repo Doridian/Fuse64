@@ -165,7 +165,6 @@ s32 D_ovl0C_10_8004668C;
 u8 D_ovl0C_10_80046690[0x4]; /* unused (func_ovl0C_10_80044EC0) */
 s32 D_ovl0C_10_80046694;
 s32 D_ovl0C_10_80046698;
-u8 D_ovl0C_10_8004669C[0x4]; /* unused (func_ovl0C_10_80044EC0) */
 Vec3f D_ovl0C_10_800466A0;
 UnkStructA *D_ovl0C_10_800466AC; /* unused (func_ovl0C_10_80044EC0) */
 UnkStruct_ovl0C_10_800466B0 D_ovl0C_10_800466B0;
@@ -214,7 +213,7 @@ static void func_ovl0C_10_80044EC8(void) {
 /* unused (its body is dropped): the reference keeps the unused words in
  * .bss, which would otherwise be common */
 static void func_ovl0C_10_80044EC0(void) {
-    D_ovl0C_10_80046690[0] = D_ovl0C_10_8004669C[0];
+    D_ovl0C_10_80046690[0] = 0;
     D_ovl0C_10_800466AC = NULL;
 }
 

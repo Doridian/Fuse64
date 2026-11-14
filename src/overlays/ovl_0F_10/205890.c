@@ -207,7 +207,6 @@ s32 D_ovl0F_10_80046B14;
 u8 D_ovl0F_10_80046B18[0x4];
 s32 D_ovl0F_10_80046B1C;
 s32 D_ovl0F_10_80046B20;
-u8 D_ovl0F_10_80046B24[0x4];
 Vec3f D_ovl0F_10_80046B28;
 UnkStructC *D_ovl0F_10_80046B34;
 u8 D_ovl0F_10_80046B38[0x8];
@@ -239,7 +238,7 @@ static void func_ovl0F_10_80044FF0(void) {
     func_ovl0F_10_80043088(D_ovl0F_10_8004672C);
 }
 
-static void func_ovl0F_10_80044FF8(void) { D_ovl0F_10_80046B18[0] = D_ovl0F_10_80046B24[0] = D_ovl0F_10_80046B38[0] = 0; /* unused (body dropped): the reference keeps the unused .bss in place */
+static void func_ovl0F_10_80044FF8(void) { D_ovl0F_10_80046B18[0] = D_ovl0F_10_80046B38[0] = 0; /* unused (body dropped): the reference keeps the unused .bss in place */
 }
 
 static void func_ovl0F_10_80045000(void) {

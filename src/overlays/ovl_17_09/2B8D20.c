@@ -178,7 +178,6 @@ void func_ovl17_09_80044A2C(UnkStructA *);
 u8 D_ovl17_09_80046390[0x24];
 s32 D_ovl17_09_800463B4;
 s32 D_ovl17_09_800463B8;
-u8 D_ovl17_09_800463BC[0x4];
 Vec3f D_ovl17_09_800463C0;
 u8 D_ovl17_09_800463CC[0x4];
 UnkStruct_ovl17_09_800463D0 D_ovl17_09_800463D0[20];
@@ -224,7 +223,7 @@ static void func_ovl17_09_80044B90(void) {
         func_ovl17_09_80045068((void (*)(UnkStructA *)) func_ovl17_09_800448A0, 0);
         /* and the .bss nothing uses keeps its place (unreferenced, -O3
          * drops it) */
-        D_ovl17_09_80046390[0] = D_ovl17_09_800463BC[0] = D_ovl17_09_800463CC[0] =
+        D_ovl17_09_80046390[0] = D_ovl17_09_800463CC[0] =
             D_ovl17_09_80046578[0] = 0;
     }
 }

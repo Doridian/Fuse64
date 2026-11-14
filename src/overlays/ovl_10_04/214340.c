@@ -115,7 +115,7 @@ void func_ovl10_04_80044438(s32, UnkStructA *);
 void func_ovl10_04_8004446C(f32);
 void func_ovl10_04_800444B4(f32, f32, f32);
 void func_ovl10_04_80044510(void);
-void func_ovl10_04_80044528(void);
+static void func_ovl10_04_80044528(void);
 
 static void func_ovl10_04_80043018(void);
 static void func_ovl10_04_80043020(void);
@@ -181,13 +181,11 @@ static void func_ovl10_04_80044538(void) {
 static void func_ovl10_04_80044530(void) {
 }
 
-void func_ovl10_04_80044528(void) {
-    /* fake: the reference keeps the unused words in .bss, which would
-     * otherwise be common; it builds to nothing */
-    if (0) {
-        D_ovl10_04_80045D10[0] = D_ovl10_04_80045D3C[0] + D_ovl10_04_80045D54[0] + D_ovl10_04_80045E5C[0] +
-                                 D_ovl10_04_80045F64[0] + D_ovl10_04_80045FAC[0];
-    }
+/* unused (its body is dropped): the reference keeps the unused words in
+ * .bss, which would otherwise be common */
+static void func_ovl10_04_80044528(void) {
+    D_ovl10_04_80045D10[0] = D_ovl10_04_80045D3C[0] + D_ovl10_04_80045D54[0] + D_ovl10_04_80045E5C[0] +
+                             D_ovl10_04_80045F64[0] + D_ovl10_04_80045FAC[0];
 }
 
 void func_ovl10_04_80044510(void) {

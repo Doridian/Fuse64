@@ -285,7 +285,7 @@ void func_ovl0C_07_80045CEC(void);
 void func_ovl0C_07_80045DFC(s32 arg0, UnkStructA *arg1);
 void func_ovl0C_07_80045E30(f32 arg0, f32 arg1, f32 arg2);
 void func_ovl0C_07_80045E8C(void);
-void func_ovl0C_07_80045EA4(void);
+static void func_ovl0C_07_80045EA4(void);
 
 /* The three statements are on one line, a macro: only then does IDO
  * schedule across them (as in ovl_0C_04 and ovl_0C_09). */
@@ -377,12 +377,10 @@ static void func_ovl0C_07_80045EB4(void) {
 static void func_ovl0C_07_80045EAC(void) {
 }
 
-void func_ovl0C_07_80045EA4(void) {
-    /* fake: the reference keeps the unused words in .bss, which would
-     * otherwise be common; it builds to nothing */
-    if (0) {
-        D_ovl0C_07_80047970[0] = D_ovl0C_07_8004797C[0] + D_ovl0C_07_8004798C[0];
-    }
+/* unused (its body is dropped): the reference keeps the unused words in
+ * .bss, which would otherwise be common */
+static void func_ovl0C_07_80045EA4(void) {
+    D_ovl0C_07_80047970[0] = D_ovl0C_07_8004797C[0] + D_ovl0C_07_8004798C[0];
 }
 
 void func_ovl0C_07_80045E8C(void) {

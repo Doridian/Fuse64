@@ -115,7 +115,7 @@ void func_ovl0C_05_80044110(void);
 void func_ovl0C_05_80044220(s32, UnkStructA *);
 void func_ovl0C_05_80044254(f32, f32, f32);
 void func_ovl0C_05_800442B0(void);
-void func_ovl0C_05_800442C8(void);
+static void func_ovl0C_05_800442C8(void);
 
 /* empty statics: each leaves a `jr ra; nop` just before its caller */
 static void func_ovl0C_05_80043018(void);
@@ -184,12 +184,10 @@ static void func_ovl0C_05_800442D8(void) {
 static void func_ovl0C_05_800442D0(void) {
 }
 
-void func_ovl0C_05_800442C8(void) {
-    /* fake: the reference keeps the two unused words in .bss, which would
-     * otherwise be common; it builds to nothing */
-    if (0) {
-        D_ovl0C_05_80045A80[0] = D_ovl0C_05_80045A8C[0];
-    }
+/* unused (its body is dropped): the reference keeps the unused words in
+ * .bss, which would otherwise be common */
+static void func_ovl0C_05_800442C8(void) {
+    D_ovl0C_05_80045A80[0] = D_ovl0C_05_80045A8C[0];
 }
 
 void func_ovl0C_05_800442B0(void) {

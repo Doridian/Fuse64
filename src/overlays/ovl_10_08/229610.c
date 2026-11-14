@@ -118,7 +118,7 @@ void func_ovl10_08_80047FC0(s32, s32, s32, s32, s32, s32, s32, s32);
 void func_ovl10_08_80048EB8(s16, s32);
 void func_ovl10_08_80048EC0(s16, s32);
 
-void func_ovl10_08_80047B48(void);
+static void func_ovl10_08_80047B48(void);
 void func_ovl10_08_80047B30(void);
 void func_ovl10_08_80047AD4(f32 arg0, f32 arg1, f32 arg2);
 void func_ovl10_08_80047A8C(f32 arg0);
@@ -364,12 +364,10 @@ static void func_ovl10_08_80047B58(void) {
 static void func_ovl10_08_80047B50(void) {
 }
 
-void func_ovl10_08_80047B48(void) {
-    /* fake: the reference keeps the unused words in .bss, which would
-     * otherwise be common; it builds to nothing */
-    if (0) {
-        D_ovl10_08_800496C0[0] = D_ovl10_08_800496EC[0] + D_ovl10_08_800496FC[0] + D_ovl10_08_800497B4[0] + D_ovl10_08_8004991C[0] + D_ovl10_08_80049AEC[0] + D_ovl10_08_80049BF4[0] + D_ovl10_08_80049D8C[0] + D_ovl10_08_80049DF4[0] + D_ovl10_08_80049E3C[0] + D_ovl10_08_80049E64[0] + D_ovl10_08_80049E8C[0] + D_ovl10_08_80049F54[0] + D_ovl10_08_80049FEC[0] + D_ovl10_08_8004A11C[0] + D_ovl10_08_8004A344[0] + D_ovl10_08_8004A52C[0];
-    }
+/* unused (its body is dropped): the reference keeps the unused words in
+ * .bss, which would otherwise be common */
+static void func_ovl10_08_80047B48(void) {
+    D_ovl10_08_800496C0[0] = D_ovl10_08_800496EC[0] + D_ovl10_08_800496FC[0] + D_ovl10_08_800497B4[0] + D_ovl10_08_8004991C[0] + D_ovl10_08_80049AEC[0] + D_ovl10_08_80049BF4[0] + D_ovl10_08_80049D8C[0] + D_ovl10_08_80049DF4[0] + D_ovl10_08_80049E3C[0] + D_ovl10_08_80049E64[0] + D_ovl10_08_80049E8C[0] + D_ovl10_08_80049F54[0] + D_ovl10_08_80049FEC[0] + D_ovl10_08_8004A11C[0] + D_ovl10_08_8004A344[0] + D_ovl10_08_8004A52C[0];
 }
 
 void func_ovl10_08_80047B30(void) {

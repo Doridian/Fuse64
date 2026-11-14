@@ -102,6 +102,13 @@
  * Two references named the wrong global, which fcmp (relocated bits
  * masked) doesn't see: 80049F38's 8004362C calls take 8004E020, not
  * 8004E018, and in 80044730's two chains 8004E004 and 8004E008 trade places.
+ *
+ * Fakes pass 7: 80044468 calls 80044420 (its tmp was the pad); 80044730
+ * calls 800446F8 for the four spawns (the object local went too);
+ * 8004AC68's save of 8004E060.y is a Vec3f (any member matches: a
+ * guess); 80049358's pad is the clamp's lower limit in a local; the
+ * dead tests in 80044088, 800483AC, 80044730 and 80047270 (both) are
+ * compiled-out DEBUG_PRINT checks (conditions guessed).
  */
 #include "common.h"
 

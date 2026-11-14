@@ -25,6 +25,15 @@
  *   into $s1-$s3 as the original does.
  * - 80049400 (folded into 80048FBC): a dead test of DEC8 puts the base
  *   of its loads in $v1.
+ *
+ * Fakes pass 7: 8004640C's two parameter blocks are 800435D4 calls
+ * (inlined: their two areas were pad1[10]); 80043B64's pad is the
+ * clamp's lower limit in a local; 80046E10's DE80/DE98/DEB0 tests are
+ * compiled-out debug checks. Near misses: 80046E10's eight blocks and
+ * 80048FBC's one as 800435D4 calls give the right frame (pad[34] -> 0,
+ * pad[3] -> 0) but 800435D4's store order (field by field), where the
+ * original stores some blocks object by object; 800489C0's block as a
+ * call: frame right, its arrays 4 bytes off (scratch/fakes-ovl/p7).
  */
 #include "common.h"
 

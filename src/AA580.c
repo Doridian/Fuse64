@@ -4,8 +4,7 @@
  * resolves the walls, slopes and edges around it; func_80291944 turns
  * it toward a direction; func_8029217C does both; func_802921C4
  * registers the three). Every function is emitted in the original's
- * order. The inlined static named func_8029085C is the one whose stub is
- * there. Its .data (the function table D_802A1D60) and .rodata (jump
+ * order; the inlined statics carry the names of the stubs they leave. Its .data (the function table D_802A1D60) and .rodata (jump
  * tables and constants) are its own, placed in data_split.txt.
  *
  * How it was matched, pass by pass (each "Left" is as of that pass; the
@@ -168,6 +167,24 @@
  *   swap s2/s3): 52. An empty K&R inlined call costs nothing (160).
  *   Tried without effect: a local obj, dz before dx, res = 0 first,
  *   !res, an if (res != 0) block, a second result variable, return 0.
+ * Fakes pass 7 (no code change; 13 -> 9 fake markers):
+ * - func_8029085C, defined after 09FC, computes the cell and the offsets
+ *   in it (unk1C/unk24 with their wraps): an inlined static's lines come
+ *   from its definition and as1 orders by them, so its body placed after
+ *   09FC puts ctx->unk14's store after the hoisted FD88 arguments and
+ *   ctx->unk4's load before the 0.01f, which #line 679 and #line 637 did.
+ *   Any extent from unk1C on matches (unk1C alone, with unk24, with the
+ *   wraps): the whole cell setup is taken, a guess.
+ * - The stubs 864/86C/874 are 9087C's (a static's callees are emitted just
+ *   before it): 864 and 86C are the two x distances, which read
+ *   ctx->unk0->unk40 again instead of obj/p, as a helper given ctx would
+ *   (inlined parameters cost nothing in 9087C, a leaf). The third stays an
+ *   empty K&R static: any one-statement helper matches there (a z distance
+ *   taking (ctx, obj) does too), so nothing picks one.
+ * - Not found: 90490 as the D7D8 call wrapper (frame +16, the size of sv,
+ *   but without sv t takes s6), as the slope test or the res == 1 floor
+ *   test; the dead reads as null checks (single tests vanish); dropping
+ *   9085C's `a` (td 4 short).
  */
 #include "common.h"
 
@@ -599,13 +616,16 @@ static s32 func_80290708(UnkStruct_802909FC *ctx, s32 code, Vec3i *dirB, Vec3i *
     return res;
 }
 
-static void func_80290864() { /* fake: empty K&R stubs (header, p3/p4) */
+/* For func_8029087C: how far the object moved along x since its last step. */
+static void func_80290864(UnkStruct_802909FC *ctx) {
+    ctx->unk2C = ctx->unk0->unk40->unk10 - ctx->unk0->unk58;
 }
 
-static void func_8029086C() { /* fake: empty K&R stub */
+static void func_8029086C(UnkStruct_802909FC *ctx) {
+    ctx->unk2C = ctx->unk0->unk58 - ctx->unk0->unk40->unk10;
 }
 
-static void func_80290874() { /* fake: empty K&R stub */
+static void func_80290874() { /* fake: an empty K&R stub for the third stub inlined into 9087C (header, p3/p4, pass 7) */
 }
 
 static void func_8029087C(UnkStruct_802909FC *ctx) {
@@ -620,7 +640,7 @@ static void func_8029087C(UnkStruct_802909FC *ctx) {
         } else {
             ctx->unk28 = 0x40;
         }
-        ctx->unk2C = ctx->unk0->unk40->unk10 - ctx->unk0->unk58;
+        func_80290864(ctx);
     } else if (p->unk10 < obj->unk58) {
         if (obj->unk60 < p->unk18) {
             ctx->unk28 = 0xA0;
@@ -629,7 +649,7 @@ static void func_8029087C(UnkStruct_802909FC *ctx) {
         } else {
             ctx->unk28 = 0xC0;
         }
-        ctx->unk2C = ctx->unk0->unk58 - ctx->unk0->unk40->unk10;
+        func_8029086C(ctx);
     } else if (obj->unk60 < p->unk18) {
         ctx->unk28 = 0x80;
         ctx->unk2C = obj->unk40->unk18 - obj->unk60;
@@ -640,17 +660,10 @@ static void func_8029087C(UnkStruct_802909FC *ctx) {
         ctx->unk28 = 1;
         ctx->unk2C = 0.0f;
     }
+    func_80290874();
 }
 
-static void func_8029085C(UnkStruct_802909FC *ctx, f32 angle) {
-    f32 a;
-    ctx->unk10 = (ctx->unk0->unk40->unk10 + 50.0f) * 0.01f;
-    ctx->unk18 = (ctx->unk0->unk40->unk18 + 50.0f) * 0.01f;
-    a = ctx->unk8 + angle;
-    ctx->unk14
-#line 679 /* fake: numbering for as1 order */
-        = func_8026EE18(a);
-}
+static void func_8029085C(UnkStruct_802909FC *ctx, f32 angle);
 
 #define func_802909FC_slope(c) ((c) == 3 || (c) == 4 || (c) == 5 || (c) == 6)
 
@@ -697,9 +710,6 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
     ctx.unk8 = obj->unk40->unk14;
     ctx.unkC = obj->unk40->unk18;
     func_8029087C(&ctx);
-    func_80290864();
-    func_8029086C();
-    func_80290874();
     ctx.unk30 = cb;
     angle = 0.0f;
     sdir = 0.0f;
@@ -708,21 +718,6 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
         func_8026E6E4(pos, &angle, &sdir);
     }
     func_8029085C(&ctx, angle);
-    ctx.unk1C = ctx.unk4 - (s32) (ctx.unk4 * 0.01f) * 100.0f;
-#line 637 /* fake: numbering for as1 order */
-    if (ctx.unk4 < -50.0f) {
-        ctx.unk1C += 100.0f;
-    }
-    ctx.unk24 = ctx.unkC - (s32) (ctx.unkC * 0.01f) * 100.0f;
-    if (ctx.unkC < -50.0f) {
-        ctx.unk24 += 100.0f;
-    }
-    if (ctx.unk1C >= 50.0f) {
-        ctx.unk1C -= 100.0f;
-    }
-    if (ctx.unk24 >= 50.0f) {
-        ctx.unk24 -= 100.0f;
-    }
     obj->unk40->unk10 = obj->unk58;
     obj->unk40->unk14 = obj->unk5C;
     obj->unk40->unk18 = obj->unk60;
@@ -948,6 +943,28 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
     obj->unk40->unk14 = ctx.unk8;
     obj->unk40->unk18 = ctx.unkC;
     return r;
+}
+
+static void func_8029085C(UnkStruct_802909FC *ctx, f32 angle) {
+    f32 a;
+    ctx->unk10 = (ctx->unk0->unk40->unk10 + 50.0f) * 0.01f;
+    ctx->unk18 = (ctx->unk0->unk40->unk18 + 50.0f) * 0.01f;
+    a = ctx->unk8 + angle;
+    ctx->unk14 = func_8026EE18(a);
+    ctx->unk1C = ctx->unk4 - (s32) (ctx->unk4 * 0.01f) * 100.0f;
+    if (ctx->unk4 < -50.0f) {
+        ctx->unk1C += 100.0f;
+    }
+    ctx->unk24 = ctx->unkC - (s32) (ctx->unkC * 0.01f) * 100.0f;
+    if (ctx->unkC < -50.0f) {
+        ctx->unk24 += 100.0f;
+    }
+    if (ctx->unk1C >= 50.0f) {
+        ctx->unk1C -= 100.0f;
+    }
+    if (ctx->unk24 >= 50.0f) {
+        ctx->unk24 -= 100.0f;
+    }
 }
 
 void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {

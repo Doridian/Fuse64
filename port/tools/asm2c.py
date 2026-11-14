@@ -25,7 +25,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 
 # the asm data files the port takes: main_code's, and boot_code's VI modes
 # (the rest of boot_code's is libultra's own, which the port replaces)
-BOOT_FILES = {"1AFB0.data.s"}
+BOOT_LABELS = {"D_8001A3B0"}     # (the file that has them: 1AFB0 in us and eu, 1AF90 in jp)
 
 # Labels whose bytes the C reads at other widths than the directives'
 # (B a byte, H a half, I a word; the pattern repeats over the label):
@@ -106,7 +106,8 @@ def main():
     labelset = {}
     parsed = []
     for f in files:
-        if f in BOOT_FILES or (re.match(r"[0-9A-F]+\.", f) and int(f.split(".")[0], 16) >= 0x40000) \
+        boot = any("dlabel %s\n" % l in open(os.path.join("asm/data", f)).read() for l in BOOT_LABELS)
+        if boot or (re.match(r"[0-9A-F]+\.", f) and int(f.split(".")[0], 16) >= 0x40000) \
                 or f.startswith("bss_802") or f.startswith("main_code_persist"):
             labels, sect = parse(os.path.join("asm/data", f))
             if not labels:

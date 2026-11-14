@@ -6,8 +6,8 @@
  * is kept (both only together give the handler).
  *
  * func_ovl0C_07_80044178's closing `}` and the empty static
- * func_ovl0C_07_80044170 after it are in "panels.c" (a fake `#line`;
- * `#line 953` returns to its own line numbers).  The `.file` ugen then
+ * func_ovl0C_07_80044170 after it are in "panels.c" (a fake `#line`,
+ * to the end of the file).  The `.file` ugen then
  * emits ends as1's block before the epilogue, which keeps ugen's restore
  * order s0, s1, s2 (as1 reverses it when the last block ends in the
  * lw, lw, store chain).  ugen drops a `#line` file whose region holds no
@@ -948,7 +948,6 @@ void func_ovl0C_07_80044178(void) {
 
 static void func_ovl0C_07_80044170(void) {
 }
-#line 953 "1887C0.c"
 
 void func_ovl0C_07_80044024(void) {
     UnkStruct_ovl0C_07_800476D0 *p;

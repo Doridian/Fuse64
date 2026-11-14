@@ -2,13 +2,15 @@
  * ovl_0D_05's stage object, IDO -O3; it matches in us, eu and jp.
  *
  * What fixed what (from 120 words), ovl_0D_02/04/06's levers:
- * - 80043790: the camera calls are in the empty static 80043760, and its
- *   call is in a "panels.c" region (1600.0f in $f16, both its 1600s floats,
- *   as ovl_0D_04's 80044D40). The region needs a function defined in
- *   "panels.c": the empty static 80043788 is one.
+ * - 80043790: the camera calls are in the static 80043760 (1600.0f in
+ *   $f16, both its 1600s floats, as ovl_0D_04's 80044D40). Its call no
+ *   longer needs a "panels.c" region of its own (2026-11-13).
  * - 80043018: 80044CC8's result goes through a local j, and that statement
- *   is in a "panels.c" region, so as1 keeps the loads of D_80046170 after
- *   the store and passes j from v0 (ovl_0D_06's 8004305C).
+ *   ends the "panels.c" region that starts at the static 80043788 (a fake
+ *   `#line`; the region needs a function defined in it), so as1 keeps the
+ *   loads of D_80046170 after the store and passes j from v0 (ovl_0D_06's
+ *   8004305C). The region's other end and 80043790's region went
+ *   (2026-11-13: tried away one `#line` at a time against the sha1).
  * - 80044290: the inlined static 80044288 has a pad local ahead of grid,
  *   so grid sits at sp+168 as in the original.
  */
@@ -554,9 +556,7 @@ void func_ovl0D_05_80043790(void) {
     func_ovl0D_05_80043768();
     D_ovl0D_05_80046180 = func_ovl0D_05_80044D48();
     func_ovl0D_05_800459C0(0x407);
-#line 1 "panels.c"
-    func_ovl0D_05_80043760(); /* fake: (see the top) */
-#line 563 "1A9E30.c"
+    func_ovl0D_05_80043760();
     UNK_MACRO_ovl0D_05_800430CC();
     func_ovl0D_05_80043758();
     func_ovl0D_05_80043750();
@@ -581,7 +581,6 @@ void func_ovl0D_05_80043790(void) {
 #line 1 "panels.c"
 static void func_ovl0D_05_80043788(void) {
 }
-#line 588 "1A9E30.c"
 
 static void func_ovl0D_05_80043780(Trio05 *t, s32 count) {
     s32 i;
@@ -786,7 +785,6 @@ void func_ovl0D_05_80043018(void) {
 
     if (func_ovl0D_05_800459D0(0x409) != 0) {
         /* fake: (see the top) */
-#line 1 "panels.c"
         j = D_ovl0D_05_8004617C = func_ovl0D_05_80044CC8(0x15A);
 #line 795 "1A9E30.c"
         func_ovl0D_05_80044CD0(j, 0, 0, D_ovl0D_05_80046170[0] - 1, D_ovl0D_05_80046170[2] - 1, 0, 0, 0);

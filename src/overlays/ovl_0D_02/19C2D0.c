@@ -1336,7 +1336,6 @@ static void func_ovl0D_02_8004311C(Ent_0D02 *e) {
             /* fake: (see the top) */
 #line 1 "panels.c"
             x0 = grid[0] - 1;
-#line 1353 "19C2D0.c"
             x1 = x0 + 4;
             z1 = grid[2] + len;
             x2 = x0 + 1;

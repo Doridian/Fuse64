@@ -49,7 +49,6 @@
  * are the floats widened (3FB99999A0000000), which the text alone doesn't show.
  */
 #include "common.h"
-#line 31 "126950.c"
 
 typedef struct {
     /* 0x00 */ u8 unk0[4];
@@ -810,7 +809,6 @@ static void func_ovl0A_01_8004607C(s32 n, Entry2 *tbl) {
         tbl->unk0->unkC |= tbl->unk14;
     }
 }
-#line 795
 static void func_ovl0A_01_8004608C(void) {
     s32 i;
     f32 cz;
@@ -1086,7 +1084,6 @@ void func_ovl0A_01_80044F3C(void) {
     pos[0] = 200.0f;
 #line 1063
     pos[2] = 900.0f;
-#line 1067
     pos[1] = v;
     played = 0;
     D_ovl0A_01_800488D8[2].obj->unk40->unk1C = 90.0f;
@@ -1371,7 +1368,6 @@ void func_ovl0A_01_800442B4(void) {
             func_ovl0A_01_80047FD0();
         } while (++j < 1370);
     }
-#line 1348
     v = j;
 #line 1347
     func_ovl0A_01_80047530(0x1A, 0x12, 4);
@@ -1406,7 +1402,6 @@ static void func_ovl0A_01_800442AC(void) {
     D_ovl0A_01_80048A20 = 0.0f;
     D_ovl0A_01_80048A24 = 0.0f;
 }
-#line 1374
 
 static void func_ovl0A_01_800441F8(void) {
     D_ovl0A_01_80048A1C += 2.0f;
@@ -1658,7 +1653,6 @@ static void func_ovl0A_01_80043380(Entry *tbl, s32 n) {
         e = tbl;
 #line 1613
         tbl->obj = func_ovl0A_01_80047E60(tbl->unk4 == 0 ? tbl->unk8 : 0x320, 0x0D000000, 0xD0, NULL);
-#line 1614
         if (tbl->unk4 != 0) {
             func_ovl0A_01_80043378(tbl);
         }
@@ -1767,7 +1761,6 @@ static void func_ovl0A_01_80043020(s32 n, Entry2 *tbl) {
         tbl++;
     }
 }
-#line 1724
 static void func_ovl0A_01_80043018(s32 n, Entry *tbl) {
     s32 i;
 

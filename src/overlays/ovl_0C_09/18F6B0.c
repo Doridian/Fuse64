@@ -9,9 +9,8 @@
  * 80045060's second flag is an s16.
  *
  * - func_ovl0C_09_80043D08: the static it inlines, func_ovl0C_09_80043D00,
- *   is defined in "panels.c" (a fake `#line`; `#line 1047` returns to the
- *   file's own numbers, and the `#line 30` after the include gives the
- *   file one name however it is compiled).  The original's prologue has a
+ *   is defined in "panels.c" (a fake `#line`, to the end of the file).
+ *   The original's prologue has a
  *   block boundary right after the hoisted invariants
  *   (&D_ovl0C_09_80047B10 in s1, 100.0f in fs0, the count in s2): the
  *   `.file` ugen emits where the inlined body starts is it.  The fakes it
@@ -20,7 +19,6 @@
  *   which keeps it after the lw of obj->unk40.
  */
 #include "common.h"
-#line 30 "18F6B0.c"
 
 /*
  * ovl_0C_09's game object, IDO -O3: the functions are written last to first
@@ -1040,7 +1038,6 @@ static void func_ovl0C_09_80043D00(f32 x, s32 z, s32 count) {
     D_ovl0C_09_80047B10.z = z * 100.0f;
     D_ovl0C_09_80047B00 = func_ovl0C_09_80047480(0x26, &D_ovl0C_09_80047B10, 0);
 }
-#line 1047 "18F6B0.c"
 
 void func_ovl0C_09_80043C40(UnkStruct_ovl0C_09_8004784C *arg0) {
     UnkStructA *obj;

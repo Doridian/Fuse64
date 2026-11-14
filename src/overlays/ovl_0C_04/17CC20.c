@@ -6,9 +6,9 @@
  *   after it) is in "panels.c", so ugen's `.file` makes its epilogue a
  *   block of its own: as1 restores s0, s1, s2 as the original does, not
  *   s2, s1, s0.  (The empty statics keep the region: ugen drops a `#line`
- *   region with no function definition in it.)  The `#line` after the
- *   #include names this file as the later `#line` does (fcmp compiles by
- *   absolute path).
+ *   region with no function definition in it.)  The region runs to the
+ *   end of the file: the `#line`s that named this file and came back to
+ *   it after the statics weren't needed (2026-11-13).
  * - func_ovl0C_04_80043FC0: an empty `do {} while (0);` after
  *   `obj = rec->unk0` (an empty macro, perhaps) starts a new block, so
  *   uopt materializes D_ovl0C_04_80045C58's address there, in v0 after
@@ -16,7 +16,6 @@
  *   `if (obj) {}` does the same; a label doesn't.
  */
 #include "common.h"
-#line 25 "17CC20.c"
 
 /*
  * ovl_0C_04's game object, IDO -O3: the functions are written last to first
@@ -590,7 +589,6 @@ static void func_ovl0C_04_800437F8(void) {
 static void func_ovl0C_04_8004365C(void) {
 }
 
-#line 596 "17CC20.c"
 void func_ovl0C_04_80043610(void) {
     func_ovl0C_04_80044AD0(0x17, 2, 0x1C);
     func_ovl0C_04_80043544(1, 0, 0, 0.0f, 2);

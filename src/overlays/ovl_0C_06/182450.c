@@ -23,7 +23,6 @@
  *   80045FC8 its v1 and 80046288 its registers.
  */
 #include "common.h"
-#line 40 "182450.c"
 
 /*
  * ovl_0C_06's game object, IDO -O3: the functions are written last to first

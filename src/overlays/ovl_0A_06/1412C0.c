@@ -66,7 +66,6 @@
  * longer), which the scheduling above depends on.
  */
 #include "common.h"
-#line 91
 
 /* what ZeroJump 0x1500 and 0x1510 return, and 0x2508 */
 typedef struct {
@@ -1175,13 +1174,11 @@ static s32 func_ovl0A_06_80044534(s32 arg0) {
     if (ret == 1 || ret == 9) {
         ret = func_ovl0A_06_80044468(1);
 #if VERSION_JP
-#line 1200
         func_ovl0A_06_80046950(D_ovl0A_06_80047738[3], D_ovl0A_06_80046DE0, 0);
 #else
 #line 1200
         func_ovl0A_06_800469A0(D_ovl0A_06_80047738[3], D_ovl0A_06_80046DE0, 0);
 #endif
-#line 1201
         D_ovl0A_06_80047748[3] = func_ovl0A_06_80046978(D_ovl0A_06_80047738[3]);
     }
     return ret;
@@ -1722,7 +1719,6 @@ static void func_ovl0A_06_80043020(s32 sfx, s32 sel) {
         yesScale = scale + 0.5f;
     }
 #if VERSION_JP
-#line 1740
     no = func_ovl0A_06_80046940(D_ovl0A_06_80046D2C, noX, noY, noScale, noScale, noFlag);
     yes = func_ovl0A_06_80046940(D_ovl0A_06_80046D24, yesX, yesY, yesScale, yesScale, yesFlag);
 #else
@@ -1730,7 +1726,6 @@ static void func_ovl0A_06_80043020(s32 sfx, s32 sel) {
     no = func_ovl0A_06_80046998(D_ovl0A_06_80046D2C, noX, noY, noScale, noScale, noFlag);
     yes = func_ovl0A_06_80046998(D_ovl0A_06_80046D24, yesX, yesY, yesScale, yesScale, yesFlag);
 #endif
-#line 1742
     func_ovl0A_06_80046948(D_ovl0A_06_80047728[3]);
     func_ovl0A_06_80046948(D_ovl0A_06_80047728[2]);
     D_ovl0A_06_80047728[3] = no;

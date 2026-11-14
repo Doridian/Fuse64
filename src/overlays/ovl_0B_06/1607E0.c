@@ -1739,7 +1739,6 @@ void COPY_FILE(void) {
         sel = func_ovl0B_06_80045F20(&D_ovl0B_06_8004A244, &D_ovl0B_06_8004A254, 5, sel & 0xF);
         if ((sel & 0xF0) != 0x30) {
             if ((sel & 0xF) == 3) {
-#line 9000
                 sel &= 0xF0;
                 sel |= COPY_ASK();
 #line 1520
@@ -2692,7 +2691,6 @@ void func_ovl0B_06_80043C48(s32 arg0) {
             D_ovl0B_06_8004A668[0] = func_ovl0B_06_80048258();
 #line 2483
             func_ovl0B_06_80048A00(0x7F);
-#line 2484
             func_ovl0B_06_80048978(1);
             func_ovl0B_06_80048998(0, 10.0f, 0);
             func_ovl0B_06_80048988(1);

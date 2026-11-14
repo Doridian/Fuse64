@@ -720,9 +720,9 @@ void func_ovl0C_01_80048068(void) {
 }
 
 void func_ovl0C_01_80047E9C(UnkStructA *arg0) {
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    UnkStructA_40 *p;
     s32 moved;
-    s32 pad2; /* fake: unused; pad and pad2 place the original's locals */
+    s32 pad2; /* fake: unused, frame space the original has (no source for it found; p matches in this slot as well) */
     f32 x;
     f32 y;
     f32 z;
@@ -731,9 +731,10 @@ void func_ovl0C_01_80047E9C(UnkStructA *arg0) {
     s32 i;
 
     if (func_ovl0C_01_80049B90(0x41A) == 0 && arg0->unk6C == 0.0f && arg0->unk68 == 0.0f) {
-        x = arg0->unk40->unk10;
-        y = arg0->unk40->unk14;
-        z = arg0->unk40->unk18;
+        p = arg0->unk40;
+        x = p->unk10;
+        y = p->unk14;
+        z = p->unk18;
         func_ovl0C_01_80049E08(arg0, 0xC0, 12.0f);
         moved = 0;
         if (arg0->unk8 & 3) {
@@ -774,9 +775,9 @@ void func_ovl0C_01_80047E9C(UnkStructA *arg0) {
 }
 
 void func_ovl0C_01_80047CA8(UnkStructA *arg0) {
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    UnkStructA_40 *p;
     s32 moved;
-    s32 pad2; /* fake: unused; pad and pad2 place the original's locals */
+    s32 pad2; /* fake: unused, frame space the original has (no source for it found; p matches in this slot as well) */
     f32 x;
     f32 y;
     f32 z;
@@ -785,9 +786,10 @@ void func_ovl0C_01_80047CA8(UnkStructA *arg0) {
     s32 i;
 
     if (func_ovl0C_01_80049B90(0x41A) == 0) {
-        x = arg0->unk40->unk10;
-        y = arg0->unk40->unk14;
-        z = arg0->unk40->unk18;
+        p = arg0->unk40;
+        x = p->unk10;
+        y = p->unk14;
+        z = p->unk18;
         if (arg0->unk6C == 0.0f && arg0->unk68 == 0.0f) {
             func_ovl0C_01_80049E08(arg0, 0xC0, 12.0f);
         } else {

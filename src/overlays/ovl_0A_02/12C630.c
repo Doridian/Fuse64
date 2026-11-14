@@ -986,7 +986,8 @@ void func_ovl0A_02_800447CC(void) {
         func_ovl0A_02_80047D00();
     }
     rot = func_ovl0A_02_80047D00() * 360.0;
-    if (!obj) { /* fake: ends the block, so rot is the value spilled */
+    if (obj == NULL) {
+        DEBUG_PRINT(("obj == NULL\n"));
     }
     obj->unk40->unk20 = rot;
     func_ovl0A_02_80047A30(obj);

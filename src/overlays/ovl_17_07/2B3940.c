@@ -414,7 +414,7 @@ void func_ovl17_07_8004376C(s32 arg0, f32 arg1) {
 }
 
 void func_ovl17_07_8004354C(UnkStructA *arg0) {
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    UnkStructA_40 *p;
     s32 moved;
     UnkStructA *other;
     f32 x;
@@ -424,9 +424,10 @@ void func_ovl17_07_8004354C(UnkStructA *arg0) {
     s32 saved;
 
     if (func_ovl17_07_80045160(0x400) != 0 && arg0->unk6C == 0.0f && arg0->unk68 == 0.0f) {
-        x = arg0->unk40->unk10;
-        y = arg0->unk40->unk14;
-        z = arg0->unk40->unk18;
+        p = arg0->unk40;
+        x = p->unk10;
+        y = p->unk14;
+        z = p->unk18;
         if (func_ovl17_07_80045160(0x401) != 0) {
             func_ovl17_07_800453D8(arg0, 0xC0, D_ovl17_07_800457C0);
         } else {

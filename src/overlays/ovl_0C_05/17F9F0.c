@@ -276,7 +276,7 @@ void func_ovl0C_05_80043EB0(void) {
 }
 
 void func_ovl0C_05_80043CE4(UnkStructA *arg0) {
-    s32 pad0[1]; /* fake: unused; they put hit at sp+0x38 in a 0x40 frame */
+    UnkStructA_40 *p;
     s32 hit;
     s32 pad1[1]; /* fake: unused, frame space the original has (no source for it found) */
     f32 x;
@@ -287,9 +287,10 @@ void func_ovl0C_05_80043CE4(UnkStructA *arg0) {
     s32 i;
 
     if (func_ovl0C_05_80045430(0x41A) == 0 && arg0->unk6C == 0.0f && arg0->unk68 == 0.0f) {
-        x = arg0->unk40->unk10;
-        y = arg0->unk40->unk14;
-        z = arg0->unk40->unk18;
+        p = arg0->unk40;
+        x = p->unk10;
+        y = p->unk14;
+        z = p->unk18;
         func_ovl0C_05_800456A8(arg0, 0x40, 12.0f);
         hit = 0;
         if (arg0->unk8 & 3) {
@@ -338,7 +339,7 @@ void func_ovl0C_05_80043CE4(UnkStructA *arg0) {
 }
 
 void func_ovl0C_05_80043B18(UnkStructA *arg0) {
-    s32 pad0[1]; /* fake: unused; they put hit at sp+0x38 in a 0x40 frame */
+    UnkStructA_40 *p;
     s32 hit;
     s32 pad1[1]; /* fake: unused, frame space the original has (no source for it found) */
     f32 x;
@@ -349,9 +350,10 @@ void func_ovl0C_05_80043B18(UnkStructA *arg0) {
     s32 i;
 
     if (func_ovl0C_05_80045430(0x41A) == 0 && arg0->unk6C == 0.0f && arg0->unk68 == 0.0f) {
-        x = arg0->unk40->unk10;
-        y = arg0->unk40->unk14;
-        z = arg0->unk40->unk18;
+        p = arg0->unk40;
+        x = p->unk10;
+        y = p->unk14;
+        z = p->unk18;
         func_ovl0C_05_800456A8(arg0, 0, 12.0f);
         hit = 0;
         if (arg0->unk8 & 3) {

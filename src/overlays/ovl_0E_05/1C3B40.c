@@ -405,7 +405,8 @@ void func_ovl0E_05_8004433C(void) {
 }
 
 void func_ovl0E_05_80043EDC(void) {
-    f32 pad[3]; /* fake: unused, frame space the original has (no source for it found) */
+    UnkStructA_40 *p;
+    f32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
     UnkStruct_ovl0E_05_80046124 *rec;
     s32 up;
     f32 a[3];
@@ -454,8 +455,8 @@ void func_ovl0E_05_80043EDC(void) {
             b[2] = D_ovl0E_05_80046210[2];
             dist = func_ovl0E_05_80045600(a, b);
             if (dist < 700.0f) {
-                func_ovl0E_05_80045D50(0x7B, rec->unk0->unk40->unk10, rec->unk0->unk40->unk14,
-                                       rec->unk0->unk40->unk18);
+                p = rec->unk0->unk40;
+                func_ovl0E_05_80045D50(0x7B, p->unk10, p->unk14, p->unk18);
             }
         }
         if (func_ovl0E_05_80044DA8()->unk10 == 0) {

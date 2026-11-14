@@ -4335,10 +4335,11 @@ void func_80245FD4() {
     }
 }
 
+/* func_80244354 for D_802AC9E8: its first line kept from that function
+ * (a dead store; that it is a copy's leftover is a guess). */
 void func_80245FA0(s32 arg0, s32 arg1) {
-    s32 v;
+    s32 v = D_800AEDF0[arg0].unk10;
 
-    if (!D_800AEDF0[arg0].unk10) {} /* fake: dead read (ugen temporaries, see the header) */
     v = D_802AC9E8;
 
     if (arg1 == 1) {

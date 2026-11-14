@@ -283,7 +283,7 @@ s32 D_ovl15_01_8004E0D0;
 u8 D_ovl15_01_8004E0D4[4];
 s32 D_ovl15_01_8004E0D8[2];
 
-s32 func_ovl15_01_80043010(s32 arg0, UnkStructA *arg1);
+s32 func_ovl15_01_80043010(s32, void *);
 s32 func_ovl15_01_80043044(UnkStructA *arg0);
 void func_ovl15_01_80043104(UnkStructA *arg0, Vec3f *arg1);
 void func_ovl15_01_800431B0(f32 *arg0, f32 *arg1, f32 *arg2, f32 *arg3);
@@ -368,8 +368,8 @@ void func_ovl15_01_8004C164(void);
 void func_ovl15_01_8004C1B8(void);
 void func_ovl15_01_8004C2C4(void);
 void func_ovl15_01_8004C490(s32 arg0);
-void func_ovl15_01_8004C580(f32 arg0);
-void func_ovl15_01_8004C5C8(f32 arg0, f32 arg1, f32 arg2);
+void func_ovl15_01_8004C580(f32);
+void func_ovl15_01_8004C5C8(f32, f32, f32);
 void func_ovl15_01_8004C624(void);
 
 /* .data */
@@ -429,23 +429,22 @@ static void func_ovl15_01_8004C67C(void) {
 static void func_ovl15_01_8004C684(void) {
 }
 
-void func_ovl15_01_8004C624(void) {
-    D_ovl15_01_8004DF54 = -1;
-    D_ovl15_01_8004DF58 = -1;
-}
-
-void func_ovl15_01_8004C5C8(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl15_01_8004D218(D_ovl15_01_8004DF60.x, D_ovl15_01_8004DF60.y, D_ovl15_01_8004DF60.z);
-    func_ovl15_01_8004D238(arg0, arg1, arg2);
-    func_ovl15_01_8004D548(0xB4);
-}
-
-void func_ovl15_01_8004C580(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl15_01_8004D240(&sp1C, NULL, NULL);
-    func_ovl15_01_8004D238(sp1C + arg0, 32768.0f, 32768.0f);
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl15_01_8004C624
+#define CORE_FUNC_B func_ovl15_01_8004C5C8
+#define CORE_FUNC_C func_ovl15_01_8004C580
+#define CORE_FUNC_D func_ovl15_01_80043010
+#define CORE_BSS_A0 D_ovl15_01_8004DF54
+#define CORE_BSS_A1 D_ovl15_01_8004DF58
+#define CORE_BSS_B D_ovl15_01_8004DF60
+#define CORE_ZJ_1704 func_ovl15_01_8004D218
+#define CORE_ZJ_1708 func_ovl15_01_8004D238
+#define CORE_ZJ_1709 func_ovl15_01_8004D240
+#define CORE_ZJ_1904 func_ovl15_01_8004D548
+#define CORE_ZJ_2B04 func_ovl15_01_8004DAD0
+/* CORE_FUNC_D comes out first here, so it is defined last (the end of the file) */
+#define CORE_D_LATE
+#include "overlays/common/core.h"
 
 void func_ovl15_01_8004C490(s32 arg0) {
     switch (arg0) {
@@ -3350,9 +3349,4 @@ s32 func_ovl15_01_80043044(UnkStructA *arg0) {
     return 0;
 }
 
-s32 func_ovl15_01_80043010(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *temp_v0;
-
-    temp_v0 = arg1->unk40;
-    return func_ovl15_01_8004DAD0(arg0, temp_v0->unk10, temp_v0->unk14, temp_v0->unk18);
-}
+#include "overlays/common/core_d.h"

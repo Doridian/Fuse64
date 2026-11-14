@@ -14,14 +14,14 @@
 static void func_ovl12_03_8004316C(f32 x, s32 z, s32 count) {
     s32 i;
 
-    D_ovl12_03_80045ED0[0] = x * 100.0f;
-    D_ovl12_03_80045ED0[1] = 0.0f;
+    D_ovl12_03_80045ED0.x = x * 100.0f;
+    D_ovl12_03_80045ED0.y = 0.0f;
     for (i = 0; i < count; i++) {
-        D_ovl12_03_80045ED0[1] += func_ovl12_03_80044950(i) * 100.0f;
+        D_ovl12_03_80045ED0.y += func_ovl12_03_80044950(i) * 100.0f;
     }
-    D_ovl12_03_80045ED0[1] += 100.0f;
-    D_ovl12_03_80045ED0[2] = z * 100.0f;
-    D_ovl12_03_80045EC0 = func_ovl12_03_80045890(0x28, (Vec3f *) D_ovl12_03_80045ED0, 0);
+    D_ovl12_03_80045ED0.y += 100.0f;
+    D_ovl12_03_80045ED0.z = z * 100.0f;
+    D_ovl12_03_80045EC0 = func_ovl12_03_80045890(0x28, &D_ovl12_03_80045ED0, 0);
 }
 
 /* Here: its inlined (empty) body's `.file` ends the block before

@@ -11,14 +11,14 @@
 static void func_ovl0E_04_8004399C(f32 x, s32 z, s32 count) {
     s32 i;
 
-    D_ovl0E_04_80046F30[0] = x * 100.0f;
-    D_ovl0E_04_80046F30[1] = 0.0f;
+    D_ovl0E_04_80046F30.x = x * 100.0f;
+    D_ovl0E_04_80046F30.y = 0.0f;
     for (i = 0; i < count; i++) {
-        D_ovl0E_04_80046F30[1] += func_ovl0E_04_800457B0(i) * 100.0f;
+        D_ovl0E_04_80046F30.y += func_ovl0E_04_800457B0(i) * 100.0f;
     }
-    D_ovl0E_04_80046F30[1] += 100.0f;
-    D_ovl0E_04_80046F30[2] = z * 100.0f;
-    D_ovl0E_04_80046F20 = func_ovl0E_04_800466F0(0x25, D_ovl0E_04_80046F30, 0);
+    D_ovl0E_04_80046F30.y += 100.0f;
+    D_ovl0E_04_80046F30.z = z * 100.0f;
+    D_ovl0E_04_80046F20 = func_ovl0E_04_800466F0(0x25, &D_ovl0E_04_80046F30.x, 0);
 }
 
 /* here: a block boundary before the load in func_ovl0E_04_80043158 */

@@ -177,7 +177,8 @@ u8 D_ovl13_02_8004DCB0[0x4];
 s32 D_ovl13_02_8004DCB4;
 s32 D_ovl13_02_8004DCB8;
 u8 D_ovl13_02_8004DCBC[0x4];
-s32 D_ovl13_02_8004DCC0[4];
+Vec3f D_ovl13_02_8004DCC0;
+u8 D_ovl13_02_8004DCCC[0x4]; /* unused (func_ovl13_02_8004BE60) */
 s32 D_ovl13_02_8004DCD0;
 u8 D_ovl13_02_8004DCD4[0x4];
 s32 D_ovl13_02_8004DCD8;
@@ -340,8 +341,8 @@ void func_ovl13_02_8004B838(void);
 void func_ovl13_02_8004BAFC(s32 arg0);
 void func_ovl13_02_8004BBE4(void);
 static void func_ovl13_02_8004BD28(void);
-void func_ovl13_02_8004BDA4(f32 arg0);
-void func_ovl13_02_8004BDEC(f32 arg0, f32 arg1, f32 arg2);
+void func_ovl13_02_8004BDA4(f32);
+void func_ovl13_02_8004BDEC(f32, f32, f32);
 void func_ovl13_02_8004BE48(void);
 
 /* .data */
@@ -372,7 +373,7 @@ f32 D_ovl13_02_8004D938[6] = { -200.0f, -100.0f, -0.0f, 200.0f, 100.0f, 0.0f };
  * body is dropped). The first is the one that used the .bss words nothing
  * else uses: a reference from it keeps them out of common */
 static void func_ovl13_02_8004BE60(void) {
-    D_ovl13_02_8004DC9C[0] = D_ovl13_02_8004DCB0[0] = D_ovl13_02_8004DCBC[0] = D_ovl13_02_8004DCD4[0] = D_ovl13_02_8004DCE4[0] = D_ovl13_02_8004DCE8[0] = D_ovl13_02_8004DD04[0] = D_ovl13_02_8004DD0C[0] = D_ovl13_02_8004DD18[0] = D_ovl13_02_8004DE7C[0] = D_ovl13_02_8004DED0[0] = D_ovl13_02_8004DEE0[0] = D_ovl13_02_8004DF14[0] = 0;
+    D_ovl13_02_8004DC9C[0] = D_ovl13_02_8004DCB0[0] = D_ovl13_02_8004DCBC[0] = D_ovl13_02_8004DCCC[0] = D_ovl13_02_8004DCD4[0] = D_ovl13_02_8004DCE4[0] = D_ovl13_02_8004DCE8[0] = D_ovl13_02_8004DD04[0] = D_ovl13_02_8004DD0C[0] = D_ovl13_02_8004DD18[0] = D_ovl13_02_8004DE7C[0] = D_ovl13_02_8004DED0[0] = D_ovl13_02_8004DEE0[0] = D_ovl13_02_8004DF14[0] = 0;
     D_ovl13_02_8004DEDC = 0.0f;
 }
 
@@ -403,23 +404,20 @@ static void func_ovl13_02_8004BEA0(void) {
 static void func_ovl13_02_8004BEA8(void) {
 }
 
-void func_ovl13_02_8004BE48(void) {
-    D_ovl13_02_8004DCB4 = -1;
-    D_ovl13_02_8004DCB8 = -1;
-}
-
-void func_ovl13_02_8004BDEC(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl13_02_8004CA38(M2C_FIELD(&D_ovl13_02_8004DCC0, f32 *, 0), M2C_FIELD(&D_ovl13_02_8004DCC0, f32 *, 4), M2C_FIELD(&D_ovl13_02_8004DCC0, f32 *, 8));
-    func_ovl13_02_8004CA58(arg0, arg1, arg2);
-    func_ovl13_02_8004CD68(0xB4);
-}
-
-void func_ovl13_02_8004BDA4(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl13_02_8004CA60(&sp1C, NULL, NULL);
-    func_ovl13_02_8004CA58(sp1C + arg0, 32768.0f, 32768.0f);
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl13_02_8004BE48
+#define CORE_FUNC_B func_ovl13_02_8004BDEC
+#define CORE_FUNC_C func_ovl13_02_8004BDA4
+#define CORE_BSS_A0 D_ovl13_02_8004DCB4
+#define CORE_BSS_A1 D_ovl13_02_8004DCB8
+#define CORE_BSS_B D_ovl13_02_8004DCC0
+#define CORE_ZJ_1704 func_ovl13_02_8004CA38
+#define CORE_ZJ_1708 func_ovl13_02_8004CA58
+#define CORE_ZJ_1709 func_ovl13_02_8004CA60
+#define CORE_ZJ_1904 func_ovl13_02_8004CD68
+/* its own CORE_FUNC_D (below, with a fake) */
+#define CORE_D_LATE
+#include "overlays/common/core.h"
 
 void func_ovl13_02_80048FBC(s32 arg0) {
     s32 pad[3]; /* fake: unused, frame space the original has (no source for it found) */

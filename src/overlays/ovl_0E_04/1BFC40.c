@@ -167,7 +167,7 @@ s32 func_ovl0E_04_800466F0(s32, f32 *, s32);
 void func_ovl0E_04_800466F8(s32);
 void func_ovl0E_04_800467A8(s32, s32, s32);
 void func_ovl0E_04_80046820(s32);
-void func_ovl0E_04_80046840(s32, f32, f32, f32);
+s32 func_ovl0E_04_80046840(s32, f32, f32, f32);
 void func_ovl0E_04_80046848(s32, f32 *);
 void func_ovl0E_04_80046998(void);
 void func_ovl0E_04_800469A0(void);
@@ -218,7 +218,7 @@ void func_ovl0E_04_80044E3C(void);
 void func_ovl0E_04_80044EB4(void);
 void func_ovl0E_04_800451D4(UnkStructA *);
 void func_ovl0E_04_80045298(UnkStructA *);
-void func_ovl0E_04_80045330(s32, UnkStructA *);
+s32 func_ovl0E_04_80045330(s32, void *);
 void func_ovl0E_04_80045364(f32, f32, f32);
 void func_ovl0E_04_800453C0(void);
 void func_ovl0E_04_800453D8(void);
@@ -249,7 +249,7 @@ s32 D_ovl0E_04_80046F20;
 s32 D_ovl0E_04_80046F24;
 s32 D_ovl0E_04_80046F28;
 u8 D_ovl0E_04_80046F2C[0x4]; /* unused (func_ovl0E_04_800453F8) */
-f32 D_ovl0E_04_80046F30[3];
+Vec3f D_ovl0E_04_80046F30;
 u8 D_ovl0E_04_80046F3C[0x4]; /* unused (func_ovl0E_04_800453F8) */
 UnkStruct_ovl0E_04_80046F40 D_ovl0E_04_80046F40;
 UnkStructA *D_ovl0E_04_80046F54;
@@ -316,23 +316,20 @@ static void func_ovl0E_04_800453E0(void) {
 void func_ovl0E_04_800453D8(void) {
 }
 
-void func_ovl0E_04_800453C0(void) {
-    D_ovl0E_04_80046F24 = -1;
-    D_ovl0E_04_80046F28 = -1;
-}
-
-void func_ovl0E_04_80045364(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl0E_04_80045F88(D_ovl0E_04_80046F30[0], D_ovl0E_04_80046F30[1], D_ovl0E_04_80046F30[2]);
-    func_ovl0E_04_80045FA8(arg0, arg1, arg2);
-    func_ovl0E_04_800462B8(180);
-}
-
-void func_ovl0E_04_80045330(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
-
-    p = arg1->unk40;
-    func_ovl0E_04_80046840(arg0, p->unk10, p->unk14, p->unk18);
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl0E_04_800453C0
+#define CORE_FUNC_B func_ovl0E_04_80045364
+#define CORE_FUNC_C func_ovl0E_04_800434C4
+#define CORE_FUNC_D func_ovl0E_04_80045330
+#define CORE_BSS_A0 D_ovl0E_04_80046F24
+#define CORE_BSS_A1 D_ovl0E_04_80046F28
+#define CORE_BSS_B D_ovl0E_04_80046F30
+#define CORE_ZJ_1704 func_ovl0E_04_80045F88
+#define CORE_ZJ_1708 func_ovl0E_04_80045FA8
+#define CORE_ZJ_1709 func_ovl0E_04_80045FB0
+#define CORE_ZJ_1904 func_ovl0E_04_800462B8
+#define CORE_ZJ_2B04 func_ovl0E_04_80046840
+#include "overlays/common/core.h"
 
 void func_ovl0E_04_80045298(UnkStructA *arg0) {
     f32 pos[3];
@@ -934,13 +931,6 @@ void func_ovl0E_04_8004350C(void) {
         func_ovl0E_04_800434C4(D_ovl0E_04_80046F40.unkC);
     }
     func_ovl0E_04_80045940(D_ovl0E_04_80046F40.unk4);
-}
-
-void func_ovl0E_04_800434C4(f32 arg0) {
-    f32 sp1C;
-
-    func_ovl0E_04_80045FB0(&sp1C, NULL, NULL);
-    func_ovl0E_04_80045FA8(sp1C + arg0, 32768.0f, 32768.0f);
 }
 
 void func_ovl0E_04_80043468(UnkStruct_ovl0E_04_80046D70 *arg0) {

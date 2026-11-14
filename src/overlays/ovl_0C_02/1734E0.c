@@ -288,7 +288,7 @@ void func_ovl0C_02_80049728(s32, s32, s32); /* 0x2A00 */
 void func_ovl0C_02_80049748(s32); /* 0x2A04 */
 void func_ovl0C_02_80049788(void); /* 0x2A0C */
 void func_ovl0C_02_800497A0(s32); /* 0x2B00 */
-void func_ovl0C_02_800497C0(s32, f32, f32, f32); /* 0x2B04 */
+s32 func_ovl0C_02_800497C0(s32, f32, f32, f32); /* 0x2B04 */
 void func_ovl0C_02_800497C8(s32, f32 *); /* 0x2B05 */
 void func_ovl0C_02_80049950(s32); /* 0x3103 */
 s32 func_ovl0C_02_80049960(void); /* 0x3105 */
@@ -342,7 +342,7 @@ void func_ovl0C_02_80044868(void);
 void func_ovl0C_02_800448CC(void);
 void func_ovl0C_02_80044914(UnkStruct_ovl0C_02_80049B84 *arg0, s32 arg1);
 void func_ovl0C_02_80044A68(UnkStruct_ovl0C_02_80049B50 *arg0, UnkStruct_ovl0C_02_80049C24 *arg1, s32 arg2);
-void func_ovl0C_02_80044B58(f32 arg0);
+void func_ovl0C_02_80044B58(f32);
 void func_ovl0C_02_80044BA0(void);
 void func_ovl0C_02_80044CD0(void);
 void func_ovl0C_02_80044E74(s32 arg0, s32 arg1, s32 arg2, f32 arg3, s32 arg4);
@@ -403,8 +403,8 @@ void func_ovl0C_02_80047FB4(UnkStructA *arg0);
 void func_ovl0C_02_80048074(UnkStructA *arg0);
 void func_ovl0C_02_800480B8(UnkStructA *arg0, s32 arg1, s32 arg2, f32 arg3, f32 arg4);
 void func_ovl0C_02_80048190(void);
-void func_ovl0C_02_800482A0(s32 arg0, UnkStructA *arg1);
-void func_ovl0C_02_800482D4(f32 arg0, f32 arg1, f32 arg2);
+s32 func_ovl0C_02_800482A0(s32, void *);
+void func_ovl0C_02_800482D4(f32, f32, f32);
 void func_ovl0C_02_80048330(void);
 static void func_ovl0C_02_80048348(void);
 static void func_ovl0C_02_80043B14(void);
@@ -425,7 +425,7 @@ s32 D_ovl0C_02_8004A0F0;
 s32 D_ovl0C_02_8004A0F4;
 s32 D_ovl0C_02_8004A0F8;
 u8 D_ovl0C_02_8004A0FC[0x4];
-f32 D_ovl0C_02_8004A100[3];
+Vec3f D_ovl0C_02_8004A100;
 UnkStructA *D_ovl0C_02_8004A10C;
 UnkStruct_ovl0C_02_8004A110 D_ovl0C_02_8004A110;
 UnkStructA *D_ovl0C_02_8004A124;
@@ -538,23 +538,23 @@ static void func_ovl0C_02_80048348(void) {
     D_ovl0C_02_8004A0FC[0] = 0; /* the reference keeps the unused .bss in place */
 }
 
-void func_ovl0C_02_80048330(void) {
-    D_ovl0C_02_8004A0F4 = -1;
-    D_ovl0C_02_8004A0F8 = -1;
-}
+/* the names src/overlays/common/core.h's code has here */
+#define CORE_FUNC_A func_ovl0C_02_80048330
+#define CORE_FUNC_B func_ovl0C_02_800482D4
+#define CORE_FUNC_C func_ovl0C_02_80044B58
+#define CORE_FUNC_D func_ovl0C_02_800482A0
+#define CORE_BSS_A0 D_ovl0C_02_8004A0F4
+#define CORE_BSS_A1 D_ovl0C_02_8004A0F8
+#define CORE_BSS_B D_ovl0C_02_8004A100
+#define CORE_ZJ_1704 func_ovl0C_02_80048F08
+#define CORE_ZJ_1708 func_ovl0C_02_80048F28
+#define CORE_ZJ_1709 func_ovl0C_02_80048F30
+#define CORE_ZJ_1904 func_ovl0C_02_80049238
+#define CORE_ZJ_2B04 func_ovl0C_02_800497C0
+#include "overlays/common/core.h"
 
-void func_ovl0C_02_800482D4(f32 arg0, f32 arg1, f32 arg2) {
-    func_ovl0C_02_80048F08(D_ovl0C_02_8004A100[0], D_ovl0C_02_8004A100[1], D_ovl0C_02_8004A100[2]);
-    func_ovl0C_02_80048F28(arg0, arg1, arg2);
-    func_ovl0C_02_80049238(180);
-}
 
-void func_ovl0C_02_800482A0(s32 arg0, UnkStructA *arg1) {
-    UnkStructA_40 *p;
 
-    p = arg1->unk40;
-    func_ovl0C_02_800497C0(arg0, p->unk10, p->unk14, p->unk18);
-}
 
 void func_ovl0C_02_80048190(void) {
     f32 scale28;
@@ -1425,14 +1425,14 @@ void func_ovl0C_02_80045A7C(void) {
 static void func_ovl0C_02_80045A74(f32 x, s32 z, s32 count) {
     s32 i;
 
-    D_ovl0C_02_8004A100[0] = x * 100.0f;
-    D_ovl0C_02_8004A100[1] = 0;
+    D_ovl0C_02_8004A100.x = x * 100.0f;
+    D_ovl0C_02_8004A100.y = 0;
     for (i = 0; i < count; i++) {
-        D_ovl0C_02_8004A100[1] += func_ovl0C_02_80048730(i) * 100.0f;
+        D_ovl0C_02_8004A100.y += func_ovl0C_02_80048730(i) * 100.0f;
     }
-    D_ovl0C_02_8004A100[1] += 100.0f;
-    D_ovl0C_02_8004A100[2] = z * 100.0f;
-    D_ovl0C_02_8004A0F0 = func_ovl0C_02_80049670(0x28, D_ovl0C_02_8004A100, 0);
+    D_ovl0C_02_8004A100.y += 100.0f;
+    D_ovl0C_02_8004A100.z = z * 100.0f;
+    D_ovl0C_02_8004A0F0 = func_ovl0C_02_80049670(0x28, &D_ovl0C_02_8004A100.x, 0);
 }
 #line 1446 "1734E0.c" /* fake: back from the other file, at the line numbers it matched with */
 
@@ -1717,12 +1717,12 @@ void func_ovl0C_02_80044BA0(void) {
     func_ovl0C_02_80048FC0(45.0f, 45.1f);
 }
 
-void func_ovl0C_02_80044B58(f32 arg0) {
-    f32 sp1C;
 
-    func_ovl0C_02_80048F30(&sp1C, NULL, NULL);
-    func_ovl0C_02_80048F28(sp1C + arg0, 32768.0f, 32768.0f);
-}
+
+
+
+
+
 
 void func_ovl0C_02_80044A68(UnkStruct_ovl0C_02_80049B50 *arg0, UnkStruct_ovl0C_02_80049C24 *arg1, s32 arg2) {
     UnkStructA *obj;

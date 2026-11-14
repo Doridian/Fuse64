@@ -10,7 +10,11 @@ s32 CORE_FUNC_D(s32 arg0, void *arg1) {
     UnkStructA_40 *p;
 
     p = ((UnkStructA *) arg1)->unk40;
-    if (1) { /* fake: a uopt block boundary; at -O2 a one-block body homes arg1 to the stack (do/while(0) and goto work alike; an initializer, one expression, a copy of arg0, a struct-field array or returning the stub's value do not); at -O3 it changes nothing */
+    /* A check around compiled-out debug output, as in main_code's copy
+     * (80420's func_80265C20): at -O2 the test's block keeps arg1 from
+     * being spilled (the condition is a guess). */
+    if (p == NULL) {
+        DEBUG_PRINT(("p == NULL\n"));
     }
     return CORE_ZJ_2B04(arg0, p->unk10, p->unk14, p->unk18);
 }

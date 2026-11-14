@@ -427,9 +427,9 @@ static void func_8028F55C(UnkStruct_800BC770 *o) {
 }
 
 /* The body's lines are below the opening line's (as1 then puts `sw a0,48(sp)` early, as the original). */
-#line 1000
+#line 1000 /* fake: see above */
 static void func_8028F5E0(UnkStruct_800BC770 *o) {
-#line 999
+#line 999 /* fake: see above */
     if (func_8028EB70(o, 100, 10.0f)) {
         func_8028ECB0(o);
     } else {

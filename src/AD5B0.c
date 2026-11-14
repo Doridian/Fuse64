@@ -7,7 +7,7 @@
  *   before the sw of p and chk; in func_80292DB0 the for's line must be
  *   below the line of the func_80292DB0 call in func_80292E88, which puts
  *   move v0,zero before andi v1. Moving lines above the first #line
- *   changes the first difference: shift all three by the same amount.
+ *   changes the first difference: shift both by the same amount.
  * - func_80297E80 is declared returning u16: the narrowing stops uopt
  *   copy-propagating ret into v0, so func_80292E90 keeps it in v1.
  * - func_80292DB8's loop is while (ret != 0 && i++ < 3) with ret = -1:
@@ -40,7 +40,7 @@ s32 func_80297E60(void *);
 s32 func_80297E68(void *, u8, u8 *);
 s32 func_80297E70(void *, u8, u8 *);
 s32 func_80297E78(void *, u8, u8 *, s32);
-u16 func_80297E80(void *, u8, u8 *, s32);
+u16 func_80297E80(void *, u8, u8 *, s32); /* fake: declared u16: the narrowing keeps ret in v1 (header) */
 
 static s32 func_80294A40(s32 slot);
 static s32 func_802949BC(u8 b);
@@ -424,10 +424,10 @@ void func_8029414C(u8 *buf) {
     *p++ = func_80293FE4(0xB);
     *p++ = func_80293EAC(chk, 6);
     chk += 7;
-#line 397
+#line 397 /* fake: numbering for as1 order (header) */
     for (k = 0, i = 0; i < 6; i++, k += 4) {
         j = k + 0x15;
-        do {} while (0);
+        do {} while (0); /* fake: splits the block */
         func_80294064(&p, &chk, j, j + 1);
         func_80294064(&p, &chk, j + 2, j + 3);
     }
@@ -562,7 +562,7 @@ static u8 func_802934D0(u8 **pp, s32 *out) {
     sum += *p++;
     *out |= (p[0] << 8) & 0xFF00;
     sum += *p++;
-    *out |= (u8)(p[0] << 0);
+    *out |= (u8)(p[0] << 0); /* fake: `(u8)(x << 0)` burns one ugen temp (header) */
     sum += *p++;
     *pp = p;
     return sum;
@@ -720,11 +720,11 @@ static s32 func_802934E0(u8 **pp) {
     s32 j;
     s32 k;
     s32 r;
-    s32 pad2[6];
+    s32 pad2[6]; /* fake: frame-tuned (header) */
 
     for (k = 0, i = 0; i < 6; i++, k += 4) {
         j = k + 0x15;
-        do {} while (0);
+        do {} while (0); /* fake: splits the block */
         r = func_802933E8(pp, j, j + 1);
         if (r == 1) {
             break;
@@ -738,13 +738,13 @@ static s32 func_802934E0(u8 **pp) {
 }
 
 static u8 func_802934D8(u8 **pp, s32 *out) {
-    s32 pad[8];
+    s32 pad[8]; /* fake: frame-tuned (header) */
     u8 *p = *pp;
     u8 sum;
 
     *out = (p[0] << 8) & 0xFF00;
     sum = *p++;
-    *out |= (u8)(*p << 0);
+    *out |= (u8)(*p << 0); /* fake: `(u8)(x << 0)` burns one ugen temp (header) */
     sum += *p++;
     *pp = p;
     return sum;
@@ -776,7 +776,7 @@ static u8 func_80293378(u8 **pp, s32 *out) {
     u8 *p = *pp;
     u8 sum;
 
-    do {
+    do { /* fake: a do/while (0) around the body */
     *out |= (p[0] << 16) & 0xFF0000;
     sum = p[0];
     *out |= (p[1] << 8) & 0xFF00;
@@ -953,7 +953,7 @@ static s32 func_80292DB8(u8 addr, u8 *buf, u8 n) {
 static s32 func_80292DB0(u8 *a, u8 *b, u8 n) {
     s32 i;
 
-#line 886
+#line 886 /* fake: numbering for as1 order (header) */
     for (i = 0; i < n * 8; i++) {
         if (b[i] != a[i]) {
             return 1;

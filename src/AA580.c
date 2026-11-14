@@ -487,11 +487,11 @@ static s32 func_8028FFA8(s32 code, UnkStruct_802909FC *ctx, Vec3i *dir, s32 code
     return res;
 }
 
-static void func_80290490(s32 c) {
+static void func_80290490(s32 c) { /* fake: an empty static called once for its stub (header, p2) */
 }
 
 static s32 func_80290498(UnkStruct_802909FC *ctx, s32 dx, s32 dy, s32 dz, s32 code) {
-    volatile struct { s32 a, b, c, d; } sv;
+    volatile struct { s32 a, b, c, d; } sv; /* fake: a volatile struct reproduces the caller-saved spill of t (header, p4) */
     f32 pos[3];
     UnkStruct_80290498 tmp;
     s32 t;
@@ -549,7 +549,7 @@ static s32 func_80290498(UnkStruct_802909FC *ctx, s32 dx, s32 dy, s32 dz, s32 co
             break;
     }
     if (res != 0) {
-        sv.c = t | 0;
+        sv.c = t | 0; /* fake: `| 0` stops copy propagation (header, p4) */
         if (res == 1) {
             h = func_8026EAF8(ctx->unk0);
             func_8026E338(ctx->unk10 + dx, ctx->unk14 + dy, ctx->unk18 + dz, pos, 0);
@@ -560,7 +560,7 @@ static s32 func_80290498(UnkStruct_802909FC *ctx, s32 dx, s32 dy, s32 dz, s32 co
                 res = 2;
             }
         }
-        t = sv.c;
+        t = sv.c; /* fake: see sv above */
         if (res == 2) {
             t = (t & ~0xF) | 0xF;
         }
@@ -598,13 +598,13 @@ static s32 func_80290708(UnkStruct_802909FC *ctx, s32 code, Vec3i *dirB, Vec3i *
     return res;
 }
 
-static void func_80290864() {
+static void func_80290864() { /* fake: empty K&R stubs (header, p3/p4) */
 }
 
-static void func_8029086C() {
+static void func_8029086C() { /* fake: empty K&R stub */
 }
 
-static void func_80290874() {
+static void func_80290874() { /* fake: empty K&R stub */
 }
 
 static void func_8029087C(UnkStruct_802909FC *ctx) {
@@ -642,11 +642,11 @@ static void func_8029087C(UnkStruct_802909FC *ctx) {
 }
 
 static void func_8029085C(UnkStruct_802909FC *ctx, f32 angle) {
-    s32 qq[1];
+    s32 qq[1]; /* fake: frame slot (header) */
     ctx->unk10 = (ctx->unk0->unk40->unk10 + 50.0f) * 0.01f;
     ctx->unk18 = (ctx->unk0->unk40->unk18 + 50.0f) * 0.01f;
     ctx->unk14
-#line 679
+#line 679 /* fake: numbering for as1 order */
         = func_8026EE18(ctx->unk8 + angle);
 }
 
@@ -663,7 +663,7 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
     s32 corner;
     Vec3i dirA;
     UnkStructA_40 *p;
-    s32 pad2[4];
+    s32 pad2[4]; /* fake: frame-tuned */
     s32 code;
     s32 codeX;
     s32 codeZ;
@@ -677,11 +677,11 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
     s32 below;
     s32 hitXZ;
     s32 code2;
-    s32 pad4[2];
+    s32 pad4[2]; /* fake: frame-tuned */
     f32 save[3];
     f32 h1;
     f32 h2;
-    s32 pad5;
+    s32 pad5; /* fake: frame-tuned */
     f32 a;
     f32 b;
     s32 c;
@@ -701,9 +701,8 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
         func_8026E6E4(ctx.unk0->unk40, &angle, &sdir);
     }
     func_8029085C(&ctx, angle);
-#line 680
     ctx.unk1C = ctx.unk4 - (s32) (ctx.unk4 * 0.01f) * 100.0f;
-#line 637
+#line 637 /* fake: numbering for as1 order */
     if (ctx.unk4 < -50.0f) {
         ctx.unk1C += 100.0f;
     }
@@ -745,7 +744,7 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
             i = 0;
         }
     }
-    func_8028FD88(&dirA, i  ^ 0, 1);
+    func_8028FD88(&dirA, i  ^ 0, 1); /* fake: `^ 0` drops the a1 precolour (header, p3) */
     code = func_8026D7D8(ctx.unk10, ctx.unk14, ctx.unk18);
     yx = 0;
     yz = 0;
@@ -853,7 +852,7 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
             corner = 0;
             if (ABS(ctx.unk24) <= ABS(ctx.unk1C)) {
                 corner |= 1;
-                if (hitXZ) {}
+                if (hitXZ) {} /* fake: dead read */
                 ctx.unkC -= ctx.unk24;
                 
                 if (dirB.unk0 == 0 && dirB.unk8 == dirA.unk8) {
@@ -872,7 +871,7 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
             res |= 0x20;
         } else if (*(s32 *) ctx.unk0->unk44 == 0) {
             p = ctx.unk0->unk40;
-            if (!ctx.unk0->unk40) {}
+            if (!ctx.unk0->unk40) {} /* fake: dead read */
             save[0] = p->unk10;
             save[1] = p->unk14;
             save[2] = p->unk18;
@@ -943,7 +942,7 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
     f32 sdir;
     Vec3i d;
     f32 sp;
-    s32 pad;
+    s32 pad; /* fake: frame-tuned */
     f32 y0;
     f32 a;
     f32 b;
@@ -952,10 +951,10 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
     f32 c;
     f32 e;
     f32 h;
-    s32 pad2;
+    s32 pad2; /* fake: frame-tuned */
     UnkStruct_8026DCAC t1;
     UnkStruct_8026DCAC t2;
-    s32 pad3;
+    s32 pad3; /* fake: frame-tuned */
     UnkStruct_8026DCAC t4;
     UnkStruct_8026DCAC t3;
     f32 g;

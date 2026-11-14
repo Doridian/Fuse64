@@ -2061,12 +2061,6 @@ u8 func_ovl0B_04_80044BE8(u8 arg0, u16 arg1) {
                 break;
         }
     }
-    if (0) {
-        func_ovl0B_04_8004471C(0, 0);
-        func_ovl0B_04_800447DC(0, 0);
-        func_ovl0B_04_800445C4();
-        func_ovl0B_04_8004456C();
-    }
     return ret;
 }
 

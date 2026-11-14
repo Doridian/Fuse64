@@ -922,17 +922,16 @@ void func_ovl15_01_8004AD60(void) {
 }
 
 void func_ovl15_01_8004AC68(void) {
-    f32 y;
-    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    Vec3f save;
 
     if (0) {
         func_ovl15_01_8004ABE0();
     }
     while (TRUE) {
         if (func_ovl15_01_8004D7B0(0x418) != 0) {
-            y = D_ovl15_01_8004E060.y;
+            save.y = D_ovl15_01_8004E060.y;
             func_ovl15_01_80049658(&D_ovl15_01_8004E050.x, &D_ovl15_01_8004E060.x, D_ovl15_01_8004E06C);
-            D_ovl15_01_8004E060.y = y;
+            D_ovl15_01_8004E060.y = save.y;
         }
         func_ovl15_01_8004AA70();
         func_ovl15_01_8004A8F4();
@@ -1723,7 +1722,9 @@ void func_ovl15_01_800483AC(void) {
             func_ovl15_01_8004D548(8);
         }
     }
-    if (cnt) {} /* fake: a dead test, for the register allocation or schedule */
+    if (i < cnt) { /* a compiled-out debug check (the condition is a guess: any test of cnt matches) */
+        DEBUG_PRINT(("stopped at %d of %d\n", i, cnt));
+    }
     func_ovl15_01_8004D3F0(obj);
     func_ovl15_01_8004D538();
 }
@@ -2028,10 +2029,14 @@ void func_ovl15_01_80047270(void) {
        t / 5.0f take f0 and f2 before t is coloured, so t gets f12 */
     t = 1.6666666f - D_ovl15_01_8004E0A8->unk40->unk28;
     v = t / 5.0f;
-    if (v) {} /* fake: a dead test, for the register allocation or schedule */
+    if (v <= 0.0f) { /* a compiled-out debug check (the condition is a guess: any test of v matches) */
+        DEBUG_PRINT(("v <= 0\n"));
+    }
     s = 0.0f;
     acc = v / 10.0f * -1.0f;
-    if (t != 1.0f) {}
+    if (t <= 0.0f) { /* another (any test of t matches) */
+        DEBUG_PRINT(("t <= 0\n"));
+    }
     for (i = 0; i < 10; i++) {
         D_ovl15_01_8004E0A8->unk40->unk30 = D_ovl15_01_8004E0A8->unk40->unk2C = D_ovl15_01_8004E0A8->unk40->unk28 = base + s;
         s += v;
@@ -2824,7 +2829,6 @@ void func_ovl15_01_80044730(void) {
     s32 c2;
     s32 c3;
     s32 v;
-    UnkStructA *p;
 
     func_ovl15_01_8004D3D8(D_ovl15_01_8004E010, 0x80000);
     func_ovl15_01_8004D3D8(D_ovl15_01_8004E014, 0x80000);
@@ -2834,7 +2838,9 @@ void func_ovl15_01_80044730(void) {
     func_ovl15_01_8004D3D8(D_ovl15_01_8004E024, 0x80000);
     func_ovl15_01_8004D7A0(0x415);
     D_ovl15_01_8004E008 = D_ovl15_01_8004E004 = 0;
-    if (D_ovl15_01_8004E00C) {} /* fake: a dead test, for the register allocation or schedule */
+    if (D_ovl15_01_8004E00C != 0) { /* a compiled-out debug check (the condition is a guess: any test of 8004E00C matches) */
+        DEBUG_PRINT(("8004E00C != 0\n"));
+    }
     c0 = 120;
     c1 = 119;
     c2 = 118;
@@ -2850,20 +2856,19 @@ void func_ovl15_01_80044730(void) {
         v = (1.0f - i / 240.0f) * 255.0f;
         D_ovl15_01_8004E010->unk40->unk36 = D_ovl15_01_8004E014->unk40->unk36 = D_ovl15_01_8004E018->unk40->unk36 = D_ovl15_01_8004E020->unk40->unk36 = D_ovl15_01_8004E01C->unk40->unk36 = D_ovl15_01_8004E024->unk40->unk36 = v;
         if (c0 > 120) {
-            func_ovl15_01_8004D528(func_ovl15_01_8004A558, D_ovl15_01_8004E010, 0, 0, 0x150);
+            func_ovl15_01_800446F8(D_ovl15_01_8004E010);
             c0 = 0;
         }
         if (func_ovl15_01_8004D7B0(0x41D) == 0 && c1 > 120) {
-            func_ovl15_01_8004D528(func_ovl15_01_8004A558, D_ovl15_01_8004E014, 0, 0, 0x150);
+            func_ovl15_01_800446F8(D_ovl15_01_8004E014);
             c1 = 0;
         }
         if (func_ovl15_01_8004D7B0(0x41C) == 0 && c2 > 120) {
-            func_ovl15_01_8004D528(func_ovl15_01_8004A558, D_ovl15_01_8004E02C, 0, 0, 0x150);
+            func_ovl15_01_800446F8(D_ovl15_01_8004E02C);
             c2 = 0;
         }
         if (func_ovl15_01_8004D7B0(0x41B) == 0 && c3 > 120) {
-            p = D_ovl15_01_8004E030;
-            func_ovl15_01_8004D528(func_ovl15_01_8004A558, p, 0, 0, 0x150);
+            func_ovl15_01_800446F8(D_ovl15_01_8004E030);
             c3 = 0;
         }
         func_ovl15_01_8004D570();
@@ -2914,11 +2919,8 @@ void func_ovl15_01_80044468(void) {
     f32 step;
     s32 n;
     s32 i;
-    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
-    Vec3f a;
 
-    func_ovl15_01_80044088(&a.x, &D_ovl15_01_8004DFD0.x, &D_ovl15_01_8004DCD0);
-    func_ovl15_01_80044088(&b.x, &a.x, &D_ovl15_01_8004DCDC);
+    func_ovl15_01_80044420(&b.x);
     func_ovl15_01_8004D368(&D_ovl15_01_8004E050, &b, &rot);
     rot.y = 0.0f;
     step = 17.0f;
@@ -2952,7 +2954,8 @@ void func_ovl15_01_80044088(f32 *arg0, f32 *arg1, Vec3f *arg2) {
     p.y = arg1[1];
     p.z = arg1[2] - arg2->z;
     D_ovl15_01_8004E070 = func_ovl15_01_8004D500(0x42, (s32) pp, &D_ovl15_01_8004DCD0, &D_ovl15_01_8004E078, 8);
-    if (func_ovl15_01_8004D4E0(1, pp, &D_ovl15_01_8004DCD0) != NULL) { /* fake: a dead test, for the register allocation or schedule */
+    if (func_ovl15_01_8004D4E0(1, pp, &D_ovl15_01_8004DCD0) == NULL) { /* a compiled-out debug check (the condition is a guess: either test of the result matches) */
+        DEBUG_PRINT(("8004D4E0 == NULL\n"));
     }
     best.x = p.x;
     best.y = p.y;

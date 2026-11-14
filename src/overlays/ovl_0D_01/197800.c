@@ -13,7 +13,7 @@
  * - 800448D4: the per-gate static 800448BC (Ent, flag) starts with the
  *   flag test (`flag == 0x400 && !0x407` returns), so the loop's float
  *   constants are hoisted into $fs0-$fs4 as the original; the macro's call
- *   in a "panels.c" region (the static 80044D6C is defined there) keeps it
+ *   in a statics.h region (the static 80044D6C is defined there) keeps it
  *   out of the prologue (the old fake read of D_ovl0D_01_80047560 stopped
  *   the hoisting).
  * - 80043134: the second probe's x is an int 2300 (its own .rodata
@@ -24,14 +24,14 @@
  *   80046C70 takes a u32 (with s32,
  *   uopt kept the three 0x02000000s in s7); the empty static 800455D8
  *   called after the 800455D0 rows (the frame); the 80046278 call in a
- *   "panels.c" region (its a0 after the three stores); 80046460 returns s32
+ *   statics.h region (its a0 after the three stores); 80046460 returns s32
  *   (v1, not v0, for the two inlined flag tests at the end).
  * - 80044154: 15.0f through a local y, and the model reached as D_ovl0D_01_800475D4[2] (the address of
  *   D_ovl0D_01_8004760C[1]; a fake, so uopt doesn't keep &[1] in a
  *   register for both the store and the load).
  * - 80044464/800444D8/800444E0: ovl_0D_06's clamp (axis, v, size),
  *   direction (takes the entity) and tiles (`len = x1 + z1`; the tiles
- *   static defined in statics.h, which replaces a "panels.c" region around
+ *   static defined in statics.h, which replaces a statics.h region around
  *   case 0's first statement).
  * - 800437C8: its parameters (id, x, n, z), as ovl_0D_06's 8004355C.
  * - 80045A00: an empty `case 31` (the jump table runs to 31).
@@ -39,7 +39,6 @@
  *   it (a fake), so it keeps its word.
  */
 #include "common.h"
-#line 48 "197800.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0D_01's stage object, IDO -O3: the functions are written last to first
@@ -582,9 +581,9 @@ void func_ovl0D_01_800455E0(void) {
     D_ovl0D_01_80047B30.y = 32768.0f;
     D_ovl0D_01_80047B30.z = 32768.0f;
     /* fake: (see the top): its a0 after the stores */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-    func_ovl0D_01_80046278(D_ovl0D_01_80047B18);
-#line 581 "197800.c" /* fake: back from the other file, at the line numbers it matched with */
+#define STATICS_PART 1
+#include "overlays/ovl_0D_01/statics.h"
+#undef STATICS_PART
     D_ovl0D_01_80047B0C = func_ovl0D_01_80046CB0(-1, 0x80, 0.0f, 0.0f, 0.0f);
     D_ovl0D_01_80047B0C->unkC = 0x3FFFF;
     func_ovl0D_01_800463B0(0);
@@ -883,11 +882,10 @@ void func_ovl0D_01_80044D74(void) {
     }
 }
 
-/* in "panels.c" (a fake, see the top) */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0D_01_80044D6C(void) {
-}
-#line 898 "197800.c" /* fake: back from the other file, at the line numbers it matched with */
+/* in statics.h (a fake, see the top) */
+#define STATICS_PART 2
+#include "overlays/ovl_0D_01/statics.h"
+#undef STATICS_PART
 
 static void func_ovl0D_01_80044D64(void) {
 }
@@ -919,9 +917,9 @@ void func_ovl0D_01_800448D4(void) {
     s32 i;
 
     /* fake: the region's .file keeps the first call out of the prologue */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-    func_ovl0D_01_800448CC();
-#line 932 "197800.c" /* fake: back from the other file, at the line numbers it matched with */
+#define STATICS_PART 3
+#include "overlays/ovl_0D_01/statics.h"
+#undef STATICS_PART
     func_ovl0D_01_800448C4();
     for (i = 0; i < 2; i++) {
         func_ovl0D_01_800448BC(&D_ovl0D_01_800476EC[i], D_ovl0D_01_8004775C[i]);

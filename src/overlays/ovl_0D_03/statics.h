@@ -1,4 +1,11 @@
 /*
+ * Without STATICS_PART: the statics below, included before the functions.
+ * With it: the runs of code (definitions, or statements inside a function)
+ * 1A0CD0.c includes where they are, from this same file: the `.file`
+ * switches around them end as1's scheduling blocks, as the original's do.
+ */
+#ifndef STATICS_PART
+/*
  * Statics the original defined in another file: where one is inlined, the
  * `.file` ugen emits for it ends an as1 scheduling block, which the
  * original's schedule has.  That file's name and what else it held are
@@ -111,3 +118,15 @@ static void func_ovl0D_03_8004337C(Ent_0D03 *e) {
     func_ovl0D_03_80046A28(x2, y0, z2, x3, z3, 0x11);
     func_ovl0D_03_80046A28(x2, y0 + 1, z2, x3, z3, 0x10);
 }
+#elif STATICS_PART == 1
+    func_ovl0D_03_80044A3C();
+#elif STATICS_PART == 2
+static void func_ovl0D_03_800441BC(Trio_0D03 *t, s32 count) {
+    s32 i;
+
+    for (i = 0; i < count; i++) {
+        func_ovl0D_03_80047A48(t->unk0, t->unk4, t->unk8);
+        t++;
+    }
+}
+#endif

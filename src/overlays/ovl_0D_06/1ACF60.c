@@ -13,7 +13,7 @@
  *   (axis, v, size), the direction 8004440C takes the entity, 80044414's
  *   case 1 computes z2 as z0 + 1 with `len = x1 + z1` (a dead fake) ahead
  *   of x0's set-up (ovl_0D_02's header says why); 80044414 is defined in
- *   another file (statics.h), which replaces a "panels.c" region around
+ *   another file (statics.h), which replaces a statics.h region around
  *   case 0's first statement. 80045DC8's second and fourth calls pass
  *   0x11 here (checked).
  * - 8004518C: the camera static 8004515C defined in statics.h (1600.0f in
@@ -43,14 +43,13 @@
  *   local j for 80045E58's result (`j = D_ovl0D_06_80047604 = ...`, which
  *   also puts `move a0,v0` right after the store) and the empty static
  *   80043010 called once more after 80045E60 (a fake; unused locals do it
- *   too). That statement in a "panels.c" region (a fake): the `.file`
+ *   too). That statement in a statics.h region (a fake): the `.file`
  *   after it ends as1's block, so the loads of 800475F8[2] and [0] for
  *   80045E60 stay after the store (ugen marks the two addresses
  *   `.noalias`, and as1 hoisted them; hand-edited ugen output with a
  *   `.file` there gave the original).
  */
 #include "common.h"
-#line 53 "1ACF60.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0D_06's stage object, IDO -O3: the functions are written last to first
@@ -547,11 +546,10 @@ void func_ovl0D_06_8004518C(void) {
     func_ovl0D_06_800467C0(D_ovl0D_06_80047508[0].obj);
 }
 
-/* in "panels.c" (a fake, see the top) */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0D_06_80045184(void) {
-}
-#line 556 "1ACF60.c" /* fake: back from the other file, at the line numbers it matched with */
+/* in statics.h (a fake, see the top) */
+#define STATICS_PART 1
+#include "overlays/ovl_0D_06/statics.h"
+#undef STATICS_PART
 
 static void func_ovl0D_06_8004517C(Trio_0D06 *t, s32 count) {
     s32 i;
@@ -1188,9 +1186,9 @@ void func_ovl0D_06_8004305C(void) {
     if (func_ovl0D_06_80046B60(0x409) != 0) {
         func_ovl0D_06_80043018(D_ovl0D_06_800472BC[0].obj);
         /* fake: (see the top) */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-        j = D_ovl0D_06_80047604 = func_ovl0D_06_80045E58(0x15B);
-#line 1307 "1ACF60.c" /* fake: back from the other file, at the line numbers it matched with */
+#define STATICS_PART 2
+#include "overlays/ovl_0D_06/statics.h"
+#undef STATICS_PART
         func_ovl0D_06_80045E60(j, 0, 0, D_ovl0D_06_800475F8[0] - 1, D_ovl0D_06_800475F8[2] - 1, 0, 0, 0);
         func_ovl0D_06_80043010(); /* fake: (see the top) */
         i = 0;

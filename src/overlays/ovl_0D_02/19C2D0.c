@@ -27,13 +27,13 @@
  *   0's x1 and z1, or making its store volatile, shows the same order.)
  * - 800444FC: the probe static 800444EC is defined in another file
  *   (statics.h; its store stays ahead of the next call), and `#line 1
- *   "panels.c"` regions (as in ovl_0D_07): around
+ *   statics.h` regions (as in ovl_0D_07): around
  *   the 80044474 call (the store of D_ovl0D_02_80047A54 is lui/%lo and the
  *   call's delay slot stays empty; it replaces the `if ((D = f())) {}`
  *   fake), and around the gate's store in 80044444 (the arguments of the
  *   calls around it go into their delay slots). In 8004421C, `j = 0` at
  *   `#line 3000` (after the loop's line) puts `move v0,a1` ahead of
- *   `move a0,zero`. In 8004311C, case 0's first statement in a "panels.c"
+ *   `move a0,zero`. In 8004311C, case 0's first statement in a statics.h
  *   region: as1 then computes z1 right after x1 and stores z2 in order,
  *   with x0's home store in the branch's delay slot, as the original (no
  *   order of the case's ugen instructions fed to as1 by hand did that; a
@@ -814,9 +814,9 @@ void func_ovl0D_02_800444FC(void) {
     func_ovl0D_02_800444D4();
     D_ovl0D_02_80047A54 = func_ovl0D_02_80046448();
     /* fake: (see the top): the call's delay slot stays empty */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-    func_ovl0D_02_80044474();
-#line 829 "19C2D0.c" /* fake: back from the other file, at the line numbers it matched with */
+#define STATICS_PART 1
+#include "overlays/ovl_0D_02/statics.h"
+#undef STATICS_PART
     func_ovl0D_02_8004446C();
     func_ovl0D_02_80044464();
     func_ovl0D_02_8004445C();
@@ -889,9 +889,9 @@ static void func_ovl0D_02_80044444(void) {
             e = &D_ovl0D_02_800476D4[i];
             o = e->obj;
             /* fake: (see the top) */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-            o->unk40->unk48->unk4->unk4 = func_ovl0D_02_80046A38(o->unk40, 0) - 0.001f;
-#line 913 "19C2D0.c" /* fake: back from the other file, at the line numbers it matched with */
+#define STATICS_PART 2
+#include "overlays/ovl_0D_02/statics.h"
+#undef STATICS_PART
             func_ovl0D_02_80046D00(e->obj, 0x02000000);
             func_ovl0D_02_8004311C(e);
         }
@@ -1310,96 +1310,6 @@ static void func_ovl0D_02_8004311C(Ent_0D02 *e) {
     switch (func_ovl0D_02_80043114(e)) {
         case 0:
             /* fake: (see the top) */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-            x0 = grid[0] - 1;
-            x1 = x0 + 4;
-            z1 = grid[2] + len;
-            x2 = x0 + 1;
-            x3 = x1 - 1;
-            z2 = grid[2];
-            z3 = z1;
-            break;
-        case 1:
-            z1 = grid[2] + 1;
-            z0 = grid[2] - 4;
-            x1 = grid[0] + len;
-            x3 = x1;
-            z2 = z0 + 1;
-            z3 = z1 - 1;
-            x2 = grid[0];
-            break;
-        case 2:
-            x1 = grid[0] + 1;
-            x0 = grid[0] - 3;
-            z0 = grid[2] - len;
-            x2 = x0 + 1;
-            x3 = x1 - 1;
-            z2 = z0;
-            z1 = grid[2];
-            z3 = grid[2];
-            break;
-        case 3:
-            z1 = grid[2] + 3;
-            z0 = grid[2] - 1;
-            x0 = grid[0] - len;
-            x2 = x0;
-            z2 = z0 + 1;
-            z3 = z1 - 1;
-            x3 = grid[0];
-            x1 = grid[0];
-            break;
-    }
-    func_ovl0D_02_800430A0(0, &x0, D_ovl0D_02_80047A48);
-    func_ovl0D_02_800430A0(1, &y0, D_ovl0D_02_80047A48);
-    func_ovl0D_02_800430A0(2, &z0, D_ovl0D_02_80047A48);
-    func_ovl0D_02_800430A0(0, &x1, D_ovl0D_02_80047A48);
-    func_ovl0D_02_800430A0(1, &y1, D_ovl0D_02_80047A48);
-    func_ovl0D_02_800430A0(2, &z1, D_ovl0D_02_80047A48);
-    func_ovl0D_02_800430A0(0, &x2, D_ovl0D_02_80047A48);
-    func_ovl0D_02_800430A0(2, &z2, D_ovl0D_02_80047A48);
-    func_ovl0D_02_800430A0(0, &x3, D_ovl0D_02_80047A48);
-    func_ovl0D_02_800430A0(2, &z3, D_ovl0D_02_80047A48);
-    func_ovl0D_02_80046340(x0, y0, z0, x1, y1, z1, 0x10);
-    func_ovl0D_02_80046338(x0, y0 + 1, z0, x1, z1, 0x12);
-    func_ovl0D_02_80046338(x0, y0, z0, x1, z1, 0xF);
-    func_ovl0D_02_80046338(x2, y0, z2, x3, z3, 0x12);
-    func_ovl0D_02_80046338(x2, y0 + 1, z2, x3, z3, 0x10);
-}
-
-/* the clamp: v's parameter before size's (see the top) */
-static void func_ovl0D_02_800430A0(s32 axis, s32 *v, s32 *size) {
-    s32 max;
-
-    switch (axis) {
-        case 0:
-            max = size[0];
-            break;
-        case 1:
-            max = size[1];
-            break;
-        case 2:
-            max = size[2];
-            break;
-    }
-    if (*v < 0) {
-        *v = 0;
-    } else if (*v >= max) {
-        *v = max - 1;
-    }
-}
-
-/* the models' state from the flags already set */
-void func_ovl0D_02_80043010(void) {
-    f32 y;
-
-    if (func_ovl0D_02_800470D0(0x407) != 0) {
-        func_ovl0D_02_80046D00(D_ovl0D_02_8004762C[0].obj, 0x01000000);
-        y = -105.0f;
-        D_ovl0D_02_8004762C[1].unk18 = y;
-        D_ovl0D_02_80047664[0].obj->unk40->unk14 = y * 10.0f;
-        func_ovl0D_02_80046D00(D_ovl0D_02_8004769C[0].obj, 0x01000000);
-    }
-    if (func_ovl0D_02_800470D0(0x408) != 0) {
-        func_ovl0D_02_80046D00(D_ovl0D_02_80047664[0].obj, 0x01000000);
-    }
-}
+#define STATICS_PART 3
+#include "overlays/ovl_0D_02/statics.h"
+#undef STATICS_PART

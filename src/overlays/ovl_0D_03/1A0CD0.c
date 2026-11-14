@@ -11,7 +11,7 @@
  * - 8004337C (the gate's tiles): ovl_0D_02's 8004311C: the direction static
  *   80043374 takes the entity, the clamp 80043300 is (axis, v, size),
  *   `len = x1 + z1` (dead) ahead of x0's set-up; it is defined in another
- *   file (statics.h), which replaces a "panels.c" region around case 0's
+ *   file (statics.h), which replaces a statics.h region around case 0's
  *   first statement (as ovl_0D_01/04/06).
  * - 80043770: a global calling only the static 80043768 (the macro, the
  *   0x424 static 80043760 and the loop over the per-gate static 80043758).
@@ -25,8 +25,8 @@
  *   $f22 for 8004449C's rows below), the EE4 loop's `i != 1` (bne, not
  *   sltu), and 8004449C's `j = 0` at `#line 3000` (ovl_0D_02's 8004421C).
  * - 80044AA8: the 80047A48 loop is the static 800441BC (Trio, count), as
- *   ovl_0D_02's 800444F4 (slt and the count in s2), defined in "panels.c";
- *   the call of 80044A3C in 80044AA0 in a "panels.c" region (the
+ *   ovl_0D_02's 800444F4 (slt and the count in s2), defined in statics.h;
+ *   the call of 80044A3C in 80044AA0 in a statics.h region (the
  *   D_ovl0D_03_800481A0 load after the store stays). The models changed at
  *   0x407 are D_ovl0D_03_80047FDC[0] and [4] (the draft had [1]).
  * - 80045EE8: grid[7] (not [6]) puts the timer static's grid at sp+168 (as
@@ -904,9 +904,9 @@ void func_ovl0D_03_80044AA8(void) {
 static void func_ovl0D_03_80044AA0(void) {
     func_ovl0D_03_80044A88();
     D_ovl0D_03_800481A0 = func_ovl0D_03_80046B38();
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-    func_ovl0D_03_80044A3C();
-#line 913 "1A0CD0.c" /* fake: back from the other file, at the line numbers it matched with */
+#define STATICS_PART 1
+#include "overlays/ovl_0D_03/statics.h"
+#undef STATICS_PART
 }
 
 /* the models, as the flags already set leave them */
@@ -1088,17 +1088,10 @@ static void func_ovl0D_03_800441C4(s32 idx) {
     }
 }
 
-/* in "panels.c" (a fake, see the top) */
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0D_03_800441BC(Trio_0D03 *t, s32 count) {
-    s32 i;
-
-    for (i = 0; i < count; i++) {
-        func_ovl0D_03_80047A48(t->unk0, t->unk4, t->unk8);
-        t++;
-    }
-}
-#line 1107 "1A0CD0.c" /* fake: back from the other file, at the line numbers it matched with */
+/* in statics.h (a fake, see the top) */
+#define STATICS_PART 2
+#include "overlays/ovl_0D_03/statics.h"
+#undef STATICS_PART
 
 void func_ovl0D_03_8004419C(void) {
     func_ovl0D_03_80044138();

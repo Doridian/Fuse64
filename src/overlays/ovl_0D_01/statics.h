@@ -1,4 +1,11 @@
 /*
+ * Without STATICS_PART: the statics below, included before the functions.
+ * With it: the runs of code (definitions, or statements inside a function)
+ * 197800.c includes where they are, from this same file: the `.file`
+ * switches around them end as1's scheduling blocks, as the original's do.
+ */
+#ifndef STATICS_PART
+/*
  * Statics the original defined in another file: where one is inlined, the
  * `.file` ugen emits for it ends an as1 scheduling block, which the
  * original's schedule has.  That file's name and what else it held are
@@ -104,3 +111,11 @@ static void func_ovl0D_01_800444E0(Ent_0D01 *e) {
     func_ovl0D_01_800462A8(x2, y0, z2, x3, z3, 0x11);
     func_ovl0D_01_800462A8(x2, y0 + 1, z2, x3, z3, 0x10);
 }
+#elif STATICS_PART == 1
+    func_ovl0D_01_80046278(D_ovl0D_01_80047B18);
+#elif STATICS_PART == 2
+static void func_ovl0D_01_80044D6C(void) {
+}
+#elif STATICS_PART == 3
+    func_ovl0D_01_800448CC();
+#endif

@@ -4,14 +4,14 @@
  *   (src/, it matches): vel and pos are Vec3f and the tests are written
  *   `(s32)dx != (s32)vel.x` (the original's `beq vel,dx`, and 500.0f in
  *   $f0 at the end). The else path packs vel in place; only the hit path
- *   calls the inlined static 80043968, which is defined in "panels.c": the
+ *   calls the inlined static 80043968, which is defined in statics.h: the
  *   `.file` at its body gives the hit path's `nop` after its mul.s (the
  *   missing word), and the else path, with no static, has no `.file` (as
  *   a static there, it costs the else path its schedule).
  * - func_ovl0F_08_800433DC (8 to 0): the loops 800433BC (case 2) and
- *   80043020 (case 1) are defined in "panels.c", which puts each loop's
+ *   80043020 (case 1) are defined in statics.h, which puts each loop's
  *   `move s2,zero` after its table and count, as in ovl_0F_04. Case 2's
- *   D_ovl0F_08_80045DA0[2] stores and their `break` are in "panels.c"
+ *   D_ovl0F_08_80045DA0[2] stores and their `break` are in statics.h
  *   (`#line` in the handler, back to "1FF8F0.c" after the break), which
  *   puts `lui at,0x4516` ahead of `lw t8,8(s1)`; switching back before the
  *   break costs the `b`'s delay slot. ovl_0F_05 and 0F_07 have the same
@@ -24,7 +24,6 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
-#line 30 "1FF8F0.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0F_08's game object, IDO -O3: the functions are written last to first
@@ -378,166 +377,7 @@ void func_ovl0F_08_80043A28(UnkStructA *arg0) {
     }
 }
 
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0F_08_80043968(s32 *dst, f32 x, f32 z) {
-    *dst = ((s16)(x * 500.0f) << 16) | ((s16)(z * 500.0f) & 0xFFFF);
-}
-
-static s32 func_ovl0F_08_80043970(UnkStructA *arg0) {
-    s32 hit;
-    s32 saved;
-    UnkStructA *other;
-    s32 id;
-
-    hit = 0;
-    other = NULL;
-    saved = arg0->unkC;
-    arg0->unkC = 0;
-    if (arg0->unk8 & 1) {
-        other = func_ovl0F_08_80044AA8(func_ovl0F_08_80044A08());
-    } else if (arg0->unk8 & 2) {
-        id = func_ovl0F_08_80044A08();
-        if (func_ovl0F_08_80044AA8(id) == arg0) {
-            other = func_ovl0F_08_80044A68(id);
-        } else {
-            other = NULL;
-        }
-    }
-    if (other != NULL) {
-        if (func_ovl0F_08_80045348(arg0, 0x10, other) != 0) {
-            hit = 1;
-        }
-    } else if (func_ovl0F_08_800451D8(arg0, 0x10) != 0) {
-        hit = 1;
-    }
-    arg0->unkC = saved;
-    return hit;
-}
-
-static void func_ovl0F_08_80043978(f32 arg0) {
-    if (D_ovl0F_08_80045B2C != 0) {
-        if (D_ovl0F_08_80045B28 == 0) {
-            if (arg0 == 0.0f) {
-                func_ovl0F_08_80045900(0x32);
-            } else {
-                func_ovl0F_08_80045900(0x27);
-            }
-            D_ovl0F_08_80045B28 = 20;
-            func_ovl0F_08_800457C8(0x19, D_ovl0F_08_80045B30->unk40->unk10, D_ovl0F_08_80045B30->unk40->unk14,
-                                   D_ovl0F_08_80045B30->unk40->unk18, 0);
-        } else {
-            D_ovl0F_08_80045B28--;
-        }
-    }
-}
-
-
-
-
-
-
-
-
-
-static void func_ovl0F_08_800433D4(void) {
-    s32 count;
-    u32 (*p)[3];
-    s32 i;
-
-    func_ovl0F_08_800456E0(D_ovl0F_08_80045B3C);
-    p = D_ovl0F_08_80045B60;
-    count = 4;
-    for (i = 0; i < count; i++) {
-        func_ovl0F_08_80045888((*p)[0], (*p)[1], (*p)[2]);
-        p++;
-    }
-}
-
-static void func_ovl0F_08_800433CC(void) {
-    func_ovl0F_08_80044828(0x22D);
-    func_ovl0F_08_80044840(0x23E);
-    func_ovl0F_08_800449D8();
-}
-
-static void func_ovl0F_08_800433C4(void) {
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
-
-    D_ovl0F_08_80045B38 = 0;
-    func_ovl0F_08_800430BC();
-}
-
-static void func_ovl0F_08_800433BC(s32 arg1, UnkStruct_ovl0F_08_80045B90 *arg0) {
-    s32 i;
-
-    for (i = 0; i < arg1; i++) {
-        *arg0->unk0 = func_ovl0F_08_80045298(arg0->unk4, arg0->unk8);
-        func_ovl0F_08_80045228(*arg0->unk0, arg0->unk24 | 0x01000000);
-        func_ovl0F_08_80043338(arg0);
-        (*arg0->unk0)->unk40->unk1C = arg0->unk18;
-        (*arg0->unk0)->unk40->unk20 = arg0->unk1C;
-        (*arg0->unk0)->unk40->unk24 = arg0->unk20;
-        arg0++;
-    }
-}
-
-static void func_ovl0F_08_80043330(void) {
-    func_ovl0F_08_80044F20(D_ovl0F_08_80045DA0[3]->unk40, 0x61);
-    func_ovl0F_08_80044F20(D_ovl0F_08_80045DA0[4]->unk40, 0x61);
-    D_ovl0F_08_80045DA0[4]->unk40->unk14 -= 3200.0f;
-}
-
-static void func_ovl0F_08_80043254(f32 arg0, f32 arg1) {
-    D_ovl0F_08_80045B20 = arg0;
-    D_ovl0F_08_80045B24 = arg1;
-    D_ovl0F_08_80045B28 = 0;
-}
-
-static void func_ovl0F_08_8004325C(void) {
-    if (func_ovl0F_08_80044978()[4] == 0) {
-        func_ovl0F_08_80043254(0.3f, 0.5f);
-    } else {
-        func_ovl0F_08_80043254(0.12f, 0.15f);
-    }
-}
-
-static void func_ovl0F_08_80043264(void) {
-    func_ovl0F_08_80044A38();
-    func_ovl0F_08_80044910(func_ovl0F_08_800440A8);
-    func_ovl0F_08_8004325C();
-    func_ovl0F_08_80044908(func_ovl0F_08_80043A28, 1);
-}
-
-static void func_ovl0F_08_8004324C(void) {
-    switch (func_ovl0F_08_80044928()) {
-        case 17:
-            func_ovl0F_08_80044A28(D_ovl0F_08_80045CD0[0].unk0, D_ovl0F_08_80045CD0[0].unk4,
-                                   D_ovl0F_08_80045CD0[0].unk8, D_ovl0F_08_80045CD0[0].unkC,
-                                   D_ovl0F_08_80045CD0[0].unk10, D_ovl0F_08_80045CD0[0].unk14,
-                                   D_ovl0F_08_80045CD0[0].unk18);
-            break;
-        case 20:
-            func_ovl0F_08_80044A28(D_ovl0F_08_80045CD0[1].unk0, D_ovl0F_08_80045CD0[1].unk4,
-                                   D_ovl0F_08_80045CD0[1].unk8, D_ovl0F_08_80045CD0[1].unkC,
-                                   D_ovl0F_08_80045CD0[1].unk10, D_ovl0F_08_80045CD0[1].unk14,
-                                   D_ovl0F_08_80045CD0[1].unk18);
-            break;
-    }
-}
-
-static void func_ovl0F_08_800431F8(void) {
-    func_ovl0F_08_80044A68(func_ovl0F_08_80044A08())->unk64 = 0;
-    D_ovl0F_08_80045B28 = 0;
-}
-
-static void func_ovl0F_08_80043020(s32 count, UnkStruct_ovl0F_08_80045B90 *p) {
-    s32 i;
-
-    for (i = 0; i < count; i++) {
-        func_ovl0F_08_80045240(*p->unk0);
-        p++;
-    }
-}
-#line 548 "1FF8F0.c" /* fake: back from the other file, at the line numbers it matched with */
+#include "overlays/ovl_0F_08/statics.h"
 
 static void func_ovl0F_08_80043018(void) {
     D_ovl0F_08_80045DD4 = func_ovl0F_08_80044A08();
@@ -559,15 +399,9 @@ void func_ovl0F_08_800433DC(s32 arg0) {
             } else {
                 func_ovl0F_08_800432B4(0x27A);
             }
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-            D_ovl0F_08_80045DA0[2]->unk40->unk10 = 2400.0f;
-            D_ovl0F_08_80045DA0[2]->unk40->unk14 = 2600.0f;
-            D_ovl0F_08_80045DA0[2]->unk40->unk18 = 5200.0f;
-            D_ovl0F_08_80045DA0[2]->unk40->unk28 = 16.0f;
-            D_ovl0F_08_80045DA0[2]->unk40->unk2C = 16.0f;
-            D_ovl0F_08_80045DA0[2]->unk40->unk30 = 16.0f;
-            break;
-#line 581 "1FF8F0.c" /* fake: back from the other file, at the line numbers it matched with */
+#define STATICS_PART 1
+#include "overlays/ovl_0F_08/statics.h"
+#undef STATICS_PART
         case 17:
             func_ovl0F_08_80044A20(0xC0);
             func_ovl0F_08_800449E0(0x29, 0, 0x12);

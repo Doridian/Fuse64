@@ -2,7 +2,7 @@
  * ovl_0F_09's game object, IDO -O3; it matches in us, eu and jp.
  * What did it, from 508 words, as in ovl_0F_08/0F_07:
  * - func_ovl0F_09_80043D88 (64 to 0): ovl_0F_08's 80043A28 ported (Vec3f,
- *   `(s32)dx != (s32)vel.x` tests, the pack static 80043CC8 in "panels.c"
+ *   `(s32)dx != (s32)vel.x` tests, the pack static 80043CC8 in statics.h
  *   and only on the hit path).
  * - func_ovl0F_09_8004343C (397 to 0): case 0x50's tests both index
  *   D_ovl0F_09_800460F4 ([0..3] and [7..10], the second set past its end),
@@ -12,7 +12,7 @@
  *   &D_ovl0F_09_80046200 everywhere (case 2 across 80045A30's call, case
  *   20's player back in s2). The loops 8004341C (case 2) and 80043020
  *   (case 1) and the static 80043434 (the `D_ovl0F_09_80046260 = -1;`
- *   store ahead of `lui a0`) are defined in "panels.c", and so are case
+ *   store ahead of `lui a0`) are defined in statics.h, and so are case
  *   2's D_ovl0F_09_80046200[2] stores and their `break` in the handler.
  *   func_ovl0F_09_80043200 takes (count, dx, dy, ride): that order of its
  *   register arguments (IDO passes them to the static in s2, $f20, $f22
@@ -39,7 +39,6 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
-#line 41 "202690.c" /* fake: names this file as the build does, for the #line regions below */
 
 /*
  * ovl_0F_09's game object, IDO -O3: the functions are written last to first
@@ -433,108 +432,9 @@ void func_ovl0F_09_80043D88(UnkStructA *arg0) {
     }
 }
 
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0F_09_80043CC8(s32 *dst, f32 x, f32 z) {
-    *dst = ((s16)(x * 500.0f) << 16) | ((s16)(z * 500.0f) & 0xFFFF);
-}
-
-static s32 func_ovl0F_09_80043CD0(UnkStructA *arg0) {
-    s32 hit;
-    s32 saved;
-    UnkStructA *other;
-    s32 id;
-
-    hit = 0;
-    other = NULL;
-    saved = arg0->unkC;
-    arg0->unkC = 0;
-    if (arg0->unk8 & 1) {
-        other = func_ovl0F_09_80044ED8(func_ovl0F_09_80044E38());
-    } else if (arg0->unk8 & 2) {
-        id = func_ovl0F_09_80044E38();
-        if (func_ovl0F_09_80044ED8(id) == arg0) {
-            other = func_ovl0F_09_80044E98(id);
-        } else {
-            other = NULL;
-        }
-    }
-    if (other != NULL) {
-        if (func_ovl0F_09_80045778(arg0, 0x10, other) != 0) {
-            hit = 1;
-        }
-    } else if (func_ovl0F_09_80045608(arg0, 0x10) != 0) {
-        hit = 1;
-    }
-    arg0->unkC = saved;
-    return hit;
-}
-
-static void func_ovl0F_09_80043CD8(f32 arg0) {
-    if (D_ovl0F_09_80045F5C != 0) {
-        if (D_ovl0F_09_80045F58 == 0) {
-            if (arg0 == 0.0f) {
-                func_ovl0F_09_80045D30(0x32);
-            } else {
-                func_ovl0F_09_80045D30(0x27);
-            }
-            D_ovl0F_09_80045F58 = 20;
-            func_ovl0F_09_80045BF8(0x19, D_ovl0F_09_80045F60->unk40->unk10, D_ovl0F_09_80045F60->unk40->unk14,
-                                   D_ovl0F_09_80045F60->unk40->unk18, 0);
-        } else {
-            D_ovl0F_09_80045F58--;
-        }
-    }
-}
-
-
-
-
-
-
-
-
-static void func_ovl0F_09_80043434(void) {
-    s32 count;
-    u32 (*p)[3];
-    s32 i;
-
-    D_ovl0F_09_80046260 = -1;
-    func_ovl0F_09_80045B10(D_ovl0F_09_80045F6C);
-    p = D_ovl0F_09_80045F90;
-    count = 4;
-    for (i = 0; i < count; i++) {
-        func_ovl0F_09_80045CB8((*p)[0], (*p)[1], (*p)[2]);
-        p++;
-    }
-}
-
-static void func_ovl0F_09_8004342C(void) {
-    func_ovl0F_09_80044C58(0x230);
-    func_ovl0F_09_80044C70(0x23F);
-    func_ovl0F_09_80044E08();
-}
-
-static void func_ovl0F_09_80043424(void) {
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
-
-    D_ovl0F_09_80045F68 = 0;
-    func_ovl0F_09_800430BC();
-}
-
-static void func_ovl0F_09_8004341C(s32 arg1, UnkStruct_ovl0F_09_80045FC0 *arg0) {
-    s32 i;
-
-    for (i = 0; i < arg1; i++) {
-        *arg0->unk0 = func_ovl0F_09_800456C8(arg0->unk4, arg0->unk8);
-        func_ovl0F_09_80045658(*arg0->unk0, arg0->unk24 | 0x01000000);
-        func_ovl0F_09_80043398(arg0);
-        (*arg0->unk0)->unk40->unk1C = arg0->unk18;
-        (*arg0->unk0)->unk40->unk20 = arg0->unk1C;
-        (*arg0->unk0)->unk40->unk24 = arg0->unk20;
-        arg0++;
-    }
-}
-#line 540 "202690.c" /* fake: back from the other file, at the line numbers it matched with */
+#define STATICS_PART 1
+#include "overlays/ovl_0F_09/statics.h"
+#undef STATICS_PART
 
 static void func_ovl0F_09_800432AC(f32 arg0, f32 arg1) {
     D_ovl0F_09_80045F50 = arg0;
@@ -594,16 +494,9 @@ static void func_ovl0F_09_800431F8(void) {
     D_ovl0F_09_80045F58 = 0;
 }
 
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-static void func_ovl0F_09_80043020(s32 count, UnkStruct_ovl0F_09_80045FC0 *p) {
-    s32 i;
-
-    for (i = 0; i < count; i++) {
-        func_ovl0F_09_80045670(*p->unk0);
-        p++;
-    }
-}
-#line 615 "202690.c" /* fake: back from the other file, at the line numbers it matched with */
+#define STATICS_PART 2
+#include "overlays/ovl_0F_09/statics.h"
+#undef STATICS_PART
 
 static void func_ovl0F_09_80043018(void) {
     D_ovl0F_09_8004623C = func_ovl0F_09_80044E38();
@@ -627,15 +520,9 @@ void func_ovl0F_09_8004343C(s32 arg0) {
             } else {
                 func_ovl0F_09_80043314(0x27A);
             }
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-            D_ovl0F_09_80046200[2]->unk40->unk10 = 2400.0f;
-            D_ovl0F_09_80046200[2]->unk40->unk14 = 2600.0f;
-            D_ovl0F_09_80046200[2]->unk40->unk18 = 5200.0f;
-            D_ovl0F_09_80046200[2]->unk40->unk28 = 16.0f;
-            D_ovl0F_09_80046200[2]->unk40->unk2C = 16.0f;
-            D_ovl0F_09_80046200[2]->unk40->unk30 = 16.0f;
-            break;
-#line 650 "202690.c" /* fake: back from the other file, at the line numbers it matched with */
+#define STATICS_PART 3
+#include "overlays/ovl_0F_09/statics.h"
+#undef STATICS_PART
         case 17:
             func_ovl0F_09_80044E50(0x40);
             func_ovl0F_09_80044E10(6, 0, 0x12);

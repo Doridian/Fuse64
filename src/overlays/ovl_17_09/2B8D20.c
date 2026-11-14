@@ -19,7 +19,7 @@
  * at the end are empty.
  *
  * as1 orders a block partly by `.loc` lines and a change of file (ugen's
- * `.file`) ends a block, so `#line` into "panels.c" (ovl_0F_04's fake
+ * `.file`) ends a block, so `#line` into statics.h (ovl_0F_04's fake
  * file name) decides several schedules, as in ovl_0F_04 and ovl_0F_02.
  *
  * Per function:
@@ -29,7 +29,7 @@
  *   update turns by the wind's angle D_ovl17_09_80046298, not view[0].
  * - 8004456C (the pusher) matches: ovl_0F_04's 80043770 with the
  *   direction from D_ovl17_09_8004629C and all eight cases; pos is f32[3];
- *   from `pos[0] = ...` to the end of the switch it is in "panels.c",
+ *   from `pos[0] = ...` to the end of the switch it is in statics.h,
  *   with `dir = D_ovl17_09_8004629C;` alone back in "2B8D20.c" (else its
  *   load is hoisted into the first block). So 80044828, 800448A0 and
  *   80044A2C, which inline it, match too; 800448A0 has an unused pad[2]
@@ -38,10 +38,10 @@
  *   0x98, and cell at 0x7C). The nops after its endless loop pad the dead
  *   epilogue to a 32-byte boundary, so they come right once everything
  *   before it has the original's size.
- * - The handler matches: 80043010's call in case 2 is in "panels.c"
+ * - The handler matches: 80043010's call in case 2 is in statics.h
  *   (inside 8004313C), which leaves the jal's slot empty as the original
  *   does, and case 3's final test, the handler's end and everything after
- *   it are in "panels.c" (the bnez's slot gets the epilogue's lw ra).
+ *   it are in statics.h (the bnez's slot gets the epilogue's lw ra).
  *   Case 2's stores are A0, A4, B4 in that order; the object of 800456E8
  *   goes through a local before D_ovl17_09_8004656C (no address CSE); the
  *   ovl_0F_04 fake `if (D_ovl17_09_800462A4) {}` after the 8004628C store
@@ -356,42 +356,9 @@ static void func_ovl17_09_8004456C(UnkStructA *obj, f32 speed) {
     pos[2] = obj->unk40->unk18;
 #line 4 "2B8D20.c" /* fake: names this file as the build does, for the #line regions below */
     dir = D_ovl17_09_8004629C;
-#line 5 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-    if (func_ovl17_09_80045048(obj->unk40) == obj->unk40->unk14) {
-        func_ovl17_09_80045FD8(obj, dir, speed);
-    } else {
-        switch (dir) {
-            case 0x00:
-                func_ovl17_09_80044554(obj, speed);
-                break;
-            case 0x20:
-                func_ovl17_09_80044564(obj, speed);
-                func_ovl17_09_80044554(obj, speed);
-                break;
-            case 0x40:
-                func_ovl17_09_80044564(obj, speed);
-                break;
-            case 0x60:
-                func_ovl17_09_8004455C(obj, speed);
-                func_ovl17_09_80044564(obj, speed);
-                break;
-            case 0x80:
-                func_ovl17_09_8004455C(obj, speed);
-                break;
-            case 0xA0:
-                func_ovl17_09_8004455C(obj, speed);
-                func_ovl17_09_8004454C(obj, speed);
-                break;
-            case 0xC0:
-                func_ovl17_09_8004454C(obj, speed);
-                break;
-            case 0xE0:
-                func_ovl17_09_80044554(obj, speed);
-                func_ovl17_09_8004454C(obj, speed);
-                break;
-        }
-    }
-#line 900 "2B8D20.c" /* fake: back from the other file, at the line numbers it matched with */
+#define STATICS_PART 1
+#include "overlays/ovl_17_09/statics.h"
+#undef STATICS_PART
     saved = obj->unkC;
     hit = FALSE;
     other = NULL;
@@ -651,166 +618,6 @@ static void func_ovl17_09_8004312C(void) {
 static void func_ovl17_09_8004313C(void) {
     D_ovl17_09_800462AC = 0.0f;
     D_ovl17_09_800462B0 = 0.0f;
-#line 1 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-    func_ovl17_09_80043010();
-}
-
-static void func_ovl17_09_80043134(void) {
-    s32 i;
-
-    for (i = 0; i < 2; i++) {
-        if (D_ovl17_09_800462DC[i].unk0 != NULL) {
-            func_ovl17_09_800459A0(D_ovl17_09_800462DC[i].unk0);
-            D_ovl17_09_800462DC[i].unk0 = NULL;
-        }
-    }
-}
-
-static void func_ovl17_09_80043288(void) {
-    if (func_ovl17_09_800450D8()->unk10 == 0) {
-        D_ovl17_09_800462A8 = 8.5f;
-    } else {
-        D_ovl17_09_800462A8 = 15.299999f;
-    }
-}
-
-static void func_ovl17_09_80043280(void) {
-}
-
-/* The overlay's handler: the entry returns it to the loader. */
-void func_ovl17_09_80043290(s32 arg0) {
-    s32 i;
-    s32 t;
-    f32 step;
-    UnkStructB *b;
-    UnkStructA *obj;
-
-    switch (arg0) {
-        case 2:
-            func_ovl17_09_80045E40(D_ovl17_09_800462B8);
-            func_ovl17_09_80044F88(0x217);
-            func_ovl17_09_80044F90(0xDA, 0.0f, 0.0f, 0.0f, 0x50, 0);
-            func_ovl17_09_80044FA0(0x221);
-            func_ovl17_09_80045138();
-            func_ovl17_09_80045100(0);
-            func_ovl17_09_80045830(0x7F);
-            func_ovl17_09_800457A8(1);
-            func_ovl17_09_800457B8(1);
-            func_ovl17_09_800457C8(2310.0f, 60.0f, 1400.0f);
-            func_ovl17_09_800457E8(0.0f, 55.0f, 2864.0f);
-            func_ovl17_09_80043288();
-            func_ovl17_09_80043280();
-            D_ovl17_09_800462A0 = 0;
-            D_ovl17_09_800462A4 = 0.0f;
-            D_ovl17_09_800462B4 = 1;
-            func_ovl17_09_80045068(func_ovl17_09_80044A2C, 5);
-            func_ovl17_09_80045068(func_ovl17_09_80044828, 6);
-            D_ovl17_09_80046280 = func_ovl17_09_80045658(0x258);
-            obj = func_ovl17_09_800456E8(func_ovl17_09_80043750, -60);
-            D_ovl17_09_8004656C = obj;
-            obj->unkC |= 0x210;
-            for (i = 0; i < 20; i++) {
-                func_ovl17_09_80043144(&D_ovl17_09_800463D0[i]);
-                D_ovl17_09_800463D0[i].unk4 = func_ovl17_09_80045C98(240);
-            }
-            func_ovl17_09_800458D0(&D_ovl17_09_80046560);
-            D_ovl17_09_8004628C = 0.0f;
-            D_ovl17_09_80046290 = 0.0f;
-            D_ovl17_09_80046294 = 1.0f;
-            func_ovl17_09_80045D50(0x407);
-            func_ovl17_09_8004313C();
-            func_ovl17_09_80045E28(90, 140, 255);
-            break;
-        case 4:
-            func_ovl17_09_80045A68(50.0f);
-            func_ovl17_09_80045A70(40);
-            break;
-        case 5:
-            b = func_ovl17_09_80045108();
-            if (b->unk38 == 1 && b->unk0 == 0) {
-                func_ovl17_09_80045AD8(func_ovl17_09_80044198, NULL, 0, 0, 0x110);
-            }
-            break;
-        case 1:
-            func_ovl17_09_80045678(D_ovl17_09_8004656C);
-            func_ovl17_09_80045660(0x258);
-            func_ovl17_09_80043134();
-            func_ovl17_09_80045DD8(0, 0, 0, 0.0f);
-            break;
-        case 3:
-            func_ovl17_09_8004312C();
-            if (D_ovl17_09_800462A0 == 0) {
-                func_ovl17_09_80043010();
-            }
-            break;
-        case 6:
-        case 7:
-        case 8:
-        case 9:
-        case 10:
-        case 11:
-        case 12:
-        case 13:
-        case 14:
-        case 15:
-        case 16:
-        case 17:
-            break;
-        case 0x50:
-            break;
-        case 0x51:
-            break;
-        case 0x52:
-            break;
-        case 0x53:
-            break;
-    }
-}
-
-static void func_ovl17_09_80043144(UnkStruct_ovl17_09_800463D0 *p) {
-    f32 r;
-    f64 t;
-
-    r = func_ovl17_09_80045C90();
-    p->unk0 = func_ovl17_09_80045C90() * 370.0 - 50.0;
-    t = func_ovl17_09_80045C90();
-    p->unk4 = (D_ovl17_09_8004628C < 0 ? -D_ovl17_09_8004628C : D_ovl17_09_8004628C) * 30.0f * t;
-    if (D_ovl17_09_80046288 <= 0.0f) {
-        p->unk4 += (1.0f - r) * 40.0f;
-    } else {
-        p->unk4 += func_ovl17_09_80045C98(90);
-    }
-    p->unk10 = 0;
-    p->unk8 = r * 12.0f + 4.0f;
-    p->unkC = r * r * 5.0f + 0.5f;
-}
-
-static void func_ovl17_09_80043010(void) {
-    D_ovl17_09_8004629C = (func_ovl17_09_80045C98(8) << 5) & 0xF0;
-    switch (D_ovl17_09_8004629C) {
-        case 0x00:
-            D_ovl17_09_80046298 = 270.0f;
-            break;
-        case 0x20:
-            D_ovl17_09_80046298 = 315.0f;
-            break;
-        case 0x40:
-            D_ovl17_09_80046298 = 0.0f;
-            break;
-        case 0x60:
-            D_ovl17_09_80046298 = 45.0f;
-            break;
-        case 0x80:
-            D_ovl17_09_80046298 = 90.0f;
-            break;
-        case 0xA0:
-            D_ovl17_09_80046298 = 135.0f;
-            break;
-        case 0xC0:
-            D_ovl17_09_80046298 = 180.0f;
-            break;
-        case 0xE0:
-            D_ovl17_09_80046298 = 225.0f;
-            break;
-    }
-}
+#define STATICS_PART 2
+#include "overlays/ovl_17_09/statics.h"
+#undef STATICS_PART

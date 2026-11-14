@@ -4,6 +4,13 @@
  * original's order, with the original's stubs. func_80282454 is global
  * (A2840 calls it); the code is the same either way.
  *
+ * Order: the definitions are bottom-up, as IDO emits them. A global is
+ * emitted at its definition, after the callees it hasn't emitted yet; an
+ * address-taken static defined after its first reference (func_80285F8C,
+ * the task) likewise. So func_80285F8C and func_80282934 are defined where
+ * their turn comes, not next to their callers (a guess among the places
+ * that give the ROM's order).
+ *
  * Data: its .data (0xA0: an unreferenced word, the function table
  * D_802A1AB4, the table D_802A1AF0) and .rodata (0x300, 151 of its 192
  * words jump-table entries) are its own and placed in data_split.txt. It
@@ -781,90 +788,6 @@ void func_802863B0(Vec3f *arg0) {
 static void func_80285F84(void) {
 }
 
-static void func_80285F8C(void) {
-    UnkStruct_800BB340 *task;
-    s32 t1;
-    UnkStructA *t2;
-    Vec3f pos2;
-    s32 padB[2]; /* fake: frame-tuned */
-    UnkStruct_80288040 *a;
-    s32 pad[3]; /* fake: frame-tuned */
-    Vec3f pos;
-    UnkStruct_80288040 *a2;
-    s32 far;
-
-    func_80285F84();
-    task = func_802391F0();
-    for (;;) {
-        switch (task->unkC) {
-        case 0:
-            func_80285A9C(task);
-            break;
-        case 1:
-            a = &task->unk10->unk14;
-            if ((D_800BA8E8[a->unk84].unk0 == 0x19) || (D_800BA8E8[a->unk84].unk0 == 0x1C)) {
-                far = 0;
-            } else {
-                func_80250338(func_80243DDC(), &pos);
-                if (((pos.x < a->unk0->unk40->unk10) && ((pos.x + 1300.0f) < a->unk0->unk40->unk10)) ||
-                    ((a->unk0->unk40->unk10 < pos.x) && (a->unk0->unk40->unk10 < (pos.x - 1300.0f))) ||
-                    ((pos.z < a->unk0->unk40->unk18) && ((pos.z + 1300.0f) < a->unk0->unk40->unk18)) ||
-                    ((a->unk0->unk40->unk18 < pos.z) && (a->unk0->unk40->unk18 < (pos.z - 1300.0f)))) {
-                    far = 1;
-                } else {
-                    far = 0;
-                }
-            }
-            if (far) {
-                func_80282598(task, 0);
-            } else {
-                t1 = func_80284FD4(a);
-                task->unkC = t1;
-                if (task->unkC != 1) {
-                    t2 = a->unk0;
-                    func_802313DC(t2, 0x3FFFF);
-                    if (((u8) (a->unk7A & 0xF)) == 1) {
-                        if (a->unk79 != -1) {
-                            func_8028A4E0(a->unk79);
-                            a->unk79 = -1;
-                        }
-                    }
-                    func_80282714(a);
-                    a->unk20 = 0;
-                    if (D_800BA8E8[a->unk84].unk0 == 0x19) {
-                        func_8026C51C(0x1F1, a->unk0->unk40->unk10, a->unk0->unk40->unk14, a->unk0->unk40->unk18);
-                    } else if ((a->unk3D != 5) || (a->unk3C != 2)) {
-                        if (task->unkC == 4) {
-                            func_8026C51C(0x166, a->unk0->unk40->unk10, a->unk0->unk40->unk14, a->unk0->unk40->unk18);
-                        } else {
-                            func_8026C51C(0x168, a->unk0->unk40->unk10, a->unk0->unk40->unk14, a->unk0->unk40->unk18);
-                        }
-                    }
-                }
-            }
-            break;
-        case 2:
-            func_80282F44(task, 0);
-            break;
-        case 5:
-            func_80282F44(task, 1);
-            break;
-        case 4:
-            func_80282F44(task, 2);
-            break;
-        case 3:
-            a2 = &task->unk10->unk14;
-            pos2.x = a2->unk0->unk40->unk10;
-            pos2.y = a2->unk0->unk40->unk14;
-            pos2.z = a2->unk0->unk40->unk18;
-            func_802829AC(&pos2, 3);
-            func_80282598(task, 1);
-            break;
-        }
-        func_80239094();
-    }
-}
-
 static void func_80285A6C() {
 }
 
@@ -1138,7 +1061,7 @@ static s32 func_8028556C(s32 arg0) {
     func_8028555C();
     func_80285554();
     p = D_800BB484;
-#line 1115 /* fake: numbering for as1 order (the load before the 0x2000 test) */
+#line 1031 /* fake: numbering for as1 order (the load before the 0x2000 test) */
     if ((arg0 & 0x2000) ||
         (!(p->unk24 & 0x20) && ((arg0 & 0xF) == 0xF)) ||
         (!(p->unk24 & 0x10) && (arg0 & 0x60)) ||
@@ -1840,12 +1763,11 @@ static s32 func_80283AFC(UnkStructA_40 *p, Vec3f *arg1) {
 void func_80283B04(UnkStruct_80288040 *arg0, Vec3f *arg1) {
     s32 failed;
     s32 i;
-    s32 dir;
+    u8 dir;
     s32 d;
 
     failed = 1;
-    dir = func_80283AFC(arg0->unk0->unk40, arg1) & 0xFF;
-    if (dir) {} /* fake: dead read */
+    dir = func_80283AFC(arg0->unk0->unk40, arg1);
     for (i = 0; i < 4; i++) {
         d = dir + i;
         if (d >= 8) {
@@ -1868,9 +1790,6 @@ void func_80283B04(UnkStruct_80288040 *arg0, Vec3f *arg1) {
     }
     if ((failed != 0) || (func_80283794(arg0, arg0->unk1C) != 0)) {
         arg0->unk1C = func_80283314(arg0, 1, 1) << 5;
-    }
-    if (0) { /* fake: a dead call: the emission order */
-        func_802836F0(NULL, 0);
     }
 }
 static void func_80283784() {
@@ -2114,9 +2033,6 @@ static u8 func_80283314(UnkStruct_80288040 *arg2, s32 arg0, s32 arg1) {
 }
 
 f32 func_8028322C(UnkStruct_80288040 *arg0) {
-    if (0) { /* fake: a dead call: the emission order */
-        func_802831A8(NULL);
-    }
     switch (arg0->unk1C) {
     case 0x00:
         return 180.0f;
@@ -2195,9 +2111,6 @@ void func_8028301C(UnkStruct_80288040 *arg0, s32 arg1, f32 arg2, f32 arg3, f32 a
     arg0->unk0->unk68 = arg2;
     arg0->unk0->unk6C = arg3;
     arg0->unk0->unk70 = arg4;
-    if (0) { /* fake: a dead call: the emission order */
-        func_80282F44(NULL, 0);
-    }
 }
 
 static void func_80282F44(UnkStruct_800BB340 *arg0, s32 arg1) {
@@ -2284,6 +2197,90 @@ static s32 func_80282AD8(UnkStruct_80288040 *act) {
     return 0;
 }
 
+static void func_80285F8C(void) {
+    UnkStruct_800BB340 *task;
+    s32 t1;
+    UnkStructA *t2;
+    Vec3f pos2;
+    s32 padB[2]; /* fake: frame-tuned */
+    UnkStruct_80288040 *a;
+    s32 pad[3]; /* fake: frame-tuned */
+    Vec3f pos;
+    UnkStruct_80288040 *a2;
+    s32 far;
+
+    func_80285F84();
+    task = func_802391F0();
+    for (;;) {
+        switch (task->unkC) {
+        case 0:
+            func_80285A9C(task);
+            break;
+        case 1:
+            a = &task->unk10->unk14;
+            if ((D_800BA8E8[a->unk84].unk0 == 0x19) || (D_800BA8E8[a->unk84].unk0 == 0x1C)) {
+                far = 0;
+            } else {
+                func_80250338(func_80243DDC(), &pos);
+                if (((pos.x < a->unk0->unk40->unk10) && ((pos.x + 1300.0f) < a->unk0->unk40->unk10)) ||
+                    ((a->unk0->unk40->unk10 < pos.x) && (a->unk0->unk40->unk10 < (pos.x - 1300.0f))) ||
+                    ((pos.z < a->unk0->unk40->unk18) && ((pos.z + 1300.0f) < a->unk0->unk40->unk18)) ||
+                    ((a->unk0->unk40->unk18 < pos.z) && (a->unk0->unk40->unk18 < (pos.z - 1300.0f)))) {
+                    far = 1;
+                } else {
+                    far = 0;
+                }
+            }
+            if (far) {
+                func_80282598(task, 0);
+            } else {
+                t1 = func_80284FD4(a);
+                task->unkC = t1;
+                if (task->unkC != 1) {
+                    t2 = a->unk0;
+                    func_802313DC(t2, 0x3FFFF);
+                    if (((u8) (a->unk7A & 0xF)) == 1) {
+                        if (a->unk79 != -1) {
+                            func_8028A4E0(a->unk79);
+                            a->unk79 = -1;
+                        }
+                    }
+                    func_80282714(a);
+                    a->unk20 = 0;
+                    if (D_800BA8E8[a->unk84].unk0 == 0x19) {
+                        func_8026C51C(0x1F1, a->unk0->unk40->unk10, a->unk0->unk40->unk14, a->unk0->unk40->unk18);
+                    } else if ((a->unk3D != 5) || (a->unk3C != 2)) {
+                        if (task->unkC == 4) {
+                            func_8026C51C(0x166, a->unk0->unk40->unk10, a->unk0->unk40->unk14, a->unk0->unk40->unk18);
+                        } else {
+                            func_8026C51C(0x168, a->unk0->unk40->unk10, a->unk0->unk40->unk14, a->unk0->unk40->unk18);
+                        }
+                    }
+                }
+            }
+            break;
+        case 2:
+            func_80282F44(task, 0);
+            break;
+        case 5:
+            func_80282F44(task, 1);
+            break;
+        case 4:
+            func_80282F44(task, 2);
+            break;
+        case 3:
+            a2 = &task->unk10->unk14;
+            pos2.x = a2->unk0->unk40->unk10;
+            pos2.y = a2->unk0->unk40->unk14;
+            pos2.z = a2->unk0->unk40->unk18;
+            func_802829AC(&pos2, 3);
+            func_80282598(task, 1);
+            break;
+        }
+        func_80239094();
+    }
+}
+
 static s32 func_80282AF0(UnkStruct_800BB340 *arg0, s32 arg1) {
     UnkStruct_80288040 *act;
     UnkStructA_40 *p;
@@ -2362,13 +2359,6 @@ static s32 func_802829AC(Vec3f *arg1, s32 arg0) {
 
 void func_80282978(Vec3f *arg0) {
     func_8028275C(arg0->x, arg0->y, arg0->z);
-}
-
-void func_80282934(void) {
-    UnkStructA_40 *pos;
-
-    pos = func_802443F4(func_80243DDC())->unk40;
-    func_8028275C(pos->unk10, pos->unk14, pos->unk18);
 }
 
 void func_8028275C(f32 arg0, f32 arg1, f32 arg2) {
@@ -2527,11 +2517,13 @@ void func_80282430(arg0, arg1, arg2)
     func_80282428();
     arg0->unk7A &= ~arg1;
     arg0->unk7A |= arg2;
-    if (0) { /* fake: dead calls: the emission order */
-        func_80282340(NULL);
-        func_802822E0(NULL);
-        func_802822BC(NULL);
-    }
+}
+
+void func_80282934(void) {
+    UnkStructA_40 *pos;
+
+    pos = func_802443F4(func_80243DDC())->unk40;
+    func_8028275C(pos->unk10, pos->unk14, pos->unk18);
 }
 
 static void func_80282428() {

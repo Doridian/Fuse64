@@ -915,6 +915,54 @@ matches, drop the `#ifdef` and the asm.
   `scratch/emptyif/`). The scripts are in `scratch/0C_09/d08_block/` and
   `scratch/epi/`.
 
+## The overlays' shared source
+
+The overlays were built from shared source as well as their own: runs of
+functions come out byte for byte the same (but for relocations) in many
+of them, in the same order, at the same place relative to the rest.
+`src/overlays/common/` holds that code once, and each overlay `#include`s
+it where its copy was:
+
+- `core.h`: four functions (CORE_FUNC_A..D) every overlay but ovl_16_01
+  has, together at the end of its functions (IDO -O3 emits a file's
+  functions last to first, so they were first in the source). One that
+  is inlined comes out just before its first inliner. `core_d.h` is
+  CORE_FUNC_D alone: ovl_15_01 includes it last (its copy comes out
+  first), and the -O2 overlays (0E_06/07/08/10/14, 17_02..05), whose
+  other three are in another order, include only it.
+- `core_0c.h`: four functions ovl_0C_01..09 have right after core.h's.
+- `flags.h`: two functions (0x400..0x404 passed to a stub, and its
+  caller) in 25 of the 0x0C/0x0E banks' overlays; the 17 -O3 ones with
+  the plain form include it.
+- `angle.h`: a function 0E_xx and 12_01..05 share (20); the 15 -O3 ones
+  include it.
+- `tasks.h`: a run of twelve functions the 0x10 bank's overlays share;
+  six include it, the other seven have the run spread between their own
+  functions and keep their copies.
+
+Names stay the overlay's address names: before an include, the overlay
+`#define`s each name the header uses (`CORE_FUNC_A`, `ANGLE_80043A78`,
+`TASK_D_80045E80`; a header's own names are one reference overlay's
+addresses) as its own `func_ovlXX_YY_...`/`D_ovlXX_YY_...`, so the port,
+which links all overlays together, sees no duplicate. A few switches
+select variants (`CORE_D_LATE`, `TASK_OWN_800442A0`); the header's top
+comment lists them. Copies that differ in form (a stub call more, a
+frame 8 bytes bigger) or in emission order stay in their overlay.
+`scratch/fakes-ovl/p5/` has the map (smap.py: every overlay function
+hashed with relocations masked, grouped; seq.py: the order per overlay)
+and unit.py, which writes a header from a reference overlay and applies
+it to another (`unit.py apply NAME OVL`).
+
+The overlays' `statics.h` files are the other half: statics (and in some
+overlays runs of statements or definitions) the original had in another
+file, included where they are. A `.file` switch ends an as1 scheduling
+block, so a run of code from another file changes the schedule around
+it; that is where most of the old `#line 1 "panels.c"` regions went. The
+header's unnumbered part (`#ifndef STATICS_PART`) holds the statics
+included before the functions; numbered parts are included in place with
+`#define STATICS_PART n`. Those in-body parts are still marked fakes:
+what the original's other file really held there is not known.
+
 ## Versions
 
 eu and jp build from the same C. Each version's config comes from its own

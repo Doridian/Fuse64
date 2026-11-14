@@ -24,13 +24,23 @@
  * loops: IDO never inlined them as pointer loops), the text-freeing
  * 80043AD4 (its own ids pointer), 80044BE0 (80044BE8's name copy,
  * unrolled), 80045530/80045538 (80045540's name check and frees),
- * 800450B8 (page 9's save, p5), 80044714 (the marks, r an int), SetText.
+ * 800450B8 (page 9's save, p5), 80044714 (the marks, r an int), SetText,
+ * and (fakes pass 3) 800436C0 (the bomber's next animation), 800438F4
+ * (the item's size), 80044304 (END/tab looks), 80044384 (a text dimmed),
+ * 8004438C (the name's last index: its lines below 80044394's replaced two
+ * `#line`s), 800444E0 (the menu cursor hidden), 800445BC/8004461C (an
+ * entry's object at its two places) and 800468E8 (a choice's open flag:
+ * its parameter copies replaced 800468F0's dead reads).
  * Emission order: IDO -O3 takes the globals in reverse definition order
  * and puts each one's static callees just before it, in the reverse order
- * of its calls (each after its own callees); the `if (0)` call lists at
- * the end of 800444E8, 800459C4, 80046AA0 and the others pull the
- * original's runs of statics and stubs into place (fakes; the empty
- * statics they place stand for inlined ones not yet found). The pages 5-8
+ * of its calls (by each callee's last call; each after its own callees).
+ * Then come the statics no global reached, in definition order (each
+ * after its own callees not yet out), unused ones included as stubs. The
+ * original's globals end at 80043F24: the page functions (in the page
+ * table only) are statics, defined in ROM order, which places every
+ * static and stub from 80043F3C on without dead calls (pass 3; the
+ * `if (0)` lists of 800444E8, 800459C4, 80046AA0 and 80045214 went). The
+ * empty statics left there stand for stubs not identified. The pages 5-8
  * handlers' stubs are found: 80046AA0, 80046CEC, 80046F20 and 8004716C
  * each call a K&R static (80046A98, 80046CE4, 80046F18, 80047164) that
  * runs the page's set-up, 800468F0(base), defined after its caller so its
@@ -67,9 +77,9 @@
  * original's 4-aligned A40C is the second word of an array at A408: the
  * pages 5-8 texts are D_ovl0B_04_8004A408[j] (j from 1, as the page's
  * own unk4[j]), not a separate k from 0. A3B0 is 13 words (jp 15). us's
- * 8 bytes at A3E8 are an unreferenced array, which -O3 would leave to
- * common: UNUSED_BSS, a dead store in 80043CD0's `if (0)` (fake), keeps
- * it. A4A0's last 12 bytes (us) and jp's A3F4 are alignment padding.
+ * 8 bytes at A3E8 are an array only the unused shared static 80043F9C
+ * (us/eu only too) references; that keeps it out of common (pass 3; p6-p2
+ * used a dead store in 80043CD0's `if (0)`). A4A0's last 12 bytes (us) and jp's A3F4 are alignment padding.
  *
  * Function by function (words us/jp as they were differing; the
  * comparison counts a global with the statics after it, so a static of
@@ -93,11 +103,11 @@
  *   copy (fake), the first with (&A16C)[1] for A170 (fake). H5a's
  *   last store (A170) is numbered below the line after it (`#line`,
  *   fake) for its place in the jal's delay slot.
- * - 800436C8 0/0 (matches): `b = a = -1` is numbered above the loop head (`#line`,
- *   fake), so as1 hoists its `li a1,-1` into the head's load delay, right
- *   after the jal, as the original has it (any C with the -1 outside the
- *   if hoists it to an s-register instead). 800438FC's cases set d before col
- *   for the original's schedule.
+ * - 800436C8 0/0 (matches): the animation step is the static 800436C0,
+ *   defined just above it, so `b = a = -1` is numbered above the loop head
+ *   and as1 hoists its `li a1,-1` into the head's load delay, right after
+ *   the jal, as the original has it (pass 3; before, a `#line` did that).
+ *   800438FC's cases set d before col for the original's schedule.
  * - 800444E8 0/0 (matches; p4). 80044714 returns s32 (s8 made a
  *   sll/sra pair whose temp put the ugen temps one ahead, and gave d1 $s3
  *   and n $s2). d1's first test is a plain `if (d1)`, every later one and
@@ -112,8 +122,7 @@
  *   stored through the neighbour, (&D_ovl0B_04_8004A480)[1][1] (fake), for
  *   the original's own lui.
  * - 80045214 0/0 (matches; p5). The save is the inlined static 800450B8
- *   returning ok (its stub; 800450C0's fade is written out, and a dead call
- *   from 80045214 (fake) pulls 800450C0 out after the stub): the test reads
+ *   returning ok (its stub; 800450C0's fade is written out): the test reads
  *   the inlined return value, `lw t8,ok; move v0,t8` in ugen, one load into
  *   $v0 after as1, with the original's temps after it. 80045540: its unk3
  *   store goes through a copy of item (`x = item; ... unk3 = x`): copy
@@ -147,10 +156,10 @@
  *   stubs 800445BC, 80044624 and 8004461C were called from 80044BE8's dead
  *   list at its end, and any inlined call after the second MakeEntries
  *   costs its 4 bytes of alignment below it (the front end's frame then
- *   ends 4 below the original's). They are called from the statics they
- *   stand before instead: 800445C4 calls 800445BC, 8004462C calls 80044624
- *   then 8004461C (first statements; the emission order is unchanged), and
- *   80044BE8 has `s32 pad[2]` (us/eu only) after its locals (frame-tuned).
+ *   ends 4 below the original's); in definition order they need no call.
+ *   80044BE8 has `s32 pad[2]` (us/eu only) after its locals (frame-tuned;
+ *   pass 3: a hide-object helper for its three us-only hides isn't it, the
+ *   frame grows).
  *   jp's `changed` (p4): uopt treats $v0 as a variable (R2) and the
  *   function's blocks as one loop, so any read of a call's result makes
  *   R2 live through the changed test and `changed` takes $v1. us/eu read
@@ -162,16 +171,16 @@
  *   in the preheader block: i $v0, j $a0, so the A490 piece, which
  *   interferes with both, takes $a1 as in the original (one index: $v0
  *   only, and the piece took $a0).
- *   80043F24 0/0 (matches; 80044394: `n - 1` in its own m with a dead read, fake,
- *   gives the original's addiu v0,v1,-1; the body numbered below its
- *   header line (`#line`, fake) lets as1 put the `sw ra` in the first
- *   branch's delay slot, and `n = 0` numbered before the [8] store puts
- *   `move v1,zero` where the original has it), 80046180 0/0 (p5: 800438FC
+ *   80043F24 0/0 (matches; 80044394: m is 8004438C's inlined `return n - 1` (pass 3; p2-p6 had m = n - 1 and a dead read),
+ *   which gives the original's addiu v0,v1,-1; the static is defined above it,
+ *   and its lines (n = 0 first) let as1 put the
+ *   `sw ra` in the first branch's delay slot and `move v1,zero` where the
+ *   original has it: p2-p6 had two `#line`s for that), 80046180 0/0 (p5: 800438FC
  *   takes (id, mode, item): IPA keeps mode in $a0, but every call now
  *   sets $a0 after the id, so jp 80046734's `li a0,1` comes after the
  *   ids index's sll as in the original; jp 80046294's mode, a ternary,
  *   goes through a local m, which the original evaluates first; jp
- *   800468F0's loop takes the paired dead reads `if (!o) {} if (!base) {}`).
+ *   800468F0's loop is 800468E8 per choice; jp still takes a dead `if (!base) {}`).
  * Everything else matches.
  * 80044BE8 with a/b/i block-scoped or #if'd out, no `changed`,
  * hand-written MakeEntries loops or an unrolled 80044BE0 (the homes are
@@ -342,26 +351,26 @@ s32 func_ovl0B_04_80048910(void); /* 0x2F0A */
 #endif
 
 /* The pages' handlers and set-ups (the page table refers to them). */
-u8 func_ovl0B_04_80044BE8(u8 arg0, u16 arg1);
-void func_ovl0B_04_800444E8(Obj *arg0);
-u8 func_ovl0B_04_80045AF0(u8 arg0, u16 arg1);
-void func_ovl0B_04_800459C4(Obj *arg0);
-u8 func_ovl0B_04_80045D20(u8 arg0, u16 arg1);
-void func_ovl0B_04_80045BF4(Obj *arg0);
-u8 func_ovl0B_04_80045F50(u8 arg0, u16 arg1);
-void func_ovl0B_04_80045E24(Obj *arg0);
-u8 func_ovl0B_04_80046180(u8 arg0, u16 arg1);
-void func_ovl0B_04_80046054(Obj *arg0);
-u8 func_ovl0B_04_80046B28(u8 arg0, u16 arg1);
-void func_ovl0B_04_80046AA0(Obj *arg0);
-u8 func_ovl0B_04_80046D74(u8 arg0, u16 arg1);
-void func_ovl0B_04_80046CEC(Obj *arg0);
-u8 func_ovl0B_04_80046FA8(u8 arg0, u16 arg1);
-void func_ovl0B_04_80046F20(Obj *arg0);
-u8 func_ovl0B_04_800471F4(u8 arg0, u16 arg1);
-void func_ovl0B_04_8004716C(Obj *arg0);
-u8 func_ovl0B_04_80045214(u8 arg0, u16 arg1);
-void func_ovl0B_04_800450C0(Obj *arg0);
+static u8 func_ovl0B_04_80044BE8(u8 arg0, u16 arg1);
+static void func_ovl0B_04_800444E8(Obj *arg0);
+static u8 func_ovl0B_04_80045AF0(u8 arg0, u16 arg1);
+static void func_ovl0B_04_800459C4(Obj *arg0);
+static u8 func_ovl0B_04_80045D20(u8 arg0, u16 arg1);
+static void func_ovl0B_04_80045BF4(Obj *arg0);
+static u8 func_ovl0B_04_80045F50(u8 arg0, u16 arg1);
+static void func_ovl0B_04_80045E24(Obj *arg0);
+static u8 func_ovl0B_04_80046180(u8 arg0, u16 arg1);
+static void func_ovl0B_04_80046054(Obj *arg0);
+static u8 func_ovl0B_04_80046B28(u8 arg0, u16 arg1);
+static void func_ovl0B_04_80046AA0(Obj *arg0);
+static u8 func_ovl0B_04_80046D74(u8 arg0, u16 arg1);
+static void func_ovl0B_04_80046CEC(Obj *arg0);
+static u8 func_ovl0B_04_80046FA8(u8 arg0, u16 arg1);
+static void func_ovl0B_04_80046F20(Obj *arg0);
+static u8 func_ovl0B_04_800471F4(u8 arg0, u16 arg1);
+static void func_ovl0B_04_8004716C(Obj *arg0);
+static u8 func_ovl0B_04_80045214(u8 arg0, u16 arg1);
+static void func_ovl0B_04_800450C0(Obj *arg0);
 
 /* .bss */
 u8 D_ovl0B_04_8004A290[12][2]; /* the name being entered, one character a string */
@@ -377,15 +386,12 @@ s32 D_ovl0B_04_8004A3B0[15];   /* page 9's */
 s32 D_ovl0B_04_8004A3EC;
 s32 D_ovl0B_04_8004A3F0;
 #define D_ovl0B_04_8004A3E4 D_ovl0B_04_8004A4A4
-#define UNUSED_BSS()
 #else
 s32 D_ovl0B_04_8004A3B0[13];   /* page 9's */
 Fade *D_ovl0B_04_8004A3E4;
-u8 D_ovl0B_04_8004A3E8[8];     /* fake: not referenced (kept by UNUSED_BSS) */
+u8 D_ovl0B_04_8004A3E8[8];     /* only the unused 80043F9C uses it */
 s32 D_ovl0B_04_8004A3F0;
 s32 D_ovl0B_04_8004A3F4;
-/* fake: a dead store in an `if (0)`, so -O3 keeps D_ovl0B_04_8004A3E8 in place */
-#define UNUSED_BSS() (D_ovl0B_04_8004A3E8[0] = 0)
 #endif
 Vec3f D_ovl0B_04_8004A3F8;
 Page *D_ovl0B_04_8004A404;
@@ -1194,10 +1200,14 @@ static s32 func_ovl0B_04_80044714(u8 set, u8 c);
 #define HALF_IDX(item, half) ((item) < 11 ? (item) - (half) * 5 : 6)
 #define PAGE_IDX(item) HALF_IDX(item, D_ovl0B_04_8004A1A8)
 
-static void func_ovl0B_04_800436C0(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
 
-static void func_ovl0B_04_800438F4(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
+/* An item's text grown by d, or set to its size plus d (inlined). */
+static void func_ovl0B_04_800438F4(s32 id, s32 grow, f32 d, Item *it) {
+    if (grow) {
+        func_ovl0B_04_80048660(id, d * 0.4f, d);
+    } else {
+        func_ovl0B_04_80048658(id, it->unk8 + d * 0.4f, it->unkC + d);
+    }
 }
 
 /* A page's texts freed (inlined). */
@@ -1207,125 +1217,6 @@ static void func_ovl0B_04_80043AD4(s32 *ids, s32 n) {
     for (i = 0; i < n; i++, ids++) {
         func_ovl0B_04_80048638(*ids);
     }
-}
-
-static void func_ovl0B_04_80043F3C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_80043F44(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_80043F4C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_80043F54(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_80043F5C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_80043F64(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_80043F6C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_80043F74(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_80043F7C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_80043F84(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_80043F8C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_80043F94(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-#if !VERSION_JP
-static void func_ovl0B_04_80043F9C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-#endif
-
-static void func_ovl0B_04_800441BC(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_80044264(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_800442FC(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_80044304(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_80044384(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_8004438C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_800444D0(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_800444D8(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_800444E0(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_800445BC() { /* fake: an empty K&R static called first in the static it precedes, for the original's stub (header) */
-}
-
-static void func_ovl0B_04_8004461C() { /* fake: an empty K&R static called first in the static it precedes, for the original's stub (header) */
-}
-
-static void func_ovl0B_04_80044624() { /* fake: an empty K&R static called first in the static it precedes, for the original's stub (header) */
-}
-
-/* Page 9's fade in, over the page (inlined). */
-
-/* The name kept (and whether it changed), and the screen's texts freed
- * (inlined in 80045540). */
-static void func_ovl0B_04_80045530(void) {
-    s32 i;
-
-    func_ovl0B_04_80043AD4(D_ovl0B_04_8004A448, 8);
-    func_ovl0B_04_80043AD4(D_ovl0B_04_8004A468, 6);
-    for (i = 0; i < 5; i++) {
-        func_ovl0B_04_80047DE0(D_ovl0B_04_8004A060[i].unk0);
-    }
-    func_ovl0B_04_80043010(3, &D_ovl0B_04_8004A060[5], 0);
-    func_ovl0B_04_80043010(2, &D_ovl0B_04_8004A060[8], 0);
-}
-
-static void func_ovl0B_04_80045538(void) {
-    s32 i;
-
-    for (i = 0; i < 8; i++) {
-        if (D_ovl0B_04_80048A20[i] != D_ovl0B_04_8004A290[i][0]) {
-            D_ovl0B_04_8004A18C = 1;
-        }
-        D_ovl0B_04_80048A20[i] = D_ovl0B_04_8004A290[i][0];
-    }
-}
-
-static void func_ovl0B_04_80045848(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_80046284(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_8004628C(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_800468E0(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
-}
-
-static void func_ovl0B_04_800468E8(void) { /* fake: an empty static for an inlined one's stub, placed by dead calls (header) */
 }
 
 /* The objects of a run of entries, and their removal (inlined). */
@@ -1349,622 +1240,476 @@ static void func_ovl0B_04_80043010(s32 n, Entry *e, s32 x) {
     }
 }
 
-/* A text set to a string, colour and scale (inlined in the set-ups). */
-static void func_ovl0B_04_SetText(s32 id, u8 *str, s32 col, f32 scale) {
-    func_ovl0B_04_80048640(id, str, col);
-    func_ovl0B_04_80048658(id, scale, scale);
+/* The shared code's statics (with 80043E4C..80043F24), none of them used
+ * here: IDO -O3 leaves an unused static only its `jr ra` stub, where it is
+ * defined (ovl_17_09 and the other overlays with this code have them at
+ * their ends), so their bodies don't show. jp's copy has one fewer. */
+static void func_ovl0B_04_80043F3C(void) {
 }
 
-/* Pages 5-8: one of a slot's ten choices (ZeroJump 0x1E04 says which are
- * open), in two halves of five. */
-u8 func_ovl0B_04_800471F4(u8 arg0, u16 arg1) {
-    u8 ret = 1;
-    s32 pad[3]; /* fake: frame-tuned (with FreeEntries' (n, e, x), p4) */
-
-    func_ovl0B_04_80046734(arg0, arg1);
-    if (arg1 & 1) {
-        if (arg0 >= 11) {
-            func_ovl0B_04_80047E70(D_ovl0B_04_8004A170, 10, -1);
-            func_ovl0B_04_80047E70(D_ovl0B_04_8004A170, 12, -1);
-            *D_ovl0B_04_8004A184 = 0;
-            func_ovl0B_04_800487D0(2);
-        } else if (D_ovl0B_04_8004A480[arg0] != 0) {
-            func_ovl0B_04_800478A0(D_ovl0B_04_8004A170, 3, arg0);
-            func_ovl0B_04_800487D0(0x2E);
-            *D_ovl0B_04_8004A184 = arg0;
-        }
-    } else if (arg1 & 2) {
-        func_ovl0B_04_800487D0(2);
-        func_ovl0B_04_80043FA4(&ret, 0, 5, 0);
-        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[10], 0);
-        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[11], 0);
-    }
-    return ret;
+static void func_ovl0B_04_80043F44(void) {
 }
 
-void func_ovl0B_04_8004716C(Obj *arg0) {
-    func_ovl0B_04_80047164();
+static void func_ovl0B_04_80043F4C(void) {
 }
 
-static void func_ovl0B_04_80047164() {
-    func_ovl0B_04_800468F0(33);
+static void func_ovl0B_04_80043F54(void) {
 }
 
-u8 func_ovl0B_04_80046FA8(u8 arg0, u16 arg1) {
-    u8 ret = 1;
-    s32 pad[3]; /* fake: frame-tuned (with FreeEntries' (n, e, x), p4) */
-
-    func_ovl0B_04_80046734(arg0, arg1);
-    if (arg1 & 1) {
-        if (arg0 >= 11) {
-            func_ovl0B_04_80047E70(D_ovl0B_04_8004A170, 3, -1);
-            func_ovl0B_04_80047E70(D_ovl0B_04_8004A170, 5, -1);
-            *D_ovl0B_04_8004A180 = 0;
-            func_ovl0B_04_800487D0(2);
-        } else if (D_ovl0B_04_8004A480[arg0] != 0) {
-            func_ovl0B_04_800478A0(D_ovl0B_04_8004A170, 2, arg0);
-            func_ovl0B_04_800487D0(0x2E);
-            *D_ovl0B_04_8004A180 = arg0;
-        }
-    } else if (arg1 & 2) {
-        func_ovl0B_04_800487D0(2);
-        func_ovl0B_04_80043FA4(&ret, 0, 4, 0);
-        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[10], 0);
-        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[11], 0);
-    }
-    return ret;
+static void func_ovl0B_04_80043F5C(void) {
 }
 
-void func_ovl0B_04_80046F20(Obj *arg0) {
-    func_ovl0B_04_80046F18();
+static void func_ovl0B_04_80043F64(void) {
 }
 
-static void func_ovl0B_04_80046F18() {
-    func_ovl0B_04_800468F0(22);
+static void func_ovl0B_04_80043F6C(void) {
 }
 
-u8 func_ovl0B_04_80046D74(u8 arg0, u16 arg1) {
-    u8 ret = 1;
-    s32 pad[3]; /* fake: frame-tuned (with FreeEntries' (n, e, x), p4) */
-
-    func_ovl0B_04_80046734(arg0, arg1);
-    if (arg1 & 1) {
-        if (arg0 >= 11) {
-            func_ovl0B_04_80047E70(D_ovl0B_04_8004A170, 1, -1);
-            *D_ovl0B_04_8004A17C = 0;
-            func_ovl0B_04_800487D0(2);
-        } else if (D_ovl0B_04_8004A480[arg0] != 0) {
-            func_ovl0B_04_800478A0(D_ovl0B_04_8004A170, 1, arg0);
-            func_ovl0B_04_800487D0(0x2E);
-            *D_ovl0B_04_8004A17C = arg0;
-        }
-    } else if (arg1 & 2) {
-        func_ovl0B_04_800487D0(2);
-        func_ovl0B_04_80043FA4(&ret, 0, 3, 0);
-        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[10], 0);
-        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[11], 0);
-    }
-    return ret;
+static void func_ovl0B_04_80043F74(void) {
 }
 
-void func_ovl0B_04_80046CEC(Obj *arg0) {
-    func_ovl0B_04_80046CE4();
+static void func_ovl0B_04_80043F7C(void) {
 }
 
-static void func_ovl0B_04_80046CE4() {
-    func_ovl0B_04_800468F0(11);
+static void func_ovl0B_04_80043F84(void) {
 }
 
-u8 func_ovl0B_04_80046B28(u8 arg0, u16 arg1) {
-    u8 ret = 1;
-    s32 pad[3]; /* fake: frame-tuned (with FreeEntries' (n, e, x), p4) */
-
-    func_ovl0B_04_80046734(arg0, arg1);
-    if (arg1 & 1) {
-        if (arg0 >= 11) {
-            func_ovl0B_04_80047E70(D_ovl0B_04_8004A170, 6, -1);
-            func_ovl0B_04_80047E70(D_ovl0B_04_8004A170, 8, -1);
-            *D_ovl0B_04_8004A178 = 0;
-            func_ovl0B_04_800487D0(2);
-        } else if (D_ovl0B_04_8004A480[arg0] != 0) {
-            func_ovl0B_04_800478A0(D_ovl0B_04_8004A170, 0, arg0);
-            func_ovl0B_04_800487D0(0x2E);
-            *D_ovl0B_04_8004A178 = arg0;
-        }
-    } else if (arg1 & 2) {
-        func_ovl0B_04_800487D0(2);
-        func_ovl0B_04_80043FA4(&ret, 0, 2, 0);
-        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[10], 0);
-        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[11], 0);
-    }
-    return ret;
+static void func_ovl0B_04_80043F8C(void) {
 }
 
-void func_ovl0B_04_80046AA0(Obj *arg0) {
-    func_ovl0B_04_80046A98();
-    if (0) { /* fake: dead calls: the emission order of the stubs and statics (header) */
-        func_ovl0B_04_800468E8();
-        func_ovl0B_04_800468E0();
-        func_ovl0B_04_80046734(0, 0);
-        func_ovl0B_04_8004628C();
-        func_ovl0B_04_80046284();
-    }
+static void func_ovl0B_04_80043F94(void) {
 }
 
-static void func_ovl0B_04_80046A98() {
-    func_ovl0B_04_800468F0(0);
-}
-
-/* Pages 5-8's set-up: which of the ten choices from base + 1 are open. */
-static void func_ovl0B_04_800468F0(s32 base) {
-    Obj *o;
-    s32 i;
-
-    D_ovl0B_04_8004A404 = &D_ovl0B_04_800499B8[D_ovl0B_04_8004A168];
-    func_ovl0B_04_80044394(D_ovl0B_04_8004A404->unk4[7], D_ovl0B_04_8004A404->unk4[9]);
-    o = func_ovl0B_04_80048668(D_ovl0B_04_8004A404->unk4[10]);
-    o->unkC |= 0x480;
-    o->unk36 = 100;
-    D_ovl0B_04_8004A480[0] = 0;
-    for (i = 1; i < 3; i++) {
-        D_ovl0B_04_8004A480[i + 10] = 1;
-    }
-    for (i = 1; i < 11; i++) {
-        if (!o) {} /* fake: dead reads (header, 800468F0) */
 #if !VERSION_JP
-        if (!o) {} /* fake: dead read */
-#else
-        if (!o) {} /* fake: dead read */
-        if (!base) {} /* fake: dead read */
-#endif
-        if (func_ovl0B_04_800484B0(base + i) == 0) {
-            D_ovl0B_04_8004A480[i] = 0;
-        } else {
-            D_ovl0B_04_8004A480[i] = 1;
-        }
-    }
-    func_ovl0B_04_MakeEntries(1, &D_ovl0B_04_8004A060[10], &D_ovl0B_04_80049C38[8]);
-    func_ovl0B_04_MakeEntries(1, &D_ovl0B_04_8004A060[11], &D_ovl0B_04_80049C38[9]);
-    D_ovl0B_04_8004A1A8 = 0;
-    D_ovl0B_04_8004A1A4 = 0;
-    D_ovl0B_04_8004A174 = D_ovl0B_04_8004A16C;
-    func_ovl0B_04_80046294(D_ovl0B_04_8004A16C);
-    func_ovl0B_04_80046600(D_ovl0B_04_8004A16C, 0);
-#if !VERSION_JP
-    o = func_ovl0B_04_80048608();
-    o->unk36 = 0;
-    o->unkC |= 0x80;
-#endif
-}
-
-/* Pages 5-8's cursor. */
-#if VERSION_JP
-static void func_ovl0B_04_80046734(u8 item, u16 buttons) {
-    if ((buttons & 0x20) || (buttons & 0x40)) {
-        if (D_ovl0B_04_8004A480[D_ovl0B_04_8004A174]) {
-            func_ovl0B_04_800438FC(D_ovl0B_04_8004A404->unk4[HALF_IDX(D_ovl0B_04_8004A174, D_ovl0B_04_8004A1A4)], 0,
-                                   &D_ovl0B_04_8004A404->unk8[HALF_IDX(D_ovl0B_04_8004A174, D_ovl0B_04_8004A1A4)]);
-        }
-        if (D_ovl0B_04_8004A480[item]) {
-            func_ovl0B_04_800438FC(D_ovl0B_04_8004A404->unk4[HALF_IDX(item, D_ovl0B_04_8004A1A8)], 1,
-                                   &D_ovl0B_04_8004A404->unk8[HALF_IDX(item, D_ovl0B_04_8004A1A8)]);
-        }
-        D_ovl0B_04_8004A174 = item;
-    } else if ((buttons & 0x80) || (buttons & 0x100)) {
-        func_ovl0B_04_80046600(item, buttons);
-        D_ovl0B_04_8004A174 = item;
-    }
-}
-#else
-static void func_ovl0B_04_80046734(u8 item, u16 buttons) {
-    if ((buttons & 0x20) || (buttons & 0x40)) {
-        func_ovl0B_04_800438FC(D_ovl0B_04_8004A404->unk4[HALF_IDX(D_ovl0B_04_8004A174, D_ovl0B_04_8004A1A4)], 0,
-                               &D_ovl0B_04_8004A404->unk8[HALF_IDX(D_ovl0B_04_8004A174, D_ovl0B_04_8004A1A4)]);
-        func_ovl0B_04_800438FC(D_ovl0B_04_8004A404->unk4[HALF_IDX(item, D_ovl0B_04_8004A1A8)], 1,
-                               &D_ovl0B_04_8004A404->unk8[HALF_IDX(item, D_ovl0B_04_8004A1A8)]);
-        D_ovl0B_04_8004A174 = item;
-    } else if ((buttons & 0x80) || (buttons & 0x100)) {
-        func_ovl0B_04_80046600(item, buttons);
-        D_ovl0B_04_8004A174 = item;
-    }
+/* Unused like the rest, but it uses D_ovl0B_04_8004A3E8 (us/eu only, as
+ * this static): a reference from an unused static keeps that .bss defined
+ * where -O3 would leave an unreferenced one to common. */
+static void func_ovl0B_04_80043F9C(void) {
+    D_ovl0B_04_8004A3E8[0] = 0; /* fake: its body doesn't reach the object; any use of the array does this */
 }
 #endif
 
-/* Pages 5-8: the other half of the choices, and its arrows. */
-static void func_ovl0B_04_80046600(u8 item, u16 buttons) {
-    if (D_ovl0B_04_8004A1A8 == 0 && (buttons & 0x100)) {
-        D_ovl0B_04_8004A1A4 = D_ovl0B_04_8004A1A8;
-        D_ovl0B_04_8004A1A8++;
-        func_ovl0B_04_80046294(item);
-        D_ovl0B_04_8004A1A4 = D_ovl0B_04_8004A1A8;
-    } else if (D_ovl0B_04_8004A1A8 == 1 && (buttons & 0x80)) {
-        D_ovl0B_04_8004A1A4 = D_ovl0B_04_8004A1A8;
-        D_ovl0B_04_8004A1A8--;
-        func_ovl0B_04_80046294(item);
-        D_ovl0B_04_8004A1A4 = D_ovl0B_04_8004A1A8;
-    }
-    switch (D_ovl0B_04_8004A1A8) {
-        case 0:
-            D_ovl0B_04_8004A060[10].unk0->unkC |= 1;
-            D_ovl0B_04_8004A060[11].unk0->unkC &= ~1;
-            break;
+/* Leave the page for another (0xFF ends the screen). */
+static void func_ovl0B_04_80043FA4(u8 *ret, s32 page, s32 item, s32 mode) {
+    *ret = 0;
+    D_ovl0B_04_8004A168 = page;
+    D_ovl0B_04_8004A16C = item;
+    D_ovl0B_04_8004A490.unk3 = item;
+    switch (mode) {
         case 1:
-            D_ovl0B_04_8004A060[10].unk0->unkC &= ~1;
-            D_ovl0B_04_8004A060[11].unk0->unkC |= 1;
+            D_ovl0B_04_8004A164->unkC &= ~1;
+            break;
+        case 2:
+            D_ovl0B_04_8004A164->unkC |= 1;
             break;
     }
 }
 
-/* Pages 5-8: the half's five choices written ("---" for a closed one). */
-#if VERSION_JP
-static void func_ovl0B_04_80046294(u8 item) {
-    s32 i;
-    s32 j;
-    s32 n;
-    s32 k;
-    s32 m;
-
-    D_ovl0B_04_80048B98[3] = D_ovl0B_04_8004A1A8 + 0x11;
-    func_ovl0B_04_80048690(D_ovl0B_04_8004A404->unk4[8], D_ovl0B_04_80048B98, 5);
-    i = D_ovl0B_04_8004A1A8 * 5;
-    n = i + 5;
-    for (j = 1; i < n; i++, j++) {
-        k = D_ovl0B_04_8004A404->unk4[j];
-        if (D_ovl0B_04_8004A480[i + 1] == 0) {
-            func_ovl0B_04_80048690(k, D_ovl0B_04_80048B88, 1);
-            D_ovl0B_04_8004A404->unk8[j].unk0 = D_ovl0B_04_80048B88;
-        } else {
-            func_ovl0B_04_80048690(k, D_ovl0B_04_800494C0[D_ovl0B_04_8004A168 - 5][i], 1);
-            D_ovl0B_04_8004A404->unk8[j].unk0 = D_ovl0B_04_800494C0[D_ovl0B_04_8004A168 - 5][i];
-        }
-    }
-    m = D_ovl0B_04_8004A480[item] ? 3 : 4;
-    func_ovl0B_04_800438FC(D_ovl0B_04_8004A404->unk4[PAGE_IDX(item)], m,
-                           &D_ovl0B_04_8004A404->unk8[PAGE_IDX(item)]);
-}
-#else
-static void func_ovl0B_04_80046294(u8 item) {
-    s32 i;
-    s32 j;
-    s32 n;
-
-    D_ovl0B_04_80048B98[5] = D_ovl0B_04_8004A1A8 + 0x11;
-    func_ovl0B_04_80048690(D_ovl0B_04_8004A404->unk4[8], D_ovl0B_04_80048B98, 5);
-    i = D_ovl0B_04_8004A1A8 * 5;
-    n = i + 5;
-    for (j = 1; i < n; i++, j++) {
-        if (D_ovl0B_04_8004A480[i + 1] == 0) {
-            D_ovl0B_04_8004A408[j] = DRAW_ITEM(D_ovl0B_04_80048B88, &D_ovl0B_04_8004A404->unk8[j]);
-            D_ovl0B_04_8004A404->unk8[j].unk0 = D_ovl0B_04_80048B88;
-        } else {
-            D_ovl0B_04_8004A408[j] = DRAW_ITEM(D_ovl0B_04_800494C0[D_ovl0B_04_8004A168 - 5][i], &D_ovl0B_04_8004A404->unk8[j]);
-            D_ovl0B_04_8004A404->unk8[j].unk0 = D_ovl0B_04_800494C0[D_ovl0B_04_8004A168 - 5][i];
-        }
-    }
-    for (j = 1, i = D_ovl0B_04_8004A1A8 * 5, n = i + 5; i < n; i++, j++) {
-        func_ovl0B_04_80048638(D_ovl0B_04_8004A404->unk4[j]);
-        D_ovl0B_04_8004A404->unk4[j] = D_ovl0B_04_8004A408[j];
-    }
-    func_ovl0B_04_800438FC(D_ovl0B_04_8004A404->unk4[PAGE_IDX(item)], 3,
-                           &D_ovl0B_04_8004A404->unk8[PAGE_IDX(item)]);
-}
-#endif
-
-/* Pages 1-4: the character sets; the R button goes to the next. */
-u8 func_ovl0B_04_80046180(u8 arg0, u16 arg1) {
-    u8 ret = 1;
-
-    if (arg1 & 0x10) {
-#if VERSION_JP
-        D_ovl0B_04_8004A490.unk2 = 1;
-        func_ovl0B_04_800487D0(0);
-        func_ovl0B_04_80043FA4(&ret, 1, arg0, 0);
-#else
-        D_ovl0B_04_8004A490.unk2 = 3;
-        func_ovl0B_04_800487D0(0);
-        func_ovl0B_04_80043FA4(&ret, 3, arg0, 0);
-#endif
-    } else {
-        func_ovl0B_04_80045540(arg0, arg1, &ret);
-    }
-    if (ret == 0) {
-        func_ovl0B_04_800458F4(D_ovl0B_04_8004A2E8[0], D_ovl0B_04_8004A2E8[1]);
-        func_ovl0B_04_800440C8(&D_ovl0B_04_80049B20[3]);
-    }
-    return ret;
-}
-
-void func_ovl0B_04_80046054(Obj *arg0) {
-    func_ovl0B_04_800458F4(D_ovl0B_04_8004A2E8[0], D_ovl0B_04_8004A2E8[1]);
-    func_ovl0B_04_80047DF0(arg0, 0x55);
-    func_ovl0B_04_8004401C(&D_ovl0B_04_80049B20[3]);
-    func_ovl0B_04_80045850();
-    func_ovl0B_04_80045958(D_ovl0B_04_8004A2E8[0], D_ovl0B_04_8004A2E8[1]);
-    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[4], D_ovl0B_04_80048A84, 5, 0.7f);
-    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[3], D_ovl0B_04_80048A80, 6, 0.5f);
-}
-
-u8 func_ovl0B_04_80045F50(u8 arg0, u16 arg1) {
-    u8 ret = 1;
-
-    if (arg1 & 0x10) {
-        D_ovl0B_04_8004A490.unk2 = 4;
-        func_ovl0B_04_800487D0(0);
-        func_ovl0B_04_80043FA4(&ret, 4, arg0, 0);
-    } else {
-        func_ovl0B_04_80045540(arg0, arg1, &ret);
-    }
-    if (ret == 0) {
-        func_ovl0B_04_800458F4(D_ovl0B_04_8004A2E0[0], D_ovl0B_04_8004A2E0[1]);
-        func_ovl0B_04_800440C8(&D_ovl0B_04_80049B20[2]);
-    }
-    return ret;
-}
-
-void func_ovl0B_04_80045E24(Obj *arg0) {
-    func_ovl0B_04_800458F4(D_ovl0B_04_8004A2E0[0], D_ovl0B_04_8004A2E0[1]);
-    func_ovl0B_04_80047DF0(arg0, 0x55);
-    func_ovl0B_04_8004401C(&D_ovl0B_04_80049B20[2]);
-    func_ovl0B_04_80045850();
-    func_ovl0B_04_80045958(D_ovl0B_04_8004A2E0[0], D_ovl0B_04_8004A2E0[1]);
-    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[3], D_ovl0B_04_80048A80, 5, 0.7f);
-#if VERSION_JP
-    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[2], D_ovl0B_04_80048A7C, 6, 0.5f);
-#else
-    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[4], D_ovl0B_04_80048A84, 6, 0.5f);
-#endif
-}
-
-u8 func_ovl0B_04_80045D20(u8 arg0, u16 arg1) {
-    u8 ret = 1;
-
-    if (arg1 & 0x10) {
-        D_ovl0B_04_8004A490.unk2 = 3;
-        func_ovl0B_04_800487D0(0);
-        func_ovl0B_04_80043FA4(&ret, 3, arg0, 0);
-    } else {
-        func_ovl0B_04_80045540(arg0, arg1, &ret);
-    }
-    if (ret == 0) {
-        func_ovl0B_04_800458F4(D_ovl0B_04_8004A2D8[0], D_ovl0B_04_8004A2D8[1]);
-        func_ovl0B_04_800440C8(&D_ovl0B_04_80049B20[1]);
-    }
-    return ret;
-}
-
-void func_ovl0B_04_80045BF4(Obj *arg0) {
-    func_ovl0B_04_800458F4(D_ovl0B_04_8004A2D8[0], D_ovl0B_04_8004A2D8[1]);
-    func_ovl0B_04_80047DF0(arg0, 0x55);
-    func_ovl0B_04_8004401C(&D_ovl0B_04_80049B20[1]);
-    func_ovl0B_04_80045850();
-    func_ovl0B_04_80045958(D_ovl0B_04_8004A2D8[0], D_ovl0B_04_8004A2D8[1]);
-    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[2], D_ovl0B_04_80048A7C, 5, 0.7f);
-    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[1], D_ovl0B_04_80048A78, 6, 0.5f);
-}
-
-u8 func_ovl0B_04_80045AF0(u8 arg0, u16 arg1) {
-    u8 ret = 1;
-
-    if (arg1 & 0x10) {
-        D_ovl0B_04_8004A490.unk2 = 2;
-        func_ovl0B_04_800487D0(0);
-        func_ovl0B_04_80043FA4(&ret, 2, arg0, 0);
-    } else {
-        func_ovl0B_04_80045540(arg0, arg1, &ret);
-    }
-    if (ret == 0) {
-        func_ovl0B_04_800458F4(D_ovl0B_04_8004A2D0[0], D_ovl0B_04_8004A2D0[1]);
-        func_ovl0B_04_800440C8(&D_ovl0B_04_80049B20[0]);
-    }
-    return ret;
-}
-
-void func_ovl0B_04_800459C4(Obj *arg0) {
-    func_ovl0B_04_800458F4(D_ovl0B_04_8004A2D0[0], D_ovl0B_04_8004A2D0[1]);
-    func_ovl0B_04_80047DF0(arg0, 0x55);
-    func_ovl0B_04_8004401C(&D_ovl0B_04_80049B20[0]);
-    func_ovl0B_04_80045850();
-    func_ovl0B_04_80045958(D_ovl0B_04_8004A2D0[0], D_ovl0B_04_8004A2D0[1]);
-    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[1], D_ovl0B_04_80048A78, 5, 0.7f);
-    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[4], D_ovl0B_04_80048A84, 6, 0.5f);
-    if (0) { /* fake: dead calls: the emission order (header) */
-        func_ovl0B_04_80045958(0, 0);
-        func_ovl0B_04_800458F4(0, 0);
-        func_ovl0B_04_80045850();
-        func_ovl0B_04_80045848();
-        func_ovl0B_04_80045540(0, 0, 0);
-    }
-}
-
-/* A page's two texts and the menu's cursor shown, and hidden. */
-static void func_ovl0B_04_80045958(s32 id0, s32 id1) {
-    Obj *a = func_ovl0B_04_80048668(id0);
-    Obj *b = func_ovl0B_04_80048668(id1);
-    Obj *c = func_ovl0B_04_80048608();
-
-    a->unkC &= ~1;
-    b->unkC &= ~1;
-    c->unkC &= ~1;
-}
-
-static void func_ovl0B_04_800458F4(s32 id0, s32 id1) {
-    Obj *a = func_ovl0B_04_80048668(id0);
-    Obj *b = func_ovl0B_04_80048668(id1);
-    Obj *c = func_ovl0B_04_80048608();
-
-    a->unkC |= 1;
-    b->unkC |= 1;
-    c->unkC |= 1;
-}
-
-static void func_ovl0B_04_80045850(void) {
-    s32 i;
-    u8 ret;
-
-    for (i = 2; i < 7; i++) {
-        D_ovl0B_04_80049C38[i].unk14 &= ~1;
-    }
-    func_ovl0B_04_8004430C(D_ovl0B_04_8004A490.unk3);
-    func_ovl0B_04_800447DC(0, &ret);
-    func_ovl0B_04_8004456C();
-}
-
-/* Pages 1-4: B rubs a character out, A writes the one under the cursor or
- * (items 0x31 and 0x32) ends the name. */
-static void func_ovl0B_04_80045540(u8 item, u16 buttons, u8 *ret) {
-    u8 c;
-    u8 x;
-
-    /* fake: (p2) the dead read gives the base its s0; c's read is on the
-     * if's line (.loc). The decrement is unsigned arithmetic masked to a
-     * byte (p5): ugen's `and 255` before the sb, which as1 drops, uses up
-     * the temporary the original's t-registers are one ahead by, and it
-     * keeps unk0's own (u8) value, so c stays in $a0. */
-    if (buttons & 2) { c = D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0];
-        D_ovl0B_04_8004A490.unk1 = 0;
-        D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0] = 0;
-        if ((D_ovl0B_04_8004A490.unk0 == 7 && c == 0) || (D_ovl0B_04_8004A490.unk0 != 7 && D_ovl0B_04_8004A490.unk0 > 0)) {
-            if (D_ovl0B_04_8004A490.unk1) {} /* fake: see above */
-            D_ovl0B_04_8004A490.unk0 = ((u32) D_ovl0B_04_8004A490.unk0 - 1) & 0xFF;
-        }
-        func_ovl0B_04_80044210();
-        func_ovl0B_04_80044154();
-        func_ovl0B_04_800487D0(2);
-    } else {
-        func_ovl0B_04_8004430C(item);
-        if (buttons & 1) {
-            if (item == 0x31 || item == 0x32) {
-                func_ovl0B_04_800487D0(1);
-                func_ovl0B_04_80043FA4(ret, 0, 1, 1);
-                D_ovl0B_04_8004A164->unk20 = 0.0f;
-                func_ovl0B_04_80045538();
-                func_ovl0B_04_80045530();
-            } else {
-                x = item;
-                D_ovl0B_04_8004A490.unk1 = func_ovl0B_04_8004426C(D_ovl0B_04_8004A490.unk2, item);
-                D_ovl0B_04_8004A490.unk3 = x;
-                func_ovl0B_04_80044210();
-                D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0] = D_ovl0B_04_8004A490.unk1;
-                D_ovl0B_04_8004A490.unk0++;
-                D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0] = 0;
-                func_ovl0B_04_800487D0(1);
-                if (D_ovl0B_04_8004A490.unk0 == 8) {
-                    D_ovl0B_04_8004A490.unk0--;
-                    D_ovl0B_04_8004A490.unk1 = 0;
-                    func_ovl0B_04_800441C4();
-                    func_ovl0B_04_800485F8(D_ovl0B_04_8004A490.unk3);
-                    func_ovl0B_04_8004430C(D_ovl0B_04_8004A490.unk3);
-                }
-            }
-        }
-    }
-    func_ovl0B_04_800447DC(buttons, ret);
-    func_ovl0B_04_8004456C();
-}
-
-/* Page 9's set-up: the name over a fade (written out: the stub before it,
- * 800450B8, is 80045214's save). Defined above 80045214, which pulls it
- * out right after that stub. */
-void func_ovl0B_04_800450C0(Obj *arg0) {
-    Obj *o = func_ovl0B_04_80048668(D_ovl0B_04_8004A3B0[4]);
-    Fade *f;
+static void func_ovl0B_04_8004401C(Fade *f) {
     f32 step;
 
-    func_ovl0B_04_80044394(D_ovl0B_04_8004A3B0[4], D_ovl0B_04_8004A3B0[5]);
-    func_ovl0B_04_8004447C(D_ovl0B_04_8004A3B0[4], 0x50);
-    func_ovl0B_04_8004447C(D_ovl0B_04_8004A3B0[5], 0x32);
-    o->unkC |= 0x400;
-    f = &D_ovl0B_04_80049B20[4];
-    if (!D_ovl0B_04_8004A3E4) {} /* fake: dead read of the fade pointer before f is set up (without it 57 words differ) */
     step = (f->unk18 - f->unk14) / f->unk1C;
     D_ovl0B_04_8004A3E4 = f;
-    f->unk0 = func_ovl0B_04_80047E58(func_ovl0B_04_80043CD0, 0);
-    f->unk0->unkC |= 0x80;
+    f->unk0 = func_ovl0B_04_80047E58(func_ovl0B_04_80043CD0, 2);
+    f->unk0->unkC |= 0x480;
     for (f->unk34 = f->unk14; f->unk34 < f->unk18; f->unk34 += step) {
         func_ovl0B_04_80048290();
     }
     func_ovl0B_04_80048290();
 }
 
-/* Page 9's save (inlined in 80045214; its stub is 800450B8): its result
- * is the inlined return value, so the test reads it from $v0 after a load
- * through a ugen temporary (`lw t8; move v0,t8`, merged by as1). */
-static s32 func_ovl0B_04_800450B8(void) {
-    s32 i;
-    s32 ok;
-    u8 *save;
-    s32 id;
-    s32 id2;
-
-    ok = 1;
-    save = D_ovl0B_04_8004A188;
-    func_ovl0B_04_8004447C(D_ovl0B_04_8004A3B0[4], 0);
-    func_ovl0B_04_8004447C(D_ovl0B_04_8004A3B0[5], 0);
-#if VERSION_JP
-    id = func_ovl0B_04_80048688(D_ovl0B_04_80048A54, 55, 175, 0.8f, 0.8f, 2);
-#else
-    id = func_ovl0B_04_80048688(D_ovl0B_04_80048A54, 100, 175, 0.8f, 0.8f, 2);
-#endif
-    func_ovl0B_04_80048268(3);
-    for (i = 0; i < 8; i++) {
-        save[i] = D_ovl0B_04_80048A20[i];
+/* The fade out and in (ovl_0B_05's 80043018 and 80043904). */
+static void func_ovl0B_04_800440C8(Fade *f) {
+    for (f->unk34 = f->unk24; f->unk34 > 0.0f; f->unk34 -= f->unk28) {
+        func_ovl0B_04_80048290();
     }
-    save[8] = 0;
-    if (func_ovl0B_04_80048910() != 0) {
-        func_ovl0B_04_800487D0(0x18);
-        func_ovl0B_04_8004447C(id, 0);
-#if VERSION_JP
-        id2 = func_ovl0B_04_80048688(D_ovl0B_04_80048A60, 50, 175, 0.8f, 0.8f, 0);
-#else
-        id2 = func_ovl0B_04_80048688(D_ovl0B_04_80048A60, 80, 175, 0.8f, 0.8f, 0);
-#endif
-        func_ovl0B_04_80048268(120);
-        func_ovl0B_04_80048638(id2);
-        ok = 0;
-    }
-    func_ovl0B_04_80048638(id);
-    return ok;
+    func_ovl0B_04_80047DE0(f->unk0);
+    func_ovl0B_04_80048290();
 }
 
-/* Page 9: save the changes or not. */
-u8 func_ovl0B_04_80045214(u8 arg0, u16 arg1) {
-    u8 ret = 1;
+/* The cursor at the end of the name. */
+static void func_ovl0B_04_80044154(void) {
+    s32 n = 0;
 
-    /* fake: a dead call pulls 800450C0 (defined above) out after 800450B8's
-     * stub, where the original has it */
-    if (0) {
-        func_ovl0B_04_800450C0(0);
+    D_ovl0B_04_8004A290[8][0] = 0;
+    while (D_ovl0B_04_8004A290[n][0] != 0) {
+        n++;
     }
-    if ((arg1 & 0x80) || (arg1 & 0x100)) {
-        func_ovl0B_04_800438FC(D_ovl0B_04_8004A3B0[D_ovl0B_04_8004A174], 0,
-                               &D_ovl0B_04_80049930[D_ovl0B_04_8004A174]);
-        func_ovl0B_04_800438FC(D_ovl0B_04_8004A3B0[arg0], 1, &D_ovl0B_04_80049930[arg0]);
-        D_ovl0B_04_8004A174 = arg0;
+    if (n == 8) {
+        n--;
     }
-    if (arg1 & 1) {
-        if (arg0 == 1) {
-            if (func_ovl0B_04_800450B8()) {
-                func_ovl0B_04_800487D0(0x25);
+    D_ovl0B_04_8004A490.unk0 = n;
+    D_ovl0B_04_8004A490.unk1 = D_ovl0B_04_8004A290[n][0];
+}
+
+static void func_ovl0B_04_800441BC(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+}
+
+/* The set and item of the character at the cursor. */
+static void func_ovl0B_04_800441C4(void) {
+    u8 set = D_ovl0B_04_8004905C[D_ovl0B_04_8004A490.unk1];
+
+    if (set != 0) {
+        D_ovl0B_04_8004A490.unk2 = set;
+    }
+#if !VERSION_JP
+    if (D_ovl0B_04_8004A490.unk2 < 3) {
+        D_ovl0B_04_8004A490.unk2 = 3;
+    }
+#endif
+    D_ovl0B_04_8004A490.unk3 = D_ovl0B_04_80048F5C[D_ovl0B_04_8004A490.unk1];
+}
+
+/* The character at the cursor written. */
+static void func_ovl0B_04_80044210(void) {
+    D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0] = D_ovl0B_04_8004A490.unk1;
+    func_ovl0B_04_80048640(D_ovl0B_04_8004A448[D_ovl0B_04_8004A490.unk0], D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0], 2);
+}
+
+static void func_ovl0B_04_80044264(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+}
+
+/* A character set's character. */
+static u8 func_ovl0B_04_8004426C(u8 set, u8 idx) {
+    u8 r;
+
+    switch (set) {
+        default:
+            r = 0;
+            break;
+        case 1:
+            r = D_ovl0B_04_8004915C[idx];
+            break;
+        case 2:
+            r = D_ovl0B_04_80049190[idx];
+            break;
+        case 3:
+            r = D_ovl0B_04_800491C4[idx];
+            break;
+        case 4:
+            r = D_ovl0B_04_800491F8[idx];
+            break;
+    }
+    return r;
+}
+
+static void func_ovl0B_04_800442FC(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+}
+
+/* The END item's and the set tab's looks. */
+static void func_ovl0B_04_80044304(s32 end, s32 tab) {
+    func_ovl0B_04_80047DF0(D_ovl0B_04_8004A060[3].unk0, end);
+    func_ovl0B_04_80047DF0(D_ovl0B_04_8004A060[2].unk0, tab);
+}
+
+/* The END item (0x31, 0x32) lit or the character set's tab. */
+static void func_ovl0B_04_8004430C(u8 item) {
+    if (item == 0x31 || item == 0x32) {
+        func_ovl0B_04_80044304(1, 2);
+    } else {
+        func_ovl0B_04_80044304(2, 1);
+    }
+}
+
+/* A text dimmed (alpha 100). */
+static void func_ovl0B_04_80044384(s32 id) {
+    Obj *o = func_ovl0B_04_80048668(id);
+
+    o->unkC |= 0x480;
+    o->unk36 = 100;
+}
+
+/* The name's last character's index (-1 for none; the name ends at 8 at most). */
+static s32 func_ovl0B_04_8004438C(void) {
+    s32 n = 0;
+
+    D_ovl0B_04_80048A20[8] = 0;
+    while (D_ovl0B_04_80048A20[n] != 0) {
+        n++;
+    }
+    return n - 1;
+}
+
+/* The name's two texts centred. */
+static void func_ovl0B_04_80044394(s32 a, s32 b) {
+#if VERSION_JP
+    u16 x;
+#else
+    s32 x;
+#endif
+    Obj *o;
+    s32 m;
+
+    m = func_ovl0B_04_8004438C();
+    if (m != -1) {
+#if VERSION_JP
+        x = 56 - m * 8;
+#else
+        x = -func_ovl0B_04_80048680(D_ovl0B_04_80048A20) * 0.65f / 2;
+#endif
+        func_ovl0B_04_80048650(a, x, 0);
+        if (b != -1) {
+            func_ovl0B_04_80048650(b, x, 0);
+            func_ovl0B_04_80044384(b);
+        }
+    }
+}
+
+static void func_ovl0B_04_8004447C(s32 id, s32 alpha) {
+    Obj *o = func_ovl0B_04_80048668(id);
+
+    if (alpha != 0xFF) {
+        o->unkC |= 0x80;
+    } else {
+        o->unkC &= ~0x80;
+    }
+    o->unk36 = alpha;
+}
+
+static void func_ovl0B_04_800444D0(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+}
+
+static void func_ovl0B_04_800444D8(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+}
+
+/* The menu cursor hidden. */
+static void func_ovl0B_04_800444E0(void) {
+    Obj *o = func_ovl0B_04_80048608();
+
+    o->unk36 = 0;
+    o->unkC |= 0x80;
+}
+
+/* Page 0's set-up. */
+static void func_ovl0B_04_800444E8(Obj *arg0) {
+    func_ovl0B_04_80044394(D_ovl0B_04_8004A2A8[6], D_ovl0B_04_8004A2A8[7]);
+    func_ovl0B_04_80044384(D_ovl0B_04_8004A2A8[8]);
+#if !VERSION_JP
+    func_ovl0B_04_800444E0();
+#endif
+}
+
+/* The cursor under the name. */
+static void func_ovl0B_04_8004456C(void) {
+    D_ovl0B_04_8004A060[4].unk0->unk10 = D_ovl0B_04_8004A490.unk0 * 20 + 120;
+    D_ovl0B_04_8004A060[4].unk0->unk18 = D_ovl0B_04_8004A060[4].unk0->unk10 + 20.0f;
+}
+
+/* An entry's object back at its place (inlined). */
+static void func_ovl0B_04_800445BC(Entry *e) {
+    e->unk0->unk18 = e->unk4;
+    e->unk0->unk1C = e->unk8;
+}
+
+/* No marks: the mark texts back at their places. */
+static void func_ovl0B_04_800445C4(void) {
+    func_ovl0B_04_800445BC(&D_ovl0B_04_8004A060[8]);
+    func_ovl0B_04_800445BC(&D_ovl0B_04_8004A060[9]);
+    D_ovl0B_04_80048A70[0] = 0xF;
+    D_ovl0B_04_80048A70[2] = 0xF;
+    D_ovl0B_04_80048A70[4] = 0xF;
+}
+
+/* An entry's object at its other place (inlined). */
+static void func_ovl0B_04_8004461C(Entry *e) {
+    e->unk0->unk18 = e->unkC;
+    e->unk0->unk1C = e->unk10;
+}
+
+static void func_ovl0B_04_80044624(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+}
+
+static s8 func_ovl0B_04_8004462C(u8 set, u8 c) {
+    s8 r = 0;
+
+    switch (set) {
+        default:
+            r = 0;
+            break;
+        case 1:
+            if (c >= 0xB0 && c < 0xB5) {
+                r = -0xB;
+            } else if (c >= 0xD3 && c < 0xD6) {
+                r = -0x28;
+            } else if (c == 0xC1) {
+                r = -0x17;
+            }
+            break;
+        case 2:
+            if (c >= 0x60 && c < 0x65) {
+                r = -0xB;
+            } else if (c >= 0x83 && c < 0x86) {
+                r = -0x28;
+            } else if (c == 0x71) {
+                r = -0x17;
+            }
+            break;
+        case 3:
+        case 4:
+            break;
+    }
+    return r;
+}
+
+/* The character before the cursor: the marks it can take (the 0x1E00
+ * buttons put them on in turn), shown in D_ovl0B_04_80048A70. */
+static s32 func_ovl0B_04_80044714(u8 set, u8 c) {
+    s32 r = 0;
+
+    switch (set) {
+        case 1:
+            if (c >= 0xC9 && c < 0xCE) {
+                r = 0x27;
+            }
+            break;
+        case 2:
+            if (c >= 0x79 && c < 0x7E) {
+                r = 0x27;
+            }
+            break;
+        case 3:
+        case 4:
+            break;
+    }
+    return r;
+}
+
+static s8 func_ovl0B_04_8004471C(u8 set, u8 c) {
+    s8 r = 0;
+
+    switch (set) {
+        default:
+            r = 0;
+            break;
+        case 1:
+            if (c >= 0xB5 && c < 0xC4) {
+                r = 0x27;
+            } else if (c >= 0xC9 && c < 0xCE) {
+                r = 0x22;
+            }
+            break;
+        case 2:
+            if (c >= 0x65 && c < 0x74) {
+                r = 0x27;
+            } else if (c >= 0x79 && c < 0x7E) {
+                r = 0x22;
+            }
+            break;
+        case 3:
+        case 4:
+            break;
+    }
+    return r;
+}
+
+static void func_ovl0B_04_800447DC(u16 buttons, u8 *ret) {
+    static s32 D_ovl0B_04_8004A1A0 = 0; /* function-scope; A1A4.. are defined after this function */
+    u8 set;
+    u8 idx;
+    u8 c;
+    s32 n;
+    u8 d1;
+    u8 d2;
+    u8 d3;
+    s32 t;
+
+    if (D_ovl0B_04_8004A490.unk0 == 0) {
+        c = 0;
+    } else if (D_ovl0B_04_8004A490.unk0 == 7 && D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0] != 0) {
+        c = D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0];
+    } else {
+        c = D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0 - 1][0];
+    }
+    set = D_ovl0B_04_8004905C[c];
+    idx = D_ovl0B_04_80048F5C[c];
+    if (set == 1 || set == 2) {
+        n = 0;
+        c = func_ovl0B_04_8004426C(set, idx);
+        d1 = func_ovl0B_04_8004471C(set, c);
+        if (d1) {
+            n = 1;
+        }
+        d2 = func_ovl0B_04_80044714(set, c);
+        if (d2 != 0) {
+            n++;
+        }
+        d3 = func_ovl0B_04_8004462C(set, c);
+        if (d3 != 0) {
+            n++;
+        }
+        if (n != 0) {
+            D_ovl0B_04_80048A70[0] = c;
+            if (d1 != 0) {
+                D_ovl0B_04_80048A70[2] = c + d1;
+            } else if (d2 != 0) {
+                D_ovl0B_04_80048A70[2] = c + d2;
+            } else if (d3 != 0) {
+                D_ovl0B_04_80048A70[2] = c + d3;
+            }
+            func_ovl0B_04_8004461C(&D_ovl0B_04_8004A060[8]);
+            if (n >= 2) {
+                func_ovl0B_04_8004461C(&D_ovl0B_04_8004A060[9]);
+                if (d2 != 0) {
+                    D_ovl0B_04_80048A70[4] = c + d2;
+                } else if (d3 != 0) {
+                    D_ovl0B_04_80048A70[4] = c + d3;
+                } else if (d1 != 0) {
+                    D_ovl0B_04_80048A70[4] = c + d1;
+                }
             } else {
-                func_ovl0B_04_800487D0(2);
+                func_ovl0B_04_800445BC(&D_ovl0B_04_8004A060[9]);
+                D_ovl0B_04_80048A70[4] = 0xF;
+            }
+            if (buttons & 0x1E00) {
+                func_ovl0B_04_800487D0(0);
+                D_ovl0B_04_8004A1A0++;
+                if (n < D_ovl0B_04_8004A1A0) {
+                    D_ovl0B_04_8004A1A0 = 0;
+                } else if (D_ovl0B_04_8004A1A0 == 1) {
+                    if (d1 != 0) {
+                        c += d1;
+                    } else if (d2 != 0) {
+                        c += d2;
+                    } else if (d3 != 0) {
+                        c += d3;
+                    } else {
+                        D_ovl0B_04_8004A1A0 = 0;
+                    }
+                } else if (d2 != 0) {
+                    c += d2;
+                } else if (d3 != 0) {
+                    c += d3;
+                } else if (d1 != 0) {
+                    c += d1;
+                } else {
+                    D_ovl0B_04_8004A1A0 = 0;
+                }
+                if (c != D_ovl0B_04_8004A490.unk1) {
+                    (&D_ovl0B_04_8004A480)[1][1] = c; /* fake: through the neighbour, for its own lui */
+                    t = 0;
+                    if ((D_ovl0B_04_8004A490.unk0 == 7 && D_ovl0B_04_8004A290[7][0] == 0) || D_ovl0B_04_8004A490.unk0 != 7) {
+                        D_ovl0B_04_8004A490.unk0--;
+                        t = 1;
+                    }
+                    func_ovl0B_04_80044210();
+                    if (t) {
+                        D_ovl0B_04_8004A490.unk0++;
+                    }
+                }
+                *ret = 2;
+            } else {
+                D_ovl0B_04_8004A1A0 = 0;
             }
         } else {
-            *D_ovl0B_04_8004A178 = D_ovl0B_04_8004A190;
-            *D_ovl0B_04_8004A17C = D_ovl0B_04_8004A194;
-            *D_ovl0B_04_8004A180 = D_ovl0B_04_8004A198;
-            *D_ovl0B_04_8004A184 = D_ovl0B_04_8004A19C;
-            func_ovl0B_04_800487D0(1);
+            func_ovl0B_04_800445C4();
+            D_ovl0B_04_8004A1A0 = 0;
         }
-        func_ovl0B_04_80043FA4(&ret, 0xFF, 0, 2);
-        func_ovl0B_04_800440C8(&D_ovl0B_04_80049B20[4]);
-    } else if (arg1 & 2) {
-        func_ovl0B_04_800487D0(2);
-        func_ovl0B_04_80043FA4(&ret, 0, 1, 1);
-        func_ovl0B_04_800440C8(&D_ovl0B_04_80049B20[4]);
-        func_ovl0B_04_8004447C(D_ovl0B_04_8004A3B0[4], 0xFF);
+    } else {
+        func_ovl0B_04_800445C4();
+        D_ovl0B_04_8004A1A0 = 0;
     }
-    return ret;
-}
+    func_ovl0B_04_80048640(D_ovl0B_04_8004A468[5], D_ovl0B_04_80048A70, 5);
+} s32 D_ovl0B_04_8004A1A4 = 0; s32 D_ovl0B_04_8004A1A8 = 0; s32 D_ovl0B_04_8004A1AC[14] = { 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1 };
 
 /* The name copied into the one being entered (inlined). */
 static void func_ovl0B_04_80044BE0(void) {
@@ -1978,7 +1723,7 @@ static void func_ovl0B_04_80044BE0(void) {
 
 /* Page 0: the name, the four slots (pages 5-8), and B to leave (through
  * page 9 if anything changed). */
-u8 func_ovl0B_04_80044BE8(u8 arg0, u16 arg1) {
+static u8 func_ovl0B_04_80044BE8(u8 arg0, u16 arg1) {
     u8 ret = 1;
     s32 changed;
     Obj *a;
@@ -2069,426 +1814,637 @@ u8 func_ovl0B_04_80044BE8(u8 arg0, u16 arg1) {
     return ret;
 }
 
-/* The character before the cursor: the marks it can take (the 0x1E00
- * buttons put them on in turn), shown in D_ovl0B_04_80048A70. */
-static s32 func_ovl0B_04_80044714(u8 set, u8 c) {
-    s32 r = 0;
+/* Page 9's save (inlined in 80045214; its stub is 800450B8): its result
+ * is the inlined return value, so the test reads it from $v0 after a load
+ * through a ugen temporary (`lw t8; move v0,t8`, merged by as1). */
+static s32 func_ovl0B_04_800450B8(void) {
+    s32 i;
+    s32 ok;
+    u8 *save;
+    s32 id;
+    s32 id2;
 
-    switch (set) {
-        case 1:
-            if (c >= 0xC9 && c < 0xCE) {
-                r = 0x27;
-            }
-            break;
-        case 2:
-            if (c >= 0x79 && c < 0x7E) {
-                r = 0x27;
-            }
-            break;
-        case 3:
-        case 4:
-            break;
-    }
-    return r;
-}
-
-static void func_ovl0B_04_800447DC(u16 buttons, u8 *ret) {
-    static s32 D_ovl0B_04_8004A1A0 = 0; /* function-scope; A1A4.. are defined after this function */
-    u8 set;
-    u8 idx;
-    u8 c;
-    s32 n;
-    u8 d1;
-    u8 d2;
-    u8 d3;
-    s32 t;
-
-    if (D_ovl0B_04_8004A490.unk0 == 0) {
-        c = 0;
-    } else if (D_ovl0B_04_8004A490.unk0 == 7 && D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0] != 0) {
-        c = D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0];
-    } else {
-        c = D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0 - 1][0];
-    }
-    set = D_ovl0B_04_8004905C[c];
-    idx = D_ovl0B_04_80048F5C[c];
-    if (set == 1 || set == 2) {
-        n = 0;
-        c = func_ovl0B_04_8004426C(set, idx);
-        d1 = func_ovl0B_04_8004471C(set, c);
-        if (d1) {
-            n = 1;
-        }
-        d2 = func_ovl0B_04_80044714(set, c);
-        if (d2 != 0) {
-            n++;
-        }
-        d3 = func_ovl0B_04_8004462C(set, c);
-        if (d3 != 0) {
-            n++;
-        }
-        if (n != 0) {
-            D_ovl0B_04_80048A70[0] = c;
-            if (d1 != 0) {
-                D_ovl0B_04_80048A70[2] = c + d1;
-            } else if (d2 != 0) {
-                D_ovl0B_04_80048A70[2] = c + d2;
-            } else if (d3 != 0) {
-                D_ovl0B_04_80048A70[2] = c + d3;
-            }
-            D_ovl0B_04_8004A060[8].unk0->unk18 = D_ovl0B_04_8004A060[8].unkC;
-            D_ovl0B_04_8004A060[8].unk0->unk1C = D_ovl0B_04_8004A060[8].unk10;
-            if (n >= 2) {
-                D_ovl0B_04_8004A060[9].unk0->unk18 = D_ovl0B_04_8004A060[9].unkC;
-                D_ovl0B_04_8004A060[9].unk0->unk1C = D_ovl0B_04_8004A060[9].unk10;
-                if (d2 != 0) {
-                    D_ovl0B_04_80048A70[4] = c + d2;
-                } else if (d3 != 0) {
-                    D_ovl0B_04_80048A70[4] = c + d3;
-                } else if (d1 != 0) {
-                    D_ovl0B_04_80048A70[4] = c + d1;
-                }
-            } else {
-                D_ovl0B_04_8004A060[9].unk0->unk18 = D_ovl0B_04_8004A060[9].unk4;
-                D_ovl0B_04_8004A060[9].unk0->unk1C = D_ovl0B_04_8004A060[9].unk8;
-                D_ovl0B_04_80048A70[4] = 0xF;
-            }
-            if (buttons & 0x1E00) {
-                func_ovl0B_04_800487D0(0);
-                D_ovl0B_04_8004A1A0++;
-                if (n < D_ovl0B_04_8004A1A0) {
-                    D_ovl0B_04_8004A1A0 = 0;
-                } else if (D_ovl0B_04_8004A1A0 == 1) {
-                    if (d1 != 0) {
-                        c += d1;
-                    } else if (d2 != 0) {
-                        c += d2;
-                    } else if (d3 != 0) {
-                        c += d3;
-                    } else {
-                        D_ovl0B_04_8004A1A0 = 0;
-                    }
-                } else if (d2 != 0) {
-                    c += d2;
-                } else if (d3 != 0) {
-                    c += d3;
-                } else if (d1 != 0) {
-                    c += d1;
-                } else {
-                    D_ovl0B_04_8004A1A0 = 0;
-                }
-                if (c != D_ovl0B_04_8004A490.unk1) {
-                    (&D_ovl0B_04_8004A480)[1][1] = c; /* fake: through the neighbour, for its own lui */
-                    t = 0;
-                    if ((D_ovl0B_04_8004A490.unk0 == 7 && D_ovl0B_04_8004A290[7][0] == 0) || D_ovl0B_04_8004A490.unk0 != 7) {
-                        D_ovl0B_04_8004A490.unk0--;
-                        t = 1;
-                    }
-                    func_ovl0B_04_80044210();
-                    if (t) {
-                        D_ovl0B_04_8004A490.unk0++;
-                    }
-                }
-                *ret = 2;
-            } else {
-                D_ovl0B_04_8004A1A0 = 0;
-            }
-        } else {
-            func_ovl0B_04_800445C4();
-            D_ovl0B_04_8004A1A0 = 0;
-        }
-    } else {
-        func_ovl0B_04_800445C4();
-        D_ovl0B_04_8004A1A0 = 0;
-    }
-    func_ovl0B_04_80048640(D_ovl0B_04_8004A468[5], D_ovl0B_04_80048A70, 5);
-} s32 D_ovl0B_04_8004A1A4 = 0; s32 D_ovl0B_04_8004A1A8 = 0; s32 D_ovl0B_04_8004A1AC[14] = { 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1 };
-
-static s8 func_ovl0B_04_8004471C(u8 set, u8 c) {
-    s8 r = 0;
-
-    switch (set) {
-        default:
-            r = 0;
-            break;
-        case 1:
-            if (c >= 0xB5 && c < 0xC4) {
-                r = 0x27;
-            } else if (c >= 0xC9 && c < 0xCE) {
-                r = 0x22;
-            }
-            break;
-        case 2:
-            if (c >= 0x65 && c < 0x74) {
-                r = 0x27;
-            } else if (c >= 0x79 && c < 0x7E) {
-                r = 0x22;
-            }
-            break;
-        case 3:
-        case 4:
-            break;
-    }
-    return r;
-}
-
-static s8 func_ovl0B_04_8004462C(u8 set, u8 c) {
-    s8 r = 0;
-    func_ovl0B_04_80044624();
-    func_ovl0B_04_8004461C();
-
-    switch (set) {
-        default:
-            r = 0;
-            break;
-        case 1:
-            if (c >= 0xB0 && c < 0xB5) {
-                r = -0xB;
-            } else if (c >= 0xD3 && c < 0xD6) {
-                r = -0x28;
-            } else if (c == 0xC1) {
-                r = -0x17;
-            }
-            break;
-        case 2:
-            if (c >= 0x60 && c < 0x65) {
-                r = -0xB;
-            } else if (c >= 0x83 && c < 0x86) {
-                r = -0x28;
-            } else if (c == 0x71) {
-                r = -0x17;
-            }
-            break;
-        case 3:
-        case 4:
-            break;
-    }
-    return r;
-}
-
-/* No marks: the mark texts back at their places. */
-static void func_ovl0B_04_800445C4(void) {
-    func_ovl0B_04_800445BC();
-    D_ovl0B_04_8004A060[8].unk0->unk18 = D_ovl0B_04_8004A060[8].unk4;
-    D_ovl0B_04_8004A060[8].unk0->unk1C = D_ovl0B_04_8004A060[8].unk8;
-    D_ovl0B_04_8004A060[9].unk0->unk18 = D_ovl0B_04_8004A060[9].unk4;
-    D_ovl0B_04_8004A060[9].unk0->unk1C = D_ovl0B_04_8004A060[9].unk8;
-    D_ovl0B_04_80048A70[0] = 0xF;
-    D_ovl0B_04_80048A70[2] = 0xF;
-    D_ovl0B_04_80048A70[4] = 0xF;
-}
-
-/* The cursor under the name. */
-static void func_ovl0B_04_8004456C(void) {
-    D_ovl0B_04_8004A060[4].unk0->unk10 = D_ovl0B_04_8004A490.unk0 * 20 + 120;
-    D_ovl0B_04_8004A060[4].unk0->unk18 = D_ovl0B_04_8004A060[4].unk0->unk10 + 20.0f;
-}
-
-/* Page 0's set-up. */
-void func_ovl0B_04_800444E8(Obj *arg0) {
-    Obj *o;
-
-    func_ovl0B_04_80044394(D_ovl0B_04_8004A2A8[6], D_ovl0B_04_8004A2A8[7]);
-    o = func_ovl0B_04_80048668(D_ovl0B_04_8004A2A8[8]);
-    o->unkC |= 0x480;
-    o->unk36 = 100;
-#if !VERSION_JP
-    o = func_ovl0B_04_80048608();
-    o->unk36 = 0;
-    o->unkC |= 0x80;
-#endif
-    if (0) { /* fake: dead calls: the emission order of the statics and stubs (header) */
-        func_ovl0B_04_800444E0();
-        func_ovl0B_04_800444D8();
-        func_ovl0B_04_800444D0();
-        func_ovl0B_04_8004447C(0, 0);
-        func_ovl0B_04_80044394(0, 0);
-        func_ovl0B_04_8004438C();
-        func_ovl0B_04_80044384();
-        func_ovl0B_04_8004430C(0);
-        func_ovl0B_04_80044304();
-        func_ovl0B_04_800442FC();
-        func_ovl0B_04_8004426C(0, 0);
-        func_ovl0B_04_80044264();
-        func_ovl0B_04_80044210();
-        func_ovl0B_04_800441C4();
-        func_ovl0B_04_800441BC();
-        func_ovl0B_04_80044154();
-        func_ovl0B_04_800440C8(0);
-        func_ovl0B_04_8004401C(0);
-        func_ovl0B_04_80043FA4(0, 0, 0, 0);
-#if !VERSION_JP
-        func_ovl0B_04_80043F9C();
-#endif
-        func_ovl0B_04_80043F94();
-        func_ovl0B_04_80043F8C();
-        func_ovl0B_04_80043F84();
-        func_ovl0B_04_80043F7C();
-        func_ovl0B_04_80043F74();
-        func_ovl0B_04_80043F6C();
-        func_ovl0B_04_80043F64();
-        func_ovl0B_04_80043F5C();
-        func_ovl0B_04_80043F54();
-        func_ovl0B_04_80043F4C();
-        func_ovl0B_04_80043F44();
-        func_ovl0B_04_80043F3C();
-    }
-}
-
-static void func_ovl0B_04_8004447C(s32 id, s32 alpha) {
-    Obj *o = func_ovl0B_04_80048668(id);
-
-    if (alpha != 0xFF) {
-        o->unkC |= 0x80;
-    } else {
-        o->unkC &= ~0x80;
-    }
-    o->unk36 = alpha;
-}
-
-/* The name's two texts centred. */
-static void func_ovl0B_04_80044394(s32 a, s32 b) {
-    s32 n;
+    ok = 1;
+    save = D_ovl0B_04_8004A188;
+    func_ovl0B_04_8004447C(D_ovl0B_04_8004A3B0[4], 0);
+    func_ovl0B_04_8004447C(D_ovl0B_04_8004A3B0[5], 0);
 #if VERSION_JP
-    u16 x;
+    id = func_ovl0B_04_80048688(D_ovl0B_04_80048A54, 55, 175, 0.8f, 0.8f, 2);
 #else
-    s32 x;
+    id = func_ovl0B_04_80048688(D_ovl0B_04_80048A54, 100, 175, 0.8f, 0.8f, 2);
 #endif
-    Obj *o;
-    s32 m;
-
-#line 2300 /* fake: the body below the header's line (sw ra's slot) */
-    D_ovl0B_04_80048A20[8] = 0;
-#line 2299 /* fake: n = 0 numbered before the [8] store */
-    n = 0;
-    while (D_ovl0B_04_80048A20[n] != 0) {
-        n++;
+    func_ovl0B_04_80048268(3);
+    for (i = 0; i < 8; i++) {
+        save[i] = D_ovl0B_04_80048A20[i];
     }
-    m = n - 1;
-    if (!m) {} /* fake: dead read; m = n - 1 its own variable (the original: addiu v0,v1,-1) */
-    if (m != -1) {
+    save[8] = 0;
+    if (func_ovl0B_04_80048910() != 0) {
+        func_ovl0B_04_800487D0(0x18);
+        func_ovl0B_04_8004447C(id, 0);
 #if VERSION_JP
-        x = 56 - m * 8;
+        id2 = func_ovl0B_04_80048688(D_ovl0B_04_80048A60, 50, 175, 0.8f, 0.8f, 0);
 #else
-        x = -func_ovl0B_04_80048680(D_ovl0B_04_80048A20) * 0.65f / 2;
+        id2 = func_ovl0B_04_80048688(D_ovl0B_04_80048A60, 80, 175, 0.8f, 0.8f, 0);
 #endif
-        func_ovl0B_04_80048650(a, x, 0);
-        if (b != -1) {
-            func_ovl0B_04_80048650(b, x, 0);
-            o = func_ovl0B_04_80048668(b);
-            o->unkC |= 0x480;
-            o->unk36 = 100;
-        }
+        func_ovl0B_04_80048268(120);
+        func_ovl0B_04_80048638(id2);
+        ok = 0;
     }
+    func_ovl0B_04_80048638(id);
+    return ok;
 }
 
-/* The END item (0x31, 0x32) lit or the character set's tab. */
-static void func_ovl0B_04_8004430C(u8 item) {
-    if (item == 0x31 || item == 0x32) {
-        func_ovl0B_04_80047DF0(D_ovl0B_04_8004A060[3].unk0, 1);
-        func_ovl0B_04_80047DF0(D_ovl0B_04_8004A060[2].unk0, 2);
-    } else {
-        func_ovl0B_04_80047DF0(D_ovl0B_04_8004A060[3].unk0, 2);
-        func_ovl0B_04_80047DF0(D_ovl0B_04_8004A060[2].unk0, 1);
-    }
-}
-
-/* A character set's character. */
-static u8 func_ovl0B_04_8004426C(u8 set, u8 idx) {
-    u8 r;
-
-    switch (set) {
-        default:
-            r = 0;
-            break;
-        case 1:
-            r = D_ovl0B_04_8004915C[idx];
-            break;
-        case 2:
-            r = D_ovl0B_04_80049190[idx];
-            break;
-        case 3:
-            r = D_ovl0B_04_800491C4[idx];
-            break;
-        case 4:
-            r = D_ovl0B_04_800491F8[idx];
-            break;
-    }
-    return r;
-}
-
-/* The character at the cursor written. */
-static void func_ovl0B_04_80044210(void) {
-    D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0] = D_ovl0B_04_8004A490.unk1;
-    func_ovl0B_04_80048640(D_ovl0B_04_8004A448[D_ovl0B_04_8004A490.unk0], D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0], 2);
-}
-
-/* The set and item of the character at the cursor. */
-static void func_ovl0B_04_800441C4(void) {
-    u8 set = D_ovl0B_04_8004905C[D_ovl0B_04_8004A490.unk1];
-
-    if (set != 0) {
-        D_ovl0B_04_8004A490.unk2 = set;
-    }
-#if !VERSION_JP
-    if (D_ovl0B_04_8004A490.unk2 < 3) {
-        D_ovl0B_04_8004A490.unk2 = 3;
-    }
-#endif
-    D_ovl0B_04_8004A490.unk3 = D_ovl0B_04_80048F5C[D_ovl0B_04_8004A490.unk1];
-}
-
-/* The cursor at the end of the name. */
-static void func_ovl0B_04_80044154(void) {
-    s32 n = 0;
-
-    D_ovl0B_04_8004A290[8][0] = 0;
-    while (D_ovl0B_04_8004A290[n][0] != 0) {
-        n++;
-    }
-    if (n == 8) {
-        n--;
-    }
-    D_ovl0B_04_8004A490.unk0 = n;
-    D_ovl0B_04_8004A490.unk1 = D_ovl0B_04_8004A290[n][0];
-}
-
-/* The fade out and in (ovl_0B_05's 80043018 and 80043904). */
-static void func_ovl0B_04_800440C8(Fade *f) {
-    for (f->unk34 = f->unk24; f->unk34 > 0.0f; f->unk34 -= f->unk28) {
-        func_ovl0B_04_80048290();
-    }
-    func_ovl0B_04_80047DE0(f->unk0);
-    func_ovl0B_04_80048290();
-}
-
-static void func_ovl0B_04_8004401C(Fade *f) {
+/* Page 9's set-up: the name over a fade (written out: the stub before it,
+ * 800450B8, is 80045214's save). */
+static void func_ovl0B_04_800450C0(Obj *arg0) {
+    Obj *o = func_ovl0B_04_80048668(D_ovl0B_04_8004A3B0[4]);
+    Fade *f;
     f32 step;
 
+    func_ovl0B_04_80044394(D_ovl0B_04_8004A3B0[4], D_ovl0B_04_8004A3B0[5]);
+    func_ovl0B_04_8004447C(D_ovl0B_04_8004A3B0[4], 0x50);
+    func_ovl0B_04_8004447C(D_ovl0B_04_8004A3B0[5], 0x32);
+    o->unkC |= 0x400;
+    f = &D_ovl0B_04_80049B20[4];
+    if (!D_ovl0B_04_8004A3E4) {} /* fake: dead read of the fade pointer before f is set up (without it 57 words differ) */
     step = (f->unk18 - f->unk14) / f->unk1C;
     D_ovl0B_04_8004A3E4 = f;
-    f->unk0 = func_ovl0B_04_80047E58(func_ovl0B_04_80043CD0, 2);
-    f->unk0->unkC |= 0x480;
+    f->unk0 = func_ovl0B_04_80047E58(func_ovl0B_04_80043CD0, 0);
+    f->unk0->unkC |= 0x80;
     for (f->unk34 = f->unk14; f->unk34 < f->unk18; f->unk34 += step) {
         func_ovl0B_04_80048290();
     }
     func_ovl0B_04_80048290();
 }
 
-/* Leave the page for another (0xFF ends the screen). */
-static void func_ovl0B_04_80043FA4(u8 *ret, s32 page, s32 item, s32 mode) {
-    *ret = 0;
-    D_ovl0B_04_8004A168 = page;
-    D_ovl0B_04_8004A16C = item;
-    D_ovl0B_04_8004A490.unk3 = item;
-    switch (mode) {
-        case 1:
-            D_ovl0B_04_8004A164->unkC &= ~1;
+/* Page 9: save the changes or not. */
+static u8 func_ovl0B_04_80045214(u8 arg0, u16 arg1) {
+    u8 ret = 1;
+
+    if ((arg1 & 0x80) || (arg1 & 0x100)) {
+        func_ovl0B_04_800438FC(D_ovl0B_04_8004A3B0[D_ovl0B_04_8004A174], 0,
+                               &D_ovl0B_04_80049930[D_ovl0B_04_8004A174]);
+        func_ovl0B_04_800438FC(D_ovl0B_04_8004A3B0[arg0], 1, &D_ovl0B_04_80049930[arg0]);
+        D_ovl0B_04_8004A174 = arg0;
+    }
+    if (arg1 & 1) {
+        if (arg0 == 1) {
+            if (func_ovl0B_04_800450B8()) {
+                func_ovl0B_04_800487D0(0x25);
+            } else {
+                func_ovl0B_04_800487D0(2);
+            }
+        } else {
+            *D_ovl0B_04_8004A178 = D_ovl0B_04_8004A190;
+            *D_ovl0B_04_8004A17C = D_ovl0B_04_8004A194;
+            *D_ovl0B_04_8004A180 = D_ovl0B_04_8004A198;
+            *D_ovl0B_04_8004A184 = D_ovl0B_04_8004A19C;
+            func_ovl0B_04_800487D0(1);
+        }
+        func_ovl0B_04_80043FA4(&ret, 0xFF, 0, 2);
+        func_ovl0B_04_800440C8(&D_ovl0B_04_80049B20[4]);
+    } else if (arg1 & 2) {
+        func_ovl0B_04_800487D0(2);
+        func_ovl0B_04_80043FA4(&ret, 0, 1, 1);
+        func_ovl0B_04_800440C8(&D_ovl0B_04_80049B20[4]);
+        func_ovl0B_04_8004447C(D_ovl0B_04_8004A3B0[4], 0xFF);
+    }
+    return ret;
+}
+
+/* The name kept (and whether it changed), and the screen's texts freed
+ * (inlined in 80045540). */
+static void func_ovl0B_04_80045530(void) {
+    s32 i;
+
+    func_ovl0B_04_80043AD4(D_ovl0B_04_8004A448, 8);
+    func_ovl0B_04_80043AD4(D_ovl0B_04_8004A468, 6);
+    for (i = 0; i < 5; i++) {
+        func_ovl0B_04_80047DE0(D_ovl0B_04_8004A060[i].unk0);
+    }
+    func_ovl0B_04_80043010(3, &D_ovl0B_04_8004A060[5], 0);
+    func_ovl0B_04_80043010(2, &D_ovl0B_04_8004A060[8], 0);
+}
+
+static void func_ovl0B_04_80045538(void) {
+    s32 i;
+
+    for (i = 0; i < 8; i++) {
+        if (D_ovl0B_04_80048A20[i] != D_ovl0B_04_8004A290[i][0]) {
+            D_ovl0B_04_8004A18C = 1;
+        }
+        D_ovl0B_04_80048A20[i] = D_ovl0B_04_8004A290[i][0];
+    }
+}
+
+/* Pages 1-4: B rubs a character out, A writes the one under the cursor or
+ * (items 0x31 and 0x32) ends the name. */
+static void func_ovl0B_04_80045540(u8 item, u16 buttons, u8 *ret) {
+    u8 c;
+    u8 x;
+
+    /* fake: (p2) the dead read gives the base its s0; c's read is on the
+     * if's line (.loc). The decrement is unsigned arithmetic masked to a
+     * byte (p5): ugen's `and 255` before the sb, which as1 drops, uses up
+     * the temporary the original's t-registers are one ahead by, and it
+     * keeps unk0's own (u8) value, so c stays in $a0. */
+    if (buttons & 2) { c = D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0];
+        D_ovl0B_04_8004A490.unk1 = 0;
+        D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0] = 0;
+        if ((D_ovl0B_04_8004A490.unk0 == 7 && c == 0) || (D_ovl0B_04_8004A490.unk0 != 7 && D_ovl0B_04_8004A490.unk0 > 0)) {
+            if (D_ovl0B_04_8004A490.unk1) {} /* fake: see above */
+            D_ovl0B_04_8004A490.unk0 = ((u32) D_ovl0B_04_8004A490.unk0 - 1) & 0xFF;
+        }
+        func_ovl0B_04_80044210();
+        func_ovl0B_04_80044154();
+        func_ovl0B_04_800487D0(2);
+    } else {
+        func_ovl0B_04_8004430C(item);
+        if (buttons & 1) {
+            if (item == 0x31 || item == 0x32) {
+                func_ovl0B_04_800487D0(1);
+                func_ovl0B_04_80043FA4(ret, 0, 1, 1);
+                D_ovl0B_04_8004A164->unk20 = 0.0f;
+                func_ovl0B_04_80045538();
+                func_ovl0B_04_80045530();
+            } else {
+                x = item;
+                D_ovl0B_04_8004A490.unk1 = func_ovl0B_04_8004426C(D_ovl0B_04_8004A490.unk2, item);
+                D_ovl0B_04_8004A490.unk3 = x;
+                func_ovl0B_04_80044210();
+                D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0] = D_ovl0B_04_8004A490.unk1;
+                D_ovl0B_04_8004A490.unk0++;
+                D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0] = 0;
+                func_ovl0B_04_800487D0(1);
+                if (D_ovl0B_04_8004A490.unk0 == 8) {
+                    D_ovl0B_04_8004A490.unk0--;
+                    D_ovl0B_04_8004A490.unk1 = 0;
+                    func_ovl0B_04_800441C4();
+                    func_ovl0B_04_800485F8(D_ovl0B_04_8004A490.unk3);
+                    func_ovl0B_04_8004430C(D_ovl0B_04_8004A490.unk3);
+                }
+            }
+        }
+    }
+    func_ovl0B_04_800447DC(buttons, ret);
+    func_ovl0B_04_8004456C();
+}
+
+static void func_ovl0B_04_80045848(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+}
+
+static void func_ovl0B_04_80045850(void) {
+    s32 i;
+    u8 ret;
+
+    for (i = 2; i < 7; i++) {
+        D_ovl0B_04_80049C38[i].unk14 &= ~1;
+    }
+    func_ovl0B_04_8004430C(D_ovl0B_04_8004A490.unk3);
+    func_ovl0B_04_800447DC(0, &ret);
+    func_ovl0B_04_8004456C();
+}
+
+static void func_ovl0B_04_800458F4(s32 id0, s32 id1) {
+    Obj *a = func_ovl0B_04_80048668(id0);
+    Obj *b = func_ovl0B_04_80048668(id1);
+    Obj *c = func_ovl0B_04_80048608();
+
+    a->unkC |= 1;
+    b->unkC |= 1;
+    c->unkC |= 1;
+}
+
+/* A page's two texts and the menu's cursor shown, and hidden. */
+static void func_ovl0B_04_80045958(s32 id0, s32 id1) {
+    Obj *a = func_ovl0B_04_80048668(id0);
+    Obj *b = func_ovl0B_04_80048668(id1);
+    Obj *c = func_ovl0B_04_80048608();
+
+    a->unkC &= ~1;
+    b->unkC &= ~1;
+    c->unkC &= ~1;
+}
+
+/* A text set to a string, colour and scale (inlined in the set-ups). */
+static void func_ovl0B_04_SetText(s32 id, u8 *str, s32 col, f32 scale) {
+    func_ovl0B_04_80048640(id, str, col);
+    func_ovl0B_04_80048658(id, scale, scale);
+}
+
+static void func_ovl0B_04_800459C4(Obj *arg0) {
+    func_ovl0B_04_800458F4(D_ovl0B_04_8004A2D0[0], D_ovl0B_04_8004A2D0[1]);
+    func_ovl0B_04_80047DF0(arg0, 0x55);
+    func_ovl0B_04_8004401C(&D_ovl0B_04_80049B20[0]);
+    func_ovl0B_04_80045850();
+    func_ovl0B_04_80045958(D_ovl0B_04_8004A2D0[0], D_ovl0B_04_8004A2D0[1]);
+    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[1], D_ovl0B_04_80048A78, 5, 0.7f);
+    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[4], D_ovl0B_04_80048A84, 6, 0.5f);
+}
+
+static u8 func_ovl0B_04_80045AF0(u8 arg0, u16 arg1) {
+    u8 ret = 1;
+
+    if (arg1 & 0x10) {
+        D_ovl0B_04_8004A490.unk2 = 2;
+        func_ovl0B_04_800487D0(0);
+        func_ovl0B_04_80043FA4(&ret, 2, arg0, 0);
+    } else {
+        func_ovl0B_04_80045540(arg0, arg1, &ret);
+    }
+    if (ret == 0) {
+        func_ovl0B_04_800458F4(D_ovl0B_04_8004A2D0[0], D_ovl0B_04_8004A2D0[1]);
+        func_ovl0B_04_800440C8(&D_ovl0B_04_80049B20[0]);
+    }
+    return ret;
+}
+
+static void func_ovl0B_04_80045BF4(Obj *arg0) {
+    func_ovl0B_04_800458F4(D_ovl0B_04_8004A2D8[0], D_ovl0B_04_8004A2D8[1]);
+    func_ovl0B_04_80047DF0(arg0, 0x55);
+    func_ovl0B_04_8004401C(&D_ovl0B_04_80049B20[1]);
+    func_ovl0B_04_80045850();
+    func_ovl0B_04_80045958(D_ovl0B_04_8004A2D8[0], D_ovl0B_04_8004A2D8[1]);
+    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[2], D_ovl0B_04_80048A7C, 5, 0.7f);
+    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[1], D_ovl0B_04_80048A78, 6, 0.5f);
+}
+
+static u8 func_ovl0B_04_80045D20(u8 arg0, u16 arg1) {
+    u8 ret = 1;
+
+    if (arg1 & 0x10) {
+        D_ovl0B_04_8004A490.unk2 = 3;
+        func_ovl0B_04_800487D0(0);
+        func_ovl0B_04_80043FA4(&ret, 3, arg0, 0);
+    } else {
+        func_ovl0B_04_80045540(arg0, arg1, &ret);
+    }
+    if (ret == 0) {
+        func_ovl0B_04_800458F4(D_ovl0B_04_8004A2D8[0], D_ovl0B_04_8004A2D8[1]);
+        func_ovl0B_04_800440C8(&D_ovl0B_04_80049B20[1]);
+    }
+    return ret;
+}
+
+static void func_ovl0B_04_80045E24(Obj *arg0) {
+    func_ovl0B_04_800458F4(D_ovl0B_04_8004A2E0[0], D_ovl0B_04_8004A2E0[1]);
+    func_ovl0B_04_80047DF0(arg0, 0x55);
+    func_ovl0B_04_8004401C(&D_ovl0B_04_80049B20[2]);
+    func_ovl0B_04_80045850();
+    func_ovl0B_04_80045958(D_ovl0B_04_8004A2E0[0], D_ovl0B_04_8004A2E0[1]);
+    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[3], D_ovl0B_04_80048A80, 5, 0.7f);
+#if VERSION_JP
+    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[2], D_ovl0B_04_80048A7C, 6, 0.5f);
+#else
+    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[4], D_ovl0B_04_80048A84, 6, 0.5f);
+#endif
+}
+
+static u8 func_ovl0B_04_80045F50(u8 arg0, u16 arg1) {
+    u8 ret = 1;
+
+    if (arg1 & 0x10) {
+        D_ovl0B_04_8004A490.unk2 = 4;
+        func_ovl0B_04_800487D0(0);
+        func_ovl0B_04_80043FA4(&ret, 4, arg0, 0);
+    } else {
+        func_ovl0B_04_80045540(arg0, arg1, &ret);
+    }
+    if (ret == 0) {
+        func_ovl0B_04_800458F4(D_ovl0B_04_8004A2E0[0], D_ovl0B_04_8004A2E0[1]);
+        func_ovl0B_04_800440C8(&D_ovl0B_04_80049B20[2]);
+    }
+    return ret;
+}
+
+static void func_ovl0B_04_80046054(Obj *arg0) {
+    func_ovl0B_04_800458F4(D_ovl0B_04_8004A2E8[0], D_ovl0B_04_8004A2E8[1]);
+    func_ovl0B_04_80047DF0(arg0, 0x55);
+    func_ovl0B_04_8004401C(&D_ovl0B_04_80049B20[3]);
+    func_ovl0B_04_80045850();
+    func_ovl0B_04_80045958(D_ovl0B_04_8004A2E8[0], D_ovl0B_04_8004A2E8[1]);
+    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[4], D_ovl0B_04_80048A84, 5, 0.7f);
+    func_ovl0B_04_SetText(D_ovl0B_04_8004A468[3], D_ovl0B_04_80048A80, 6, 0.5f);
+}
+
+/* Pages 1-4: the character sets; the R button goes to the next. */
+static u8 func_ovl0B_04_80046180(u8 arg0, u16 arg1) {
+    u8 ret = 1;
+
+    if (arg1 & 0x10) {
+#if VERSION_JP
+        D_ovl0B_04_8004A490.unk2 = 1;
+        func_ovl0B_04_800487D0(0);
+        func_ovl0B_04_80043FA4(&ret, 1, arg0, 0);
+#else
+        D_ovl0B_04_8004A490.unk2 = 3;
+        func_ovl0B_04_800487D0(0);
+        func_ovl0B_04_80043FA4(&ret, 3, arg0, 0);
+#endif
+    } else {
+        func_ovl0B_04_80045540(arg0, arg1, &ret);
+    }
+    if (ret == 0) {
+        func_ovl0B_04_800458F4(D_ovl0B_04_8004A2E8[0], D_ovl0B_04_8004A2E8[1]);
+        func_ovl0B_04_800440C8(&D_ovl0B_04_80049B20[3]);
+    }
+    return ret;
+}
+
+static void func_ovl0B_04_80046284(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+}
+
+static void func_ovl0B_04_8004628C(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+}
+
+/* Pages 5-8: the half's five choices written ("---" for a closed one). */
+#if VERSION_JP
+static void func_ovl0B_04_80046294(u8 item) {
+    s32 i;
+    s32 j;
+    s32 n;
+    s32 k;
+    s32 m;
+
+    D_ovl0B_04_80048B98[3] = D_ovl0B_04_8004A1A8 + 0x11;
+    func_ovl0B_04_80048690(D_ovl0B_04_8004A404->unk4[8], D_ovl0B_04_80048B98, 5);
+    i = D_ovl0B_04_8004A1A8 * 5;
+    n = i + 5;
+    for (j = 1; i < n; i++, j++) {
+        k = D_ovl0B_04_8004A404->unk4[j];
+        if (D_ovl0B_04_8004A480[i + 1] == 0) {
+            func_ovl0B_04_80048690(k, D_ovl0B_04_80048B88, 1);
+            D_ovl0B_04_8004A404->unk8[j].unk0 = D_ovl0B_04_80048B88;
+        } else {
+            func_ovl0B_04_80048690(k, D_ovl0B_04_800494C0[D_ovl0B_04_8004A168 - 5][i], 1);
+            D_ovl0B_04_8004A404->unk8[j].unk0 = D_ovl0B_04_800494C0[D_ovl0B_04_8004A168 - 5][i];
+        }
+    }
+    m = D_ovl0B_04_8004A480[item] ? 3 : 4;
+    func_ovl0B_04_800438FC(D_ovl0B_04_8004A404->unk4[PAGE_IDX(item)], m,
+                           &D_ovl0B_04_8004A404->unk8[PAGE_IDX(item)]);
+}
+#else
+static void func_ovl0B_04_80046294(u8 item) {
+    s32 i;
+    s32 j;
+    s32 n;
+
+    D_ovl0B_04_80048B98[5] = D_ovl0B_04_8004A1A8 + 0x11;
+    func_ovl0B_04_80048690(D_ovl0B_04_8004A404->unk4[8], D_ovl0B_04_80048B98, 5);
+    i = D_ovl0B_04_8004A1A8 * 5;
+    n = i + 5;
+    for (j = 1; i < n; i++, j++) {
+        if (D_ovl0B_04_8004A480[i + 1] == 0) {
+            D_ovl0B_04_8004A408[j] = DRAW_ITEM(D_ovl0B_04_80048B88, &D_ovl0B_04_8004A404->unk8[j]);
+            D_ovl0B_04_8004A404->unk8[j].unk0 = D_ovl0B_04_80048B88;
+        } else {
+            D_ovl0B_04_8004A408[j] = DRAW_ITEM(D_ovl0B_04_800494C0[D_ovl0B_04_8004A168 - 5][i], &D_ovl0B_04_8004A404->unk8[j]);
+            D_ovl0B_04_8004A404->unk8[j].unk0 = D_ovl0B_04_800494C0[D_ovl0B_04_8004A168 - 5][i];
+        }
+    }
+    for (j = 1, i = D_ovl0B_04_8004A1A8 * 5, n = i + 5; i < n; i++, j++) {
+        func_ovl0B_04_80048638(D_ovl0B_04_8004A404->unk4[j]);
+        D_ovl0B_04_8004A404->unk4[j] = D_ovl0B_04_8004A408[j];
+    }
+    func_ovl0B_04_800438FC(D_ovl0B_04_8004A404->unk4[PAGE_IDX(item)], 3,
+                           &D_ovl0B_04_8004A404->unk8[PAGE_IDX(item)]);
+}
+#endif
+
+/* Pages 5-8: the other half of the choices, and its arrows. */
+static void func_ovl0B_04_80046600(u8 item, u16 buttons) {
+    if (D_ovl0B_04_8004A1A8 == 0 && (buttons & 0x100)) {
+        D_ovl0B_04_8004A1A4 = D_ovl0B_04_8004A1A8;
+        D_ovl0B_04_8004A1A8++;
+        func_ovl0B_04_80046294(item);
+        D_ovl0B_04_8004A1A4 = D_ovl0B_04_8004A1A8;
+    } else if (D_ovl0B_04_8004A1A8 == 1 && (buttons & 0x80)) {
+        D_ovl0B_04_8004A1A4 = D_ovl0B_04_8004A1A8;
+        D_ovl0B_04_8004A1A8--;
+        func_ovl0B_04_80046294(item);
+        D_ovl0B_04_8004A1A4 = D_ovl0B_04_8004A1A8;
+    }
+    switch (D_ovl0B_04_8004A1A8) {
+        case 0:
+            D_ovl0B_04_8004A060[10].unk0->unkC |= 1;
+            D_ovl0B_04_8004A060[11].unk0->unkC &= ~1;
             break;
-        case 2:
-            D_ovl0B_04_8004A164->unkC |= 1;
+        case 1:
+            D_ovl0B_04_8004A060[10].unk0->unkC &= ~1;
+            D_ovl0B_04_8004A060[11].unk0->unkC |= 1;
             break;
     }
+}
+
+/* Pages 5-8's cursor. */
+#if VERSION_JP
+static void func_ovl0B_04_80046734(u8 item, u16 buttons) {
+    if ((buttons & 0x20) || (buttons & 0x40)) {
+        if (D_ovl0B_04_8004A480[D_ovl0B_04_8004A174]) {
+            func_ovl0B_04_800438FC(D_ovl0B_04_8004A404->unk4[HALF_IDX(D_ovl0B_04_8004A174, D_ovl0B_04_8004A1A4)], 0,
+                                   &D_ovl0B_04_8004A404->unk8[HALF_IDX(D_ovl0B_04_8004A174, D_ovl0B_04_8004A1A4)]);
+        }
+        if (D_ovl0B_04_8004A480[item]) {
+            func_ovl0B_04_800438FC(D_ovl0B_04_8004A404->unk4[HALF_IDX(item, D_ovl0B_04_8004A1A8)], 1,
+                                   &D_ovl0B_04_8004A404->unk8[HALF_IDX(item, D_ovl0B_04_8004A1A8)]);
+        }
+        D_ovl0B_04_8004A174 = item;
+    } else if ((buttons & 0x80) || (buttons & 0x100)) {
+        func_ovl0B_04_80046600(item, buttons);
+        D_ovl0B_04_8004A174 = item;
+    }
+}
+#else
+static void func_ovl0B_04_80046734(u8 item, u16 buttons) {
+    if ((buttons & 0x20) || (buttons & 0x40)) {
+        func_ovl0B_04_800438FC(D_ovl0B_04_8004A404->unk4[HALF_IDX(D_ovl0B_04_8004A174, D_ovl0B_04_8004A1A4)], 0,
+                               &D_ovl0B_04_8004A404->unk8[HALF_IDX(D_ovl0B_04_8004A174, D_ovl0B_04_8004A1A4)]);
+        func_ovl0B_04_800438FC(D_ovl0B_04_8004A404->unk4[HALF_IDX(item, D_ovl0B_04_8004A1A8)], 1,
+                               &D_ovl0B_04_8004A404->unk8[HALF_IDX(item, D_ovl0B_04_8004A1A8)]);
+        D_ovl0B_04_8004A174 = item;
+    } else if ((buttons & 0x80) || (buttons & 0x100)) {
+        func_ovl0B_04_80046600(item, buttons);
+        D_ovl0B_04_8004A174 = item;
+    }
+}
+#endif
+
+static void func_ovl0B_04_800468E0(void) { /* fake: an empty static for the original's stub here (an inlined or unused static; which one is open) */
+}
+
+/* Choice n's open flag (inlined). */
+static void func_ovl0B_04_800468E8(s32 n, s32 i) {
+    if (func_ovl0B_04_800484B0(n) == 0) {
+        D_ovl0B_04_8004A480[i] = 0;
+    } else {
+        D_ovl0B_04_8004A480[i] = 1;
+    }
+}
+
+/* Pages 5-8's set-up: which of the ten choices from base + 1 are open. */
+static void func_ovl0B_04_800468F0(s32 base) {
+    Obj *o;
+    s32 i;
+
+    D_ovl0B_04_8004A404 = &D_ovl0B_04_800499B8[D_ovl0B_04_8004A168];
+    func_ovl0B_04_80044394(D_ovl0B_04_8004A404->unk4[7], D_ovl0B_04_8004A404->unk4[9]);
+    o = func_ovl0B_04_80048668(D_ovl0B_04_8004A404->unk4[10]);
+    o->unkC |= 0x480;
+    o->unk36 = 100;
+    D_ovl0B_04_8004A480[0] = 0;
+    for (i = 1; i < 3; i++) {
+        D_ovl0B_04_8004A480[i + 10] = 1;
+    }
+    for (i = 1; i < 11; i++) {
+#if VERSION_JP
+        if (!base) {} /* fake: dead read (jp only: base then takes s5) */
+#endif
+        func_ovl0B_04_800468E8(base + i, i);
+    }
+    func_ovl0B_04_MakeEntries(1, &D_ovl0B_04_8004A060[10], &D_ovl0B_04_80049C38[8]);
+    func_ovl0B_04_MakeEntries(1, &D_ovl0B_04_8004A060[11], &D_ovl0B_04_80049C38[9]);
+    D_ovl0B_04_8004A1A8 = 0;
+    D_ovl0B_04_8004A1A4 = 0;
+    D_ovl0B_04_8004A174 = D_ovl0B_04_8004A16C;
+    func_ovl0B_04_80046294(D_ovl0B_04_8004A16C);
+    func_ovl0B_04_80046600(D_ovl0B_04_8004A16C, 0);
+#if !VERSION_JP
+    func_ovl0B_04_800444E0();
+#endif
+}
+
+static void func_ovl0B_04_80046AA0(Obj *arg0) {
+    func_ovl0B_04_80046A98();
+}
+
+static void func_ovl0B_04_80046A98() {
+    func_ovl0B_04_800468F0(0);
+}
+
+static u8 func_ovl0B_04_80046B28(u8 arg0, u16 arg1) {
+    u8 ret = 1;
+    s32 pad[3]; /* fake: frame-tuned (with FreeEntries' (n, e, x), p4) */
+
+    func_ovl0B_04_80046734(arg0, arg1);
+    if (arg1 & 1) {
+        if (arg0 >= 11) {
+            func_ovl0B_04_80047E70(D_ovl0B_04_8004A170, 6, -1);
+            func_ovl0B_04_80047E70(D_ovl0B_04_8004A170, 8, -1);
+            *D_ovl0B_04_8004A178 = 0;
+            func_ovl0B_04_800487D0(2);
+        } else if (D_ovl0B_04_8004A480[arg0] != 0) {
+            func_ovl0B_04_800478A0(D_ovl0B_04_8004A170, 0, arg0);
+            func_ovl0B_04_800487D0(0x2E);
+            *D_ovl0B_04_8004A178 = arg0;
+        }
+    } else if (arg1 & 2) {
+        func_ovl0B_04_800487D0(2);
+        func_ovl0B_04_80043FA4(&ret, 0, 2, 0);
+        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[10], 0);
+        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[11], 0);
+    }
+    return ret;
+}
+
+static void func_ovl0B_04_80046CEC(Obj *arg0) {
+    func_ovl0B_04_80046CE4();
+}
+
+static void func_ovl0B_04_80046CE4() {
+    func_ovl0B_04_800468F0(11);
+}
+
+static u8 func_ovl0B_04_80046D74(u8 arg0, u16 arg1) {
+    u8 ret = 1;
+    s32 pad[3]; /* fake: frame-tuned (with FreeEntries' (n, e, x), p4) */
+
+    func_ovl0B_04_80046734(arg0, arg1);
+    if (arg1 & 1) {
+        if (arg0 >= 11) {
+            func_ovl0B_04_80047E70(D_ovl0B_04_8004A170, 1, -1);
+            *D_ovl0B_04_8004A17C = 0;
+            func_ovl0B_04_800487D0(2);
+        } else if (D_ovl0B_04_8004A480[arg0] != 0) {
+            func_ovl0B_04_800478A0(D_ovl0B_04_8004A170, 1, arg0);
+            func_ovl0B_04_800487D0(0x2E);
+            *D_ovl0B_04_8004A17C = arg0;
+        }
+    } else if (arg1 & 2) {
+        func_ovl0B_04_800487D0(2);
+        func_ovl0B_04_80043FA4(&ret, 0, 3, 0);
+        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[10], 0);
+        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[11], 0);
+    }
+    return ret;
+}
+
+static void func_ovl0B_04_80046F20(Obj *arg0) {
+    func_ovl0B_04_80046F18();
+}
+
+static void func_ovl0B_04_80046F18() {
+    func_ovl0B_04_800468F0(22);
+}
+
+static u8 func_ovl0B_04_80046FA8(u8 arg0, u16 arg1) {
+    u8 ret = 1;
+    s32 pad[3]; /* fake: frame-tuned (with FreeEntries' (n, e, x), p4) */
+
+    func_ovl0B_04_80046734(arg0, arg1);
+    if (arg1 & 1) {
+        if (arg0 >= 11) {
+            func_ovl0B_04_80047E70(D_ovl0B_04_8004A170, 3, -1);
+            func_ovl0B_04_80047E70(D_ovl0B_04_8004A170, 5, -1);
+            *D_ovl0B_04_8004A180 = 0;
+            func_ovl0B_04_800487D0(2);
+        } else if (D_ovl0B_04_8004A480[arg0] != 0) {
+            func_ovl0B_04_800478A0(D_ovl0B_04_8004A170, 2, arg0);
+            func_ovl0B_04_800487D0(0x2E);
+            *D_ovl0B_04_8004A180 = arg0;
+        }
+    } else if (arg1 & 2) {
+        func_ovl0B_04_800487D0(2);
+        func_ovl0B_04_80043FA4(&ret, 0, 4, 0);
+        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[10], 0);
+        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[11], 0);
+    }
+    return ret;
+}
+
+static void func_ovl0B_04_8004716C(Obj *arg0) {
+    func_ovl0B_04_80047164();
+}
+
+static void func_ovl0B_04_80047164() {
+    func_ovl0B_04_800468F0(33);
+}
+
+/* Pages 5-8: one of a slot's ten choices (ZeroJump 0x1E04 says which are
+ * open), in two halves of five. */
+static u8 func_ovl0B_04_800471F4(u8 arg0, u16 arg1) {
+    u8 ret = 1;
+    s32 pad[3]; /* fake: frame-tuned (with FreeEntries' (n, e, x), p4) */
+
+    func_ovl0B_04_80046734(arg0, arg1);
+    if (arg1 & 1) {
+        if (arg0 >= 11) {
+            func_ovl0B_04_80047E70(D_ovl0B_04_8004A170, 10, -1);
+            func_ovl0B_04_80047E70(D_ovl0B_04_8004A170, 12, -1);
+            *D_ovl0B_04_8004A184 = 0;
+            func_ovl0B_04_800487D0(2);
+        } else if (D_ovl0B_04_8004A480[arg0] != 0) {
+            func_ovl0B_04_800478A0(D_ovl0B_04_8004A170, 3, arg0);
+            func_ovl0B_04_800487D0(0x2E);
+            *D_ovl0B_04_8004A184 = arg0;
+        }
+    } else if (arg1 & 2) {
+        func_ovl0B_04_800487D0(2);
+        func_ovl0B_04_80043FA4(&ret, 0, 5, 0);
+        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[10], 0);
+        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[11], 0);
+    }
+    return ret;
 }
 
 /* The other overlays' shared code (ovl_17_09's 80044A98-80044B70); nothing
@@ -2582,7 +2538,6 @@ void func_ovl0B_04_80043ADC(void) {
 #endif
         func_ovl0B_04_80043A24(0, 0, 0);
         func_ovl0B_04_800438FC(0, 0, 0);
-        func_ovl0B_04_800438F4();
     }
 }
 
@@ -2595,7 +2550,7 @@ void func_ovl0B_04_80043CD0(s32 arg0, Gfx0B04 **arg1) {
     { Gfx0B04 *g = gfx++; g->w0 = 0xF7000000; g->w1 = 0x10001; }
     { Gfx0B04 *g = gfx++; g->w0 = 0xF6000000 | (((D_ovl0B_04_8004A3E4->unk2C + (s32) D_ovl0B_04_8004A3E4->unk34) & 0x3FF) << 14) | (((D_ovl0B_04_8004A3E4->unk30 + (s32) (D_ovl0B_04_8004A3E4->unk34 * D_ovl0B_04_8004A3E4->unk20)) & 0x3FF) << 2); g->w1 = (((D_ovl0B_04_8004A3E4->unk2C - (s32) D_ovl0B_04_8004A3E4->unk34) & 0x3FF) << 14) | (((D_ovl0B_04_8004A3E4->unk30 - (s32) (D_ovl0B_04_8004A3E4->unk34 * D_ovl0B_04_8004A3E4->unk20)) & 0x3FF) << 2); }
     *arg1 = gfx;
-    if (0) { func_ovl0B_04_80043ADC(); UNUSED_BSS(); } /* fake: UNUSED_BSS */
+    if (0) { func_ovl0B_04_80043ADC(); } /* fake: a dead call: 80043ADC comes out before 80043CD0 (header) */
 }
 
 #if !VERSION_JP
@@ -2649,52 +2604,53 @@ static void func_ovl0B_04_800438FC(s32 id, u32 mode, Item *it) {
             break;
     }
     func_ovl0B_04_80048690(id, it->unk0, col);
-    if (grow) {
-        func_ovl0B_04_80048660(id, d * 0.4f, d);
-    } else {
-        func_ovl0B_04_80048658(id, it->unk8 + d * 0.4f, it->unkC + d);
-    }
+    func_ovl0B_04_800438F4(id, grow, d, it);
 }
 
 /* The bomber's task: turned with the C buttons, its animation picked from
  * D_ovl0B_04_8004A1AC each time one ends. */
-void func_ovl0B_04_800436C8(void) {
+/* The bomber's next animation, from D_ovl0B_04_8004A1AC (inlined). */
+static void func_ovl0B_04_800436C0(void) {
     static s32 D_ovl0B_04_8004A1E4 = 0;
-    u16 buttons;
     s32 a;
     s32 b;
+
+    if (++D_ovl0B_04_8004A1E4 >= 14) {
+        D_ovl0B_04_8004A1E4 = 0;
+    }
+    b = a = -1;
+    switch (D_ovl0B_04_8004A1AC[D_ovl0B_04_8004A1E4]) {
+        case 0:
+            a = 0;
+            break;
+        case 1:
+            a = 1;
+            b = 2;
+            break;
+        case 2:
+            a = 3;
+            b = 4;
+            break;
+        case 3:
+            a = 5;
+            b = 6;
+            break;
+    }
+    func_ovl0B_04_80047E20(D_ovl0B_04_8004A164, a, 0);
+    func_ovl0B_04_80047E20(D_ovl0B_04_8004A164, b, 1);
+    D_ovl0B_04_8004A164->unkC |= 0x20;
+    D_ovl0B_04_8004A164->unkC &= ~0x40;
+    D_ovl0B_04_8004A164->unk48->unk4->unk4 = 0.0f;
+    D_ovl0B_04_8004A164->unk48->unk4->unk10 = 0.0f;
+}
+
+void func_ovl0B_04_800436C8(void) {
+    u16 buttons;
 
     while (TRUE) {
         buttons = func_ovl0B_04_80048320(0);
         if (D_ovl0B_04_8004A164->unkC & 0x40) {
-            if (++D_ovl0B_04_8004A1E4 >= 14) {
-                D_ovl0B_04_8004A1E4 = 0;
-            }
-#line 2579 /* fake: see the next line */
-            b = a = -1; /* fake: numbered above the loop head so as1 hoists li a1 into its load delay */
-            switch (D_ovl0B_04_8004A1AC[D_ovl0B_04_8004A1E4]) {
-                case 0:
-                    a = 0;
-                    break;
-                case 1:
-                    a = 1;
-                    b = 2;
-                    break;
-                case 2:
-                    a = 3;
-                    b = 4;
-                    break;
-                case 3:
-                    a = 5;
-                    b = 6;
-                    break;
-            }
-            func_ovl0B_04_80047E20(D_ovl0B_04_8004A164, a, 0);
-            func_ovl0B_04_80047E20(D_ovl0B_04_8004A164, b, 1);
-            D_ovl0B_04_8004A164->unkC |= 0x20;
-            D_ovl0B_04_8004A164->unkC &= ~0x40;
-            D_ovl0B_04_8004A164->unk48->unk4->unk4 = 0.0f;
-            D_ovl0B_04_8004A164->unk48->unk4->unk10 = 0.0f;
+            func_ovl0B_04_800436C0();
         }
         if (buttons & 0x10) {
             func_ovl0B_04_80043640(2.0f);
@@ -2702,10 +2658,6 @@ void func_ovl0B_04_800436C8(void) {
             func_ovl0B_04_80043640(-2.0f);
         }
         func_ovl0B_04_80048290();
-    }
-    if (0) { /* fake: dead calls: the emission order (header) */
-        func_ovl0B_04_800436C0();
-        func_ovl0B_04_80043640(0);
     }
 }
 
@@ -2753,10 +2705,10 @@ static void func_ovl0B_04_H5a() {
     func_ovl0B_04_80047E28(D_ovl0B_04_8004A164, -1);
     D_ovl0B_04_8004A164->unkC |= 0x20;
     /* fake: the store numbered below the line after it, for its place in the jal's delay slot */
-#line 2704 /* fake: see above */
+#line 2651 /* fake: see above */
     D_ovl0B_04_8004A170 = func_ovl0B_04_80047E68(D_ovl0B_04_8004A164, 0xF);
 }
-#line 2686 /* fake: back to the file's numbering */
+#line 2633 /* fake: back to the file's numbering */
 
 /* The tests reread each slot through its pointer, as the original does;
  * the first test's value is its own variable (a: $a3, the later ones x:

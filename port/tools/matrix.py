@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""The port's 32-bit coverage matrix (docs/PORT.md, "Testing"): every host
-x us/eu/jp x test.py's scenarios, against port/tools/test_refs.json.
+"""The port's coverage matrix (docs/PORT.md, "Testing"): every host x
+us/eu/jp x test.py's scenarios, against port/tools/test_refs.json.
 
   matrix.py [--tree us=. --tree eu=DIR --tree jp=DIR] [--build]
-            [--platform P ...] [--version V ...] [--scenario S ...]
+            [--platform P ... | --32 | --64] [--version V ...] [--scenario S ...]
             [-j N] [--results FILE [--resume]]
 
 asm/ and assets/ hold one version at a time, so each version's builds live
@@ -11,11 +11,14 @@ in a tree of its own that has that version extracted (`make VERSION=<v>
 extract`): `--tree eu=DIR` (the default is this checkout for the version in
 its .version, and nothing for the others).  In each tree a platform's build
 is a directory of its own (PLATFORMS below: build-port for Linux i386,
-build-port-win32, build-port-wasm, build-port-mips...); `--build` configures
-and builds the missing ones and rebuilds the others (cmake --build).
+build-port-win32, build-port-wasm, build-port-mips..., and where pointers
+are 8 bytes build-port-x86_64, build-port-win64, build-port-aarch64);
+`--build` configures and builds the missing ones and rebuilds the others
+(cmake --build).  The default is every host; --32 and --64 take the
+32-bit ones or the 64-bit ones.
 
 Every run is test.py's (headless, deterministic, from a blank save): the
-Windows build under wine (in a prefix of its own, --wineprefix, with no
+Windows builds under wine (in a prefix of its own, --wineprefix, with no
 display, and its wineserver stopped at the end), the WebAssembly build under
 node, the cross builds under qemu-user (their CMake cache's emulator).  The
 runs go -j at a time; the table at the end has, per host and version, each
@@ -51,7 +54,15 @@ PLATFORMS = {
     "mipsel": ("build-port-mipsel", ["-DCMAKE_TOOLCHAIN_FILE={tree}/port/tools/cross-mipsel.cmake"],
                "MIPS LE (qemu)"),
     "armhf": ("build-port-armhf", ["-DCMAKE_TOOLCHAIN_FILE={tree}/port/tools/cross-armhf.cmake"], "armhf (qemu)"),
+    # where pointers are 8 bytes
+    "x86_64": ("build-port-x86_64", ["-DCMAKE_C_COMPILER=clang"], "Linux x86-64"),
+    "win64": ("build-port-win64", ["-DCMAKE_TOOLCHAIN_FILE={tree}/port/tools/cross-win64.cmake"],
+              "Windows x64 (wine)"),
+    "aarch64": ("build-port-aarch64", ["-DCMAKE_TOOLCHAIN_FILE={tree}/port/tools/cross-aarch64.cmake"],
+                "aarch64 (qemu)"),
 }
+HOSTS32 = ["i386", "win32", "wasm", "mips", "ppc", "mipsel", "armhf"]
+HOSTS64 = ["x86_64", "win64", "aarch64"]
 VERSIONS = ["us", "eu", "jp"]
 SCENARIOS = ["legal", "menus", "battle", "story"]
 
@@ -96,6 +107,8 @@ def main():
     ap.add_argument("--tree", action="append", default=[], metavar="V=DIR",
                     help="the tree whose extract is version V (default: this checkout for its .version)")
     ap.add_argument("--platform", action="append", choices=list(PLATFORMS))
+    ap.add_argument("--32", dest="h32", action="store_true", help="the 32-bit hosts")
+    ap.add_argument("--64", dest="h64", action="store_true", help="the 64-bit hosts")
     ap.add_argument("--version", action="append", choices=VERSIONS)
     ap.add_argument("--scenario", action="append", choices=SCENARIOS)
     ap.add_argument("--build", action="store_true", help="configure and build every build first")
@@ -117,7 +130,12 @@ def main():
         if v not in VERSIONS:
             sys.exit("--tree %s: not a version" % t)
         trees[v] = os.path.abspath(d)
-    plats = a.platform or list(PLATFORMS)
+    plats = list(a.platform or [])
+    if a.h32:
+        plats += [p for p in HOSTS32 if p not in plats]
+    if a.h64:
+        plats += [p for p in HOSTS64 if p not in plats]
+    plats = plats or list(PLATFORMS)
     vers = [v for v in (a.version or VERSIONS)]
     scens = a.scenario or SCENARIOS
 
@@ -158,7 +176,7 @@ def main():
                 jobs.append((key, bdir, s))
     # the long ones first (qemu's, the story)
     weight = {"legal": 1, "menus": 10, "battle": 20, "story": 40}
-    slow = {"ppc": 3, "mips": 1.5, "mipsel": 1.5, "armhf": 1.5}
+    slow = {"ppc": 3, "mips": 1.5, "mipsel": 1.5, "armhf": 1.5, "aarch64": 1.5}
     jobs.sort(key=lambda j: -weight[j[2]] * slow.get(j[0].split("/")[0], 0.1))
 
     def work(job):
@@ -180,7 +198,7 @@ def main():
         with concurrent.futures.ThreadPoolExecutor(max_workers=a.j) as ex:
             list(ex.map(work, jobs))
     finally:
-        if "win32" in plats and os.path.isdir(os.environ["WINEPREFIX"]):
+        if ("win32" in plats or "win64" in plats) and os.path.isdir(os.environ["WINEPREFIX"]):
             subprocess.run(["wineserver", "-k"], stderr=subprocess.DEVNULL)
 
     print()

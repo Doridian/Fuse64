@@ -961,7 +961,7 @@ void func_ovl10_08_80045988(s32 arg0) {
 
 void func_ovl10_08_80045768(void) {
     Tbl_ovl10_08 tbl = D_ovl10_08_800494CC;
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 *flags;
 
     func_ovl10_08_80048DA0(D_ovl10_08_80049288);
     func_ovl10_08_80048F48(0, 0, 0xDE);
@@ -975,7 +975,8 @@ void func_ovl10_08_80045768(void) {
     func_ovl10_08_80047EF0(0xC7, 0.0f, 12000.0f, 0.0f, 0x50, 0);
     func_ovl10_08_80047F60(0x1F4);
     D_ovl10_08_80049E60 = func_ovl10_08_80047FB8(0x1F5);
-    if (*func_ovl10_08_80048038() & 2) {
+    flags = func_ovl10_08_80048038();
+    if (*flags & 2) {
         func_ovl10_08_80047FC0(D_ovl10_08_80049E60, 8, 8, 0x10, 0x18, 8, 4, 8);
     }
     func_ovl10_08_80047F68();
@@ -1375,7 +1376,7 @@ void func_ovl10_08_80044448(s32 arg0, s32 arg1) {
 /* opens (arg1 1) or closes the gate */
 void func_ovl10_08_80044238(s32 arg0, s32 arg1) {
     s32 id;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad; /* fake: unused, frame space the original has (no source for it found; pass 10: held object/row pointers no, `f32 pos[4]` passed cast to Vec3f * matches, not taken) */
     Vec3f pos;
 
     if (arg1 != D_ovl10_08_8004A004[arg0]) {
@@ -1416,7 +1417,7 @@ void func_ovl10_08_80044188(void) {
 void func_ovl10_08_80043F34(s32 arg0, s32 arg1) {
     s32 j;
     s32 v;
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found; pass 10: 80043EBC called in place of its written-out copy is not inlined, 4934 words) */
 
     if (arg1 != (D_ovl10_08_800497E8[arg0] & 1)) {
         if (arg1 != 0) {
@@ -1438,7 +1439,7 @@ void func_ovl10_08_80043F34(s32 arg0, s32 arg1) {
                 v = 1;
                 func_ovl10_08_80043DDC(arg0);
             }
-            /* fake: nothing, but it keeps arg0 in v1 for the loops */
+            /* fake: nothing, but it keeps arg0 in v1 for the loops (pass 10: a debug range check of arg0 here matches too, but mid-function) */
             if (arg0) {
             }
             if (D_ovl10_08_800497B8[arg0] & 1) {
@@ -1681,7 +1682,7 @@ void func_ovl10_08_800432B0(void) {
     func_ovl10_08_800480D8(1);
     func_ovl10_08_800431C8(D_ovl10_08_80049E7C, D_ovl10_08_80049FD8, D_ovl10_08_80049FDC, off);
     func_ovl10_08_80048A58(0x78);
-    /* fake: (the permuter) a, and the test of D_ovl10_08_80049F04, on a's line */
+    /* fake: (the permuter) a, and the test of D_ovl10_08_80049F04, on a's line (pass 10: the stores and call on one line, macro-like, with a and b locals: 13 words; through the globals: 19) */
     a = D_ovl10_08_80049F00; if (D_ovl10_08_80049F04 && D_ovl10_08_80049F04 && D_ovl10_08_80049F04) {}
     D_ovl10_08_800496E4 = a;
     D_ovl10_08_800496E8 = D_ovl10_08_80049F04;

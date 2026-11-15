@@ -328,6 +328,9 @@ where data arrives, and declarations a host needs.
   shares (Blast Corps' are already 64-bit clean). `test.py same` against
   the i386 build is the check at each step. Not started: it changes many
   of src/'s files, while the fake-reduction passes are editing them.
+  `-DPORT_TRY64=ON` builds x86-64 anyway (it compiles and links) for that
+  work; it stops at boot, in the first `osSendMesg` to an asm data queue
+  (`D_802AC3E0`, asm2c's struct at the N64's 4-byte pointer offsets).
 - **Packages** (an AppImage, the `.exe` with SDL, a macOS app; Blast
   Corps' "Packages") and a hosted page: after 64-bit, with SDL in the
   Windows cross build.

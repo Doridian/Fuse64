@@ -17,9 +17,9 @@
  * What it took, function by function:
  * - 80043E64: the phase step is `0.1f + 0.1f * ...` (a double from
  *   8004CF00): .rodata has (f64)0.1f, not 0.1.
- * - 800458D8: r = 0 and a dead read of it give r its bit in uopt's order
- *   before flags, so the 0x40 test gets $v0 and flags $v1; the count
- *   reuses arg0's register.
+ * - 800458D8: r = 0 and a (compiled-out) null check after it give r its
+ *   bit in uopt's order before flags, so the 0x40 test gets $v0 and flags
+ *   $v1; the count reuses arg0's register.
  * - 80046E10: dead tests of DE80, DE98 and DEB0 at the top of the loop,
  *   and their first stores in the order DEB0, DE98, DE80, colour them
  *   into $s1-$s3 as the original does.
@@ -29,11 +29,16 @@
  * Fakes pass 7: 8004640C's two parameter blocks are 800435D4 calls
  * (inlined: their two areas were pad1[10]); 80043B64's pad is the
  * clamp's lower limit in a local; 80046E10's DE80/DE98/DEB0 tests are
- * compiled-out debug checks. Near misses: 80046E10's eight blocks and
- * 80048FBC's one as 800435D4 calls give the right frame (pad[34] -> 0,
- * pad[3] -> 0) but 800435D4's store order (field by field), where the
- * original stores some blocks object by object; 800489C0's block as a
- * call: frame right, its arrays 4 bytes off (scratch/fakes-ovl/p7).
+ * compiled-out debug checks. As 800435D4 calls, 80046E10's eight blocks
+ * and 80048FBC's one give the right frame but 800435D4's store order
+ * (field by field), where the original stores some blocks object by
+ * object (scratch/fakes-ovl/p7).
+ *
+ * Fakes pass 15: the frame space the pads stood for is held values
+ * (guesses; any locals in that space fit): the three blocks' values in
+ * locals (80048FBC, 800489C0, 80046E10, a scope per block there), and a
+ * constant or a converted argument in a local elsewhere
+ * (scratch/fakes-ovl/p15-1302).
  */
 #include "common.h"
 
@@ -425,7 +430,11 @@ static void func_ovl13_02_8004BEA8(void) {
 #include "overlays/common/core.h"
 
 void func_ovl13_02_80048FBC(s32 arg0) {
-    s32 pad[3]; /* fake: unused, frame space the original has (no source for it found) */
+    /* the reset's three values held: what the frame's three words were (a guess:
+       held one by one before their stores, in any order, they fit too) */
+    f32 v8;
+    f32 vC;
+    f32 v10;
     f32 *p;
     f32 dx;
     f32 dy;
@@ -472,18 +481,21 @@ void func_ovl13_02_80048FBC(s32 arg0) {
                 func_ovl13_02_80046B34(D_ovl13_02_8004DE34);
                 func_ovl13_02_8004CFC0(0x41E);
                 i = arg0;
+                v8 = 0.8f;
+                vC = 0.11f;
+                v10 = 0.999f;
                 D_ovl13_02_8004DE80.unk0 = 2;
                 D_ovl13_02_8004DE98.unk0 = 2;
                 D_ovl13_02_8004DEB0.unk0 = 2;
-                D_ovl13_02_8004DE80.unk8 = 0.8f;
-                D_ovl13_02_8004DE80.unkC = 0.11f;
-                D_ovl13_02_8004DE80.unk10 = 0.999f;
-                D_ovl13_02_8004DE98.unk8 = 0.8f;
-                D_ovl13_02_8004DE98.unkC = 0.11f;
-                D_ovl13_02_8004DE98.unk10 = 0.999f;
-                D_ovl13_02_8004DEB0.unk8 = 0.8f;
-                D_ovl13_02_8004DEB0.unkC = 0.11f;
-                D_ovl13_02_8004DEB0.unk10 = 0.999f;
+                D_ovl13_02_8004DE80.unk8 = v8;
+                D_ovl13_02_8004DE80.unkC = vC;
+                D_ovl13_02_8004DE80.unk10 = v10;
+                D_ovl13_02_8004DE98.unk8 = v8;
+                D_ovl13_02_8004DE98.unkC = vC;
+                D_ovl13_02_8004DE98.unk10 = v10;
+                D_ovl13_02_8004DEB0.unk8 = v8;
+                D_ovl13_02_8004DEB0.unkC = vC;
+                D_ovl13_02_8004DEB0.unk10 = v10;
                 D_ovl13_02_8004DE34 = 0;
                 break;
             }
@@ -884,7 +896,10 @@ void func_ovl13_02_8004AB3C(void) {
 }
 
 void func_ovl13_02_8004A8E0(void) {
-    s32 pad[3]; /* fake: unused, frame space the original has (no source for it found) */
+    /* the per-frame steps held (a guess: any three of the constants fit, in any order) */
+    f32 fall = 1.0f;
+    f32 back = 2.0f;
+    f32 fly = 15.0f;
     s32 p[3];
     UnkStructA *obj;
     s32 i;
@@ -897,8 +912,8 @@ void func_ovl13_02_8004A8E0(void) {
         obj = D_ovl13_02_8004DD68[n];
         func_ovl13_02_8004C250(obj->unk40->unk10, obj->unk40->unk14, obj->unk40->unk18, p, 0);
         for (i = 0; i < 30; i++) {
-            obj->unk40->unk14 -= 1.0f;
-            obj->unk40->unk18 += 2.0f;
+            obj->unk40->unk14 -= fall;
+            obj->unk40->unk18 += back;
             func_ovl13_02_8004CD90();
         }
         func_ovl13_02_8004C238(p[0], p[1], p[2] - 3, p[0], p[2] + 2, 0);
@@ -907,8 +922,8 @@ void func_ovl13_02_8004A8E0(void) {
         for (i = 0; i < 120; i++) {
             obj->unk40->unk1C += dx;
             obj->unk40->unk20 += dz;
-            obj->unk40->unk14 -= 1.0f;
-            obj->unk40->unk18 += 15.0f;
+            obj->unk40->unk14 -= fall;
+            obj->unk40->unk18 += fly;
             if (i > 60.0) {
                 func_ovl13_02_8004CBF8(obj, 0x40000);
             }
@@ -1096,24 +1111,24 @@ void func_ovl13_02_80049F1C(UnkStructA *arg0) {
 }
 
 void func_ovl13_02_80049D50(void) {
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 side = 300.0f; /* the side rows' offset held (a guess: any constant held fits) */
 
     ((Vec3f *) D_ovl13_02_8004DF18)[0].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x;
     ((Vec3f *) D_ovl13_02_8004DF18)[0].y = (*(Vec3f *) &D_ovl13_02_8004DD10).y;
     ((Vec3f *) D_ovl13_02_8004DF18)[0].z = (*(Vec3f *) &D_ovl13_02_8004DD10).z - 1400.0f;
-    ((Vec3f *) D_ovl13_02_8004DF18)[1].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x - 300.0f;
+    ((Vec3f *) D_ovl13_02_8004DF18)[1].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x - side;
     ((Vec3f *) D_ovl13_02_8004DF18)[1].y = (*(Vec3f *) &D_ovl13_02_8004DD10).y;
     ((Vec3f *) D_ovl13_02_8004DF18)[1].z = ((Vec3f *) D_ovl13_02_8004DF18)[0].z;
-    ((Vec3f *) D_ovl13_02_8004DF18)[2].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x + 300.0f;
+    ((Vec3f *) D_ovl13_02_8004DF18)[2].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x + side;
     ((Vec3f *) D_ovl13_02_8004DF18)[2].y = (*(Vec3f *) &D_ovl13_02_8004DD10).y;
     ((Vec3f *) D_ovl13_02_8004DF18)[2].z = ((Vec3f *) D_ovl13_02_8004DF18)[0].z;
     ((Vec3f *) D_ovl13_02_8004DF18)[3].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x;
     ((Vec3f *) D_ovl13_02_8004DF18)[3].y = (*(Vec3f *) &D_ovl13_02_8004DD10).y;
     ((Vec3f *) D_ovl13_02_8004DF18)[3].z = (*(Vec3f *) &D_ovl13_02_8004DD10).z - 1700.0f;
-    ((Vec3f *) D_ovl13_02_8004DF18)[4].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x - 300.0f;
+    ((Vec3f *) D_ovl13_02_8004DF18)[4].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x - side;
     ((Vec3f *) D_ovl13_02_8004DF18)[4].y = (*(Vec3f *) &D_ovl13_02_8004DD10).y;
     ((Vec3f *) D_ovl13_02_8004DF18)[4].z = ((Vec3f *) D_ovl13_02_8004DF18)[3].z;
-    ((Vec3f *) D_ovl13_02_8004DF18)[5].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x + 300.0f;
+    ((Vec3f *) D_ovl13_02_8004DF18)[5].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x + side;
     ((Vec3f *) D_ovl13_02_8004DF18)[5].y = (*(Vec3f *) &D_ovl13_02_8004DD10).y;
     ((Vec3f *) D_ovl13_02_8004DF18)[5].z = ((Vec3f *) D_ovl13_02_8004DF18)[3].z;
     ((Vec3f *) D_ovl13_02_8004DF60)->x = (*(Vec3f *) &D_ovl13_02_8004DD10).x;
@@ -1140,7 +1155,8 @@ void func_ovl13_02_80049D50(void) {
 }
 
 void func_ovl13_02_800499A0(void) {
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 frames = 30.0f; /* D_8004D8B0's step count (unk0) as a float: a guess, other constants held fit too */
+
     D_ovl13_02_8004D4F8[0].unk24[0] = (M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4)) / D_ovl13_02_8004D4F8[0].unk0;
     D_ovl13_02_8004D4F8[0].unk24[1] = (M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4)) / D_ovl13_02_8004D4F8[0].unk0;
     D_ovl13_02_8004D4F8[0].unk24[2] = (M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4)) / D_ovl13_02_8004D4F8[0].unk0;
@@ -1179,9 +1195,9 @@ void func_ovl13_02_800499A0(void) {
     D_ovl13_02_8004D608[6].unk24[0] = M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4);
     D_ovl13_02_8004D608[6].unk24[1] = M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4);
     D_ovl13_02_8004D608[6].unk24[2] = M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4);
-    D_ovl13_02_8004D8B0.unk24[0] = (M2C_FIELD(&D_ovl13_02_8004DFD0, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4)) / 30.0f;
-    D_ovl13_02_8004D8B0.unk24[1] = (M2C_FIELD(&D_ovl13_02_8004DFD0, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4)) / 30.0f;
-    D_ovl13_02_8004D8B0.unk24[2] = (M2C_FIELD(&D_ovl13_02_8004DFD0, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4)) / 30.0f;
+    D_ovl13_02_8004D8B0.unk24[0] = (M2C_FIELD(&D_ovl13_02_8004DFD0, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4)) / frames;
+    D_ovl13_02_8004D8B0.unk24[1] = (M2C_FIELD(&D_ovl13_02_8004DFD0, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4)) / frames;
+    D_ovl13_02_8004D8B0.unk24[2] = (M2C_FIELD(&D_ovl13_02_8004DFD0, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4)) / frames;
     (&D_ovl13_02_8004D8B0)[1].unk24[0] = D_ovl13_02_8004D8B0.unk24[0] * -1.0f;
     (&D_ovl13_02_8004D8B0)[1].unk24[1] = D_ovl13_02_8004D8B0.unk24[1] * -1.0f;
     (&D_ovl13_02_8004D8B0)[1].unk24[2] = D_ovl13_02_8004D8B0.unk24[2] * -1.0f;
@@ -1328,17 +1344,21 @@ static void func_ovl13_02_80049400(void) {
 
     if (0) { func_ovl13_02_80048FBC(0); } /* fake: dead code: it must come out between its referrer 80048FBC and 80049468 inside 80049468's turn; global (any place) or static at any place without it doesn't (scratch/fakes-ovl/p3/mv.py) */
     sp1C = func_ovl13_02_8004CD70();
-    if (M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 0) == 0.0f) {}
+    if (M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 0) == 0.0f) {
+        DEBUG_PRINT(("80049400: x == 0\n")); /* compiled out; what it reports is a guess */
+    }
     func_ovl13_02_8004CD68((func_ovl13_02_8004CF08(2) * 0xA) + 0xA);
     func_ovl13_02_8004D2F0((PORT_IP(s32)) sp1C, M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 0), M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 4), M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 8));
     func_ovl13_02_8004CD58();
 }
 
 void func_ovl13_02_800489C0(s32 arg0) {
-    s32 padt[1]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 back = 1000.0f; /* the camera's pull-back held (a guess: other constants held fit too) */
     f32 spA0[3];
     f32 sp94[3];
-    f32 pad[3]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 v8;
+    f32 vC;
+    f32 v10;
     s32 var_s0;
     s32 var_s1;
     s32 var_s5;
@@ -1347,7 +1367,7 @@ void func_ovl13_02_800489C0(s32 arg0) {
     func_ovl13_02_8004511C();
     spA0[0] = M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 0);
     spA0[1] = M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 4);
-    spA0[2] = M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 8) + 1000.0f;
+    spA0[2] = M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 8) + back;
     func_ovl13_02_800430CC(&spA0[0], 0x1E, 1);
     func_ovl13_02_8004CA70(D_ovl13_02_8004D4F8, 0x170, 0);
     spA0[0] = M2C_FIELD(&D_ovl13_02_8004DF60, f32 *, 0);
@@ -1359,7 +1379,7 @@ void func_ovl13_02_800489C0(s32 arg0) {
     func_ovl13_02_8004CAA0(0x20);
     spA0[0] = M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 0);
     spA0[1] = M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 4);
-    spA0[2] = M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 8) + 1000.0f;
+    spA0[2] = M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 8) + back;
     func_ovl13_02_800434C0(&spA0[0]);
     func_ovl13_02_8004CC00(D_ovl13_02_8004DE3C, 0x08000000);
     if (!(D_ovl13_02_8004DE3C->unk40->unkC & 0x40)) {
@@ -1403,18 +1423,21 @@ loop_5:
                     func_ovl13_02_80046B34(D_ovl13_02_8004DE34);
                     func_ovl13_02_8004CFC0(0x41E);
                     var_s5 = arg0;
+                    v8 = 0.8f;
+                    vC = 0.11f;
+                    v10 = 0.999f;
                     D_ovl13_02_8004DE80.unk0 = 2;
                     D_ovl13_02_8004DE98.unk0 = 2;
                     D_ovl13_02_8004DEB0.unk0 = 2;
-                    D_ovl13_02_8004DE80.unk8 = 0.8f;
-                    D_ovl13_02_8004DE80.unkC = 0.11f;
-                    D_ovl13_02_8004DE80.unk10 = 0.999f;
-                    D_ovl13_02_8004DE98.unk8 = 0.8f;
-                    D_ovl13_02_8004DE98.unkC = 0.11f;
-                    D_ovl13_02_8004DE98.unk10 = 0.999f;
-                    D_ovl13_02_8004DEB0.unk8 = 0.8f;
-                    D_ovl13_02_8004DEB0.unkC = 0.11f;
-                    D_ovl13_02_8004DEB0.unk10 = 0.999f;
+                    D_ovl13_02_8004DE80.unk8 = v8;
+                    D_ovl13_02_8004DE80.unkC = vC;
+                    D_ovl13_02_8004DE80.unk10 = v10;
+                    D_ovl13_02_8004DE98.unk8 = v8;
+                    D_ovl13_02_8004DE98.unkC = vC;
+                    D_ovl13_02_8004DE98.unk10 = v10;
+                    D_ovl13_02_8004DEB0.unk8 = v8;
+                    D_ovl13_02_8004DEB0.unkC = vC;
+                    D_ovl13_02_8004DEB0.unk10 = v10;
                 } else {
                     func_ovl13_02_8004CD90();
                     if (!(D_ovl13_02_8004DE3C->unk40->unkC & 0x40)) {
@@ -1733,7 +1756,7 @@ void func_ovl13_02_80046E10(s32 arg0) {
     f32 save;
     f32 w;
     s32 found;
-    s32 pad[34]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 near = 700.0f; /* the distance clamp's floor held (a guess: other constants held fit too) */
 
     func_ovl13_02_8004CBF8(D_ovl13_02_8004DE3C, 0x08000000);
     func_ovl13_02_8004511C();
@@ -1800,18 +1823,27 @@ void func_ovl13_02_80046E10(s32 arg0) {
         D_ovl13_02_8004DEF4 = 0.0f;
         ang = M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4);
         save = D_ovl13_02_8004DE50[0]->unk50;
-        D_ovl13_02_8004DEB0.unkC = 0.5f;
-        D_ovl13_02_8004DEB0.unk8 = 0.5f;
-        D_ovl13_02_8004DEB0.unk0 = 2;
-        D_ovl13_02_8004DE98.unkC = 0.5f;
-        D_ovl13_02_8004DE98.unk8 = 0.5f;
-        D_ovl13_02_8004DE98.unk0 = 2;
-        D_ovl13_02_8004DE80.unkC = 0.5f;
-        D_ovl13_02_8004DE80.unk8 = 0.5f;
-        D_ovl13_02_8004DE80.unk0 = 2;
-        D_ovl13_02_8004DEB0.unk10 = 0.999f;
-        D_ovl13_02_8004DE98.unk10 = 0.999f;
-        D_ovl13_02_8004DE80.unk10 = 0.999f;
+        /* each of the eight settings of DE80/DE98/DEB0 holds its values in a block
+           of its own: their 32 words of frame (a guess, as any locals filling that
+           space fit; one inlined setter can't be it, each stores in its own order) */
+        {
+            s32 mode = 2;
+            f32 v8 = 0.5f;
+            f32 vC = 0.5f;
+            f32 v10 = 0.999f;
+            D_ovl13_02_8004DEB0.unkC = vC;
+            D_ovl13_02_8004DEB0.unk8 = v8;
+            D_ovl13_02_8004DEB0.unk0 = mode;
+            D_ovl13_02_8004DE98.unkC = vC;
+            D_ovl13_02_8004DE98.unk8 = v8;
+            D_ovl13_02_8004DE98.unk0 = mode;
+            D_ovl13_02_8004DE80.unkC = vC;
+            D_ovl13_02_8004DE80.unk8 = v8;
+            D_ovl13_02_8004DE80.unk0 = mode;
+            D_ovl13_02_8004DEB0.unk10 = v10;
+            D_ovl13_02_8004DE98.unk10 = v10;
+            D_ovl13_02_8004DE80.unk10 = v10;
+        }
         func_ovl13_02_8004D2D0(0xDE);
         while (!(D_ovl13_02_8004DE3C->unk40->unkC & 0x40)) {
             M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) = ang - func_ovl13_02_8004CEF0((D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 / D_ovl13_02_8004DEF0) * 180.0f) * 45.0f;
@@ -1832,104 +1864,140 @@ void func_ovl13_02_80046E10(s32 arg0) {
             p[1] = D_ovl13_02_8004DE50[7]->unk40->unk14;
             p[2] = D_ovl13_02_8004DE50[7]->unk40->unk18;
             func_ovl13_02_8004CB88(p, (f32 *) &D_ovl13_02_8004DC90, d);
-            if (d[2] <= 700.0f) {
-                d[2] = 700.0f;
+            if (d[2] <= near) {
+                d[2] = near;
             }
             if (d[2] > 1400.0f) {
                 d[2] = 1400.0f;
             }
-            d[2] -= 700.0f;
+            d[2] -= near;
             d[2] *= 0.01f;
             switch ((u32) d[2]) {
             case 0:
                 func_ovl13_02_80046D7C(0xA, 20.0f);
-                D_ovl13_02_8004DEB0.unk10 = 0.99f;
-                D_ovl13_02_8004DEB0.unk0 = 0x100002;
-                D_ovl13_02_8004DE98.unk10 = 0.99f;
-                D_ovl13_02_8004DE98.unk0 = 0x100002;
-                D_ovl13_02_8004DE80.unk10 = 0.99f;
-                D_ovl13_02_8004DE80.unk0 = 0x100002;
-                D_ovl13_02_8004DEB0.unk8 = 5.0f;
-                D_ovl13_02_8004DE98.unk8 = 5.0f;
-                D_ovl13_02_8004DE80.unk8 = 5.0f;
-                D_ovl13_02_8004DE80.unkC = 0.4f;
-                D_ovl13_02_8004DE98.unkC = 0.4f;
-                D_ovl13_02_8004DEB0.unkC = 0.4f;
+                {
+                    s32 mode = 0x100002;
+                    f32 v8 = 5.0f;
+                    f32 vC = 0.4f;
+                    f32 v10 = 0.99f;
+                    D_ovl13_02_8004DEB0.unk10 = v10;
+                    D_ovl13_02_8004DEB0.unk0 = mode;
+                    D_ovl13_02_8004DE98.unk10 = v10;
+                    D_ovl13_02_8004DE98.unk0 = mode;
+                    D_ovl13_02_8004DE80.unk10 = v10;
+                    D_ovl13_02_8004DE80.unk0 = mode;
+                    D_ovl13_02_8004DEB0.unk8 = v8;
+                    D_ovl13_02_8004DE98.unk8 = v8;
+                    D_ovl13_02_8004DE80.unk8 = v8;
+                    D_ovl13_02_8004DE80.unkC = vC;
+                    D_ovl13_02_8004DE98.unkC = vC;
+                    D_ovl13_02_8004DEB0.unkC = vC;
+                }
                 break;
             case 1:
                 func_ovl13_02_80046D7C(0xA, 0.0f);
-                D_ovl13_02_8004DE80.unk0 = 0x100002;
-                D_ovl13_02_8004DE80.unkC = 0.5f;
-                D_ovl13_02_8004DE80.unk10 = 0.99f;
-                D_ovl13_02_8004DE98.unk0 = 0x100002;
-                D_ovl13_02_8004DE98.unkC = 0.5f;
-                D_ovl13_02_8004DE98.unk10 = 0.99f;
-                D_ovl13_02_8004DEB0.unk0 = 0x100002;
-                D_ovl13_02_8004DEB0.unkC = 0.5f;
-                D_ovl13_02_8004DEB0.unk10 = 0.99f;
-                D_ovl13_02_8004DE80.unk8 = 4.0f;
-                D_ovl13_02_8004DE98.unk8 = 4.0f;
-                D_ovl13_02_8004DEB0.unk8 = 4.0f;
+                {
+                    s32 mode = 0x100002;
+                    f32 v8 = 4.0f;
+                    f32 vC = 0.5f;
+                    f32 v10 = 0.99f;
+                    D_ovl13_02_8004DE80.unk0 = mode;
+                    D_ovl13_02_8004DE80.unkC = vC;
+                    D_ovl13_02_8004DE80.unk10 = v10;
+                    D_ovl13_02_8004DE98.unk0 = mode;
+                    D_ovl13_02_8004DE98.unkC = vC;
+                    D_ovl13_02_8004DE98.unk10 = v10;
+                    D_ovl13_02_8004DEB0.unk0 = mode;
+                    D_ovl13_02_8004DEB0.unkC = vC;
+                    D_ovl13_02_8004DEB0.unk10 = v10;
+                    D_ovl13_02_8004DE80.unk8 = v8;
+                    D_ovl13_02_8004DE98.unk8 = v8;
+                    D_ovl13_02_8004DEB0.unk8 = v8;
+                }
                 break;
             case 2:
                 func_ovl13_02_80046D7C(0xA, -10.0f);
-                D_ovl13_02_8004DE80.unk0 = 0x100002;
-                D_ovl13_02_8004DE80.unkC = 0.5f;
-                D_ovl13_02_8004DE80.unk10 = 0.99f;
-                D_ovl13_02_8004DE98.unk0 = 0x100002;
-                D_ovl13_02_8004DE98.unkC = 0.5f;
-                D_ovl13_02_8004DE98.unk10 = 0.99f;
-                D_ovl13_02_8004DEB0.unk0 = 0x100002;
-                D_ovl13_02_8004DEB0.unkC = 0.5f;
-                D_ovl13_02_8004DEB0.unk10 = 0.99f;
-                D_ovl13_02_8004DE80.unk8 = 3.0f;
-                D_ovl13_02_8004DE98.unk8 = 3.0f;
-                D_ovl13_02_8004DEB0.unk8 = 3.0f;
+                {
+                    s32 mode = 0x100002;
+                    f32 v8 = 3.0f;
+                    f32 vC = 0.5f;
+                    f32 v10 = 0.99f;
+                    D_ovl13_02_8004DE80.unk0 = mode;
+                    D_ovl13_02_8004DE80.unkC = vC;
+                    D_ovl13_02_8004DE80.unk10 = v10;
+                    D_ovl13_02_8004DE98.unk0 = mode;
+                    D_ovl13_02_8004DE98.unkC = vC;
+                    D_ovl13_02_8004DE98.unk10 = v10;
+                    D_ovl13_02_8004DEB0.unk0 = mode;
+                    D_ovl13_02_8004DEB0.unkC = vC;
+                    D_ovl13_02_8004DEB0.unk10 = v10;
+                    D_ovl13_02_8004DE80.unk8 = v8;
+                    D_ovl13_02_8004DE98.unk8 = v8;
+                    D_ovl13_02_8004DEB0.unk8 = v8;
+                }
                 break;
             case 3:
                 func_ovl13_02_80046D7C(0xA, -30.0f);
-                D_ovl13_02_8004DEB0.unk10 = 0.99f;
-                D_ovl13_02_8004DEB0.unk0 = 0x100002;
-                D_ovl13_02_8004DE98.unk10 = 0.99f;
-                D_ovl13_02_8004DE98.unk0 = 0x100002;
-                D_ovl13_02_8004DE80.unk10 = 0.99f;
-                D_ovl13_02_8004DE80.unk0 = 0x100002;
-                D_ovl13_02_8004DEB0.unk8 = 2.0f;
-                D_ovl13_02_8004DE98.unk8 = 2.0f;
-                D_ovl13_02_8004DE80.unk8 = 2.0f;
-                D_ovl13_02_8004DE80.unkC = 0.6f;
-                D_ovl13_02_8004DE98.unkC = 0.6f;
-                D_ovl13_02_8004DEB0.unkC = 0.6f;
+                {
+                    s32 mode = 0x100002;
+                    f32 v8 = 2.0f;
+                    f32 vC = 0.6f;
+                    f32 v10 = 0.99f;
+                    D_ovl13_02_8004DEB0.unk10 = v10;
+                    D_ovl13_02_8004DEB0.unk0 = mode;
+                    D_ovl13_02_8004DE98.unk10 = v10;
+                    D_ovl13_02_8004DE98.unk0 = mode;
+                    D_ovl13_02_8004DE80.unk10 = v10;
+                    D_ovl13_02_8004DE80.unk0 = mode;
+                    D_ovl13_02_8004DEB0.unk8 = v8;
+                    D_ovl13_02_8004DE98.unk8 = v8;
+                    D_ovl13_02_8004DE80.unk8 = v8;
+                    D_ovl13_02_8004DE80.unkC = vC;
+                    D_ovl13_02_8004DE98.unkC = vC;
+                    D_ovl13_02_8004DEB0.unkC = vC;
+                }
                 break;
             case 4:
                 func_ovl13_02_80046D7C(0xA, -40.0f);
-                D_ovl13_02_8004DEB0.unk10 = 0.99f;
-                D_ovl13_02_8004DEB0.unk0 = 0x100002;
-                D_ovl13_02_8004DE98.unk10 = 0.99f;
-                D_ovl13_02_8004DE98.unk0 = 0x100002;
-                D_ovl13_02_8004DE80.unk10 = 0.99f;
-                D_ovl13_02_8004DE80.unk0 = 0x100002;
-                D_ovl13_02_8004DEB0.unk8 = 1.0f;
-                D_ovl13_02_8004DE98.unk8 = 1.0f;
-                D_ovl13_02_8004DE80.unk8 = 1.0f;
-                D_ovl13_02_8004DE80.unkC = 0.6f;
-                D_ovl13_02_8004DE98.unkC = 0.6f;
-                D_ovl13_02_8004DEB0.unkC = 0.6f;
+                {
+                    s32 mode = 0x100002;
+                    f32 v8 = 1.0f;
+                    f32 vC = 0.6f;
+                    f32 v10 = 0.99f;
+                    D_ovl13_02_8004DEB0.unk10 = v10;
+                    D_ovl13_02_8004DEB0.unk0 = mode;
+                    D_ovl13_02_8004DE98.unk10 = v10;
+                    D_ovl13_02_8004DE98.unk0 = mode;
+                    D_ovl13_02_8004DE80.unk10 = v10;
+                    D_ovl13_02_8004DE80.unk0 = mode;
+                    D_ovl13_02_8004DEB0.unk8 = v8;
+                    D_ovl13_02_8004DE98.unk8 = v8;
+                    D_ovl13_02_8004DE80.unk8 = v8;
+                    D_ovl13_02_8004DE80.unkC = vC;
+                    D_ovl13_02_8004DE98.unkC = vC;
+                    D_ovl13_02_8004DEB0.unkC = vC;
+                }
                 break;
             default:
                 func_ovl13_02_80046D7C(0xA, -50.0f);
-                D_ovl13_02_8004DEB0.unk10 = 0.99f;
-                D_ovl13_02_8004DEB0.unk0 = 0x100002;
-                D_ovl13_02_8004DE98.unk10 = 0.99f;
-                D_ovl13_02_8004DE98.unk0 = 0x100002;
-                D_ovl13_02_8004DE80.unk10 = 0.99f;
-                D_ovl13_02_8004DE80.unk0 = 0x100002;
-                D_ovl13_02_8004DE80.unkC = 0.93f;
-                D_ovl13_02_8004DE98.unkC = 0.93f;
-                D_ovl13_02_8004DEB0.unkC = 0.93f;
-                D_ovl13_02_8004DE80.unk8 = 1.0f;
-                D_ovl13_02_8004DE98.unk8 = 1.0f;
-                D_ovl13_02_8004DEB0.unk8 = 1.0f;
+                {
+                    s32 mode = 0x100002;
+                    f32 v8 = 1.0f;
+                    f32 vC = 0.93f;
+                    f32 v10 = 0.99f;
+                    D_ovl13_02_8004DEB0.unk10 = v10;
+                    D_ovl13_02_8004DEB0.unk0 = mode;
+                    D_ovl13_02_8004DE98.unk10 = v10;
+                    D_ovl13_02_8004DE98.unk0 = mode;
+                    D_ovl13_02_8004DE80.unk10 = v10;
+                    D_ovl13_02_8004DE80.unk0 = mode;
+                    D_ovl13_02_8004DE80.unkC = vC;
+                    D_ovl13_02_8004DE98.unkC = vC;
+                    D_ovl13_02_8004DEB0.unkC = vC;
+                    D_ovl13_02_8004DE80.unk8 = v8;
+                    D_ovl13_02_8004DE98.unk8 = v8;
+                    D_ovl13_02_8004DEB0.unk8 = v8;
+                }
                 break;
             }
             D_ovl13_02_8004DE50[6]->unk5C = 0.0f;
@@ -1950,18 +2018,24 @@ void func_ovl13_02_80046E10(s32 arg0) {
             }
             D_ovl13_02_8004DE50[0]->unk50 = save;
         }
-        D_ovl13_02_8004DE80.unk0 = 2;
-        D_ovl13_02_8004DE98.unk0 = 2;
-        D_ovl13_02_8004DEB0.unk0 = 2;
-        D_ovl13_02_8004DEB0.unk8 = 0.8f;
-        D_ovl13_02_8004DE98.unk8 = 0.8f;
-        D_ovl13_02_8004DE80.unk8 = 0.8f;
-        D_ovl13_02_8004DEB0.unkC = 0.11f;
-        D_ovl13_02_8004DE98.unkC = 0.11f;
-        D_ovl13_02_8004DE80.unkC = 0.11f;
-        D_ovl13_02_8004DE80.unk10 = 0.999f;
-        D_ovl13_02_8004DE98.unk10 = 0.999f;
-        D_ovl13_02_8004DEB0.unk10 = 0.999f;
+        {
+            s32 mode = 2;
+            f32 v8 = 0.8f;
+            f32 vC = 0.11f;
+            f32 v10 = 0.999f;
+            D_ovl13_02_8004DE80.unk0 = mode;
+            D_ovl13_02_8004DE98.unk0 = mode;
+            D_ovl13_02_8004DEB0.unk0 = mode;
+            D_ovl13_02_8004DEB0.unk8 = v8;
+            D_ovl13_02_8004DE98.unk8 = v8;
+            D_ovl13_02_8004DE80.unk8 = v8;
+            D_ovl13_02_8004DEB0.unkC = vC;
+            D_ovl13_02_8004DE98.unkC = vC;
+            D_ovl13_02_8004DE80.unkC = vC;
+            D_ovl13_02_8004DE80.unk10 = v10;
+            D_ovl13_02_8004DE98.unk10 = v10;
+            D_ovl13_02_8004DEB0.unk10 = v10;
+        }
     }
     if (D_ovl13_02_8004DE24 > 0) {
         func_ovl13_02_8004CC00(D_ovl13_02_8004DE3C, 0x04000000);
@@ -2102,7 +2176,7 @@ void func_ovl13_02_8004640C(void) {
     f32 ry;
     f32 a;
     f32 rad;
-    s32 pad0; /* fake: unused, frame space the original has (no source for it found) */
+    f32 amp = 15.0f; /* the sway's amplitude held (a guess: other constants held fit too) */
     f32 dr;
     f32 pos[3];
 
@@ -2132,7 +2206,7 @@ void func_ovl13_02_8004640C(void) {
     r = 0.0f;
     while (!(D_ovl13_02_8004DE3C->unk40->unkC & 0x40)) {
         rad = 1.0f - D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 / D_ovl13_02_8004DEF0;
-        rad *= 15.0f;
+        rad *= amp;
         M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 4) += -10.0f;
         M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) = ry + r;
         M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 0) = func_ovl13_02_8004CEF0(a) * rad + x;
@@ -2382,11 +2456,14 @@ PORT_IP(s32) func_ovl13_02_800458D8(UnkStructA *arg0) {
     s32 r;
 
     /* r's variable must come before flags in uopt's bit order (unconstrained
-       ranges are coloured in bit order): r = 0 and the dead read give r its
-       bit first, so the 0x40 test gets $v0 and flags $v1 */
+       ranges are coloured in bit order): r = 0 and the (compiled-out) check
+       after it give r its bit first, so the 0x40 test gets $v0 and flags $v1.
+       What the check reports is a guess; it doesn't fit before r = 0 */
     r = 0;
+    if (arg0 == NULL) {
+        DEBUG_PRINT(("800458D8: no object\n"));
+    }
     flags = arg0->unk10;
-    if (r) {} /* fake: a dead test, for the register allocation or schedule */
     r = arg0->unk10 & 0x40;
     if (r == 0) {
         return 0;
@@ -2478,7 +2555,10 @@ void func_ovl13_02_80045460(void) {
 }
 
 void func_ovl13_02_8004521C(void) {
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
+    /* the ring's radius and step as locals: a guess, the first word of each pair
+       of held values fits as well (the frame has their two words) */
+    f32 dist = 800.0f;
+    f32 step = 15.0f;
     UnkStructA *objs[24];
     s32 i;
     Vec3f a;
@@ -2491,14 +2571,14 @@ void func_ovl13_02_8004521C(void) {
     n = (PORT_IP(s32)) func_ovl13_02_8004CD70();
     a.y = 0.0f;
     a.x = 0.0f;
-    a.z = 800.0f;
+    a.z = dist;
     for (i = 0; i < 24; i++) {
         objs[i] = func_ovl13_02_8004CC20(0, 0, 0xD0, NULL);
         pos[i].z = 0.0f;
         pos[i].y = 0.0f;
         pos[i].x = 0.0f;
         func_ovl13_02_8004CB90(&a.x, &pos[i].x);
-        a.x += 15.0f;
+        a.x += step;
     }
     for (i = 0, k = 0, wait = 3; i < n; i++) {
         wait++;
@@ -3031,7 +3111,7 @@ void func_ovl13_02_800434C0(f32 *arg0) {
 
 void func_ovl13_02_800430CC(f32 *arg0, s32 arg1, s32 arg2) {
     f32 sp3C[3];
-    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 steps; /* arg1 as a float, both steps' divisor (a guess: 90.0f, -1.0f or 0.0f held fit the word too) */
     f32 dy;
     f32 dx;
     s32 i;
@@ -3040,7 +3120,8 @@ void func_ovl13_02_800430CC(f32 *arg0, s32 arg1, s32 arg2) {
     M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) = W360(M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4));
     sp3C[2] = sp3C[0] = sp3C[1] = 0.0f;
     func_ovl13_02_8004CB88(&D_ovl13_02_8004DEC8, arg0, sp3C);
-    dx = (A180(sp3C[0]) - A180(M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 0))) / (f32) arg1;
+    steps = arg1;
+    dx = (A180(sp3C[0]) - A180(M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 0))) / steps;
     if (arg2 != 0) {
         sp3C[1] = (sp3C[1] - 90.0f >= 360.0f) ? sp3C[1] - 90.0f - 360.0f : (sp3C[1] < 90.0f) ? sp3C[1] - 90.0f + 360.0f : sp3C[1] - 90.0f;
         if (!(sp3C[1] >= 0.0f && sp3C[1] <= 180.0f)) {
@@ -3052,7 +3133,7 @@ void func_ovl13_02_800430CC(f32 *arg0, s32 arg1, s32 arg2) {
         if (!(dy >= 0.0f && dy <= 180.0f)) {
             dy = (360.0f - dy) * -1.0f;
         }
-        dy /= (f32) arg1;
+        dy /= steps;
     }
     for (i = 0; i < arg1; i++) {
         M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 0) += dx;

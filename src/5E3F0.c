@@ -62,7 +62,8 @@
  * pointer variable or an `id = arg0` copy costs 8 bytes of frame or
  * moves a spill slot (8024BC20, 80244E04, 80246C3C, 80249648). An
  * empty `do {} while (0);` splits a block and changes uopt's choices
- * (8024B444, 8024878C, 80244FF8).
+ * (8024B444, 8024878C; 80244FF8's was there for a dead `p = &entry`
+ * store, and both went in fakes pass 10).
  * 8024C04C's unused `o = func_802443F4(arg0)` (as 8024AF24's): the
  * inlined copy emits nothing, but its R2 store and its return value's
  * range take v0 and v1 in the entry block.
@@ -77,8 +78,21 @@
  * flag gets v0. Its unk28 is loaded straight into obj (t0, kept by a
  * dead read); a getter there would end the entry block before the
  * first flag's unk10 load, which must share it with the parameters.
- * 80246078's third loop has the same unused func_80243D54 call after
- * its test, so the inlined func_80243EF0's result gets v0 there.
+ * 80246078's third loop had the same unused func_80243D54 call after
+ * its test; it was the getter for the func_80232D18 argument (its R2
+ * store does the same), with the function-level `j` that the inner
+ * block's own `j` shadows gone (its slot was the getter's area).
+ * Fakes pass 10 (DEBUG_PRINT checks, include/macros.h, messages are
+ * placeholders): 802500D4's dead read of r is `r >= 4` (tbl's size; any
+ * single test of r matches; its frame pad holds the 50.0f spawn
+ * distance, a guess among held values), 8024E088's of spA0 a range
+ * check of the stick angle, 80246F00 case 4's final `*D_802ACF58` read
+ * a check of D_802ACF58, 8024C334's `e->unk28` read in the t2 branch a
+ * check of the object and its model (it must read twice: no single test
+ * moves the spill slot). 8024D8C4's dx dead read: the diagonal cases set
+ * dx and dz in two statements each, dx first (`dx = dz = v` chains
+ * colour dx/dz the other way round), and its zeroing as three
+ * statements of int 0 (0.0f changes the code).
  * One object: no jal goes forward, there's no nop padding between
  * functions, and .rodata and .data run in function order with no
  * internal pads; split after func_80244354 (the only out-of-line
@@ -1134,7 +1148,7 @@ void func_802500D4() {
     s32 kind;
     UnkObj *objs[4];
     void * made;
-    s32 pad[1]; /* fake: frame-tuned */
+    f32 dist = 50.0f; /* the spawn distance (its frame slot; a guess among held values) */
     Tbl4_5E3F0 tbl;
     f32 pos[3];
     Vec3f off;
@@ -1147,10 +1161,12 @@ void func_802500D4() {
         objs[i] = NULL;
         if (D_800AEDF0[i].unk14 != 0 && D_800AEDF0[i].unk24 != 0) {
             r = func_80234248(3);
-            if (!r && !r) {} /* fake: dead read (uses up a ugen temporary) */
+            if (r >= 4) {
+                DEBUG_PRINT(("r >= 4\n"));
+            }
             if (r != 0) {
                 obj = D_800AEDF0[i].unk28;
-                pos[2] = 50.0f;
+                pos[2] = dist;
                 pos[0] = obj->unk40->unk20;
                 pos[1] = 0.0f;
                 func_8022FEAC(pos, &off.x);
@@ -1392,7 +1408,9 @@ void func_8024E088(s32 arg0) {
                 }
                 spC8 = spB4[0] + sp9C;
                 ang = WRAP360(spC8);
-                if (!spA0 && !spA0) {} /* fake: dead read (ugen temporaries) */
+                if (spA0 < 0.0f || spA0 >= 360.0f) {
+                    DEBUG_PRINT(("spA0 out of range\n"));
+                }
                 if (func_802452AC(arg0, 0x2000C20)) {
                     if (spB4[2] > 20.0f && spB4[2] < 35.0f) {
                         spD4 = 2.0f;
@@ -1891,7 +1909,9 @@ void func_8024D8C4(Ctl58 *arg0) {
     }
     if (dist <= 1.0f) {
         if (!b0) {
-            dx = 0; dy = dx; dz = dx;
+            dx = 0;
+            dy = 0;
+            dz = 0;
             switch (D_802AC8BC) {
             case 0x0:
                 dz = -D_802AC8C4;
@@ -1916,16 +1936,18 @@ void func_8024D8C4(Ctl58 *arg0) {
                 break;
             case 0xE0:
                 angle = 225.0f;
-                dx = dz = -D_802AC8C4;
+                dx = -D_802AC8C4;
+                dz = -D_802AC8C4;
                 break;
             case 0x60:
                 angle = 45.0f;
-                dx = dz = D_802AC8C4;
+                dx = D_802AC8C4;
+                dz = D_802AC8C4;
                 break;
             case 0xA0:
                 angle = 315.0f;
-                dz = D_802AC8C4;
                 dx = -D_802AC8C4;
+                dz = D_802AC8C4;
                 break;
             case 0x100:
                 dy = D_802AC8C4;
@@ -1934,7 +1956,6 @@ void func_8024D8C4(Ctl58 *arg0) {
                 dy = -D_802AC8C4;
                 break;
             }
-            if (!dx && !dx) {} /* fake: dead read (ugen temporaries) */
             func_8026DCAC(obj->unk40->unk10 + dx * 100.0f, obj->unk40->unk14 + dy * 100.0f,
                           obj->unk40->unk18 + dz * 100.0f, &ipos, 2);
             func_8026E338(ipos.i[0], ipos.i[1], ipos.i[2], res, 0);
@@ -2015,10 +2036,10 @@ void func_8024D5D0(Ctl58 *arg0) {
     f32 cs;
     s32 tilt;
     s32 yawDir;
-    s32 pad[1]; /* fake: frame-tuned */
+    s32 pad[1]; /* fake: frame-tuned (p10: dist/pitch/yaw as one f32[3], which func_8022FF58 fills from &yaw, is 8-aligned: frame +8 with any extra word, s's slot 4 high without) */
     f32 s;
 
-    if (!arg0->unk0 && !arg0->unk0) {} /* fake: dead read (ugen temporaries, see the header) */
+    if (!arg0->unk0 && !arg0->unk0) {} /* fake: dead read (ugen temporaries, see the header); the original loads dist first, into f0; p10: the three loads in any order or as initialisers, DEBUG_PRINT compares of unk0: no (`!arg0->unk0` alone matches) */
     dir = arg0->unk4;
     tilt = arg0->unk8;
     dist = arg0->unk0;
@@ -2444,8 +2465,8 @@ void func_8024C334(s32 arg0, PORT_IP(s32) arg1, u16 arg2, f32 *arg3) {
 
     t1 = func_80244BA4(arg0, 2);
     if (!t1) {
-        func_80243D54(arg0); /* fake: unused call: its R2 store frees v0 for the flag (header) */
-        if (!((UnkObj *)obj)->unk40 && !((UnkObj *)obj)->unk40) {} /* fake: keeps unk28 loaded (t0) */
+        func_80243D54(arg0); /* fake: unused call: its R2 store frees v0 for the flag (header); p10: getters for unk28 in place of obj/e->unk28, at each fake's place, no */
+        if (!((UnkObj *)obj)->unk40 && !((UnkObj *)obj)->unk40) {} /* fake: keeps unk28 loaded (t0); p10: no DEBUG_PRINT check of obj/obj->unk40 (single or `||`) anywhere in the branch */
         if (!(e->unk38 & 0x1000)) {
             func_8024C314(arg0);
             e->unk38 |= 0x1000;
@@ -2453,7 +2474,9 @@ void func_8024C334(s32 arg0, PORT_IP(s32) arg1, u16 arg2, f32 *arg3) {
     }
     t2 = func_802452AC(arg0, 0x600002);
     if (t2) {
-        if (!e->unk28 && !e->unk28) {} /* fake: moves the final address's spill slot to sp+0x18 */
+        if (e->unk28 == NULL || e->unk28->unk40 == NULL) {
+            DEBUG_PRINT(("e->unk28 or its unk40 == NULL\n"));
+        }
         D_802AC8D0[arg0]--;
     }
     t3 = func_80244BA4(arg0, 0x400000);
@@ -2635,7 +2658,7 @@ void func_8024B444(s32 arg0, f32 *arg1) {
             if (D_800AEDF0[other].unkC4 == 8.0f) {
                 D_800AEDF0[other].unkC4 = 6.0f;
             }
-            do {} while (0); /* fake: splits the block */
+            do {} while (0); /* fake: splits the block (only here; any DEBUG_PRINT check, even `if (0)`, does it; `else if` pairs, an entry pointer for `other`, the C0 update's forms: no) */
             if (D_800AEDF0[other].unkC4 == -8.0f) {
                 D_800AEDF0[other].unkC4 = -6.0f;
             }
@@ -3174,7 +3197,7 @@ void func_8024A0DC(s32 arg0) {
     case 0x400000:
         if (D_802AC8BC != 0 && D_802AC8BC != 0x20 && D_802AC8BC != 0x40 && D_802AC8BC != 0x60 &&
             D_802AC8BC != 0x80 && D_802AC8BC != 0xA0) {
-        if (!flags && !flags) {} /* fake: dead read in an empty if (ugen temporaries) */
+        if (!flags && !flags) {} /* fake: dead read in an empty if (ugen temporaries); p10: only a test of flags (unset in this case) keeps the if: any other DEBUG_PRINT condition loses it */
         }
         func_80244354(id, 0x420, 0);
         t5 = func_80244BA4(id, 0x02000000);
@@ -3596,7 +3619,7 @@ void func_8024878C(s32 arg0) {
     s32 t3;
 
     func_80244354(arg0, 2, 0);
-    do {} while (0); /* fake: splits the block */
+    do {} while (0); /* fake: splits the block (p10: no DEBUG_PRINT check of arg0 here; direct-call tests, an early return, a ternary, `id = arg0`: no; an unused `s32 *p = func_80243D54(arg0)` matches but is no better) */
     t1 = func_80244BA4(arg0, 0x1000);
     if (!t1) {
         func_80244354(arg0, 0x20, 0);
@@ -4068,7 +4091,7 @@ void func_80246F00(s32 arg0, s32 arg1) {
                                 func_80231408(obj, flags | 0x80000);
                                 obj = *D_802ACF58;
                                 func_8022F808(obj, (f32 *)obj->unk58);
-                                if (!obj->unk40 && !obj->unk40) {} /* fake: obj crosses the call, so it takes s0 */
+                                if (!obj->unk40 && !obj->unk40) {} /* fake: obj crosses the call, so it takes s0 (p10: DEBUG_PRINT checks of obj, here or after the case; obj for *D_802ACF58 in the loop's calls: no) */
                                 func_8026C660(0x1EA);
                                 break;
                             }
@@ -4096,7 +4119,9 @@ void func_80246F00(s32 arg0, s32 arg1) {
                 func_8022F808(obj, (f32 *)obj->unk58);
                 if (!obj->unk40 && !obj->unk40) {} /* fake: likewise */
             }
-            if (*D_802ACF58) {} /* fake: dead read (as the two above) */
+            if (D_802ACF58 == NULL) {
+                DEBUG_PRINT(("D_802ACF58 == NULL\n"));
+            }
             break;
         }
         func_80245FA0(arg0, arg1);
@@ -4284,7 +4309,6 @@ void func_80246078() {
     UnkStruct_800AEDF0 *p;
     UnkObj *obj;
     s32 i;
-    s32 j;
     s32 k;
     s32 m;
     void *q;
@@ -4337,8 +4361,7 @@ void func_80246078() {
     for (i = 0; i < 4; i++) {
         p = &D_800AEDF0[i];
         if ((p->unk24 == 1 || p->unk24 == 2) && p->unk14 != 0 && !func_80244BA4(i, 0x1000) && !func_80243EF0(i)) {
-            func_80243D54(i); /* fake: unused call: the inlined test result gets v0 (header) */
-            t2 = func_80232D18(p->unk28, 0x10);
+            t2 = func_80232D18((void *) func_802443F4(i), 0x10);
             if (t2 != 0) {
                 c[0]++;
             }
@@ -4726,16 +4749,13 @@ void func_802450DC(s32 arg0) {
 s32 func_80244FF8(UnkObj *arg0) {
     s32 ret = 0;
     s32 id;
-    UnkStruct_800AEDF0 *p;
     s32 flag;
 
     func_802313DC(arg0, 0x400);
     id = func_802441AC(arg0);
     func_80244354(id, 0x400000, 0);
-    p = &D_800AEDF0[id];
     flag = func_80244BA4(id, 0x1000);
     if (flag) {
-        do {} while (0); /* fake: splits the block */
         flag = func_80243EB4(id, 0x2000);
         if (!flag) {
             arg0->unk6C = 1.0f;

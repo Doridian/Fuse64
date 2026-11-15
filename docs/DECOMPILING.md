@@ -737,6 +737,11 @@ matches, drop the `#ifdef` and the asm.
   An infinite loop's `0x01000000` was hoisted into `s3` (a bigger frame);
   `p->unk28 ? 0x01000000 : 0x01000000` leaves it a `lui` in a delay slot
   (ovl_0C_01's 80047A60, 136 words to 36).
+- **`a = b = v` and two statements colour differently.** main_code's
+  8024D8C4 needed a dead `if (!dx && !dx) {}` for its dx/dz float
+  registers until its diagonal cases' `dx = dz = v` became `dx = v; dz =
+  v;`. A fake's job is often a dead store's or a chain's: 80244FF8's
+  `do {} while (0)` went with an unused `p = &D_800AEDF0[id]` store.
 - **Re-read a global after each call** where m2c keeps it in a temporary
   and the original reloads it (ovl_0C_01's 80046224, 51 words to 0).
   `D = f(); D->x |= 0x80;` keeps `&D` in a register (`lui/addiu a1;

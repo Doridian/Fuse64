@@ -103,6 +103,19 @@
  * (pad[10]), 80043688's fade level 80043078 (its `max = 255.0f` and four
  * pad words); 8004DB80/8004DB4C and 8004F084/8004F048 likewise (no
  * fakes there). 80046AEC's dx/pad/dz is a Vec3f d.
+ * Fakes pass 14 (scratch/fakes-ovl/p14-1502, 16 `fake:` markers to 5):
+ * every pad word is a held value (guesses, each with a role; any held
+ * local fills them): 8004D660 pos/mode/speed/on/set, 80049A04 dist,
+ * 8004BC88 frames, 8004928C last/wait/id/flags (loop counters of their
+ * own don't fit), 800481A0 n1/n2, 80046AEC p/k0, 80045330 speed/ground,
+ * 800443AC period/frames, 80043688 size. 8004B7E0's `if (s == t) {}` is
+ * a compiled-out `t > 1.0f` debug check right after t is computed.
+ * Left: 800468A0's `i` (no form without a front-end temp or 8 bytes
+ * of frame), the three dead calls that place 80046194/80049A04 (as
+ * globals at their ROM places they lose their flag's first .bss slot, or
+ * get inlined with a file-scope flag), and 80045A58's 1.0f test (splitting
+ * the later `= 1.0f` chains, 1.0f-using debug checks and inline 1.0f - t
+ * don't raise 1.0f's priority the same way).
  *
  * jp: 8004B6E4's first loop scales the beam's 0x2C by i / 20 (us sets it
  * to 0), and its second loop leaves it alone; 8004C400 picks a different
@@ -2593,27 +2606,34 @@ void func_ovl15_02_8004928C() {
     UnkStructA *self;
     s32 i;
     UnkStructA *objs[10];
-    s32 pad[4]; /* fake: unused, frame space the original has (no source for it found) */
+    /* last, wait, id and flags are held values (fakes pass 14; guesses: any held local fills these words) */
+    UnkStructA *last;
+    s32 wait;
+    s32 id;
+    s32 flags;
     s32 tasks[10];
     s32 snd;
 
     self = func_ovl15_02_80050730();
+    id = 0x118;
     i = 0;
     objs[i++] = func_ovl15_02_80049198(0x305, NULL, self);
     for (; i < 9; i++) {
-        objs[i] = func_ovl15_02_80049198(0x118, objs[i - 1], self);
+        objs[i] = func_ovl15_02_80049198(id, objs[i - 1], self);
     }
-    objs[i] = func_ovl15_02_80049198(0x118, objs[i - 1], self);
-    snd = func_ovl15_02_80044378(0x14E, objs[i]);
+    objs[i] = last = func_ovl15_02_80049198(id, objs[i - 1], self);
+    snd = func_ovl15_02_80044378(0x14E, last);
+    flags = 0x150;
     i = 0;
-    tasks[i++] = func_ovl15_02_80050708(func_ovl15_02_80048ED0, objs[0], 0, 0, 0x150);
+    tasks[i++] = func_ovl15_02_80050708(func_ovl15_02_80048ED0, objs[0], 0, 0, flags);
     for (; i < 10; i++) {
-        tasks[i] = func_ovl15_02_80050708(func_ovl15_02_80048C1C, objs[i], 0, 0, 0x150);
+        tasks[i] = func_ovl15_02_80050708(func_ovl15_02_80048C1C, objs[i], 0, 0, flags);
     }
     while (objs[0]->unk40->unk14 < ((Vec3f *) self)->y + 400.0f) {
         func_ovl15_02_80050750();
     }
-    for (i = 0; i < 480 && D_ovl15_02_80051408 != 0; i++) {
+    wait = 480;
+    for (i = 0; i < wait && D_ovl15_02_80051408 != 0; i++) {
         func_ovl15_02_80050750();
     }
     func_ovl15_02_80050CC0(snd);
@@ -2621,7 +2641,7 @@ void func_ovl15_02_8004928C() {
         func_ovl15_02_80050710(tasks[i]);
     }
     for (i = 0; i < 10; i++) {
-        func_ovl15_02_80050708(func_ovl15_02_800489E8, objs[i], 0, 0, 0x150);
+        func_ovl15_02_80050708(func_ovl15_02_800489E8, objs[i], 0, 0, flags);
     }
     func_ovl15_02_80050728(0x1F);
     func_ovl15_02_800505D0(objs[0]);

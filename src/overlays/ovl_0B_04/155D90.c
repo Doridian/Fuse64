@@ -84,8 +84,8 @@
  * Function by function (words us/jp as they were differing; the
  * comparison counts a global with the statics after it, so a static of
  * the wrong size costs the rest of its run):
- * - 80043110 0/0 (matches; p4). The frame: FreeEntries (n, e, x) with x
- *   unused and no other local (16-byte areas, as the original's homes'
+ * - 80043110 0/0 (matches; p4). The frame: FreeEntries (n, e, d) with d
+ *   unused (MakeEntries' arguments; p13) and no other local (16-byte areas, as the original's homes'
  *   spacing shows); H1's final free is an inlined FreeEntry(e, i) (the 8
  *   bytes below the second FreeEntries that the end-pointer spill's place
  *   needs); case 12 calls 800487E8 directly (no H12), which keeps the stub
@@ -100,9 +100,9 @@
  *   (80047E28) is `s32 (Obj *, s32)` as 0B_06's 80048888, which puts H5a's
  *   object in $v1 as in the original.
  *   H5b's calls pass `(x += 1, x - 1)` for the original's `addiu a2,v1,0`
- *   copy (fake), the first with (&A16C)[1] for A170 (fake). H5a's
- *   last store (A170) is numbered below the line after it (`#line`,
- *   fake) for its place in the jal's delay slot.
+ *   copy (fake), the first with (&A16C)[1] for A170 (fake). H5a is
+ *   defined after H5b, so its last store (A170) sorts after H5b's first
+ *   call and goes in that jal's delay slot (a `#line` did that before).
  * - 800436C8 0/0 (matches): the animation step is the static 800436C0,
  *   defined just above it, so `b = a = -1` is numbered above the loop head
  *   and as1 hoists its `li a1,-1` into the head's load delay, right after
@@ -129,24 +129,25 @@
  *   propagation makes uopt fold the store into a direct one with its own
  *   `lui at`, as in the original. The rub-out is the flat test
  *   `(unk0 == 7 && c == 0) || (unk0 != 7 && unk0 > 0)` on the global, a
- *   dead `if (unk1) {}` first in its arm (fake: one more use of the base,
- *   which then takes s0) and c's read on the `if (buttons & 2)` line (its
- *   .loc). The decrement is `unk0 = ((u32) unk0 - 1) & 0xFF` (p5): the
+ *   compiled-out `unk0 >= 8` check after the decrement in its arm (one
+ *   more use of the base, which then takes s0; p2-p12 had a dead
+ *   `if (unk1) {}` there) and c's read on the `if (buttons & 2)` line (its
+ *   .loc, fake). The decrement is `unk0 = ((u32) unk0 - 1) & 0xFF` (p5): the
  *   unsigned arithmetic keeps unk0's own value (s1; any int arithmetic
  *   reads the promoted copy in v1), and ugen's `and 255` before the sb,
  *   which as1 drops, uses up the temporary the original's t-registers are
  *   one ahead by (p2-p4's `c = A290[..] ^ 0` did that but left c in t6).
  * - 80043ADC 0/0 (matches; w5): us's loop is `if (A168 != 0xFF) { p3 =
  *   &tbl[3]; if (!p3) {} do { ... } while (A168 != 0xFF); }` with p4 =
- *   &tbl[4] set at the top and one more dead read of p3 after the else
- *   arm's 80043A24 call. p3/p4 are copy-propagated to the constants
+ *   &tbl[4] set at the top and a compiled-out `p == p3` check after the
+ *   else arm's 80043A24 call (p13; a dead read of p3 before). p3/p4 are copy-propagated to the constants
  *   tbl+108/tbl+144, which then stay separate uopt candidates instead of
  *   folding into the table base (a literal &tbl[3] in the test becomes
- *   base+108 once the base has a register). The second dead read gives
+ *   base+108 once the base has a register). The check's read gives
  *   tbl+108 two loop uses (save 20/8 = 2.5) so it is coloured before the
  *   table base (10/7) and the stride 36 (10/7, which then gets no register,
  *   so the multiply is shifts again); tbl+144 keeps one use and is reloaded
- *   with lui each time as in the original. The dead read must be in that
+ *   with lui each time as in the original. The read must be in that
  *   arm: anywhere else adds a uopt block (the base's n grows and A168's
  *   address wins its register) or extends the range before the loop. The
  *   if/do shape puts p3's load at its own statement in the preheader, and
@@ -157,9 +158,10 @@
  *   list at its end, and any inlined call after the second MakeEntries
  *   costs its 4 bytes of alignment below it (the front end's frame then
  *   ends 4 below the original's); in definition order they need no call.
- *   80044BE8 has `s32 pad[2]` (us/eu only) after its locals (frame-tuned;
- *   pass 3: a hide-object helper for its three us-only hides isn't it, the
- *   frame grows).
+ *   us/eu's 80044BE8 dims its first entry through the inlined static
+ *   80044624 (p13), whose area is the 8 bytes p2-p12 gave it as a pad[2]
+ *   (pass 3's helper for all three us-only hides grew the frame; the
+ *   other two as the helper change the code).
  *   jp's `changed` (p4): uopt treats $v0 as a variable (R2) and the
  *   function's blocks as one loop, so any read of a call's result makes
  *   R2 live through the changed test and `changed` takes $v1. us/eu read
@@ -180,7 +182,14 @@
  *   sets $a0 after the id, so jp 80046734's `li a0,1` comes after the
  *   ids index's sll as in the original; jp 80046294's mode, a ternary,
  *   goes through a local m, which the original evaluates first; jp
- *   800468F0's loop is 800468E8 per choice; jp still takes a dead `if (!base) {}`).
+ *   800468F0's loop is 800468E8 per choice, after a compiled-out check of
+ *   base, which jp needs: p13, was a jp-only dead `if (!base) {}`).
+ * - Pages 5-8's handlers (80046B28, 80046D74, 80046FA8, 800471F4) start
+ *   with the inlined empty static 800468E0(item, buttons): its two
+ *   parameters' area is the 16 bytes their frames have above the locals
+ *   (p13; p4-p12 had a pad[3]). Any inlined call whose body compiles to
+ *   nothing does the same (a FreeEntries of 0 entries too); (void), K&R
+ *   or one parameter is 8 bytes short.
  * Everything else matches.
  * 80044BE8 with a/b/i block-scoped or #if'd out, no `changed`,
  * hand-written MakeEntries loops or an unrolled 80044BE0 (the homes are
@@ -1155,7 +1164,7 @@ extern s32 D_ovl0B_04_8004A1A8;
 extern s32 D_ovl0B_04_8004A1AC[14];
 
 static void func_ovl0B_04_80043050(Entry *e, Desc *d);
-static void func_ovl0B_04_80043010(s32 n, Entry *e, s32 x);
+static void func_ovl0B_04_80043010(s32 n, Entry *e, Desc *d);
 static void func_ovl0B_04_800438FC(s32 id, u32 mode, Item *it);
 static void func_ovl0B_04_80043A24(s32 n, s32 *ids, Item *items);
 #if !VERSION_JP
@@ -1231,9 +1240,11 @@ static void func_ovl0B_04_MakeEntries(s32 n, Entry *e, Desc *d) {
     return;
 }
 
-/* fake: (n, e, x) with x unused (frame-tuned): 80043110's FreeEntries n
- * homes at the original's 80 and 64 (p4: no pad local; 16-byte areas). */
-static void func_ovl0B_04_80043010(s32 n, Entry *e, s32 x) {
+/* MakeEntries' arguments, the Desc unused (the callers pass the one they
+ * made the run with): the third parameter's home is part of the frame
+ * (80043110's FreeEntries n homes at the original's 80 and 64; 16-byte
+ * areas). */
+static void func_ovl0B_04_80043010(s32 n, Entry *e, Desc *d) {
     s32 i;
 
     for (i = 0; i < n; i++) {
@@ -1285,9 +1296,15 @@ static void func_ovl0B_04_80043F94(void) {
 #if !VERSION_JP
 /* Unused like the rest, but it uses D_ovl0B_04_8004A3E8 (us/eu only, as
  * this static): a reference from an unused static keeps that .bss defined
- * where -O3 would leave an unreferenced one to common. */
+ * where -O3 would leave an unreferenced one to common. Its body is a
+ * guess (an unused static leaves only its stub; any use of the array
+ * matches). */
 static void func_ovl0B_04_80043F9C(void) {
-    D_ovl0B_04_8004A3E8[0] = 0; /* fake: its body doesn't reach the object; any use of the array does this */
+    s32 i;
+
+    for (i = 0; i < 8; i++) {
+        D_ovl0B_04_8004A3E8[i] = 0;
+    }
 }
 #endif
 
@@ -1518,7 +1535,12 @@ static void func_ovl0B_04_8004461C(Entry *e) {
     e->unk0->unk1C = e->unk10;
 }
 
-static void func_ovl0B_04_80044624(void) { /* unidentified: an original static (inlined or unused) left only its stub here; its body is unknown */
+/* Page 0's first entry dimmed (inlined in us/eu's 80044BE8; jp doesn't
+ * call it). Its area is the 8 bytes of us/eu's frame there (p13; p2-p12
+ * had a pad[2]). */
+static void func_ovl0B_04_80044624(void) {
+    D_ovl0B_04_8004A060[0].unk0->unkC |= 0x80;
+    D_ovl0B_04_8004A060[0].unk0->unk36 = 0;
 }
 
 static s8 func_ovl0B_04_8004462C(u8 set, u8 c) {
@@ -1732,9 +1754,6 @@ static u8 func_ovl0B_04_80044BE8(u8 arg0, u16 arg1) {
     Obj *b;
     s32 i;
     s32 j;
-#if !VERSION_JP
-    s32 pad[2]; /* fake: frame-tuned (p2; fakes p9: D_ovl0B_04_8004A060[0].unk0 held in an Obj * for case 1's two stores drops a reload) */
-#endif
 
     if ((arg1 & 0x20) || (arg1 & 0x40)) {
         func_ovl0B_04_800438FC(D_ovl0B_04_8004A2A8[D_ovl0B_04_8004A174], 0,
@@ -1783,8 +1802,7 @@ static u8 func_ovl0B_04_80044BE8(u8 arg0, u16 arg1) {
                     func_ovl0B_04_80043050(&D_ovl0B_04_8004A060[i], &D_ovl0B_04_80049C38[j]);
                 }
 #if !VERSION_JP
-                D_ovl0B_04_8004A060[0].unk0->unkC |= 0x80;
-                D_ovl0B_04_8004A060[0].unk0->unk36 = 0;
+                func_ovl0B_04_80044624();
 #endif
                 func_ovl0B_04_MakeEntries(3, &D_ovl0B_04_8004A060[5], &D_ovl0B_04_80049C38[10]);
                 func_ovl0B_04_MakeEntries(2, &D_ovl0B_04_8004A060[8], &D_ovl0B_04_80049C38[10]);
@@ -1929,8 +1947,8 @@ static void func_ovl0B_04_80045530(void) {
     for (i = 0; i < 5; i++) {
         func_ovl0B_04_80047DE0(D_ovl0B_04_8004A060[i].unk0);
     }
-    func_ovl0B_04_80043010(3, &D_ovl0B_04_8004A060[5], 0);
-    func_ovl0B_04_80043010(2, &D_ovl0B_04_8004A060[8], 0);
+    func_ovl0B_04_80043010(3, &D_ovl0B_04_8004A060[5], &D_ovl0B_04_80049C38[10]);
+    func_ovl0B_04_80043010(2, &D_ovl0B_04_8004A060[8], &D_ovl0B_04_80049C38[10]);
 }
 
 static void func_ovl0B_04_80045538(void) {
@@ -1950,17 +1968,21 @@ static void func_ovl0B_04_80045540(u8 item, u16 buttons, u8 *ret) {
     u8 c;
     u8 x;
 
-    /* fake: (p2) the dead read gives the base its s0; c's read is on the
-     * if's line (.loc). The decrement is unsigned arithmetic masked to a
-     * byte (p5): ugen's `and 255` before the sb, which as1 drops, uses up
-     * the temporary the original's t-registers are one ahead by, and it
-     * keeps unk0's own (u8) value, so c stays in $a0. */
+    /* fake: c's read is on the if's line (.loc; on its own line as1 puts
+     * the `li a2,7` before its load, p13). The decrement is unsigned
+     * arithmetic masked to a byte (p5): ugen's `and 255` before the sb,
+     * which as1 drops, uses up the temporary the original's t-registers
+     * are one ahead by, and it keeps unk0's own (u8) value, so c stays in
+     * $a0. The cursor check after it (a compiled-out DEBUG_PRINT, p13; p2
+     * had a dead read) gives the base its s0. */
     if (buttons & 2) { c = D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0];
         D_ovl0B_04_8004A490.unk1 = 0;
         D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0] = 0;
         if ((D_ovl0B_04_8004A490.unk0 == 7 && c == 0) || (D_ovl0B_04_8004A490.unk0 != 7 && D_ovl0B_04_8004A490.unk0 > 0)) {
-            if (D_ovl0B_04_8004A490.unk1) {} /* fake: see above */
             D_ovl0B_04_8004A490.unk0 = ((u32) D_ovl0B_04_8004A490.unk0 - 1) & 0xFF;
+            if (D_ovl0B_04_8004A490.unk0 >= 8) {
+                DEBUG_PRINT(("cursor >= 8\n"));
+            }
         }
         func_ovl0B_04_80044210();
         func_ovl0B_04_80044154();
@@ -2277,7 +2299,11 @@ static void func_ovl0B_04_80046734(u8 item, u16 buttons) {
 }
 #endif
 
-static void func_ovl0B_04_800468E0(void) { /* unidentified: an original static (inlined or unused) left only its stub here; its body is unknown */
+/* Pages 5-8: the handler's input, for the debug output (inlined; the
+ * body is a guess). Its two parameters' area is the 16 bytes of the
+ * handlers' frame above their locals (p13; p4-p12 had a pad[3] there). */
+static void func_ovl0B_04_800468E0(u8 item, u16 buttons) {
+    DEBUG_PRINT(("item %d buttons %x\n", item, buttons));
 }
 
 /* Choice n's open flag (inlined). */
@@ -2304,9 +2330,11 @@ static void func_ovl0B_04_800468F0(s32 base) {
         D_ovl0B_04_8004A480[i + 10] = 1;
     }
     for (i = 1; i < 11; i++) {
-#if VERSION_JP
-        if (!base) {} /* fake: dead read (jp only: base then takes s5) */
-#endif
+        /* A compiled-out check (jp needs its read of base: base then takes
+         * s5; us/eu don't mind it; p13, was a jp-only dead read). */
+        if (base > 33) {
+            DEBUG_PRINT(("base > 33\n"));
+        }
         func_ovl0B_04_800468E8(base + i, i);
     }
     func_ovl0B_04_MakeEntries(1, &D_ovl0B_04_8004A060[10], &D_ovl0B_04_80049C38[8]);
@@ -2331,8 +2359,8 @@ static void func_ovl0B_04_80046A98() {
 
 static u8 func_ovl0B_04_80046B28(u8 arg0, u16 arg1) {
     u8 ret = 1;
-    s32 pad[3]; /* fake: frame-tuned (with FreeEntries' (n, e, x), p4) */
 
+    func_ovl0B_04_800468E0(arg0, arg1);
     func_ovl0B_04_80046734(arg0, arg1);
     if (arg1 & 1) {
         if (arg0 >= 11) {
@@ -2348,8 +2376,8 @@ static u8 func_ovl0B_04_80046B28(u8 arg0, u16 arg1) {
     } else if (arg1 & 2) {
         func_ovl0B_04_800487D0(2);
         func_ovl0B_04_80043FA4(&ret, 0, 2, 0);
-        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[10], 0);
-        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[11], 0);
+        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[10], &D_ovl0B_04_80049C38[8]);
+        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[11], &D_ovl0B_04_80049C38[9]);
     }
     return ret;
 }
@@ -2364,8 +2392,8 @@ static void func_ovl0B_04_80046CE4() {
 
 static u8 func_ovl0B_04_80046D74(u8 arg0, u16 arg1) {
     u8 ret = 1;
-    s32 pad[3]; /* fake: frame-tuned (with FreeEntries' (n, e, x), p4) */
 
+    func_ovl0B_04_800468E0(arg0, arg1);
     func_ovl0B_04_80046734(arg0, arg1);
     if (arg1 & 1) {
         if (arg0 >= 11) {
@@ -2380,8 +2408,8 @@ static u8 func_ovl0B_04_80046D74(u8 arg0, u16 arg1) {
     } else if (arg1 & 2) {
         func_ovl0B_04_800487D0(2);
         func_ovl0B_04_80043FA4(&ret, 0, 3, 0);
-        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[10], 0);
-        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[11], 0);
+        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[10], &D_ovl0B_04_80049C38[8]);
+        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[11], &D_ovl0B_04_80049C38[9]);
     }
     return ret;
 }
@@ -2396,8 +2424,8 @@ static void func_ovl0B_04_80046F18() {
 
 static u8 func_ovl0B_04_80046FA8(u8 arg0, u16 arg1) {
     u8 ret = 1;
-    s32 pad[3]; /* fake: frame-tuned (with FreeEntries' (n, e, x), p4) */
 
+    func_ovl0B_04_800468E0(arg0, arg1);
     func_ovl0B_04_80046734(arg0, arg1);
     if (arg1 & 1) {
         if (arg0 >= 11) {
@@ -2413,8 +2441,8 @@ static u8 func_ovl0B_04_80046FA8(u8 arg0, u16 arg1) {
     } else if (arg1 & 2) {
         func_ovl0B_04_800487D0(2);
         func_ovl0B_04_80043FA4(&ret, 0, 4, 0);
-        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[10], 0);
-        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[11], 0);
+        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[10], &D_ovl0B_04_80049C38[8]);
+        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[11], &D_ovl0B_04_80049C38[9]);
     }
     return ret;
 }
@@ -2431,8 +2459,8 @@ static void func_ovl0B_04_80047164() {
  * open), in two halves of five. */
 static u8 func_ovl0B_04_800471F4(u8 arg0, u16 arg1) {
     u8 ret = 1;
-    s32 pad[3]; /* fake: frame-tuned (with FreeEntries' (n, e, x), p4) */
 
+    func_ovl0B_04_800468E0(arg0, arg1);
     func_ovl0B_04_80046734(arg0, arg1);
     if (arg1 & 1) {
         if (arg0 >= 11) {
@@ -2448,8 +2476,8 @@ static u8 func_ovl0B_04_800471F4(u8 arg0, u16 arg1) {
     } else if (arg1 & 2) {
         func_ovl0B_04_800487D0(2);
         func_ovl0B_04_80043FA4(&ret, 0, 5, 0);
-        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[10], 0);
-        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[11], 0);
+        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[10], &D_ovl0B_04_80049C38[8]);
+        func_ovl0B_04_80043010(1, &D_ovl0B_04_8004A060[11], &D_ovl0B_04_80049C38[9]);
     }
     return ret;
 }
@@ -2515,7 +2543,9 @@ void func_ovl0B_04_80043ADC(void) {
             func_ovl0B_04_80043A7C(p->unk0, p->unk4, p->unk8);
         } else {
             func_ovl0B_04_80043A24(p->unk0, p->unk4, p->unk8);
-            if (!p3) {} /* fake: second dead read (header, 80043ADC) */
+            if (p == p3) {
+                DEBUG_PRINT(("p == p3\n")); /* compiled out: p3's second loop use (header, 80043ADC) */
+            }
         }
 #endif
         menu = func_ovl0B_04_800485D0(p->unkC, p->unk10, p->unk16, p->unk18, p->unk1A);
@@ -2793,8 +2823,8 @@ static void func_ovl0B_04_H1(void) {
     func_ovl0B_04_80048250(D_ovl0B_04_8004A4A0);
     func_ovl0B_04_80047E78(D_ovl0B_04_8004A170);
     func_ovl0B_04_80047DE0(D_ovl0B_04_8004A164);
-    func_ovl0B_04_80043010(20, D_ovl0B_04_80049D40, 0);
-    func_ovl0B_04_80043010(20, D_ovl0B_04_80049ED0, 0);
+    func_ovl0B_04_80043010(20, D_ovl0B_04_80049D40, &D_ovl0B_04_80049C38[0]);
+    func_ovl0B_04_80043010(20, D_ovl0B_04_80049ED0, &D_ovl0B_04_80049C38[1]);
     func_ovl0B_04_FreeEntry(D_ovl0B_04_8004A060, 12);
 }
 

@@ -428,7 +428,10 @@ matches, drop the `#ifdef` and the asm.
   - an empty static with no parameters still adds a 4-byte slot to its
     caller's frame (8004352C's frame was 8 bytes too big while its stub
     was an empty static it called); called inside an `if`, the same
-    static fixed ovl_0D_04's func_80044D98 frame;
+    static fixed ovl_0D_04's func_80044D98 frame; with parameters it adds
+    their slots (ovl_0B_04's four page handlers had a `pad[3]` where each
+    calls the empty stub 800468E0 with two), so an unidentified stub is
+    the first suspect for a pad;
   - a small function the handler calls can stay a call only by being
     bigger: ovl_0D_04's func_80044840 calls its empty static twice (a
     fake), where once it was inlined into the handler;

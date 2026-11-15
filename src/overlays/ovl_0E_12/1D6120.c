@@ -545,19 +545,12 @@ void func_ovl0E_12_80043A64(void) {
                     }
                 }
             }
-            D_ovl0E_12_80045F94[i].unk0->unk40->unk10 = D_ovl0E_12_80045F94[i].unk14 * 10.0f;
-            D_ovl0E_12_80045F94[i].unk0->unk40->unk14 = D_ovl0E_12_80045F94[i].unk18 * 10.0f;
-            D_ovl0E_12_80045F94[i].unk0->unk40->unk18 = D_ovl0E_12_80045F94[i].unk1C * 10.0f;
-            D_ovl0E_12_80045F94[i].unk0->unk40->unk1C = D_ovl0E_12_80045F94[i].unk20;
-            D_ovl0E_12_80045F94[i].unk0->unk40->unk20 = D_ovl0E_12_80045F94[i].unk24;
-            D_ovl0E_12_80045F94[i].unk0->unk40->unk24 = D_ovl0E_12_80045F94[i].unk28;
-            D_ovl0E_12_80045F94[i].unk0->unk40->unk28 = D_ovl0E_12_80045F94[i].unk2C;
-            D_ovl0E_12_80045F94[i].unk0->unk40->unk2C = D_ovl0E_12_80045F94[i].unk30;
-            D_ovl0E_12_80045F94[i].unk0->unk40->unk30 = D_ovl0E_12_80045F94[i].unk34;
-            /* fake: (ends the block): without it `move a1` for the next call is
-             * scheduled into a load delay slot above, not the call's delay slot */
-            if (!D_ovl0E_12_80045F94[i].unkE && !D_ovl0E_12_80045F94[i].unkE && !D_ovl0E_12_80045F94[i].unkE) {
-            }
+            /* the record's position, angles and scale, copied into the object: from
+             * statics.h, whose `.file` ends the block (the next call's `move a1`
+             * stays in its delay slot) */
+#define STATICS_PART 1
+#include "overlays/ovl_0E_12/statics.h"
+#undef STATICS_PART
             func_ovl0E_12_80045648(D_ovl0E_12_80045F94[i].unk0, 0x02000000);
             func_ovl0E_12_80045650(D_ovl0E_12_80045F94[i].unk0, 0x80000);
             D_ovl0E_12_80045F94[i].unk0->unk40->unk20 = D_ovl0E_12_80045FCC[i].unk10;

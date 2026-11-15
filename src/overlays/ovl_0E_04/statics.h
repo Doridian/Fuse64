@@ -1,3 +1,4 @@
+#ifndef STATICS_PART
 /*
  * Statics the original defined in another file: where one is inlined, the
  * `.file` ugen emits for it ends an as1 scheduling block, which the
@@ -24,3 +25,14 @@ static void func_ovl0E_04_8004399C(f32 x, s32 z, s32 count) {
 /* here: a block boundary before the load in func_ovl0E_04_80043158 */
 static void func_ovl0E_04_80043150(void) {
 }
+#elif STATICS_PART == 1
+        D_ovl0E_04_80046D70[i].unk0->unk40->unk10 = D_ovl0E_04_80046D70[i].unk14 * 10.0f;
+        D_ovl0E_04_80046D70[i].unk0->unk40->unk14 = D_ovl0E_04_80046D70[i].unk18 * 10.0f;
+        D_ovl0E_04_80046D70[i].unk0->unk40->unk18 = D_ovl0E_04_80046D70[i].unk1C * 10.0f;
+        D_ovl0E_04_80046D70[i].unk0->unk40->unk1C = D_ovl0E_04_80046D70[i].unk20;
+        D_ovl0E_04_80046D70[i].unk0->unk40->unk20 = D_ovl0E_04_80046D70[i].unk24;
+        D_ovl0E_04_80046D70[i].unk0->unk40->unk24 = D_ovl0E_04_80046D70[i].unk28;
+        D_ovl0E_04_80046D70[i].unk0->unk40->unk28 = D_ovl0E_04_80046D70[i].unk2C;
+        D_ovl0E_04_80046D70[i].unk0->unk40->unk2C = D_ovl0E_04_80046D70[i].unk30;
+        D_ovl0E_04_80046D70[i].unk0->unk40->unk30 = D_ovl0E_04_80046D70[i].unk34;
+#endif

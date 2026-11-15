@@ -10,9 +10,9 @@
  * - func_ovl0E_04_80043158: the last of its empty statics,
  *   func_ovl0E_04_80043150, is defined in statics.h too: the boundary
  *   keeps the `lui a0` of D_ovl0E_04_80046F20 after `sw ra`.
- * - func_ovl0E_04_80043B4C: the fake test of unkE before the last call is
- *   ovl_0E_05's (src/overlays/ovl_0E_05/1C3B40.c): it ends the block, so
- *   `move a1,s4` stays in the call's delay slot.
+ * - func_ovl0E_04_80043B4C: the nine stores before the last call come from
+ *   statics.h (as in ovl_0E_05 and ovl_0E_12): the `.file` switch back
+ *   ends the block, so `move a1,s4` stays in the call's delay slot.
  */
 #include "common.h"
 
@@ -749,19 +749,12 @@ void func_ovl0E_04_80043B4C(void) {
                 }
             }
         }
-        D_ovl0E_04_80046D70[i].unk0->unk40->unk10 = D_ovl0E_04_80046D70[i].unk14 * 10.0f;
-        D_ovl0E_04_80046D70[i].unk0->unk40->unk14 = D_ovl0E_04_80046D70[i].unk18 * 10.0f;
-        D_ovl0E_04_80046D70[i].unk0->unk40->unk18 = D_ovl0E_04_80046D70[i].unk1C * 10.0f;
-        D_ovl0E_04_80046D70[i].unk0->unk40->unk1C = D_ovl0E_04_80046D70[i].unk20;
-        D_ovl0E_04_80046D70[i].unk0->unk40->unk20 = D_ovl0E_04_80046D70[i].unk24;
-        D_ovl0E_04_80046D70[i].unk0->unk40->unk24 = D_ovl0E_04_80046D70[i].unk28;
-        D_ovl0E_04_80046D70[i].unk0->unk40->unk28 = D_ovl0E_04_80046D70[i].unk2C;
-        D_ovl0E_04_80046D70[i].unk0->unk40->unk2C = D_ovl0E_04_80046D70[i].unk30;
-        D_ovl0E_04_80046D70[i].unk0->unk40->unk30 = D_ovl0E_04_80046D70[i].unk34;
-        /* fake: (ends the block): without it `move a1` for the next call is
-         * scheduled into a load delay slot above, not the call's delay slot */
-        if (!D_ovl0E_04_80046D70[i].unkE && !D_ovl0E_04_80046D70[i].unkE && !D_ovl0E_04_80046D70[i].unkE) {
-        }
+        /* the record's position, angles and scale, copied into the object: from
+         * statics.h, whose `.file` ends the block (the next call's `move a1`
+         * stays in its delay slot) */
+#define STATICS_PART 1
+#include "overlays/ovl_0E_04/statics.h"
+#undef STATICS_PART
         func_ovl0E_04_80046150(D_ovl0E_04_80046D70[i].unk0, 0x80000);
     }
 }

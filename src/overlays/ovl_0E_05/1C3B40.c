@@ -239,11 +239,10 @@ UnkStruct_ovl0E_05_8004615C D_ovl0E_05_8004615C[1] = {
     { NULL, -1, 0x1AC, -1, -1, -1, -1, 155.0f, 40.0f, 135.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
 
-/* unused: the stubs IDO -O3 leaves at the end of the object; one of them
- * refers to the .bss nothing else uses, which would otherwise be common */
-static void func_ovl0E_05_80044908(void) {
-    D_ovl0E_05_80046230[0] = 0;
-}
+/* unused: the stubs IDO -O3 leaves at the end of the object; the first,
+ * in statics.h, refers to the .bss nothing else uses, which would
+ * otherwise be common */
+#include "statics.h"
 
 static void func_ovl0E_05_80044900(void) {
 }
@@ -573,19 +572,12 @@ void func_ovl0E_05_80043860(void) {
                 }
             }
         }
-        D_ovl0E_05_8004615C[i].unk0->unk40->unk10 = D_ovl0E_05_8004615C[i].unk14 * 10.0f;
-        D_ovl0E_05_8004615C[i].unk0->unk40->unk14 = D_ovl0E_05_8004615C[i].unk18 * 10.0f;
-        D_ovl0E_05_8004615C[i].unk0->unk40->unk18 = D_ovl0E_05_8004615C[i].unk1C * 10.0f;
-        D_ovl0E_05_8004615C[i].unk0->unk40->unk1C = D_ovl0E_05_8004615C[i].unk20;
-        D_ovl0E_05_8004615C[i].unk0->unk40->unk20 = D_ovl0E_05_8004615C[i].unk24;
-        D_ovl0E_05_8004615C[i].unk0->unk40->unk24 = D_ovl0E_05_8004615C[i].unk28;
-        D_ovl0E_05_8004615C[i].unk0->unk40->unk28 = D_ovl0E_05_8004615C[i].unk2C;
-        D_ovl0E_05_8004615C[i].unk0->unk40->unk2C = D_ovl0E_05_8004615C[i].unk30;
-        D_ovl0E_05_8004615C[i].unk0->unk40->unk30 = D_ovl0E_05_8004615C[i].unk34;
-        /* fake: (ends the block): without it `move a1` for the next call is
-         * scheduled into a load delay slot above, not the call's delay slot */
-        if (!D_ovl0E_05_8004615C[i].unkE && !D_ovl0E_05_8004615C[i].unkE && !D_ovl0E_05_8004615C[i].unkE) {
-        }
+        /* the record's position, angles and scale, copied into the object: from
+         * statics.h, whose `.file` ends the block (the next call's `move a1`
+         * stays in its delay slot) */
+#define STATICS_PART 1
+#include "overlays/ovl_0E_05/statics.h"
+#undef STATICS_PART
         func_ovl0E_05_80045658(D_ovl0E_05_8004615C[i].unk0, 0x02000000);
         func_ovl0E_05_80045660(D_ovl0E_05_8004615C[i].unk0, 0x80000);
         if (((UnkStruct_ovl0E_05_40 *) D_ovl0E_05_8004615C[i].unk0->unk40)->unk48->unk4->unk4 != 0.0f) {

@@ -2,7 +2,7 @@
 """The fixed addresses the game's C names (docs/PORT.md, "Addresses outside
 every section"), as names in the port's RDRAM.
 
-  gen_regions.py OUT.c
+  gen_regions.py [--decls DECLS.json] OUT.c
 
 The N64 game uses RAM no section has by address: the work area from
 0x80063000, the framebuffers at 0x80100000, the archive's buffers, the
@@ -14,17 +14,43 @@ asm `.set`).  The names below 0x80000000 are segment and physical
 addresses (D_1000000 is segment 1's base, D_200000 a physical address):
 absolute symbols with their number, which the renderer reads as the RSP
 would (port/host/gfx.c).
+
+Where pointers are 8 bytes (--decls: decls.py's JSON), a name whose
+declared type holds pointers takes the host's size of that type, and the
+names inside it (an element's, a member's) their host offsets
+(port/tools/layouts.py); the names after it move up as far as it grew.
+Only the work area holds such names, and it ends well below the
+framebuffers.  OUT's _report.txt lists what moved.
 """
 import os
 import re
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import layouts  # noqa: E402
+
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 RDRAM_SIZE = 0x800000
+# names that are what the hardware or the loaders read at their N64 address
+FIXED_FROM = 0x80100000
+# names that are the end of what is before them (40040.c clears the work
+# area up to D_800BEA60), not an object
+END_MARKERS = {"D_800BEA60"}
+# a name whose declarations disagree: the one that is its object
+# (426E0.c's D_800A3F00 is the end of D_800A0D00[], 48600.c's the pool after it)
+TYPES = {"D_800A3F00": ("src/48600.c", "UnkStructA80[128]")}
 
 
 def main():
-    out = sys.argv[1]
+    args = sys.argv[1:]
+    lay = full = None
+    if "--decls" in args:
+        i = args.index("--decls")
+        import json
+        full = json.load(open(args[i + 1]))
+        lay = layouts.Layouts(full)
+        del args[i:i + 2]
+    out = args[0]
     names = {}
     for line in open(os.path.join(ROOT, "undefined_syms_auto.txt")):
         m = re.match(r"\s*(D_[0-9A-F]+)\s*=\s*(0x[0-9A-Fa-f]+)\s*;", line)
@@ -34,13 +60,44 @@ def main():
          "#include <stdint.h>", "#include \"port_game.h\"", "",
          "/* the N64's RDRAM, for what the game has at fixed addresses */",
          "uint8_t port_rdram[0x%X] __attribute__((aligned(0x2000)));" % RDRAM_SIZE, ""]
-    absolute = []
-    for n, a in sorted(names.items(), key=lambda e: e[1]):
-        if 0x80000000 <= a < 0x80000000 + RDRAM_SIZE:
-            o.append("__asm__(\".globl \" PORT_ULP \"%s\\n.set \" PORT_ULP \"%s, \" PORT_ULP \"port_rdram + 0x%X\\n\");"
-                     % (n, n, a - 0x80000000))
+    absolute, report = [], []
+    inram = sorted(((n, a) for n, a in names.items() if 0x80000000 <= a < 0x80000000 + RDRAM_SIZE),
+                   key=lambda e: e[1])
+    absolute = [(n, a) for n, a in sorted(names.items(), key=lambda e: e[1])
+                if not (0x80000000 <= a < 0x80000000 + RDRAM_SIZE)]
+    hend = 0        # where the last name's host object ends (an offset in port_rdram)
+    cover = None    # (host start, N64 start, file, type, N64 end) of a name others are inside
+    for i, (n, a) in enumerate(inram):
+        off = a - 0x80000000
+        size = (inram[i + 1][1] - a) if i + 1 < len(inram) else 0
+        if lay and cover and off < cover[4]:
+            h = lay.host_off(cover[2], cover[3], off - cover[1])
+            if h is None:
+                report.append("%s: inside %s at +0x%X: no host offset" % (n, cover[3], off - cover[1]))
+                h = off - cover[1]
+            hoff = cover[0] + h
         else:
-            absolute.append((n, a))
+            cover = None
+            hoff = max(off, hend) if lay else off
+            if hoff != off and a >= FIXED_FROM:
+                sys.exit("gen_regions.py: %s moved to 0x%X, past the work area" % (n, 0x80000000 + hoff))
+            t = (TYPES.get(n) or layouts.best_type(lay, full, n, size)) if lay else None
+            if t:
+                hoff = (hoff + 7) & ~7
+                n64, h64 = lay.size(t[0], t[1], 32), lay.size(t[0], t[1], 64)
+                cover = (hoff, off, t[0], t[1], off + n64)
+                hend = hoff + h64
+                report.append("%s %s (%s): 0x%X bytes, 0x%X here" % (n, t[1], t[0], n64, h64))
+            else:
+                # (as big as its declarations say, where they do: the last
+                # name before a gap doesn't take the gap)
+                ds = [d.get("s64") for d in full["names"].get(n, []) if d["kind"] == "var"] if lay else []
+                ds = [x for x in ds if x]
+                hend = hoff + (max(ds) if ds else size) if a < FIXED_FROM and n not in END_MARKERS else 0
+        if hoff != off:
+            report.append("%s: at 0x%X (+0x%X)" % (n, 0x80000000 + hoff, hoff - off))
+        o.append("__asm__(\".globl \" PORT_ULP \"%s\\n.set \" PORT_ULP \"%s, \" PORT_ULP \"port_rdram + 0x%X\\n\");"
+                 % (n, n, hoff))
     # the segment and physical addresses: absolute symbols, or where the
     # object format has none (WebAssembly) proxies, small objects that
     # port_addr turns back into their numbers (port/src/memory.c)
@@ -60,6 +117,8 @@ def main():
     o.append("#endif")
     open(out + ".tmp", "w").write("\n".join(o) + "\n")
     os.replace(out + ".tmp", out)
+    if lay:
+        open(out[:-2] + "_report.txt", "w").write("".join(x + "\n" for x in report))
 
 
 if __name__ == "__main__":

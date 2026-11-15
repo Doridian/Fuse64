@@ -11,6 +11,8 @@
 # with the host (port/host) into an ordinary program.
 cmake_minimum_required(VERSION 3.20)
 project(fuse64 C)
+# (the tools read the build's commands: port/tools/decls.py, ptrcast_scan.py)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(PORT_VERSION us CACHE STRING "the version to build: us, eu or jp")
 set_property(CACHE PORT_VERSION PROPERTY STRINGS us eu jp)
@@ -178,16 +180,32 @@ endif()
 # ---- generated: the asm data, ZeroJump, the fixed addresses, the overlays ----------
 file(GLOB DATA_S ${ROOT}/asm/data/*.s)
 file(GLOB ZJ_S ${ROOT}/asm/*_zerojmp.s ${ROOT}/asm/overlays/*/*_zerojmp.s)
+# where pointers are 8 bytes, the asm data's labels and the fixed addresses
+# are laid out by the types the game's C declares them with (decls.py: the
+# declarations and the layouts, from this build's compile commands;
+# docs/PORT.md, "Where pointers are 8 bytes")
+set(DECLS_ARG)
+set(DECLS_DEP)
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    file(GLOB_RECURSE GAME_H ${ROOT}/include/*.h ${ROOT}/src/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
+    add_custom_command(OUTPUT ${GEN}/decls.json
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/decls.py ${CMAKE_CURRENT_BINARY_DIR}
+                --version ${PORT_VERSION} -o ${GEN}/decls.json
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/decls.py ${GAME_C} ${OVL_C} ${GAME_H}
+                ${CMAKE_CURRENT_SOURCE_DIR}/src/ultra.c ${CMAKE_BINARY_DIR}/compile_commands.json VERBATIM)
+    set(DECLS_ARG --decls ${GEN}/decls.json)
+    set(DECLS_DEP ${GEN}/decls.json ${CMAKE_CURRENT_SOURCE_DIR}/tools/layouts.py)
+endif()
 add_custom_command(OUTPUT ${GEN}/asm_data.c
-    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/asm2c.py ${GEN}/asm_data.c
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/asm2c.py ${DATA_S} ${ROOT}/assets/code.bin VERBATIM)
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/asm2c.py ${DECLS_ARG} ${GEN}/asm_data.c
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/asm2c.py ${DATA_S} ${ROOT}/assets/code.bin ${DECLS_DEP} VERBATIM)
 add_custom_command(OUTPUT ${GEN}/zerojump.c
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_zerojump.py ${PORT_VERSION} ${GEN}/zerojump.c
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_zerojump.py ${ROOT}/tools/host_check.py ${ZJ_S} ${GAME_C} ${OVL_C}
     VERBATIM)
 add_custom_command(OUTPUT ${GEN}/regions.c
-    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_regions.py ${GEN}/regions.c
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_regions.py ${ROOT}/undefined_syms_auto.txt VERBATIM)
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_regions.py ${DECLS_ARG} ${GEN}/regions.c
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_regions.py ${ROOT}/undefined_syms_auto.txt ${DECLS_DEP} VERBATIM)
 # the names other names share memory with, through pointers in the game's C
 # (gen_inner.py; docs/PORT.md, "Names inside another name's object")
 add_custom_command(OUTPUT ${GEN}/port_inner.h ${GEN}/inner.c

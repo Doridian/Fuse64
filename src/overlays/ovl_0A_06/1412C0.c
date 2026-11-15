@@ -462,8 +462,8 @@ s32 D_ovl0A_06_80047024 = 9;
 #if VERSION_JP
 s32 D_ovl0A_06_80046E3C_jp = 0; /* not referenced */
 #endif
-u32 D_ovl0A_06_80047028[16] = {
-    0, 0, 0, 0xFF, 0, 0, 0, 0xFF, 0, 0, 0, 0xFF, 0, 0, 0, 0xFF,
+typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } Vtx_ovl0A_06; /* (a Vtx: halves and bytes) */ Vtx_ovl0A_06 D_ovl0A_06_80047028[4] = {
+    { { 0, 0, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0xFF } }, { { 0, 0, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0xFF } }, { { 0, 0, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0xFF } }, { { 0, 0, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0xFF } },
 };
 u8 D_ovl0A_06_80047068[4][0x20] = {
     { 0x0F, 0x10, 0x10, 0x0F, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A,

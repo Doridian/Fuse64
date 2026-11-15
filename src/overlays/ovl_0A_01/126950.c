@@ -229,11 +229,11 @@ u8 D_ovl0A_01_80048D28[8];
 static void func_ovl0A_01_80046F10(s32 arg0, Gfx_ovl0A_01 **arg1);
 
 /* .data */
-u32 D_ovl0A_01_80048730[4][4] = {
-    { 0xFF5600FA, 0, 0, 0xFF },
-    { 0xFFCE0000, 0, 0, 0xFF },
-    { 0x00AA00FA, 0, 0, 0xFF },
-    { 0x00320000, 0, 0, 0xFF },
+typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } Vtx_ovl0A_01; /* (a Vtx: halves and bytes) */ Vtx_ovl0A_01 D_ovl0A_01_80048730[4] = {
+    { { -170, 250, 0 }, 0, { 0, 0 }, { 0x00, 0x00, 0x00, 0xFF } },
+    { { -50, 0, 0 }, 0, { 0, 0 }, { 0x00, 0x00, 0x00, 0xFF } },
+    { { 170, 250, 0 }, 0, { 0, 0 }, { 0x00, 0x00, 0x00, 0xFF } },
+    { { 50, 0, 0 }, 0, { 0, 0 }, { 0x00, 0x00, 0x00, 0xFF } },
 };
 Entry D_ovl0A_01_80048770[8] = {
     { NULL, 1, 0x324, 2300.0f, 0.0f, 1100.0f, 0, -1, 0.0f },

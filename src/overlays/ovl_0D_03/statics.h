@@ -15,7 +15,6 @@
 static void func_ovl0D_03_80043C14(void) {
     Ent_0D03 *p;
 
-    /* fake: (see the top) */
     func_ovl0D_03_80047400(D_ovl0D_03_8004817C);
     for (p = D_ovl0D_03_80047D1C; p < D_ovl0D_03_80047D1C + 3; p++) {
         if (p->obj != NULL) {
@@ -42,7 +41,7 @@ static void func_ovl0D_03_8004337C(Ent_0D03 *e) {
 
     p = e->obj->unk40;
     func_ovl0D_03_80046A40(p->unk10, p->unk14, p->unk18, grid, 0);
-    len = x1 + z1; /* fake: (see the top) */
+    len = x1 + z1; /* fake: (see the top; pass 12: the locals declared x1, z1 first or z0 last, x0..z0 set up after the len switch: no) */
     x0 = grid[0];
     y0 = grid[1];
     z0 = grid[2];
@@ -63,7 +62,6 @@ static void func_ovl0D_03_8004337C(Ent_0D03 *e) {
     y1 = grid[1] + 2;
     switch (func_ovl0D_03_80043374(e)) {
         case 0:
-            /* fake: (see the top) */
             x0 = grid[0] - 1;
             x1 = x0 + 4;
             z1 = grid[2] + len;

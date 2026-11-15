@@ -17,6 +17,10 @@ static void func_ovl0D_01_800455B0(void) {
     func_ovl0D_01_80046B68(1600.0f, 1600.0f, 3200.0f, 1600.0f);
 }
 
+static void func_ovl0D_01_800448CC(void) {
+    UNK_MACRO_ovl0D_01_800448D4();
+}
+
 /* the tiles under a gate: solid, and the frame around its opening */
 static void func_ovl0D_01_800444E0(Ent_0D01 *e) {
     s32 grid[6];
@@ -35,7 +39,7 @@ static void func_ovl0D_01_800444E0(Ent_0D01 *e) {
 
     p = e->obj->unk40;
     func_ovl0D_01_800462C0(p->unk10, p->unk14, p->unk18, grid, 0);
-    len = x1 + z1; /* fake: (see the top) */
+    len = x1 + z1; /* fake: (see the top; pass 12: the locals declared x1, z1 first or z0 last, x0..z0 set up after the len switch: no) */
     x0 = grid[0];
     y0 = grid[1];
     z0 = grid[2];
@@ -56,7 +60,6 @@ static void func_ovl0D_01_800444E0(Ent_0D01 *e) {
     y1 = grid[1] + 2;
     switch (func_ovl0D_01_800444D8(e)) {
         case 0:
-            /* fake: (see the top) */
             x0 = grid[0] - 1;
             x1 = x0 + 4;
             z1 = grid[2] + len;
@@ -113,9 +116,4 @@ static void func_ovl0D_01_800444E0(Ent_0D01 *e) {
 }
 #elif STATICS_PART == 1
     func_ovl0D_01_80046278(D_ovl0D_01_80047B18);
-#elif STATICS_PART == 2
-static void func_ovl0D_01_80044D6C(void) {
-}
-#elif STATICS_PART == 3
-    func_ovl0D_01_800448CC();
 #endif

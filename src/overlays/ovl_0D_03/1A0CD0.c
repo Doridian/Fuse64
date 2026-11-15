@@ -23,7 +23,8 @@
  *   call stayed in the prologue).
  * - 80044588: `unk34 = 200` (an int: with 200.0f uopt kept the constant in
  *   $f22 for 8004449C's rows below), the EE4 loop's `i != 1` (bne, not
- *   sltu), and 8004449C's `j = 0` at `#line 3000` (ovl_0D_02's 8004421C).
+ *   sltu), and 8004449C taking its first row j as a parameter, 0 from
+ *   800444AC (ovl_0D_02's 8004421C; was a `j = 0` at `#line 3000`).
  * - 80044AA8: the 80047A48 loop is the static 800441BC (Trio, count), as
  *   ovl_0D_02's 800444F4 (slt and the count in s2), defined in statics.h;
  *   the call of 80044A3C in 80044AA0 in a statics.h region (the
@@ -259,7 +260,7 @@ static void func_ovl0D_03_800441BC(Trio_0D03 *, s32);
 static void func_ovl0D_03_800441C4(s32);
 static void func_ovl0D_03_80044314(s32);
 static void func_ovl0D_03_8004431C(Ent_0D03 *);
-static void func_ovl0D_03_8004449C(Vec3f *, Vec3f (*)[4]);
+static void func_ovl0D_03_8004449C(Vec3f *, Vec3f (*)[4], s32);
 static void func_ovl0D_03_800444A4(void);
 static void func_ovl0D_03_800444AC(void);
 static void func_ovl0D_03_800444B4(Ent_0D03 *);
@@ -993,15 +994,11 @@ static void func_ovl0D_03_80044558(void) {
     }
 }
 
-/* the rows of points the debris of D_ovl0D_03_80047F94 falls from */
-static void func_ovl0D_03_8004449C(Vec3f *corner, Vec3f (*rows)[4]) {
-    s32 j;
+/* the rows of points the debris of D_ovl0D_03_80047F94 falls from, from row
+ * j on (the caller passes 0: its line, after this loop's, is what as1 reads) */
+static void func_ovl0D_03_8004449C(Vec3f *corner, Vec3f (*rows)[4], s32 j) {
     s32 k;
 
-    /* fake: (as in ovl_0D_02): j = 0 after the loop's line (a statics.h part, do/while, a rows copy: no) */
-#line 3000 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
-    j = 0;
-#line 1008 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     for (; j < 3; j++) {
         for (k = 0; k < 4; k++) {
             rows[j][k].x = corner->x * 10.0f - k * 200.0f;
@@ -1015,7 +1012,7 @@ static void func_ovl0D_03_800444AC(void) {
     s32 i;
 
     for (i = 0; i < 1; i++) {
-        func_ovl0D_03_8004449C(&D_ovl0D_03_80047FCC[i], D_ovl0D_03_800481A8[i]);
+        func_ovl0D_03_8004449C(&D_ovl0D_03_80047FCC[i], D_ovl0D_03_800481A8[i], 0);
     }
 }
 
@@ -1371,7 +1368,7 @@ static void func_ovl0D_03_80043300(s32 axis, s32 *v, s32 *size) {
 /* the models' state from the flags already set */
 void func_ovl0D_03_8004305C(void) {
     s32 i;
-    s32 pad[5]; /* fake: the frame (an index per walk: registers move) */
+    s32 pad[5]; /* fake: the frame (an index per walk: registers move; pass 12: locals in the inlined statics 80043054 (x, z held; the three pictures as a loop) and 80043010 (the object's unk40, the height): no, the frame stays 64 or the code moves) */
 
     if (func_ovl0D_03_800477C0(0x407) != 0) {
         func_ovl0D_03_80043054();

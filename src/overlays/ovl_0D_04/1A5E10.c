@@ -2,9 +2,14 @@
  * ovl_0D_04's stage object, IDO -O3; it matches in us, eu and jp.
  *
  * The gate 80044318 matches in us: its loop calls the per-gate static
- * 80044300 (Ent, flag), as ovl_0D_02's 800434F8 does, with a fake that
- * reads D_ovl0D_04_80047044 (ovl_0D_02's 80043510 reads 47A40); its locals
- * are dir, pos, r with dir.x set first.
+ * 80044300 (Ent, flag), as ovl_0D_02's 800434F8 does; its locals are dir,
+ * pos, r with dir.x set first. Its first call, the static 80044310 (the
+ * macro), is defined in another file (statics.h), as ovl_0D_02's 80043508:
+ * the `.file` keeps the call out of the prologue. That needs 80044318 to
+ * be its first inliner, so the setup 80044D98 writes the macro itself (as
+ * ovl_0D_02's setup does); with the setup calling 80044310 the stub and
+ * the call move (1430 words), and a fake read of D_ovl0D_04_80047044 was
+ * needed (pass 12).
  *
  * What fixed what (from 512 words in jp, us not re-measured):
  * - ovl_0D_02's gate code ported (src/overlays/ovl_0D_02): the
@@ -455,9 +460,8 @@ void func_ovl0D_04_80044D98(void) {
     func_ovl0D_04_80044D70();
     D_ovl0D_04_80047078 = func_ovl0D_04_80045A58();
     func_ovl0D_04_800467A0(1);
-    /* fake: (see the top): 1600.0f in $f16 */
     func_ovl0D_04_80044D40();
-    func_ovl0D_04_80044310();
+    UNK_MACRO_ovl0D_04_80044318();
     func_ovl0D_04_80044D68();
     func_ovl0D_04_80044D60();
     D_ovl0D_04_80047060 = 0;
@@ -743,18 +747,11 @@ static s32 func_ovl0D_04_80043F1C(Ent_0D04 *e) {
 void func_ovl0D_04_80044318(void) {
     s32 i;
 
-    /* fake: (as in ovl_0D_02's 80043510): keeps the first call out of the prologue */
-    if (!D_ovl0D_04_80047044 && !D_ovl0D_04_80047044 && !D_ovl0D_04_80047044) {
-    }
     func_ovl0D_04_80044310();
     func_ovl0D_04_80044308();
     for (i = 0; i < 1; i++) {
         func_ovl0D_04_80044300(&D_ovl0D_04_80046D74[i], D_ovl0D_04_80046DAC[i]);
     }
-}
-
-static void func_ovl0D_04_80044310(void) {
-    UNK_MACRO_ovl0D_04_80044318();
 }
 
 static void func_ovl0D_04_80044308(void) {

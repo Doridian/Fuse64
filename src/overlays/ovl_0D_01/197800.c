@@ -12,13 +12,17 @@
  * - 800436C8/800434BC: the fields compared with 0xFFFF (as the siblings).
  * - 800448D4: the per-gate static 800448BC (Ent, flag) starts with the
  *   flag test (`flag == 0x400 && !0x407` returns), so the loop's float
- *   constants are hoisted into $fs0-$fs4 as the original; the macro's call
- *   in a statics.h region (the static 80044D6C is defined there) keeps it
- *   out of the prologue (the old fake read of D_ovl0D_01_80047560 stopped
- *   the hoisting).
+ *   constants are hoisted into $fs0-$fs4 as the original; its first call,
+ *   the macro's static 800448CC, is defined in another file (statics.h,
+ *   as ovl_0D_02's 80043508), which keeps it out of the prologue, with the
+ *   setup 800455E0 writing the macro itself so that 800448D4 is the
+ *   static's first inliner (pass 12; before, the call was in a statics.h
+ *   region and 80044D6C defined in another; the old fake read of
+ *   D_ovl0D_01_80047560 stopped the hoisting).
  * - 80043134: the second probe's x is an int 2300 (its own .rodata
- *   2300.0f, as the original's two), and an unused local above pos puts it
- *   at sp+96 (a fake).
+ *   2300.0f, as the original's two), and the fade's length held in a
+ *   float local above pos puts it at sp+96 (a guess; it was an unused
+ *   local, a fake, before pass 12).
  * - 800455E0: both 1600s of the camera static 800455B0 floats, and that
  *   static defined in another file (statics.h; 1600.0f in $f16);
  *   80046C70 takes a u32 (with s32,
@@ -580,7 +584,7 @@ void func_ovl0D_01_800455E0(void) {
     D_ovl0D_01_80047B30.x = 32768.0f;
     D_ovl0D_01_80047B30.y = 32768.0f;
     D_ovl0D_01_80047B30.z = 32768.0f;
-    /* fake: (see the top): its a0 after the stores */
+    /* fake: (see the top): its a0 after the stores (pass 12: every stub has its static, so the call is not an inlined static's) */
 #define STATICS_PART 1
 #include "overlays/ovl_0D_01/statics.h"
 #undef STATICS_PART
@@ -592,9 +596,8 @@ void func_ovl0D_01_800455E0(void) {
     func_ovl0D_01_80046350(func_ovl0D_01_80045CFC);
     func_ovl0D_01_800455B8();
     D_ovl0D_01_80047B2C = func_ovl0D_01_800463B8();
-    /* fake: (see the top): 1600.0f in $f16 */
     func_ovl0D_01_800455B0();
-    func_ovl0D_01_800448CC();
+    UNK_MACRO_ovl0D_01_800448D4();
     func_ovl0D_01_800455A8();
     func_ovl0D_01_800455A0();
     D_ovl0D_01_80047B10 = 0;
@@ -882,10 +885,9 @@ void func_ovl0D_01_80044D74(void) {
     }
 }
 
-/* in statics.h (a fake, see the top) */
-#define STATICS_PART 2
-#include "overlays/ovl_0D_01/statics.h"
-#undef STATICS_PART
+static void func_ovl0D_01_80044D6C(void) {
+}
+
 
 static void func_ovl0D_01_80044D64(void) {
 }
@@ -916,18 +918,11 @@ void func_ovl0D_01_80044C0C(void) {
 void func_ovl0D_01_800448D4(void) {
     s32 i;
 
-    /* fake: the region's .file keeps the first call out of the prologue */
-#define STATICS_PART 3
-#include "overlays/ovl_0D_01/statics.h"
-#undef STATICS_PART
+    func_ovl0D_01_800448CC();
     func_ovl0D_01_800448C4();
     for (i = 0; i < 2; i++) {
         func_ovl0D_01_800448BC(&D_ovl0D_01_800476EC[i], D_ovl0D_01_8004775C[i]);
     }
-}
-
-static void func_ovl0D_01_800448CC(void) {
-    UNK_MACRO_ovl0D_01_800448D4();
 }
 
 static void func_ovl0D_01_800448C4(void) {
@@ -1298,7 +1293,7 @@ static void func_ovl0D_01_800434BC(Ent_0D01 *arg0) {
 void func_ovl0D_01_80043134(void) {
     s32 i;
     s32 n;
-    s32 pad; /* fake: unused, its slot puts pos at sp+96 */
+    f32 frames; /* the fade's length held: a guess (any float held here fills its word, which puts pos at sp+96) */
     Vec3f pos;
 
     while (TRUE) {
@@ -1335,9 +1330,10 @@ void func_ovl0D_01_80043134(void) {
     func_ovl0D_01_80046C68(D_ovl0D_01_8004788C[0].obj, 0x80000);
     D_ovl0D_01_8004788C[0].obj->unk40->unk36 = 0xFF;
     n = 10;
+    frames = 120.0f;
     for (i = 0; i < 120; i++) {
         n++;
-        D_ovl0D_01_8004788C[0].obj->unk40->unk36 = (1.0f - i / 120.0f) * 255.0f;
+        D_ovl0D_01_8004788C[0].obj->unk40->unk36 = (1.0f - i / frames) * 255.0f;
         if (n >= 11) {
             pos.x = func_ovl0D_01_80046F70() * 600.0 + 1900.0;
             pos.y = func_ovl0D_01_80046F70() * 500.0 + 500.0;

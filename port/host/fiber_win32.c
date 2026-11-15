@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/host/fiber_win32.c, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/host/fiber_win32.c, the same author's (AGPL-3.0): NOTICES.md.]
  * fiber.h on Windows fibers: every fiber on the one OS thread, as with
  * ucontext (Windows has neither ucontext nor a pthread_attr_setstack that
  * takes the caller's memory).  A Windows fiber has a stack of its own,

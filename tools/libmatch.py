@@ -14,7 +14,7 @@ Functions no reference matches exactly can still be placed by similarity
 (--fuzzy), for a revision that differs from every ultralib build by a few
 instructions.
 
-Adapted from Blast Corps' tools/libmatch.py (../BlastCorps); only the
+Adapted from DozerEncore's tools/libmatch.py (../DozerEncore); only the
 module loading differs.
 
 Usage:

@@ -1,7 +1,8 @@
 # Decompiling
 
 How a text object becomes C, and what has mattered for matching so far.
-The loop and the tools are Blast Corps' (`../BlastCorps`, its
+The loop and the tools are DozerEncore's (a PC port of Blast Corps,
+`../DozerEncore`, its
 docs/DECOMPILING.md), adapted to one code image with overlays.
 
 ## The pipeline
@@ -1016,7 +1017,7 @@ What a decompiler has to do for jp (and eu):
    `.s` the other version's extract never wrote would stop the build.
    The Makefile's C rule therefore runs a file with GLOBAL_ASM through
    `tools/version_ifs.py <VERSION_X> in.c -o build/.../x.c.vi.c` first
-   (ported from Blast Corps). It decides every `#if`/`#ifdef`/`#ifndef`/
+   (ported from DozerEncore). It decides every `#if`/`#ifdef`/`#ifndef`/
    `#elif`/`#else` whose condition names only `VERSION_*` macros, blanks
    the directives and the branches not taken (line numbers stay), and
    leaves every other line, other conditionals included, for the
@@ -1062,7 +1063,7 @@ What a decompiler has to do for jp (and eu):
 ## Data
 
 A module's `.data`, `.rodata` and `.bss` are cut per object where the C
-shows them, the way Blast Corps did it, except that the cut points come
+shows them, the way DozerEncore did it, except that the cut points come
 from the compiler, not from a heuristic on the data (one that put the
 boundary above every stored-to address and below every jump table and
 float constant disagreed with the reference decomp in 26 of 95 overlays).
@@ -1148,7 +1149,7 @@ What mattered:
   the bytes are the same, so pick the one the code suggests and say so.
 - A `switch` gets its jump table only when its cases are dense enough:
   120010.c's handler needs all of cases 1 to 17, most of them empty
-  (Blast Corps: "Empty cases still count toward IDO's jump-table
+  (DozerEncore: "Empty cases still count toward IDO's jump-table
   decision").
 - Defining a variable in its own file didn't change the code that uses it
   (40300's bump pointer, 40040's tables), so the `extern` can simply

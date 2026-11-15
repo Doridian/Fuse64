@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/libaudio/reverb.c, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/libaudio/reverb.c, the same author's (AGPL-3.0): NOTICES.md.]
  * The port's libaudio: the reverb on the auxiliary bus.
  *
  * One circular delay line takes the bus's (mono) input each section; the

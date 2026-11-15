@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/libaudio/cseqplayer.c, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/libaudio/cseqplayer.c, the same author's (AGPL-3.0): NOTICES.md.]
  * The port's libaudio: the compact sequence player.
  *
  * A client of the synthesizer.  Its handler runs its event queue: the

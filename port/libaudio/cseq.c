@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/libaudio/cseq.c, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/libaudio/cseq.c, the same author's (AGPL-3.0): NOTICES.md.]
  * The port's libaudio: compact MIDI sequences.
  *
  * A compact sequence is up to 16 tracks, each a stream of events with the

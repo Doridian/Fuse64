@@ -1,8 +1,8 @@
 /*
  * The graphics utilities the game calls (gu.h's interface): the port's own
- * implementation, in place of the SDK's.  Blast Corps' port/src/gu.c (the
+ * implementation, in place of the SDK's.  DozerEncore's port/src/gu.c (the
  * same author's, AGPL-3.0), unchanged but for its includes: both games
- * link libultra 2.0I's, and Blast Corps' port/tools/sdk_check compared
+ * link libultra 2.0I's, and DozerEncore's port/tools/sdk_check compared
  * every function with the originals bit for bit.  Each result has to be
  * the SDK's, since the game feeds them back into its own physics and
  * camera.

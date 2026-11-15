@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/libaudio/audio_private.h, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/libaudio/audio_private.h, the same author's (AGPL-3.0): NOTICES.md.]
  * The port's libaudio (docs/PORT.md, "libaudio"): what its files share.
  *
  * The synthesizer is a fixed chain, not a graph: each physical voice

@@ -23,7 +23,7 @@ afterwards would be much harder.
 
 Online play is only as good as the port's determinism. These are port
 requirements from day one, tested by `--deterministic`/`--replay`, as in
-Blast Corps' port:
+DozerEncore (a PC port of Blast Corps):
 
 1. **The game advances by inputs alone.** A frame of game logic is a pure
    function of (state, four controllers' inputs). The audio thread, the

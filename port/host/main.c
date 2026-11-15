@@ -1,5 +1,5 @@
 /*
- * The host program: the cartridge and the "interrupt" loop (Blast Corps'
+ * The host program: the cartridge and the "interrupt" loop (DozerEncore's
  * port/host/main.c, cut down).
  *
  * The game runs as fibers (threads.c) on the main OS thread.  This loop

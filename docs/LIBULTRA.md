@@ -4,8 +4,8 @@ Bomberman 64 links Nintendo's libultra and libaudio into boot_code
 (`0x80001A50` to the end of its text, `0x80019F80`), and some gu and libm
 into main_code (`0x8029B650-0x8029D0E0` and the data they use). This page
 says which revision it is, how the names are found, and what doesn't
-match. The tools are Blast Corps' (`../BlastCorps`, the same scripts
-adapted to one code image).
+match. The tools are DozerEncore's (a PC port of Blast Corps,
+`../DozerEncore`: the same scripts adapted to one code image).
 
 ## Workflow
 
@@ -20,7 +20,7 @@ make clean && make VERSION=us extract && make VERSION=us
 ```
 
 and the same for eu and jp. `build_ultralib.sh` clones decompals/ultralib at a
-fixed commit (the one Blast Corps uses) and builds `libultra_rom` for every
+fixed commit (the one DozerEncore uses) and builds `libultra_rom` for every
 revision with IDO 5.3 and ultralib's own flags. Its voice library fails to
 build on some hosts; the game doesn't link it, so the script carries on.
 `libmatch.py` makes its code image from `baserom.<v>.z64`, so it works

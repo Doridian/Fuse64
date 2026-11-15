@@ -1,5 +1,5 @@
 /*
- * The interface between the two halves of the port (Blast Corps' port.h,
+ * The interface between the two halves of the port (DozerEncore's port.h,
  * cut to what this game needs).
  *
  * "N64 side": the decompiled game C, port/src/ (the libultra replacement)

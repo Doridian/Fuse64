@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/libaudio/core.c, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/libaudio/core.c, the same author's (AGPL-3.0): NOTICES.md.]
  * The port's libaudio: the heap, lists, event queues and the bank and
  * sequence bank files.
  */

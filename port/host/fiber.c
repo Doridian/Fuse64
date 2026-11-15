@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/host/fiber.c, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/host/fiber.c, the same author's (AGPL-3.0): NOTICES.md.]
  * fiber.h's front: the backend, chosen once at startup (fiber.h).
  */
 #include <stdint.h>

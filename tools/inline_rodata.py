@@ -14,7 +14,7 @@ whether that was right.
 
 A symbol used more than once is reported and left alone: IDO emits one
 constant per use, so which uses are literals depends on the original.
-(Blast Corps' tool, reading the image instead of a .rodata.s.)
+(DozerEncore's tool, reading the image instead of a .rodata.s.)
 """
 import re
 import struct

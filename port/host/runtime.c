@@ -1,5 +1,5 @@
 /*
- * Runtime support: the game's threads' stacks (Blast Corps' port/host/
+ * Runtime support: the game's threads' stacks (DozerEncore's port/host/
  * runtime.c) and the game's sprintf.
  */
 #include <stdarg.h>

@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/libaudio/synth.c, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/libaudio/synth.c, the same author's (AGPL-3.0): NOTICES.md.]
  * The port's libaudio: the synthesizer (the driver): its setup, its
  * clients, the physical voices and their updates, and each audio frame's
  * command list.

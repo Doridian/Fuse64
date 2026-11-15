@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/libaudio/bankfile.h, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/libaudio/bankfile.h, the same author's (AGPL-3.0): NOTICES.md.]
  * A bank file (.ctl) as the ROM has it, for alBnkfNew (core.c): its
  * records' layouts and the one reader of their fields.
  *

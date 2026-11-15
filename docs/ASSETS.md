@@ -519,8 +519,8 @@ Found while converting (the earlier text above is right but incomplete):
 ### Reuse by the PC port
 
 The port loads assets from the user's ROM at startup (`ASSET_INIT`, as in
-Blast Corps): it inflates entries with `tools/hudson_lzss.py`'s algorithm
-(C in the port) and needs the pictures as texel data, not PNG files. The
+DozerEncore, a PC port of Blast Corps): it inflates entries with
+`tools/hudson_lzss.py`'s algorithm (C in the port) and needs the pictures as texel data, not PNG files. The
 converter is written for that: `bm64image.parse(bytes)` gives
 `{frames: [{fmt, w, h, pixels, palette}]}` and `pack()` is its inverse, both
 pure functions on bytes and plain data with no build-tree knowledge; PNG is
@@ -623,5 +623,5 @@ Stage maps, the stored tables and the sound entries are still
   which is fine because only the table of offsets changes (`0x300000`,
   segment 0x18, is hard-coded in `40FB0.s` and nowhere else).
 - For the PC port: models need the segment 2/3.. rules, and the display
-  lists need a F3DEX 1.x renderer (the same as Blast Corps' if it is
+  lists need a F3DEX 1.x renderer (the same as DozerEncore's if it is
   F3DEX 1.x too), and the animation tracks' meaning (open question 2).

@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/include/libaudio_heap.h, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/include/libaudio_heap.h, the same author's (AGPL-3.0): NOTICES.md.]
  * The port's libaudio's blocks in the audio heap (docs/PORT.md, "libaudio"):
  * the sizes the reference allocates them at, and the structures this code
  * keeps in them.  port/libaudio's (audio_private.h includes it), and the

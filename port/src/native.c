@@ -1,6 +1,6 @@
 /*
  * Byte order: what arrives from the ROM as bytes, put in the host's order
- * by type where it arrives (docs/PORT.md, "Byte order"; Blast Corps'
+ * by type where it arrives (docs/PORT.md, "Byte order"; DozerEncore's
  * port/host/native.c in its model).  On a big-endian host every function
  * here is the identity.
  *

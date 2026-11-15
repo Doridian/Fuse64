@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/host/aspmain.c, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/host/aspmain.c, the same author's (AGPL-3.0): NOTICES.md.]
  * The audio microcode, high level: runs the command lists that the port's
  * libaudio (port/libaudio, alAudioFrame) builds for the RSP.  (In
  * Bomberman 64 the resampler's table is at 0xC0 of the microcode's data,

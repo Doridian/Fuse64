@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/host/threads.c, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/host/threads.c, the same author's (AGPL-3.0): NOTICES.md.]
  * The game's threads as fibers (fiber.h: ucontext, or host threads one at
  * a time), scheduled as libultra does: the highest-priority runnable
  * thread runs until it blocks, yields, or wakes a thread of higher

@@ -27,7 +27,7 @@ gave the port").
         from the definition; needs the version's extract
 
 The port's own SDK headers have a display list's words as wide as a pointer
-(Blast Corps' port); here a copy of ultralib's gbi.h with that change
+(DozerEncore's port); here a copy of ultralib's gbi.h with that change
 (build/host_check/shim) stands in for them.
 The port's port_game.h is included as the
 port's build does (what the C's `#ifdef TARGET_PC` code calls).

@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/libaudio/voice.c, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/libaudio/voice.c, the same author's (AGPL-3.0): NOTICES.md.]
  * The port's libaudio: a physical voice's chain, which fetches and decodes
  * its wave table, resamples it to its pitch and mixes it into the buses
  * with its volume ramp, pan and effect send; and the updates that change

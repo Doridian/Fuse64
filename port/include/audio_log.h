@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/include/audio_log.h, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/include/audio_log.h, the same author's (AGPL-3.0): NOTICES.md.]
  * The libaudio oracle's log (docs/PORT.md, "The libaudio oracle"): what
  * port/tools/audio_oracle/replay.c reads, and what the port's recorder
  * wrote (port/src/audio_record.c and port/host/audiolog.c, a build with

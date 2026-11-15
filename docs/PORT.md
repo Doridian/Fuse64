@@ -5,8 +5,9 @@ decompilation (`port/`, phase 6 of docs/ROADMAP.md). It compiles the
 game's C as it is in `src/` with the host's compiler, links it with a
 host layer (libultra, libaudio, the RSP and RDP, a window, sound, the
 controller, the save) and runs it as an ordinary program. The model and
-much of the code are Blast Corps' port (`../BlastCorps/port`, the same
-author's, AGPL-3.0: NOTICES.md says which files come from it).
+much of the code are DozerEncore's (a PC port of Blast Corps,
+`../DozerEncore/port`, the same author's, AGPL-3.0: NOTICES.md says which
+files come from it).
 
 ## Status
 
@@ -95,7 +96,7 @@ node build-port-wasm/fuse64.js --headless --frames 300 baserom.us.z64
 It runs under node (`-sNODERAWFS`: the ROM and the save are files), the
 threads and tasks on emscripten's fibers (Asyncify). The link is `-O2`
 (without it emcc runs no wasm-opt and Asyncify's instrumentation is about
-fifty times slower), with Blast Corps' limit on Binaryen's inlining of
+fifty times slower), with DozerEncore's limit on Binaryen's inlining of
 one-caller functions and the renderer left out of Asyncify
 (`port/web/asyncify_remove.txt`): with them the node build runs about as
 fast as the native one. What differs from the ELF build:
@@ -125,7 +126,7 @@ emcmake cmake -S port -B build-port-web -G Ninja -DPORT_WASM_TARGET=web
 cmake --build build-port-web     # fuse64.html, .js, .wasm: serve the three
 ```
 
-`port/web/shell.html` (after Blast Corps'): the ROM from a file picker, or
+`port/web/shell.html` (after DozerEncore's): the ROM from a file picker, or
 `?rom=URL` (your own copy on your own server), kept with the save in
 IndexedDB (IDBFS at `/save`); `?args=` adds options (`-v`). SDL2's canvas,
 keyboard and game controllers, and WebAudio. The loop gives the page its
@@ -170,7 +171,7 @@ host has its own) with `-DTARGET_PC -D<VERSION>`, `-std=gnu89
 -fsigned-char -fno-strict-aliasing -fwrapv -ftrivial-auto-var-init=zero
 -ffp-contract=off` (and on x86 `-msse2 -mfpmath=sse -malign-double`:
 SSE's rounding, o32's alignment), errors only for what a host can't take,
-the port's SDK headers (`port/include/sdk`: Blast Corps', with
+the port's SDK headers (`port/include/sdk`: DozerEncore's, with
 F3DEX's macros added) and `-include port_game.h`; gmalloc as the Makefile
 does; and four generated files:
 
@@ -214,7 +215,7 @@ texture in the opening's fade).
 
 ### Threads, tasks and timing
 
-The game's libultra threads are fibers (Blast Corps' threads.c and
+The game's libultra threads are fibers (DozerEncore's threads.c and
 fiber_*.c: ucontext, Win32 fibers, Asyncify, or host threads one at a
 time) run by libultra's priority rules on one OS thread; main.c's loop
 runs when no thread can and raises what the hardware would (the VI at 60
@@ -256,10 +257,10 @@ fog and the z-buffer. About 140 retraces a second headless on one core.
 
 ### Audio
 
-libaudio is Blast Corps' port of ultralib's (port/libaudio), with the
-calls this game makes that Blast Corps' doesn't (extra.c: the
+libaudio is DozerEncore's port of ultralib's (port/libaudio), with the
+calls this game makes that Blast Corps doesn't (extra.c: the
 compressed-sequence player's channel calls, the synthesizer's) and the
-sound player (sndplayer.c). The RSP's audio microcode is Blast Corps'
+sound player (sndplayer.c). The RSP's audio microcode is DozerEncore's
 HLE (aspmain.c). The AI's buffers go to SDL or `--wav`.
 
 ### Checks and debugging aids
@@ -314,7 +315,7 @@ where data arrives, and declarations a host needs.
 ## What's left
 
 - **64-bit** (x86-64 Linux, aarch64, macOS, Windows x64; then ASan and
-  UBSan there, which work on i386 now): Blast Corps' pointer pass ("Where
+  UBSan there, which work on i386 now): DozerEncore's pointer pass ("Where
   pointers are 8 bytes" in its PORT.md) over the 617 casts between
   pointers and integers and the 2273 `M2C_FIELD`s at N64 offsets ("32-bit
   hosts and 64-bit hosts", below). Its order here: the regions first
@@ -325,7 +326,7 @@ where data arrives, and declarations a host needs.
   turned into fields, file by file, each version's ROM checked, then
   asm2c's pointer words, the ZeroJump stubs' pointer/integer
   conversions, and the libultra and libaudio structures the host layer
-  shares (Blast Corps' are already 64-bit clean). `test.py same` against
+  shares (DozerEncore's are already 64-bit clean). `test.py same` against
   the i386 build is the check at each step. Not started: it changes many
   of src/'s files, while the fake-reduction passes are editing them.
   `-DPORT_TRY64=ON` builds x86-64 anyway (it compiles and links) for that
@@ -392,7 +393,7 @@ offsets in comments (669) as clang does for the host:
   doesn't: 85A10's audio manager, whose thread is an array of `u64`). The
   game's C needs nothing more on a host whose pointers are 4 bytes:
   i386, armhf, wasm32 (phase 7).
-- **-m64: 305 differ.** A 64-bit build needs Blast Corps' pointer pass
+- **-m64: 305 differ.** A 64-bit build needs DozerEncore's pointer pass
   ("Where pointers are 8 bytes") first. What it has to go through:
   617 casts between pointers and integers in 64 files (5E3F0 143,
   6BBE0 95, 8A7A0 60, 54E40 45; `-Wpointer-to-int-cast` and the like),
@@ -424,7 +425,7 @@ What is still asm, and what replaces it in the port:
 | `2630` func_80001A30 | `D_8001BFC0[id] = table` (IDO's code for it is 5 instructions, not these 6) | C under `TARGET_PC` in src/1050.c |
 | `zerojump` func_80042000 | the ZeroJump dispatcher at virtual 0 | "ZeroJump", below |
 | `*_zerojmp` | each module's 711 stubs (`jr $zero; li $t0, id`) | "ZeroJump", below |
-| `B2410` func_80297C10, func_80297C7C | setjmp and longjmp, for the cooperative tasks (530C0) | not the host's alone: func_80238A10 makes a task by writing its entry and a stack top (0x800 bytes in the task, or the caller's) into the buffer as `ra` and `sp`, and func_80239208 reads `sp` back (the stack check). The port needs a coroutine per task with a host-sized stack (ucontext, fibers, threads run one at a time: Blast Corps' "Threads without ucontext"), and 530C0's switches under `TARGET_PC` |
+| `B2410` func_80297C10, func_80297C7C | setjmp and longjmp, for the cooperative tasks (530C0) | not the host's alone: func_80238A10 makes a task by writing its entry and a stack top (0x800 bytes in the task, or the caller's) into the buffer as `ra` and `sp`, and func_80239208 reads `sp` back (the stack check). The port needs a coroutine per task with a host-sized stack (ucontext, fibers, threads run one at a time: DozerEncore's "Threads without ucontext"), and 530C0's switches under `TARGET_PC` |
 | `B2500` func_80297D00, func_80297D20 | WatchLo set and clear (4E030, 40040) | no-ops |
 | `3D90` func_80003190, `6080` func_80005480, `D4D0` func_8000C8D0 | osUnmapTLBAll, osPiGetDeviceType, alSndpGetSound | the host libultra |
 | `4150` func_80003550 | a lone `nop`, no `jr` (nothing refers to it) | nothing |
@@ -465,7 +466,7 @@ nonmatching/. What is left (`asm/data`, us):
 | ovl_0B_04 | .bss | 19 | 448 | | 15 labels (96 bytes) |
 | zerojump | .rodata | | 136 | | its error strings |
 
-A generator like Blast Corps' `port/tools/asm2c.py` (the extracted asm as
+A generator like DozerEncore's `port/tools/asm2c.py` (the extracted asm as
 typed C at build time) covers it if it types each label from the C's
 declaration, which most have: 199 scalars, 114 scalar arrays, 60 structs,
 40 pointers or pointer arrays. It needs more for:
@@ -477,7 +478,7 @@ declaration, which most have: 199 scalars, 114 scalar arrays, 60 structs,
   .data (`D_8029F6D8`, `D_8029F718`, `D_8029F7A0`, 240 bytes; a `Gfx` with
   pointer-wide words in the port, and 412F0 writes `D_8029F7A0`'s address
   into a list as `u32`), and tables of words and floats (`D_802A0658`).
-  These need a type of their own (Blast Corps' inventory).
+  These need a type of their own (DozerEncore's inventory).
 - **Two declarations.** 5 labels are declared differently in two files
   (`D_802A5300`, `D_802A5418`, `D_802AC760`, `D_802ACF08`, `D_802AFE84`).
 - **Labels inside a variable.** `D_802ABA9C` and `D_802AC33C` are the task
@@ -494,9 +495,9 @@ declaration, which most have: 199 scalars, 114 scalar arrays, 60 structs,
 cache and files `D_8014B000`-`D_8014C8D0`, `D_8019A8D0`-`D_8019C2E0` (the
 archive index at `0x8019C0D0`; the audio heap, 86680's func_8026A754
 call), `D_801E56C0`, `D_802B36D0` and the 1 MiB sbrk arena `D_80300000`.
-The port makes them regions (Blast Corps' `port_regions.h`), sized from
+The port makes them regions (DozerEncore's `port_regions.h`), sized from
 the address map and typed from the C. Besides: `D_1000000` and `D_200000`
-are segment addresses (Blast Corps' proxies), and `zerojump_ROM_START`/`END`
+are segment addresses (DozerEncore's proxies), and `zerojump_ROM_START`/`END`
 the linker's.
 
 ### Overlays
@@ -505,14 +506,14 @@ the linker's.
 them as one: **no global is defined twice** among 8919 (8909 in jp), all 95
 overlays included: their names carry the bank and entry. Loading an
 overlay in the port is restoring its variables, which are all C (but
-ovl_0B_04's), so a Blast Corps-style table of them can come from the
+ovl_0B_04's), so a DozerEncore-style table of them can come from the
 objects.
 
 ### What the host supplies
 
 From the link (us): libultra's 224 names (jp 223), 94 `os*`, 113 `al*`,
 6 `gu*`, `sinf`, `fcos`, `sqrtf`, `sprintf`, `memcpy` and the `long long`
-helpers (libaudio's C can be ultralib's, as Blast Corps' `port/libaudio`);
+helpers (libaudio's C can be ultralib's, as DozerEncore's `port/libaudio`);
 the asm and ZeroJump above; the asm data (378 labels); the regions (135).
 The host's compiler adds `memset` (a struct cleared), and the allocator's
 names are gmalloc's through pc_names.h, not the host libc's.
@@ -523,7 +524,7 @@ The host layer has to meet, from the C:
   flags `D_802AD238` and `D_802AD660`, in func_8026A5BC) and 85A10's
   func_8026B7A8, which waits for the audio thread to count `D_802AF95C` up
   to a number of frames. With the threads run one at a time each
-  needs the other thread's turn (Blast Corps' `port_spin_wait()`).
+  needs the other thread's turn (DozerEncore's `port_spin_wait()`).
 - **The cooperative tasks** (above): every `func_80239094` is a task
   switch.
 - **The RNG seed** from `osGetTime` (docs/NETPLAY.md, "Requirements").

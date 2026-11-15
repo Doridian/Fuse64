@@ -93,7 +93,8 @@ run with it pinned (`tools/shift_check.py` explains).
   decomp of the US version (against a decompressed ROM). Its split and
   compiler flags were the starting point for the layout here. No code was
   copied.
-- The structure and tooling follow the author's Blast Corps decompilation.
+- The structure and tooling follow the author's DozerEncore (a PC port of
+  Blast Corps, built from its matching decompilation).
 - Haruhiko Okumura's LZSS.C (1989), whose encoder Hudson's matches.
 - [decompals/ultralib](https://github.com/decompals/ultralib): its headers
   (`include/ultralib`) and the libultra sources `src/libultra` starts from.

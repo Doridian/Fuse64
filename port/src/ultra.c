@@ -1,7 +1,7 @@
 /*
  * libultra for the port: the OS (threads, messages, events, timers) and the
  * I/O the game uses (PI, SI, VI, SP/DP, AI), on top of port/host.  From
- * Blast Corps' port/src/ultra.c (the same author's, AGPL-3.0), with this
+ * DozerEncore's port/src/ultra.c (the same author's, AGPL-3.0), with this
  * game's differences: four controllers, the controller pak as a file, the
  * scheduler's own SP/DP handling.
  *

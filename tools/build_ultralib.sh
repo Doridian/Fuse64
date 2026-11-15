@@ -6,8 +6,8 @@
 # Clones decompals/ultralib into <dir> and builds libultra_rom for every
 # revision it knows (2.0D to 2.0L) with IDO 5.3 and ultralib's own flags.
 # Matching against all of them is how the revision is identified
-# (docs/LIBULTRA.md); the build is the same as Blast Corps'
-# (../BlastCorps/tools/build_ultralib.sh).  The voice library (Japanese
+# (docs/LIBULTRA.md); the build is the same as DozerEncore's
+# (../DozerEncore/tools/build_ultralib.sh).  The voice library (Japanese
 # voice recognition, which this game doesn't link) fails to build on some
 # hosts, so the build carries on past errors and only checks that the rest
 # is there.

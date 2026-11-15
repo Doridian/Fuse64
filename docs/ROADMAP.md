@@ -1,6 +1,7 @@
 # Roadmap
 
-The end state is the one Blast Corps reached (`../BlastCorps`): every ROM
+The end state is the one DozerEncore (a PC port of Blast Corps,
+`../DozerEncore`) reached: every ROM
 rebuilds byte for byte from one source tree, all of the game's code is C
 (no `GLOBAL_ASM` left, and no handwritten asm in the port), the ROM's assets
 are editable files that rebuild to the same bytes, and the same C builds a
@@ -9,7 +10,7 @@ multiplayer over WebRTC, native and browser alike (docs/NETPLAY.md).
 
 Versions: **us** (`NBME`) is the working version, and **eu** (`NBMP`) and
 **jp** (`NBMJ`, *Baku Bomberman*) build from the same C with `#if`s, the
-way Blast Corps does it (its CLAUDE.md, "Versions"). See docs/LAYOUT.md
+way DozerEncore does it (its CLAUDE.md, "Versions"). See docs/LAYOUT.md
 for the ROMs and README.md for the hashes.
 
 ## Phase 0 — scaffolding (done)
@@ -154,7 +155,7 @@ docs/LIBULTRA.md has the details.
   ultralib's D to I builds are the same code, and J/K/L don't match.
   `tools/build_ultralib.sh` builds every revision, and `tools/libmatch.py
   --scan` compares them.
-- `tools/libmatch.py` and `tools/gen_symbols.py` (Blast Corps') name 370
+- `tools/libmatch.py` and `tools/gen_symbols.py` (DozerEncore's) name 370
   functions and 54 globals in boot_code and 13 functions and 1 global in
   main_code, in us, eu and jp alike (`symbol_addrs.<module>.<v>.txt`). EU's
   libultra (and jp's) is byte for byte US's. Only a 0x60-byte gap moves.
@@ -263,7 +264,7 @@ evidence for the flags):
   objects are decompiled with their data (docs/DECOMPILING.md, "Data");
   main_code's .data/.rodata boundary isn't shown yet.
 - `#if VERSION_EU`/`#if VERSION_JP` in the C for the changed functions
-  and the versions' data, and `version_ifs.py` (Blast Corps) for
+  and the versions' data, and `version_ifs.py` (DozerEncore) for
   version-specific GLOBAL_ASM lines, when the first of those is
   decompiled (docs/DECOMPILING.md, "Versions").
 - Hudson's game code is likely all C. Only libultra's `.s` files are real
@@ -275,10 +276,10 @@ evidence for the flags):
 Inventory the asset banks (models, textures, palettes, animations, the
 sound banks and sequences), extract them to editable formats, and rebuild
 them matching. The ROM link then places everything by built size, so an
-edited asset can change size. Blast Corps' `tools/assets.py` and
+edited asset can change size. DozerEncore's `tools/assets.py` and
 `assetlib/` are the template. For the port, the remakeable assets
 stay out of the executable and are loaded from the user's ROM at startup
-(`ASSET_INIT`, as in Blast Corps).
+(`ASSET_INIT`, as in DozerEncore).
 
 The inventory is done: `tools/inventory.py` classifies every archive entry
 (`docs/inventory.<v>.csv`), and docs/ASSETS.md has what is in them, how the
@@ -303,7 +304,7 @@ animation tracks' fields.
 
 Started (`port/`; docs/PORT.md, "Status": the game runs on 32-bit hosts,
 x86 natively, big-endian ones under qemu, and in WebAssembly). The same
-architecture as Blast Corps' port (its docs/PORT.md). What the
+architecture as DozerEncore's (its docs/PORT.md). What the
 decompilation gave it is docs/PORT.md, "What the decompilation gave the
 port" (`tools/host_check.py`):
 
@@ -318,11 +319,11 @@ port" (`tools/host_check.py`):
   linked in at once, with distinct symbols, and "loading" an overlay
   selects its code and resets its data/bss to the ROM's initial values.
   The zerojump table becomes a table of function pointers.
-- Reuse is preferred over rewrite. Blast Corps' `port/host`, renderer and
+- Reuse is preferred over rewrite. DozerEncore's `port/host`, renderer and
   `libaudio` port are the starting point. Whatever is game-agnostic is
   shared or copied with attribution in NOTICES.md.
 - Tests from the beginning: deterministic headless runs against committed
-  references (`port/tools/test.py` in Blast Corps), sanitizers, a
+  references (`port/tools/test.py` in DozerEncore), sanitizers, a
   big-endian host and a 32-bit host. The determinism work is also netplay's
   foundation (docs/NETPLAY.md, "Requirements").
 
@@ -330,7 +331,7 @@ port" (`tools/host_check.py`):
 
 emsdk, headless under node for the tests, and a page (`port/web/`) that
 asks the player for their own ROM. GitHub Pages builds it from the
-repository alone, as Blast Corps' `pages.yml` does.
+repository alone, as DozerEncore's `pages.yml` does.
 
 ## Phase 8 — online multiplayer
 

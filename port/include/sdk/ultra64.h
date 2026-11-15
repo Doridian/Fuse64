@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/include/sdk/ultra64.h, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/include/sdk/ultra64.h, the same author's (AGPL-3.0): NOTICES.md.]
  * The port's own SDK headers (PR/ultratypes.h has the why): everything the
  * game's C gets from <ultra64.h>.  PR/libaudio.h is the port's audio
  * library's.

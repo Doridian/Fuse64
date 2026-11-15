@@ -397,7 +397,7 @@ def object_starts(b, start, end, known=()):
     boundaries the padding doesn't show (library objects, and where one ends
     before a gap of zeros: the gap is an object of its own, so that a C
     object before it needn't carry it).  A boundary that
-    a branch crosses is dropped (as BlastCorps' gen_code_yaml does)."""
+    a branch crosses is dropped (as DozerEncore's gen_code_yaml does)."""
     cand = sorted(c for c in known if start < c < end and c % 16 == 0)
     o = start
     while o < end - 8:

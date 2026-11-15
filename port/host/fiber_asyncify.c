@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/host/fiber_asyncify.c, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/host/fiber_asyncify.c, the same author's (AGPL-3.0): NOTICES.md.]
  * fiber.h on emscripten's fibers (Asyncify): every fiber on the page's one
  * thread, as with ucontext.  A switch unwinds the wasm stack into the
  * fiber's Asyncify buffer and rewinds the other's from its own, so the C

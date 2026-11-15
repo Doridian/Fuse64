@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/host/fiber_pthread.c, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/host/fiber_pthread.c, the same author's (AGPL-3.0): NOTICES.md.]
  * fiber.h on host threads: each fiber is an OS thread, and exactly one of
  * them, or the loop's, runs at any time.  The CPU is a baton handed over
  * under one mutex: fiber_run gives it to the fiber and waits for it back,

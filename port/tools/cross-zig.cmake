@@ -9,7 +9,7 @@
 # ziglang.org unpacked; no root, no sysroot: zig carries musl).  No SDL
 # there: the build is headless (PORT_SDL=OFF); musl has no ucontext, so the
 # game's threads and 530C0's tasks are host threads, one running at a time.
-# From Blast Corps' port/tools/cross-zig.cmake (the same author's, AGPL-3.0).
+# From DozerEncore's port/tools/cross-zig.cmake (the same author's, AGPL-3.0).
 set(CMAKE_SYSTEM_NAME Linux)
 if(NOT PORT_ZIG)
     if(DEFINED ENV{ZIG})

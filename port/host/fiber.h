@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/host/fiber.h, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/host/fiber.h, the same author's (AGPL-3.0): NOTICES.md.]
  * The context switch under threads.c: how a game thread's native C gets a
  * stack of its own and hands the CPU back.  threads.c does all the
  * scheduling; a backend only switches, and only between the loop and one

@@ -4,7 +4,7 @@
  * the game's color images in its own memory as the RDP would, so that what
  * the game reads back (its screen captures) and what the VI shows are the
  * same as on the hardware, headless or not.  The port's own (docs/PORT.md,
- * "Graphics"), after Blast Corps' port/host/gfx.c in its model (a float
+ * "Graphics"), after DozerEncore's port/host/gfx.c in its model (a float
  * z-buffer tied to the z image, TMEM emulated with its loads, the combiner
  * and blender by their formulas).
  *

@@ -258,7 +258,7 @@ elseif(EMSCRIPTEN)
     # instrumentation stays as slow as it was made.  Binaryen would inline
     # every function that has one caller whatever its size, and a fiber
     # switch rewinds every frame on the stack by walking its body to the
-    # call (Blast Corps' port/CMakeLists.txt).  The renderer never switches
+    # call (DozerEncore's port/CMakeLists.txt).  The renderer never switches
     # fibers, so Asyncify leaves it alone (web/asyncify_remove.txt).
     target_link_options(fuse64 PRIVATE -O2 -sASYNCIFY -sASYNCIFY_STACK_SIZE=65536 -sGLOBAL_BASE=268435456
         -sINITIAL_MEMORY=384MB -sALLOW_MEMORY_GROWTH=1 -sSTACK_SIZE=1MB --profiling-funcs

@@ -22,7 +22,7 @@ __osSpSetStatus, but every overlay links at 0x80043000 into one image, so a
 plain name there would clash (their names carry the bank and entry, which
 is for the game's own code to settle first).
 
-Adapted from Blast Corps' tools/gen_symbols.py (../BlastCorps).
+Adapted from DozerEncore's tools/gen_symbols.py (../DozerEncore).
 
 Usage:
   gen_symbols.py <version> <objdir> [<objdir> ...]   # see tools/build_ultralib.sh

@@ -1,5 +1,5 @@
 /*
- * [Blast Corps' port/host/fiber_ucontext.c, the same author's (AGPL-3.0): NOTICES.md.]
+ * [DozerEncore's port/host/fiber_ucontext.c, the same author's (AGPL-3.0): NOTICES.md.]
  * fiber.h on ucontext: every fiber on the one OS thread (the default on
  * Linux, where it is the cheapest switch).  macOS has deprecated ucontext
  * and WebAssembly has none: those take fiber_pthread.c.

@@ -1,5 +1,5 @@
 /*
- * The port's own SDK headers (Blast Corps' port/include/sdk, adapted): the
+ * The port's own SDK headers (DozerEncore's port/include/sdk, adapted): the
  * fixed-size types are the decompilation's own include/PR/ultratypes.h
  * (32-bit whatever the host's long is, under TARGET_PC), plus size_t.
  */

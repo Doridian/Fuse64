@@ -10,8 +10,8 @@ says where they come from and on what terms they are here.
 | --- | --- | --- |
 | decompals/ultralib (libultra reconstruction) | `include/ultralib/`, `src/libultra/` | no licence file; see below |
 | GNU malloc (`gmalloc.c`, 1995) | `src/libmalloc/` | GNU GPL v2 or later (from the LGPL v2 or later); see below |
-| Blast Corps decomp tools | `tools/elf_mips2.py` and others adapted from `../BlastCorps` | AGPL-3.0, same author |
-| Blast Corps PC port | parts of Fuse64 (`port/`) copied or adapted from `../BlastCorps/port` | AGPL-3.0, same author; see below |
+| DozerEncore (a PC port of Blast Corps): decomp tools | `tools/elf_mips2.py` and others adapted from `../DozerEncore` | AGPL-3.0, same author |
+| DozerEncore: the PC port | parts of Fuse64 (`port/`) copied or adapted from `../DozerEncore/port` | AGPL-3.0, same author; see below |
 
 ---
 
@@ -27,7 +27,7 @@ carry this game's differences describe them at the top of the file; a
 few (`io/pfsresizefile.c`, and the older revisions' code in
 `io/conteep*.c`, `io/contreaddata.c`, `io/motor.c`) are decompiled from
 the game in ultralib's style. Several of the older-revision forms were first matched
-in the Blast Corps decomp (`../BlastCorps/blastcorps/src/libultra`, the same
+in DozerEncore's decompilation of Blast Corps (`../DozerEncore/blastcorps/src/libultra`, the same
 author's project), which reconstructs them from ultralib too.
 
 ultralib is a reverse-engineered reconstruction of Nintendo's N64 SDK
@@ -42,7 +42,7 @@ notices are kept as they are.
 
 Fuse64, the PC port, must not depend on it: the N64 build keeps `src/libultra` and
 `include/ultralib` because it has to match the ROM, and the port replaces
-the library over the same interface (as Blast Corps' docs/DISTRIBUTION.md,
+the library over the same interface (as DozerEncore's docs/DISTRIBUTION.md,
 "Replacing the SDK parts", does).
 
 ## GNU malloc
@@ -64,14 +64,14 @@ with the project's AGPL-3.0 (section 13 of each). `src/libmalloc/README.md`
 records the origin, the checksum and this choice. The directory's stub
 headers (`include/`) and `pc_names.h` are the project's own (AGPL-3.0).
 
-## Blast Corps decomp
+## DozerEncore
 
-Tools adapted from `../BlastCorps` (`tools/libmatch.py`,
+Tools adapted from `../DozerEncore` (`tools/libmatch.py`,
 `tools/gen_symbols.py`, `tools/elf_mips2.py`, ...) are the same author's
 work under AGPL-3.0, like this project.
 
 Fuse64, the PC port (`port/`, docs/PORT.md), reuses the game-agnostic parts of
-Blast Corps' port (`../BlastCorps/port`, commit `9203a91e`), the same
+DozerEncore's port (`../DozerEncore/port`, commit `9203a91e`), the same
 author's work under AGPL-3.0 (its `LICENSE`, the same licence as this
 project's). Copied with small changes (includes, what this game doesn't
 have taken out): `port/include/sdk/` (the port's own SDK headers, with

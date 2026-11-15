@@ -15,20 +15,23 @@ As of 2026-11-14:
 
 | host | builds | how far it runs |
 |---|---|---|
-| Linux i386 (`-m32`), us | yes | the legal screen, title, file select, the opening, the world select, the first stage played; battle mode against three CPU players. `test.py`'s four scenarios pass |
-| Linux i386, eu | yes | as us (legal, menus and battle recorded) |
-| Linux i386, jp | yes | as us (legal, menus and battle recorded; battle with the port's own timing of the script, "Testing") |
-| Windows i386 (zig `x86-windows-gnu`, under wine) | yes | legal, menus and battle are Linux i386's |
-| WebAssembly (emscripten), node | yes | legal, menus and battle are Linux i386's |
-| WebAssembly, a page (`PORT_WASM_TARGET=web`) | yes | plays in a browser (headless Chromium: the legal screen, the opening, the attract demos), the ROM from a file picker or `?rom=`, the save in IndexedDB |
-| big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | us: mips's legal, menus and battle are x86's, ppc's and mipsel's legal and menus (since the asset fix in "Byte order") |
+| Linux i386 (`-m32`) | yes | the legal screen, title, file select, the opening, the world select, the first stage played; battle mode against three CPU players: `test.py`'s four scenarios, in us, eu and jp (the references are this build's) |
+| Windows i386 (zig `x86-windows-gnu`, under wine) | yes | the four scenarios are Linux i386's, in us, eu and jp |
+| WebAssembly (emscripten), node | yes | the four scenarios are Linux i386's, in us, eu and jp |
+| WebAssembly, a page (`PORT_WASM_TARGET=web`) | yes | plays in a browser (headless Chromium, us, eu and jp: the legal screen, the opening, the attract demos), the ROM from a file picker or `?rom=`, the save in IndexedDB |
+| big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | the four scenarios are Linux i386's, in us, eu and jp |
 | Linux x86-64, us | yes | `test.py`'s four scenarios are i386's (legal, menus, battle, story: "Where pointers are 8 bytes") |
 | Linux x86-64, eu and jp | yes | legal, menus and battle are i386's |
 | aarch64 (zig, qemu-user), us | yes | legal, menus and battle are i386's |
 | macOS, Windows x64 | not tried | ("What's left") |
 
+`port/tools/matrix.py` runs the seven 32-bit hosts with the three versions and
+the four scenarios ("The matrix"). Its last run, 2026-11-14 (after the
+vertex fix in "Byte order"), gave the references in all 84.
+
 The ROM build is unchanged by all of it: every change to `src/` is under
-`TARGET_PC` or a macro that gives IDO the same text ("Source changes").
+`TARGET_PC`, a macro that gives IDO the same text, or a type that gives it
+the same bytes ("Source changes").
 
 ## Building and running
 
@@ -164,14 +167,61 @@ sound (`--wav`) and the EEPROM file.
 
 `--save` records them. `test.py same A B` compares two builds' runs with
 each other (a cross build under qemu, a sanitized build, the WebAssembly
-build against x86). Recorded: us legal, menus, battle and story; eu
-and jp legal, menus and battle. jp's battle input is the port's own
+build against x86). Recorded: legal, menus, battle and story in us, eu
+and jp (on Linux i386; eu's and jp's story checked by screenshots
+every 500 retraces: the opening, the world select and the first stage
+played, as us's). jp's battle input is the port's own
 timing of battle.jp.txt (`port/tools/inputs/battle.jp.txt`, which test.py
 prefers to the shift check's): the port loads without the N64's waits, so
 jp's opening logo scene, which it plays by itself after the title, starts
 150 retraces earlier than on the N64. The headless clock is virtual (it
 moves from one event to the next when every thread waits), so a run is
 the same on every host.
+
+### The matrix
+
+```
+port/tools/matrix.py --tree eu=../tree-eu --tree jp=../tree-jp [--build] -j 16 --results matrix.json
+```
+
+runs every 32-bit host (Linux i386, Windows i386 under wine, WebAssembly
+under node, mips, ppc, mipsel and armhf under qemu-user) with every
+version and scenario through test.py and prints the table below.
+`asm/` holds one version at a time, so each version's builds are in a
+tree of its own with that version extracted (`--tree V=DIR`; this
+checkout is its `.version`'s): `build-port`, `build-port-win32`,
+`build-port-wasm`, `build-port-<arch>`, which `--build` configures and
+builds. wine runs in a prefix of its own (`--wineprefix`, by default
+`build-port-wine`) with no display, and its wineserver is stopped at the
+end. `--results` keeps each result as it comes and `--resume` skips those
+it has. Nearly all of the time is qemu's story runs (12000 retraces).
+The last run, `-j 16` on 32 cores shared with other builds, took two
+hours and 25 minutes: a story run took about 2.5 minutes on Linux
+i386, wine and node, 42 under qemu-arm, an hour under qemu-mips and
+qemu-mipsel, and two hours 25 under qemu-ppc (its floating point is
+the dear part), which is what the whole run waits for.
+
+The last run, 2026-11-14 (this branch: the tip of main before the
+pointer pass, with the vertex fix in "Byte order"), every build rebuilt
+from that source in each version's tree:
+
+| host | us | eu | jp |
+|---|---|---|---|
+| Linux i386 | legal menus battle story | legal menus battle story | legal menus battle story |
+| Windows i386 (wine) | legal menus battle story | legal menus battle story | legal menus battle story |
+| WebAssembly (node) | legal menus battle story | legal menus battle story | legal menus battle story |
+| MIPS, big-endian (qemu) | legal menus battle story | legal menus battle story | legal menus battle story |
+| PowerPC (qemu) | legal menus battle story | legal menus battle story | legal menus battle story |
+| MIPS, little-endian (qemu) | legal menus battle story | legal menus battle story | legal menus battle story |
+| armhf (qemu) | legal menus battle story | legal menus battle story | legal menus battle story |
+
+Each scenario named gave the references (the framebuffer at every
+retrace, the sound, the EEPROM): 84 of 84. The run before the fix gave
+78: mips's story differed from the references in all three versions
+(from retrace 4306 in us: the beam ovl_0A_01 draws, there and not on
+the little-endian hosts), and ppc's story hadn't run. The story references are the fixed Linux i386 build's,
+whose us story then matched mips's (the unfixed build's) hash for hash
+through retrace 4500.
 
 ## How it works
 
@@ -284,11 +334,18 @@ values the game keeps in the N64's order on purpose are read and written
 as such (the EEPROM header and default slot in AD5B0, a palette fade in
 ACA00: `PORT_BE32_GET` and the like). On a big-endian host all of it is
 the identity, which the qemu builds check: a difference between mips and
-x86 that mipsel doesn't share is a byte-order bug on one side. The last
-one was native.c taking the word after an asset container's last record
+x86 that mipsel doesn't share is a byte-order bug on one side. Two were
+found so. native.c took the word after an asset container's last record
 for a record type: in a container whose type 4 record's texels follow the
 table there, it swapped the first four texels on little-endian hosts (a
-texture in the opening's fade).
+texture in the opening's fade). And the C's own data must have the types
+the RSP reads it with: ovl_0A_01's four vertices (the opening's hologram
+beam) were u32 words, so on a little-endian host x and y were swapped and
+the colour's bytes reversed, and the beam was out of view; they are a
+`Vtx` struct now (the same bytes for IDO), as are ovl_0A_06's and 0B_07's.
+That one was found by comparing the two hosts' display lists, with the
+vertices and matrices they load, for the first retrace that differed
+(4306 of us's story; a temporary log in gfx.c's `run`).
 
 ### Threads, tasks and timing
 
@@ -387,7 +444,9 @@ include/common.h: `PORT_V0(x)`, `PORT_RET(ido, pc)`, `PORT_ONLY(x)`,
 array), `PORT_SPAN2`, `PORT_WORD_BYTE0`, `PORT_BE32_GET`/`SET`,
 `PORT_BE16_GET`/`SET`, `PORT_DCAC_LEN`, `PORT_ORDER()`. Besides: a task switch's
 macros (530C0), the overlay loader's call (40FB0), the byte-order calls
-where data arrives, and declarations a host needs.
+where data arrives, declarations a host needs, and data given the type
+the hardware reads it with (ovl_0A_01's and 0A_06's vertices: "Byte
+order").
 
 ## What's left
 
@@ -401,8 +460,6 @@ where data arrives, and declarations a host needs.
 - **Packages** (an AppImage, the `.exe` with SDL, a macOS app; Blast
   Corps' "Packages") and a hosted page: after 64-bit, with SDL in the
   Windows cross build.
-- **Big-endian past battle**: story under qemu (slow: a 6000-retrace
-  run takes most of an hour), and eu and jp there.
 - **Renderer**: what the first stage and the menus show is checked by eye
   against an emulator, not pixel for pixel.
 - Phase 7 and 8 (docs/ROADMAP.md, docs/NETPLAY.md): the input and the RNG

@@ -1,0 +1,56 @@
+# ptrcast_scan.py's allow-list: class file us eu jp
+# (docs/PORT.md, "Where pointers are 8 bytes").  Each counted diagnostic
+# was read and is not a pointer cut to 32 bits:
+#   ovl: `(void *) i`, a task's argument that is a number (the task reads
+#     it back as one);
+#   main: numbers kept in pointer fields (45170/46300's file values, the
+#     0x31 marker), dead code (9CAB0's fake, 6BBE0's), ROM addresses and
+#     sizes handed to libultra as pointers (80580), a task's number;
+#   shorten: differences of addresses (sizes, counts), numbers returned
+#     through an intptr_t (func_80294A48's states, the task arguments, the
+#     ids of PORT_V0 wrappers), a write-only word (9CAB0's unk8C), libaudio's
+#     buffer arithmetic, gu.c's fixed point.
+main src/45170.c 1 1 1
+main src/46300.c 1 1 1
+main src/48600.c 2 2 2
+main src/6BBE0.c 2 2 2
+main src/80580.c 4 4 4
+main src/9CAB0.c 1 1 1
+main src/A4CE0.c 1 1 1
+ovl src/overlays/ovl_0A_02/12C630.c 2 2 2
+ovl src/overlays/ovl_0A_05/13A9F0.c 6 6 6
+ovl src/overlays/ovl_0B_02/148730.c 2 2 2
+ovl src/overlays/ovl_0D_02/19C2D0.c 2 2 2
+ovl src/overlays/ovl_0D_03/1A0CD0.c 2 2 2
+ovl src/overlays/ovl_0D_05/1A9E30.c 1 1 1
+ovl src/overlays/ovl_0E_15/1DF480.c 1 1 1
+ovl src/overlays/ovl_0F_01/1E2D80.c 2 2 2
+ovl src/overlays/ovl_0F_02/1E84A0.c 2 2 2
+ovl src/overlays/ovl_0F_04/1F2230.c 2 2 2
+ovl src/overlays/ovl_13_02/2697F0.c 2 2 2
+ovl src/overlays/ovl_14_01/274480.c 1 1 1
+ovl src/overlays/ovl_14_02/27E920.c 2 2 2
+ovl src/overlays/ovl_14_02/statics.h 1 1 1
+ovl src/overlays/ovl_15_02/296AC0.c 2 2 2
+shorten port/libaudio/reverb.c 2 2 2
+shorten port/src/gu.c 2 2 2
+shorten src/1050.c 3 3 3
+shorten src/40040.c 2 2 2
+shorten src/412F0.c 2 2 2
+shorten src/426E0.c 3 3 3
+shorten src/46300.c 1 1 1
+shorten src/54E40.c 5 5 5
+shorten src/6BBE0.c 1 1 1
+shorten src/80580.c 2 2 2
+shorten src/85A10.c 2 2 2
+shorten src/8A7A0.c 3 3 3
+shorten src/9CAB0.c 1 1 1
+shorten src/overlays/ovl_0B_06/1607E0.c 5 5 5
+shorten src/overlays/ovl_0C_01/16BB60.c 1 1 1
+shorten src/overlays/ovl_0C_02/1734E0.c 1 1 1
+shorten src/overlays/ovl_0C_06/statics.h 1 1 1
+shorten src/overlays/ovl_0D_02/19C2D0.c 3 3 3
+shorten src/overlays/ovl_0D_03/1A0CD0.c 2 2 2
+shorten src/overlays/ovl_10_13/2439F0.c 1 1 1
+shorten src/overlays/ovl_13_02/2697F0.c 4 4 4
+shorten src/overlays/ovl_14_02/27E920.c 1 1 1

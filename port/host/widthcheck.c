@@ -42,7 +42,7 @@
 #error "the width check's shadow table is for 32-bit hosts"
 #endif
 
-extern char __executable_start[];
+extern char __executable_start[], _end[];
 int port_coro_stack(const void *p);
 
 #define W_ANY 15  /* memset: any width */
@@ -148,7 +148,82 @@ static void copy_shadow(uintptr_t d, uintptr_t s, size_t n) {
     }
 }
 
+/*
+ * The pointer slots ($PORT_PTRSLOTS=FILE; docs/PORT.md, "Where pointers
+ * are 8 bytes"): every word the game's C stores a pointer into (a value in
+ * the game's memory, read back after the store: the callbacks come before
+ * the access), with the store's place, and every place that loads such a
+ * word, written at exit.  Where pointers are 8 bytes each of those places
+ * must be an access of a pointer's type, and each word a pointer's room.
+ */
+#define NSLOTS (1u << 20)
+typedef struct {
+    uintptr_t addr;
+    uint32_t store;
+} Slot;
+static Slot *slots;
+static const char *slots_out;
+static uintptr_t ps_addr;
+static uint32_t ps_pc;
+#define NSITES (1u << 16)
+typedef struct {
+    uint32_t pc, n;
+    uint8_t kind;   /* 1 a store, 2 a load */
+} Site;
+static Site sites[NSITES];
+
+static void site(uint32_t pc, int kind) {
+    for (uint32_t i = (pc * 2654435761u) & (NSITES - 1);; i = (i + 1) & (NSITES - 1)) {
+        if (sites[i].pc == pc && sites[i].kind == kind) {
+            sites[i].n++;
+            return;
+        }
+        if (!sites[i].pc) {
+            sites[i].pc = pc, sites[i].kind = (uint8_t)kind, sites[i].n = 1;
+            return;
+        }
+    }
+}
+
+static Slot *slot(uintptr_t a, int make) {
+    for (uint32_t i = ((uint32_t)a * 2654435761u >> 2) & (NSLOTS - 1);; i = (i + 1) & (NSLOTS - 1)) {
+        if (slots[i].addr == a)
+            return &slots[i];
+        if (!slots[i].addr) {
+            if (!make)
+                return NULL;
+            slots[i].addr = a;
+            return &slots[i];
+        }
+    }
+}
+
+static inline void ps_check(void) {
+    if (ps_addr) {
+        uint32_t v = *(volatile uint32_t *)ps_addr;
+        if (v >= 0x10000 && port_is_game_memory((void *)(uintptr_t)v)) {
+            Slot *s = slot(ps_addr, 1);
+            s->store = ps_pc;
+            site(ps_pc, 1);
+        }
+        ps_addr = 0;
+    }
+}
+
+static inline void ps_access(uintptr_t a, unsigned n, void *pc, int st) {
+    ps_check();
+    if (n != 4 || (a & 3))
+        return;
+    if (st) {
+        ps_addr = a, ps_pc = rel(pc);
+    } else if (slot(a, 0)) {
+        site(rel(pc), 2);
+    }
+}
+
 static inline void store(uintptr_t a, unsigned n, void *pc) {
+    if (slots)
+        ps_access(a, n, pc, 1);
     unsigned sn = last_n;
     last_n = 0;
     if (sn == n && n > 1) {
@@ -168,6 +243,8 @@ static inline void store(uintptr_t a, unsigned n, void *pc) {
 }
 
 static inline void load(uintptr_t a, unsigned n, void *pc) {
+    if (slots)
+        ps_access(a, n, pc, 0);
     flush();
     last_load = a;
     last_n = n;
@@ -254,8 +331,34 @@ static int cmp(const void *a, const void *b) {
     return x->count < y->count ? 1 : x->count > y->count ? -1 : 0;
 }
 
+static void dump_slots(void) {
+    FILE *f = fopen(slots_out, "w");
+    if (!f)
+        return;
+    ps_check();
+    fprintf(f, "# slot ADDR STORE (ADDR: rN64 in port_rdram, xOFF in the executable, h the host's);"
+               " site KIND PC COUNT\n");
+    for (uint32_t i = 0; i < NSLOTS; i++)
+        if (slots[i].addr) {
+            uintptr_t a = slots[i].addr;
+            if (a >= (uintptr_t)port_rdram && a < (uintptr_t)port_rdram + PORT_RDRAM_SIZE)
+                fprintf(f, "slot r%08lx %08x\n", (unsigned long)(a - (uintptr_t)port_rdram + 0x80000000u),
+                        slots[i].store);
+            else if (a >= (uintptr_t)__executable_start && a < (uintptr_t)_end)
+                fprintf(f, "slot x%08x %08x\n", rel((void *)a), slots[i].store);
+            else
+                fprintf(f, "slot h%08lx %08x\n", (unsigned long)a, slots[i].store);
+        }
+    for (uint32_t i = 0; i < NSITES; i++)
+        if (sites[i].pc)
+            fprintf(f, "site %s %08x %u\n", sites[i].kind == 1 ? "store" : "load", sites[i].pc, sites[i].n);
+    fclose(f);
+}
+
 static void dump(void) {
     static int done;
+    if (slots && !done)
+        dump_slots();
     const char *path = getenv("PORT_WIDTHCHECK_OUT");
     FILE *f = path ? fopen(path, "w") : stderr;
     unsigned n = 0;
@@ -294,6 +397,9 @@ void __asan_init(void) {
         return;
     once = 1;
     atexit(dump);
+    slots_out = getenv("PORT_PTRSLOTS");
+    if (slots_out)
+        slots = calloc(NSLOTS, sizeof *slots);
     /* the initialized variables, as stores of their types (widthcheck.py data) */
     const char *data = getenv("PORT_WIDTHCHECK_DATA");
     if (data) {

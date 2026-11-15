@@ -1,0 +1,16 @@
+# The game's objects that the C reaches by N64 offset in a file with no type
+# for them (port/tools/gen_port_types.py writes port/include/port_types.h).
+#   NAME SIZE OFF:TYPE...   # what it is
+
+Port_UnkStructA 0x80 20:void 24:void 3C:void 40:Port_UnkStructA_40 44:Port_UnkStructA 78:Port_UnkStructA 7C:Port_UnkStructA  # the object pool D_800A3F00's object (48600.c's UnkStructA80, structs.h's UnkStructA)
+Port_UnkStructA_40 0x50 3C:void 40:void 44:void 48:Port_UnkStructA_40_48 4C:void  # an object's model: the pool D_800A0D00's (426E0.c's UnkObj, structs.h's UnkStructA_40)
+Port_UnkStructA_40_48 0x8 4:Port_UnkStructA_40_48_4  # structs.h's UnkStructA_40_48
+Port_UnkStructA_40_48_4 0x18 0:void C:void  # structs.h's UnkStructA_40_48_4: two of 426E0.c's UnkAnimSlot (an animation, its time and flags)
+Port_80288040 0x90 0:Port_UnkStructA 68:void  # 9CAB0.c's UnkStruct_80288040: a player's bomber
+Port_800AEDF0 0xC8 28:Port_UnkStructA 2C:Port_UnkStructA 30:void 40:void 4C:void B0:void B4:void  # 5E3F0.c's UnkStruct_800AEDF0: D_800AEDF0[5], the players
+Port_800BCFE8 0x128 18:Port_UnkStructA 1C:Port_UnkStructA 98:Port_800BCFE8_98 9C:void  # 6BBE0.c's per-player state D_800BCFE8[4]
+Port_800BCFE8_98 0x30 24:void 28:void 2C:void  # what 6BBE0.c's D_800BCFE8[i] has at 0x98 (malloc'd)
+Port_Rec926 0x48 8:void 14:void 18:void  # 926A0.c's Rec926: D_8008E658[48]
+Port_Ent88 0x88 14:Port_Ent88 18:Port_Ent88 1C:Port_UnkStructA 20:void 24:void 28:void 2C:void 30:void 34:void 38:void  # 8A7A0.c's Ent88
+Port_800BB4A8 0x58 8:Port_800BB4A8 C:Port_800BB4A8 10:void 14:void 18:void  # 93850.c's UnkStruct_800BB4A8: a node of the list D_800BB4A8
+Port_ObjDir 0x8 0:void  # 6BBE0.c's task argument sp134 {an object, a direction}

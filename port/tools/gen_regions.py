@@ -38,7 +38,11 @@ FIXED_FROM = 0x80100000
 END_MARKERS = {"D_800BEA60"}
 # a name whose declarations disagree: the one that is its object
 # (426E0.c's D_800A3F00 is the end of D_800A0D00[], 48600.c's the pool after it)
-TYPES = {"D_800A3F00": ("src/48600.c", "UnkStructA80[128]")}
+TYPES = {"D_800A3F00": ("src/48600.c", "UnkStructA80[128]"), "D_800BCFE8": ("src/6BBE0.c", "Port_800BCFE8[4]"),
+         "D_8008E658": ("src/926A0.c", "Rec926[48]"),
+         "D_8008F438": ("src/8A7A0.c", "Ent88[22]"),
+         # 6BBE0.c's message queue and its message (the C declares bytes)
+         "D_800BE848": ("port/src/ultra.c", "OSMesgQueue"), "D_800BE860": ("port/src/ultra.c", "OSMesg[1]")}
 
 
 def main():
@@ -66,7 +70,8 @@ def main():
     absolute = [(n, a) for n, a in sorted(names.items(), key=lambda e: e[1])
                 if not (0x80000000 <= a < 0x80000000 + RDRAM_SIZE)]
     hend = 0        # where the last name's host object ends (an offset in port_rdram)
-    cover = None    # (host start, N64 start, file, type, N64 end) of a name others are inside
+    cover = None    # (host start, N64 start, file, type, N64 end, base) of a name others are inside
+    own = []        # (name, size): the objects of their own (below)
     for i, (n, a) in enumerate(inram):
         off = a - 0x80000000
         size = (inram[i + 1][1] - a) if i + 1 < len(inram) else 0
@@ -76,28 +81,41 @@ def main():
                 report.append("%s: inside %s at +0x%X: no host offset" % (n, cover[3], off - cover[1]))
                 h = off - cover[1]
             hoff = cover[0] + h
+            base = cover[5]
         else:
             cover = None
             hoff = max(off, hend) if lay else off
+            base = "port_rdram"
             if hoff != off and a >= FIXED_FROM:
                 sys.exit("gen_regions.py: %s moved to 0x%X, past the work area" % (n, 0x80000000 + hoff))
             t = (TYPES.get(n) or layouts.best_type(lay, full, n, size)) if lay else None
             if t:
                 hoff = (hoff + 7) & ~7
                 n64, h64 = lay.size(t[0], t[1], 32), lay.size(t[0], t[1], 64)
-                cover = (hoff, off, t[0], t[1], off + n64)
-                hend = hoff + h64
+                if a >= FIXED_FROM and hoff + h64 > off + size:
+                    # past the work area what follows stays where the N64
+                    # has it: a name that grows there is an object of its
+                    # own (the game reaches it by its name alone)
+                    base, hoff = "port_region_" + n, 0
+                    own.append((base, h64))
+                    report.append("%s: an object of its own" % n)
+                else:
+                    hend = hoff + h64
+                cover = (hoff, off, t[0], t[1], off + n64, base)
                 report.append("%s %s (%s): 0x%X bytes, 0x%X here" % (n, t[1], t[0], n64, h64))
             else:
-                # (as big as its declarations say, where they do: the last
-                # name before a gap doesn't take the gap)
+                # (as big as its declarations say, and never less than the
+                # N64's room up to the next name: the C may index past a
+                # declaration, D_800BE818's s32 is three)
                 ds = [d.get("s64") for d in full["names"].get(n, []) if d["kind"] == "var"] if lay else []
                 ds = [x for x in ds if x]
-                hend = hoff + (max(ds) if ds else size) if a < FIXED_FROM and n not in END_MARKERS else 0
-        if hoff != off:
+                hend = hoff + max(ds + [size]) if a < FIXED_FROM and n not in END_MARKERS else 0
+        if hoff != off and base == "port_rdram":
             report.append("%s: at 0x%X (+0x%X)" % (n, 0x80000000 + hoff, hoff - off))
-        o.append("__asm__(\".globl \" PORT_ULP \"%s\\n.set \" PORT_ULP \"%s, \" PORT_ULP \"port_rdram + 0x%X\\n\");"
-                 % (n, n, hoff))
+        o.append("__asm__(\".globl \" PORT_ULP \"%s\\n.set \" PORT_ULP \"%s, \" PORT_ULP \"%s + 0x%X\\n\");"
+                 % (n, n, base, hoff))
+    for b, sz in own:
+        o.append("uint8_t %s[0x%X] __attribute__((aligned(16)));" % (b, sz))
     # the segment and physical addresses: absolute symbols, or where the
     # object format has none (WebAssembly) proxies, small objects that
     # port_addr turns back into their numbers (port/src/memory.c)

@@ -39,9 +39,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 ALLOW = os.path.join(ROOT, "port", "tools", "ptrcast_allow.txt")
 BLANK = os.path.join(ROOT, "build", "ptrcast_scan")
 VERSIONS = ("us", "eu", "jp")
-CLASSES = ("gbi", "main", "ovl", "port", "gen", "ptrtype", "other")
+CLASSES = ("gbi", "main", "ovl", "port", "gen", "ptrtype", "shorten", "other")
 FLAGS = ["-fsyntax-only", "-Wno-everything", "-Wpointer-to-int-cast", "-Wint-to-pointer-cast",
-         "-Wint-conversion", "-Wincompatible-pointer-types", "-Wno-incompatible-function-pointer-types",
+         "-Wint-conversion", "-Wincompatible-pointer-types", "-Wshorten-64-to-32", "-Wno-incompatible-function-pointer-types",
          "-Wno-error", "-fno-caret-diagnostics", "-fmacro-backtrace-limit=0", "-fno-color-diagnostics",
          "-fdiagnostics-absolute-paths"]
 DIAG = re.compile(r"^(.*?):(\d+):(\d+): (warning|error): (.*?)(?: \[(-W[\w-]+)\])?$")
@@ -99,6 +99,8 @@ def scan_one(u):
 
 
 def classify(path, macros, flag):
+    if flag == "-Wshorten-64-to-32":
+        return "shorten"
     if flag == "-Wincompatible-pointer-types":
         return "ptrtype"
     rel = os.path.relpath(path, ROOT)

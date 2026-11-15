@@ -125,6 +125,9 @@ TYPES = {
     "D_802AD1F8": "port/src/ultra.c:OSMesgQueue", "D_802AD130": "port/src/ultra.c:OSMesg[50]",
     "D_802AAC40": "port/src/ultra.c:OSScClient",
     "D_802AD120": "port/src/ultra.c:ALHeap",
+    # 8A7A0.c's five slots, each with an object (the labels after the first
+    # are inside them)
+    "D_802AFCE8": "src/8A7A0.c:Slot30[5]",
 }
 
 

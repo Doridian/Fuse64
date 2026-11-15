@@ -154,3 +154,55 @@ def best_type(lay, full, name, size):
         if n and (best is None or n > best[0]):
             best = (n, d["file"], t)
     return best and best[1:]
+
+
+def field_path(lay, f, t, off):
+    """(the C designator of N64 offset off inside a t, e.g. `unk4C[1]` or
+    `unk10.x`, and the type there), or None: a scalar's or a pointer's start,
+    or a place inside a scalar array"""
+    p = lay.parse(t)
+    if p[0] in ("ptr", "sc"):
+        return ("", t) if off == 0 else None
+    if p[0] == "arr":
+        e = lay.size(f, p[1], 32)
+        if not e:
+            return None
+        i, r = divmod(off, e)
+        sub = field_path(lay, f, p[1], r)
+        return None if sub is None else ("[%d]%s" % (i, sub[0]), sub[1])
+    k = lay.resolve(f, p[1])
+    if k is None:
+        return None
+    best = None
+    for fl in lay.records[f][k]["fields"]:
+        o = fl.get("off32")
+        if o is not None and o <= off:
+            sz = lay.size(f, fl["type"], 32)
+            if sz is None or off < o + max(sz, 1):
+                best = fl
+    if best is None:
+        return None
+    sub = field_path(lay, f, best["type"], off - best["off32"])
+    return None if sub is None else ("." + best["name"] + sub[0], sub[1])
+
+
+def floats(lay, f, t, base=0):
+    """the N64 offsets of the floats inside a t"""
+    p = lay.parse(t)
+    if p[0] == "ptr":
+        return []
+    if p[0] == "sc":
+        tt = lay._norm(t)
+        return [base] if tt in ("f32", "float", "f64", "double") else []
+    if p[0] == "arr":
+        e = lay.size(f, p[1], 32)
+        sub = floats(lay, f, p[1])
+        return [base + i * e + s for i in range(p[2] or 0) for s in sub] if sub and e else []
+    k = lay.resolve(f, p[1])
+    if k is None:
+        return []
+    out = []
+    for fl in lay.records[f][k]["fields"]:
+        if fl.get("off32") is not None:
+            out += floats(lay, f, fl["type"], base + fl["off32"])
+    return out

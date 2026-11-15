@@ -37,8 +37,13 @@ TYPEDEFS = {"u8": "unsigned char", "s8": "signed char", "u16": "unsigned short",
             "OSEvent": "unsigned int", "OSIntMask": "unsigned int", "OSPageMask": "unsigned int",
             "OSMesg": "void *", "ALMicroTime": "int", "ALPan": "unsigned char", "ALSndId": "short",
             "size_t": "__SIZE_TYPE__", "__size_t": "__SIZE_TYPE__", "OSYieldResult": "unsigned int",
-            "uintptr_t": "uintptr_t", "vs32": "int", "vu32": "unsigned int"}
+            "uintptr_t": "uintptr_t", "intptr_t": "intptr_t", "vs32": "int", "vu32": "unsigned int"}
 UNKNOWN = set()
+# the targets the port's libultra defines with addresses as wide as a
+# pointer where libultra's own have a u32 (port/src/ultra.c)
+HOST_SIGS = {"osVirtualToPhysical": ("uintptr_t", ["void *"]),
+             "osPhysicalToVirtual": ("void *", ["uintptr_t"])}
+NARROW = []
 # the handwritten asm the port has in C (port/src/boot.c): in jp a stub of
 # its own addresses can have one of these (us's) names
 HANDWRITTEN = {"func_80003190", "func_80005480", "func_8000C8D0", "func_80042000", "func_80297D00", "func_80297D20",
@@ -174,11 +179,26 @@ def main():
             n_bound += 1
         elif t and tdef is not None:
             tret, tparams = proto(tdef[2], tdef[3])
+            if t in HOST_SIGS:
+                tret, tparams = HOST_SIGS[t]
             traw = tdef[3] or []
             tparams = [p for p, raw in zip(tparams, traw) if raw != "..."]
             tvar = tdef[4]
             if t not in targets_decl:
                 targets_decl[t] = "%s %s(%s);" % (tret, t, (", ".join(tparams) or "void") + (", ..." if tvar else ""))
+            # (where pointers are 8 bytes: a pointer or a pointer-wide
+            # integer of the target's that a caller declares as a 32-bit int)
+            wide = ("void *", "intptr_t", "uintptr_t")
+            narrow = ("int", "unsigned int")
+            for i, p in enumerate(tparams):
+                if i < len(sparams) and p in wide and sparams[i] in narrow:
+                    NARROW.append("%s (-> %s) arg %d: %s" % (s, t, i, sorted({e[5] for e in funcs[s] if e[0] == "decl"})))
+                if i < len(sparams) and sparams[i] in wide and p in narrow:
+                    NARROW.append("%s (-> %s) target arg %d: %s" % (s, t, i, tdef[5] if tdef and len(tdef) > 5 else "?"))
+            if sret in wide and tret in narrow:
+                NARROW.append("%s (-> %s) target returns: %s" % (s, t, tdef[5] if tdef and len(tdef) > 5 else "?"))
+            if tret in wide and sret in narrow:
+                NARROW.append("%s (-> %s) returns: %s" % (s, t, sorted({e[5] for e in funcs[s] if e[0] == "decl"})))
             cargs = []
             for i, p in enumerate(tparams):
                 if i < len(sparams):
@@ -212,6 +232,11 @@ def main():
     open(out + ".tmp", "w").write("\n".join(o) + "\n")
     os.replace(out + ".tmp", out)
     print("gen_zerojump: %d stubs, %d bound" % (len(declared), n_bound))
+    # what a 64-bit build cuts to 32 bits (docs/PORT.md, "Where pointers are 8 bytes")
+    open(out[:-2] + "_narrow.txt", "w").write("".join(x + "\n" for x in NARROW))
+    if NARROW:
+        print("gen_zerojump: %d stub arguments or returns narrower than their targets' (%s)"
+              % (len(NARROW), out[:-2] + "_narrow.txt"))
     if UNKNOWN:
         sys.exit("gen_zerojump: types it doesn't know (TYPEDEFS): %s" % " ".join(sorted(UNKNOWN)))
 

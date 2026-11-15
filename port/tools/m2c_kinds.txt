@@ -1,0 +1,261 @@
+# The structs of m2c's field accesses' bases, where the base's own type
+# doesn't say (port/tools/m2c_port.py; docs/PORT.md, "Where pointers are 8
+# bytes"):  FILE FUNCTION BASE STRUCT  (FUNCTION * for the whole file).
+
+# 48600: the object pool's objects (D_800A3F00) and their shapes
+src/48600.c * arg0 UnkStructA80
+src/48600.c * arg1 UnkStructA80
+src/48600.c * temp_v0 UnkStructA80
+src/48600.c * var_t0 UnkStructA80
+src/48600.c func_802312AC p Shape
+
+# 54E40: the objects (structs.h's UnkStructA, the pool's object)
+src/54E40.c * obj UnkStructA
+src/54E40.c * arg0 UnkStructA
+src/54E40.c * temp_v0 UnkStructA
+src/54E40.c * model UnkStructA
+src/54E40.c * p UnkStructA
+src/54E40.c * func_802443F4(i) UnkStructA
+src/54E40.c func_80242FB4 obj Port_80288040
+src/54E40.c func_80242FB4 p UnkStructA
+src/54E40.c * D_800AEDF0 Port_800AEDF0[]
+
+# 6BBE0: the per-player state D_800BCFE8[4] (Port_800BCFE8) and the objects
+src/6BBE0.c * var_fp Port_800BCFE8
+src/6BBE0.c * temp_s4 Port_800BCFE8
+src/6BBE0.c * src Port_800BCFE8
+src/6BBE0.c * sp2C Port_800BCFE8
+src/6BBE0.c * obj Port_UnkStructA
+src/6BBE0.c * target Port_UnkStructA
+src/6BBE0.c * temp_s2 Port_UnkStructA
+src/6BBE0.c * (u8 *) var_s5 Port_UnkStructA
+src/6BBE0.c func_80251D30 p Port_800BCFE8_98
+src/6BBE0.c func_80251D30 arg0 Port_800BCFE8
+src/6BBE0.c func_802553D4 arg0 Port_800BCFE8
+src/6BBE0.c func_802553D4 arg1 Port_UnkStructA
+src/6BBE0.c func_802553D4 p Port_800BCFE8
+src/6BBE0.c func_802553D4 temp_s1 Port_UnkStructA
+src/6BBE0.c func_802553D4 temp_v0 Port_UnkStructA
+src/6BBE0.c func_8025C628 temp_s0 Port_800BCFE8
+src/6BBE0.c func_8025C840 var_s1 Port_800BCFE8[]
+src/6BBE0.c func_8025C840 temp_s0 Port_800BCFE8
+src/6BBE0.c func_8025CB60 temp_v0 Port_UnkStructA
+src/6BBE0.c func_8025CB60 func_802391F0() Port_800BCFE8
+src/6BBE0.c func_8025CC5C temp_v0 Port_UnkStructA
+src/6BBE0.c func_8025CDAC temp_s1 Port_800BCFE8
+src/6BBE0.c func_8025CEA0 player Port_800BCFE8
+src/6BBE0.c func_8025D008 arg0 Port_UnkStructA
+src/6BBE0.c func_8025D1AC arg0 Port_UnkStructA
+src/6BBE0.c func_8025D858 p Port_UnkStructA
+src/6BBE0.c func_8025DAB0 player Port_UnkStructA
+src/6BBE0.c func_8025DC60 p Port_800BCFE8
+src/6BBE0.c func_802553D4 temp_v0_41 Port_UnkStructA_40
+# (but func_80251C88's record there)
+src/6BBE0.c @3123 temp_v0_41 Port_Rec926
+src/6BBE0.c @3124 temp_v0_41 Port_Rec926
+src/6BBE0.c @3125 temp_v0_41 Port_Rec926
+src/6BBE0.c * arg0 Port_800BCFE8
+src/6BBE0.c * var_s0 Port_UnkStructA
+src/6BBE0.c func_80255040 arg0 Port_UnkStructA_40
+src/6BBE0.c func_80255064 arg0 Port_UnkStructA_40
+src/6BBE0.c func_80255040 arg1 Port_UnkStructA_40
+src/6BBE0.c func_80255064 arg1 Port_UnkStructA_40
+src/6BBE0.c @2593 var_s0 Port_UnkStructA_40
+src/6BBE0.c @2596 var_s0 Port_UnkStructA_40
+src/6BBE0.c @3360 var_s0 Port_UnkStructA_40
+src/6BBE0.c @3363 var_s0 Port_UnkStructA_40
+src/6BBE0.c func_802529A4 temp_v0 Port_UnkStructA
+# (these two take a player's object, D_800BCFE8[i]'s 0x18, not the player)
+src/6BBE0.c func_802529A4 arg0 Port_UnkStructA
+src/6BBE0.c func_8025156C arg0 Port_UnkStructA
+src/6BBE0.c func_8025500C arg1 Port_UnkStructA
+src/6BBE0.c func_802526A0 arg1 Port_800BCFE8
+src/6BBE0.c @3801 entry Port_Ent88
+src/6BBE0.c @3870 entry Port_Ent88
+src/6BBE0.c @3978 entry Port_800BB4A8
+src/6BBE0.c @4155 entry Port_Rec926
+src/6BBE0.c func_80254E20 t2 Port_Ent88
+
+# 5E3F0: the players' objects and models
+src/5E3F0.c * obj Port_UnkStructA
+src/5E3F0.c * p->unk28 Port_UnkStructA
+src/5E3F0.c * (UnkObj *)func_802443F4(arg0) Port_UnkStructA
+src/5E3F0.c * ((UnkObj *)func_802443F4(arg0)) Port_UnkStructA
+src/5E3F0.c * D_800AEDF0[arg0].unkB4 Port_UnkStructA
+src/5E3F0.c * e->unkB0 Port_UnkStructA
+src/5E3F0.c func_8024B444 o Port_UnkStructA
+src/5E3F0.c * func_802443F4(cur) Port_UnkStructA
+src/5E3F0.c * D_800AEDF0[arg0].unk2C Port_UnkStructA
+src/5E3F0.c func_8024D108 o->unk40 Port_UnkStructA_40
+src/5E3F0.c func_80250338 temp_v1 Port_UnkStructA
+
+# 8A7A0: the object D_802AFDD8 and the entities (Ent88)
+src/8A7A0.c * D_802AFDD8 Port_UnkStructA
+src/8A7A0.c func_80270EF0 temp_v0 Port_Ent88
+src/8A7A0.c func_80270FC0 arg0 Port_UnkStructA
+src/8A7A0.c func_802733C8 temp_v0 Slot30  # (func_80273370's slot)
+src/8A7A0.c func_802733F8 arg0 Port_Ent88
+src/8A7A0.c func_802733F8 temp_v0 Port_Ent88
+src/8A7A0.c func_802733F8 temp_v1 Port_Ent88
+src/8A7A0.c func_80273544 arg0 Port_Ent88
+src/8A7A0.c func_80273544 temp_v0 Port_Ent88
+src/8A7A0.c func_80274FD4 arg0 Port_Ent88
+src/8A7A0.c func_80275DD8 arg0 Port_Ent88
+src/8A7A0.c func_80275DD8 arg1 Port_Ent88
+
+# 87D80: objects
+src/87D80.c func_8026E8E0 p Port_UnkStructA
+src/87D80.c * D_802A5578 Port_UnkStructA
+src/8A7A0.c * D_8008F438 Port_Ent88[]
+
+# 80580: the configs' block of the N64's layout (func_80269908 and
+# func_8026984C, which nothing calls) and the audio manager's counters
+src/80580.c func_80269908 arg0 -
+src/80580.c func_8026984C arg0 -
+src/80580.c * func_8026B79C() -
+
+# (`-`: an object with no pointer before what is read: an object's model,
+# 426E0.c's UnkObj / structs.h's UnkStructA_40, below 0x3C; a vector; the
+# players D_800AEDF0 below 0x28)
+src/48600.c func_80232A34 sv_a2 UnkStructA80
+src/48600.c func_802310BC arg2 UnkStructA80
+src/48600.c func_8023101C arg3 UnkStructA80
+src/48600.c func_80230604 D_802A5560 UnkStructA80
+src/87D80.c func_8026E938 arg0 -
+src/87D80.c func_8026E6E4 arg0 -
+src/87D80.c func_8026E338 arg3 -
+src/87D80.c func_8026DA1C arg0 -
+src/5E3F0.c func_80251368 temp_v0 -
+src/5E3F0.c func_80250338 arg1 -
+src/5E3F0.c func_8024D50C arg0 -
+src/5E3F0.c func_8024B444 arg1 -
+src/5E3F0.c func_80246F00 *D_802ACF58 UnkStructA
+src/5E3F0.c func_80246078 obj->unk40 -
+src/5E3F0.c func_80246078 o->unk40 -
+src/5E3F0.c func_80245E2C ((UnkObj *)func_802443F4(arg0))->unk40 -
+src/5E3F0.c func_802459BC obj->unk40 -
+src/8A7A0.c func_80277DF4 D_800AEDF0 -
+src/8A7A0.c func_80277DA8 temp_v0 -
+src/8A7A0.c func_80277D60 temp_v0 -
+src/8A7A0.c func_80277CC0 func_802703B4(arg0) -
+src/8A7A0.c func_80275DD8 temp_v0 -
+src/8A7A0.c func_80275DD8 temp_v1 -
+src/8A7A0.c func_80274FD4 PORT_FIELD(arg0, void **, 0x20, Port_Ent88, unk20) -
+src/8A7A0.c func_80271540 temp_v0 Port_UnkStructA
+src/8A7A0.c func_80271540 temp_v1 -
+src/8A7A0.c func_80270FC0 temp_v0 -
+src/8A7A0.c func_802702EC temp_v0 Slot30
+src/8A7A0.c func_80270384 arg0 Ent88
+
+# ovl_0B_03: the boxes' and models' objects (UnkStructA_40 below 0x3C), the
+# game settings (54E40.c's UnkStruct_802AC610, func_8023A840's: numbers),
+# the battle setup (UnkStructB: numbers), and the two boxes D_80048E6C[]
+src/overlays/ovl_0B_03/14FAB0.c * D_ovl0B_03_80048D08[1].unk10 -
+src/overlays/ovl_0B_03/14FAB0.c * D_ovl0B_03_8004A340[i][j].unk0 -
+src/overlays/ovl_0B_03/14FAB0.c * a->unk0 -
+src/overlays/ovl_0B_03/14FAB0.c func_ovl0B_03_8004386C p -
+src/overlays/ovl_0B_03/14FAB0.c * D_ovl0B_03_8004A3F4 -
+src/overlays/ovl_0B_03/14FAB0.c * D_ovl0B_03_80048EEC[i * 3 + j].unk14 -
+src/overlays/ovl_0B_03/14FAB0.c * D_ovl0B_03_80048E6C Box_ovl0B_03[]
+src/overlays/ovl_0B_03/14FAB0.c * D_ovl0B_03_8004A324 -
+src/overlays/ovl_0B_03/14FAB0.c * D_ovl0B_03_80049024[0].unk14 -
+src/overlays/ovl_0B_03/14FAB0.c * D_ovl0B_03_80049024[1].unk14 -
+src/overlays/ovl_0B_03/14FAB0.c * D_ovl0B_03_80048DA0[i].unk14 -
+src/overlays/ovl_0B_03/14FAB0.c * D_ovl0B_03_80048DA0[i + 4].unk14 -
+src/overlays/ovl_0B_03/14FAB0.c * D_ovl0B_03_80048E6C[0].unk14 -
+src/overlays/ovl_0B_03/14FAB0.c * D_ovl0B_03_80048E84[0].unk14 -
+src/overlays/ovl_0B_03/14FAB0.c * (u8 *)D_ovl0B_03_8004A324 + i * 4 -
+src/overlays/ovl_0B_03/14FAB0.c * boxes[i].unk14 -
+
+# 54E40: models (426E0.c's UnkObj, below 0x3C), players (below 0x28)
+src/54E40.c func_80242FB4 PORT_FIELD(obj, u8 **, 0x68, Port_80288040, unk68) -
+src/54E40.c func_8023FAA0 temp_v1 -
+src/54E40.c func_8023EB28 pl -
+src/54E40.c func_8023E1D8 cur -
+src/54E40.c * D_802A0760 -
+src/54E40.c * D_802AC7DC -
+src/54E40.c * D_802AC7D4 -
+src/54E40.c * D_802AC818 -
+
+# 8A7A0: the vector D_802AFE60
+src/8A7A0.c * D_802AFE60 -
+# the overlays: the game settings (func_8023A840's: numbers), vectors, the
+# task's argument {s32, s32, object} (ovl_14_02), objects
+src/overlays/ovl_0B_02/148730.c * boxes[i].unk1C -
+src/overlays/ovl_13_01/2605F0.c * D_ovl13_01_8004C23C -
+src/overlays/ovl_13_01/2605F0.c func_ovl13_01_80047CB4 arg0 -
+src/overlays/ovl_13_01/2605F0.c func_ovl13_01_80046C00 arg0 -
+src/overlays/ovl_13_01/2605F0.c func_ovl13_01_80045D80 arg0 UnkStructA
+src/overlays/ovl_15_02/296AC0.c * D_ovl15_02_800513AC -
+src/overlays/ovl_14_01/274480.c * D_ovl14_01_8004D4E0 -
+src/overlays/ovl_14_01/274480.c func_ovl14_01_80049814 *parts UnkStructA
+src/overlays/ovl_14_01/274480.c func_ovl14_01_80049814 parts[-1] UnkStructA
+src/overlays/ovl_15_01/28BB90.c * D_ovl15_01_8004DFAC -
+src/overlays/ovl_15_01/28BB90.c * M2C_FIELD(D_ovl15_01_8004E0A0, void **, 0x20) -
+src/overlays/ovl_15_01/28BB90.c * &D_ovl15_01_8004E0D8 -
+src/overlays/ovl_15_01/28BB90.c func_ovl15_01_800431B0 arg0 -
+src/overlays/ovl_15_01/28BB90.c func_ovl15_01_8004362C PORT_FIELD(arg0, void **, 0x40, UnkStructA, unk40) -
+src/overlays/ovl_15_01/28BB90.c func_ovl15_01_800431B0 arg1 -
+# (the pointer D_8004DD00: at 4 is the next variable, D_8004DD04)
+src/overlays/ovl_13_02/2697F0.c func_ovl13_02_8004AF1C &D_ovl13_02_8004DD00 -
+src/overlays/ovl_13_02/2697F0.c * D_ovl13_02_8004DCDC -
+src/overlays/ovl_13_02/2697F0.c func_ovl13_02_800460C0 temp_s0 UnkStructA
+src/overlays/ovl_13_02/2697F0.c func_ovl13_02_800434C0 arg0 -
+src/overlays/ovl_14_02/27E920.c func_ovl14_02_8004E6A0 temp_v0 -
+src/overlays/ovl_14_02/27E920.c func_ovl14_02_8004E6A0 sp1C -
+src/overlays/ovl_14_02/27E920.c func_ovl14_02_8004CD60 arg0 -
+src/overlays/ovl_14_02/27E920.c func_ovl14_02_8004CD60 arg1 -
+src/overlays/ovl_14_02/27E920.c * D_ovl14_02_800502B0 -
+
+# 6BBE0: models (below 0x3C), the game settings (func_8023A840's, func_8023A834's: numbers), tables of numbers, what D_800BCFE8[i]'s 0x98 and 0x9C point to (numbers), the task argument sp134
+src/6BBE0.c func_8025DC60 def -
+src/6BBE0.c func_8025D858 o -
+src/6BBE0.c func_8025D858 s -
+src/6BBE0.c func_8025D544 func_802391F0() Port_ObjDir
+src/6BBE0.c func_8025D544 o -
+src/6BBE0.c func_8025D544 s -
+src/6BBE0.c func_8025D35C p -
+src/6BBE0.c func_8025D35C o -
+src/6BBE0.c func_8025CC5C temp_v1 -
+src/6BBE0.c func_8025CC5C temp_a0 -
+src/6BBE0.c func_8025CB60 temp_v0_2 -
+src/6BBE0.c func_8025CB60 temp_s0 -
+src/6BBE0.c func_8025C628 temp_v0 -
+src/6BBE0.c func_8025C628 temp_s1 -
+src/6BBE0.c func_8025C628 temp_v0_2 -
+src/6BBE0.c func_8025C590 temp_v0->unk28 -
+src/6BBE0.c func_802553D4 PORT_FIELD(var_fp, void **, 0x9C, Port_800BCFE8, unk9C) -
+src/6BBE0.c func_802553D4 sp108 -
+src/6BBE0.c func_802553D4 var_s0 = PORT_FIELD(M2C_FIELD(var_fp, f32 **, 0x18), void **, 0x40, Port_UnkStructA, unk40) -
+src/6BBE0.c func_802553D4 (u8 *) D_802A0F3C + (D_802ACFC8[0] * 8) -
+src/6BBE0.c func_802553D4 (var_s4 * 8) + (u8 *) D_802A0F3C -
+src/6BBE0.c func_802553D4 sp148 -
+src/6BBE0.c func_80255350 PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), s32 **, 0x28, Port_800BCFE8_98, unk28) -
+src/6BBE0.c func_80255350 PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), s32 **, 0x2C, Port_800BCFE8_98, unk2C) -
+src/6BBE0.c func_802551B4 temp_s1 -
+src/6BBE0.c func_80255110 func_8023A840() -
+src/6BBE0.c func_80255110 temp_v0 -
+src/6BBE0.c func_80255110 temp_v0_2 -
+src/6BBE0.c func_8025500C m -
+src/6BBE0.c func_80254FA8 func_8023A840() -
+src/6BBE0.c func_80254FA8 temp_v0 -
+src/6BBE0.c func_80254FA8 temp_v0_2 -
+src/6BBE0.c func_80254F20 func_8023A840() -
+src/6BBE0.c func_80254F20 temp_v0 -
+src/6BBE0.c func_80254EC4 PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), s32 **, 0x2C, Port_800BCFE8_98, unk2C) -
+src/6BBE0.c func_802530A8 PORT_FIELD(arg0, void **, 0x9C, Port_800BCFE8, unk9C) -
+src/6BBE0.c func_802530A8 entry -
+src/6BBE0.c func_80252D14 PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), u8 **, 0x24, Port_800BCFE8_98, unk24) + i * 0x10 -
+src/6BBE0.c func_80252658 arg1 -
+src/6BBE0.c func_80252174 PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), s32 **, 0x24, Port_800BCFE8_98, unk24) -
+src/6BBE0.c func_80252174 PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), s32 **, 0x28, Port_800BCFE8_98, unk28) -
+src/6BBE0.c func_80252174 PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), s32 **, 0x2C, Port_800BCFE8_98, unk2C) -
+src/6BBE0.c func_80252048 PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), s32 **, 0x24, Port_800BCFE8_98, unk24) -
+src/6BBE0.c func_80252048 PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), s32 **, 0x2C, Port_800BCFE8_98, unk2C) -
+src/6BBE0.c func_80251E5C PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), s32 **, 0x2C, Port_800BCFE8_98, unk2C) -
+src/6BBE0.c func_80251C88 D_8008E658 + i * PORT_HOST(0x48, sizeof(Port_Rec926)) Port_Rec926
+src/6BBE0.c func_80251C48 arg1 -
+src/6BBE0.c func_80251BDC arg1 -
+src/6BBE0.c func_80251708 g -
+src/6BBE0.c func_8025156C temp_v0 -
+src/6BBE0.c func_802514CC p Port_800BCFE8

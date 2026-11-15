@@ -46,6 +46,12 @@ def tus(build, version):
         if "/port/host/" in src or "/gen/" in src:
             continue
         argv = shlex.split(e["command"]) if "command" in e else list(e["arguments"])
+        if os.path.basename(argv[0]).startswith("zig") and argv[1:2] == ["cc"]:
+            # (a zig cross build: the layouts are the host clang's -m32 and
+            # -m64, which a target's ILP32 and LP64 ones are for this C)
+            argv = ["clang"] + [a for i, a in enumerate(argv[2:], 2)
+                                if not a.startswith(("-target", "--target", "-mcpu"))
+                                and argv[i - 1] not in ("-target",)]
         if "-o" in argv:
             i = argv.index("-o")
             del argv[i:i + 2]
@@ -231,8 +237,75 @@ def ptrish(d):
         (d.get("e32") is not None and d.get("e64") != d.get("e32"))
 
 
-def check(db):
+def fsplit(t):
+    """a function type's (return, [params] or None)"""
+    d = 0
+    for i in range(len(t) - 1, -1, -1):
+        c = t[i]
+        if c == ")":
+            d += 1
+        elif c == "(":
+            d -= 1
+            if d == 0:
+                ret, ps = t[:i].strip(), t[i + 1:-1]
+                break
+    else:
+        return t, None
+    if not ps.strip():
+        return ret, None
+    out, d, cur = [], 0, ""
+    for c in ps:
+        if c == "," and d == 0:
+            out.append(cur.strip())
+            cur = ""
+            continue
+        d += c in "(["
+        d -= c in ")]"
+        cur += c
+    out.append(cur.strip())
+    return ret, ([] if out == ["void"] else out)
+
+
+def tclass(t):
+    """p: a pointer; i: a 4-byte integer; o: anything else"""
+    t = re.sub(r"\b(const|volatile|struct|union|enum|restrict|__restrict)\b", "", t).strip()
+    if "*" in t or "[" in t or "(" in t:
+        return "p"
+    if t in ("int", "unsigned int", "long", "unsigned long") and False:
+        return "i"
+    if t in ("int", "unsigned int", "s32", "u32", "M2C_UNK", "M2C_UNK32", "OSPri", "OSId", "vs32", "vu32"):
+        return "i"
+    return "o"
+
+
+def check_funcs(db):
+    """a function whose definition and a declaration disagree on a pointer
+    against a 4-byte integer, in a parameter or the return"""
     bad = []
+    for n, L in sorted(db.items()):
+        fs = [d for d in L if d["kind"] == "fun"]
+        defs = [d for d in fs if d["def"] and not d["static"]]
+        if not defs:
+            continue
+        dr, dp = fsplit(defs[0]["dtype"])
+        for d in fs:
+            if d is defs[0] or d["static"]:
+                continue
+            r, ps = fsplit(d["dtype"])
+            why = []
+            if {tclass(r), tclass(dr)} == {"p", "i"}:
+                why.append("returns %s, defined %s" % (r, dr))
+            if ps is not None and dp is not None:
+                for i, (a, b) in enumerate(zip(ps, dp)):
+                    if {tclass(a), tclass(b)} == {"p", "i"}:
+                        why.append("arg %d %s, defined %s" % (i, a, b))
+            if why:
+                bad.append((n, "%s: %s (defined in %s)" % (d["file"], "; ".join(why), defs[0]["file"])))
+    return bad
+
+
+def check(db):
+    bad = check_funcs(db)
     for n, L in sorted(db.items()):
         vs = [d for d in L if d["kind"] == "var"]
         if len(vs) < 2:

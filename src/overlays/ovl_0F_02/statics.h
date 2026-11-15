@@ -10,6 +10,8 @@
  * `.file` ugen emits for it ends an as1 scheduling block, which the
  * original's schedule has.  That file's name and what else it held are
  * unknown; several overlays' copies of these statics are the same code.
+ * 800462E8, 80046150, _inl4 and _inl1 are the handler's statics that need
+ * it (2026-11-15: each of the others tried in 1E84A0.c matches there).
  */
 
 static void func_ovl0F_02_80045F0C(UnkStruct_ovl0F_02_80048734 *p, s32 count) {
@@ -29,6 +31,65 @@ static void func_ovl0F_02_80045F0C(UnkStruct_ovl0F_02_80048734 *p, s32 count) {
  * guess; the store has to be in another file than 80046E80's other code) */
 static void func_ovl0F_02_80046E10(void) {
     D_ovl0F_02_80048610 = 0;
+}
+
+/* case 2's: the stage's tables */
+static void func_ovl0F_02_800462E8(void) {
+}
+
+/* case 2's: the panels and their tiles; one hides something */
+static void func_ovl0F_02_80046150(s32 n, UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags) {
+    s32 i;
+
+    func_ovl0F_02_80044F74(n, p);
+    for (i = 0; i < n; i++) {
+        if (p->unk1C == 0.0f) {
+            func_ovl0F_02_80047328((s32) p->unkC - 1, (s32) p->unk10,
+                                   (s32) p->unk14 - 1, (s32) p->unkC - 1,
+                                   (s32) p->unk14, 0x1411);
+            func_ovl0F_02_80047328((s32) p->unkC, (s32) p->unk10,
+                                   (s32) p->unk14 - 1, (s32) p->unkC,
+                                   (s32) p->unk14, 0x141A);
+        }
+        flags->unk0 = 1;
+        flags->unk8 = -1;
+        p++;
+        flags++;
+    }
+    D_ovl0F_02_80048918[func_ovl0F_02_80047FF8(n - 1)].unk8 = 3;
+}
+
+/* case 2's: 80046150 for the stage's panels (defined after it: its call's
+ * line has to follow 80046150's for as1; its stub, 80046158, lands between
+ * 80046150's and the door's) */
+static void func_ovl0F_02_800462F8_inl4(void) {
+    func_ovl0F_02_80046150(5, D_ovl0F_02_8004883C, D_ovl0F_02_80048918);
+}
+
+/* case 0x52's, on the switch at (0x12, 0xA): the camera and script */
+static void func_ovl0F_02_800462F8_inl1(void) {
+    /* held values (frame space the original has; which: a guess) */
+    f32 dist = 0.0f;
+    s32 flag = 0x406;
+    s32 other = 0x407;
+    f32 x = 581.4f;
+    f32 y = 1430.1f;
+    f32 z = 1133.3f;
+    s32 wait = 60;
+    char *script = (char *) D_ovl0F_02_80048BD8;
+
+    if (func_ovl0F_02_800480C0(flag) == 0) {
+        func_ovl0F_02_80047DC8(dist);
+        func_ovl0F_02_80047DD0(0x7F);
+        func_ovl0F_02_800480B0(flag);
+        func_ovl0F_02_800480B8(other);
+        func_ovl0F_02_80047C48();
+        func_ovl0F_02_80047B90(0xF);
+        func_ovl0F_02_80047B88(0x10);
+        func_ovl0F_02_80047B18(0);
+        func_ovl0F_02_80047B38(x, y, z);
+        func_ovl0F_02_80043324(wait, script);
+    }
 }
 #elif STATICS_PART == 1
     pos[0] = obj->unk40->unk10;

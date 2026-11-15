@@ -12,8 +12,9 @@
  * direct callees out first, then what it only takes the address of. The
  * fake is the `if (0)` address list in the empty static
  * func_ovl0F_02_80046170 (ovl_0F_04's 800460B4), every address-taken
- * function in descending address order; 80043404 takes the place of
- * ovl_0F_04's 80043530.
+ * function in descending address order down to 80043618 (the last two,
+ * 800434F8 and 80043404, turned out not needed in 2026-11-15's pass; every
+ * other entry is).
  *
  * Where ovl_0F_04 differs:
  * - Its 800433FC and 80043480 are here 80044C94 and 80044F74, statics not
@@ -59,13 +60,14 @@
  * The "1E84A0.c" #lines back after 80046150, the finder and case 0x52 were
  * redundant, so "panels.c" now runs from 80046E80's end to the handler.
  *
- * 2026-11-15 (fakes pass 16): the "panels.c" #lines are gone. 80046150 takes
- * the panels as p itself (no copy), with _inl4 defined just after it; the
- * finder 80043398 does the same, defined just before the handler, with a
- * held local; 80046E80's last store is the statics.h static 80046E10 (one
- * of the unused stubs). What was left of the region is the one #line before
- * 80043398: that and the handler are in another file than the rest. The
- * pads (80044084's _inl1, the handler's _inl1/_inl2) are held values.
+ * 2026-11-15 (fakes pass 16): the "panels.c" #lines are all gone. 80046150
+ * takes the panels as p itself (no copy), with _inl4 defined just after it;
+ * the finder 80043398 does the same, defined just before the handler, with
+ * a held local; 80046E80's last store is the statics.h static 80046E10 (one
+ * of the unused stubs). Of the region, only four of the handler's statics
+ * need another file than the handler: 800462E8, 80046150, _inl4 and _inl1
+ * are statics.h's. The pads (80044084's _inl1, the handler's _inl1/_inl2)
+ * are held values.
  */
 #include "common.h"
 static void func_ovl0F_02_80043D64(void);
@@ -581,8 +583,6 @@ static void func_ovl0F_02_80046170(void) {
         func_ovl0F_02_800473C8((void (*)(UnkStructA *)) func_ovl0F_02_800438B4, 0);
         func_ovl0F_02_800473C8((void (*)(UnkStructA *)) func_ovl0F_02_80043858, 0);
         func_ovl0F_02_800473C8((void (*)(UnkStructA *)) func_ovl0F_02_80043618, 0);
-        func_ovl0F_02_800473C8((void (*)(UnkStructA *)) func_ovl0F_02_800434F8, 0);
-        func_ovl0F_02_800473C8((void (*)(UnkStructA *)) func_ovl0F_02_80043404, 0);
     }
 }
 
@@ -614,35 +614,6 @@ static void func_ovl0F_02_80046160(UnkStruct_ovl0F_02_800489F4 *door) {
         *m0->unk0 = NULL;
         m1->unk10 += 1.0f;
     }
-}
-
-/* case 2's: the panels and their tiles; one hides something */
-static void func_ovl0F_02_80046150(s32 n, UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags) {
-    s32 i;
-
-    func_ovl0F_02_80044F74(n, p);
-    for (i = 0; i < n; i++) {
-        if (p->unk1C == 0.0f) {
-            func_ovl0F_02_80047328((s32) p->unkC - 1, (s32) p->unk10,
-                                   (s32) p->unk14 - 1, (s32) p->unkC - 1,
-                                   (s32) p->unk14, 0x1411);
-            func_ovl0F_02_80047328((s32) p->unkC, (s32) p->unk10,
-                                   (s32) p->unk14 - 1, (s32) p->unkC,
-                                   (s32) p->unk14, 0x141A);
-        }
-        flags->unk0 = 1;
-        flags->unk8 = -1;
-        p++;
-        flags++;
-    }
-    D_ovl0F_02_80048918[func_ovl0F_02_80047FF8(n - 1)].unk8 = 3;
-}
-
-/* case 2's: 80046150 for the stage's panels (defined after it: its call's
- * line has to follow 80046150's for as1, its stub 80046158 still lands
- * between 80046150 and the door) */
-static void func_ovl0F_02_800462F8_inl4(void) {
-    func_ovl0F_02_80046150(5, D_ovl0F_02_8004883C, D_ovl0F_02_80048918);
 }
 
 /* case 2's: the wind, the blocks' callbacks and the particles */
@@ -679,10 +650,6 @@ static void func_ovl0F_02_80046178(s32 n1, s32 n2) {
     func_ovl0F_02_80048178(0x3A2, 0x3B6, 0xE6, 0xF0, 0xFF);
     D_ovl0F_02_80048604 = 930.0f;
     D_ovl0F_02_80048608 = 950.0f;
-}
-
-/* case 2's: the stage's tables */
-static void func_ovl0F_02_800462E8(void) {
 }
 
 static void func_ovl0F_02_80046168(void) {
@@ -1071,7 +1038,10 @@ void func_ovl0F_02_80043FEC(void) {
     UnkStructA *player;
     s32 hit;
     s32 j; /* fake: a copy of i for the loop's body (from the permuter; it puts i in s0 and
-            * the record in s2), but for the store to D_ovl0F_02_80048F20.unk16 */
+            * the record in s2), but for the store to D_ovl0F_02_80048F20.unk16. Tried in
+            * 2026-11-15's pass: i everywhere (76 words, whatever the declaration order or the
+            * unused locals), j in the store too (the store addresses the symbol: 4), record /
+            * state / step pointers (346+), the body or the store as an inlined static */
     UnkStructA_40 *p;
     f32 mx; /* the mover's x */
 
@@ -1617,31 +1587,6 @@ static void func_ovl0F_02_80043020(s32 count, UnkStruct_ovl0F_02_80048734 *p) {
     }
 }
 
-static void func_ovl0F_02_800462F8_inl1(void) {
-    /* held values (frame space the original has; which: a guess) */
-    f32 dist = 0.0f;
-    s32 flag = 0x406;
-    s32 other = 0x407;
-    f32 x = 581.4f;
-    f32 y = 1430.1f;
-    f32 z = 1133.3f;
-    s32 wait = 60;
-    char *script = (char *) D_ovl0F_02_80048BD8;
-
-    if (func_ovl0F_02_800480C0(flag) == 0) {
-        func_ovl0F_02_80047DC8(dist);
-        func_ovl0F_02_80047DD0(0x7F);
-        func_ovl0F_02_800480B0(flag);
-        func_ovl0F_02_800480B8(other);
-        func_ovl0F_02_80047C48();
-        func_ovl0F_02_80047B90(0xF);
-        func_ovl0F_02_80047B88(0x10);
-        func_ovl0F_02_80047B18(0);
-        func_ovl0F_02_80047B38(x, y, z);
-        func_ovl0F_02_80043324(wait, script);
-    }
-}
-
 static void func_ovl0F_02_800462F8_inl2(void) {
     /* held values (frame space the original has; which: a guess) */
     s32 flag = 0x406;
@@ -1671,11 +1616,10 @@ static void func_ovl0F_02_800462F8_inl0(u32 (*p)[3], s32 count) {
     }
 }
 
-#line 1675 "handler.c" /* fake: another file name than the one compiled (any line number works): 80043398 and the handler need a `.file` of their own, which ends as1 blocks between them and the statics they inline (perhaps the original #included the code above, or this) */
 /* case 0x52's: the panel the player stands on, if it is still up (its stub
- * is 80043398, among the handler's). Defined here, just before the handler
- * (its lines before the call's, in the same file), and taking the panels
- * as p itself: found is a held value (frame space; which: a guess). */
+ * is 80043398, among the handler's). Defined just before the handler and
+ * taking the panels as p itself; found is a held value (frame space;
+ * which: a guess). */
 static s32 func_ovl0F_02_80043398(s32 n, UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags) {
     s32 i;
     s32 found = -1;

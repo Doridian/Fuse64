@@ -975,6 +975,11 @@ A `#line` that renumbers the start of an inlined static's body (so its
 lines come before the binding's) is often the loop's pointer passed as
 the parameter instead (`f(n, p, ...)`, not `p = panels;` inside): a
 binding takes the call's line (ovl_0F_04's 80043578 and 80043398).
+A `#line N "1E84A0.c"` "back" is not the main file: cfe names that by its
+path (`src/overlays/.../1E84A0.c`), so it is a third file. Wrapping each
+definition of such a region in its own `#line 1 "x.c"` and the main
+file's real path, then unwrapping, finds what needs another file
+(ovl_0F_02: four of the handler's statics, now statics.h's).
 
 ## Versions
 

@@ -686,7 +686,7 @@ void func_ovl0C_01_80048068(void) {
 void func_ovl0C_01_80047E9C(UnkStructA *arg0) {
     UnkStructA_40 *p;
     s32 moved;
-    s32 pad2; /* fake: unused, frame space the original has (no source for it found; p matches in this slot as well) */
+    s32 mask; /* a guess: any value held here fills the slot (12.0f too) */
     f32 x;
     f32 y;
     f32 z;
@@ -720,13 +720,14 @@ void func_ovl0C_01_80047E9C(UnkStructA *arg0) {
         } else {
             other = NULL;
         }
+        mask = 0x10;
         saved = arg0->unkC;
         arg0->unkC = 0;
         if (other != NULL) {
-            if (func_ovl0C_01_800498D8(arg0, 0x10, other) != 0) {
+            if (func_ovl0C_01_800498D8(arg0, mask, other) != 0) {
                 moved = 1;
             }
-        } else if (func_ovl0C_01_80049768(arg0, 0x10) != 0) {
+        } else if (func_ovl0C_01_80049768(arg0, mask) != 0) {
             moved = 1;
         }
         arg0->unkC = saved;

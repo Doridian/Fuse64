@@ -242,7 +242,7 @@ void func_ovl0C_05_80043EB0(void) {
 void func_ovl0C_05_80043CE4(UnkStructA *arg0) {
     UnkStructA_40 *p;
     s32 hit;
-    s32 pad1[1]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 mask; /* a guess: any value held here fills the slot (12.0f too) */
     f32 x;
     f32 y;
     f32 z;
@@ -284,13 +284,14 @@ void func_ovl0C_05_80043CE4(UnkStructA *arg0) {
         } else {
             other = NULL;
         }
+        mask = 0x10;
         saved = arg0->unkC;
         arg0->unkC = 0;
         if (other != NULL) {
-            if (func_ovl0C_05_80045178(arg0, 0x10, other) != 0) {
+            if (func_ovl0C_05_80045178(arg0, mask, other) != 0) {
                 hit = 1;
             }
-        } else if (func_ovl0C_05_80045008(arg0, 0x10, other) != 0) {
+        } else if (func_ovl0C_05_80045008(arg0, mask, other) != 0) {
             hit = 1;
         }
         arg0->unkC = saved;
@@ -305,7 +306,7 @@ void func_ovl0C_05_80043CE4(UnkStructA *arg0) {
 void func_ovl0C_05_80043B18(UnkStructA *arg0) {
     UnkStructA_40 *p;
     s32 hit;
-    s32 pad1[1]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 mask; /* a guess: any value held here fills the slot (12.0f too) */
     f32 x;
     f32 y;
     f32 z;
@@ -347,13 +348,14 @@ void func_ovl0C_05_80043B18(UnkStructA *arg0) {
         } else {
             other = NULL;
         }
+        mask = 0x10;
         saved = arg0->unkC;
         arg0->unkC = 0;
         if (other != NULL) {
-            if (func_ovl0C_05_80045178(arg0, 0x10, other) != 0) {
+            if (func_ovl0C_05_80045178(arg0, mask, other) != 0) {
                 hit = 1;
             }
-        } else if (func_ovl0C_05_80045008(arg0, 0x10, other) != 0) {
+        } else if (func_ovl0C_05_80045008(arg0, mask, other) != 0) {
             hit = 1;
         }
         arg0->unkC = saved;

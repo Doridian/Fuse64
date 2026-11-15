@@ -24,9 +24,9 @@
  *   empty stub called from 8004359C); 80045FC8's result has its own
  *   local m (4th, spilled as in the original); the else branch's four
  *   player tests are a loop over n (IDO unrolls it: the original's
- *   `move v0,a0` copy), counted in j, with a dead read of j
- *   (`if (!j) {}`) at the top of its body that sets uopt's register
- *   order (several dead reads do; this one also suits jp); x counts the
+ *   `move v0,a0` copy), counted in j, with a compiled-out debug check
+ *   of j at the top of its body that sets uopt's register order (any
+ *   test of j there does; before the loop jp misses); x counts the
  *   second object's two frames ($s7 there as in the original); the endless
  *   button waits are `while (TRUE) { if (...) break; ... }` (test at the
  *   top, `b` back); the figures' loop sets i = 0 ahead of x; each text
@@ -584,7 +584,8 @@ void func_ovl0B_07_800435FC(void) {
         }
         j = 0;
         for (n = 0; n < 4; n++) {
-            if (!j) { /* fake: dead read, uopt's register order */
+            if (j >= 4) { /* a compiled-out debug check of D_ovl0B_07_80046F20's bound (any test of j here matches: which is a guess) */
+                DEBUG_PRINT(("j >= 4\n"));
             }
             if (D_ovl0B_07_80046F18->unk4[n] != 0 && i == D_ovl0B_07_80046F18->unk90[n]) {
                 D_ovl0B_07_80046F20[j] = n;

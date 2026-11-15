@@ -83,7 +83,8 @@
  *   Size-tuned (flagged): OPEN_A/OPEN_B's two unused locals a, b (jp's
  *   homes of n/i at -16/-20 and -40/-44 need 24-byte areas), the
  *   handler has no locals of its own, and 80043480's `s32 pad[2]` (its
- *   frame lost the 8 bytes of the placeholder NAMES took over). Case 2/4's
+ *   frame lost the 8 bytes of the placeholder NAMES took over; p13: two
+ *   held values, see below). Case 2/4's
  *   0.0f arguments are written `0` so they are not the 0.0f constant
  *   that holds $fs0 for 80043040: then 10.0f gets $fs0 in case 2.
  *   Fixed bugs: the copy menu labels &D_80049B94[6] (was [5]) and moves
@@ -91,9 +92,9 @@
  * - 8004473C 49 (80044908-80045F20; jp's 800445BC_jp 140): 80044BE4's
  *   uopt registers one off (t1/t2/t3 for t2/t3/t4; the dead read in its
  *   loop is a lever, not the original), 80045794's frame (40 vs 32).
- *   80045794 tests `(u16)i & 0x8000` on 8004518C's result (flagged: a
- *   lever; the cast's dropped `andi 0xFFFF` takes the temporary the
- *   original's t-registers are one off by; a u16 `i` is worse). 8004518C
+ *   80045794 tests `(u16)i & 0x8000` on 8004518C's result (p13: a u16
+ *   local of its own, `pressed`; the cast's dropped `andi 0xFFFF` takes
+ *   the temporary the original's t-registers are one off by). 8004518C
  *   returns u16 (ovlpass): with s32 its return reused the loop test's
  *   zero-extended copy ($v1) where the original returns `pressed` from $s6.
  * - 8004616C (800464C0-80047030; jp 80046170): (COPY_FILE's frame is
@@ -138,7 +139,7 @@
  *   frame is still 184 vs 200 (pad[8] fixes us and breaks jp).
  *   80046634: see wAA below (its first alpha loop counts with j).
  * - 8004747C 0 (jp 0; wZ): 80045F20's parameters are (off, on, n, sel)
- *   (flagged: ugen sets a static callee's register parameters in argument
+ *   (no longer flagged in p13: a signature, not a fake; ugen sets a static callee's register parameters in argument
  *   order, and every call in the original loads off, on, n, then sel; the
  *   registers follow the callee's colouring, so `lui s3` (off) now comes
  *   first as in the original, us 530 -> 512, jp 265 -> 249). 80046634's
@@ -176,7 +177,7 @@
  *   original's frame (104), with no `slot` local there (sel & 0xF at the
  *   two calls); in ERASE it gives us's frame 200 with pad[3] (jp pad[2],
  *   size-tuned, flagged). COPY_ASK's SE is written out with slot as its
- *   wait (flagged).
+ *   wait (flagged; p13: us only, jp's takes the SE macro).
  * - LEVEL_ASK's loop is `while (result == 0)`: y/fy are no longer hoisted
  *   out of LEVEL_FILE's loop. LEVEL_FILE keeps result in $s0 and stores
  *   it once after the loop into a volatile local X (wAI), and its second 80045C24 call reads the unk14 bytes through the
@@ -257,7 +258,7 @@
  * wAF (us/eu 70 -> 51, jp 61 -> 50): the menus' inner statics, by order.
  * - COPY_ASK (us): `loop = 1; sub = 0;` ahead of the 8004473C call (the
  *   original's `li s8,1` before its store), and 80049368's slot as
- *   `(u32)slot`. The original still loads sub into s7 where this has v0.
+ *   `(u32)slot` (p13: the cast is no longer needed). The original still loads sub into s7 where this has v0.
  * - LEVEL_FILE is defined after LEVEL_ASK (a static's definition order
  *   sets its .loc lines, and so the schedule where the two are inlined
  *   together), with `loop = 0; do {` on one line (the store's place).
@@ -278,9 +279,11 @@
  * - Case 2's D_8004A668 store goes in the 80048A00 call's delay slot only
  *   with a later .loc than the call's argument: `#line 2484` / `#line
  *   2483` around the two statements (flagged: as1 orders a block by
- *   line; checked on hand-edited ugen output). us handler 0.
+ *   line; checked on hand-edited ugen output). us handler 0. (p13: the
+ *   store is the static 80043C40, called there.)
  * - 80048CF0 is declared s32 (OPEN_A/OPEN_B's counter reload in $v1, jp).
- * - OPEN_B is defined under `#line 2518` (back to 2706 after; flagged):
+ * - OPEN_B is defined under `#line 2518` (back to 2706 after; flagged;
+ *   p13: one #line, OPEN_B defined last):
  *   its `i = 0` then schedules as the original in both us (li s2 first)
  *   and jp (the 364 home stored before 368); 2517 breaks us, 2519 jp.
  *   jp handler 0.
@@ -385,7 +388,8 @@
  *   is the plain `D_8004992C = 0x400` through fp. The neighbour
  *   store/dead read and `sel & 0xFU` (both above) are gone. jp: the
  *   guard reads loop first, which swaps loop/sel ($s6/$s7); a dead
- *   `if (!sel) {}` after `sel = 0` (jp only, fake) gives them back
+ *   `if (!sel) {}` after `sel = 0` (jp only, fake; p13: a debug check
+ *   of sel in the loop, all versions) gives them back
  *   (keeping jp's do-while instead also matches, but needs `0xFU`).
  *   The other flagged levers in ERASE (the 80046858 stub call, SEF in
  *   the 0x1064 arm) are still needed: without them us is 32 / 282.
@@ -399,6 +403,40 @@
  *   are one array per jp label (its five own `_jp`), the tables that
  *   differ are `#if VERSION_JP` (generated from jp's asm), and the level
  *   labels' x scale (LEVEL_SX) is 0.45f in jp, 0.55f in us/eu.
+ *
+ * Fakes pass 13 (scratch/fakes-ovl/p13, 21 `fake:` markers to 10):
+ * - The `#line 1520` in COPY_FILE was COPY_ASK's definition place: COPY_ASK
+ *   (both versions' copies) is defined before COPY_FILE (a static's lines
+ *   below its caller's = defined before it).
+ * - The `#line 2484`/`2483` pair around case 2's D_8004A668 store: the
+ *   store is the body of 80043C40 (an empty static the handler called at
+ *   its top), called in case 2 and defined after the handler.
+ * - OPEN_B's `#line 2518`/`2706` pair is one #line, with OPEN_B defined
+ *   last in the file. It must give OPEN_B's `i = 0` exactly its call's
+ *   line (us breaks one line earlier, jp one later), so it is still a
+ *   fake, and it follows the handler's line: any line added or removed
+ *   above the handler moves it (the call's line minus 5).
+ * - 80043480's pad[2]: `dy = i * 40` for its three 80043040 calls and
+ *   `n` for 80049368's count to print, both held in locals; its dead read
+ *   of D_8004A5D0[i] is a compiled-out debug check (any test of that
+ *   element matches, only there: a guess).
+ * - ERASE_ASK's pad[1]: 80049390's result held in `ret` (only at the
+ *   call; any unused local fits as well, so a guess).
+ * - jp ERASE_FILE's `if (!sel) {}`: a debug check of sel after the
+ *   80045F20 call, in every version (any test of sel matches almost
+ *   anywhere in the function).
+ * - 80045794's `(u16)i` cast: `pressed`, a u16 local of its own.
+ * - jp COPY_ASK's written-out SE: the SE macro matches there.
+ * - Left: 8004747C's pad[14], us ERASE_FILE's 80046858 call and us
+ *   LEVEL_FILE's pad[9] (frame areas: held values, block locals and a
+ *   second inlined LEVEL_ASK call don't give them), jp's dead reads of
+ *   side (only right after `side = 0`), result (only in jp's own text
+ *   code) and loop (jp COPY_ASK; the do/while as a while, declaration
+ *   and initialisation orders: no), us COPY_ASK's `*p` and written-out
+ *   SE (without `*p` COPY_ASK isn't inlined unless the call's argument
+ *   is `sub & 0xFU`, and then slot takes s0 for s7: declaration,
+ *   initialisation and SE forms don't move it), jp CLOSE_B's k[15] and
+ *   the OPEN_B #line.
  */
 #include "common.h"
 
@@ -620,7 +658,7 @@ static void func_ovl0B_06_8004382C();
 static void func_ovl0B_06_80043834(void);
 void func_ovl0B_06_8004390C(void);
 void func_ovl0B_06_80043B20(void);
-static void func_ovl0B_06_80043C40();
+static void func_ovl0B_06_80043C40(void);
 static void NAMES(void);
 static void LABELS(void);
 static void LABELS_0(void);
@@ -1286,9 +1324,6 @@ static s32 ERASE_FILE(void) {
 
     loop = 1;
     sel = 0;
-#if VERSION_JP
-    if (!sel) {} /* fake: (jp only: us and eu match without it) the while's test reads loop first; this gives jp's loop $s7, sel $s6 back */
-#endif
     func_ovl0B_06_80048CA8(MSG_TASK, NULL, 0, 0, 0x130);
     func_ovl0B_06_800464C0(0);
 #if VERSION_JP
@@ -1302,6 +1337,7 @@ static s32 ERASE_FILE(void) {
     func_ovl0B_06_800433B0(&D_ovl0B_06_80049A44[5]);
     while (loop != 0) {
         sel = func_ovl0B_06_80045F20(&D_ovl0B_06_8004A244, &D_ovl0B_06_8004A264, 3, sel & 0xF);
+        if ((sel & 0xF) >= 3) { DEBUG_PRINT(("sel >= 3\n")); } /* a compiled-out debug check (jp needs a read of sel in the loop for its loop/sel registers; any test of sel matches: guess) */
         if ((sel & 0xF0) == 0x30) {
             loop = 0;
         } else {
@@ -1346,7 +1382,7 @@ static s32 ERASE_ASK(s32 slot, Col_ovl0B_06 *off, Col_ovl0B_06 *on) {
     s32 held;
     s32 pressed;
     s32 i;
-    s32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 ret; /* 80049390's result, held (any held value fills this slot: a guess) */
 
     keep = 1;
     side = 1;
@@ -1379,7 +1415,8 @@ static s32 ERASE_ASK(s32 slot, Col_ovl0B_06 *off, Col_ovl0B_06 *on) {
                 SEF(1, 15);
                 func_ovl0B_06_80049378(slot);
                 func_ovl0B_06_80049380(10);
-                if (func_ovl0B_06_80049390() != 0) {
+                ret = func_ovl0B_06_80049390();
+                if (ret != 0) {
                     D_ovl0B_06_8004992C = 0;
                     func_ovl0B_06_80048CF0();
                     func_ovl0B_06_80046634(0);
@@ -1717,52 +1754,6 @@ static void func_ovl0B_06_800464C0(s32 arg0) {
 }
 
 
-/* @8004616C */
-void COPY_FILE(void) {
-    s32 loop;
-    s32 sel;
-
-    loop = 1;
-    sel = 0;
-    do {
-        sel = func_ovl0B_06_80045F20(&D_ovl0B_06_8004A244, &D_ovl0B_06_8004A254, 5, sel & 0xF);
-        if ((sel & 0xF0) != 0x30) {
-            if ((sel & 0xF) == 3) {
-                sel &= 0xF0;
-                sel |= COPY_ASK();
-#line 1520 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
-            } else if ((sel & 0xF) == 4) {
-                func_ovl0B_06_800459D8(0);
-            } else {
-                if (func_ovl0B_06_80049368(sel & 0xF, 0) == 10) {
-                    SEF(0x18, 50);
-                } else {
-                    loop = 0;
-                    func_ovl0B_06_80049378(sel & 0xF);
-                    if (func_ovl0B_06_80049388() != 0) {
-                        func_ovl0B_06_80049380(NULL);
-                        func_ovl0B_06_80048CA8(MSG_TASK, NULL, 0, 0, 0x130);
-                        func_ovl0B_06_80048CF0();
-                        func_ovl0B_06_80044908(0);
-                        func_ovl0B_06_80044BE4(0);
-                        func_ovl0B_06_80044E48(0x41C8, 0x18);
-                        D_ovl0B_06_8004992C = 0x400;
-                        func_ovl0B_06_80044BE4(1);
-                        func_ovl0B_06_80044908(1);
-                    }
-                    func_ovl0B_06_80048250(0x25, 0x10, 0);
-                }
-            }
-        } else {
-            loop = 0;
-            func_ovl0B_06_80048250(0x20, 0x11, 0);
-        }
-        func_ovl0B_06_80048CF0();
-    } while (loop != 0);
-    func_ovl0B_06_80048CB8();
-}
-
-
 /* @80046164: copying, the file to copy from (inlined in us, not in jp) */
 #if VERSION_JP
 static s32 COPY_ASK(void) {
@@ -1793,11 +1784,7 @@ static s32 COPY_ASK(void) {
             slot = sub & 0xF;
             if (func_ovl0B_06_80049368(slot, 0) == 10) {
                 PORT_HOST((&D_ovl0B_06_80049928)[1], D_ovl0B_06_8004992C) = 0x1064;
-                /* fake: SE written out with slot as its wait (us: slot and the wait share $s7) */
-                slot = 50;
-                if (slot && slot == 1) slot = 0;
-                func_ovl0B_06_80049230(0x18);
-                func_ovl0B_06_80048CC8(slot);
+                SE(0x18, 50);
             } else {
                 D_ovl0B_06_8004992C = 0;
                 loop = 0;
@@ -1852,7 +1839,7 @@ static s32 COPY_ASK(void) {
             loop = 0;
         } else {
             slot = *p & 0xF;
-            if (func_ovl0B_06_80049368((u32)slot, 0) == 10) {
+            if (func_ovl0B_06_80049368(slot, 0) == 10) {
                 D_ovl0B_06_8004992C = 0x1064;
                 /* fake: SE written out with slot as its wait (us: slot and the wait share $s7) */
                 slot = 50;
@@ -1887,12 +1874,56 @@ static s32 COPY_ASK(void) {
 #endif
 
 
+/* @8004616C */
+void COPY_FILE(void) {
+    s32 loop;
+    s32 sel;
+
+    loop = 1;
+    sel = 0;
+    do {
+        sel = func_ovl0B_06_80045F20(&D_ovl0B_06_8004A244, &D_ovl0B_06_8004A254, 5, sel & 0xF);
+        if ((sel & 0xF0) != 0x30) {
+            if ((sel & 0xF) == 3) {
+                sel &= 0xF0;
+                sel |= COPY_ASK();
+            } else if ((sel & 0xF) == 4) {
+                func_ovl0B_06_800459D8(0);
+            } else {
+                if (func_ovl0B_06_80049368(sel & 0xF, 0) == 10) {
+                    SEF(0x18, 50);
+                } else {
+                    loop = 0;
+                    func_ovl0B_06_80049378(sel & 0xF);
+                    if (func_ovl0B_06_80049388() != 0) {
+                        func_ovl0B_06_80049380(NULL);
+                        func_ovl0B_06_80048CA8(MSG_TASK, NULL, 0, 0, 0x130);
+                        func_ovl0B_06_80048CF0();
+                        func_ovl0B_06_80044908(0);
+                        func_ovl0B_06_80044BE4(0);
+                        func_ovl0B_06_80044E48(0x41C8, 0x18);
+                        D_ovl0B_06_8004992C = 0x400;
+                        func_ovl0B_06_80044BE4(1);
+                        func_ovl0B_06_80044908(1);
+                    }
+                    func_ovl0B_06_80048250(0x25, 0x10, 0);
+                }
+            }
+        } else {
+            loop = 0;
+            func_ovl0B_06_80048250(0x20, 0x11, 0);
+        }
+        func_ovl0B_06_80048CF0();
+    } while (loop != 0);
+    func_ovl0B_06_80048CB8();
+}
+
+
 
 
 /* @80045F20 */
-/* fake: parameters reordered (off, on, n, sel). ugen sets up a static callee's
- * register parameters in argument order, and the original loads off, on,
- * n, then sel at every call. The registers follow the callee's colouring. */
+/* The parameters in the order every call loads them (off, on, n, then sel):
+ * ugen sets up a static callee's register parameters in argument order. */
 static s32 func_ovl0B_06_80045F20(Col_ovl0B_06 *off, Col_ovl0B_06 *on, s32 n, s32 arg0) {
     s32 held;
     s32 pressed;
@@ -2103,13 +2134,14 @@ static s32 func_ovl0B_06_80045794(volatile s32 arg0, s32 mode, s32 arg2) { /* ar
     UnkStructA_40 *a;
     UnkStructA_40 *b;
     s32 i;
+    u16 pressed;
 
     save = func_ovl0B_06_80048E38();
     ret = 0;
     D_ovl0B_06_8004992C = 0;
     func_ovl0B_06_80045340(save, mode);
-    i = func_ovl0B_06_8004518C();
-    if (D_ovl0B_06_8004A404 != 0 && ((u16)i & 0x8000)) { /* fake: the cast */
+    pressed = func_ovl0B_06_8004518C();
+    if (D_ovl0B_06_8004A404 != 0 && (pressed & 0x8000)) {
         SE(1, 15);
         a = func_ovl0B_06_800490C8(D_ovl0B_06_8004A408);
         b = func_ovl0B_06_800490C8(D_ovl0B_06_8004A40C);
@@ -2267,6 +2299,7 @@ static void func_ovl0B_06_80045340(u8 *save, s32 arg0) {
 static u16 func_ovl0B_06_8004518C(void) {
     s32 held;
     u16 pressed;
+
     s32 a;
     s32 b;
 
@@ -2664,15 +2697,11 @@ void func_ovl0B_06_8004390C(void) {
 
 /* @80043834 */
 void func_ovl0B_06_80043C48(s32 arg0) {
-
-    func_ovl0B_06_80043C40();
     switch (arg0) {
         case 2:
             D_ovl0B_06_80049928 = 0;
             func_ovl0B_06_80048FF8(0x32, 0x32, 0x32);
-#line 2484 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
-            D_ovl0B_06_8004A668[0] = func_ovl0B_06_80048258();
-#line 2483 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+            func_ovl0B_06_80043C40();
             func_ovl0B_06_80048A00(0x7F);
             func_ovl0B_06_80048978(1);
             func_ovl0B_06_80048998(0, 10.0f, 0);
@@ -2776,7 +2805,10 @@ void func_ovl0B_06_80043C48(s32 arg0) {
 
 
 /* @80043B20 */
-static void func_ovl0B_06_80043C40() {
+/* the chosen menu, saved (case 2; defined after the handler, so its line is
+ * later than the 80048A00 call's argument, as the original's schedule) */
+static void func_ovl0B_06_80043C40(void) {
+    D_ovl0B_06_8004A668[0] = func_ovl0B_06_80048258();
 }
 
 static void NAMES(void) {
@@ -2878,23 +2910,6 @@ static void CLOSE_A(s32 n, Box_ovl0B_06 *box) {
     }
 }
 
-#line 2518 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
-static void OPEN_B(s32 n, Box_ovl0B_06 *box) {
-    s32 i;
-    f32 step;
-    s32 a;
-    s32 b;
-    for (i = 0; i < n; i++, box++) {
-        step = (box->unk18 - box->unk14) / box->unk1C;
-        box->unk0 = func_ovl0B_06_800488B8(box->unk40, box->unk38);
-        box->unk0->unkC |= box->unk3C;
-        for (box->unk34 = box->unk14; box->unk34 < box->unk18; box->unk34 += step) {
-            func_ovl0B_06_80048CF0();
-        }
-        func_ovl0B_06_80048CF0();
-    }
-}
-#line 2706 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 
 static void CLOSE_B(s32 n, Box_ovl0B_06 *box) {
     s32 i;
@@ -2967,7 +2982,8 @@ static void func_ovl0B_06_80043480(s32 arg0) {
     u8 buf[4];
     s32 i;
     s32 j;
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 dy;
+    s32 n;
 
     func_ovl0B_06_80043460();
     func_ovl0B_06_80043468();
@@ -2977,7 +2993,8 @@ static void func_ovl0B_06_80043480(s32 arg0) {
         if (state != 10) {
             label = &D_ovl0B_06_800499F0[i];
             p = &D_ovl0B_06_80049930[i];
-            func_ovl0B_06_80047E20(buf, "%03d", func_ovl0B_06_80049368(i, 1));
+            n = func_ovl0B_06_80049368(i, 1);
+            func_ovl0B_06_80047E20(buf, "%03d", n);
             buf[0] -= 0x20;
             buf[1] -= 0x20;
             buf[2] -= 0x20;
@@ -3003,17 +3020,18 @@ static void func_ovl0B_06_80043480(s32 arg0) {
             p->unk0->unk20 = p->unk1C;
             p->unk0->unk24 = p->unk20;
             if (arg0 != 0) {
+                dy = i * 40;
                 if (state == 0) {
-                    func_ovl0B_06_80043040(&D_ovl0B_06_80049F20[i][0], &D_ovl0B_06_8004A0C4[10], i * 40);
+                    func_ovl0B_06_80043040(&D_ovl0B_06_80049F20[i][0], &D_ovl0B_06_8004A0C4[10], dy);
                 } else {
-                    func_ovl0B_06_80043040(&D_ovl0B_06_80049F20[i][0], &D_ovl0B_06_8004A0C4[11], i * 40);
+                    func_ovl0B_06_80043040(&D_ovl0B_06_80049F20[i][0], &D_ovl0B_06_8004A0C4[11], dy);
                 }
-                if (!D_ovl0B_06_8004A5D0[i]) {} /* fake: a dead test, for the register allocation or schedule */
+                if (D_ovl0B_06_8004A5D0[i] != 0) { DEBUG_PRINT(("D_8004A5D0[i] != 0\n")); } /* a compiled-out debug check (only a test of D_8004A5D0[i], and only between the 80043040 calls and the loop, matches: guess) */
                 for (j = 0; j < 6; j++) {
                     kind = func_ovl0B_06_80049368(i, j + 2);
                     if (kind != 0) {
                         r = &D_ovl0B_06_80049F20[i][j + 1];
-                        func_ovl0B_06_80043040(r, &D_ovl0B_06_8004A0C4[j + 4], i * 40);
+                        func_ovl0B_06_80043040(r, &D_ovl0B_06_8004A0C4[j + 4], dy);
                         d = 0;
                         switch (kind) {
                             case 1:
@@ -3170,3 +3188,26 @@ static void func_ovl0B_06_80043018(void) {
 }
 
 
+/* fake: the #line gives OPEN_B's `i = 0` the line of its call in the
+ * handler's case 17 (as1 orders a block partly by .loc line): us needs it
+ * no later than the call (li s2,6 first), jp no earlier (the 364 home
+ * stored before 368). Defined anywhere without it, one version swaps the
+ * two; tried: the start index as a parameter (jp's n home moves), OPEN_B
+ * in a statics.h (jp swaps). The number is the call's line minus 5, so a
+ * line added or removed above the handler changes it. */
+#line 2740
+static void OPEN_B(s32 n, Box_ovl0B_06 *box) {
+    s32 i;
+    f32 step;
+    s32 a;
+    s32 b;
+    for (i = 0; i < n; i++, box++) {
+        step = (box->unk18 - box->unk14) / box->unk1C;
+        box->unk0 = func_ovl0B_06_800488B8(box->unk40, box->unk38);
+        box->unk0->unkC |= box->unk3C;
+        for (box->unk34 = box->unk14; box->unk34 < box->unk18; box->unk34 += step) {
+            func_ovl0B_06_80048CF0();
+        }
+        func_ovl0B_06_80048CF0();
+    }
+}

@@ -53,12 +53,7 @@ if(EMSCRIPTEN)
         set(PORT_SDL OFF CACHE BOOL "" FORCE)
     endif()
 endif()
-# 8-byte pointers need the pointer pass (docs/PORT.md, "What's left");
-# PORT_TRY64 builds anyway, for that work: it links, and stops at boot
-option(PORT_TRY64 "build where pointers are 8 bytes (the pointer pass's work build: it doesn't run yet)" OFF)
-if(NOT CMAKE_SIZEOF_VOID_P EQUAL 4 AND NOT PORT_TRY64)
-    message(FATAL_ERROR "the port builds for 4-byte pointers so far (-m32, i386; docs/PORT.md, \"32-bit hosts and 64-bit hosts\")")
-endif()
+# pointers may be 4 or 8 bytes (docs/PORT.md, "Where pointers are 8 bytes")
 
 # the width check (host/widthcheck.c): the game's C instrumented, every
 # load and store a call, to find the reads of another width than the store

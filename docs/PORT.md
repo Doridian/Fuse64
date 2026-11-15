@@ -22,7 +22,8 @@ As of 2026-11-14:
 | WebAssembly (emscripten), node | yes | legal, menus and battle are Linux i386's |
 | WebAssembly, a page (`PORT_WASM_TARGET=web`) | yes | plays in a browser (headless Chromium: the legal screen, the opening, the attract demos), the ROM from a file picker or `?rom=`, the save in IndexedDB |
 | big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | us: mips's legal, menus and battle are x86's, ppc's and mipsel's legal and menus (since the asset fix in "Byte order") |
-| 64-bit hosts (x86-64, aarch64, macOS, Windows x64) | no | needs the pointer pass ("32-bit hosts and 64-bit hosts", "What's left") |
+| Linux x86-64, us | yes | `test.py`'s four scenarios are i386's (legal, menus, battle, story: "Where pointers are 8 bytes") |
+| x86-64 eu and jp, aarch64, macOS, Windows x64 | builds (x86-64) | not run yet ("What's left") |
 
 The ROM build is unchanged by all of it: every change to `src/` is under
 `TARGET_PC` or a macro that gives IDO the same text ("Source changes").
@@ -35,6 +36,10 @@ cmake -S port -B build-port -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_C_FLAGS=-m
 cmake --build build-port
 build-port/fuse64 baserom.us.z64           # the user's own ROM
 ```
+
+Without `-m32` it builds for the host's 8-byte pointers (x86-64), the
+game's structures laid out by their host types ("Where pointers are 8
+bytes").
 
 It needs clang (the overlays' sections: "Overlays"), CMake, Ninja,
 Python 3 and, for a window and sound, SDL2 (32-bit: `lib32-sdl2`). The
@@ -65,8 +70,9 @@ port/tools/test.py same build-port build-port-mips --scenario legal
 ```
 
 musl has no ucontext, so the threads and tasks there are host threads,
-one running at a time (fiber_pthread.c). aarch64 is 64-bit and doesn't
-build yet.
+one running at a time (fiber_pthread.c). aarch64 is 64-bit: it needs the
+pointer pass's x86-64 state ("Where pointers are 8 bytes") and hasn't
+been run yet.
 
 ### Windows
 
@@ -191,8 +197,74 @@ sbrk arena at 0x80300000) are aliases into one 8 MiB buffer laid out as
 RDRAM (`port_rdram`), since the C clears and indexes across them.
 `port_addr()` (port/src/memory.c) turns what the game hands the hardware
 (a KSEG0/1 address, a physical one, a segment address, a host pointer)
-into a host pointer. Pointers are 4 bytes, so the game's structures have
-their N64 layout (`tools/host_check.py layout`).
+into a host pointer. Where pointers are 4 bytes the game's structures have
+their N64 layout (`tools/host_check.py layout`); where they are 8 each
+name that holds pointers takes its host type's size and the names after
+it move up ("Where pointers are 8 bytes").
+
+### Where pointers are 8 bytes
+
+DozerEncore's pointer pass ("Where pointers are 8 bytes" in its PORT.md),
+done here the same way: every pointer the game's C keeps is a host
+pointer, in a structure the host compiler lays out, and the code that
+reached a field by its N64 offset reaches it by name. On x86-64 the us
+scenarios of `test.py` give i386's digests, sound and EEPROM (`test.py
+run` against the same references; `test.py same build-port32
+build-port64`).
+
+- **The game's structures.** A field that holds a pointer is a pointer or
+  `PORT_IP(s32)`/`PORT_UP(u32)` (include/common.h: s32 for IDO, intptr_t
+  for a host), where a function's matched C keeps an integer. A file's own
+  view of another's structure (a `u8 pad[n]` where the other has a
+  pointer) has the pointer slots under `TARGET_PC` (`PORT_RET(u8 unk0[4];,
+  void *unk0;)` on one line where a file has `#line`), or is the
+  canonical type (926A0's objects are structs.h's `UnkStructA`).
+- **m2c's field accesses.** `M2C_FIELD(expr, type, offset)` after a
+  pointer becomes `PORT_FIELD(expr, type, offset, S, field)`, the same
+  text for IDO and S's field for a host; `PORT_ELEM` for the i-th of an
+  array, `PORT_AT` for an address `(u8 *)x + offset`.
+  `port/tools/m2c_port.py` writes them from `decls.json` and
+  `port/tools/m2c_kinds.txt`, which says what a base is where its own
+  type doesn't (a function's `u8 *temp_v0`, a line's: `@LINE`), `-` where
+  nothing before the offsets read is a pointer. It leaves an #ifdef
+  TARGET_PC's #else alone, takes a variable of numbers as needing nothing
+  (and checks the variables after it for pointers), and reports what it
+  can't place ("no known struct": none left in us) and a pointer read
+  where the struct has bytes ("disagree"). `port_types.txt` (gen_port_types.py)
+  has the objects no file has a type for, as pointers between N64 bytes.
+- **Memory.** gen_regions.py lays out the fixed-address names by their
+  host types (a name with pointers takes its host size, the ones after it
+  move up, never less than the N64's room to the next name), asm2c.py the
+  asm data likewise (`TYPES` where the C declares bytes: the SDK's
+  objects, 8A7A0's slots); a name past the work area that grows is an
+  object of its own (`D_8014C8D0`'s frames). A size the C allocates by an
+  N64 literal is `PORT_HOST(n, sizeof(T))` (the libaudio players), a
+  stride `PORT_HOST(0xC8, sizeof(Port_800AEDF0))`, a display list's byte
+  area `PORT_GFX_BYTES(n)` (412F0's areas the models' lists are built in:
+  the host's commands are 16 bytes), the audio heap twice its size
+  (`port_audio_heap`), an SDK object kept as bytes the host's size
+  (`PORT_SIZEOF_OSIOMESG`, the OSScClient on 412F0's stack).
+- **What the ROM keeps narrow.** The models' display lists stay the
+  ROM's 8-byte commands (port/src/native.c, `port_narrow_dl`); the one
+  place the game's C walks one (426E0's func_80229C10, the scrolls'
+  vertices) walks it at 8 under `TARGET_PC`. The sounds' 16-byte records
+  are copied to the host's (80580), the sequence file's offsets are ROM
+  addresses (u32), the scripts' table an offset.
+
+**The checks** (on a build without `-m32`):
+
+- `port/tools/ptrcast_scan.py BUILD --version all`: clang's pointer and
+  integer conversions, `-Wshorten-64-to-32` included, per class and file
+  against `port/tools/ptrcast_allow.txt` (90 in us, each read: numbers in
+  pointer fields, task arguments that are numbers, differences of
+  addresses; the file's header says which);
+- `port/tools/m2c_port.py build/gen/decls.json FILE...`: 0 to rewrite, 0
+  unknown, 0 disagree;
+- `port/tools/views.py BUILD --check`: the views of a structure linked by
+  a call have its pointer slots;
+- `test.py same build-port32 build-port64` and the hashes per retrace
+  (`--hash`), with the objects and the pools dumped from both under gdb,
+  found the rest: a scenario that differs says where.
 
 ### Byte order
 
@@ -314,24 +386,15 @@ where data arrives, and declarations a host needs.
 
 ## What's left
 
-- **64-bit** (x86-64 Linux, aarch64, macOS, Windows x64; then ASan and
-  UBSan there, which work on i386 now): DozerEncore's pointer pass ("Where
-  pointers are 8 bytes" in its PORT.md) over the 617 casts between
-  pointers and integers and the 2273 `M2C_FIELD`s at N64 offsets ("32-bit
-  hosts and 64-bit hosts", below). Its order here: the regions first
-  (each fixed-address name its own object sized by its host type, the
-  names inside another's an offset into it by `offsetof`, gen_regions.py
-  and gen_inner.py), then the game's structures that hold pointers (305
-  differ under `-m64`: `host_check.py layout`) with their `M2C_FIELD`s
-  turned into fields, file by file, each version's ROM checked, then
-  asm2c's pointer words, the ZeroJump stubs' pointer/integer
-  conversions, and the libultra and libaudio structures the host layer
-  shares (DozerEncore's are already 64-bit clean). `test.py same` against
-  the i386 build is the check at each step. Not started: it changes many
-  of src/'s files, while the fake-reduction passes are editing them.
-  `-DPORT_TRY64=ON` builds x86-64 anyway (it compiles and links) for that
-  work; it stops at boot, in the first `osSendMesg` to an asm data queue
-  (`D_802AC3E0`, asm2c's struct at the N64's 4-byte pointer offsets).
+- **64-bit, the rest**: eu and jp on x86-64 (they build; their scenarios
+  aren't recorded against i386 there yet), aarch64 (the zig cross build
+  under qemu-user, `test.py same`), macOS and Windows x64; ASan and UBSan
+  on x86-64. The scenarios cover the menus, battle and the first stage:
+  what they don't reach (the other stages and overlays, the story's
+  bosses, the options) can still read a pointer through an N64 offset or a
+  32-bit integer. `ptrcast_scan.py`'s allow-list and m2c_port.py's
+  "no known struct" list are the static side of it ("Where pointers are 8
+  bytes"); a run that crashes or differs from i386 the dynamic one.
 - **Packages** (an AppImage, the `.exe` with SDL, a macOS app; Blast
   Corps' "Packages") and a hosted page: after 64-bit, with SDL in the
   Windows cross build.
@@ -401,8 +464,9 @@ offsets in comments (669) as clang does for the host:
   ovl_13_02 254, 54E40 121, 48600 101, 80580 72, 8A7A0 58), and the
   declarations below that disagree on pointer or integer.
 
-So the first port build should be 32-bit (`-m32 -malign-double`, as Blast
-Corps' i386 build), then wasm32; native 64-bit after the pointer pass.
+So the first port build was 32-bit (`-m32 -malign-double`, as Blast
+Corps' i386 build), then wasm32; native 64-bit came with the pointer pass
+("Where pointers are 8 bytes"). The counts above are from before it.
 
 ### Declarations across files
 

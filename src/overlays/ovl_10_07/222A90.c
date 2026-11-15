@@ -1137,7 +1137,9 @@ void func_ovl10_07_80045758(s32 *arg0) {
         D_ovl10_07_8004A3E0[i] = arg0[4];
         D_ovl10_07_8004A3F8[i] = arg0[5];
         D_ovl10_07_8004A410[i] = arg0[6];
-        /* a uopt block boundary: the addresses below are strength-reduced */
+        /* fake: an empty loop, a uopt block boundary (no code): the table addresses below are then
+         * computed in the loop (pass 12: an `if` with a DEBUG_PRINT body, any condition, even 0, matches,
+         * here only; the four tables as one [4][6] in a 4-pass loop, while/for loops: no) */
         do {} while (0);
         D_ovl10_07_8004A448[i] = arg0[7];
         D_ovl10_07_8004A460[i] = arg0[8];
@@ -1639,7 +1641,7 @@ void func_ovl10_07_80043DA8(void) {
 /* opens (arg1 1) or closes the gate */
 void func_ovl10_07_80043B98(s32 arg0, s32 arg1) {
     s32 id;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 dist; /* the gate travel held: a guess (held, it fits only here or above the outer tests) */
     Vec3f pos;
 
     if (arg1 != D_ovl10_07_8004A4DC[arg0]) {
@@ -1647,15 +1649,16 @@ void func_ovl10_07_80043B98(s32 arg0, s32 arg1) {
             id = func_ovl10_07_800430F4(func_ovl10_07_80047630);
             D_ovl10_07_8004A4E0[id] = arg0;
         }
+        dist = 100.0f;
         if (arg1 != 0) {
-            D_ovl10_07_8004A5EC[arg0] = D_ovl10_07_8004A4D4[arg0]->unk40->unk18 - 100.0f;
-            D_ovl10_07_8004A5F0[arg0] = D_ovl10_07_8004A4D8[arg0]->unk40->unk18 + 100.0f;
+            D_ovl10_07_8004A5EC[arg0] = D_ovl10_07_8004A4D4[arg0]->unk40->unk18 - dist;
+            D_ovl10_07_8004A5F0[arg0] = D_ovl10_07_8004A4D8[arg0]->unk40->unk18 + dist;
             D_ovl10_07_8004A5E8[arg0] = -5.0f;
             func_ovl10_07_80048660(D_ovl10_07_8004A4C8[arg0][0], D_ovl10_07_8004A4C8[arg0][1], D_ovl10_07_8004A4C8[arg0][2] + 1, 0);
             func_ovl10_07_80048660(D_ovl10_07_8004A4C8[arg0][0], D_ovl10_07_8004A4C8[arg0][1], D_ovl10_07_8004A4C8[arg0][2] + 2, 0);
         } else {
-            D_ovl10_07_8004A5EC[arg0] = D_ovl10_07_8004A4D4[arg0]->unk40->unk18 + 100.0f;
-            D_ovl10_07_8004A5F0[arg0] = D_ovl10_07_8004A4D8[arg0]->unk40->unk18 - 100.0f;
+            D_ovl10_07_8004A5EC[arg0] = D_ovl10_07_8004A4D4[arg0]->unk40->unk18 + dist;
+            D_ovl10_07_8004A5F0[arg0] = D_ovl10_07_8004A4D8[arg0]->unk40->unk18 - dist;
             D_ovl10_07_8004A5E8[arg0] = 5.0f;
             func_ovl10_07_80048660(D_ovl10_07_8004A4C8[arg0][0], D_ovl10_07_8004A4C8[arg0][1], D_ovl10_07_8004A4C8[arg0][2] + 1, 9);
             func_ovl10_07_80048660(D_ovl10_07_8004A4C8[arg0][0], D_ovl10_07_8004A4C8[arg0][1], D_ovl10_07_8004A4C8[arg0][2] + 2, 9);
@@ -1668,7 +1671,8 @@ void func_ovl10_07_80043B98(s32 arg0, s32 arg1) {
 void func_ovl10_07_80043944(s32 arg0, s32 arg1) {
     s32 j;
     s32 v;
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 id;
+    s32 *p; /* the tile row held: a guess (any held value fills this word) */
 
     if (arg1 != (D_ovl10_07_80049CA8[arg0] & 1)) {
         if (arg1 != 0) {
@@ -1682,7 +1686,8 @@ void func_ovl10_07_80043944(s32 arg0, s32 arg1) {
                 v = 9;
                 D_ovl10_07_80049CA8[arg0] |= 2;
                 /* func_ovl10_07_800438CC(arg0), written out */
-                D_ovl10_07_80049CD8[func_ovl10_07_800430F4(func_ovl10_07_80046954)] = arg0;
+                id = func_ovl10_07_800430F4(func_ovl10_07_80046954);
+                D_ovl10_07_80049CD8[id] = arg0;
                 D_ovl10_07_80049E10[arg0] = 0;
             } else {
                 D_ovl10_07_80049CA8[arg0] &= ~2;
@@ -1690,16 +1695,17 @@ void func_ovl10_07_80043944(s32 arg0, s32 arg1) {
                 v = 1;
                 func_ovl10_07_800437EC(arg0);
             }
-            /* fake: nothing, but it keeps arg0 in v1 for the loops */
+            /* fake: nothing, but it keeps arg0 in v1 for the loops (pass 10: a debug range check of arg0 here matches too, but mid-function; pass 12: still needed with the row held in p) */
             if (arg0) {
             }
+            p = D_ovl10_07_80049BF0[arg0];
             if (D_ovl10_07_80049C78[arg0] & 1) {
                 for (j = 0; j < D_ovl10_07_80049E70[arg0]; j++) {
-                    func_ovl10_07_80048660(D_ovl10_07_80049BF0[arg0][0] + j, D_ovl10_07_80049BF0[arg0][1], D_ovl10_07_80049BF0[arg0][2], v);
+                    func_ovl10_07_80048660(p[0] + j, p[1], p[2], v);
                 }
             } else {
                 for (j = 0; j < D_ovl10_07_80049E70[arg0]; j++) {
-                    func_ovl10_07_80048660(D_ovl10_07_80049BF0[arg0][0], D_ovl10_07_80049BF0[arg0][1], D_ovl10_07_80049BF0[arg0][2] + j, v);
+                    func_ovl10_07_80048660(p[0], p[1], p[2] + j, v);
                 }
             }
         }

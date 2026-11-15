@@ -1007,7 +1007,9 @@ void func_ovl10_08_800455FC(s32 *arg0) {
         D_ovl10_08_80049F08[i] = arg0[4];
         D_ovl10_08_80049F20[i] = arg0[5];
         D_ovl10_08_80049F38[i] = arg0[6];
-        /* a uopt block boundary: the addresses below are strength-reduced */
+        /* fake: an empty loop, a uopt block boundary (no code): the table addresses below are then
+         * computed in the loop (pass 12: an `if` with a DEBUG_PRINT body, any condition, even 0, matches,
+         * here only; the four tables as one [4][6] in a 4-pass loop, while/for loops: no) */
         do {} while (0);
         D_ovl10_08_80049F70[i] = arg0[7];
         D_ovl10_08_80049F88[i] = arg0[8];
@@ -1376,7 +1378,7 @@ void func_ovl10_08_80044448(s32 arg0, s32 arg1) {
 /* opens (arg1 1) or closes the gate */
 void func_ovl10_08_80044238(s32 arg0, s32 arg1) {
     s32 id;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found; pass 10: held object/row pointers no, `f32 pos[4]` passed cast to Vec3f * matches, not taken) */
+    f32 dist; /* the gate travel held: a guess (held, it fits only here or above the outer tests) */
     Vec3f pos;
 
     if (arg1 != D_ovl10_08_8004A004[arg0]) {
@@ -1384,15 +1386,16 @@ void func_ovl10_08_80044238(s32 arg0, s32 arg1) {
             id = func_ovl10_08_80043150(func_ovl10_08_8004701C);
             D_ovl10_08_8004A008[id] = arg0;
         }
+        dist = 100.0f;
         if (arg1 != 0) {
-            D_ovl10_08_8004A114[arg0] = D_ovl10_08_80049FFC[arg0]->unk40->unk18 - 100.0f;
-            D_ovl10_08_8004A118[arg0] = D_ovl10_08_8004A000[arg0]->unk40->unk18 + 100.0f;
+            D_ovl10_08_8004A114[arg0] = D_ovl10_08_80049FFC[arg0]->unk40->unk18 - dist;
+            D_ovl10_08_8004A118[arg0] = D_ovl10_08_8004A000[arg0]->unk40->unk18 + dist;
             D_ovl10_08_8004A110[arg0] = -5.0f;
             func_ovl10_08_80047F20(D_ovl10_08_80049FF0[arg0][0], D_ovl10_08_80049FF0[arg0][1], D_ovl10_08_80049FF0[arg0][2] + 1, 0);
             func_ovl10_08_80047F20(D_ovl10_08_80049FF0[arg0][0], D_ovl10_08_80049FF0[arg0][1], D_ovl10_08_80049FF0[arg0][2] + 2, 0);
         } else {
-            D_ovl10_08_8004A114[arg0] = D_ovl10_08_80049FFC[arg0]->unk40->unk18 + 100.0f;
-            D_ovl10_08_8004A118[arg0] = D_ovl10_08_8004A000[arg0]->unk40->unk18 - 100.0f;
+            D_ovl10_08_8004A114[arg0] = D_ovl10_08_80049FFC[arg0]->unk40->unk18 + dist;
+            D_ovl10_08_8004A118[arg0] = D_ovl10_08_8004A000[arg0]->unk40->unk18 - dist;
             D_ovl10_08_8004A110[arg0] = 5.0f;
             func_ovl10_08_80047F20(D_ovl10_08_80049FF0[arg0][0], D_ovl10_08_80049FF0[arg0][1], D_ovl10_08_80049FF0[arg0][2] + 1, 9);
             func_ovl10_08_80047F20(D_ovl10_08_80049FF0[arg0][0], D_ovl10_08_80049FF0[arg0][1], D_ovl10_08_80049FF0[arg0][2] + 2, 9);
@@ -1417,7 +1420,8 @@ void func_ovl10_08_80044188(void) {
 void func_ovl10_08_80043F34(s32 arg0, s32 arg1) {
     s32 j;
     s32 v;
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found; pass 10: 80043EBC called in place of its written-out copy is not inlined, 4934 words) */
+    s32 id;
+    s32 *p; /* the tile row held: a guess (any held value fills this word) */
 
     if (arg1 != (D_ovl10_08_800497E8[arg0] & 1)) {
         if (arg1 != 0) {
@@ -1431,7 +1435,8 @@ void func_ovl10_08_80043F34(s32 arg0, s32 arg1) {
                 v = 9;
                 D_ovl10_08_800497E8[arg0] |= 2;
                 /* func_ovl10_08_80043EBC(arg0), written out */
-                D_ovl10_08_80049818[func_ovl10_08_80043150(func_ovl10_08_80046038)] = arg0;
+                id = func_ovl10_08_80043150(func_ovl10_08_80046038);
+                D_ovl10_08_80049818[id] = arg0;
                 D_ovl10_08_80049950[arg0] = 0;
             } else {
                 D_ovl10_08_800497E8[arg0] &= ~2;
@@ -1439,16 +1444,17 @@ void func_ovl10_08_80043F34(s32 arg0, s32 arg1) {
                 v = 1;
                 func_ovl10_08_80043DDC(arg0);
             }
-            /* fake: nothing, but it keeps arg0 in v1 for the loops (pass 10: a debug range check of arg0 here matches too, but mid-function) */
+            /* fake: nothing, but it keeps arg0 in v1 for the loops (pass 10: a debug range check of arg0 here matches too, but mid-function; pass 12: still needed with the row held in p) */
             if (arg0) {
             }
+            p = D_ovl10_08_80049730[arg0];
             if (D_ovl10_08_800497B8[arg0] & 1) {
                 for (j = 0; j < D_ovl10_08_800499B0[arg0]; j++) {
-                    func_ovl10_08_80047F20(D_ovl10_08_80049730[arg0][0] + j, D_ovl10_08_80049730[arg0][1], D_ovl10_08_80049730[arg0][2], v);
+                    func_ovl10_08_80047F20(p[0] + j, p[1], p[2], v);
                 }
             } else {
                 for (j = 0; j < D_ovl10_08_800499B0[arg0]; j++) {
-                    func_ovl10_08_80047F20(D_ovl10_08_80049730[arg0][0], D_ovl10_08_80049730[arg0][1], D_ovl10_08_80049730[arg0][2] + j, v);
+                    func_ovl10_08_80047F20(p[0], p[1], p[2] + j, v);
                 }
             }
         }

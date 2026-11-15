@@ -765,7 +765,7 @@ void func_ovl10_06_80048110(void) {
 
 void func_ovl10_06_80047E10(void) {
     s32 j;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 max; /* the speed limit held: a guess (8004ADD0[0] held before its use fits too) */
     Vec3f player;
     Vec3f pos;
     Vec3f sp3C;
@@ -792,8 +792,9 @@ void func_ovl10_06_80047E10(void) {
         func_ovl10_06_80049F28(&pos.x, &player.x, &angle.x);
         angle.y -= 90.0f;
         dist = func_ovl10_06_80049F40(&player, &pos);
-        if (dist > 6.8f) {
-            speed = 6.8f;
+        max = 6.8f;
+        if (dist > max) {
+            speed = max;
         } else {
             speed = dist;
         }
@@ -893,7 +894,7 @@ void func_ovl10_06_80047B0C(void) {
 
 void func_ovl10_06_80047A50(void) {
     s32 i;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad; /* fake: unused, frame space the original has (no source for it found; pass 12: the count, the object or 8004A640's result held: no) */
     Vec3f pos;
 
     while (TRUE) {
@@ -988,16 +989,15 @@ void func_ovl10_06_80047634(void) {
 void func_ovl10_06_80047450(void) {
     Vec3f pos;
     Vec3f target;
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
-    f32 angle;
+    Vec3f angle;
     f32 diff;
     f32 step;
     f32 a;
 
     func_ovl10_06_8004A068(D_ovl10_06_8004B9B0[D_ovl10_06_8004ACA8], &pos);
     func_ovl10_06_8004A068(D_ovl10_06_8004ADBC, &target);
-    func_ovl10_06_80049F28(&pos.x, &target.x, &angle);
-    diff = angle - D_ovl10_06_8004B9B0[D_ovl10_06_8004ACA8]->unk40->unk20;
+    func_ovl10_06_80049F28(&pos.x, &target.x, &angle.x);
+    diff = angle.x - D_ovl10_06_8004B9B0[D_ovl10_06_8004ACA8]->unk40->unk20;
     if (diff >= 180.0f) {
         diff -= 360.0f;
     }
@@ -1061,8 +1061,7 @@ void func_ovl10_06_80047110(s32 arg0) {
     s32 id;
     Vec3f a;
     Vec3f b;
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
-    f32 angle;
+    Vec3f angle;
 
     D_ovl10_06_8004B8F8 = 0;
     D_ovl10_06_8004BBD0[arg0] = func_ovl10_06_80049FC0(0x106, 0x01000040, 0xD0, 0);
@@ -1075,9 +1074,9 @@ void func_ovl10_06_80047110(s32 arg0) {
     D_ovl10_06_8004BBD0[arg0]->unk38 = 50.0f;
     func_ovl10_06_8004A068(D_ovl10_06_8004ADBC, &a);
     func_ovl10_06_8004A068(D_ovl10_06_8004BBD0[arg0], &b);
-    func_ovl10_06_80049F28(&b.x, &a.x, &angle);
+    func_ovl10_06_80049F28(&b.x, &a.x, &angle.x);
     D_ovl10_06_8004BBD0[arg0]->unk38 = 50.0f;
-    D_ovl10_06_8004BBD0[arg0]->unk40->unk20 = angle;
+    D_ovl10_06_8004BBD0[arg0]->unk40->unk20 = angle.x;
     D_ovl10_06_8004B010[arg0] = (a.x - b.x) / 56.0f;
     D_ovl10_06_8004B110[arg0] = (a.z - b.z) / 56.0f;
     D_ovl10_06_8004BBD0[arg0]->unk68 = 40.0f;
@@ -1415,7 +1414,7 @@ void func_ovl10_06_80045F9C(void) {
 }
 
 void func_ovl10_06_80045CE4(void) {
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found; pass 12: hit must stay at 76: a word less or a Vec3f no, held objects/flags/index no; 80045C90 called for its written-out copy is not inlined) */
     s32 hit;
     s32 i;
     s32 flags;
@@ -1505,7 +1504,7 @@ s32 func_ovl10_06_80045C20(void (*arg0)()) {
 void func_ovl10_06_80045888(void) {
     s32 i;
     s32 r;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    s32 e; /* the effect held: a guess (the only place a held effects[r] fits; any held f32 constant fits too) */
     s32 effects[10] = { 12, 13, 14, 15, 16, 19, 20, 22, 23, 24 };
     Vec3f ang;
     Vec3f pos;
@@ -1524,7 +1523,8 @@ void func_ovl10_06_80045888(void) {
     pos.y += D_ovl10_06_8004ADC0[i]->unk40->unk14 + 200.0f;
     pos.z += D_ovl10_06_8004ADC0[i]->unk40->unk18;
     if (D_ovl10_06_8004B7D8[i] % 10 == 0) {
-        func_ovl10_06_8004A540(effects[r], &pos.x, 0);
+        e = effects[r];
+        func_ovl10_06_8004A540(e, &pos.x, 0);
         func_ovl10_06_8004A068(D_ovl10_06_8004ADC0[i], &pos);
         if (func_ovl10_06_8004A2A8(1) != 0) {
             func_ovl10_06_8004A698(0xC9, &pos.x);

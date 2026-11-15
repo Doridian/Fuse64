@@ -971,6 +971,10 @@ header's unnumbered part (`#ifndef STATICS_PART`) holds the statics
 included before the functions; numbered parts are included in place with
 `#define STATICS_PART n`. Those in-body parts are still marked fakes:
 what the original's other file really held there is not known.
+A `#line` that renumbers the start of an inlined static's body (so its
+lines come before the binding's) is often the loop's pointer passed as
+the parameter instead (`f(n, p, ...)`, not `p = panels;` inside): a
+binding takes the call's line (ovl_0F_04's 80043578 and 80043398).
 
 ## Versions
 

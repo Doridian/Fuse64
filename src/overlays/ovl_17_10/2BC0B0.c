@@ -167,11 +167,10 @@ UnkStruct_ovl17_10_80046628 D_ovl17_10_80046628[5] = {
     { NULL, 800, -300, 300 },
 };
 
-/* unused: the stubs IDO -O3 leaves at the end of the object; one of them
- * refers to the .bss nothing else uses, which would otherwise be common */
-static void func_ovl17_10_80044E40(void) {
-    D_ovl17_10_800466F0[0] = 0;
-}
+/* unused: the stubs IDO -O3 leaves at the end of the object; the first,
+ * in statics.h, refers to the .bss nothing else uses, which would
+ * otherwise be common */
+#include "statics.h"
 
 static void func_ovl17_10_80044E38(void) {
 }
@@ -714,11 +713,10 @@ void func_ovl17_10_80043300(s32 arg0) {
         case 17:
             break;
         case 4:
-            D_ovl17_10_80046490 = 0.3f;
-            D_ovl17_10_80046494 = 0.5f;
-            D_ovl17_10_80046498 = 0;
-            if (arg0 && arg0 && arg0) { /* fake: without it the next call is scheduled into these stores */
-            }
+            /* the speeds: from statics.h, whose `.file` ends the block */
+#define STATICS_PART 1
+#include "overlays/ovl_17_10/statics.h"
+#undef STATICS_PART
             func_ovl17_10_80045278(func_ovl17_10_80044564, 1);
             func_ovl17_10_80043288();
             func_ovl17_10_80043158();

@@ -6,9 +6,13 @@
  * inlined into every caller leave a `jr ra; nop` stub just before their first
  * caller; the unused ones at the end of the object leave one each.
  *
- * The three `if (!obj && !obj && !obj) {}` are fakes: they generate no code but
- * end a basic block, which the original's scheduling needs after the two
- * animation calls and before the wait (the same spots in ovl_0A_02-03).
+ * The animation wait, func_ovl0A_04_800432F0, is defined in another file
+ * (statics.h), as ovl_0A_02's, 03's and 05's are: the `.file` where it is
+ * inlined ends a basic block, which the original's scheduling needs. In
+ * func_ovl0A_04_80043300 the object's first position (three stores) comes
+ * from statics.h too (its `.file` switches end the block after the two
+ * animation calls), and the two lights' offsets are set axis by axis.
+ * These replace the last two `if (!obj && !obj && !obj) {}` fakes.
  */
 
 typedef struct {
@@ -819,11 +823,10 @@ void func_ovl0A_04_80043300(void) {
     obj = func_ovl0A_04_80045D30(0x328, 0x01000000, 0xD0, NULL);
     func_ovl0A_04_80045A30(obj->unk40, 0x16, 0);
     obj->unk40->unk48->unk4->unk4 = func_ovl0A_04_80045A48(obj->unk40, 0) - 0.001f;
-    if (!obj && !obj && !obj) { /* fake: a block boundary */
-    }
-    obj->unk40->unk10 = 200.0f;
-    obj->unk40->unk14 = 0.0f;
-    obj->unk40->unk18 = -2000.0f;
+    /* the first position: from statics.h (see the top) */
+#define STATICS_PART 1
+#include "overlays/ovl_0A_04/statics.h"
+#undef STATICS_PART
     dx = -2.2222223f;
     dy = -0.5555556f;
     dz = 26.666666f;
@@ -847,10 +850,10 @@ void func_ovl0A_04_80043300(void) {
     func_ovl0A_04_80045D08(obj, 0x04000000);
     func_ovl0A_04_800432F0(obj);
     a.x = 60.0f;
-    a.y = 60.0f;
-    a.z = 10.0f;
     b.x = a.x * -1.0f;
+    a.y = 60.0f;
     b.y = a.y;
+    a.z = 10.0f;
     b.z = a.z;
     a.x += obj->unk40->unk10;
     a.y += obj->unk40->unk14;
@@ -875,13 +878,7 @@ static void func_ovl0A_04_800432F8(s32 flag) {
     }
 }
 
-static void func_ovl0A_04_800432F0(Obj04 *obj) {
-    if (!obj && !obj && !obj) { /* fake: a block boundary */
-    }
-    while (!(obj->unk40->unkC & 0x40)) {
-        func_ovl0A_04_80045EA0();
-    }
-}
+#include "statics.h"
 
 void func_ovl0A_04_80043124(void) {
     Obj04 *self;

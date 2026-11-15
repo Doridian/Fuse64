@@ -25,15 +25,22 @@
  *   s1, x1 s2, z1 s3 (41 words). Reading x1 and z1 before it gives the
  *   original's x0 s0, x1 s1, z1 s2, z0 s3. (Moving z0's set-up after case
  *   0's x1 and z1, or making its store volatile, shows the same order.)
+ *   Tried in pass 10: x1/z1 (and len) with dead initialisers or `x1 = z1
+ *   = 0` (the homed locals keep the stores: 3400 words), `len = 0` (41);
+ *   a compiled-out check `if (x1 + z1 == 0)` matches but tests unset
+ *   values, so the plain read stays.
+ * - 8004596C: the word between tgt and timer is idx + 1 held in n for
+ *   the timer's division (a guess: any held value there matches).
  * - 800444FC: the probe static 800444EC is defined in another file
  *   (statics.h; its store stays ahead of the next call), and `#line 1
  *   statics.h` regions (as in ovl_0D_07): around
  *   the 80044474 call (the store of D_ovl0D_02_80047A54 is lui/%lo and the
  *   call's delay slot stays empty; it replaces the `if ((D = f())) {}`
  *   fake), and around the gate's store in 80044444 (the arguments of the
- *   calls around it go into their delay slots). In 8004421C, `j = 0` at
- *   `#line 3000` (after the loop's line) puts `move v0,a1` ahead of
- *   `move a0,zero`. In 8004311C, case 0's first statement in a statics.h
+ *   calls around it go into their delay slots). 8004421C takes its first
+ *   row j as a parameter (0 from 8004422C, whose line comes after the
+ *   loop's; a guess for what was a `j = 0` at `#line 3000`): that puts
+ *   `move v0,a1` ahead of `move a0,zero`. In 8004311C, case 0's first statement in a statics.h
  *   region: as1 then computes z1 right after x1 and stores z2 in order,
  *   with x0's home store in the branch's delay slot, as the original (no
  *   order of the case's ugen instructions fed to as1 by hand did that; a
@@ -237,7 +244,7 @@ static void func_ovl0D_02_80043AB4(void);
 static void func_ovl0D_02_80043F94(s32);
 static void func_ovl0D_02_80044094(s32);
 static void func_ovl0D_02_8004409C(Ent_0D02 *);
-static void func_ovl0D_02_8004421C(Vec3f *, Vec3f (*)[4]);
+static void func_ovl0D_02_8004421C(Vec3f *, Vec3f (*)[4], s32);
 static void func_ovl0D_02_80044224(void);
 static void func_ovl0D_02_8004422C(void);
 static void func_ovl0D_02_80044234(Ent_0D02 *);
@@ -383,7 +390,7 @@ void func_ovl0D_02_8004596C(void) {
     s32 r;
     f32 ang;
     Vec3f tgt;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    s32 n; /* idx + 1 held (the frame's word here; which value: a guess, any held one fits) */
     s32 timer;
 
     idx = (s32) func_ovl0D_02_80046E70();
@@ -393,7 +400,8 @@ void func_ovl0D_02_8004596C(void) {
     pos.y = e->unk18 * 10.0f;
     pos.z = e->unk1C * 10.0f + 150.0f;
     cnt = 0;
-    timer = 240 / (idx + 1);
+    n = idx + 1;
+    timer = 240 / n;
     func_ovl0D_02_80046350(pos.x, pos.y, pos.z, grid, 0);
     while (func_ovl0D_02_800470D0(flag) == 0) {
         if (e->obj == NULL) {
@@ -896,15 +904,11 @@ static void func_ovl0D_02_80044444(void) {
     }
 }
 
-/* the rows of points the debris of D_ovl0D_02_80047800 falls from */
-static void func_ovl0D_02_8004421C(Vec3f *corner, Vec3f (*rows)[4]) {
-    s32 j;
+/* the rows of points the debris of D_ovl0D_02_80047800 falls from, from row
+ * j on (the caller passes 0: its line, after this loop's, is what as1 reads) */
+static void func_ovl0D_02_8004421C(Vec3f *corner, Vec3f (*rows)[4], s32 j) {
     s32 k;
 
-    /* fake: (see the top): j = 0 after the loop's line */
-#line 3000 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
-    j = 0;
-#line 928 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     for (; j < 3; j++) {
         for (k = 0; k < 4; k++) {
             rows[j][k].x = corner->x * 10.0f - k * 200.0f;
@@ -918,7 +922,7 @@ static void func_ovl0D_02_8004422C(void) {
     s32 i;
 
     for (i = 0; i < 2; i++) {
-        func_ovl0D_02_8004421C(&D_ovl0D_02_80047870[i], D_ovl0D_02_80047A60[i]);
+        func_ovl0D_02_8004421C(&D_ovl0D_02_80047870[i], D_ovl0D_02_80047A60[i], 0);
     }
 }
 

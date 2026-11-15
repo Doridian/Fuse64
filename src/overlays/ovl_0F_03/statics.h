@@ -32,16 +32,20 @@ static void func_ovl0F_03_80043434(void) {
 
 /* case 2's: the door, closed or already open */
 static void func_ovl0F_03_80044C7C(UnkStruct_ovl0F_03_80046F0C *door) {
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
-    if (func_ovl0F_03_800468D0(door->unk0[0].unk28) == 0) {
+    UnkStruct_ovl0F_03_80046E88 *m1; /* the door's two entries held in locals (the */
+    UnkStruct_ovl0F_03_80046E88 *m0; /* frame's 8 bytes; which values: a guess, as 0F_02's) */
+
+    m0 = door->unk0;
+    m1 = &door->unk0[1];
+    if (func_ovl0F_03_800468D0(m0->unk28) == 0) {
         func_ovl0F_03_80046648(func_ovl0F_03_80043F38, door, 0, 0, 0x110);
     } else {
         door->unk58();
         door->unk5C();
-        door->unk0[1].unk10 -= 1.0f;
-        func_ovl0F_03_800430B4(1, &door->unk0[1]);
-        *door->unk0[0].unk0 = NULL;
-        door->unk0[1].unk10 += 1.0f;
+        m1->unk10 -= 1.0f;
+        func_ovl0F_03_800430B4(1, m1);
+        *m0->unk0 = NULL;
+        m1->unk10 += 1.0f;
     }
 }
 

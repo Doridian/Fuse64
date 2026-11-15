@@ -51,8 +51,11 @@
  * region or renumbering that is gone, it is no longer needed.
  *
  * 2026-11-14: 80043944's renumbering was an inlined static: the tile
- * put-back and flag clear are 80043B28 (p, flags), defined just before it,
- * and the panel finder is 8004393C, defined just after it (stub places).
+ * put-back and flag clear are 8004393C (p, flags), defined just before it,
+ * and the panel finder is 80043398, defined just after it. (The names are
+ * the stubs': 2026-11-14 pass 10 removed each call in a test build, and the
+ * stub that went with it is 8004393C's for the put-back, 80043398's for the
+ * finder, among the handler's; k's load then needs no `(u32)` cast.)
  * The "1E84A0.c" #lines back after 80046150, the finder and case 0x52 were
  * redundant, so "panels.c" now runs from 80046E80's end to the handler.
  */
@@ -329,8 +332,8 @@ void func_ovl0F_02_80043FEC(void);
 void func_ovl0F_02_800462F8(s32 arg0);
 static void func_ovl0F_02_80043D6C(s32 flag);
 static void func_ovl0F_02_80043B30(s32 i);
-static void func_ovl0F_02_80043B28(UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags);
-static s32 func_ovl0F_02_8004393C(s32 n, UnkStruct_ovl0F_02_80048734 *panels, UnkStruct_ovl0F_02_80048918 *flags);
+static void func_ovl0F_02_8004393C(UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags);
+static s32 func_ovl0F_02_80043398(s32 n, UnkStruct_ovl0F_02_80048734 *panels, UnkStruct_ovl0F_02_80048918 *flags);
 void func_ovl0F_02_80043944(void);
 void func_ovl0F_02_800438B4(UnkStructA *obj);
 void func_ovl0F_02_80043858(UnkStructA *obj);
@@ -1329,9 +1332,10 @@ static void func_ovl0F_02_80043B30(s32 i) {
 }
 
 /* the panel stepped on: its tile is put back if it was up, and its flag
- * cleared (inlined into 80043944 just below, its lines before the caller's;
- * the code was 80043944's own, with the caller renumbered by `#line`s) */
-static void func_ovl0F_02_80043B28(UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags) {
+ * cleared (inlined into 80043944 just below, its lines before the caller's,
+ * its stub just before it; the code was 80043944's own, with the caller
+ * renumbered by `#line`s) */
+static void func_ovl0F_02_8004393C(UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags) {
     if (p->unk1C == 0.0f) {
         func_ovl0F_02_80047328((s32) p->unkC - 1, (s32) p->unk10,
                                (s32) p->unk14 - 1, (s32) p->unkC,
@@ -1347,8 +1351,8 @@ void func_ovl0F_02_80043944(void) {
     s32 k;
 
     i = D_ovl0F_02_80048D74;
-    func_ovl0F_02_80043B28(&D_ovl0F_02_8004883C[i], &D_ovl0F_02_80048918[i]);
-    k = D_ovl0F_02_80048918[(u32) i].unk8;
+    func_ovl0F_02_8004393C(&D_ovl0F_02_8004883C[i], &D_ovl0F_02_80048918[i]);
+    k = D_ovl0F_02_80048918[i].unk8;
     obj = D_ovl0F_02_80048D18[i];
     do {
         func_ovl0F_02_80047D68(obj);
@@ -1364,9 +1368,9 @@ void func_ovl0F_02_80043944(void) {
 }
 
 /* case 0x52's: the panel the player stands on, if it is still up (its stub
- * comes out at 8004393C, so it is defined after 80043944) */
+ * is 80043398, among the handler's; defined after 80043944 for its lines) */
 #line 1 "panels.c" /* fake: renumbers the lines (as1 orders a block partly by .loc line): the handler's case 0x52 (#line 6 below) needs these to straddle it */
-static s32 func_ovl0F_02_8004393C(s32 n, UnkStruct_ovl0F_02_80048734 *panels, UnkStruct_ovl0F_02_80048918 *flags) {
+static s32 func_ovl0F_02_80043398(s32 n, UnkStruct_ovl0F_02_80048734 *panels, UnkStruct_ovl0F_02_80048918 *flags) {
     s32 i;
     UnkStruct_ovl0F_02_80048734 *p;
 
@@ -1758,7 +1762,7 @@ void func_ovl0F_02_800462F8(s32 arg0) {
                 func_ovl0F_02_800462F8_inl1();
             } else {
 #line 6 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-                i = func_ovl0F_02_8004393C(5, D_ovl0F_02_8004883C, D_ovl0F_02_80048918);
+                i = func_ovl0F_02_80043398(5, D_ovl0F_02_8004883C, D_ovl0F_02_80048918);
                 if (i != -1) {
                     D_ovl0F_02_80048D74 = i;
                     func_ovl0F_02_80047E38(func_ovl0F_02_80043944, NULL, 0, 0, 0x110);

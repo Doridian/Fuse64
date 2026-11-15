@@ -6,7 +6,7 @@
  * the static 80044250, ovl_0F_02's 800454E8/800454E0), their reset
  * 800432F0 (800453A4), the door task 80043F38 (80045024) and its
  * effects 80043E60 (80044E9C, (id, pos, d, h)), and the handler's door
- * static 80044C7C (80046160, a door pointer and pad[2]). 800430B4 takes
+ * static 80044C7C (80046160, a door pointer, its two entries in locals). 800430B4 takes
  * (n, models) as ovl_0F_02's 80044F74; with (models, n) the door's call
  * schedules differently. Every function and stub comes out in the
  * original's place.
@@ -20,7 +20,7 @@
  * - The handler's frame: `s32 pad[10]` in 8004327C (case 0x50), and case
  *   15's code written in the handler with the empty static 80043028
  *   called first (as a static of its own its 5-argument call takes 8
- *   bytes of the frame below case 0x52's slots). The door's pad[2] sits
+ *   bytes of the frame below case 0x52's slots). The door's m0/m1 sit
  *   between case 20's slot and the tables'.
  * - 80044C8C takes (table, count) and the handler calls 800469B0 itself,
  *   as ovl_0F_02's 800462F8_inl0.

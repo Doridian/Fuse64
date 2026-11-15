@@ -349,7 +349,7 @@ void func_ovl15_02_80049784(UnkStructA *obj);
 void func_ovl15_02_8004B14C(void);
 static void func_ovl15_02_80049A04(void) {
     static s32 D_ovl15_02_80051530;
-    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 dist; /* the push-off distance held (a guess: any held value fills this word) */
     Vec3f v;
     Vec3f d;
     s32 ok;
@@ -368,9 +368,10 @@ static void func_ovl15_02_80049A04(void) {
         func_ovl15_02_80045A58(&D_ovl15_02_80051530);
         func_ovl15_02_80049784(obj);
         func_ovl15_02_800505C0(obj, 0x01000000);
+        dist = 400.0f;
         v.x = obj->unk40->unk20;
         v.y = 0.0f;
-        v.z = 400.0f;
+        v.z = dist;
         func_ovl15_02_80050550(&v, &d);
         obj->unk40->unk10 += d.x;
         obj->unk40->unk14 += d.y;
@@ -1346,34 +1347,46 @@ void func_ovl15_02_8004D818() {
 }
 
 void func_ovl15_02_8004D660() {
-    f32 pad0[3]; /* fake: unused, frame space the original has (no source for it found) */
+    /* pos, mode, speed, on and set are held values (fakes pass 14; guesses: any
+     * held local fills these frame words, but these each have a role) */
+    f32 *pos;
+    s32 mode;
+    f32 speed;
     f32 v[3];
-    s32 pad1[2]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 on;
+    s32 set;
     s32 a;
     s32 b;
     s32 c;
 
+    pos = &D_ovl15_02_800514A8.x;
     a = 0;
     b = 0;
     c = 0;
     for (;;) {
-        if (func_ovl15_02_80050BE0() != 0 && func_ovl15_02_80050990(0x418) != 0) {
-            func_ovl15_02_80050988(0x418);
-            func_ovl15_02_80050948();
+        on = func_ovl15_02_80050BE0();
+        if (on != 0) {
+            set = func_ovl15_02_80050990(0x418);
+            if (set != 0) {
+                func_ovl15_02_80050988(0x418);
+                func_ovl15_02_80050948();
+            }
         }
         func_ovl15_02_8004D104();
         func_ovl15_02_8004CF54();
         func_ovl15_02_8004D3BC(&a, &b, &c);
-        switch (D_ovl15_02_800514CC) {
+        mode = D_ovl15_02_800514CC;
+        switch (mode) {
         case 1:
-            func_ovl15_02_800452DC(&D_ovl15_02_800514A8.x, &D_ovl15_02_800514B8.x, D_ovl15_02_800514D0);
+            speed = D_ovl15_02_800514D0;
+            func_ovl15_02_800452DC(pos, &D_ovl15_02_800514B8.x, speed);
             break;
         case 2:
             func_ovl15_02_80050500(v);
-            func_ovl15_02_80044FDC(&D_ovl15_02_800514A8.x, &D_ovl15_02_800514B8.x, 3.0f, v);
+            func_ovl15_02_80044FDC(pos, &D_ovl15_02_800514B8.x, 3.0f, v);
             break;
         }
-        (&D_ovl15_02_800514B8.x)[1] = 0.0f;
+        D_ovl15_02_800514B8.y = 0.0f;
         func_ovl15_02_80050750();
     }
 }
@@ -1824,7 +1837,7 @@ void func_ovl15_02_8004BE64() {
 }
 
 void func_ovl15_02_8004BC88() {
-    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 frames; /* the swell's length held (a guess: any held value fills this word) */
     Vec3f pos;
     UnkStructA *obj;
     f32 sx;
@@ -1841,8 +1854,9 @@ void func_ovl15_02_8004BC88() {
     da = obj->unk54;
     a = 0.0f;
     n = 2;
+    frames = 30.0f;
     for (i = 0; i < 30; i++) {
-        s = func_ovl15_02_800508B0(i * 180.0f / 30.0f);
+        s = func_ovl15_02_800508B0(i * 180.0f / frames);
         obj->unk4C = func_ovl15_02_800508B8(a) * sx * s;
         obj->unk50 = func_ovl15_02_800508B8(a) * sy * s;
         obj->unk54 = func_ovl15_02_800508B0(a) * sx * s;
@@ -1920,6 +1934,7 @@ void func_ovl15_02_8004B7E0(UnkStructA *arg0) {
     func_ovl15_02_80044378(0x159, b);
     for (i = 0.0f; i < 20.0f; i += 1.0f) {
         t = i / 20.0f;
+        if (t > 1.0f) { DEBUG_PRINT(("t > 1.0f\n")); } /* a compiled-out debug check (guess: c == NULL further down matches too) */
         s = t * 4.0f;
         a->unk40->unk30 = s;
         a->unk40->unk2C = s;
@@ -1928,7 +1943,6 @@ void func_ovl15_02_8004B7E0(UnkStructA *arg0) {
         b->unk40->unk2C = s;
         b->unk40->unk28 = s;
         c->unk4C = c->unk54 = s = a->unk40->unk28;
-        if (s == t) {} /* fake: a dead test, for the register allocation or schedule */
         al = 63.0f * t;
         a->unk40->unk36 = al;
         b->unk40->unk36 = al;
@@ -2822,7 +2836,8 @@ void func_ovl15_02_80048630() {
 }
 
 void func_ovl15_02_800481A0() {
-    f32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 n1; /* the two moves' frame counts held (a guess: any held values fill these words) */
+    f32 n2;
     s32 *flag;
     s32 i;
     s32 j;
@@ -2842,8 +2857,9 @@ void func_ovl15_02_800481A0() {
     D_ovl15_02_800514A8.y = t - 800.0f;
     D_ovl15_02_800514A8.x -= 10.0f;
     D_ovl15_02_800514C4 = 0.0f;
+    n1 = 180.0f;
     step = t - D_ovl15_02_800514A8.y;
-    step /= 180.0f;
+    step /= n1;
     for (i = 0; i < 180; i++) {
         D_ovl15_02_800514A8.x += 0.055555556f;
         D_ovl15_02_800514A8.y += step;
@@ -2858,11 +2874,12 @@ void func_ovl15_02_800481A0() {
         D_ovl15_02_80051538[i]->unk40->unk2C = 1.0f;
         D_ovl15_02_80051538[i]->unk40->unk28 = D_ovl15_02_80051538[i]->unk40->unk30 = D_ovl15_02_80051538[i]->unk40->unk2C;
     }
+    n2 = 120.0f;
     step = (D_ovl15_02_80051488.y - 350.0f) - D_ovl15_02_800514A8.y;
-    step /= 120.0f;
+    step /= n2;
     for (i = 0; i < 120; i++) {
         D_ovl15_02_800514A8.y += step;
-        q = (f32) i / 120.0f;
+        q = (f32) i / n2;
         a = 255.0f * q;
         func_ovl15_02_800432A8(1.0f, 1.0f, 1.0f, a);
         D_ovl15_02_80051424->unk40->unk36 = a;
@@ -3325,7 +3342,9 @@ void func_ovl15_02_80046D3C(void) {
 }
 
 void func_ovl15_02_80046AEC(UnkStructA *arg0, f32 *arg1) {
-    f32 pad0[2]; /* fake: unused, frame space the original has (no source for it found) */
+    /* p and k0 are held values (fakes pass 14; guesses: any held local fills these words) */
+    Vec3f *p;
+    f32 k0;
     Vec3f d;
     Vec3f ang;
     f32 kx;
@@ -3333,17 +3352,19 @@ void func_ovl15_02_80046AEC(UnkStructA *arg0, f32 *arg1) {
     f32 x;
     f32 z;
 
+    p = (Vec3f *) arg0;
+    k0 = 1.0f;
     d.x = D_ovl15_02_80051488.x - D_ovl15_02_800513D8.x;
     d.z = D_ovl15_02_80051488.z - D_ovl15_02_800513D8.z;
     if (func_ovl15_02_800508F8(d.z) == 0) {
         kx = d.x / d.z;
     } else {
-        kx = 1.0f;
+        kx = k0;
     }
     if (func_ovl15_02_800508F8(d.x) == 0) {
         kz = d.z / d.x;
     } else {
-        kz = 1.0f;
+        kz = k0;
     }
     func_ovl15_02_80050548(&D_ovl15_02_800513D8, &D_ovl15_02_80051488, &ang);
     ang.x = W360(ang.x + 45.0f);
@@ -3364,9 +3385,9 @@ void func_ovl15_02_80046AEC(UnkStructA *arg0, f32 *arg1) {
         x = D_ovl15_02_800513D8.x - 3300.0f;
         z = kz * x;
     }
-    ((Vec3f *) arg0)->x = x + D_ovl15_02_800513D8.x;
-    ((Vec3f *) arg0)->y = D_ovl15_02_800513D8.y;
-    ((Vec3f *) arg0)->z = z + D_ovl15_02_800513D8.z;
+    p->x = x + D_ovl15_02_800513D8.x;
+    p->y = D_ovl15_02_800513D8.y;
+    p->z = z + D_ovl15_02_800513D8.z;
 }
 
 void func_ovl15_02_800468A0() {
@@ -3713,7 +3734,9 @@ void func_ovl15_02_80045330(void) {
     UnkStructA *obj;
     UnkStructA *obj2;
     f32 step;
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
+    /* speed and ground are held values (fakes pass 14; guesses: any held local fills these words) */
+    f32 speed;
+    f32 ground;
     f32 pos[3];
     f32 ang[3];
     f32 r;
@@ -3730,16 +3753,17 @@ void func_ovl15_02_80045330(void) {
     ang[1] = 0.0f;
     ang[2] = 0.0f;
     step = ((D_ovl15_02_800513D8.y + 500.0f) - pos[1]) / 60.0f;
+    speed = 5.0f;
     for (i = 0; i < 60; i++) {
         pos[1] += step;
         func_ovl15_02_80050690((UnkStructA *) pos, obj);
-        func_ovl15_02_800452DC(pos, ang, 5.0f);
+        func_ovl15_02_800452DC(pos, ang, speed);
         obj->unk40->unk20 = ang[0];
         func_ovl15_02_80050750();
     }
     for (i = 0; i < 30; i++) {
         func_ovl15_02_80050690((UnkStructA *) pos, obj);
-        func_ovl15_02_800452DC(pos, ang, 5.0f);
+        func_ovl15_02_800452DC(pos, ang, speed);
         r = i / 30.0f;
         obj->unk40->unk20 = ang[0];
         v = func_ovl15_02_800508B0(r * 180.0f) * 5.0f + (1.0f + r * 4.0f);
@@ -3761,15 +3785,16 @@ void func_ovl15_02_80045330(void) {
             k = 0;
         }
         func_ovl15_02_80050690((UnkStructA *) pos, obj);
-        func_ovl15_02_800452DC(pos, ang, 5.0f);
+        func_ovl15_02_800452DC(pos, ang, speed);
         obj->unk40->unk20 = ang[0];
         func_ovl15_02_80050750();
     }
     obj->unk68 = 0.0001f;
-    while (obj->unk40->unk14 > 100.0f) {
+    ground = 100.0f;
+    while (obj->unk40->unk14 > ground) {
         func_ovl15_02_80050638(obj);
         func_ovl15_02_80050688(obj, pos);
-        func_ovl15_02_800452DC(pos, ang, 5.0f);
+        func_ovl15_02_800452DC(pos, ang, speed);
         obj->unk40->unk20 = ang[0];
         func_ovl15_02_80050750();
     }
@@ -3777,7 +3802,7 @@ void func_ovl15_02_80045330(void) {
         v = 2.0f;
         obj->unk40->unk2C = func_ovl15_02_800508B8((i / 7.0f) * 90.0f) * v + v;
         func_ovl15_02_80050688(obj, pos);
-        func_ovl15_02_800452DC(pos, ang, 5.0f);
+        func_ovl15_02_800452DC(pos, ang, speed);
         obj->unk40->unk20 = ang[0];
         func_ovl15_02_80050750();
     }
@@ -3787,14 +3812,14 @@ void func_ovl15_02_80045330(void) {
         obj->unk40->unk2C = func_ovl15_02_800508B0((i / 7.0f) * 90.0f) * 7.0f + 2.0f;
         func_ovl15_02_80050638(obj);
         func_ovl15_02_80050688(obj, pos);
-        func_ovl15_02_800452DC(pos, ang, 5.0f);
+        func_ovl15_02_800452DC(pos, ang, speed);
         obj->unk40->unk20 = ang[0];
         func_ovl15_02_80050750();
     }
     while (obj->unk6C < obj->unk68) {
         func_ovl15_02_80050638(obj);
         func_ovl15_02_80050688(obj, pos);
-        func_ovl15_02_800452DC(pos, ang, 5.0f);
+        func_ovl15_02_800452DC(pos, ang, speed);
         obj->unk40->unk20 = ang[0];
         func_ovl15_02_80050750();
     }
@@ -4024,7 +4049,9 @@ s16 arg2;
 
 void func_ovl15_02_800443AC(void) {
     s32 n;
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
+    /* period and frames are held values (fakes pass 14; guesses: any held local fills these words) */
+    s32 period;
+    f32 frames;
     s32 alpha;
     s32 i;
     s32 j;
@@ -4038,7 +4065,8 @@ void func_ovl15_02_800443AC(void) {
     }
     func_ovl15_02_80050980(0x439);
     D_ovl15_02_80051408 = D_ovl15_02_80051404 = 0;
-    j = 60;
+    period = 60;
+    j = period;
     func_ovl15_02_800505F0(D_ovl15_02_80051424);
     func_ovl15_02_80043E84(0x01080000);
     func_ovl15_02_800505B8(D_ovl15_02_8005142C, 0x01080000);
@@ -4051,13 +4079,14 @@ void func_ovl15_02_800443AC(void) {
     func_ovl15_02_80050CA8();
     func_ovl15_02_80050C90(0x1DB);
     func_ovl15_02_80044378(0x164, D_ovl15_02_8005140C);
+    frames = 180.0f;
     for (i = 0; i < 180; i++) {
         j++;
-        if (j > 60) {
+        if (j > period) {
             func_ovl15_02_80050708(func_ovl15_02_80047B30, NULL, 0, 0, 0x150);
             j = 0;
         }
-        alpha = (1.0f - (f32) i / 180.0f) * 255.0f;
+        alpha = (1.0f - (f32) i / frames) * 255.0f;
         for (k = 0; k < 4; k++) {
             func_ovl15_02_800505B8(D_ovl15_02_80051538[k], 0x01080000);
             D_ovl15_02_80051538[k]->unk40->unk36 = alpha;
@@ -4185,7 +4214,7 @@ void func_ovl15_02_80043E38() {
 
 void func_ovl15_02_80043688(void) {
     UnkStructA *obj;
-    s32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 size; /* the start size held (fakes pass 14; a guess: any held value fills this word) */
     f32 m;
     f32 u;
     s32 i;
@@ -4203,7 +4232,8 @@ void func_ovl15_02_80043688(void) {
         func_ovl15_02_80050708(func_ovl15_02_80043E38, NULL, 0, 0, 0x150);
         func_ovl15_02_80050728(0x3C);
         obj = func_ovl15_02_800505E0(0x2F0, 0x01080000, 0xD0, NULL);
-        obj->unk40->unk30 = 7.0f;
+        size = 7.0f;
+        obj->unk40->unk30 = size;
         obj->unk40->unk28 = obj->unk40->unk2C = obj->unk40->unk30;
         obj->unk40->unk10 = D_ovl15_02_80051424->unk40->unk10;
         obj->unk40->unk14 = D_ovl15_02_80051424->unk40->unk14;

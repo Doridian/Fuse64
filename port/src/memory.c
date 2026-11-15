@@ -79,8 +79,9 @@ void *port_addr(uintptr_t a) {
     if (a > 0xFFFFFFFFu && port_is_game_memory((void *)(a + 0x80000000u)))
         return (void *)(a + 0x80000000u);
     /* (and one plus 0x80000000, which on the N64 wraps to the physical
-       address: 47A80.c's segment bases) */
-    if (a > 0xFFFFFFFFu && port_is_game_memory((void *)(a - 0x80000000u)))
+       address: 47A80.c's segment bases; on a host whose image is below
+       4 GiB, a static aarch64 one, that sum is a 32-bit number) */
+    if (a >= 0x80000000u && port_is_game_memory((void *)(a - 0x80000000u)))
         return (void *)(a - 0x80000000u);
 #endif
     return (void *)a;

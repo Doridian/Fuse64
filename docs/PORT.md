@@ -23,7 +23,9 @@ As of 2026-11-14:
 | WebAssembly, a page (`PORT_WASM_TARGET=web`) | yes | plays in a browser (headless Chromium: the legal screen, the opening, the attract demos), the ROM from a file picker or `?rom=`, the save in IndexedDB |
 | big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | us: mips's legal, menus and battle are x86's, ppc's and mipsel's legal and menus (since the asset fix in "Byte order") |
 | Linux x86-64, us | yes | `test.py`'s four scenarios are i386's (legal, menus, battle, story: "Where pointers are 8 bytes") |
-| x86-64 eu and jp, aarch64, macOS, Windows x64 | builds (x86-64) | not run yet ("What's left") |
+| Linux x86-64, eu and jp | yes | legal, menus and battle are i386's |
+| aarch64 (zig, qemu-user), us | yes | legal, menus and battle are i386's |
+| macOS, Windows x64 | not tried | ("What's left") |
 
 The ROM build is unchanged by all of it: every change to `src/` is under
 `TARGET_PC` or a macro that gives IDO the same text ("Source changes").
@@ -70,9 +72,12 @@ port/tools/test.py same build-port build-port-mips --scenario legal
 ```
 
 musl has no ucontext, so the threads and tasks there are host threads,
-one running at a time (fiber_pthread.c). aarch64 is 64-bit: it needs the
-pointer pass's x86-64 state ("Where pointers are 8 bytes") and hasn't
-been run yet.
+one running at a time (fiber_pthread.c). aarch64 is 64-bit ("Where
+pointers are 8 bytes"); its static image is below 4 GiB, so a game
+pointer plus 0x80000000 is a 32-bit number there (port_addr, memory.c).
+For the build's `decls.json` the zig commands are run as the host clang's
+(`ZIG_GLOBAL_CACHE_DIR` in the build directory if zig's own cache
+fails).
 
 ### Windows
 
@@ -386,10 +391,8 @@ where data arrives, and declarations a host needs.
 
 ## What's left
 
-- **64-bit, the rest**: eu and jp on x86-64 (they build; their scenarios
-  aren't recorded against i386 there yet), aarch64 (the zig cross build
-  under qemu-user, `test.py same`), macOS and Windows x64; ASan and UBSan
-  on x86-64. The scenarios cover the menus, battle and the first stage:
+- **64-bit, the rest**: story on aarch64 (qemu is slow), eu and jp there,
+  macOS and Windows x64; ASan and UBSan on x86-64. The scenarios cover the menus, battle and the first stage:
   what they don't reach (the other stages and overlays, the story's
   bosses, the options) can still read a pointer through an N64 offset or a
   32-bit integer. `ptrcast_scan.py`'s allow-list and m2c_port.py's

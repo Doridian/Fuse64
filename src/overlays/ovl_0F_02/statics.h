@@ -24,6 +24,12 @@ static void func_ovl0F_02_80045F0C(UnkStruct_ovl0F_02_80048734 *p, s32 count) {
         p++;
     }
 }
+
+/* 80046E80's last store: the stub before 80046E18 is its (the body is a
+ * guess; the store has to be in another file than 80046E80's other code) */
+static void func_ovl0F_02_80046E10(void) {
+    D_ovl0F_02_80048610 = 0;
+}
 #elif STATICS_PART == 1
     pos[0] = obj->unk40->unk10;
     pos[1] = obj->unk40->unk14;

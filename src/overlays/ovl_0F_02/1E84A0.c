@@ -58,6 +58,14 @@
  * finder, among the handler's; k's load then needs no `(u32)` cast.)
  * The "1E84A0.c" #lines back after 80046150, the finder and case 0x52 were
  * redundant, so "panels.c" now runs from 80046E80's end to the handler.
+ *
+ * 2026-11-15 (fakes pass 16): the "panels.c" #lines are gone. 80046150 takes
+ * the panels as p itself (no copy), with _inl4 defined just after it; the
+ * finder 80043398 does the same, defined just before the handler, with a
+ * held local; 80046E80's last store is the statics.h static 80046E10 (one
+ * of the unused stubs). What was left of the region is the one #line before
+ * 80043398: that and the handler are in another file than the rest. The
+ * pads (80044084's _inl1, the handler's _inl1/_inl2) are held values.
  */
 #include "common.h"
 static void func_ovl0F_02_80043D64(void);
@@ -309,7 +317,7 @@ static void func_ovl0F_02_80046E80(void);
 void func_ovl0F_02_80046DF8(void);
 void func_ovl0F_02_80046D9C(f32, f32, f32);
 s32 func_ovl0F_02_80046D20(s32, void *);
-static void func_ovl0F_02_80046150(s32 n, UnkStruct_ovl0F_02_80048734 *panels, UnkStruct_ovl0F_02_80048918 *flags);
+static void func_ovl0F_02_80046150(s32 n, UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags);
 static void func_ovl0F_02_80046178(s32 n1, s32 n2);
 static void func_ovl0F_02_80046160(UnkStruct_ovl0F_02_800489F4 *door);
 static void func_ovl0F_02_800462E8(void);
@@ -333,7 +341,7 @@ void func_ovl0F_02_800462F8(s32 arg0);
 static void func_ovl0F_02_80043D6C(s32 flag);
 static void func_ovl0F_02_80043B30(s32 i);
 static void func_ovl0F_02_8004393C(UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags);
-static s32 func_ovl0F_02_80043398(s32 n, UnkStruct_ovl0F_02_80048734 *panels, UnkStruct_ovl0F_02_80048918 *flags);
+static s32 func_ovl0F_02_80043398(s32 n, UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags);
 void func_ovl0F_02_80043944(void);
 void func_ovl0F_02_800438B4(UnkStructA *obj);
 void func_ovl0F_02_80043858(UnkStructA *obj);
@@ -487,10 +495,8 @@ s32 D_ovl0F_02_80048B08[2] = { 0, 0 };
 
 #include "statics.h"
 
-/* unused: the stubs IDO -O3 leaves at the end of the object */
-static void func_ovl0F_02_80046E10(void) {
-}
-
+/* unused: the stubs IDO -O3 leaves at the end of the object (80046E10's is
+ * statics.h's) */
 static void func_ovl0F_02_80046E18(void) {
 }
 
@@ -541,8 +547,7 @@ static void func_ovl0F_02_80046E80(void) {
     func_ovl0F_02_80047328(7, 4, 0x11, 7, 0x15, 0x1F);
     func_ovl0F_02_80047328(8, 4, 0x11, 9, 0x15, 0x1416);
     func_ovl0F_02_80047328(0xA, 4, 0x11, 0xD, 0x15, 0x1411);
-    D_ovl0F_02_80048610 = 0;
-#line 1 "panels.c" /* fake: another file, up to the "1E84A0.c" before the handler: its .file ends as1 scheduling blocks (perhaps an included file in the original); the "panels.c" #lines in between only renumber */
+    func_ovl0F_02_80046E10();
 }
 
 /* the names src/overlays/common/core.h's code has here */
@@ -612,13 +617,10 @@ static void func_ovl0F_02_80046160(UnkStruct_ovl0F_02_800489F4 *door) {
 }
 
 /* case 2's: the panels and their tiles; one hides something */
-static void func_ovl0F_02_80046150(s32 n, UnkStruct_ovl0F_02_80048734 *panels, UnkStruct_ovl0F_02_80048918 *flags) {
+static void func_ovl0F_02_80046150(s32 n, UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags) {
     s32 i;
-    UnkStruct_ovl0F_02_80048734 *p;
 
-    p = panels;
-#line 1 "panels.c" /* fake: renumbers the lines (as1 orders a block partly by .loc line): this body needs lower lines than the code above it */
-    func_ovl0F_02_80044F74(n, panels);
+    func_ovl0F_02_80044F74(n, p);
     for (i = 0; i < n; i++) {
         if (p->unk1C == 0.0f) {
             func_ovl0F_02_80047328((s32) p->unkC - 1, (s32) p->unk10,
@@ -636,6 +638,12 @@ static void func_ovl0F_02_80046150(s32 n, UnkStruct_ovl0F_02_80048734 *panels, U
     D_ovl0F_02_80048918[func_ovl0F_02_80047FF8(n - 1)].unk8 = 3;
 }
 
+/* case 2's: 80046150 for the stage's panels (defined after it: its call's
+ * line has to follow 80046150's for as1, its stub 80046158 still lands
+ * between 80046150 and the door) */
+static void func_ovl0F_02_800462F8_inl4(void) {
+    func_ovl0F_02_80046150(5, D_ovl0F_02_8004883C, D_ovl0F_02_80048918);
+}
 
 /* case 2's: the wind, the blocks' callbacks and the particles */
 static void func_ovl0F_02_80046178(s32 n1, s32 n2) {
@@ -962,13 +970,13 @@ static f32 func_ovl0F_02_80043FEC_inl0(UnkStruct_ovl0F_02_80048734 *p) {
 }
 
 static void func_ovl0F_02_80043FEC_inl1(UnkStruct_ovl0F_02_80048734 *p) {
-    s32 padP; /* fake: unused; pos at sp+0xA8 */
+    s32 snd = 0x168; /* held (frame space before pos, at sp+0xA8; which value: a guess) */
     f32 pos[3];
 
     pos[0] = (*p->unk0)->unk40->unk10;
     pos[1] = (*p->unk0)->unk40->unk14;
     pos[2] = (*p->unk0)->unk40->unk18;
-    func_ovl0F_02_800483E8(0x168, pos);
+    func_ovl0F_02_800483E8(snd, pos);
     func_ovl0F_02_800483A0(pos);
 }
 
@@ -1367,26 +1375,6 @@ void func_ovl0F_02_80043944(void) {
     func_ovl0F_02_80047E48();
 }
 
-/* case 0x52's: the panel the player stands on, if it is still up (its stub
- * is 80043398, among the handler's; defined after 80043944 for its lines) */
-#line 1 "panels.c" /* fake: renumbers the lines (as1 orders a block partly by .loc line): the handler's case 0x52 (#line 6 below) needs these to straddle it */
-static s32 func_ovl0F_02_80043398(s32 n, UnkStruct_ovl0F_02_80048734 *panels, UnkStruct_ovl0F_02_80048918 *flags) {
-    s32 i;
-    UnkStruct_ovl0F_02_80048734 *p;
-
-    i = 0;
-    for (p = panels; i < n; i++) {
-        if (flags->unk0 != 0 && p->unk1C == 0.0f &&
-            func_ovl0F_02_800474B0((s32) p->unkC - 1, (s32) p->unk14 - 1,
-                                   (s32) p->unkC, (s32) p->unk14) != 0) {
-            return i;
-        }
-        p++;
-        flags++;
-    }
-    return -1;
-}
-
 
 /* the pushed blocks' callbacks */
 void func_ovl0F_02_800438B4(UnkStructA *obj) {
@@ -1630,38 +1618,49 @@ static void func_ovl0F_02_80043020(s32 count, UnkStruct_ovl0F_02_80048734 *p) {
 }
 
 static void func_ovl0F_02_800462F8_inl1(void) {
-    s32 pad[8]; /* fake: unused, frame space the original has (no source for it found) */
+    /* held values (frame space the original has; which: a guess) */
+    f32 dist = 0.0f;
+    s32 flag = 0x406;
+    s32 other = 0x407;
+    f32 x = 581.4f;
+    f32 y = 1430.1f;
+    f32 z = 1133.3f;
+    s32 wait = 60;
+    char *script = (char *) D_ovl0F_02_80048BD8;
 
-    if (func_ovl0F_02_800480C0(0x406) == 0) {
-        func_ovl0F_02_80047DC8(0.0f);
+    if (func_ovl0F_02_800480C0(flag) == 0) {
+        func_ovl0F_02_80047DC8(dist);
         func_ovl0F_02_80047DD0(0x7F);
-        func_ovl0F_02_800480B0(0x406);
-        func_ovl0F_02_800480B8(0x407);
+        func_ovl0F_02_800480B0(flag);
+        func_ovl0F_02_800480B8(other);
         func_ovl0F_02_80047C48();
         func_ovl0F_02_80047B90(0xF);
         func_ovl0F_02_80047B88(0x10);
         func_ovl0F_02_80047B18(0);
-        func_ovl0F_02_80047B38(581.4f, 1430.1f, 1133.3f);
-        func_ovl0F_02_80043324(60, (char *) D_ovl0F_02_80048BD8);
+        func_ovl0F_02_80047B38(x, y, z);
+        func_ovl0F_02_80043324(wait, script);
     }
 }
 
 static void func_ovl0F_02_800462F8_inl2(void) {
-    s32 pad[3]; /* fake: unused, frame space the original has (no source for it found) */
-    if (func_ovl0F_02_800480C0(0x406) != 0) {
+    /* held values (frame space the original has; which: a guess) */
+    s32 flag = 0x406;
+    s32 other = 0x407;
+    char *script = (char *) D_ovl0F_02_80048BF8;
+
+    if (func_ovl0F_02_800480C0(flag) != 0) {
         func_ovl0F_02_80047DC8(40.0f);
         func_ovl0F_02_80047DD0(30);
-        func_ovl0F_02_800480B8(0x406);
-        func_ovl0F_02_800480B0(0x407);
+        func_ovl0F_02_800480B8(flag);
+        func_ovl0F_02_800480B0(other);
         func_ovl0F_02_80047B88(0x1F);
         func_ovl0F_02_80047B18(1);
         func_ovl0F_02_80047C50();
         func_ovl0F_02_80047C18(D_ovl0F_02_80048D38);
-        func_ovl0F_02_80043324(60, (char *) D_ovl0F_02_80048BF8);
+        func_ovl0F_02_80043324(60, script);
     }
 }
 
-#line 1 "panels.c" /* fake: renumbers the lines (as1 orders a block partly by .loc line), for the handler's inlined copies */
 static void func_ovl0F_02_800462F8_inl0(u32 (*p)[3], s32 count) {
     s32 i;
 
@@ -1672,10 +1671,26 @@ static void func_ovl0F_02_800462F8_inl0(u32 (*p)[3], s32 count) {
     }
 }
 
-static void func_ovl0F_02_800462F8_inl4(void) {
-    func_ovl0F_02_80046150(5, D_ovl0F_02_8004883C, D_ovl0F_02_80048918);
+#line 1675 "handler.c" /* fake: another file name than the one compiled (any line number works): 80043398 and the handler need a `.file` of their own, which ends as1 blocks between them and the statics they inline (perhaps the original #included the code above, or this) */
+/* case 0x52's: the panel the player stands on, if it is still up (its stub
+ * is 80043398, among the handler's). Defined here, just before the handler
+ * (its lines before the call's, in the same file), and taking the panels
+ * as p itself: found is a held value (frame space; which: a guess). */
+static s32 func_ovl0F_02_80043398(s32 n, UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags) {
+    s32 i;
+    s32 found = -1;
+
+    for (i = 0; i < n; i++) {
+        if (flags->unk0 != 0 && p->unk1C == 0.0f &&
+            func_ovl0F_02_800474B0((s32) p->unkC - 1, (s32) p->unk14 - 1,
+                                   (s32) p->unkC, (s32) p->unk14) != 0) {
+            return i;
+        }
+        p++;
+        flags++;
+    }
+    return found;
 }
-#line 1707 "1E84A0.c" /* fake: back from the other file, at the line numbers it matched with */
 
 /* The overlay's handler: the entry returns it to the loader. */
 void func_ovl0F_02_800462F8(s32 arg0) {
@@ -1761,13 +1776,11 @@ void func_ovl0F_02_800462F8(s32 arg0) {
             if (func_ovl0F_02_800474B0(0x12, 0xA, 0x12, 0xA) != 0) {
                 func_ovl0F_02_800462F8_inl1();
             } else {
-#line 6 "panels.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
                 i = func_ovl0F_02_80043398(5, D_ovl0F_02_8004883C, D_ovl0F_02_80048918);
                 if (i != -1) {
                     D_ovl0F_02_80048D74 = i;
                     func_ovl0F_02_80047E38(func_ovl0F_02_80043944, NULL, 0, 0, 0x110);
                 }
-
             }
             break;
         case 0x53:

@@ -1582,8 +1582,7 @@ static void func_ovl12_05_80044534(void) {
 static f32 func_ovl12_05_800444D4(UnkStructA_40 *from, UnkStructA_40 *to) {
     Vec3f a;
     Vec3f b;
-    f32 pad[2]; /* fake: unused; the original's frame is 8 bytes bigger */
-    f32 angle;
+    Vec3f angle;
 
     a.x = from->unk10;
     a.y = from->unk14;
@@ -1591,8 +1590,8 @@ static f32 func_ovl12_05_800444D4(UnkStructA_40 *from, UnkStructA_40 *to) {
     b.x = to->unk10;
     b.y = to->unk14;
     b.z = to->unk18;
-    func_ovl12_05_8004A038((Vec3f *) &a.x, (Vec3f *) &b.x, (Vec3f *) &angle);
-    return angle;
+    func_ovl12_05_8004A038(&a, &b, &angle);
+    return angle.x;
 }
 
 /* twin of 12_03:80043E68 (nonmatching/overlays/ovl_12_03/250B70.c) */

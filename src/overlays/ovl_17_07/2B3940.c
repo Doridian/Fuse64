@@ -19,12 +19,15 @@
  * - The zero: the original sets it in both arms of the `diff >= 360`
  *   test and copies it to t's $f20 after, from z in $f26. z is 0.0f in
  *   one arm and an int 0 in the other (identical constants fold, and the
- *   test with them), and a dead `if (z != 0.0f)` in the loop keeps it in
- *   a saved register over the loop (frame 0x60). Two uses of the 1/6 in
+ *   test with them), and an `if (z != 0.0f)` debug check in the loop
+ *   (DEBUG_PRINT, compiled out; 2026-11-14, it was a dead `u = 1.0f`)
+ *   keeps it in a saved register over the loop (frame 0x60). Two uses of the 1/6 in
  *   a `* 0` after the loop (2026-11-13) raise its priority above z's, so
  *   the 1/6 takes $f24 and z $f26.
- * - The empty do-while after the abs (from the permuter) puts the 10 in
- *   s5 and &D_ovl17_07_800457C0 in s4.
+ * - The `if (x > 0)` debug check after the abs (DEBUG_PRINT, compiled
+ *   out; 2026-11-14, it was the permuter's empty do-while; x < 0, x > 10,
+ *   x < -10 and y == 0 match too) puts the 10 in s5 and
+ *   &D_ovl17_07_800457C0 in s4.
  * - y is set in each arm of the 0x401 test (the original's delay slot).
  * - The dead `if (!obj->unk40->unk20 && !obj->unk40->unk20) {}` in z's
  *   else arm survives uopt as two loads into temporaries, which as1
@@ -327,7 +330,6 @@ void func_ovl17_07_8004376C(s32 arg0, f32 arg1) {
     f32 diff;
     f32 t;
     f32 z;
-    f32 u;
     s32 i;
     s32 x;
     s32 y;
@@ -381,16 +383,17 @@ void func_ovl17_07_8004376C(s32 arg0, f32 arg1) {
                 x = -(10 - (s32) t);
             }
             D_ovl17_07_800457C0 = (x < 0 ? -x : x) / 2;
-            do { /* fake: (the permuter) puts the 10 in s5 and &D_ovl17_07_800457C0 in s4 */
-            } while (0);
+            if (x > 0) { /* a compiled-out debug check (a guess: several tests of x or y match; it puts the 10 in s5 and &D_ovl17_07_800457C0 in s4) */
+                DEBUG_PRINT(("x > 0\n"));
+            }
         }
         func_ovl17_07_80044AD8(D_ovl17_07_800456B0.unk4);
         D_ovl17_07_800456B0.unk4 = func_ovl17_07_80044AD0(D_ovl17_07_800456B0.unk0->unk40, 0, x, y,
                                                           D_ovl17_07_800456B0.unk10, D_ovl17_07_800456B0.unk12);
         func_ovl17_07_80044F20();
         t += 0.16666667f;
-        if (z != 0.0f) { /* fake: dead, keeps a saved float register in use */
-            u = 1.0f;
+        if (z != 0.0f) { /* a compiled-out debug check (a guess: any test of z matches; it keeps z in a saved register) */
+            DEBUG_PRINT(("z != 0\n"));
         }
     }
     /* fake: two uses of the 1/6 after the loop (folded only after colouring) lift its

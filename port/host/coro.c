@@ -89,7 +89,7 @@ static Buf *find(intptr_t *buf, int create) {
     return &bufs[nbufs++];
 }
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(__x86_64__)
 int port_task_v;
 #endif
 

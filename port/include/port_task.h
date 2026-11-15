@@ -23,7 +23,18 @@
 
 #include <setjmp.h>
 
-#if defined(_WIN32)
+#if defined(_WIN32) && defined(__x86_64__)
+/* x86-64 Windows: the CRT's setjmp with no frame, whose longjmp restores
+   the registers without unwinding (MinGW's __USE_MINGW_SETJMP_NON_SEH
+   setjmp).  Not the compiler's: on Win64 clang's __builtin_longjmp puts
+   back the frame pointer less the offset the prologue gave it (rbp is
+   rsp plus the frame's size there), so the setjmp's function restored
+   xmm6-xmm15 and its locals from the wrong place: a float the game kept
+   across a task switch (9BFD0's fades) came back 0. */
+typedef jmp_buf port_jmp_buf;
+#define PORT_SETJMP(b) _setjmp((b), NULL)
+#define PORT_LONGJMP(b, v) longjmp((b), (v))
+#elif defined(_WIN32)
 /* MinGW's i386 longjmp unwinds the SEH chain, which a switch of fibers
    leaves as another stack's: the compiler's own setjmp there, whose
    longjmp passes 1 (the value goes beside it) */

@@ -11,7 +11,7 @@ files come from it).
 
 ## Status
 
-As of 2026-11-14:
+As of 2026-11-15:
 
 | host | builds | how far it runs |
 |---|---|---|
@@ -20,14 +20,15 @@ As of 2026-11-14:
 | WebAssembly (emscripten), node | yes | the four scenarios are Linux i386's, in us, eu and jp |
 | WebAssembly, a page (`PORT_WASM_TARGET=web`) | yes | plays in a browser (headless Chromium, us, eu and jp: the legal screen, the opening, the attract demos), the ROM from a file picker or `?rom=`, the save in IndexedDB |
 | big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | the four scenarios are Linux i386's, in us, eu and jp |
-| Linux x86-64, us | yes | `test.py`'s four scenarios are i386's (legal, menus, battle, story: "Where pointers are 8 bytes") |
-| Linux x86-64, eu and jp | yes | legal, menus and battle are i386's |
-| aarch64 (zig, qemu-user), us | yes | legal, menus and battle are i386's |
-| macOS, Windows x64 | not tried | ("What's left") |
+| Linux x86-64 | yes | the four scenarios are Linux i386's, in us, eu and jp ("Where pointers are 8 bytes"); under ASan and UBSan too, in us |
+| Windows x64 (zig `x86_64-windows-gnu`, under wine) | yes | the four scenarios are Linux i386's, in us, eu and jp |
+| aarch64 (zig, qemu-user) | yes | the four scenarios are Linux i386's, in us, eu and jp |
+| macOS | not tried | ("What's left") |
 
-`port/tools/matrix.py` runs the seven 32-bit hosts with the three versions and
-the four scenarios ("The matrix"). Its last run, 2026-11-14 (after the
-vertex fix in "Byte order"), gave the references in all 84.
+`port/tools/matrix.py` runs the ten hosts with the three versions and the
+four scenarios ("The matrix"). Its last runs: the seven 32-bit hosts on
+2026-11-14 (after the vertex fix in "Byte order"), the references in all
+84; the three 64-bit hosts on 2026-11-15, the references in all 36.
 
 The ROM build is unchanged by all of it: every change to `src/` is under
 `TARGET_PC`, a macro that gives IDO the same text, or a type that gives it
@@ -97,7 +98,20 @@ coro.c; a game thread resumes in the fiber it yielded from, as
 swapcontext does), the tasks' setjmp is the compiler's own (MinGW's i386
 longjmp unwinds the SEH chain, which a task switch must not), and
 `port_addr` takes the PE image's bounds (memory.c). test.py runs a `.exe`
-under the build's emulator (wine). 64-bit Windows needs the pointer pass.
+under the build's emulator (wine).
+
+`cross-win64.cmake` is the same for x86-64 (`x86_64-windows-gnu`), with
+8-byte pointers ("Where pointers are 8 bytes"; LLP64's 4-byte `long`
+changes nothing, the game's types being fixed widths). There the tasks'
+setjmp is the CRT's with no frame (`_setjmp(buf, NULL)`, MinGW's
+`__USE_MINGW_SETJMP_NON_SEH` setjmp, whose longjmp restores the registers
+without unwinding), not the compiler's: on Win64 clang's
+`__builtin_longjmp` puts back the frame pointer less the offset the
+prologue gave it (`rbp` is `rsp` plus the frame's size there), so the
+function that set the buffer restored xmm6-xmm15 (callee-saved on Win64)
+and its locals from the wrong place, and a float the game kept across a
+task switch came back 0 (9BFD0.c's fades: jp's legal screen differed from
+retrace 179).
 
 ### WebAssembly
 
@@ -178,20 +192,53 @@ jp's opening logo scene, which it plays by itself after the title, starts
 moves from one event to the next when every thread waits), so a run is
 the same on every host.
 
+### When a scenario differs
+
+The checkpoint says by when; `fuse64 --hash` prints every retrace's
+digest, so two builds' runs (`--headless --deterministic` and the
+scenario's `--input`) give the first retrace that differs, and
+`--screenshot PREFIX --every N` what it looks like. Then:
+
+```
+PORT_DUMP_DL=4306:4306:a.txt build-a/fuse64 --headless --deterministic --frames 4307 ... baserom.us.z64
+PORT_DUMP_DL=4306:4306:b.txt build-b/fuse64 ...
+diff a.txt b.txt
+```
+
+`PORT_DUMP_DL=FROM:TO[:FILE]` (port/host/gfx.c) writes every command of
+the graphics tasks of retraces FROM to TO (to stderr without FILE), one
+line each, indented by its depth in the display list calls: the two
+words, and what it loads: a matrix's 16 s15.16 elements, each vertex's
+x, y, z, flag, s, t and colour (or normal), a movemem's bytes, TMEM's
+checksum after each load. An address word that is one of the run's
+pointers is written `ptr`, and every address as where it is (`@` and an
+offset in `port_rdram`, or `@host`), so that two hosts' dumps compare
+line for line where their layouts agree (the 32-bit hosts with each
+other, the 64-bit hosts with each other). The vertex fix in "Byte order"
+was found this way (with a temporary log then). For the game's memory
+(the objects, the pools) `PORT_DUMP_RDRAM` ("Checks and debugging aids"),
+or the objects under gdb on both builds; a write to one field is quickest
+found with gdb's `watch -l` on the native build, a task's locals with
+the Windows build's crash dump (winedbg, with
+`HKCU\Software\Wine\WineDbg\ShowCrashDialog` 0 in the prefix, prints the
+registers and the stack).
+
 ### The matrix
 
 ```
-port/tools/matrix.py --tree eu=../tree-eu --tree jp=../tree-jp [--build] -j 16 --results matrix.json
+port/tools/matrix.py --tree eu=../tree-eu --tree jp=../tree-jp [--build] [--32 | --64] -j 16 --results matrix.json
 ```
 
-runs every 32-bit host (Linux i386, Windows i386 under wine, WebAssembly
-under node, mips, ppc, mipsel and armhf under qemu-user) with every
-version and scenario through test.py and prints the table below.
-`asm/` holds one version at a time, so each version's builds are in a
-tree of its own with that version extracted (`--tree V=DIR`; this
-checkout is its `.version`'s): `build-port`, `build-port-win32`,
-`build-port-wasm`, `build-port-<arch>`, which `--build` configures and
-builds. wine runs in a prefix of its own (`--wineprefix`, by default
+runs every host with every version and scenario through test.py and
+prints the tables below: the 32-bit ones (`--32`: Linux i386, Windows
+i386 under wine, WebAssembly under node, mips, ppc, mipsel and armhf
+under qemu-user) and the 64-bit ones (`--64`: Linux x86-64, Windows x64
+under wine, aarch64 under qemu-user). `asm/` holds one version at a
+time, so each version's builds are in a tree of its own with that
+version extracted (`--tree V=DIR`; this checkout is its `.version`'s):
+`build-port`, `build-port-win32`, `build-port-wasm`,
+`build-port-<arch>`, `build-port-x86_64`, `build-port-win64`, which
+`--build` configures and builds. wine runs in a prefix of its own (`--wineprefix`, by default
 `build-port-wine`) with no display, and its wineserver is stopped at the
 end. `--results` keeps each result as it comes and `--resume` skips those
 it has. Nearly all of the time is qemu's story runs (12000 retraces).
@@ -222,6 +269,26 @@ retrace, the sound, the EEPROM): 84 of 84. The run before the fix gave
 the little-endian hosts), and ppc's story hadn't run. The story references are the fixed Linux i386 build's,
 whose us story then matched mips's (the unfixed build's) hash for hash
 through retrace 4500.
+
+The 64-bit hosts' last run, 2026-11-15 (`--64 -j 12`, every build
+rebuilt from this branch in each version's tree; 42 minutes, nearly all
+of it qemu-aarch64's story, about 40 minutes a run, against under 3 on
+Linux x86-64 and wine):
+
+| host | us | eu | jp |
+|---|---|---|---|
+| Linux x86-64 | legal menus battle story | legal menus battle story | legal menus battle story |
+| Windows x64 (wine) | legal menus battle story | legal menus battle story | legal menus battle story |
+| aarch64 (qemu) | legal menus battle story | legal menus battle story | legal menus battle story |
+
+36 of 36. The first run (before the fixes) gave 26: Windows x64 gave
+only us's and eu's legal screens, the rest differing (the tasks' setjmp:
+"Windows"), and battle crashed there once that was fixed (6BBE0.c's
+buffer: "Where pointers are 8 bytes"); Linux x86-64 and aarch64 gave the
+references already. The fixes leave the 32-bit hosts' layouts the N64's
+(a buffer sized for 8-byte pointers is its N64 size where they are 4;
+only 54E40.c's local is bigger on every host): after them Linux i386's
+and big-endian MIPS's four us scenarios gave the references.
 
 ## How it works
 
@@ -262,10 +329,10 @@ it move up ("Where pointers are 8 bytes").
 DozerEncore's pointer pass ("Where pointers are 8 bytes" in its PORT.md),
 done here the same way: every pointer the game's C keeps is a host
 pointer, in a structure the host compiler lays out, and the code that
-reached a field by its N64 offset reaches it by name. On x86-64 the us
-scenarios of `test.py` give i386's digests, sound and EEPROM (`test.py
-run` against the same references; `test.py same build-port32
-build-port64`).
+reached a field by its N64 offset reaches it by name. On Linux x86-64,
+Windows x64 and aarch64 the scenarios of `test.py` give i386's digests,
+sound and EEPROM (`test.py run` against the same references; `test.py
+same build-port32 build-port64`; "The matrix").
 
 - **The game's structures.** A field that holds a pointer is a pointer or
   `PORT_IP(s32)`/`PORT_UP(u32)` (include/common.h: s32 for IDO, intptr_t
@@ -320,6 +387,21 @@ build-port64`).
 - `test.py same build-port32 build-port64` and the hashes per retrace
   (`--hash`), with the objects and the pools dumped from both under gdb,
   found the rest: a scenario that differs says where.
+- What none of those see: a buffer the game sized by the N64's pointers
+  that a callee fills with the host's. On Linux x86-64 such an overflow
+  hit nothing that mattered; the Windows x64 build (another frame layout)
+  and ASan ("Checks and debugging aids") found them. 6BBE0.c's
+  func_80254DC8 gave func_8022F698 0x28 bytes on its stack for ten
+  object pointers (on Windows it wrote 40 bytes of NULLs over the CPU
+  players' task frames, and battle crashed at retrace 1438); 412F0.c's
+  `D_802A5398` receives a message (a pointer); 85A10.c's `D_802AD698` is
+  an OSScClient (two pointers); 52270.c's thread slots hold an OSThread
+  (0x1C0 bytes here, 8-aligned). Each is `PORT_HOST(n, ...)`, `PORT_IP`
+  or a `TARGET_PC` type. One wasn't the pointers': 54E40.c's
+  func_8023FAA0 gives func_8026DCAC three ints of room, and it writes three
+  floats after them (on the N64 the frame had the room). And gen_regions.py
+  moves a name by a multiple of 16, so that it keeps its N64 alignment
+  (4ED50.c's Vec3f at `D_8008E648` was at an odd address).
 
 ### Byte order
 
@@ -425,13 +507,34 @@ HLE (aspmain.c). The AI's buffers go to SDL or `--wav`.
   value reaches a return is in a `PORT_V0(...)` ("ZeroJump"). us: 7 such
   functions, all covered (func_8023085C's was missing).
 - **Sanitizers**: `-DPORT_SANITIZE=...` (any `-fsanitize=` list), with
-  `-DPORT_SANITIZE_RECOVER=ON` to survey every report instead of stopping
-  at the first.
+  `-DPORT_SANITIZE_RECOVER=ON` (and `ASAN_OPTIONS=halt_on_error=0`) to
+  survey every report instead of stopping at the first. On x86-64,
+  `address,undefined` over test.py's four us scenarios
+  (`ASAN_OPTIONS=detect_leaks=0:detect_stack_use_after_return=0`) gives
+  the references and no AddressSanitizer report since the fixes in "Where
+  pointers are 8 bytes" (four were real overflows there, and an OSThread
+  at an unaligned offset). UBSan's that stay, each read: 412F0.c's
+  func_80227678 indexes through `D_802A538C` while it is still NULL (an
+  address computed, not read: the caller doesn't use it then); 87D80.c's
+  stage map indexes a layer's cells past the decompilation's `[23]` into
+  the next layer (no pointers there, so the same bytes as on the N64); and
+  5E3F0.c's func_80243D90 and func_80243D2C take index -1 (`D_802AC894`,
+  no current entry) of `D_800AEDF0`, clearing bit 0x8000 of the word 0x38
+  bytes before the array and reading another: on the N64 and the 32-bit
+  hosts `D_800AED78[2].unk0` (a pointer), where pointers are 8 bytes
+  another word of `D_800AED78`, as the array's elements are bigger there.
+  Neither changes what the scenarios show; it is the game's own bug, left
+  as it is. `-DPORT_HOST_MALLOC=ON` (the game's blocks the host's, for ASan)
+  runs the legal screen, but the menus crash at retrace 324 in the
+  renderer, a vertex address in none of the blocks (not looked into
+  further: the arena build is the one checked).
 - `PORT_GFX_TRACE=X,Y` logs every write to that pixel of a color image
   (the color, the othermode, the tile, the texture image and its offset in
   RDRAM, the sample's s and t; with `-v -v` TMEM and the palette), and
   `PORT_DUMP_RDRAM=N:FILE` writes the RDRAM buffer at retrace N: together
   they found the big-endian hosts' difference ("Byte order").
+- `PORT_DUMP_DL=FROM:TO[:FILE]` writes the display lists of retraces FROM
+  to TO as text ("Testing").
 
 ## Source changes
 
@@ -446,17 +549,27 @@ array), `PORT_SPAN2`, `PORT_WORD_BYTE0`, `PORT_BE32_GET`/`SET`,
 macros (530C0), the overlay loader's call (40FB0), the byte-order calls
 where data arrives, declarations a host needs, and data given the type
 the hardware reads it with (ovl_0A_01's and 0A_06's vertices: "Byte
-order").
+order"), and buffers the host's size where a callee fills them with
+pointers or more than the caller gave room for ("Where pointers are 8
+bytes").
 
 ## What's left
 
-- **64-bit, the rest**: story on aarch64 (qemu is slow), eu and jp there,
-  macOS and Windows x64; ASan and UBSan on x86-64. The scenarios cover the menus, battle and the first stage:
-  what they don't reach (the other stages and overlays, the story's
-  bosses, the options) can still read a pointer through an N64 offset or a
-  32-bit integer. `ptrcast_scan.py`'s allow-list and m2c_port.py's
-  "no known struct" list are the static side of it ("Where pointers are 8
-  bytes"); a run that crashes or differs from i386 the dynamic one.
+- **64-bit, the rest**: macOS (not tried). The scenarios cover the menus,
+  battle and the first stage: what they don't reach (the other stages and
+  overlays, the story's bosses, the options) can still read a pointer
+  through an N64 offset or a 32-bit integer, or fill an N64-sized buffer
+  with host pointers (the bugs the Windows x64 build and ASan found were
+  of that kind). `ptrcast_scan.py`'s allow-list and m2c_port.py's "no known
+  struct" list are the static side of it ("Where pointers are 8 bytes"); a
+  run that crashes or differs from i386, on any of the three 64-bit hosts
+  or under ASan, the dynamic one. ASan and UBSan in eu and jp not run;
+  `PORT_HOST_MALLOC` stops in the menus ("Checks and debugging aids").
+- **5E3F0.c's index -1** (func_80243D90, func_80243D2C with no current
+  entry): the word it clears a bit of and the one it reads are other
+  words where pointers are 8 bytes than on the N64 ("Checks and debugging
+  aids"); harmless in the scenarios, but a faithful port would reach the
+  N64's words (not changed: other work is going on in that file).
 - **Packages** (an AppImage, the `.exe` with SDL, a macOS app; Blast
   Corps' "Packages") and a hosted page: after 64-bit, with SDL in the
   Windows cross build.

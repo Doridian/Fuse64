@@ -208,6 +208,27 @@ typedef struct {
 
 extern UnkStruct_800AEDF0 D_800AEDF0[5];
 
+#ifdef TARGET_PC
+/*
+ * Entry -1: D_802AC894 is -1 when no entry is current, and func_80243DEC
+ * (func_80243D90) and the scripts' func_80243D2C index D_800AEDF0 with it
+ * all the same (the game's own bug; the scenarios reach both). On the N64
+ * entry -1's unk68 is the word 0x60 bytes before the array,
+ * D_800AED78[2].unk0 (5E090.c's: a pointer, NULL then), and its unk14 the
+ * word 0xB4 before it, D_800AEBBC + 0x180 (0 then). Where pointers are 8
+ * bytes the entries and D_800AED78's elements are bigger, so the same
+ * index reaches other words; a host reaches the N64's (on a 32-bit host
+ * the same words as the original's index).
+ */
+typedef struct {
+    /* 0x00 */ void *unk0;
+    /* 0x04 */ void *unk4;
+    /* 0x08 */ s32 unk8;
+} Port_800AED78;
+extern Port_800AED78 D_800AED78[];
+extern u8 D_800AEBBC[];
+#endif
+
 typedef struct {
     /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;)
     /* 0x04 */ f32 unk4;
@@ -5242,6 +5263,20 @@ s32 func_80243DDC() {
 }
 
 void func_80243D90(s32 arg0, s32 arg1, s32 arg2) {
+#ifdef TARGET_PC
+    if (arg0 == -1) {
+        /* (the N64's word is the pointer's low half: the flag's bit there) */
+        uintptr_t w = (uintptr_t)D_800AED78[2].unk0;
+
+        if (arg2 == 1) {
+            w |= (u32)arg1;
+        } else {
+            w &= ~(uintptr_t)(u32)arg1;
+        }
+        D_800AED78[2].unk0 = (void *)w;
+        return;
+    }
+#endif
     s32 v = D_800AEDF0[arg0].unk68;
 
     if (arg2 == 1) {
@@ -5261,6 +5296,11 @@ s32 *func_80243D54(s32 arg0) {
 }
 
 s32 func_80243D2C(s32 arg0) {
+#ifdef TARGET_PC
+    if (arg0 == -1) {
+        return *(s32 *)(D_800AEBBC + 0x180);
+    }
+#endif
     return D_800AEDF0[arg0].unk14;
 }
 

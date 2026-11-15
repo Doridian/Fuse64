@@ -526,7 +526,6 @@ void func_ovl0D_06_8004518C(void) {
     func_ovl0D_06_80045164();
     D_ovl0D_06_80047608 = func_ovl0D_06_80045ED8();
     func_ovl0D_06_80046C20(1);
-    /* fake: (see the top): 1600.0f in $f16 */
     func_ovl0D_06_8004515C();
     func_ovl0D_06_80044800();
     func_ovl0D_06_80045154();
@@ -778,7 +777,7 @@ void func_ovl0D_06_80044B14(void) {
 void func_ovl0D_06_80044808(void) {
     s32 i;
 
-    /* fake: (as in ovl_0D_02's 80043510): keeps the first call out of the prologue */
+    /* fake: (as in ovl_0D_02's 80043510): keeps the first call out of the prologue; 0D_02's form (80044800 defined in statics.h) misses here, as 8004518C inlines it first (the call moves into the prologue, 1416 words) */
     if (!D_ovl0D_06_80047080 && !D_ovl0D_06_80047080 && !D_ovl0D_06_80047080) {
     }
     func_ovl0D_06_80044800();
@@ -1107,7 +1106,7 @@ static void func_ovl0D_06_8004355C(s32 id, s32 x, s32 n, s32 z) {
 }
 
 void func_ovl0D_06_80043500(f32 arg0, f32 arg1, f32 arg2) {
-    /* fake: (see the top): 800435FC's address taken */
+    /* fake: (see the top): 800435FC's address taken (800435FC global: 195 words; no address: 56) */
     if (0) {
         func_ovl0D_06_800468D8(func_ovl0D_06_800435FC, NULL, 0, 0, 0);
     }
@@ -1190,7 +1189,7 @@ void func_ovl0D_06_8004305C(void) {
 #include "overlays/ovl_0D_06/statics.h"
 #undef STATICS_PART
         func_ovl0D_06_80045E60(j, 0, 0, D_ovl0D_06_800475F8[0] - 1, D_ovl0D_06_800475F8[2] - 1, 0, 0, 0);
-        func_ovl0D_06_80043010(); /* fake: (see the top) */
+        func_ovl0D_06_80043010(); /* fake: (see the top); without it the frame is 8 short (80043010 with an s32 or pointer parameter, a debug check in it: the same; the statics.h line as an inlined static returning j: a stub more) */
         i = 0;
         func_ovl0D_06_80046790(D_ovl0D_06_800470BC[i++].obj, 0x01000000);
         D_ovl0D_06_800470BC[i].unk18 = 180.0f;

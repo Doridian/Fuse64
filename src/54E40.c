@@ -2258,7 +2258,7 @@ void func_8023FAA0() {
     s32 var_v0;
     u8 *temp_v0;
     u8 *temp_v1;
-    s32 sp44[3];
+    s32 sp44[PORT_HOST(3, 6)]; /* (func_8026DCAC writes three floats after the three ints) */
     u8 *temp_v1_3;
 
     temp_v0 = (u8 *)(func_802391F0());

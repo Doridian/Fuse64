@@ -3599,7 +3599,7 @@ static void *func_80254E00(f32 *arg0, f32 *arg1) {
 
 static PORT_IP(s32) func_80254DC8(void *arg0, s32 arg1, f32 arg2) {
     f32 size[3];
-    u8 buf[0x28];
+    u8 buf[PORT_HOST(0x28, 10 * sizeof(void *))]; /* ten object pointers */
 
     size[2] = arg2;
     size[1] = arg2;

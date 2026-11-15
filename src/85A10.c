@@ -195,7 +195,7 @@ extern u8 D_802A5040[];
  * array or struct 8-aligned. */
 UnkStruct_802AD680 D_802AD680;
 void *D_802AD690;
-u8 D_802AD698[0x8];
+u8 D_802AD698[PORT_HOST(0x8, 2 * sizeof(void *))] PORT_ONLY(__attribute__((aligned(8)))); /* (sched.h's OSScClient) */
 UnkStruct_802AD6A0 D_802AD6A0;
 u64 D_802AD928[0x2000 / 8];
 UnkStruct_802AF928 *D_802AF928;

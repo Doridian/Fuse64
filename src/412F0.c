@@ -114,7 +114,7 @@ s32 D_802A5388;
 UnkStruct_802A538C *D_802A538C;
 UnkStruct_80226E84 *D_802A5390;
 s32 D_802A5394;
-s32 D_802A5398;
+PORT_IP(s32) D_802A5398; /* (a message: a pointer's size) */
 u8 D_802A539C[4];
 UnkStruct_802A5330 D_802A53A0;
 void *D_802A53B8;
@@ -307,7 +307,7 @@ void func_80226B18(void *arg0) {
         func_80237A90(task);
         func_80237A70(&D_802A53A0, &msg5C);
         func_8022997C();
-        D_802A5394 = D_802A5398;
+        D_802A5394 = (s32) D_802A5398;
     }
 }
 

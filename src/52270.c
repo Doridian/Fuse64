@@ -25,7 +25,11 @@ typedef struct {
     /* 0x008 */ UnkStruct_802A8938 unk8;
     /* 0x020 */ void *unk20;
     /* 0x024 */ u8 unk24[4];
+#ifdef TARGET_PC
+    /* 0x028 */ u64 unk28[PORT_SIZEOF_OSTHREAD / 8]; /* an OSThread: the host's, 8-aligned */
+#else
     /* 0x028 */ u8 unk28[0x1B0];
+#endif
     /* 0x1D8 */ u8 unk1D8[0x400];
 } UnkStruct_802A5A60; /* size 0x5D8 */
 

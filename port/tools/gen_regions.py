@@ -84,7 +84,9 @@ def main():
             base = cover[5]
         else:
             cover = None
-            hoff = max(off, hend) if lay else off
+            # (a name that moves up moves by a multiple of 16, so that it
+            # keeps the N64's alignment: 4ED50.c's Vec3f at D_8008E648)
+            hoff = off + ((max(hend - off, 0) + 15) & ~15) if lay else off
             base = "port_rdram"
             if hoff != off and a >= FIXED_FROM:
                 sys.exit("gen_regions.py: %s moved to 0x%X, past the work area" % (n, 0x80000000 + hoff))

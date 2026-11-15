@@ -273,7 +273,7 @@ void func_ovl0E_09_800444F0(UnkStructA *arg0) {
 
 void func_ovl0E_09_80043F8C(void) {
     s16 moving;
-    s32 pad; /* fake: unused; the original's frame has one more slot */
+    f32 h; /* a guess: any float held here fills the slot (1200.0f, 4.0f too) */
     UnkStruct_ovl0E_09_80045DCC *rec;
     UnkStructA *obj;
     s16 doneX;
@@ -281,6 +281,7 @@ void func_ovl0E_09_80043F8C(void) {
     s32 flags;
     f32 pos[3];
 
+    h = 100.0f;
     moving = 0;
     rec = func_ovl0E_09_80045600();
     rec->unk8 = func_ovl0E_09_800454D0(0x1BB, 0x30, rec->unk14, rec->unk18, rec->unk1C);
@@ -348,8 +349,8 @@ void func_ovl0E_09_80043F8C(void) {
         flags = func_ovl0E_09_80045438(obj, 0xC0);
         if (flags != 0) {
             if (flags & 0x6000) {
-                func_ovl0E_09_80045A28(0x14, obj->unk40->unk10, obj->unk40->unk14 + 100.0f, obj->unk40->unk18, 0);
-                func_ovl0E_09_80045A28(0x12, obj->unk40->unk10, obj->unk40->unk14 + 100.0f, obj->unk40->unk18, 0);
+                func_ovl0E_09_80045A28(0x14, obj->unk40->unk10, obj->unk40->unk14 + h, obj->unk40->unk18, 0);
+                func_ovl0E_09_80045A28(0x12, obj->unk40->unk10, obj->unk40->unk14 + h, obj->unk40->unk18, 0);
                 func_ovl0E_09_80045B80(0x168, obj->unk40->unk10, obj->unk40->unk14, obj->unk40->unk18);
                 pos[0] = obj->unk40->unk10;
                 pos[1] = obj->unk40->unk14;

@@ -390,9 +390,10 @@ void func_ovl10_04_80043998(s32 arg0) {
 void func_ovl10_04_80043740(void) {
     s32 i;
     UnkStruct_ovl10_04_800453E0 *p;
-    s32 pad; /* fake: unused; the original's frame has the slot */
+    f32 lim; /* a guess: any float held for the loop fills this slot (42.5f, 34.0f too) */
     f32 x;
 
+    lim = 5600.0f;
     for (i = 0; i < 8; i++) {
         if (D_ovl10_04_80045F68[i] != NULL && D_ovl10_04_80045FA8 % 2 == i % 2) {
             func_ovl10_04_800435E0(i);
@@ -417,7 +418,7 @@ void func_ovl10_04_80043740(void) {
             if (D_ovl10_04_80045FD0[i] < 4 && func_ovl10_04_80045278(D_ovl10_04_80045F68[i], 0x20) != 0) {
                 D_ovl10_04_80045F68[i]->unk40->unk10 = x;
             }
-            if (D_ovl10_04_80045F68[i]->unk40->unk10 > 5600.0f) {
+            if (D_ovl10_04_80045F68[i]->unk40->unk10 > lim) {
                 func_ovl10_04_800435C0(D_ovl10_04_80045F68[i]);
                 D_ovl10_04_80045F68[i] = NULL;
             }

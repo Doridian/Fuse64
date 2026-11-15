@@ -518,13 +518,17 @@ void func_ovl0E_02_8004405C(UnkStruct_ovl0E_02_800467A0 *arg0, s16 arg1, s16 arg
 
 void func_ovl0E_02_80043C08(void) {
     UnkStructA_40 *p;
-    f32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
+    /* a guess: two held floats fill these slots (any two do) */
+    f32 lim;
+    f32 h;
     UnkStruct_ovl0E_02_8004648C *rec;
     s32 up;
     f32 a[3];
     f32 b[3];
     f32 dist;
 
+    lim = 700.0f;
+    h = 100.0f;
     rec = func_ovl0E_02_80045C20();
     rec->unk0 = func_ovl0E_02_80045AD0(0x1BE, 0x01000040, 0x20, 0);
     func_ovl0E_02_80045AE0(rec->unk0);
@@ -566,7 +570,7 @@ void func_ovl0E_02_80043C08(void) {
             b[1] = 0.0f;
             b[2] = D_ovl0E_02_80046760[2];
             dist = func_ovl0E_02_80045A50(a, b);
-            if (dist < 700.0f) {
+            if (dist < lim) {
                 p = rec->unk0->unk40;
                 func_ovl0E_02_800461A0(0x7B, p->unk10, p->unk14, p->unk18);
             }
@@ -582,7 +586,7 @@ void func_ovl0E_02_80043C08(void) {
             } else {
                 up = 1;
             }
-            func_ovl0E_02_80046048(7, rec->unk4, rec->unk8 + 100.0f, rec->unk10, 0);
+            func_ovl0E_02_80046048(7, rec->unk4, rec->unk8 + h, rec->unk10, 0);
         }
         rec->unk0->unk40->unk14 = rec->unk8;
         func_ovl0E_02_80045C40();

@@ -451,9 +451,10 @@ void func_ovl10_03_80044BBC(s32 arg0) {
 void func_ovl10_03_80044964(void) {
     s32 i;
     UnkStruct_ovl10_03_800465E0 *p;
-    s32 pad; /* fake: unused; the original's frame has the slot */
+    f32 lim; /* a guess: any float held for the loop fills this slot (42.5f, 34.0f too) */
     f32 x;
 
+    lim = 5600.0f;
     for (i = 0; i < 8; i++) {
         if (D_ovl10_03_80047228[i] != NULL && D_ovl10_03_80047268 % 2 == i % 2) {
             func_ovl10_03_80044804(i);
@@ -478,7 +479,7 @@ void func_ovl10_03_80044964(void) {
             if (D_ovl10_03_80047290[i] < 4 && func_ovl10_03_80046478(D_ovl10_03_80047228[i], 0x20) != 0) {
                 D_ovl10_03_80047228[i]->unk40->unk10 = x;
             }
-            if (D_ovl10_03_80047228[i]->unk40->unk10 > 5600.0f) {
+            if (D_ovl10_03_80047228[i]->unk40->unk10 > lim) {
                 func_ovl10_03_800447E4(D_ovl10_03_80047228[i]);
                 D_ovl10_03_80047228[i] = NULL;
             }
@@ -617,10 +618,11 @@ void func_ovl10_03_80043E34(void) {
     Vec3f pos2;
     Vec3f ang;
     f32 a;
-    s32 pad; /* fake: unused; the original's frame has the slot */
+    f32 y; /* the height the positions are flattened to */
 
+    y = 700.0f;
     func_ovl10_03_80046598(func_ovl10_03_80045D08(0), &player);
-    if (player.y == 700.0f || D_ovl10_03_80046FF0 != 0) {
+    if (player.y == y || D_ovl10_03_80046FF0 != 0) {
         for (i = 0; i < 2; i++) {
             for (j = 0; j < 9; j++) {
                 D_ovl10_03_80047428[i][10 - j - 1] = D_ovl10_03_80047428[i][10 - j - 2];
@@ -629,13 +631,13 @@ void func_ovl10_03_80043E34(void) {
             D_ovl10_03_80047428[i][0] = D_ovl10_03_800472D8[i]->unk40->unk10;
             D_ovl10_03_80047478[i][0] = D_ovl10_03_800472D8[i]->unk40->unk18;
             func_ovl10_03_80046598(D_ovl10_03_800472D0[i], &pos);
-            pos.y = 700.0f;
+            pos.y = y;
             if (func_ovl10_03_80046470(&player, &pos) < 1500.0f) {
                 if (!(D_ovl10_03_80047300[i] & 1)) {
                     func_ovl10_03_80043CF4(i);
                 }
                 func_ovl10_03_80046598(D_ovl10_03_800472D8[i], &pos);
-                pos.y = 700.0f;
+                pos.y = y;
                 func_ovl10_03_80046458(&pos, &player, &ang);
                 ang.y -= 90.0f;
                 dist = func_ovl10_03_80046470(&player, &pos);

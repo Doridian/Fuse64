@@ -333,9 +333,13 @@ void func_ovl12_02_800432A0(void) {
 }
 
 void func_ovl12_02_80043258(void) {
-    /* empty: what the other overlays fade in here (the test keeps the
-     * function too big to inline) */
-    if (D_ovl12_02_800451B0.unk0 == 2) { /* fake: a dead test, for the register allocation or schedule */
+    /* where the other overlays fade in (UNK_MACRO_..._80043068), a
+     * compiled-out debug check: it keeps the function too big to be
+     * inlined into its callers, where the original calls it. Any test of
+     * the record matches (unk0 == 0, unk0 < 0, unk4 < 0 too); which one
+     * is a guess. */
+    if (D_ovl12_02_800451B0.unk0 == 2) {
+        DEBUG_PRINT(("mode 2\n"));
     }
     func_ovl12_02_80043FB8(D_ovl12_02_800451B0.unk4, 3, 4.0f, D_ovl12_02_800451B0.unk10, 0, 1, 1);
 }

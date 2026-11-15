@@ -22,6 +22,7 @@
  * words, vertices, matrices, viewports: the C wrote them).
  */
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -1164,6 +1165,111 @@ static uintptr_t cmd_w1(const uint8_t *c, unsigned st) {
     return st == NSTRIDE ? ((const uint32_t *)c)[1] : ((const Cmd *)c)->w1;
 }
 
+/* ---- PORT_DUMP_DL: the display lists, as text ------------------------------------------ */
+
+/* PORT_DUMP_DL=FROM:TO[:FILE] writes every command of the graphics tasks
+   of retraces FROM to TO (stderr, or FILE), one line each: its depth in
+   the call stack, the two words, and what it loads (a vertex's numbers, a
+   matrix's, a movemem's bytes, TMEM's checksum after a load).  Addresses
+   are written as where they are (an offset in port_rdram, or "host"),
+   not as the run's pointers, so two builds' dumps compare with diff (a
+   big-endian host against a little-endian one: "Byte order" in
+   docs/PORT.md). */
+static FILE *dl_out;
+static int dl_on;
+static unsigned dl_task;
+
+static void dl_init(void) {
+    static int done;
+    static unsigned from, to;
+    if (!done) {
+        const char *e = getenv("PORT_DUMP_DL");
+        char path[1024] = "";
+        done = 1;
+        if (e && sscanf(e, "%u:%u:%1023s", &from, &to, path) >= 2) {
+            dl_out = path[0] ? fopen(path, "w") : stderr;
+            if (!dl_out)
+                host_fatal("PORT_DUMP_DL: can't write %s", path);
+        } else {
+            from = 1, to = 0;
+        }
+    }
+    dl_on = dl_out && host_vi_count >= from && host_vi_count <= to;
+    if (dl_on)
+        fprintf(dl_out, "== retrace %u task %u\n", host_vi_count, dl_task);
+    dl_task++;
+}
+
+static void dl_where(const void *p) {
+    uintptr_t a = (uintptr_t)p;
+    if (a >= (uintptr_t)port_rdram && a < (uintptr_t)port_rdram + PORT_RDRAM_SIZE)
+        fprintf(dl_out, " @%06X", (unsigned)(a - (uintptr_t)port_rdram));
+    else
+        fprintf(dl_out, " @%s", p ? "host" : "null");
+}
+
+static uint32_t dl_crc(const uint8_t *p, size_t n) {
+    uint32_t h = 2166136261u;
+    for (size_t i = 0; i < n; i++)
+        h = (h ^ p[i]) * 16777619u;
+    return h;
+}
+
+static void dl_cmd(int depth, uint32_t w0, uintptr_t w1) {
+    uint8_t op = w0 >> 24;
+    /* (an address word that is a pointer of the run's as "ptr", where it
+       is written after) */
+    int a = op == 0x01 || op == 0x03 || op == 0x04 || op == 0x06 || op >= 0xFD ||
+            (op == 0xBC && (w0 & 0xFF) == 0x06);
+    uintptr_t u = port_unproxy(w1);
+    if (a && !(u < 0x10000000u || (u >= 0x80000000u && u < 0x80000000u + PORT_RDRAM_SIZE) ||
+               (u >= 0xA0000000u && u < 0xA0000000u + PORT_RDRAM_SIZE)))
+        fprintf(dl_out, "%*s%08X ptr     ", depth * 2, "", w0);
+    else
+        fprintf(dl_out, "%*s%08X %08X", depth * 2, "", w0, (unsigned)w1);
+    switch (op) {
+    case 0xBC:                          /* MOVEWORD: a segment's base */
+        if ((w0 & 0xFF) == 0x06)
+            dl_where(port_addr(w1));
+        break;
+    case 0x01: {                      /* MTX: the 16 s15.16 elements */
+        const uint32_t *w = (const uint32_t *)addr(w1);
+        dl_where(w);
+        for (int i = 0; i < 16; i++) {
+            uint32_t iw = w[i / 2], fw = w[8 + i / 2];
+            fprintf(dl_out, " %08X", (i & 1) ? (iw & 0xFFFF) << 16 | (fw & 0xFFFF) : (iw & 0xFFFF0000u) | fw >> 16);
+        }
+        break;
+    }
+    case 0x03: {                        /* MOVEMEM: its bytes */
+        const uint8_t *m = addr(w1);
+        int n = w0 & 0xFFFF;
+        dl_where(m);
+        if (n > 32)
+            n = 32;
+        fprintf(dl_out, " ");
+        for (int i = 0; i < n; i++)
+            fprintf(dl_out, "%02X", m[i]);
+        break;
+    }
+    case 0x04: {                        /* VTX: x y z flag s t and the colour or normal, each vertex */
+        int n = (w0 >> 10) & 0x3F;
+        const uint8_t *v = addr(w1);
+        dl_where(v);
+        for (int i = 0; i < n; i++, v += 16) {
+            const int16_t *h = (const int16_t *)v;
+            fprintf(dl_out, "\n%*s  v%d: %d %d %d %d  %d %d  %02X%02X%02X%02X", depth * 2, "",
+                    ((w0 >> 16) & 0xFF) / 2 + i, h[0], h[1], h[2], h[3], h[4], h[5], v[12], v[13], v[14], v[15]);
+        }
+        break;
+    }
+    case 0x06: case 0xFD: case 0xFE: case 0xFF:
+        dl_where(addr(w1));
+        break;
+    }
+    fprintf(dl_out, "\n");
+}
+
 static void run(const Cmd *dl) {
     const uint8_t *stack[18];
     unsigned stack_st[18];
@@ -1180,6 +1286,8 @@ static void run(const Cmd *dl) {
         uint8_t op = w0 >> 24;
         if (host_verbose > 3)
             host_log("  %p: %08X %08X\n", (const void *)c, w0, (unsigned)w1);
+        if (dl_on)
+            dl_cmd(sp, w0, w1);
         switch (op) {
         case 0x00:
             break;
@@ -1337,15 +1445,21 @@ static void run(const Cmd *dl) {
             break;
         case 0xF0:
             load_tlut(w0, w1l);
+            if (dl_on)
+                fprintf(dl_out, "%*s  tmem %08X\n", sp * 2, "", dl_crc(tmem, sizeof tmem));
             break;
         case 0xF2:
             set_tile_size(w0, w1l);
             break;
         case 0xF3:
             load_block(w0, w1l);
+            if (dl_on)
+                fprintf(dl_out, "%*s  tmem %08X\n", sp * 2, "", dl_crc(tmem, sizeof tmem));
             break;
         case 0xF4:
             load_tile(w0, w1l);
+            if (dl_on)
+                fprintf(dl_out, "%*s  tmem %08X\n", sp * 2, "", dl_crc(tmem, sizeof tmem));
             break;
         case 0xF5:
             set_tile(w0, w1l);
@@ -1401,6 +1515,7 @@ int host_gfx_task(const void *dl, uint32_t size) {
     }
     if (host_verbose > 1)
         host_log("gfx task %p at retrace %u\n", dl, host_vi_count);
+    dl_init();
     (void)size;
     if (no_draw)            /* (debugging: the game's logic alone) */
         return 1;
@@ -1412,5 +1527,7 @@ int host_gfx_task(const void *dl, uint32_t size) {
         gs.sc_y1 = 240;
     }
     run((const Cmd *)dl);
+    if (dl_on)
+        fflush(dl_out);
     return full_sync;
 }

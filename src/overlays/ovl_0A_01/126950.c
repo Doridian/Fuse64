@@ -56,10 +56,10 @@
 #include "common.h"
 
 typedef struct {
-    /* 0x00 */ u8 unk0[4];
+    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;)
     /* 0x04 */ f32 unk4;
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ u8 unkC[4];
+    /* 0x0C */ PORT_RET(u8 unkC[4];, void *unkC;)
     /* 0x10 */ f32 unk10;
     /* 0x14 */ s32 unk14;
 } UnkStruct_ovl0A_01_Anim2;
@@ -83,18 +83,18 @@ typedef struct {
     /* 0x30 */ f32 unk30;
     /* 0x34 */ s16 unk34;
     /* 0x36 */ s16 unk36;
-    /* 0x38 */ u8 unk38[0x10];
+    /* 0x38 */ PORT_RET(u8 unk38[0x10];, u8 unk38[0x4]; void *unk3C; void *unk40; void *unk44;)
     /* 0x48 */ UnkStruct_ovl0A_01_Anim *unk48;
 } Inner;
 
 typedef struct {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ u8 unkC[0x1C];
+    /* 0x0C */ PORT_RET(u8 unkC[0x1C];, u8 unkC[0x14]; void *unk20; void *unk24;)
     /* 0x28 */ s32 unk28;
-    /* 0x2C */ u8 unk2C[0x14];
+    /* 0x2C */ PORT_RET(u8 unk2C[0x14];, u8 unk2C[0x10]; void *unk3C;)
     /* 0x40 */ Inner *unk40;
-    /* 0x44 */ u8 unk44[8];
+    /* 0x44 */ PORT_RET(u8 unk44[8];, void *unk44; u8 unk48[0x4];)
     /* 0x4C */ f32 unk4C;
     /* 0x50 */ f32 unk50;
     /* 0x54 */ f32 unk54;
@@ -121,8 +121,8 @@ typedef struct {
 } Sprite;
 
 typedef struct {
-    u32 w0;
-    u32 w1;
+    PORT_UP(u32) w0;
+    PORT_UP(u32) w1;
 } Gfx_ovl0A_01;
 
 /* A placed object: what a table entry spawns and where. */
@@ -195,7 +195,7 @@ void func_ovl0A_01_80047E50(Obj *); /* 0x1814 */
 Obj * func_ovl0A_01_80047E60(s32, s32, s32, Obj *); /* 0x1816 */
 void func_ovl0A_01_80047E70(Obj *); /* 0x1818 */
 void func_ovl0A_01_80047F10(Obj *, Obj *); /* 0x182C */
-s32 func_ovl0A_01_80047F88(void (*)(), void *, s32, s32, s32); /* 0x1900 */
+s32 func_ovl0A_01_80047F88(void (*)(), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0A_01_80047F90(s32); /* 0x1901 */
 void func_ovl0A_01_80047F98(void); /* 0x1902 */
 void func_ovl0A_01_80047FA8(s32); /* 0x1904 */
@@ -207,7 +207,7 @@ f32 func_ovl0A_01_80048130(f32); /* 0x1D00 */
 f64 func_ovl0A_01_80048140(void); /* 0x1D02 */
 s32 func_ovl0A_01_80048148(s32); /* 0x1D03 */
 void func_ovl0A_01_80048288(s32, s32, s32, f32); /* 0x2004 */
-void func_ovl0A_01_800483D8(s32, f32, f32, f32, s32); /* 0x2600 */
+void func_ovl0A_01_800483D8(s32, f32, f32, f32, PORT_IP(s32)); /* 0x2600 */
 void func_ovl0A_01_800483E0(s32, f32 *, s32); /* 0x2601 */
 void func_ovl0A_01_80048510(s32); /* 0x2B00 */
 s32 func_ovl0A_01_80048530(s32, f32, f32, f32); /* 0x2B04 */
@@ -578,7 +578,7 @@ static void func_ovl0A_01_80046F10(s32 arg0, Gfx_ovl0A_01 **arg1) {
     gfx = *arg1;
     { Gfx_ovl0A_01 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFE793C; }
     { Gfx_ovl0A_01 *g = gfx++; g->w0 = 0xB900031D; g->w1 = 0x00504240; }
-    { Gfx_ovl0A_01 *g = gfx++; g->w0 = 0x0400103F; g->w1 = (u32) D_ovl0A_01_80048730; }
+    { Gfx_ovl0A_01 *g = gfx++; g->w0 = 0x0400103F; g->w1 = (PORT_UP(u32)) D_ovl0A_01_80048730; }
     for (i = 0; i < 4; i++) {
         { Gfx_ovl0A_01 *g = gfx++; g->w0 = 0xB2100000 + i * 2; g->w1 = RGBA(D_ovl0A_01_80048A48[0].unk4[i]); }
     }

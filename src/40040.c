@@ -2,8 +2,8 @@
 
 /* A display list command, two words (gbi.h's Gfx, not in include/ yet). */
 typedef struct {
-    u32 w0;
-    u32 w1;
+    PORT_UP(u32) w0;
+    PORT_UP(u32) w1;
 } Gfx_80225840;
 
 void func_80225CC0(void);
@@ -13,12 +13,12 @@ void func_80226860(void);
 void func_80226D80(void);
 void func_80226E84(Gfx_80225840 *);
 Gfx_80225840 *func_80227464(void);
-u32 func_80227678(s32);
+PORT_UP(u32) func_80227678(s32);
 void func_80227708(s32, s32, s32, s32);
 s32 func_8022773C(void);
 void func_802277D0(void);
 void func_8022787C(Gfx_80225840 **);
-void func_80227D50(s32, s32, s32, s32, s32);
+void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
 void func_802290CC(void);
 void func_8022A858(void);
 void func_80232E60(void);
@@ -28,8 +28,8 @@ void func_80236F54(void);
 void func_80237890(void);
 void func_80238100(void);
 void func_802381F8(void);
-void func_8023876C(s32, s32, s32);
-PORT_RET(void, s32) func_80238A10(void (*)(void), s32, void *, s32, s32);
+void func_8023876C(PORT_RET(s32, void *), s32, s32);
+PORT_RET(void, s32) func_80238A10(void (*)(void), PORT_IP(s32), void *, s32, s32);
 void func_802392F8(void);
 void func_8023946C(void);
 void func_8023A104(void);
@@ -63,7 +63,7 @@ extern u8 D_800BEA60[];
 extern s32 D_802A1230;
 extern s32 D_802A1234;
 extern s32 D_802A123C;
-extern s32 D_802AC5C0;
+extern PORT_RET(s32, void *) D_802AC5C0;
 
 /* .data */
 void *D_8029F570[] = {
@@ -74,12 +74,12 @@ void *D_8029F590[] = { malloc, free };
 
 /* main_code's main function: main_code_entry calls it, and it never
  * returns. */
-void func_80225840(s32 arg0) {
+void func_80225840(PORT_RET(s32, void *) arg0) {
     s32 count;
     Gfx_80225840 *gfx;
     s32 sp3C;
     void *stack;
-    u32 dl;
+    PORT_UP(u32) dl;
 
     count = 8;
     func_80297D20();

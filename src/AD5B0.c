@@ -29,7 +29,7 @@
  * (func_8028A060's table, func_8028A36C's bits) are packed into a slot in
  * checksummed chunks. */
 
-s32 *func_8028A060(s32);
+s32 *func_8028A060(PORT_IP(s32));
 s32 func_8028A36C(s32);
 void func_8028A3D0(s32);
 void func_8028A428(s32);
@@ -85,7 +85,7 @@ void func_802930F8(u8 *buf, s32 kind);
 s32 func_80294E54(void);
 s32 func_802952CC(u8 *buf);
 s32 func_8029522C(s32 slot, u8 *buf);
-s32 func_80294A48(s32 slot, u32 kind);
+PORT_IP(s32) func_80294A48(s32 slot, u32 kind);
 s32 func_802947AC(void);
 void func_80293EA0(s32 slot);
 void func_80293E5C(s32 kind);
@@ -269,9 +269,9 @@ s32 func_80294CA0(s32 i) {
     }
 }
 
-s32 func_80294A48(s32 slot, u32 kind) {
+PORT_IP(s32) func_80294A48(s32 slot, u32 kind) {
     u8 *s;
-    s32 ret = 0;
+    PORT_IP(s32) ret = 0;
 
     switch (kind) {
         case 0:
@@ -307,7 +307,7 @@ s32 func_80294A48(s32 slot, u32 kind) {
             break;
         case 8:
             if (func_80294A48(slot, 0) != 10) {
-                ret = (s32) &D_80063000[slot * 0x90 + 0x10];
+                ret = (PORT_IP(s32)) &D_80063000[slot * 0x90 + 0x10];
             }
             break;
     }

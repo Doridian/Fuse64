@@ -13,12 +13,12 @@ typedef struct {
  * component is masked like the others (_SHIFTL), which sets its
  * registers. */
 typedef struct {
-    /* 0x00 */ u32 w0;
-    /* 0x04 */ u32 w1;
+    /* 0x00 */ PORT_UP(u32) w0;
+    /* 0x04 */ PORT_UP(u32) w1;
 } UnkStruct_80281FA0; /* size 0x8 */
 
 void *func_8022A328(void *, s32, s32, s32, s32);
-s32 func_80238A10(void *, s32, s32, s32, s32);
+s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_80238EA8(s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
@@ -99,7 +99,7 @@ static void func_80281FA0(s32 arg0, UnkStruct_80281FA0 **arg1) {
 
     { UnkStruct_80281FA0 *g = gfx++; g->w0 = 0xB9000401; g->w1 = 0; }
     { UnkStruct_80281FA0 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFDF6FB; }
-    { UnkStruct_80281FA0 *g = gfx++; g->w0 = 0xFF10013F; g->w1 = (u32) D_1000000; }
+    { UnkStruct_80281FA0 *g = gfx++; g->w0 = 0xFF10013F; g->w1 = (PORT_UP(u32)) D_1000000; }
     { UnkStruct_80281FA0 *g = gfx++; g->w0 = 0xF7000000; g->w1 = 0x10001; }
     { UnkStruct_80281FA0 *g = gfx++; g->w0 = 0xF64FC3BC; g->w1 = 0; }
     { UnkStruct_80281FA0 *g = gfx++; g->w0 = 0xB9000401; g->w1 = 0x10; }

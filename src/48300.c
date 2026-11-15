@@ -19,10 +19,10 @@ typedef struct {
     /* 0x24 */ f32 unk24;
 } Rect40;
 
-s32 func_80238A10(void *, s32, s32, s32, s32);
+s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
-s32 func_802391F0(void);
+PORT_IP(s32) func_802391F0(void);
 void func_80239430(void);
 s32 *func_8023A840(void);
 void func_8026C454(s32, f32, f32, f32);
@@ -33,12 +33,12 @@ extern u8 D_8029FD40[];
 
 void func_8022DB00(void);
 static void func_8022DB28(void);
-void func_8022DBBC(s32 arg0);
+void func_8022DBBC(PORT_IP(s32) arg0);
 static void func_8022DBF4(Rect40 **arg0, f32 arg1, f32 arg2, s32 *arg3, s32 arg4);
 static void func_8022DD6C(void);
-void func_8022DDB4(s32 arg0);
+void func_8022DDB4(PORT_IP(s32) arg0);
 
-void func_8022DDB4(s32 arg0) {
+void func_8022DDB4(PORT_IP(s32) arg0) {
     if (!(*func_8023A840() & 2)) {
         func_80238A10(func_8022DD6C, arg0, 0, 0, 0x150);
     }
@@ -88,7 +88,7 @@ static void func_8022DBF4(Rect40 **arg0, f32 arg1, f32 arg2, s32 *arg3, s32 arg4
     }
 }
 
-void func_8022DBBC(s32 arg0) {
+void func_8022DBBC(PORT_IP(s32) arg0) {
     func_80238A10(func_8022DB28, arg0, 0, 0, 0x150);
 }
 
@@ -99,10 +99,24 @@ static void func_8022DB28() {
     s32 n;
     s32 i;
 
+#ifdef TARGET_PC
+    {
+        /* the overlays' { object, sound, count } (a pointer, then words) */
+        struct {
+            Rect40 *r;
+            s32 id;
+            s32 n;
+        } *a = (void *) func_802391F0();
+        r = a->r;
+        id = a->id;
+        n = a->n;
+    }
+#else
     args = (s32 *) func_802391F0();
     r = (Rect40 *) args[0];
     id = args[1];
     n = args[2];
+#endif
     id = func_8026C51C(id, r->x0, r->y0, r->x1);
     for (i = 0; i < n; i++) {
         func_8026C454(id, r->x0, r->y0, r->x1);

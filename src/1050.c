@@ -16,7 +16,7 @@ void func_80000698(void *dst, u32 size, u32 rom);
 /* fake: func_80000698 is void (10D0.c); see func_80000450 */
 s64 func_80000698(void *dst, u32 size, u32 rom);
 #endif
-void func_80001A30(s32 id, void **table);
+void func_80001A30(PORT_IP(s32) id, void **table);
 
 /* .data: ZeroJump module 0 */
 void *D_80019F80[] = { func_80001A30 };
@@ -26,7 +26,7 @@ void **D_8001BFC0[256];
 #ifdef TARGET_PC
 /* boot_code 2630, handwritten (asm/2630.s, which IDO's code for this can't
  * be): registers module `id`'s ZeroJump table */
-void func_80001A30(s32 id, void **table) {
+void func_80001A30(PORT_IP(s32) id, void **table) {
     D_8001BFC0[id] = table;
 }
 #endif
@@ -47,12 +47,12 @@ void func_80001A30(s32 id, void **table) {
  */
 void func_80000450(void) {
 #ifdef TARGET_PC
-    func_80000698((void *)func_80042000, (u32)zerojump_ROM_END - (u32)zerojump_ROM_START, (u32)zerojump_ROM_START);
+    func_80000698((void *)func_80042000, (PORT_UP(u32))zerojump_ROM_END - (PORT_UP(u32))zerojump_ROM_START, (PORT_UP(u32))zerojump_ROM_START);
 #else
     if (func_80000698((void *)(u32)func_80042000, (u32)zerojump_ROM_END - (u32)zerojump_ROM_START,
                       (u32)zerojump_ROM_START)) {
     }
 #endif
-    osMapTLB(0, OS_PM_4K, NULL, (u32)func_80042000 + 0x80000000, -1, -1);
+    osMapTLB(0, OS_PM_4K, NULL, (PORT_UP(u32))func_80042000 + 0x80000000, -1, -1);
     D_8001BFC0[0] = D_80019F80;
 }

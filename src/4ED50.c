@@ -35,7 +35,7 @@ typedef struct UnkStruct_802363BC {
     /* 0x40 */ struct UnkStruct_802363BC *unk40;
 } UnkStruct_802363BC; /* size 0x44 */
 
-s32 func_80238A10(void *, s32, s32, s32, s32);
+s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 void func_80234F6C(s32);
 void func_80235114(Vec3f_8008E648 *);
 #ifdef TARGET_PC
@@ -98,7 +98,7 @@ typedef struct {
 } UnkStruct_80234DD4;
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0x40];
+    /* 0x00 */ PORT_RET(u8 unk0[0x40];, u8 unk0[0x20]; void *unk20; void *unk24; u8 unk28[0x14]; void *unk3C;)
     /* 0x40 */ UnkStruct_80234DD4 *unk40;
 } UnkStruct_802443F4;
 
@@ -155,8 +155,8 @@ void func_8023646C(UnkStruct_802363BC *);
 void func_80236AEC(u16);
 void func_80236ACC(u16);
 s32 func_80234248(s32);
-void func_80227CD0(s32, f32, f32, f32, f32, f32, f32, f32, f32, f32);
-extern s32 D_802AC5C0;
+void func_80227CD0(PORT_RET(s32, void *), f32, f32, f32, f32, f32, f32, f32, f32, f32);
+extern PORT_RET(s32, void *) D_802AC5C0;
 extern Vec3f_8008E648 D_8008F3D8;
 void func_80235D7C(void);
 void func_80236D30(void);
@@ -465,7 +465,7 @@ void func_802358D0(void *arg0, s32 arg1, s16 arg2) {
     D_8008F424 = arg2;
     D_8008F426 = 0;
     if (arg0 != 0) {
-        func_80238A10(func_80236658, (s32) arg0, 0, 0, arg1);
+        func_80238A10(func_80236658, (PORT_IP(s32)) arg0, 0, 0, arg1);
     }
 }
 

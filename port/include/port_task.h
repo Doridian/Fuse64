@@ -37,8 +37,8 @@ typedef jmp_buf port_jmp_buf;
 #define PORT_LONGJMP(b, v) longjmp((b), (v))
 #endif
 
-port_jmp_buf *port_task_save(int *buf);
-void port_task_jump(int *buf, int v) __attribute__((noreturn));
+port_jmp_buf *port_task_save(intptr_t *buf);
+void port_task_jump(intptr_t *buf, int v) __attribute__((noreturn));
 
 #undef func_80297C10
 #undef func_80297C7C

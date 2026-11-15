@@ -205,13 +205,13 @@ typedef struct {
     /* 0x34 */ s16 unk34;
     /* 0x36 */ s16 unk36;
     /* 0x38 */ s32 unk38;
-    /* 0x3C */ u8 unk3C[0xC];
+    /* 0x3C */ PORT_RET(u8 unk3C[0xC];, void *unk3C; void *unk40; void *unk44;)
     /* 0x48 */ UnkStructA_40_48 *unk48;
 } Obj;
 
 typedef struct {
-    u32 w0;
-    u32 w1;
+    PORT_UP(u32) w0;
+    PORT_UP(u32) w1;
 } Gfx0B04;
 
 /* A line of text: string, position, scale and its two colours. */
@@ -310,7 +310,7 @@ void func_ovl0B_04_80047F38(f32, f32, f32); /* 0x1704 */
 void func_ovl0B_04_80047F58(f32, f32, f32); /* 0x1708 */
 void func_ovl0B_04_80047F60(f32 *, f32 *, f32 *); /* 0x1709 */
 void func_ovl0B_04_80047FA0(s32); /* 0x1711 */
-s32 func_ovl0B_04_80048248(void (*)(void), void *, s32, s32, s32); /* 0x1900 */
+s32 func_ovl0B_04_80048248(void (*)(void), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0B_04_80048250(s32); /* 0x1901 */
 void func_ovl0B_04_80048258(void); /* 0x1902 */
 s32 func_ovl0B_04_80048268(s32); /* 0x1904 */

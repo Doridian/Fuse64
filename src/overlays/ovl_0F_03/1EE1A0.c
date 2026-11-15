@@ -135,8 +135,8 @@ typedef struct {
 
 /* A display list command (gbi.h's Gfx, as two words) */
 typedef struct {
-    /* 0x00 */ u32 w0;
-    /* 0x04 */ u32 w1;
+    /* 0x00 */ PORT_UP(u32) w0;
+    /* 0x04 */ PORT_UP(u32) w1;
 } UnkStruct_ovl0F_03_Gfx; /* size 0x8 */
 
 /* gbi.h's _SHIFTL */
@@ -195,13 +195,13 @@ s32 func_ovl0F_03_800464A8(UnkStructA *, s32);
 void func_ovl0F_03_800464F8(UnkStructA *, s32);
 void func_ovl0F_03_80046500(UnkStructA *, s32);
 s32 func_ovl0F_03_80046510(UnkStructA *);
-UnkStructA *func_ovl0F_03_80046520(s32, s32, s32, s32);
+UnkStructA *func_ovl0F_03_80046520(s32, s32, s32, PORT_IP(s32));
 UnkStructA *func_ovl0F_03_80046568(s32, s32);
 void func_ovl0F_03_80046578(UnkStructA *);
 void func_ovl0F_03_800465D8(f32);
 void func_ovl0F_03_800465E0(s32);
-s32 func_ovl0F_03_80046618(UnkStructA *, s32, UnkStructA *);
-s32 func_ovl0F_03_80046648(void (*)(void), void *, s32, s32, s32);
+PORT_IP(s32) func_ovl0F_03_80046618(UnkStructA *, s32, UnkStructA *);
+s32 func_ovl0F_03_80046648(void (*)(void), void *, PORT_IP(s32), s32, s32);
 void func_ovl0F_03_80046658(void);
 s32 func_ovl0F_03_80046668(s32);
 void *func_ovl0F_03_80046670(void);
@@ -217,7 +217,7 @@ s32 *func_ovl0F_03_800468E0(s32);
 void func_ovl0F_03_80046988(s32, s32, s32, s32, s32);
 void func_ovl0F_03_80046998(s32, s32, s32);
 void func_ovl0F_03_800469B0(u32 (*)[3]);
-void func_ovl0F_03_80046A98(s32, f32, f32, f32, s32);
+void func_ovl0F_03_80046A98(s32, f32, f32, f32, PORT_IP(s32));
 s32 func_ovl0F_03_80046AA0(s32, f32 *, s32);
 void func_ovl0F_03_80046AA8(s32);
 void func_ovl0F_03_80046AD8(void);
@@ -390,10 +390,10 @@ static void func_ovl0F_03_800456BC(void) {
 
 /* a task: the door's switch, pressed a number of times */
 void func_ovl0F_03_80044C20(void) {
-    s32 n;
+    PORT_IP(s32) n;
     s32 i;
 
-    n = (s32)func_ovl0F_03_80046670();
+    n = (PORT_IP(s32))func_ovl0F_03_80046670();
     for (i = 0; i < n; i++) {
         func_ovl0F_03_80046BB8();
         func_ovl0F_03_80046690();
@@ -473,13 +473,13 @@ void func_ovl0F_03_80044258(s32 arg0, UnkStruct_ovl0F_03_Gfx **arg1) {
     { UnkStruct_ovl0F_03_Gfx *g = gfx++; g->w0 = 0xBA001301; g->w1 = 0; }
     { UnkStruct_ovl0F_03_Gfx *g = gfx++; g->w0 = 0xBA000E02; g->w1 = 0x8000; }
     t = D_ovl0F_03_80046DF0;
-    { UnkStruct_ovl0F_03_Gfx *g = gfx++; g->w0 = 0xFD100000; g->w1 = t->unk20 + (u32) t; }
+    { UnkStruct_ovl0F_03_Gfx *g = gfx++; g->w0 = 0xFD100000; g->w1 = t->unk20 + (PORT_UP(u32)) t; }
     { UnkStruct_ovl0F_03_Gfx *g = gfx++; g->w0 = 0xE8000000; g->w1 = 0; }
     { UnkStruct_ovl0F_03_Gfx *g = gfx++; g->w0 = 0xF5000100; g->w1 = 0x07000000; }
     { UnkStruct_ovl0F_03_Gfx *g = gfx++; g->w0 = 0xE6000000; g->w1 = 0; }
     { UnkStruct_ovl0F_03_Gfx *g = gfx++; g->w0 = 0xF0000000; g->w1 = 0x0703C000; }
     { UnkStruct_ovl0F_03_Gfx *g = gfx++; g->w0 = 0xE7000000; g->w1 = 0; }
-    { UnkStruct_ovl0F_03_Gfx *g = gfx++; g->w0 = 0xFD500000; g->w1 = t->unk14 + (u32) t; }
+    { UnkStruct_ovl0F_03_Gfx *g = gfx++; g->w0 = 0xFD500000; g->w1 = t->unk14 + (PORT_UP(u32)) t; }
     { UnkStruct_ovl0F_03_Gfx *g = gfx++; g->w0 = 0xF5500000; g->w1 = 0x07000000; }
     { UnkStruct_ovl0F_03_Gfx *g = gfx++; g->w0 = 0xE6000000; g->w1 = 0; }
     { UnkStruct_ovl0F_03_Gfx *g = gfx++; g->w0 = 0xF3000000; g->w1 = 0x0703F800; }

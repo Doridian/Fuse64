@@ -20,7 +20,7 @@ void port_boot(void) {
 
 /* 13F0's func_8000083C runs a ROM segment after loading it: the port has
    main_code linked in */
-void func_80225800(s32 arg0);
+void func_80225800(void *arg0);
 
 void *port_segment_entry(int seg) {
     if (seg != 2)

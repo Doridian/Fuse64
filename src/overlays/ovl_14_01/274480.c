@@ -172,7 +172,7 @@ void func_ovl14_01_8004C7F0(f32 *); /* 0x1727 */
 void func_ovl14_01_8004C828(Vec3f *, Vec3f *, Vec3f *); /* 0x1803 */
 void func_ovl14_01_8004C830(Vec3f *, Vec3f *); /* 0x1804 */
 s32 func_ovl14_01_8004C848(UnkStructA *, s32); /* 0x1807 */ /* also: s32 (Obj_0D02 *, s32) x1; s32 (Obj_0D04 *, s32) x1; s32 (Obj_0D06 *, s32) x1 */
-s32 func_ovl14_01_8004C860(s32, s32); /* 0x180A */
+s32 func_ovl14_01_8004C860(PORT_IP(s32), PORT_IP(s32)); /* 0x180A */
 void func_ovl14_01_8004C868(UnkStructA *, s32); /* 0x180B */ /* also: void (Obj_0D02 *, s32) x1; void (Obj05 *, s32) x1; void (Obj_0D03 *, s32) x1 */
 void func_ovl14_01_8004C880(UnkStructA *, UnkStructA *, Link_ovl14_01 *, s32); /* 0x180E */ /* also: void (UnkStructA *, UnkStructA *, Link_ovl13_01 *, s32) x1 */
 void func_ovl14_01_8004C890(s32); /* 0x1810 */
@@ -189,7 +189,7 @@ void func_ovl14_01_8004C9A8(UnkStructA *); /* 0x1833 */
 void func_ovl14_01_8004C9C8(s32 *); /* 0x1837 */
 void func_ovl14_01_8004C9D0(void); /* 0x1838 */
 void func_ovl14_01_8004C9D8(void); /* 0x1839 */
-s32 func_ovl14_01_8004C9E8(void (*)(), void *, s32, s32, s32); /* 0x1900 */ /* also: void (void (*)(void), void *, s32, s32, s32) x6; s32 (void (*)(void), void *, s32, s32, s32) x4; s32 (void (*)(), void *, void *, s32, s32) x1 */
+s32 func_ovl14_01_8004C9E8(void (*)(), void *, PORT_IP(s32), s32, s32); /* 0x1900 */ /* also: void (void (*)(void), void *, s32, s32, s32) x6; s32 (void (*)(void), void *, s32, s32, s32) x4; s32 (void (*)(), void *, void *, s32, s32) x1 */
 void func_ovl14_01_8004C9F8(void); /* 0x1902 */
 void func_ovl14_01_8004CA08(s32); /* 0x1904 */ /* also: s32 (s32) x1 */
 void *func_ovl14_01_8004CA10(void); /* 0x1905 */ /* also: Obj02 * (void) x1; Obj03 * (void) x1; UnkStruct_ovl0A_05_80048CA0 *(void) x1 */
@@ -215,7 +215,7 @@ void func_ovl14_01_8004CD48(s32); /* 0x2203 */
 void func_ovl14_01_8004CE40(s32, f32 *, s32); /* 0x2601 */ /* also: s32 (s32, f32 *, s32) x3; void (s32, f32 *, Obj_0D02 *) x1; void (s32, f32 *, Obj_0D03 *) x1 */
 void func_ovl14_01_8004CE60(void *); /* 0x2701 */ /* also: void (UnkStruct_ovl0A_05_80048CA0 *) x1 */
 s32 func_ovl14_01_8004CF70(s32); /* 0x2B00 */ /* also: s32 (s32) x6 */
-void func_ovl14_01_8004CF80(s32); /* 0x2B02 */
+void func_ovl14_01_8004CF80(PORT_IP(s32)); /* 0x2B02 */
 void func_ovl14_01_8004CF88(void); /* 0x2B03 */
 s32 func_ovl14_01_8004CF90(s32, f32, f32, f32); /* 0x2B04 */ /* also: void (s32, s32, s32, s32) x7 */
 void func_ovl14_01_8004CF98(s32, f32 *); /* 0x2B05 */
@@ -468,7 +468,7 @@ void func_ovl14_01_8004B9CC(void) {
         } while (func_ovl14_01_8004CC70(0x413) == 0);
     }
     if (!(*D_ovl14_01_8004D4E0 & 2)) {
-        func_ovl14_01_8004CF80((s32) sp1C);
+        func_ovl14_01_8004CF80((PORT_IP(s32)) sp1C);
     }
     func_ovl14_01_8004C9F8();
 }
@@ -780,7 +780,7 @@ void func_ovl14_01_8004A914(void) {
     D_ovl14_01_8004D5DC = func_ovl14_01_8004C8F0(0x1CA, 0x01400000, D_ovl14_01_8004D5E8);
     D_ovl14_01_8004D5E0 = func_ovl14_01_8004C8F0(-1, 0x400000, D_ovl14_01_8004D5E8);
     D_ovl14_01_8004D5E0->unk50 = 800.0f;
-    M2C_FIELD(D_ovl14_01_8004D5E0, Link_ovl14_01 **, 0x3C) = D_ovl14_01_8004D560;
+    PORT_FIELD(D_ovl14_01_8004D5E0, Link_ovl14_01 **, 0x3C, UnkStructA, unk3C) = D_ovl14_01_8004D560;
     D_ovl14_01_8004D5F4 = func_ovl14_01_8004C8F0(-1, 0x400000, D_ovl14_01_8004D5E8);
     D_ovl14_01_8004D5F4->unk50 = 800.0f;
     D_ovl14_01_8004D5F4->unk54 = 490.0f;
@@ -1202,13 +1202,13 @@ void func_ovl14_01_80049814(s32 id, UnkStructA **parts, Link_ovl14_01 *links) {
         D_ovl14_01_8004D4DC = (Vec3f *) a;
     }
     if (a) {} /* fake: a dead test, for the register allocation or schedule */
-    M2C_FIELD(*parts, Link_ovl14_01 **, 0x3C) = links;
+    PORT_FIELD(*parts, Link_ovl14_01 **, 0x3C, UnkStructA, unk3C) = links;
     parts++;
     *parts = func_ovl14_01_8004C8F0(-1, 0x500000, parts[-1]);
     (*parts)->unk50 = 0.0f;
     (*parts)->unk54 = 60.0f;
     parts++;
-    M2C_FIELD(parts[-1], Link_ovl14_01 **, 0x3C) = links;
+    PORT_FIELD(parts[-1], Link_ovl14_01 **, 0x3C, UnkStructA, unk3C) = links;
     *parts = func_ovl14_01_8004C8F0(0x1C7, 0x01000000, parts[-1]);
     func_ovl14_01_8004C880(parts[-1], *parts, links, 0x150);
     func_ovl14_01_8004C8D0(*parts);
@@ -1275,7 +1275,7 @@ void func_ovl14_01_80049618(void) {
         l[0].unk4 += d;
         l[1].unk4 += d;
         l[2].unk4 += d;
-        if (done == 0 && func_ovl14_01_8004C860((s32) obj, (s32)(func_ovl14_01_8004C0D8(func_ovl14_01_8004C078()))) != 0) {
+        if (done == 0 && func_ovl14_01_8004C860((PORT_IP(s32)) obj, (PORT_IP(s32))(func_ovl14_01_8004C0D8(func_ovl14_01_8004C078()))) != 0) {
             func_ovl14_01_8004C8A0(obj, 0x1E00);
             done = 1;
         }
@@ -1336,7 +1336,7 @@ void func_ovl14_01_80048DE8(s32 arg0) {
     f32 pos[3];
     f32 from[3];
     f32 to[3];
-    s32 id;
+    PORT_IP(s32) id;
     s32 r;
     s32 i;
 
@@ -1351,7 +1351,7 @@ void func_ovl14_01_80048DE8(s32 arg0) {
     }
     r = 0;
     for (i = 0; i < arg0 && r == 0 && func_ovl14_01_80044FDC() == 0; i++) {
-        id = (s32)(func_ovl14_01_80048D48((void *) id));
+        id = (PORT_IP(s32))(func_ovl14_01_80048D48((void *) id));
         if (id == 0) {
             break;
         }
@@ -2480,7 +2480,7 @@ void func_ovl14_01_800457F0(void) {
     f32 pos[3];
     f32 step[3];
     f32 ang[3];
-    s32 n;
+    PORT_IP(s32) n;
     s32 i;
     f32 sp[3];
     f32 w;
@@ -2490,7 +2490,7 @@ void func_ovl14_01_800457F0(void) {
     } else {
         speed = 6.8f;
     }
-    n = (s32) func_ovl14_01_8004CA10();
+    n = (PORT_IP(s32)) func_ovl14_01_8004CA10();
     obj = func_ovl14_01_8004C8C0(0x1CB, 0x480080, 0x40, D_ovl14_01_8004D5EC);
     obj->unk30 = 2;
     obj->unk38 = 100.0f;
@@ -3101,7 +3101,7 @@ void func_ovl14_01_80043B20(void) {
             if ((D_ovl14_01_8004D5E8->unk40->unk10 != D_ovl14_01_8004D5E8->unk58 || D_ovl14_01_8004D5E8->unk40->unk18 != D_ovl14_01_8004D5E8->unk60) && func_ovl14_01_8004BEC0() < D_ovl14_01_8004D690.y + 1100.0f) {
                 if (n >= 7) {
                     func_ovl14_01_8004C9E8(func_ovl14_01_80043F10, arg, 0, 0, 0x150);
-                    arg = (void *) ((s32) arg ^ 1);
+                    arg = (void *) ((PORT_IP(s32)) arg ^ 1);
                     n = 0;
                 }
             } else if (D_ovl14_01_8004D5E8->unk40->unk14 != D_ovl14_01_8004D5E8->unk5C && n >= 5) {

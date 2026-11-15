@@ -35,7 +35,7 @@ void func_80239094(void);
 void func_8022FF58(f32 *, f32 *, f32 *);
 s32 func_8023372C(f32, f32);
 void func_80297D80(void *, void *, s32);
-void func_80297D88(s32, void *, s32);
+void func_80297D88(s32, void *, PORT_IP(s32));
 s32 func_80297D90(void *, void *, s32);
 void func_80298030(void *, u8 *, UnkStruct_802AC400 *);
 void func_80298038(void *);

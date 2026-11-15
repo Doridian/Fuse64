@@ -73,7 +73,7 @@ typedef struct {
 typedef struct UnkStruct_ovl10_06_8004A460 {
     /* 0x00 */ u8 unk0[4];
     /* 0x04 */ struct UnkStruct_ovl10_06_8004A460 *unk4;
-    /* 0x08 */ u8 unk8[0x14];
+    /* 0x08 */ PORT_RET(u8 unk8[0x14];, void *unk8; void *unkC; void *unk10; u8 unk14[0x8];)
     /* 0x1C */ f32 unk1C;
     /* 0x20 */ f32 unk20;
     /* 0x24 */ f32 unk24;
@@ -146,7 +146,7 @@ void func_ovl10_06_80049F78(UnkStructA *, UnkStructA *);
 void func_ovl10_06_80049F98(UnkStructA *, s32);
 void func_ovl10_06_80049FA0(UnkStructA *, s32);
 s32 func_ovl10_06_80049FB0(UnkStructA *);
-UnkStructA *func_ovl10_06_80049FC0(s32, s32, s32, s32);
+UnkStructA *func_ovl10_06_80049FC0(s32, s32, s32, PORT_IP(s32));
 UnkStructA *func_ovl10_06_80049FD0(UnkStructA *);
 void *func_ovl10_06_80049FF0(s32, s32, UnkStructA *);
 void func_ovl10_06_8004A018(UnkStructA *);
@@ -154,7 +154,7 @@ void func_ovl10_06_8004A068(UnkStructA *, Vec3f *);
 UnkStruct_ovl10_06_8004A0B0 *func_ovl10_06_8004A0B0(UnkStructA *, s32);
 s32 func_ovl10_06_8004A0C0();
 void func_ovl10_06_8004A0E0(void *);
-s32 func_ovl10_06_8004A0E8(void (*)(void), void *, s32, s32, s32);
+s32 func_ovl10_06_8004A0E8(void (*)(void), void *, PORT_IP(s32), s32, s32);
 void func_ovl10_06_8004A0F8(void);
 void func_ovl10_06_8004A108(s32);
 void func_ovl10_06_8004A130(void);
@@ -173,7 +173,7 @@ s32 *func_ovl10_06_8004A380(s32);
 void func_ovl10_06_8004A3E8(s32, s32, s32, f32);
 void func_ovl10_06_8004A450(u32 (*)[3]);
 UnkStruct_ovl10_06_8004A460 *func_ovl10_06_8004A460(void);
-void func_ovl10_06_8004A538(s32, f32, f32, f32, s32);
+void func_ovl10_06_8004A538(s32, f32, f32, f32, PORT_IP(s32));
 s32 func_ovl10_06_8004A540(s32, f32 *, s32);
 void func_ovl10_06_8004A548(s32);
 void func_ovl10_06_8004A578(void);
@@ -1399,7 +1399,7 @@ void func_ovl10_06_80045F9C(void) {
 
     i = D_ovl10_06_8004B290[D_ovl10_06_8004ACA8];
     D_ovl10_06_8004B3A0[i] |= 2;
-    D_ovl10_06_8004ADE8[i] = func_ovl10_06_80049FC0(0xAE, 0x016C0000, 0x20, (s32)D_ovl10_06_8004ADC0[i]);
+    D_ovl10_06_8004ADE8[i] = func_ovl10_06_80049FC0(0xAE, 0x016C0000, 0x20, (PORT_IP(s32))D_ovl10_06_8004ADC0[i]);
     D_ovl10_06_8004ADE8[i]->unk4C = 40.0f;
     D_ovl10_06_8004ADE8[i]->unk50 = 230.0f;
     D_ovl10_06_8004ADE8[i]->unk54 = 400.0f;
@@ -1769,7 +1769,7 @@ void func_ovl10_06_80044D00(void) {
         x = e->unk40->unk10;
         y = e->unk40->unk14;
         z = e->unk40->unk18;
-        if (e != NULL && *(s32 *)e->unk44 == 0 && (func_ovl10_06_80049628(x, y, z) & 0xF) == 1) {
+        if (e != NULL && PORT_HOST(*(s32 *)e->unk44, (intptr_t)e->unk44) == 0 && (func_ovl10_06_80049628(x, y, z) & 0xF) == 1) {
             D_ovl10_06_8004ADF8[D_ovl10_06_8004B7D0] = e;
             func_ovl10_06_80049F78(D_ovl10_06_8004ADB8, e);
             func_ovl10_06_80049F98(e, 0x200000);

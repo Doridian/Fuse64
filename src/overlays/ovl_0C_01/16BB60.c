@@ -275,14 +275,14 @@ s32 func_ovl0C_01_80049768(UnkStructA *, s32);
 void func_ovl0C_01_800497B8(UnkStructA *, s32);
 void func_ovl0C_01_800497C0(UnkStructA *, s32);
 void func_ovl0C_01_800497D0(UnkStructA *);
-UnkStructA *func_ovl0C_01_800497E0(s32, s32, s32, s32);
+UnkStructA *func_ovl0C_01_800497E0(s32, s32, s32, PORT_IP(s32));
 UnkStructA *func_ovl0C_01_800497F0(UnkStructA *);
 UnkStructA *func_ovl0C_01_80049800(s32, s32, f32, f32, f32);
 void func_ovl0C_01_80049838(UnkStructA *);
 UnkStructA *func_ovl0C_01_80049848(UnkStructA *, s32);
-s32 func_ovl0C_01_800498D8(UnkStructA *, s32, UnkStructA *);
+PORT_IP(s32) func_ovl0C_01_800498D8(UnkStructA *, s32, UnkStructA *);
 void func_ovl0C_01_80049900(void *);
-s32 func_ovl0C_01_80049908(void (*)(void), void *, s32, s32, s32);
+s32 func_ovl0C_01_80049908(void (*)(void), void *, PORT_IP(s32), s32, s32);
 void func_ovl0C_01_80049910(s32);
 void func_ovl0C_01_80049918(void);
 void func_ovl0C_01_80049928(s32);
@@ -300,7 +300,7 @@ s32 func_ovl0C_01_80049B90(s32);
 s32 *func_ovl0C_01_80049BA0(s32);
 void func_ovl0C_01_80049C58(s32, s32, s32);
 void func_ovl0C_01_80049C70(u32 (*)[3]);
-void func_ovl0C_01_80049D58(s32, f32, f32, f32, s32);
+void func_ovl0C_01_80049D58(s32, f32, f32, f32, PORT_IP(s32));
 void func_ovl0C_01_80049D88(s16, s32);
 void func_ovl0C_01_80049D90(s16, s32);
 void func_ovl0C_01_80049DA8(f32 *);
@@ -1389,7 +1389,7 @@ void func_ovl0C_01_80045FBC(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_0
     obj = func_ovl0C_01_80049800(0x2BB, 0xD0, arg0->unk4, arg0->unk8, arg0->unkC);
     fl.i = 0x01000000;
     if (!arg2) {
-        fl.u = 0x01000000 | (s32)obj * 0;
+        fl.u = 0x01000000 | (PORT_IP(s32))obj * 0;
     }
     func_ovl0C_01_800497B8(obj, fl.i);
     arg0->unk0 = obj;

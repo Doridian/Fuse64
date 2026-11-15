@@ -43,11 +43,11 @@ typedef struct {
 } UnkStruct_802B01B8; /* size 0x8 */
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0x30];
+    /* 0x00 */ PORT_RET(u8 unk0[0x30];, u8 unk0[0x20]; void *unk20; void *unk24; u8 unk28[0x8];)
     /* 0x30 */ s32 unk30;
     /* 0x34 */ f32 unk34;
     /* 0x38 */ f32 unk38;
-    /* 0x3C */ s32 unk3C;
+    /* 0x3C */ PORT_IP(s32) unk3C;
     /* 0x40 */ UnkStruct_8027CE10_C *unk40;
 } UnkStruct_802B01D0;
 
@@ -77,7 +77,7 @@ typedef struct {
 void func_8022946C(UnkStruct_8027CE10_C *, s32);
 PORT_RET(void, s32) func_8022FC90(UnkStruct_802B01D0 *);
 void func_8022FF58(f32 *, f32 *, f32 *);
-UnkStruct_802B01D0 *func_80231274(s32, s32, s32, s32);
+UnkStruct_802B01D0 *func_80231274(s32, s32, s32, PORT_IP(s32));
 void func_802313DC(UnkStruct_802B01D0 *, s32);
 void func_80231408(UnkStruct_802B01D0 *, s32);
 s32 func_80232D18(UnkStruct_802B01D0 *, s32);
@@ -85,7 +85,7 @@ s32 func_80234248(s32);
 s32 func_80234768(void);
 void func_802348B4(f32 *, f32 *, f32 *);
 void func_80234900(f32 *, f32 *, f32 *);
-s32 func_80238A10(void (*)(void), s32, s32, s32, s32);
+s32 func_80238A10(void (*)(void), PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_80238EA8(s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
@@ -103,7 +103,7 @@ s32 func_8027B8D4(s16, s16, s16, s16);
 /* A4CE0's func_8028A7CC returns nothing, but here it was called as an
  * int function (undeclared, most likely): with void, func_8027DFAC's first
  * loop counts in v0 instead of v1. */
-s32 func_8028A7CC(s32, f32 *, s32);
+s32 func_8028A7CC(s32, f32 *, PORT_IP(s32));
 
 extern UnkStruct_80090440 D_80090440[50];
 extern UnkStruct_80090440 D_80090468;

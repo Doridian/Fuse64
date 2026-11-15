@@ -64,7 +64,7 @@ typedef struct {
     /* 0x5E */ u16 unk5E;
     /* 0x60 */ f32 unk60;
     /* 0x64 */ f32 unk64;
-    /* 0x68 */ s32 unk68;
+    /* 0x68 */ PORT_IP(s32) unk68;
     /* 0x6C */ u8 unk6C;
     /* 0x6D */ u8 unk6D;
     /* 0x6E */ s16 unk6E;
@@ -164,12 +164,12 @@ PORT_RET(void, s32) func_80225CCC(void *, s32, s32);
 void func_802276FC(s32);
 f32 func_80229D3C(void *, s32);
 void func_80229E38(void *, s32, s32);
-s32 func_8022F4AC(UnkStructA *, s32, UnkStructA *);
+PORT_RET(s32, void *) func_8022F4AC(UnkStructA *, s32, UnkStructA *);
 UnkStructA *func_8022F550(UnkStructA *, s32);
 PORT_RET(void, s32) func_8022FC90(void *);
 void func_80230914(void *);
 UnkStructA *func_80230CB4(s32, s32, s32, s32, void *);
-s32 func_802311E8(void *);
+PORT_RET(s32, void *) func_802311E8(void *);
 void func_802313DC(void *, s32);
 void func_80231408(void *, s32);
 s32 func_80232D18(void *, s32);
@@ -180,7 +180,7 @@ f32 func_80234434(f32);
 s32 func_80234768(void);
 void func_80234858(f32 *, f32 *, f32 *);
 void func_802348B4(f32 *, f32 *, f32 *);
-s32 func_80238A10(void *, void *, s32, s32, s32);
+s32 func_80238A10(void *, void *, PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_80238EA8(s32);
 void func_80239094(void);
 UnkStruct_800BB340 *func_802391F0(void);
@@ -195,10 +195,10 @@ s32 func_8026C51C(s32, f32, f32, f32);
 s32 func_8026D7D8(s32, s32, s32);
 void func_8026DCAC(f32, f32, f32, void *, s32);
 s32 func_8026EE18(f32);
-s32 func_802700EC(UnkStructA *, UnkStructA *, s32, f32);
+PORT_RET(s32, void *) func_802700EC(UnkStructA *, UnkStructA *, s32, f32);
 void func_80270BA4(void *);
 void func_80270C24(UnkStructA *, s32, s32);
-void func_802727D8(s32);
+void func_802727D8(PORT_RET(s32, void *));
 void func_802733C8(void *);
 PORT_RET(void, s32) func_8027B7C4(s16, f32, f32, f32);
 void func_8027F820(UnkStructA *);
@@ -968,7 +968,7 @@ static void func_80285A9C(UnkStruct_800BB340 *arg0) {
          * s-registers a constant 2 live across the calls, and a in s4 a call
          * passing a to a static that takes its argument in s4 (IPA), all
          * from code uopt deletes only after the frame and colouring are done */
-        if ((s32) r * 0) {
+        if ((PORT_IP(s32)) r * 0) {
             r->unk0 = 2;
             func_80238A10(0, 0, 0, 0, 0);
             func_80283FCC(a);
@@ -1041,7 +1041,7 @@ static s32 func_80285658(UnkStruct_800BA900 *arg0, UnkStruct_800BB340 *arg1) {
     a->unk40 = 0;
     func_80231408(a->unk0, func_80282524(a));
     arg0->unk0 = 1;
-    arg0->unk14.unk8C = (s32) arg1;
+    arg0->unk14.unk8C = (PORT_IP(s32)) arg1;
     a->unk0->unkC = 0x26E57;
     if (D_800BA8E8[a->unk84].unk0 == 0x1C) {
         a->unk0->unkC |= 8;
@@ -1288,7 +1288,7 @@ static s32 func_80284B20(UnkStruct_80288040 *arg0) {
         if (((u8) (arg0->unk7A & 0xF)) == 3) {
             func_802831A8(arg0);
         }
-        func_802727D8(arg0->unk68);
+        func_802727D8(PORT_PTR(arg0->unk68));
         break;
     case 0x10:
         func_802733C8(arg0->unk0);
@@ -1297,7 +1297,7 @@ static s32 func_80284B20(UnkStruct_80288040 *arg0) {
         }
         break;
     case 0x30:
-        func_802727D8(arg0->unk68);
+        func_802727D8(PORT_PTR(arg0->unk68));
         break;
     }
     return ret;
@@ -1638,7 +1638,7 @@ static void func_80283FCC(UnkStruct_80288040 *arg0) {
                 }
                 arg0->unk40 = 0;
             } else if (!(p->unk8 & 4) || (((u8) (arg0->unk7A & 0xF)) == 1) || (p->unk8 & 0x20000) || (arg0->unk30 == 2) || (arg0->unk30 == 3)) {
-                arg0->unk68 = func_802700EC(arg0->unk0, p, arg0->unk1C & 0xF0, arg0->unk2C);
+                arg0->unk68 = PORT_INT(func_802700EC(arg0->unk0, p, arg0->unk1C & 0xF0, arg0->unk2C));
                 func_80282430(arg0, 0xF0, 0x30);
                 func_80231408(arg0->unk0, 0x20400);
             }

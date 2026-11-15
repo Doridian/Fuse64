@@ -66,7 +66,7 @@ void func_ovl10_07_80049040(UnkStructA *);
 UnkStructA *func_ovl10_07_80049050(s32, s32, s32, UnkStructA *);
 void func_ovl10_07_800490A8(UnkStructA *);
 void func_ovl10_07_800490F8(UnkStructA *, Vec3f *);
-void func_ovl10_07_80049178(void (*)(void), s32, s32, s32, s32);
+void func_ovl10_07_80049178(void (*)(void), s32, PORT_IP(s32), s32, s32);
 void func_ovl10_07_80049198(s32);
 void func_ovl10_07_800491C0(void);
 void func_ovl10_07_800491F0(s32, s32);
@@ -118,7 +118,7 @@ void func_ovl10_07_80048D80(UnkStructA_40 *, s32, s32);
 void func_ovl10_07_80048D90(s32, s32);
 void func_ovl10_07_80049060(UnkStructA *);
 s32 func_ovl10_07_800493E0(s32);
-void func_ovl10_07_800495C8(s32, f32, f32, f32, s32);
+void func_ovl10_07_800495C8(s32, f32, f32, f32, PORT_IP(s32));
 void func_ovl10_07_800495D8(s32);
 
 static void func_ovl10_07_80048288(void);

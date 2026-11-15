@@ -63,15 +63,15 @@ typedef struct {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ s32 unk8;
     /* 0x0C */ s32 unkC;
-    /* 0x10 */ u8 unk10[0x18];
+    /* 0x10 */ PORT_RET(u8 unk10[0x18];, u8 unk10[0x10]; void *unk20; void *unk24;)
     /* 0x28 */ s32 unk28;
     /* 0x2C */ u8 unk2C[4];
     /* 0x30 */ s32 unk30;
     /* 0x34 */ f32 unk34;
     /* 0x38 */ f32 unk38;
-    /* 0x3C */ u8 unk3C[4];
+    /* 0x3C */ PORT_RET(u8 unk3C[4];, void *unk3C;)
     /* 0x40 */ UnkStructA_40 *unk40;
-    /* 0x44 */ u8 unk44[8];
+    /* 0x44 */ PORT_RET(u8 unk44[8];, void *unk44; u8 unk48[0x4];)
     /* 0x4C */ f32 unk4C;
     /* 0x50 */ u8 unk50[4];
     /* 0x54 */ f32 unk54;
@@ -162,15 +162,15 @@ void func_ovl0D_02_80046CC8(Obj_0D02 *, s32); /* 0x180B */
 void func_ovl0D_02_80046CF8(Obj_0D02 *, s32); /* 0x1811 */
 void func_ovl0D_02_80046D00(Obj_0D02 *, s32); /* 0x1812 */
 void func_ovl0D_02_80046D10(Obj_0D02 *); /* 0x1814 */
-Obj_0D02 *func_ovl0D_02_80046D18(s32, s32, s32, s32, s32); /* 0x1815 */
-Obj_0D02 *func_ovl0D_02_80046D20(s32, s32, s32, s32); /* 0x1816 */
+Obj_0D02 *func_ovl0D_02_80046D18(s32, s32, s32, s32, PORT_IP(s32)); /* 0x1815 */
+Obj_0D02 *func_ovl0D_02_80046D20(s32, s32, s32, PORT_IP(s32)); /* 0x1816 */
 Obj_0D02 *func_ovl0D_02_80046D30(Obj_0D02 *); /* 0x1818 */
 Obj_0D02 *func_ovl0D_02_80046D40(s32, s32, f32, f32, f32); /* 0x181A */
 s32 func_ovl0D_02_80046D70(Obj_0D02 *, f32 *, f32 *, f32 *); /* 0x1820 */
 void func_ovl0D_02_80046D78(Obj_0D02 *); /* 0x1821 */
 void func_ovl0D_02_80046DC8(Obj_0D02 *, f32 *); /* 0x182B */
 void func_ovl0D_02_80046DD0(void *, Obj_0D02 *); /* 0x182C */
-void func_ovl0D_02_80046E48(void (*)(void), void *, s32, s32, s32); /* 0x1900 */
+void func_ovl0D_02_80046E48(void (*)(void), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0D_02_80046E58(void); /* 0x1902 */
 void func_ovl0D_02_80046E68(s32); /* 0x1904 */
 void *func_ovl0D_02_80046E70(void); /* 0x1905 */
@@ -381,7 +381,7 @@ static void func_ovl0D_02_80045F80(void) {
 
 /* the task of each of D_ovl0D_02_80047710 (its index is the argument) */
 void func_ovl0D_02_8004596C(void) {
-    s32 idx;
+    PORT_IP(s32) idx;
     Ent_0D02 *e;
     s32 flag;
     Vec3f pos;
@@ -393,7 +393,7 @@ void func_ovl0D_02_8004596C(void) {
     s32 n; /* idx + 1 held (the frame's word here; which value: a guess, any held one fits) */
     s32 timer;
 
-    idx = (s32) func_ovl0D_02_80046E70();
+    idx = (PORT_IP(s32)) func_ovl0D_02_80046E70();
     e = &D_ovl0D_02_80047710[idx];
     flag = D_ovl0D_02_800477F0[idx];
     pos.x = e->unk14 * 10.0f + 150.0f;
@@ -560,7 +560,7 @@ void func_ovl0D_02_800455A0(void) {
 /* the task of each of D_ovl0D_02_80047800 (its index is the argument):
  * once hit, it burns for three seconds, throwing debris */
 void func_ovl0D_02_80045274(void) {
-    s32 idx;
+    PORT_IP(s32) idx;
     s32 i;
     s32 r;
     s32 t0;
@@ -568,7 +568,7 @@ void func_ovl0D_02_80045274(void) {
     s32 t2;
     s32 t3;
 
-    idx = (s32) func_ovl0D_02_80046E70();
+    idx = (PORT_IP(s32)) func_ovl0D_02_80046E70();
     do {
         func_ovl0D_02_80046E68(idx + 7);
         D_ovl0D_02_80047A3C->unk30 = 1;

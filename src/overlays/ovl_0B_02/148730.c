@@ -79,8 +79,8 @@
 #define WRAP(x) ((x) >= 360.0f ? (x) - 360.0f : (x) < 0.0f ? (x) + 360.0f : (x))
 
 typedef struct {
-    u32 w0;
-    u32 w1;
+    PORT_UP(u32) w0;
+    PORT_UP(u32) w1;
 } Gfx_ovl0B_02;
 
 /* A box: its centre, its size, its scale, the model and frame, and the
@@ -113,7 +113,7 @@ typedef struct {
     /* 0x08 */ f32 unk8;
     /* 0x0C */ f32 unkC;
     /* 0x10 */ UnkStructA_40 *unk10;
-    /* 0x14 */ u32 unk14;
+    /* 0x14 */ PORT_UP(u32) unk14;
     /* 0x18 */ s32 unk18;
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ s32 unk20;
@@ -146,7 +146,7 @@ s32 func_ovl0B_02_80048738(void); /* 0xF03 */
 Save_ovl0B_02 *func_ovl0B_02_80048778(void); /* 0xF0B */
 void func_ovl0B_02_80048788(void); /* 0xF0D */
 void func_ovl0B_02_80048790(s32); /* 0xF0E */
-u32 func_ovl0B_02_80048CF8(s32); /* 0x1400 */
+PORT_UP(u32) func_ovl0B_02_80048CF8(s32); /* 0x1400 */
 void func_ovl0B_02_80048D00(s32); /* 0x1401 */
 UnkStructA_40 *func_ovl0B_02_80048D08(s32, s32); /* 0x1500 */
 void func_ovl0B_02_80048D10(UnkStructA_40 *); /* 0x1501 */
@@ -165,7 +165,7 @@ void func_ovl0B_02_80049020(s32); /* 0x1810 */
 void func_ovl0B_02_80049028(UnkStructA *, s32); /* 0x1811 */
 void func_ovl0B_02_80049040(UnkStructA *); /* 0x1814 */
 UnkStructA *func_ovl0B_02_80049050(s32, s32, s32, UnkStructA *); /* 0x1816 */
-s32 func_ovl0B_02_80049178(void (*)(), void *, s32, s32, s32); /* 0x1900 */
+s32 func_ovl0B_02_80049178(void (*)(), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0B_02_80049180(s32); /* 0x1901 */
 void func_ovl0B_02_80049188(void); /* 0x1902 */
 void func_ovl0B_02_80049198(s32); /* 0x1904 */
@@ -191,7 +191,7 @@ void func_ovl0B_02_80049568(s32); /* 0x2502 */
 s32 func_ovl0B_02_80049560(u8 *, u16, u16, f32, f32, s32); /* 0x2501 */
 s32 func_ovl0B_02_800495B0(u8 *); /* 0x250B */
 s32 func_ovl0B_02_800495B8(u8 *, u16, u16, f32, f32, s32); /* 0x250C */
-void func_ovl0B_02_800495C8(s32, f32, f32, f32, s32); /* 0x2600 */
+void func_ovl0B_02_800495C8(s32, f32, f32, f32, PORT_IP(s32)); /* 0x2600 */
 void func_ovl0B_02_800495E0(void); /* 0x2603 */
 void func_ovl0B_02_80049700(s32); /* 0x2B00 */
 void func_ovl0B_02_80049710(s32); /* 0x2B02 */
@@ -742,7 +742,7 @@ void func_ovl0B_02_80047020(void) {
 /* A piece's display list (the callback of the objects 80043FC4 makes). */
 void func_ovl0B_02_80046EFC(UnkStructA_40 *arg0, Gfx_ovl0B_02 **arg1) {
     Gfx_ovl0B_02 *gfx = *arg1;
-    Piece_ovl0B_02 *p = M2C_FIELD(arg0, Piece_ovl0B_02 **, 0x40);
+    Piece_ovl0B_02 *p = PORT_FIELD(arg0, Piece_ovl0B_02 **, 0x40, UnkStructA_40, unk40);
     u32 *e = (u32 *) (p->unk14 + p->unk18 * 12 + 12);
 
     { Gfx_ovl0B_02 *g = gfx++; g->w0 = 0xBC000806; g->w1 = p->unk14; }
@@ -765,7 +765,7 @@ void func_ovl0B_02_80046B8C(void) {
     f32 dx;
     s32 i;
 
-    x = (s32) func_ovl0B_02_800491A0();
+    x = (PORT_IP(s32)) func_ovl0B_02_800491A0();
     a = func_ovl0B_02_80049050(0x1B6, 0x01080000, 0xD0, NULL);
     b = func_ovl0B_02_80049050(0x1B7, 0x01080000, 0xD0, NULL);
     a->unk40->unk10 = b->unk40->unk10 = 19.0f;
@@ -1467,7 +1467,7 @@ static void func_ovl0B_02_800443DC(Piece_ovl0B_02 *pieces, s32 n) {
 
 static void func_ovl0B_02_80043FBC(Piece_ovl0B_02 *pieces, s32 n) {
     UnkStructA_40 *obj;
-    u32 dl;
+    PORT_UP(u32) dl;
     s32 i;
 
     for (i = 0; i < n; i++) {
@@ -1479,7 +1479,7 @@ static void func_ovl0B_02_80043FBC(Piece_ovl0B_02 *pieces, s32 n) {
             obj = pieces[i].unk10 = func_ovl0B_02_80048D88(func_ovl0B_02_80046EFC, 0);
             pieces[i].unk14 = dl;
             M2C_FIELD(obj, s32 *, 0x38) = pieces[i].unk18;
-            M2C_FIELD(obj, Piece_ovl0B_02 **, 0x40) = &pieces[i];
+            PORT_FIELD(obj, Piece_ovl0B_02 **, 0x40, UnkStructA_40, unk40) = &pieces[i];
         }
         obj->unk10 = pieces[i].unk4;
         obj->unk14 = pieces[i].unk8;

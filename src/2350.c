@@ -20,7 +20,7 @@ void func_80000698(void *dst, u32 size, u32 rom);
 void func_80000794(void);
 void func_80000870(void);
 void func_8000083C(s32 seg, void *entry, void *arg);
-void func_80001A30(s32 id, void **table);
+void func_80001A30(PORT_IP(s32) id, void **table);
 void func_800004D0();
 void func_80000524();
 void func_8000059C();

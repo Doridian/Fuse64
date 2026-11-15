@@ -198,19 +198,19 @@ void func_ovl15_02_800505B8(UnkStructA *, s32); /* 0x1811 */ /* also: void (Obj0
 void func_ovl15_02_800505C0(UnkStructA *, s32); /* 0x1812 */ /* also: void (Obj02 *, s32) x1; void (Obj03 *, s32) x1; void (UnkStruct_ovl0A_05_80048CA0 *, s32) x1 */
 void func_ovl15_02_800505C8(void *, s32); /* 0x1813 */
 s32 func_ovl15_02_800505D0(UnkStructA *); /* 0x1814 */
-UnkStructA *func_ovl15_02_800505E0(s32, s32, s32, UnkStructA *); /* 0x1816 */ /* also: Obj02 * (s32, s32, s32, Obj02 *) x1; Obj03 * (s32, s32, s32, Obj03 *) x1; UnkStruct_ovl0A_05_80048CA0 *(s32, s32, s32, UnkStruct_ovl0A_05_80048CA0 *) x1 */
+UnkStructA *func_ovl15_02_800505E0(PORT_IP(s32), s32, s32, UnkStructA *); /* 0x1816 */ /* also: Obj02 * (s32, s32, s32, Obj02 *) x1; Obj03 * (s32, s32, s32, Obj03 *) x1; UnkStruct_ovl0A_05_80048CA0 *(s32, s32, s32, UnkStruct_ovl0A_05_80048CA0 *) x1 */
 UnkStructA *func_ovl15_02_800505F0(UnkStructA *); /* 0x1818 */ /* also: void (Obj02 *) x1; void (Obj03 *) x1; Obj_0D02 *(Obj_0D02 *) x1 */
 void func_ovl15_02_80050638(UnkStructA *); /* 0x1821 */ /* also: void (Obj02 *) x1; void (Obj_0D02 *) x1; void (Obj_0D03 *) x1 */
 UnkStructA *func_ovl15_02_80050640(UnkStructA *, s32); /* 0x1822 */
 void func_ovl15_02_80050688(UnkStructA *, f32 *); /* 0x182B */ /* also: void (Obj02 *, f32 *) x1; void (Obj03 *, f32 *) x1; void (UnkStruct_ovl0A_05_80048CA0 *, f32 *) x1 */
 void func_ovl15_02_80050690(UnkStructA *, UnkStructA *); /* 0x182C */ /* also: void (Obj02 *, Obj02 *) x1; void (Obj03 *, Obj03 *) x1; void (UnkStruct_ovl0A_05_80048CA0 *, UnkStruct_ovl0A_05_80048CA0 *) x1 */
 void func_ovl15_02_800506C8(UnkStructA *); /* 0x1833 */
-s32 func_ovl15_02_800506D0(UnkStructA *, s32); /* 0x1834 */
-UnkStructA *func_ovl15_02_800506E0(s32, s32, Vec3f *, Vec3f *, s32); /* 0x1836 */
+PORT_IP(s32) func_ovl15_02_800506D0(UnkStructA *, s32); /* 0x1834 */
+UnkStructA *func_ovl15_02_800506E0(PORT_IP(s32), PORT_IP(s32), Vec3f *, Vec3f *, s32); /* 0x1836 */
 void func_ovl15_02_800506E8(s32 *); /* 0x1837 */
 void func_ovl15_02_800506F0(void); /* 0x1838 */
 void func_ovl15_02_800506F8(void); /* 0x1839 */
-s32 func_ovl15_02_80050708(void (*)(), void *, s32, s32, s32); /* 0x1900 */ /* also: void (void (*)(void), void *, s32, s32, s32) x6; s32 (void (*)(void), void *, s32, s32, s32) x4; s32 (void (*)(), void *, void *, s32, s32) x1 */
+s32 func_ovl15_02_80050708(void (*)(), void *, PORT_IP(s32), s32, s32); /* 0x1900 */ /* also: void (void (*)(void), void *, s32, s32, s32) x6; s32 (void (*)(void), void *, s32, s32, s32) x4; s32 (void (*)(), void *, void *, s32, s32) x1 */
 void func_ovl15_02_80050710(s32); /* 0x1901 */
 void func_ovl15_02_80050718(void); /* 0x1902 */
 void func_ovl15_02_80050728(s32); /* 0x1904 */ /* also: s32 (s32) x1 */
@@ -238,11 +238,11 @@ void func_ovl15_02_80050A08(s32, s32, s32, f32); /* 0x2004 */
 void func_ovl15_02_80050A50(s32); /* 0x2200 */
 void func_ovl15_02_80050A60(s32); /* 0x2202 */
 void func_ovl15_02_80050A68(s32); /* 0x2203 */
-void func_ovl15_02_80050B60(s32, f32 *, s32); /* 0x2601 */ /* also: s32 (s32, f32 *, s32) x3; void (s32, f32 *, Obj_0D02 *) x1; void (s32, f32 *, Obj_0D03 *) x1 */
+void func_ovl15_02_80050B60(s32, f32 *, PORT_IP(s32)); /* 0x2601 */ /* also: s32 (s32, f32 *, s32) x3; void (s32, f32 *, Obj_0D02 *) x1; void (s32, f32 *, Obj_0D03 *) x1 */
 s32 func_ovl15_02_80050BE0(void); /* 0x2802 */
 void func_ovl15_02_80050BE8(s32, f32, s32, s32); /* 0x2803 */
 s32 func_ovl15_02_80050C90(s32); /* 0x2B00 */
-void func_ovl15_02_80050CA0(s32); /* 0x2B02 */
+void func_ovl15_02_80050CA0(PORT_IP(s32)); /* 0x2B02 */
 void func_ovl15_02_80050CA8(void); /* 0x2B03 */
 s32 func_ovl15_02_80050CB0(s32, f32, f32, f32); /* 0x2B04 */
 void func_ovl15_02_80050CC0(s32); /* 0x2B06 */
@@ -658,7 +658,7 @@ void func_ovl15_02_8004F6E8(void) {
         } while (func_ovl15_02_80050990(0x420) == 0);
     }
     if (!(*D_ovl15_02_800513AC & 2)) {
-        func_ovl15_02_80050CA0((s32) sp1C);
+        func_ovl15_02_80050CA0((PORT_IP(s32)) sp1C);
     }
     func_ovl15_02_80050718();
 }
@@ -1300,7 +1300,7 @@ void func_ovl15_02_8004DA44(u32 arg0, s32 arg1) {
 void func_ovl15_02_8004D818() {
     UnkStructA *objs[8];
     Vec3f size;
-    s32 n;
+    PORT_IP(s32) n;
     s32 i;
     s32 ok;
     UnkStructA *o;
@@ -1321,7 +1321,7 @@ void func_ovl15_02_8004D818() {
                 for (i = 0; i < 8; i++) {
                     objs[i] = NULL;
                 }
-                n = (s32) func_ovl15_02_800506E0(0x42, (s32) p, &size, (Vec3f *) objs, 8);
+                n = (PORT_IP(s32)) func_ovl15_02_800506E0(0x42, (PORT_IP(s32)) p, &size, (Vec3f *) objs, 8);
                 if (n != 0) {
                     ok = 1;
                     for (i = 0; i < n && ok != 0; i++) {
@@ -1520,9 +1520,9 @@ void func_ovl15_02_8004CE64(void *arg0) {
 void func_ovl15_02_8004CD68() {
     s32 i;
     Vec3f v;
-    s32 obj;
+    PORT_IP(s32) obj;
 
-    obj = (s32) func_ovl15_02_80050730();
+    obj = (PORT_IP(s32)) func_ovl15_02_80050730();
     for (i = 0; i != 8; i++) {
         v.x = func_ovl15_02_800508B8((f32) func_ovl15_02_800508C0() * 360.0f) * 100.0f;
         v.y = func_ovl15_02_800508B8((f32) func_ovl15_02_800508C0() * 360.0f) * 100.0f;
@@ -1569,7 +1569,7 @@ void func_ovl15_02_8004CAD0() {
 }
 
 void func_ovl15_02_8004C400() {
-    s32 id;
+    PORT_IP(s32) id;
     UnkStructA *obj;
     s32 loop;
     s32 played;
@@ -1590,7 +1590,7 @@ void func_ovl15_02_8004C400() {
     f32 dist;
     f32 speed;
 
-    id = (s32) func_ovl15_02_80050730();
+    id = (PORT_IP(s32)) func_ovl15_02_80050730();
     obj = func_ovl15_02_800505E0(id, 0x01080000, 0xD0, NULL);
     func_ovl15_02_800505F0(obj);
     speed = 4.0f;
@@ -1868,7 +1868,7 @@ void func_ovl15_02_8004BB68() {
 
     self = func_ovl15_02_80050730();
     a = self->unk40->unk36;
-    o = func_ovl15_02_8004BAC0(M2C_FIELD(self, UnkStructA **, 0x44));
+    o = func_ovl15_02_8004BAC0(PORT_FIELD(self, UnkStructA **, 0x44, UnkStructA, unk44));
     o->unk4C = self->unk4C;
     o->unk50 = self->unk50;
     o->unk54 = self->unk54;
@@ -2710,7 +2710,7 @@ void func_ovl15_02_80048C1C() {
     s32 i;
 
     obj = func_ovl15_02_80050730();
-    tgt = M2C_FIELD(obj, UnkStructA **, 0x44);
+    tgt = PORT_FIELD(obj, UnkStructA **, 0x44, UnkStructA, unk44);
     for (i = 0; i < 16; i++) {
         func_ovl15_02_80050688(tgt, &buf[i].x);
         if (tgt->unk28 != 0x305) {
@@ -2974,7 +2974,7 @@ void func_ovl15_02_80047D70() {
     s32 i;
     s32 n;
 
-    obj = func_ovl15_02_800505E0((s32) func_ovl15_02_80050730() + 0x309, 0x01000030, 0x30, NULL);
+    obj = func_ovl15_02_800505E0((PORT_IP(s32)) func_ovl15_02_80050730() + 0x309, 0x01000030, 0x30, NULL);
     obj->unk34 = 150.0f;
     obj->unk38 = 150.0f;
     obj->unk40->unk20 = D_ovl15_02_800514B8.x;
@@ -4249,8 +4249,8 @@ void func_ovl15_02_80043688(void) {
         D_ovl15_02_80050FDC[0] &= ~1;
         D_ovl15_02_80050FDC[0] |= 2;
         M2C_FIELD(&D_ovl15_02_80050FDC, f32 *, 8) = 0.25f;
-        M2C_FIELD(D_ovl15_02_80051430[0], M2C_UNK **, 0x3C) = (M2C_UNK *) &D_ovl15_02_80050FDC;
-        M2C_FIELD(D_ovl15_02_80051428, M2C_UNK **, 0x3C) = (M2C_UNK *) &D_ovl15_02_80050FDC;
+        PORT_FIELD(D_ovl15_02_80051430[0], M2C_UNK **, 0x3C, UnkStructA, unk3C) = (M2C_UNK *) &D_ovl15_02_80050FDC;
+        PORT_FIELD(D_ovl15_02_80051428, M2C_UNK **, 0x3C, UnkStructA, unk3C) = (M2C_UNK *) &D_ovl15_02_80050FDC;
         played = 0;
         for (n = D_ovl15_02_800514E0, t = 0.0f; t < n; t += 1.0f) {
             D_ovl15_02_800514C8 = func_ovl15_02_800508B0((t / n) * 180.0f) * 30.0f;
@@ -4260,8 +4260,8 @@ void func_ovl15_02_80043688(void) {
             }
             func_ovl15_02_80050750();
         }
-        M2C_FIELD(D_ovl15_02_80051430[0], M2C_UNK **, 0x3C) = NULL;
-        M2C_FIELD(D_ovl15_02_80051428, M2C_UNK **, 0x3C) = M2C_FIELD(D_ovl15_02_80051430[0], M2C_UNK **, 0x3C);
+        PORT_FIELD(D_ovl15_02_80051430[0], M2C_UNK **, 0x3C, UnkStructA, unk3C) = NULL;
+        PORT_FIELD(D_ovl15_02_80051428, M2C_UNK **, 0x3C, UnkStructA, unk3C) = PORT_FIELD(D_ovl15_02_80051430[0], M2C_UNK **, 0x3C, UnkStructA, unk3C);
         D_ovl15_02_80050FDC[0] = 0x20001;
         M2C_FIELD(&D_ovl15_02_80050FDC, f32 *, 0xC) = 0.05f;
         M2C_FIELD(&D_ovl15_02_80050FDC, f32 *, 8) = 0.1f;

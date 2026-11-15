@@ -21,7 +21,7 @@ s32 func_8026D7D8(s32, s32, s32);
 extern UnkStruct_800B5F20 D_800B5F20[6];
 extern u8 D_802A1610[];
 s32 D_802B01F0;
-void (*D_802B01F8[7])(s32);
+void (*D_802B01F8[7])(PORT_IP(s32));
 void (*D_802B0214)(void);
 
 void func_8027F740(void) {
@@ -71,13 +71,13 @@ void func_8027F84C(void (*arg0)(void)) {
     D_802B0214 = arg0;
 }
 
-void func_8027F858(s32 arg0, s32 arg1) {
+void func_8027F858(PORT_IP(s32) arg0, s32 arg1) {
     if (D_802B01F8[arg1 - 1] != NULL) {
         D_802B01F8[arg1 - 1](arg0);
     }
 }
 
-void func_8027F88C(void (*arg0)(s32), s32 arg1) {
+void func_8027F88C(void (*arg0)(PORT_IP(s32)), s32 arg1) {
     D_802B01F8[arg1 - 1] = arg0;
 }
 

@@ -403,8 +403,8 @@
 #include "common.h"
 
 typedef struct {
-    u32 w0;
-    u32 w1;
+    PORT_UP(u32) w0;
+    PORT_UP(u32) w1;
 } Gfx_ovl0B_06;
 
 /* D_ovl0B_06_80049930 */
@@ -558,7 +558,7 @@ s32 func_ovl0B_06_800490E8(u8 *, u16, u16, f32, f32, u8); /* 0x250C */
 void func_ovl0B_06_800490F0(s32, u8 *, s32); /* 0x250D */
 void func_ovl0B_06_80049230(s32); /* 0x2B00 */
 s32 func_ovl0B_06_80049250(s32, f32, f32, f32); /* 0x2B04 */
-s32 func_ovl0B_06_80049368(s32, s32); /* 0x2F09 */
+PORT_IP(s32) func_ovl0B_06_80049368(s32, s32); /* 0x2F09 */
 s32 func_ovl0B_06_80049370(void); /* 0x2F0A */
 void func_ovl0B_06_80049378(s32); /* 0x2F0B */
 void func_ovl0B_06_80049380(s32); /* 0x2F0C */
@@ -3145,7 +3145,7 @@ static void func_ovl0B_06_80043040(Rect_ovl0B_06 *rect, Spr_ovl0B_06 *spr, f32 d
     func_ovl0B_06_80043020();
     func_ovl0B_06_80043018();
     rect->unk0 = func_ovl0B_06_80048838(spr->unk8, spr->unk10);
-    *(s32 *) rect->unk0->unk38 = spr->unkC;
+    PORT_HOST(*(s32 *) rect->unk0->unk38, rect->unk0->unk38) = spr->unkC;
     rect->unk0->unk28 = spr->unk0;
     rect->unk0->unk2C = spr->unk4;
     rect->unk0->unk10 = rect->unk4;

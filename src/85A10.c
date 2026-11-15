@@ -96,20 +96,20 @@ typedef struct {
 
 /* abi.h's Acmd */
 typedef struct {
-    /* 0x00 */ u32 w0;
-    /* 0x04 */ u32 w1;
+    /* 0x00 */ PORT_UP(u32) w0;
+    /* 0x04 */ PORT_UP(u32) w1;
 } UnkStruct_802AD6A0_0; /* size 0x8 */
 
 /* audiomgr.c's AMAudioMgr */
 typedef struct {
     /* 0x000 */ UnkStruct_802AD6A0_0 *ACMDList[2];
     /* 0x008 */ UnkStruct_8026B238 *audioInfo[3];
-    /* 0x018 */ u64 thread[0x1B0 / 8];
+    /* 0x018 */ u64 thread[PORT_HOST(0x1B0, PORT_SIZEOF_OSTHREAD) / 8];
     /* 0x1C8 */ UnkStruct_802AD868 audioFrameMsgQ;
     /* 0x1E0 */ void *audioFrameMsgBuf[8];
     /* 0x200 */ UnkStruct_802AD868 audioReplyMsgQ;
     /* 0x218 */ void *audioReplyMsgBuf[8];
-    /* 0x238 */ u8 g[0x50];
+    /* 0x238 */ u8 g[PORT_HOST(0x50, PORT_SIZEOF_ALGLOBALS)];
 } UnkStruct_802AD6A0; /* size 0x288 */
 
 /* error flags (1 heap, 2 DMA, 4 AI underrun, 8 command list, 0x10 DMA
@@ -153,7 +153,13 @@ typedef struct {
 
 /* os.h's OSIoMesg */
 typedef struct {
+#ifdef TARGET_PC
+    /* (the host's: where pointers are 8 bytes it is bigger) */
+    void *align;
+    u8 unk0[PORT_SIZEOF_OSIOMESG - sizeof(void *)];
+#else
     /* 0x00 */ u8 unk0[0x18];
+#endif
 } UnkStruct_802AF960;
 
 void *func_80297D48(void *);
@@ -210,7 +216,7 @@ void *D_802AFBB8[0x18];
 
 void *func_8026B72C(s32 arg0);
 static void func_8026B584(void *arg);
-static s32 func_8026B804(s32 addr, s32 len, void *state);
+static PORT_IP(s32) func_8026B804(s32 addr, s32 len, void *state);
 static void *func_8026B210(UnkStruct_802AF930 **state);
 
 s16 func_8026B9CC(UnkStruct_8026B9CC_0 *c, UnkStruct_8026B9CC_1 *amc) {
@@ -309,7 +315,7 @@ end:
     return err;
 }
 
-static s32 func_8026B804(s32 addr, s32 len, void *state) {
+static PORT_IP(s32) func_8026B804(s32 addr, s32 len, void *state) {
     u8 *foundBuffer;
     s32 delta;
     s32 addrEnd;
@@ -327,14 +333,14 @@ static s32 func_8026B804(s32 addr, s32 len, void *state) {
         } else if (addrEnd <= buffEnd) {
             dmaPtr->lastFrame = D_802AF938;
             foundBuffer = dmaPtr->ptr + addr - dmaPtr->startAddr;
-            return (s32) func_80297D48(foundBuffer);
+            return (PORT_IP(s32)) func_80297D48(foundBuffer);
         }
         lastDmaPtr = dmaPtr;
         dmaPtr = dmaPtr->next;
     }
     dmaPtr = D_802AF930.firstFree;
     if (dmaPtr == NULL) {
-        return (s32) func_80297D48(D_802AF930.firstUsed);
+        return (PORT_IP(s32)) func_80297D48(D_802AF930.firstUsed);
     }
     D_802AF930.firstFree = dmaPtr->next;
     func_802983B8(dmaPtr);
@@ -357,7 +363,7 @@ static s32 func_8026B804(s32 addr, s32 len, void *state) {
     dmaPtr->startAddr = addr;
     dmaPtr->lastFrame = D_802AF938;
     func_80298028(&D_802AF960[D_802AF93C++], 0, 0, addr, foundBuffer, D_802AF944, &D_802AFBA0);
-    return (s32) func_80297D48(foundBuffer) + delta;
+    return (PORT_IP(s32)) func_80297D48(foundBuffer) + delta;
 }
 
 void func_8026B7D4(void) {

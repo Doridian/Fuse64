@@ -32,6 +32,11 @@ extern u8 D_800AEDF0[];
 s16 D_802A14F0 = 0;
 s16 D_802AFE70;
 
+#ifdef TARGET_PC
+/* the object pool's object and its 0x40 (structs.h), as the host lays them out */
+typedef UnkStructA_40 Sub926;
+typedef UnkStructA Obj926;
+#else
 typedef struct {
     /* 0x00 */ u8 pad0[0xC];
     /* 0x0C */ s32 unkC;
@@ -56,11 +61,12 @@ typedef struct {
     /* 0x3C */ u8 pad3C[4];
     /* 0x40 */ Sub926 *unk40;
 } Obj926;
+#endif
 
 typedef struct {
     /* 0x00 */ s16 unk0;
     /* 0x02 */ u8 pad2[6];
-    /* 0x08 */ s32 *unk8;
+    /* 0x08 */ PORT_IP(s32) *unk8; /* the caller's slot that holds this record */
     /* 0x0C */ s16 unkC;
     /* 0x0E */ u16 unkE;
     /* 0x10 */ s16 unk10;
@@ -88,7 +94,24 @@ typedef struct {
     /* 0x18 */ s32 unk18;
     /* 0x1C */ u8 pad1C[4];
     /* 0x20 */ s32 unk20;
+#ifdef TARGET_PC
+    /* 0x24 */ u8 pad24[4];
+    /* (D_800AEDF0's pointers as wide as the host's: 5E3F0.c's
+       UnkStruct_800AEDF0) */
+    /* 0x28 */ intptr_t unk28;
+    /* 0x2C */ intptr_t unk2C;
+    /* 0x30 */ intptr_t unk30;
+    /* 0x34 */ u8 pad34[0x40 - 0x34];
+    /* 0x40 */ intptr_t unk40;
+    /* 0x44 */ u8 pad44[0x4C - 0x44];
+    /* 0x4C */ intptr_t unk4C;
+    /* 0x50 */ u8 pad50[0xB0 - 0x50];
+    /* 0xB0 */ intptr_t unkB0;
+    /* 0xB4 */ intptr_t unkB4;
+    /* 0xB8 */ u8 padB8[0xC8 - 0xB8];
+#else
     /* 0x24 */ u8 pad24[0xC8 - 0x24];
+#endif
 } Player926; /* size 0xC8 */
 
 typedef struct {
@@ -101,7 +124,7 @@ void func_8027404C(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5
 s32 func_80277EA0(s16 arg0);
 s16 func_80277F0C(Rec926 *arg0);
 s16 func_80277F74(void);
-Rec926 *func_80277FC4(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4, f32 arg5, f32 arg6, f32 arg7, s16 arg8, s32 *arg9);
+Rec926 *func_80277FC4(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4, f32 arg5, f32 arg6, f32 arg7, s16 arg8, PORT_IP(s32) *arg9);
 void func_80278740(Rec926 *arg0);
 void func_80278788(Rec926 *arg0);
 void func_802787E4(Rec926 *arg0);
@@ -331,7 +354,7 @@ void func_80278740(Rec926 *arg0) {
     D_802AFE70--;
 }
 
-Rec926 *func_80277FC4(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4, f32 arg5, f32 arg6, f32 arg7, s16 arg8, s32 *arg9) {
+Rec926 *func_80277FC4(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4, f32 arg5, f32 arg6, f32 arg7, s16 arg8, PORT_IP(s32) *arg9) {
     s16 idx;
     s16 alpha;
     s32 flags;

@@ -10,7 +10,7 @@ extern u8 D_8008E640[8];
 extern u8 D_802A1C00[];
 extern u8 D_802A1C2C[9];
 
-s32 *func_8028A060(s32 arg0) {
+s32 *func_8028A060(PORT_IP(s32) arg0) {
     if (arg0 < 0 || arg0 >= 45) {
         while (1) {
         }

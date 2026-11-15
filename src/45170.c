@@ -62,7 +62,7 @@ typedef struct {
 
 /* Chunk 3: channels (0x2F: key list; 0x30: a curve, tag 0x31). */
 typedef struct {
-    /* 0x00 */ s32 unk0;
+    /* 0x00 */ PORT_IP(s32) unk0;
     /* 0x04 */ s32 unk4;
     /* 0x08 */ s32 *unk8;
     /* 0x0C */ f32 *unkC;
@@ -152,7 +152,7 @@ typedef struct {
     /* 0x0C */ s32 unkC;
     /* 0x10 */ s32 *unk10;
     /* 0x14 */ s32 *unk14;
-    /* 0x18 */ s32 unk18;
+    /* 0x18 */ PORT_IP(s32) unk18;
     /* 0x1C */ UnkTree *unk1C;
     /* 0x20 */ s32 unk20;
     /* 0x24 */ s32 unk24;

@@ -229,7 +229,11 @@ extern oscData *D_802AD3C4;
 extern oscData D_802AD3C8[32];
 
 typedef struct SeqData {
+#ifdef TARGET_PC
+    /* 0x00 */ u32 offset; /* a ROM address: the file's 4 bytes */
+#else
     /* 0x00 */ u8 *offset;
+#endif
     /* 0x04 */ s32 len;
 } SeqData;
 
@@ -481,7 +485,7 @@ s32 func_80268F70(void);
 s32 func_80268F94(s16 arg0);
 void func_802690DC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 void func_8026910C(void);
-static void func_80269144(s32 rom, void *dst, s32 size);
+static void func_80269144(PORT_IP(s32) rom, void *dst, s32 size);
 void func_802691A8(void);
 s16 *func_80269680(u32 arg0);
 void func_80269704(u8 arg0);
@@ -854,7 +858,7 @@ static s16 func_8026A164() {
     oscData *os;
     u32 n;
 
-    D_802AD220 = func_8026B72C(0x7C);
+    D_802AD220 = func_8026B72C(PORT_HOST(0x7C, port_sizeof_ALCSPlayer));
     if (D_802AD220 == NULL) {
         return 1;
     }
@@ -918,7 +922,7 @@ static s16 func_8026A164() {
         D_802A1330 = 0;
         return 0;
     }
-    D_802AD228 = func_8026B72C(0xF8);
+    D_802AD228 = func_8026B72C(PORT_HOST(0xF8, port_sizeof_ALCSeq));
     if (D_802AD228 == NULL) {
         return 1;
     }
@@ -975,7 +979,7 @@ static s16 func_80269AFC() {
 
     D_802AD658 = NULL;
     D_802A12BC = D_802A12B4 + D_802A12B8;
-    D_802AD64C = func_8026B72C(0x54);
+    D_802AD64C = func_8026B72C(PORT_HOST(0x54, port_sizeof_ALSndPlayer));
     if (D_802AD64C == NULL) {
         return 1;
     }
@@ -1095,22 +1099,56 @@ static s32 func_80269A84(SndHeader *hdr) {
     }
     D_802A1348 = hdr->rom;
     func_80269144(D_802A1348, D_802AD648, size); PORT_ONLY(port_sounds_native(D_802AD648, size, hdr->count));
+#ifdef TARGET_PC
+    /* the sounds as the host lays them out (where pointers are 8 bytes a
+       16-byte record has no room for them): the file stays as it came,
+       for the envelopes, books and loops its records point into */
+    {
+        u8 *raw = (u8 *) D_802AD648;
+        SndSound *nat = port_alloc(hdr->count * sizeof(SndSound));
+        SndWave **waves = port_alloc((size / 4 + 1) * sizeof(SndWave *));
+        for (k = 0; k < hdr->count; k++) {
+            u8 *r = raw + k * 16;
+            u32 woff = *(u32 *) (r + 8);
+            snd = &nat[k];
+            snd->envelope = raw + *(u32 *) r;
+            snd->keyMap = raw + *(u32 *) (r + 4);
+            snd->samplePan = r[0xC];
+            snd->sampleVolume = r[0xD];
+            snd->flags = 1;
+            if (waves[woff / 4] == NULL) {
+                u8 *w = raw + woff;
+                wave = waves[woff / 4] = port_alloc(sizeof(SndWave));
+                wave->base = *(s32 *) w + hdr->table;
+                wave->len = *(s32 *) (w + 4);
+                wave->type = w[8];
+                wave->flags = 1;
+                wave->book = raw + *(u32 *) (w + 0x10);
+                wave->loop = *(u32 *) (w + 0xC) != 0 ? raw + *(u32 *) (w + 0xC) : NULL;
+            }
+            snd->wavetable = waves[woff / 4];
+        }
+        port_free(waves);
+        D_802AD648 = (SndBankFile *) nat;
+        return 0;
+    }
+#endif
     for (k = 0; k < hdr->count; k++) {
         snd = (SndSound *) ((u8 *) D_802AD648 + k * 16);
         if (snd->flags != 0) {
             continue;
         }
         snd->flags = 1;
-        snd->envelope = (u8 *) snd->envelope + (u32) D_802AD648;
-        wave = snd->wavetable = (SndWave *) ((u8 *) snd->wavetable + (u32) D_802AD648);
+        snd->envelope = (u8 *) snd->envelope + (PORT_UP(u32)) D_802AD648;
+        wave = snd->wavetable = (SndWave *) ((u8 *) snd->wavetable + (PORT_UP(u32)) D_802AD648);
         if (wave->flags != 0) {
             continue;
         }
         wave->flags = 1;
         wave->base += hdr->table;
-        wave->book = (u8 *) wave->book + (u32) D_802AD648;
+        wave->book = (u8 *) wave->book + (PORT_UP(u32)) D_802AD648;
         if (wave->loop != NULL) {
-            wave->loop = (u8 *) wave->loop + (u32) D_802AD648;
+            wave->loop = (u8 *) wave->loop + (PORT_UP(u32)) D_802AD648;
         }
     }
     return 0;
@@ -1136,7 +1174,9 @@ static s32 func_80269A7C(SndHeader *hdr) {
     }
     hdr->scriptRom += D_802A1344;
     func_80269144(hdr->scriptRom, D_802AD658, total); PORT_ONLY(port_scripts_native(D_802AD658, total));
+#ifndef TARGET_PC
     *D_802AD658 = (u16 *) ((u8 *) *D_802AD658 + (u32) D_802AD658);
+#endif
     total = D_802A12BC * sizeof(VoiceScript);
     D_802AD65C = func_8026B72C(total);
     if (D_802AD65C == NULL) {
@@ -1404,7 +1444,7 @@ static void func_802691A0(void) {
         if (len & 1) {
             len++;
         }
-        func_80269144((s32) sd->offset, D_802AD224, len); PORT_ONLY(port_native32(D_802AD224, 0x44));
+        func_80269144((PORT_IP(s32)) sd->offset, D_802AD224, len); PORT_ONLY(port_native32(D_802AD224, 0x44));
     } else {
         len = D_802A1334 - D_802A1330;
         if (len & 1) {
@@ -1446,9 +1486,14 @@ play:
     }
 }
 
-static void func_80269144(s32 rom, void *dst, s32 size) {
+static void func_80269144(PORT_IP(s32) rom, void *dst, s32 size) {
     struct {
+#ifdef TARGET_PC
+        void *align;
+        u8 w[PORT_SIZEOF_OSIOMESG - sizeof(void *)];
+#else
         u32 w[6];
+#endif
     } mb; /* OSIoMesg */
 
     func_80297D50(dst, (void *) size);
@@ -1692,7 +1737,12 @@ static void func_80268430(s16 idx, s16 script, s8 type) {
         s->flags = 0;
         s->script = script;
         if (script >= 0) {
+#ifdef TARGET_PC
+            /* (the first word stays the table's offset: a pointer may not fit) */
+            t = (u16 *) ((u8 *) D_802AD658 + *(u32 *) D_802AD658);
+#else
             t = *D_802AD658;
+#endif
             s->pc = (u8 *) D_802AD658 + t[script];
             s->wait = 0;
             s->nchild = 0;
@@ -2263,7 +2313,7 @@ static void func_8026706C(s16 num, SndDef *def) {
             def->unkE = 0;
             break;
         case 0x5432:
-            def->sound = (u8 *) D_802AD648 + (e->unk4 & 0x7FFF) * 0x10;
+            def->sound = (u8 *) D_802AD648 + (e->unk4 & 0x7FFF) * PORT_HOST(0x10, sizeof(SndSound));
             if (e->unk4 < 0) {
                 def->unkF = 1;
             }

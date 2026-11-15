@@ -9,7 +9,7 @@
 
 extern u8 D_80024820[];
 void func_80000698(void *dst, u32 size, u32 rom);
-void func_80001A30(s32 id, void **table);
+void func_80001A30(PORT_IP(s32) id, void **table);
 void func_800007F0(s32 seg, void *dst);
 void func_8000083C(s32 seg, void *entry, void *arg);
 

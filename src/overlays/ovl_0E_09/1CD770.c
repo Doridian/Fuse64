@@ -39,8 +39,8 @@ typedef struct {
 
 /* what func_ovl0E_09_80045D28 returns */
 typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
+    /* 0x00 */ PORT_RET(u8 unk0[0xC];, void *unk0; u8 unk4[0x8];)
+    /* 0x0C */ PORT_IP(s32) unkC;
 } UnkStruct_ovl0E_09_80045D28;
 
 void func_ovl0E_09_80044A88(s32);
@@ -64,7 +64,7 @@ void func_ovl0E_09_80044C88(s32, s32, f32, s32, s32, s32, s32);
 void func_ovl0E_09_80044C90(const char *);
 void func_ovl0E_09_80044C98(void);
 void func_ovl0E_09_80044CD0(s32);
-void func_ovl0E_09_80045170(s32);
+void func_ovl0E_09_80045170(PORT_IP(s32));
 void func_ovl0E_09_800451D0(UnkStructA_40 *, s32, s32, s32, s32, s32);
 void func_ovl0E_09_800452C8(f32, f32, f32);
 void func_ovl0E_09_800452E8(f32, f32, f32);
@@ -79,7 +79,7 @@ void func_ovl0E_09_800454A0(UnkStructA *);
 UnkStructA *func_ovl0E_09_800454D0(s32, s32, f32, f32, f32);
 void func_ovl0E_09_80045508(UnkStructA *);
 void func_ovl0E_09_80045598(UnkStructA *);
-s32 func_ovl0E_09_800455D8(void (*)(void), void *, s32, s32, s32);
+s32 func_ovl0E_09_800455D8(void (*)(void), void *, PORT_IP(s32), s32, s32);
 void func_ovl0E_09_800455E0(s32);
 void func_ovl0E_09_800455E8(void);
 void func_ovl0E_09_800455F8(s32);
@@ -89,7 +89,7 @@ void func_ovl0E_09_80045858(s32);
 void func_ovl0E_09_80045918(s32, s32, s32, s32, s32);
 void func_ovl0E_09_80045928(s32, s32, s32);
 void func_ovl0E_09_80045940(u32 (*)[3]);
-void func_ovl0E_09_80045A28(s32, f32, f32, f32, s32);
+void func_ovl0E_09_80045A28(s32, f32, f32, f32, PORT_IP(s32));
 void func_ovl0E_09_80045A30(s32, f32 *, s32);
 void func_ovl0E_09_80045AE8(s32, s32, s32);
 void func_ovl0E_09_80045B40(f32 *);

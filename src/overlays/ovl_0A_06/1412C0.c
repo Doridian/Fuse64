@@ -86,8 +86,8 @@ typedef struct {
 
 /* A display list command (gbi.h's Gfx, as two words) */
 typedef struct {
-    /* 0x00 */ u32 w0;
-    /* 0x04 */ u32 w1;
+    /* 0x00 */ PORT_UP(u32) w0;
+    /* 0x04 */ PORT_UP(u32) w1;
 } UnkStruct_ovl0A_06_800452B8;
 
 /* a rectangle: x, y, width, height */
@@ -149,7 +149,7 @@ UnkStruct_ovl0A_06_800460E8 *func_ovl0A_06_80046168(void (*)(s32, UnkStruct_ovl0
 void func_ovl0A_06_80046248(f32, f32, f32); /* 0x1704 */
 void func_ovl0A_06_80046268(f32, f32, f32); /* 0x1708 */
 void func_ovl0A_06_80046270(f32 *, f32 *, f32 *); /* 0x1709 */
-s32 func_ovl0A_06_80046558(void (*)(), void *, s32, s32, s32); /* 0x1900 */
+s32 func_ovl0A_06_80046558(void (*)(), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0A_06_80046568(void); /* 0x1902 */
 void func_ovl0A_06_80046578(s32); /* 0x1904 */
 s32 func_ovl0A_06_800465A0(void); /* 0x1909 */
@@ -759,7 +759,7 @@ static void func_ovl0A_06_800452B8(s32 arg0, UnkStruct_ovl0A_06_80047178 *tbl, U
     UnkStruct_ovl0A_06_800452B8 *gfx = *arg1;
     s32 i;
 
-    { UnkStruct_ovl0A_06_800452B8 *_g = (UnkStruct_ovl0A_06_800452B8 *) (gfx++); _g->w0 = 0x0400103F; _g->w1 = (u32) D_ovl0A_06_80047028; }
+    { UnkStruct_ovl0A_06_800452B8 *_g = (UnkStruct_ovl0A_06_800452B8 *) (gfx++); _g->w0 = 0x0400103F; _g->w1 = (PORT_UP(u32)) D_ovl0A_06_80047028; }
     for (i = 0; i < 4; i++) {
         UnkStruct_ovl0A_06_800452B8 *_g = (UnkStruct_ovl0A_06_800452B8 *) (gfx++);
         _g->w0 = 0xB2100000 | (i * 2);

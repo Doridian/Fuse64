@@ -114,18 +114,18 @@ void func_ovl0F_09_80045660(UnkStructA *, s32);
 s32 func_ovl0F_09_80045670(UnkStructA *);
 UnkStructA *func_ovl0F_09_800456C8(s32, s32);
 void func_ovl0F_09_800456D8(UnkStructA *);
-s32 func_ovl0F_09_80045778(UnkStructA *, s32, UnkStructA *);
-s32 func_ovl0F_09_800457A8(void (*)(void), s32, s32, s32, s32);
+PORT_IP(s32) func_ovl0F_09_80045778(UnkStructA *, s32, UnkStructA *);
+s32 func_ovl0F_09_800457A8(void (*)(void), s32, PORT_IP(s32), s32, s32);
 void func_ovl0F_09_800457B0(s32);
 void func_ovl0F_09_800457B8(void);
 void func_ovl0F_09_800457C8(s32);
-s32 func_ovl0F_09_800457D0(void);
+PORT_IP(s32) func_ovl0F_09_800457D0(void);
 s32 func_ovl0F_09_800457F0(void);
 UnkStructC *func_ovl0F_09_80045830(s32);
 void func_ovl0F_09_80045840(UnkStructC *, s32);
 s32 func_ovl0F_09_80045A30(s32);
 void func_ovl0F_09_80045B10(u32 (*)[3]);
-void func_ovl0F_09_80045BF8(s32, f32, f32, f32, s32);
+void func_ovl0F_09_80045BF8(s32, f32, f32, f32, PORT_IP(s32));
 void func_ovl0F_09_80045CB8(s32, s32, s32);
 void func_ovl0F_09_80045D30(s32);
 s32 func_ovl0F_09_80045D50(s32, f32, f32, f32);
@@ -278,7 +278,7 @@ void func_ovl0F_09_800448B8(void) {
 
 
 void func_ovl0F_09_8004460C(void) {
-    s32 dir;
+    PORT_IP(s32) dir;
     UnkStructA *obj;
     f32 angle;
     f32 step;
@@ -317,7 +317,7 @@ void func_ovl0F_09_8004460C(void) {
 
 /* a task: turns model 5 for 200 frames, then idles */
 void func_ovl0F_09_80044528(void) {
-    s32 speed;
+    PORT_IP(s32) speed;
     s32 i;
 
     i = 0;

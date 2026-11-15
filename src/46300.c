@@ -73,7 +73,7 @@ typedef struct {
 
 /* Chunk 3: channels (0x2F: key list; 0x30: a curve, tag 0x31). */
 typedef struct {
-    /* 0x00 */ s32 unk0;
+    /* 0x00 */ PORT_IP(s32) unk0;
     /* 0x04 */ s32 unk4;
     /* 0x08 */ s32 *unk8;
     /* 0x0C */ f32 *unkC;
@@ -91,12 +91,24 @@ typedef struct {
 } UnkChan; /* size 0x20 */
 
 /* A key list channel's part from unk4 on. */
+#if defined(TARGET_PC) && PORT_LP64
+/* (where pointers are 8 bytes UnkChan's unkC is 8 bytes after its unk8,
+   past the padding before a pointer) */
+typedef struct __attribute__((packed)) {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 unk4;
+    u8 port_pad[4];
+    /* 0x08 */ s32 *unk8;
+    /* 0x0C */ s32 *unkC;
+} UnkChanKeys;
+#else
 typedef struct {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ s32 unk4;
     /* 0x08 */ s32 *unk8;
     /* 0x0C */ s32 *unkC;
 } UnkChanKeys;
+#endif
 
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -163,7 +175,7 @@ typedef struct {
     /* 0x0C */ s32 unkC;
     /* 0x10 */ s32 *unk10;
     /* 0x14 */ s32 *unk14;
-    /* 0x18 */ s32 unk18;
+    /* 0x18 */ PORT_IP(s32) unk18;
     /* 0x1C */ UnkTree *unk1C;
     /* 0x20 */ s32 unk20;
     /* 0x24 */ s32 unk24;
@@ -187,7 +199,7 @@ s32 D_802A54D0;
 void func_8022BB00(UnkTree *arg0);
 void func_8022BB88(UnkAnim *arg0);
 void func_8022BC64(Vec3f *arg0, Vec3f *arg1, Vec3f *arg2, f32 arg3);
-void func_8022BCC8(UnkInst *arg0, s32 arg1, f32 arg2);
+void func_8022BCC8(UnkInst *arg0, PORT_IP(s32) arg1, f32 arg2);
 f32 func_8022BE48(UnkCurve *arg0, f32 arg1);
 void func_8022BF44(Vec3f *arg0, Vec3f *arg1, Vec3f *arg2, f32 arg3);
 f32 func_8022BF9C(f32 arg0, f32 arg1, f32 arg2);
@@ -234,7 +246,7 @@ UnkNode *func_8022CFC8(UnkInst *arg0, UnkNode *arg1, s32 arg2) {
             j += arg0->unk2C[j].unk28;
         }
         node->unk10 = n;
-        node->unkC = malloc(n * 4);
+        node->unkC = malloc(n * PORT_HOST(4, sizeof(*node->unkC)));
         j = arg0->unk2C[arg2].unk2C + arg2;
         for (i = 0; i < n; i++) {
             node->unkC[i] = func_8022CFC8(arg0, node, j);
@@ -362,7 +374,7 @@ UnkAnim *func_8022C8B8(UnkInst *arg0, s32 arg1) {
                 D_802A5504->unk10 = (s32 *)chan->unkC;
                 D_802A54E0 = chan->unk8;
                 D_802A5504->unk14 = (s32 *)D_802A54E0;
-                D_802A5504->unk18 = (s32)&chan->unk10;
+                D_802A5504->unk18 = (PORT_IP(s32))&chan->unk10;
                 D_802A54EC = chan->unk4;
                 D_802A54F0 = chan->unk4 + chan->unk8;
                 break;
@@ -388,7 +400,7 @@ UnkTree *func_8022C7EC(UnkNode *arg0) {
     tree = malloc(sizeof(UnkTree));
     tree->unk0 = arg0;
     if (arg0->unk10 != 0) {
-        tree->unk8 = malloc(arg0->unk10 * 4);
+        tree->unk8 = malloc(arg0->unk10 * PORT_HOST(4, sizeof(*tree->unk8)));
         for (i = 0; i < arg0->unk10; i++) {
             tree->unk8[i] = func_8022C7EC(arg0->unkC[i]);
         }
@@ -445,7 +457,7 @@ void func_8022C530(UnkAnim *arg0, f32 arg1, s32 arg2) {
             u = (t - times[j - 1]) / (times[j] - times[j - 1]);
             func_8022C09C(track->unk1C, u);
         } else if (track->unk4 == 0x30) {
-            func_8022BCC8(inst, (s32)track->unk10, func_8022BE48((UnkCurve *)track->unk18, t));
+            func_8022BCC8(inst, (PORT_IP(s32))track->unk10, func_8022BE48((UnkCurve *)track->unk18, t));
         }
     }
 }
@@ -589,7 +601,7 @@ f32 func_8022BE48(UnkCurve *arg0, f32 arg1) {
     return ret;
 }
 
-void func_8022BCC8(UnkInst *arg0, s32 arg1, f32 arg2) {
+void func_8022BCC8(UnkInst *arg0, PORT_IP(s32) arg1, f32 arg2) {
     UnkKeySet *set;
     UnkKey *keys;
     s32 n;

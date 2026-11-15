@@ -14,7 +14,7 @@
  */
 
 typedef struct {
-    /* 0x00 */ u8 unk0[4];
+    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (426E0.c's UnkAnimSlot: its animation) */
     /* 0x04 */ f32 unk4;
 } UnkStruct_ovl0A_02_Anim2;
 
@@ -37,18 +37,18 @@ typedef struct {
     /* 0x30 */ f32 unk30;
     /* 0x34 */ s16 unk34;
     /* 0x36 */ s16 unk36;
-    /* 0x38 */ u8 unk38[0x10];
+    /* 0x38 */ PORT_RET(u8 unk38[0x10];, u8 unk38[0x4]; void *unk3C; void *unk40; void *unk44;)
     /* 0x48 */ UnkStruct_ovl0A_02_Anim *unk48;
 } UnkStruct_ovl0A_02_80047A20_Inner;
 
 typedef struct {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ u8 unkC[0x1C];
+    /* 0x0C */ PORT_RET(u8 unkC[0x1C];, u8 unkC[0x14]; void *unk20; void *unk24;)
     /* 0x28 */ s32 unk28;
-    /* 0x2C */ u8 unk2C[0x14];
+    /* 0x2C */ PORT_RET(u8 unk2C[0x14];, u8 unk2C[0x10]; void *unk3C;)
     /* 0x40 */ UnkStruct_ovl0A_02_80047A20_Inner *unk40;
-    /* 0x44 */ u8 unk44[8];
+    /* 0x44 */ PORT_RET(u8 unk44[8];, void *unk44; u8 unk48[0x4];)
     /* 0x4C */ f32 unk4C;
     /* 0x50 */ f32 unk50;
     /* 0x54 */ f32 unk54;
@@ -131,7 +131,7 @@ void func_ovl0A_02_80047A30(Obj02 *); /* 0x1818 */
 void func_ovl0A_02_80047A78(Obj02 *); /* 0x1821 */
 void func_ovl0A_02_80047AC8(Obj02 *, f32 *); /* 0x182B */
 void func_ovl0A_02_80047AD0(Obj02 *, Obj02 *); /* 0x182C */
-s32 func_ovl0A_02_80047B48(void (*)(), void *, s32, s32, s32); /* 0x1900 */
+s32 func_ovl0A_02_80047B48(void (*)(), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0A_02_80047B50(s32); /* 0x1901 */
 void func_ovl0A_02_80047B58(void); /* 0x1902 */
 void func_ovl0A_02_80047B68(s32); /* 0x1904 */
@@ -820,11 +820,11 @@ void func_ovl0A_02_80045214(f32 *pos, f32 *sph, f32 *r, f32 *step) {
 }
 
 void func_ovl0A_02_80045054(void) {
-    s32 idx;
+    PORT_IP(s32) idx;
     Obj02 *obj;
     s32 i;
 
-    idx = (s32) func_ovl0A_02_80047B70();
+    idx = (PORT_IP(s32)) func_ovl0A_02_80047B70();
     obj = func_ovl0A_02_80047A20(0xDE, 0x0D000004, 0xD0, NULL);
     func_ovl0A_02_80047A30(obj);
     obj->unk40->unk20 = 90.0f;
@@ -961,14 +961,14 @@ void func_ovl0A_02_80044998(void) {
 }
 
 void func_ovl0A_02_800447CC(void) {
-    s32 idx;
+    PORT_IP(s32) idx;
     Obj02 *obj;
     s32 i;
     f32 t;
     f32 n;
     f32 rot;
 
-    idx = (s32) func_ovl0A_02_80047B70();
+    idx = (PORT_IP(s32)) func_ovl0A_02_80047B70();
     obj = func_ovl0A_02_80047A20(0xDE, 0x0D000004, 0xD0, NULL);
     func_ovl0A_02_80047AD0((Obj02 *) D_ovl0A_02_800483C8[idx], obj);
     for (i = 0; i < 10; i++) {

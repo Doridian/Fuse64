@@ -234,14 +234,50 @@ static void container(uint8_t *d, uint32_t size) {
 #endif
 
 /* a file the asset cache inflated (87190.c's func_8026CE28) */
+/* ---- the ROM's display lists ------------------------------------------------------------
+ *
+ * Where pointers are 8 bytes the port's display list commands are 16 bytes
+ * and the ROM's are 8 (port/host/gfx.c reads both).  A file of the asset
+ * cache is where the renderer finds the ROM's: the files loaded are kept
+ * here, the latest over any earlier one that the same memory held. */
+
+#define NARROW_MAX 512
+static struct {
+    uintptr_t lo, hi;
+} narrow[NARROW_MAX];
+static int nnarrow;
+
+static void narrow_add(const void *p, uint32_t size) {
+    uintptr_t lo = (uintptr_t)p, hi = lo + size;
+    int n = 0;
+    for (int i = 0; i < nnarrow; i++)
+        if (narrow[i].hi <= lo || narrow[i].lo >= hi)
+            narrow[n++] = narrow[i];
+    if (n == NARROW_MAX) {
+        for (int i = 1; i < NARROW_MAX; i++)
+            narrow[i - 1] = narrow[i];
+        n--;
+    }
+    narrow[n].lo = lo, narrow[n].hi = hi;
+    nnarrow = n + 1;
+}
+
+int port_narrow_dl(const void *p) {
+    uintptr_t a = (uintptr_t)p;
+    for (int i = nnarrow - 1; i >= 0; i--)
+        if (a >= narrow[i].lo && a < narrow[i].hi)
+            return 1;
+    return 0;
+}
+
 void port_asset_native(int32_t id, void *p, int32_t size) {
+    (void)id;
+    if (size >= 0x10 && port_be32(p) == 0x36340038u)
+        narrow_add(p, (uint32_t)size);
 #ifdef PORT_SWAP
     uint8_t *d = p;
-    (void)id;
     if (size >= 0x10 && rd32(d) == MAGIC)
         container(d, (uint32_t)size);
-#else
-    (void)id, (void)p, (void)size;
 #endif
 }
 

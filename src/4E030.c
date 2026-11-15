@@ -6,7 +6,7 @@
  * compares call them with a `jal`: 4DE50 is another file. */
 
 typedef struct {
-    /* 0x00 */ u8 unk0[4];
+    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (426E0.c's UnkAnimSlot: its animation) */
     /* 0x04 */ f32 unk4;
 } UnkStruct_80233E3C_4;
 
@@ -29,7 +29,7 @@ typedef struct {
     /* 0x30 */ f32 unk30;
     /* 0x34 */ s16 unk34;
     /* 0x36 */ s16 unk36;
-    /* 0x38 */ u8 unk38[0x10];
+    /* 0x38 */ PORT_RET(u8 unk38[0x10];, u8 unk38[0x4]; void *unk3C; void *unk40; void *unk44;)
     /* 0x48 */ UnkStruct_80233E3C_48 *unk48;
 } UnkStruct_80233C30;
 
@@ -37,9 +37,9 @@ typedef struct {
     /* 0x00 */ u8 unk0[0xC];
     /* 0x0C */ s32 unkC;
     /* 0x10 */ s32 unk10;
-    /* 0x14 */ u8 unk14[0x2C];
+    /* 0x14 */ PORT_RET(u8 unk14[0x2C];, u8 unk14[0xC]; void *unk20; void *unk24; u8 unk28[0x14]; void *unk3C;)
     /* 0x40 */ UnkStruct_80233C30 *unk40;
-    /* 0x44 */ u8 unk44[8];
+    /* 0x44 */ PORT_RET(u8 unk44[8];, void *unk44; u8 unk48[0x4];)
     /* 0x4C */ f32 unk4C;
     /* 0x50 */ f32 unk50;
     /* 0x54 */ f32 unk54;
@@ -57,10 +57,10 @@ void func_8022FF58(f32 *, f32 *, f32 *);
 PORT_RET(void, void *) func_802311E8(UnkStruct_80231274 *);
 UnkStruct_80231274 *func_80231274(s32, s32, s32, UnkStruct_80231274 *);
 void func_80232BA0(f32 *, UnkStruct_80231274 *);
-PORT_RET(void, s32) func_80238A10(void (*)(), s32, s32, s32, s32);
+PORT_RET(void, s32) func_80238A10(void (*)(), PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
-s32 func_802391F0(void);
+PORT_IP(s32) func_802391F0(void);
 void func_80239430(void);
 s32 *func_8023A840(void);
 s32 func_80243DDC(void);
@@ -70,8 +70,8 @@ PORT_RET(void, s32) func_8026C660(s32);
 PORT_RET(void, s32) func_8027B7C4(s32, f32, f32, f32);
 PORT_RET(void, s32) func_8027BA80(s32, f32, f32, f32, s32, s32);
 s32 func_8028A36C(s32);
-PORT_RET(void, s32) func_8028A7CC(s32, f32 *, s32);
-PORT_RET(void, s32) func_8028A81C(s32, f32, f32, f32, s32);
+PORT_RET(void, s32) func_8028A7CC(s32, f32 *, PORT_IP(s32));
+PORT_RET(void, s32) func_8028A81C(s32, f32, f32, f32, PORT_IP(s32));
 void func_80297D00(s32);
 void func_80297D20(void);
 f32 fcos(f32);
@@ -328,7 +328,7 @@ UnkStruct_80233C30 *func_80233C30(void) {
 /* obj before id: id's slot is the second */
 void func_80233A74(void) {
     UnkStruct_80233C30 *obj;
-    s32 id;
+    PORT_IP(s32) id;
     s32 i;
     f32 speed;
     f32 accel;

@@ -266,7 +266,7 @@ void func_8000101C(void *arg) {
 
     for (;;) {
         osRecvMesg(&sc->interruptQ, &msg, OS_MESG_BLOCK);
-        switch ((s32)msg) {
+        switch ((PORT_IP(s32))msg) {
             case SC_MSG_RETRACE:
                 if (D_80019FAC == 0) {
                     D_80019FAC = 1;

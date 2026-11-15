@@ -70,9 +70,9 @@ void func_802276D4(s32);
 void func_802276E0(s32, s32, s32);
 void func_802276FC(s32);
 void func_80227870(void);
-void func_80227D50(s32, s32, s32, s32, s32);
+void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
 void func_8022946C(UnkStruct_80281444 *, s32);
-s32 func_80238A10(void *, s32, void *, s32, u16);
+s32 func_80238A10(void *, PORT_IP(s32), void *, s32, u16);
 s32 func_8023903C(u32);
 void func_80239094(void);
 void func_80239430(void);
@@ -114,7 +114,7 @@ void func_80296808(void);
 void func_8029698C(s32 arg0);
 
 extern s32 D_800AEE04;
-extern s32 D_802AC5C0;
+extern PORT_RET(s32, void *) D_802AC5C0;
 extern s32 D_802AC5CC;
 
 UnkStruct_802B0320 D_802B0320[12];

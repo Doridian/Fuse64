@@ -138,11 +138,11 @@ f32 func_ovl10_13_80049F80(Vec3f *, Vec3f *);
 void func_ovl10_13_80049FD8(UnkStructA *, s32);
 void func_ovl10_13_80049FE0(UnkStructA *, s32);
 void func_ovl10_13_80049FF0(UnkStructA *);
-UnkStructA *func_ovl10_13_8004A000(s32, s32, s32, s32);
+UnkStructA *func_ovl10_13_8004A000(s32, s32, s32, PORT_IP(s32));
 UnkStructA *func_ovl10_13_8004A010(UnkStructA *);
 void func_ovl10_13_8004A058(UnkStructA *);
 void func_ovl10_13_8004A0A8(UnkStructA *, Vec3f *);
-s32 func_ovl10_13_8004A128(void (*)(), void *, s32, s32, s32);
+s32 func_ovl10_13_8004A128(void (*)(), void *, PORT_IP(s32), s32, s32);
 s32 func_ovl10_13_8004A130(s32);
 void func_ovl10_13_8004A138(void);
 void func_ovl10_13_8004A140(u16, s32);
@@ -167,7 +167,7 @@ void func_ovl10_13_8004A420(void);
 void func_ovl10_13_8004A428(s32, s32, s32, f32);
 void func_ovl10_13_8004A430(s32, s32, s32, s32);
 void func_ovl10_13_8004A440(s32, s32, s32, s32);
-void func_ovl10_13_8004A578(s32, f32, f32, f32, s32);
+void func_ovl10_13_8004A578(s32, f32, f32, f32, PORT_IP(s32));
 void func_ovl10_13_8004A580(s32, f32 *, s32);
 s32 func_ovl10_13_8004A6B0(s32);
 void func_ovl10_13_8004A6C0(s32);
@@ -406,10 +406,10 @@ void func_ovl10_13_80048850(void) {
     f32 scale;
     f32 angle;
     s32 sound;
-    s32 who;
+    PORT_IP(s32) who;
     s32 i;
 
-    who = (s32)(func_ovl10_13_8004A150());
+    who = (PORT_IP(s32))(func_ovl10_13_8004A150());
     obj = func_ovl10_13_80049818(who);
     p = func_ovl10_13_80049CB8(0x302, 0);
     p->unkC |= 0x80;
@@ -1020,7 +1020,7 @@ void func_ovl10_13_800464B0(void) {
     UnkStruct_ovl10_13_8004A770 *player;
     UnkStruct_ovl10_13_80049728 *info;
     Vec3f pos;
-    s32 limit;
+    PORT_IP(s32) limit;
     UnkStructA_40 *temp_v1;
 
     info = func_ovl10_13_80049728();
@@ -1041,7 +1041,7 @@ void func_ovl10_13_800464B0(void) {
     func_ovl10_13_80049E80(0xF);
     func_ovl10_13_8004A778(0);
     func_ovl10_13_80049E80(0x1F);
-    limit = (s32)obj->unk40;
+    limit = (PORT_IP(s32))obj->unk40;
     func_ovl10_13_80049E18(((UnkStructA_40 *)limit)->unk10, ((UnkStructA_40 *)limit)->unk14 + 100.0f, ((UnkStructA_40 *)limit)->unk18);
     func_ovl10_13_80049E38(0.0f, 35.0f, 800.0f);
     player = func_ovl10_13_8004A770(1);
@@ -1225,7 +1225,7 @@ static void func_ovl10_13_8004574C(void) {
     f32 c;
     s32 limit;
     f32 t;
-    s32 i;
+    PORT_IP(s32) i;
 
     obj0 = (UnkStructA *)func_ovl10_13_80049728();
     D_ovl10_13_8004ADD0 = ((UnkStruct_ovl10_13_80049728 *)obj0)->unk30;
@@ -1243,10 +1243,10 @@ static void func_ovl10_13_8004574C(void) {
     func_ovl10_13_80049888();
     func_ovl10_13_800497C8(1);
     func_ovl10_13_8004A198(0x70, 0x70, 0);
-    i = (s32)func_ovl10_13_8004A770(1);
+    i = (PORT_IP(s32))func_ovl10_13_8004A770(1);
     ((UnkStruct_ovl10_13_8004A770 *)i)->unk0 = 0;
     ((UnkStruct_ovl10_13_8004A770 *)i)->unk88 = -1;
-    i = (s32)func_ovl10_13_8004A770(2);
+    i = (PORT_IP(s32))func_ovl10_13_8004A770(2);
     ((UnkStruct_ovl10_13_8004A770 *)i)->unk0 = 0;
     ((UnkStruct_ovl10_13_8004A770 *)i)->unk88 = -1;
     if ((D_ovl10_13_8004ADA8 != 0x1C) && !(((UnkStruct_ovl10_13_8004A770 *)i)->unk124 & 8)) {

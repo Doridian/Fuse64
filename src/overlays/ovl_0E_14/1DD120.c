@@ -44,7 +44,7 @@ s32 func_ovl0E_14_80044988(UnkStructA *, s32);
 void func_ovl0E_14_800449D8(UnkStructA *, s32);
 void func_ovl0E_14_800449E0(UnkStructA *, s32);
 UnkStructA *func_ovl0E_14_80044A20(s32, s32, f32, f32, f32);
-void func_ovl0E_14_80044B28(void (*)(void), s32, s32, s32, s32);
+void func_ovl0E_14_80044B28(void (*)(void), s32, PORT_IP(s32), s32, s32);
 void func_ovl0E_14_80044B38(void);
 void func_ovl0E_14_80044B48(s32);
 void func_ovl0E_14_80044B70(void);

@@ -29,6 +29,9 @@
  */
 #ifdef TARGET_PC
 #include <stdint.h>
+#ifndef offsetof
+#define offsetof(type, member) __builtin_offsetof(type, member)
+#endif
 #else
 typedef u32 uintptr_t;
 #endif
@@ -90,10 +93,50 @@ extern uintptr_t port_v0;
 #endif
 
 /*
+ * Where pointers are 8 bytes (docs/PORT.md, "Where pointers are 8 bytes"):
+ * PORT_FIELD(expr, type, offset, S, field) is m2c's M2C_FIELD(expr, type,
+ * offset) for IDO and the field of struct S for a host, whose offset may be
+ * another (PORT_ELEM: of the i-th S from expr; port/tools/m2c_port.py
+ * writes them); PORT_AT(expr, offset, S, field) is the address
+ * `(u8 *)expr + offset` likewise; PORT_IP(t) and PORT_UP(t)
+ * are an integer type t that holds a pointer: t for IDO, intptr_t and
+ * uintptr_t for a host; PORT_PTR(x) and PORT_INT(x) are x for IDO and x
+ * as a pointer or as such an integer for a host.
+ */
+#ifdef TARGET_PC
+#define PORT_AT(expr, offset, S, field) ((u8 *) & ((S *)(expr))->field)
+#define PORT_FIELD(expr, type, offset, S, field) (*(type) & ((S *)(expr))->field)
+#define PORT_ELEM(expr, type, offset, S, i, field) (*(type) & ((S *)(expr))[i].field)
+#define PORT_IP(t) intptr_t
+#define PORT_UP(t) uintptr_t
+#define PORT_PTR(x) ((void *)(x))
+#define PORT_INT(x) ((intptr_t)(x))
+#else
+#define PORT_AT(expr, offset, S, field) ((u8 *)(expr) + (offset))
+#define PORT_FIELD(expr, type, offset, S, field) M2C_FIELD(expr, type, offset)
+#define PORT_ELEM(expr, type, offset, S, i, field) M2C_FIELD(expr, type, offset)
+#define PORT_IP(t) t
+#define PORT_UP(t) t
+#define PORT_PTR(x) x
+#define PORT_INT(x) x
+#endif
+
+/*
  * An expression IDO compiles as it is and a host otherwise, on one line (a
  * file with `#line`): an index past an array's end that reaches the next
  * variable on the N64 (where the host's layout may differ), for one.
  */
+/*
+ * PORT_GFX_BYTES(n): n bytes of display list on the N64 (n / 8 commands),
+ * as many bytes as those commands take where a command's words are as wide
+ * as a pointer (the port's gbi.h).
+ */
+#ifdef TARGET_PC
+#define PORT_GFX_BYTES(n) ((n) / 4 * sizeof(uintptr_t))
+#else
+#define PORT_GFX_BYTES(n) (n)
+#endif
+
 #ifdef TARGET_PC
 #define PORT_HOST(ido, pc) (pc)
 #else

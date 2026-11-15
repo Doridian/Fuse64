@@ -7,14 +7,14 @@ typedef struct UnkStruct_802AB200 {
     /* 0x002 */ u16 unk2;
     /* 0x004 */ s32 unk4;
     /* 0x008 */ u32 unk8;
-    /* 0x00C */ s32 unkC;
-    /* 0x010 */ s32 unk10;
+    /* 0x00C */ PORT_IP(s32) unkC;
+    /* 0x010 */ PORT_IP(s32) unk10;
     /* 0x014 */ s32 unk14;
     /* 0x018 */ s64 unk18;
     /* 0x020 */ s32 unk20;
     /* 0x024 */ u8 *unk24;
     /* 0x028 */ u8 unk28[0x800];
-    /* 0x828 */ s32 unk828[28];
+    /* 0x828 */ PORT_IP(s32) unk828[28];
     /* 0x898 */ struct UnkStruct_802AB200 *unk898;
     /* 0x89C */ struct UnkStruct_802AB200 *unk89C;
 } UnkStruct_802AB200; /* size 0x8A0 */
@@ -22,8 +22,8 @@ typedef struct UnkStruct_802AB200 {
 /* func_80297C10 and func_80297C7C are setjmp and longjmp (hand-written,
  * B2410).  setjmp's result is unsigned: as s32 or int, func_802392F8's
  * switch compares with registers holding 1 and 2 instead of `at`. */
-u32 func_80297C10(s32 *);
-void func_80297C7C(s32 *, s32);
+u32 func_80297C10(PORT_IP(s32) *);
+void func_80297C7C(PORT_IP(s32) *, s32);
 void func_80297D30(s32, void *);
 void func_80297D38(const char *, ...);
 s32 func_80297D90(s32, s32, s32);
@@ -34,8 +34,8 @@ UnkStruct_802AB200 *func_80238918(u16 arg0);
 void func_8023897C(UnkStruct_802AB200 *arg0);
 void func_80238994(UnkStruct_802AB200 *arg0);
 UnkStruct_802AB200 *func_802389D4(void);
-s32 func_80238A10(s32 arg0, s32 arg1, u8 *arg2, s32 arg3, u16 arg4);
-s32 func_80238B9C(s32 arg0, s32 arg1, u8 *arg2, s32 arg3, u16 arg4);
+s32 func_80238A10(PORT_IP(s32) arg0, PORT_IP(s32) arg1, u8 *arg2, s32 arg3, u16 arg4);
+s32 func_80238B9C(PORT_IP(s32) arg0, PORT_IP(s32) arg1, u8 *arg2, s32 arg3, u16 arg4);
 s32 func_80238BDC(void);
 UnkStruct_802AB200 *func_80238C08(u16 arg0);
 s32 func_80238C68(u16 arg0);
@@ -51,7 +51,7 @@ void func_80239094(void);
 void func_802390B4(void);
 s32 func_802390F0(s32 arg0, s32 arg1, s32 arg2);
 s32 func_802391A4(void);
-s32 func_802391F0(void);
+PORT_IP(s32) func_802391F0(void);
 s32 func_80239208(UnkStruct_802AB200 *arg0);
 void func_80239430(void);
 
@@ -75,7 +75,7 @@ extern u32 D_802AC354;
 extern s32 D_802AC358;
 extern s32 D_802AC35C;
 extern s32 D_802AC360;
-extern s32 D_802AC368[];
+extern PORT_IP(s32) D_802AC368[];
 
 void func_8023946C(void) {
     s32 i;
@@ -159,7 +159,7 @@ s32 func_80239208(UnkStruct_802AB200 *arg0) {
     u32 mask = 0x7FFFFFFF;
 
     sp = arg0->unk828[2] & mask;
-    sptop = (u32)arg0->unk24 & mask;
+    sptop = (PORT_UP(u32))arg0->unk24 & mask;
     spbtm = arg0->unk20 + sptop;
 
     func_80297D38("id    : %d\n", arg0->unk0);
@@ -177,7 +177,7 @@ s32 func_80239208(UnkStruct_802AB200 *arg0) {
     return sp - sptop;
 }
 
-s32 func_802391F0(void) {
+PORT_IP(s32) func_802391F0(void) {
     return D_802AC344->unk10;
 }
 
@@ -363,14 +363,14 @@ s32 func_80238BDC(void) {
     return D_802AC344->unk0;
 }
 
-s32 func_80238B9C(s32 arg0, s32 arg1, u8 *arg2, s32 arg3, u16 arg4) {
+s32 func_80238B9C(PORT_IP(s32) arg0, PORT_IP(s32) arg1, u8 *arg2, s32 arg3, u16 arg4) {
     if (arg4 < 0x110 || arg4 >= 0x3D0) {
         while (1) {}
     }
     return func_80238A10(arg0, arg1, arg2, arg3, arg4);
 }
 
-s32 func_80238A10(s32 arg0, s32 arg1, u8 *arg2, s32 arg3, u16 arg4) {
+s32 func_80238A10(PORT_IP(s32) arg0, PORT_IP(s32) arg1, u8 *arg2, s32 arg3, u16 arg4) {
     UnkStruct_802AB200 *p;
     UnkStruct_802AB200 *t;
     s32 i;
@@ -408,7 +408,7 @@ s32 func_80238A10(s32 arg0, s32 arg1, u8 *arg2, s32 arg3, u16 arg4) {
         t->unk828[i] = 0;
     }
     t->unk828[3] = t->unkC;
-    t->unk828[2] = (s32)(t->unk24 + t->unk20);
+    t->unk828[2] = (PORT_IP(s32))(t->unk24 + t->unk20);
     D_802AC358++;
     return t->unk0;
 }

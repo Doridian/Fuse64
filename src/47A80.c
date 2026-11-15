@@ -83,8 +83,9 @@ typedef struct Node {
 } Node;
 
 typedef struct {
-    /* 0x00 */ u8 pad0[8];
-    /* 0x08 */ s32 *bases;
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ void *unk4;
+    /* 0x08 */ PORT_IP(s32) *bases;
     /* 0x0C */ s32 *meshes;
 } MeshOverride; /* size 0x10 */
 
@@ -202,15 +203,15 @@ const Hilite D_802A2D50 = { { 0x80, 0x80, 0x80, 0x80 } };
 
 f32 D_802A5510[4][4];
 Gfx *D_802A5550;
-s32 D_802A5554;
+PORT_IP(s32) D_802A5554;
 
 static void func_8022D280(Gfx **gp, f32 *trans, f32 *rot, s32 *pushed);
-static void func_8022D414(Gfx **gp, s32 base, s32 joints, s32 idx);
-void func_8022D58C(Gfx **gp, s32 base, s32 idx);
+static void func_8022D414(Gfx **gp, PORT_IP(s32) base, s32 joints, s32 idx);
+void func_8022D58C(Gfx **gp, PORT_IP(s32) base, s32 idx);
 static void func_8022D980(Node *node);
-void func_8022DAB0(Model *model, Gfx **gp, s32 base);
+void func_8022DAB0(Model *model, Gfx **gp, PORT_IP(s32) base);
 
-void func_8022DAB0(Model *model, Gfx **gp, s32 base) {
+void func_8022DAB0(Model *model, Gfx **gp, PORT_IP(s32) base) {
     D_802A5550 = *gp;
     D_802A5554 = base;
     func_8022D980(model->root);
@@ -238,7 +239,7 @@ static void func_8022D980(Node *node) {
     }
 }
 
-void func_8022D58C(Gfx **gp, s32 base, s32 idx) {
+void func_8022D58C(Gfx **gp, PORT_IP(s32) base, s32 idx) {
     s32 load;
     Gfx *g;
     MeshEntry *m;
@@ -283,7 +284,7 @@ void func_8022D58C(Gfx **gp, s32 base, s32 idx) {
             break;
         case 6:
             D_8029FCC0 = 1;
-            GFX2(g++, 0x06000000, (u32) D_8029FCC8);
+            GFX2(g++, 0x06000000, (PORT_UP(u32)) D_8029FCC8);
             gDPSetHilite1Tile(g++, 0, &D_802A2D50, 32, 32);
             break;
         case 8:
@@ -293,7 +294,7 @@ void func_8022D58C(Gfx **gp, s32 base, s32 idx) {
         }
         if (load != 0) {
             guMtxF2L(D_802A5510, D_802A538C[D_802A5368]);
-            GFX2(g++, 0x01040040, (u32) D_802A538C[D_802A5368]);
+            GFX2(g++, 0x01040040, (PORT_UP(u32)) D_802A538C[D_802A5368]);
             D_802A5368++;
             GFX2(g++, 0x06000000, m->dl + base);
             GFX2(g++, 0xBD000000, 0);
@@ -307,8 +308,8 @@ void func_8022D58C(Gfx **gp, s32 base, s32 idx) {
     *gp = g;
 }
 
-static void func_8022D414(Gfx **gp, s32 base, s32 joints, s32 idx) {
-    s32 bj;
+static void func_8022D414(Gfx **gp, PORT_IP(s32) base, s32 joints, s32 idx) {
+    PORT_IP(s32) bj;
     Gfx *g;
     Joint *j;
     s32 pushed;
@@ -357,7 +358,7 @@ static void func_8022D280(Gfx **gp, f32 *trans, f32 *rot, s32 *pushed) {
     }
     if (n != 0) {
         guMtxF2L(D_802A5510, D_802A538C[D_802A5368]);
-        GFX2(g++, 0x01040040, (u32) D_802A538C[D_802A5368]);
+        GFX2(g++, 0x01040040, (PORT_UP(u32)) D_802A538C[D_802A5368]);
         D_802A5368++;
     }
     *pushed = n;

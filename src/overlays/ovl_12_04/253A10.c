@@ -29,7 +29,7 @@ void func_ovl12_04_80043EC0(s32);
 void func_ovl12_04_80043EC8(s32, s32, f32, s32, s32, s32, s32);
 void func_ovl12_04_80043ED8(void);
 void func_ovl12_04_80043F10(s32);
-s32 func_ovl12_04_80043F48(s32);
+PORT_IP(s32) func_ovl12_04_80043F48(s32);
 void func_ovl12_04_80044508(f32, f32, f32);
 void func_ovl12_04_80044528(f32, f32, f32);
 void func_ovl12_04_80044530(f32 *, f32 *, f32 *);
@@ -37,7 +37,7 @@ void func_ovl12_04_80044570(s32);
 s32 func_ovl12_04_80044678(UnkStructA *, s32);
 void func_ovl12_04_800446D0(UnkStructA *, s32);
 void func_ovl12_04_80044748(UnkStructA *);
-s32 func_ovl12_04_800447E8(UnkStructA *, s32, s32);
+PORT_IP(s32) func_ovl12_04_800447E8(UnkStructA *, s32, PORT_IP(s32));
 void func_ovl12_04_80044838(s32);
 void func_ovl12_04_80044860(void);
 UnkStructA *func_ovl12_04_800448A0(s32);
@@ -203,7 +203,7 @@ void func_ovl12_04_80043460(void) {
 
 void func_ovl12_04_80043690(UnkStructA *arg0) {
     s32 hit;
-    s32 t;
+    PORT_IP(s32) t;
 
     func_ovl12_04_80044D18(arg0, 0, 5.0f);
     hit = FALSE;

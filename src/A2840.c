@@ -66,7 +66,12 @@ typedef struct {
     /* 0x5E */ u16 unk5E;
     /* 0x60 */ f32 unk60;
     /* 0x64 */ f32 unk64;
+#ifdef TARGET_PC
+    /* 0x68 */ intptr_t unk68;  /* a pointer (54E40.c's M2C_FIELD(obj, u8 **, 0x68)) */
+    /* 0x6C */ u8 unk6C[2];
+#else
     /* 0x68 */ u8 unk68[6];
+#endif
     /* 0x6E */ s16 unk6E;
     /* 0x70 */ u8 unk70[8];
     /* 0x78 */ u8 unk78;

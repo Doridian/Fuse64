@@ -58,7 +58,7 @@
  */
 
 typedef struct {
-    /* 0x00 */ u8 unk0[4];
+    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (426E0.c's UnkAnimSlot: its animation) */
     /* 0x04 */ f32 unk4;
 } Anim2_0D06;
 
@@ -81,7 +81,7 @@ typedef struct {
     /* 0x30 */ f32 unk30;
     /* 0x34 */ s16 unk34;
     /* 0x36 */ s16 unk36;
-    /* 0x38 */ u8 unk38[0x10];
+    /* 0x38 */ PORT_RET(u8 unk38[0x10];, u8 unk38[0x4]; void *unk3C; void *unk40; void *unk44;)
     /* 0x48 */ Anim_0D06 *unk48;
 } Obj40_0D06;
 
@@ -89,13 +89,13 @@ typedef struct {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ s32 unk8;
     /* 0x0C */ s32 unkC;
-    /* 0x10 */ u8 unk10[0x18];
+    /* 0x10 */ PORT_RET(u8 unk10[0x18];, u8 unk10[0x10]; void *unk20; void *unk24;)
     /* 0x28 */ s32 unk28;
     /* 0x2C */ u8 unk2C[4];
     /* 0x30 */ s32 unk30;
     /* 0x34 */ f32 unk34;
     /* 0x38 */ f32 unk38;
-    /* 0x3C */ u8 unk3C[4];
+    /* 0x3C */ PORT_RET(u8 unk3C[4];, void *unk3C;)
     /* 0x40 */ Obj40_0D06 *unk40;
 } Obj_0D06;
 
@@ -202,10 +202,10 @@ s32 func_ovl0D_06_80046738(Obj_0D06 *, s32); /* 0x1807 */
 void func_ovl0D_06_80046788(Obj_0D06 *, s32); /* 0x1811 */
 void func_ovl0D_06_80046790(Obj_0D06 *, s32); /* 0x1812 */
 void func_ovl0D_06_800467A0(Obj_0D06 *); /* 0x1814 */
-Obj_0D06 *func_ovl0D_06_800467B0(s32, s32, s32, s32); /* 0x1816 */
+Obj_0D06 *func_ovl0D_06_800467B0(s32, s32, s32, PORT_IP(s32)); /* 0x1816 */
 void func_ovl0D_06_800467C0(Obj_0D06 *); /* 0x1818 */
 Obj_0D06 *func_ovl0D_06_800467D0(s32, s32, f32, f32, f32); /* 0x181A */
-void func_ovl0D_06_800468D8(void (*)(void), void *, s32, s32, s32); /* 0x1900 */
+void func_ovl0D_06_800468D8(void (*)(void), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0D_06_800468E8(void); /* 0x1902 */
 void func_ovl0D_06_800468F8(s32); /* 0x1904 */
 void *func_ovl0D_06_80046900(void); /* 0x1905 */

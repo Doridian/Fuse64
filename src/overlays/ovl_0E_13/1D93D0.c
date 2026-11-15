@@ -90,7 +90,7 @@ typedef struct {
 
 /* UnkStructA_40 with the pointer at 0x48 */
 typedef struct {
-    /* 0x00 */ u8 unk0[4];
+    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (426E0.c's UnkAnimSlot: its animation) */
     /* 0x04 */ f32 unk4;
 } UnkStruct_ovl0E_13_48_4;
 
@@ -100,7 +100,7 @@ typedef struct {
 } UnkStruct_ovl0E_13_48;
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0x48];
+    /* 0x00 */ PORT_RET(u8 unk0[0x48];, u8 unk0[0x3C]; void *unk3C; void *unk40; void *unk44;)
     /* 0x48 */ UnkStruct_ovl0E_13_48 *unk48;
 } UnkStruct_ovl0E_13_40;
 
@@ -145,7 +145,7 @@ void func_ovl0E_13_80045EC0(UnkStructA *);
 UnkStructA *func_ovl0E_13_80045EF0(s32, s32, f32, f32, f32);
 void func_ovl0E_13_80045F28(UnkStructA *);
 void func_ovl0E_13_80045FB8(UnkStructA *);
-s32 func_ovl0E_13_80045FF8(void (*)(void), void *, s32, s32, s32);
+s32 func_ovl0E_13_80045FF8(void (*)(void), void *, PORT_IP(s32), s32, s32);
 void func_ovl0E_13_80046000(s32);
 void func_ovl0E_13_80046008(void);
 void func_ovl0E_13_80046018(s32);
@@ -157,7 +157,7 @@ s32 func_ovl0E_13_80046280(s32);
 void func_ovl0E_13_80046338(s32, s32, s32, s32, s32);
 void func_ovl0E_13_80046348(s32, s32, s32);
 void func_ovl0E_13_80046360(u32 (*)[3]);
-void func_ovl0E_13_80046448(s32, f32, f32, f32, s32);
+void func_ovl0E_13_80046448(s32, f32, f32, f32, PORT_IP(s32));
 s32 func_ovl0E_13_80046450(s32, f32 *, s32);
 void func_ovl0E_13_80046458(s32);
 void func_ovl0E_13_80046508(s32, s32, s32);

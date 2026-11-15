@@ -259,7 +259,7 @@ void func_ovl0C_06_80044494(UnkStruct_ovl0C_06_80049264 *arg0, UnkStruct_ovl0C_0
     obj = func_ovl0C_06_80048600(0x2BB, 0xD0, arg0->unk4, arg0->unk8, arg0->unkC);
     fl.i = 0x01000000;
     if (!arg2) {
-        fl.u = 0x01000000 | (s32)obj * 0;
+        fl.u = 0x01000000 | (PORT_IP(s32))obj * 0;
     }
     func_ovl0C_06_800485B8(obj, fl.i);
     arg0->unk0 = obj;

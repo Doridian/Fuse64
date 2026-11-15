@@ -29,16 +29,27 @@ typedef struct {
     /* 0x30 */ f32 unk30;
     /* 0x34 */ u8 unk34[2];
     /* 0x36 */ s16 unk36;
+#ifdef TARGET_PC
+    /* 426E0.c's UnkObj (the pool D_800A0D00's object) has pointers here */
+    /* 0x38 */ s32 unk38;
+    /* 0x3C */ void *unk3C;
+    /* 0x40 */ void *unk40;
+    /* 0x44 */ void *unk44;
+#else
     /* 0x38 */ u8 unk38[0x10];
+#endif
     /* 0x48 */ struct UnkStructA_40_48 *unk48;
+#ifdef TARGET_PC
+    /* 0x4C */ void *unk4C;
+#endif
 } UnkStructA_40;
 
 /* The structure at UnkStructA_40's 0x48, and the one at its 0x4. */
 typedef struct {
-    /* 0x00 */ u8 unk0[4];
+    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;)
     /* 0x04 */ f32 unk4;
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ u8 unkC[4];
+    /* 0x0C */ PORT_RET(u8 unkC[4];, void *unkC;)
     /* 0x10 */ f32 unk10;
     /* 0x14 */ s32 unk14;
 } UnkStructA_40_48_4;
@@ -59,15 +70,29 @@ typedef struct {
     /* 0x14 */ u8 unk14[4];
     /* 0x18 */ f32 unk18;
     /* 0x1C */ f32 unk1C;
+#ifdef TARGET_PC
+    /* 0x20 */ intptr_t unk20;
+    /* 0x24 */ intptr_t unk24;
+#else
     /* 0x20 */ u8 unk20[8];
+#endif
     /* 0x28 */ s32 unk28;
     /* 0x2C */ u8 unk2C[4];
     /* 0x30 */ s32 unk30;
     /* 0x34 */ f32 unk34;
     /* 0x38 */ f32 unk38;
+#ifdef TARGET_PC
+    /* the pointers 48600.c's UnkStructA80 has (the object pool's whole
+       object): where pointers are 8 bytes they make room for themselves */
+    /* 0x3C */ void *unk3C;
+    /* 0x40 */ UnkStructA_40 *unk40;
+    /* 0x44 */ void *unk44;
+    /* 0x48 */ u8 unk48[4];
+#else
     /* 0x3C */ u8 unk3C[4];
     /* 0x40 */ UnkStructA_40 *unk40;
     /* 0x44 */ u8 unk44[8];
+#endif
     /* 0x4C */ f32 unk4C;
     /* 0x50 */ f32 unk50;
     /* 0x54 */ f32 unk54;
@@ -78,6 +103,11 @@ typedef struct {
     /* 0x68 */ f32 unk68;
     /* 0x6C */ f32 unk6C;
     /* 0x70 */ f32 unk70;
+#ifdef TARGET_PC
+    /* 0x74 */ f32 unk74;
+    /* 0x78 */ void *unk78;
+    /* 0x7C */ void *unk7C;
+#endif
 } UnkStructA;
 
 /* What the main_code function behind the overlays' ZeroJump stub at
@@ -115,5 +145,11 @@ typedef struct {
     /* 0x48 */ u8 unk48[4];
     /* 0x4C */ f32 unk4C;
 } UnkStructC;
+
+#ifdef TARGET_PC
+/* the game's objects as the port lays them out where another file's C
+   reaches them by offset (port/include/port_types.h) */
+#include "port_types.h"
+#endif
 
 #endif

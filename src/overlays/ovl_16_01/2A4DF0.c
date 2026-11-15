@@ -28,7 +28,7 @@ typedef struct {
 } UnkStruct_ovl16_01_80043020; /* size 0x38 */
 
 typedef struct {
-    /* 0x00 */ u8 unk0[4];
+    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (426E0.c's UnkAnimSlot: its animation) */
     /* 0x04 */ f32 unk4;
 } UnkStruct_ovl16_01_800436B0_4;
 
@@ -38,7 +38,7 @@ typedef struct {
 } UnkStruct_ovl16_01_800436B0_48;
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0x48];
+    /* 0x00 */ PORT_RET(u8 unk0[0x48];, u8 unk0[0x3C]; void *unk3C; void *unk40; void *unk44;)
     /* 0x48 */ UnkStruct_ovl16_01_800436B0_48 *unk48;
 } UnkStruct_ovl16_01_800436B0_40;
 
@@ -67,7 +67,7 @@ void func_ovl16_01_80044840(f32, f32, f32);
 void func_ovl16_01_80044860(f32, f32, f32);
 void func_ovl16_01_80044868(f32 *, f32 *, f32 *);
 void func_ovl16_01_800448B8(s32);
-void func_ovl16_01_80044990(s32, Vec3f *, Vec3f *);
+void func_ovl16_01_80044990(PORT_IP(s32), Vec3f *, Vec3f *);
 void func_ovl16_01_80044A00(UnkStructA *, s32);
 void func_ovl16_01_80044A08(UnkStructA *, s32);
 void func_ovl16_01_80044A18(UnkStructA *);

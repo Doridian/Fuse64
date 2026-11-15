@@ -18,6 +18,12 @@
 #include <ultra64.h>
 #include <PR/rcp.h>
 #include "port.h"
+#include <PR/libaudio.h>
+
+/* the game's C keeps these as bytes (port_game.h) */
+_Static_assert(sizeof(OSThread) <= PORT_SIZEOF_OSTHREAD, "PORT_SIZEOF_OSTHREAD");
+_Static_assert(sizeof(ALGlobals) <= PORT_SIZEOF_ALGLOBALS, "PORT_SIZEOF_ALGLOBALS");
+_Static_assert(sizeof(OSIoMesg) == PORT_SIZEOF_OSIOMESG, "PORT_SIZEOF_OSIOMESG");
 
 /* ---- globals libultra defines ------------------------------------------ */
 

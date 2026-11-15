@@ -92,6 +92,10 @@ void alSynSetFXParam(ALSynth *s, ALFxRef fx, s16 paramID, void *param) { }
 
 s32 alHeapCheck(ALHeap *hp) { return 0; }
 
+const int port_sizeof_ALCSPlayer = sizeof(ALCSPlayer);
+const int port_sizeof_ALCSeq = sizeof(ALCSeq);
+const int port_sizeof_ALSndPlayer = sizeof(ALSndPlayer);
+
 /* ---- bank files --------------------------------------------------------------------------- */
 
 void alBnkfNew(ALBankFile *f, u8 *table) {

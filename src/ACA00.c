@@ -28,7 +28,7 @@ typedef struct {
 typedef struct {
     /* 0x00 */ u8 unk0[0x3C];
     /* 0x3C */ UnkStruct_8029279C_3C *unk3C;
-    /* 0x40 */ u8 unk40[0xC];
+    /* 0x40 */ PORT_RET(u8 unk40[0xC];, void *unk40; void *unk44; void *unk48;)
     /* 0x4C */ UnkStruct_8029279C_4C *unk4C;
 } UnkStruct_8029279C;
 

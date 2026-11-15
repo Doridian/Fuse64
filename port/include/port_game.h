@@ -25,6 +25,32 @@ void *port_overlay_load(int bank, int entry);
 /* 13F0's segment loader: the entry of ROM segment seg (main_code's, 2) */
 void *port_segment_entry(int seg);
 
+/* where pointers are 8 bytes (docs/PORT.md, "Where pointers are 8 bytes") */
+#if __SIZEOF_POINTER__ == 8
+#define PORT_LP64 1
+#else
+#define PORT_LP64 0
+#endif
+
+/* the audio heap 86680.c gives the sound driver: n64 (*len bytes) where
+   pointers are 4 bytes; where they are 8, whose structures in it are
+   bigger, a heap of twice the size (port/src/memory.c) */
+unsigned char *port_audio_heap(unsigned char *n64, int *len);
+
+/* the host's sizes of SDK objects the game's C keeps as bytes or words
+   (checked in port/src/ultra.c) */
+#define PORT_SIZEOF_OSTHREAD (PORT_LP64 ? 0x1C0 : 0x1B0)
+#define PORT_SIZEOF_ALGLOBALS (PORT_LP64 ? 0x80 : 0x50)
+#define PORT_SIZEOF_OSIOMESG (PORT_LP64 ? 0x28 : 0x18)
+
+/* memory for what the port makes of the game's data (the host's layout of
+   a record the ROM has in the N64's): zeroed, never the game's heaps */
+void *port_alloc(unsigned long size);
+void port_free(void *p);
+/* the host's sizes of the SDK's objects the game allocates by their N64
+   sizes (port/libaudio/extra.c) */
+extern const int port_sizeof_ALCSPlayer, port_sizeof_ALCSeq, port_sizeof_ALSndPlayer;
+
 /* a big-endian word at p (include/common.h's PORT_BE32_GET/SET) */
 static inline unsigned int port_get_be32(const void *p) {
     const unsigned char *b = (const unsigned char *)p;

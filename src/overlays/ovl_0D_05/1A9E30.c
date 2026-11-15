@@ -28,13 +28,13 @@
 typedef struct {
     /* 0x00 */ u8 unk0[0xC];
     /* 0x0C */ s32 unkC;
-    /* 0x10 */ u8 unk10[0x20];
+    /* 0x10 */ PORT_RET(u8 unk10[0x20];, u8 unk10[0x10]; void *unk20; void *unk24; u8 unk28[0x8];)
     /* 0x30 */ s32 unk30;
     /* 0x34 */ f32 unk34;
     /* 0x38 */ f32 unk38;
-    /* 0x3C */ u8 unk3C[4];
+    /* 0x3C */ PORT_RET(u8 unk3C[4];, void *unk3C;)
     /* 0x40 */ UnkStructA_40 *unk40;
-    /* 0x44 */ u8 unk44[8];
+    /* 0x44 */ PORT_RET(u8 unk44[8];, void *unk44; u8 unk48[0x4];)
     /* 0x4C */ f32 unk4C;
     /* 0x50 */ u8 unk50[4];
     /* 0x54 */ f32 unk54;
@@ -116,13 +116,13 @@ void func_ovl0D_05_800455C8(Obj05 *, s32); /* 0x180B */
 void func_ovl0D_05_800455F8(Obj05 *, s32); /* 0x1811 */
 void func_ovl0D_05_80045600(Obj05 *, s32); /* 0x1812 */
 void func_ovl0D_05_80045610(Obj05 *); /* 0x1814 */
-Obj05 *func_ovl0D_05_80045618(s32, s32, s32, s32, s32); /* 0x1815 */
-Obj05 *func_ovl0D_05_80045620(s32, s32, s32, s32); /* 0x1816 */
+Obj05 *func_ovl0D_05_80045618(s32, s32, s32, s32, PORT_IP(s32)); /* 0x1815 */
+Obj05 *func_ovl0D_05_80045620(s32, s32, s32, PORT_IP(s32)); /* 0x1816 */
 Obj05 *func_ovl0D_05_80045630(Obj05 *); /* 0x1818 */
 Obj05 *func_ovl0D_05_80045640(s32, s32, f32, f32, f32); /* 0x181A */
 s32 func_ovl0D_05_80045670(Obj05 *, f32 *, f32 *, f32 *); /* 0x1820 */
 void func_ovl0D_05_800456C8(Obj05 *, f32 *); /* 0x182B */
-void func_ovl0D_05_80045748(void (*)(void), void *, s32, s32, s32); /* 0x1900 */
+void func_ovl0D_05_80045748(void (*)(void), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0D_05_80045758(void); /* 0x1902 */
 void func_ovl0D_05_80045768(s32); /* 0x1904 */
 void *func_ovl0D_05_80045770(void); /* 0x1905 */
@@ -286,7 +286,7 @@ static void func_ovl0D_05_80044870(void) {
 
 /* the task of each of D_ovl0D_05_80045FD4 (its index is the argument) */
 void func_ovl0D_05_80044290(void) {
-    s32 idx;
+    PORT_IP(s32) idx;
     Ent05 *e;
     s32 flag;
     Vec3f pos;
@@ -298,7 +298,7 @@ void func_ovl0D_05_80044290(void) {
     s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     s32 timer;
 
-    idx = (s32) func_ovl0D_05_80045770();
+    idx = (PORT_IP(s32)) func_ovl0D_05_80045770();
     e = &D_ovl0D_05_80045FD4[idx];
     flag = D_ovl0D_05_8004607C[idx];
     pos.x = e->unk14 * 10.0f + 150.0f;

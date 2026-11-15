@@ -78,11 +78,11 @@ void func_ovl0E_15_80045E20(s32);
 void func_ovl0E_15_80045E30(f32, f32, f32);
 void func_ovl0E_15_80045F10(UnkStructA *, s32);
 void func_ovl0E_15_80045F20(UnkStructA *);
-UnkStructA *func_ovl0E_15_80045F30(s32, s32, s32, s32);
+UnkStructA *func_ovl0E_15_80045F30(s32, s32, s32, PORT_IP(s32));
 void func_ovl0E_15_80045F40(UnkStructA *);
 void func_ovl0E_15_80045F88(UnkStructA *);
 void func_ovl0E_15_80046018(UnkStructA *);
-s32 func_ovl0E_15_80046058(void (*)(void), void *, s32, s32, s32);
+s32 func_ovl0E_15_80046058(void (*)(void), void *, PORT_IP(s32), s32, s32);
 void func_ovl0E_15_80046068(void);
 s32 func_ovl0E_15_80046078(s32);
 void *func_ovl0E_15_80046080(void);
@@ -96,7 +96,7 @@ s32 func_ovl0E_15_80046218(s32);
 void func_ovl0E_15_80046278(void);
 void func_ovl0E_15_80046280(void);
 void func_ovl0E_15_800462D8(s32);
-void func_ovl0E_15_800464A8(s32, f32, f32, f32, s32);
+void func_ovl0E_15_800464A8(s32, f32, f32, f32, PORT_IP(s32));
 void func_ovl0E_15_800464B0(s32, f32 *, s32);
 s32 func_ovl0E_15_800465E0(s32);
 void func_ovl0E_15_800465F0(s32);
@@ -237,12 +237,12 @@ void func_ovl0E_15_80045024(UnkStructA *arg0) {
 /* a task: one of four objects moved along x for 120 frames (its argument,
  * 0-3, picks where it starts) */
 void func_ovl0E_15_80044E90(void) {
-    s32 n;
+    PORT_IP(s32) n;
     UnkStructA *obj;
     s32 odd;
     s32 i;
 
-    n = (s32) func_ovl0E_15_80046080();
+    n = (PORT_IP(s32)) func_ovl0E_15_80046080();
     obj = func_ovl0E_15_80045F30(0x1C2, 0x01000000, 0xC0, 0);
     func_ovl0E_15_80045F40(obj);
     odd = n & 1;

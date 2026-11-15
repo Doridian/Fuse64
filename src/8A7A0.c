@@ -132,13 +132,13 @@ typedef struct {
     /* 0x08 */ s32 unk8;
     /* 0x0C */ s32 unkC;
     /* 0x10 */ s32 unk10;
-    /* 0x14 */ u8 pad14[0x30 - 0x14];
+    /* 0x14 */ PORT_RET(u8 pad14[0x30 - 0x14];, u8 pad14[0xC]; void *unk20; void *unk24; u8 unk28[0x8];)
     /* 0x30 */ s32 unk30;
     /* 0x34 */ f32 unk34;
     /* 0x38 */ f32 unk38;
-    /* 0x3C */ u8 pad3C[4];
+    /* 0x3C */ PORT_RET(u8 pad3C[4];, void *unk3C;)
     /* 0x40 */ Sub8E *unk40;
-    /* 0x44 */ u8 pad44[0x4C - 0x44];
+    /* 0x44 */ PORT_RET(u8 pad44[0x4C - 0x44];, void *unk44; u8 unk48[0x4];)
     /* 0x4C */ f32 unk4C;
     /* 0x50 */ f32 unk50;
     /* 0x54 */ f32 unk54;
@@ -155,7 +155,7 @@ typedef struct {
     /* 0x00 */ s16 unk0;
     /* 0x02 */ u8 pad2[6];
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
+    /* 0x0C */ PORT_IP(s32) unkC; /* an object */
     /* 0x10 */ s16 unk10;
     /* 0x12 */ u8 pad12[0x1C - 0x12];
     /* 0x1C */ f32 unk1C;
@@ -242,8 +242,24 @@ typedef struct {
 #endif
     /* 0x20 */ s32 unk20;
     /* 0x24 */ u8 pad24[4];
+#ifdef TARGET_PC
+    /* (D_800AEDF0's pointers as wide as the host's: 5E3F0.c's
+       UnkStruct_800AEDF0) */
+    /* 0x28 */ intptr_t unk28;
+    /* 0x2C */ intptr_t unk2C;
+    /* 0x30 */ intptr_t unk30;
+    /* 0x34 */ u8 pad34[0x40 - 0x34];
+    /* 0x40 */ intptr_t unk40;
+    /* 0x44 */ u8 pad44[0x4C - 0x44];
+    /* 0x4C */ intptr_t unk4C;
+    /* 0x50 */ u8 pad50[0xB0 - 0x50];
+    /* 0xB0 */ intptr_t unkB0;
+    /* 0xB4 */ intptr_t unkB4;
+    /* 0xB8 */ u8 padB8[0xC8 - 0xB8];
+#else
     /* 0x28 */ s32 unk28;
     /* 0x2C */ u8 pad2C[0xC8 - 0x2C];
+#endif
 } Player87; /* size 0xC8 */
 
 #define ENT_HEAD (*(Ent88 **) &D_8008F44C)
@@ -257,23 +273,23 @@ extern Node87 D_802AFE58;
 
 void free(void *);
 void func_8022638C(u32, void *);
-void func_802297B8(s32, s32, s32, s32);
+void func_802297B8(PORT_RET(s32, void *), s32, s32, s32);
 s32 func_8022984C(void *, s32);
 f32 func_8022DF68(f32 *, f32 *);
-s32 func_8022E884(s32, s32);
-s32 func_8022F4AC(s32, s32, s32);
+s32 func_8022E884(PORT_RET(s32, void *), PORT_RET(s32, void *));
+PORT_RET(s32, void *) func_8022F4AC(PORT_RET(s32, void *), s32, PORT_RET(s32, void *));
 PORT_RET(void, s32) func_8022FC90(void *);
 void func_8022FF58(f32 *, f32 *, f32 *);
 void * func_802308B8(void *, s32);
 void func_80230914(void *);
-s32 func_802311E8(void *);
+PORT_RET(s32, void *) func_802311E8(void *);
 void * func_80231274(s32, s32, s32, void *);
 void func_802313DC(void *, s32);
 void func_80231408(void *, s32);
 void func_80231434(void *);
 void func_80232A34(u8 *arg0, s32 arg1);
-PORT_RET(s32, void) func_80232AA8(s32);
-PORT_RET(s32, void) func_80232AC8(s32, s32);
+PORT_RET(s32, void) func_80232AA8(PORT_RET(s32, void *));
+PORT_RET(s32, void) func_80232AC8(PORT_RET(s32, void *), PORT_RET(s32, void *));
 s32 func_80232D18(void *, s32);
 void func_80232DB4(void *);
 int func_8023369C(f32, f32, f32);
@@ -281,37 +297,37 @@ int func_802336E4(f32);
 s32 func_80234248(s32);
 f32 func_80234408(f32);
 f32 func_80234434(f32);
-s32 func_80238A10(void *, s32, s32, s32, s32);
+s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_80238EA8(s32);
 void func_80239094(void);
 s32 *func_802391F0(void);
 s32 *func_8023A840(void);
 void func_802438BC(s32 *);
 void func_802441F4(void *, s32, s32 *, f32 *);
-s32 func_802442A8(s32);
+PORT_IP(s32) func_802442A8(s32);
 void * func_802443F4(s32);
 void func_80244C30(s32, s32);
 void func_80244E04(void *);
-s32 func_80244F34(void *, s32);
+s32 func_80244F34(void *, PORT_IP(s32));
 s32 func_80244FF8(void *);
 void func_802511EC(s32, s32, s32, s32);
 s32 func_8026C51C(s32, f32, f32, f32);
 s32 func_8026C660(s32);
 void * func_8027A1A0(void *);
-s32 func_8027A1F4(void *, s32);
+s32 func_8027A1F4(void *, PORT_IP(s32));
 void func_8027B440(void *);
 s32 func_8027B5A8(void *);
 s16 func_8027DF40(s32);
 s16 func_8027DF9C(void);
 s32 func_8027E8EC(s16, s16, s16, s16);
 void func_8027F820();
-void func_8027F858(s32, s32);
+void func_8027F858(PORT_IP(s32), s32);
 s32 func_80286CA8(s32, f32, f32, f32);
 s32 func_802870A8();
 PORT_RET(s32, void) func_80287440(Obj8E *arg0);
 s32 func_802875B0();
 s32 func_8028A4E0(s32);
-s32 func_8028A81C(s32, f32, f32, f32, s32);
+s32 func_8028A81C(s32, f32, f32, f32, PORT_IP(s32));
 s32 func_802909FC(void *, void *);
 s32 func_80277378(s32 arg0);
 void func_80291944(void *, s32, f32);
@@ -380,7 +396,7 @@ s32 func_8026E608(s32 arg0, s32 arg1);
 void func_8026E6E4(u8 *arg0, f32 *arg1, f32 *arg2);
 f32 func_8026E8B8(void);
 s32 func_8026E8C8(void);
-s32 func_8026E8E0(s32 arg0);
+s32 func_8026E8E0(PORT_IP(s32) arg0);
 f32 func_8026E938(u8 *arg0);
 f32 func_8026EAF8(u8 *arg0);
 void func_8026ECC0(void);
@@ -400,7 +416,7 @@ void func_8026FC08(s32 arg0);
 void func_8026FF64(s32 arg0);
 void func_8026FF94(s32 arg0);
 s32 func_8026FFA0(s16 arg0);
-void func_80270080(s32 *arg0);
+void func_80270080(PORT_IP(s32) *arg0);
 void *func_802700EC(u8 *arg0, u8 *arg1, s32 arg2, f32 arg3);
 s32 func_802702BC(s16 arg0);
 void func_802702EC(s16 arg0);
@@ -410,37 +426,37 @@ s32 func_80270384(u8 *arg0);
 s16 *func_802703B4(u8 *arg0);
 s32 func_80270438(u8 *arg0, s32 *arg1);
 s32 func_802704F8(f32 arg0);
-s32 func_80270714(s16 arg0);
+PORT_IP(s32) func_80270714(s16 arg0);
 PORT_RET(void, s32) func_80270770(s16 arg0, s16 arg1);
-void func_80270A80(s32 *arg0);
+void func_80270A80(PORT_IP(s32) *arg0);
 void func_80270B20(u8 *arg0);
-s16 func_80270B4C(s32 arg0);
+s16 func_80270B4C(PORT_IP(s32) arg0);
 void func_80270BA4(u8 *arg0);
 void func_80270C24(u8 *arg0, s16 arg1, s32 arg2);
 void func_80270EF0(u8 *arg0);
 f32 func_80270F44(u8 *arg0);
 f32 func_80270FC0(u8 *arg0);
 void func_80271010(u8 *arg0, s16 arg1);
-void func_80271178(s16 arg0, s32 arg1);
+void func_80271178(s16 arg0, PORT_IP(s32) arg1);
 void func_802711C8(s16 *arg0);
 s16 func_802712A8(s16 *arg0, s16 arg1);
 void func_802712C4(s16 *arg0);
 s32 func_8027130C(u8 *arg0);
 void func_80271448(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5);
 void func_802714C4(void);
-s32 func_80271540(s16 arg0);
+PORT_IP(s32) func_80271540(s16 arg0);
 void *func_802716F8(s16 arg0);
 void func_80271BB8(s16 arg0);
-void func_80271F74(s32 *arg0);
+void func_80271F74(PORT_IP(s32) *arg0);
 s32 func_80272024(s16 arg0);
 void func_802720C8(u8 *arg0);
-s32 func_802721D4(Obj8E *arg0, s32 arg1, Ctl87 *arg2);
+s32 func_802721D4(Obj8E *arg0, PORT_IP(s32) arg1, Ctl87 *arg2);
 s16 func_8027241C(s16 arg0);
 void func_80272494(Obj8E *arg0, Obj8E *arg1, Ctl87 *arg2);
 void func_802727D8(Ctl87 *arg0);
 void func_80272FC0(Obj8E *arg0, s16 arg1);
 void func_802731A4(Obj8E *arg0, s16 arg1);
-void *func_80273370(s32 arg0);
+void *func_80273370(PORT_IP(s32) arg0);
 void func_802733C8(u8 *arg0);
 void func_802733F8(s16 *arg0);
 void func_80273414(s16 *arg0);
@@ -460,7 +476,24 @@ typedef struct {
     /* 0x18 */ s32 unk18;
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ s32 unk20;
+#ifdef TARGET_PC
+    /* 0x24 */ u8 pad24[4];
+    /* (D_800AEDF0's pointers as wide as the host's: 5E3F0.c's
+       UnkStruct_800AEDF0) */
+    /* 0x28 */ intptr_t unk28;
+    /* 0x2C */ intptr_t unk2C;
+    /* 0x30 */ intptr_t unk30;
+    /* 0x34 */ u8 pad34[0x40 - 0x34];
+    /* 0x40 */ intptr_t unk40;
+    /* 0x44 */ u8 pad44[0x4C - 0x44];
+    /* 0x4C */ intptr_t unk4C;
+    /* 0x50 */ u8 pad50[0xB0 - 0x50];
+    /* 0xB0 */ intptr_t unkB0;
+    /* 0xB4 */ intptr_t unkB4;
+    /* 0xB8 */ u8 padB8[0xC8 - 0xB8];
+#else
     /* 0x24 */ u8 pad24[0xC8 - 0x24];
+#endif
 } Player8E; /* size 0xC8 */
 
 typedef struct {
@@ -480,7 +513,7 @@ void func_802740AC(s16 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4);
 void func_802741D8(s16 arg0);
 s32 func_80274994(s16 arg0);
 s16 func_80274F64(s16 arg0);
-PORT_RET(void, s32) func_80274F8C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4);
+PORT_RET(void, PORT_IP(s32)) func_80274F8C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4);
 void func_80274FD4(Ent88 *arg0);
 void func_80275034(s16 *arg0);
 s32 func_802750C0(s16 *arg0, s16 arg1);
@@ -519,7 +552,7 @@ void func_80277D60(s16 arg0, s16 arg1);
 void func_80277DA8(s16 arg0, s16 arg1);
 void func_80277DF4(s16 arg0);
 void func_80277E1C(void);
-void *func_80277FC4(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4, f32 arg5, f32 arg6, f32 arg7, s16 arg8, s32 arg9);
+void *func_80277FC4(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4, f32 arg5, f32 arg6, f32 arg7, s16 arg8, PORT_RET(s32, void *) arg9);
 void func_80278D54(s32 *arg0);
 void func_80278DBC(void);
 
@@ -587,11 +620,11 @@ s32 func_80273AD4(s16 arg0, f32 arg1, f32 arg2, f32 arg3) {
     OBJ_DD8->unk30 = 1;
     OBJ_DD8->unk34 = 40.0f;
     OBJ_DD8->unk38 = 40.0f;
-    if (func_8022F4AC((s32) OBJ_DD8, 0x10, pl->unk28) != 0) {
+    if (func_8022F4AC((PORT_RET(s32, void *)) OBJ_DD8, 0x10, PORT_PTR(pl->unk28)) != 0) {
         return 0;
     }
     if (func_802909FC(OBJ_DD8, func_80277378) != 0) {
-        if (func_8022F4AC((s32) OBJ_DD8, 0x10, pl->unk28) != 0) {
+        if (func_8022F4AC((PORT_RET(s32, void *)) OBJ_DD8, 0x10, PORT_PTR(pl->unk28)) != 0) {
             return 0;
         }
         VEC_E60[0] = OBJ_DD8->unk40->x;
@@ -661,7 +694,7 @@ void *func_8027361C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
     obj->unk38 = 40.0f;
     e = &ENTS[idx];
     func_80273544((u8 *) e);
-    e->unk4 = func_80238A10(func_8027723C, (s32) e, 0, 0, 0xB0);
+    e->unk4 = func_80238A10(func_8027723C, (PORT_IP(s32)) e, 0, 0, 0xB0);
     if (e->unk4 == -1) {
         return NULL;
     }
@@ -754,19 +787,19 @@ void func_80277DF4(s16 arg0) {
 void func_80277DA8(s16 arg0, s16 arg1) {
     u8 *temp_v0;
 
-    temp_v0 = (arg0 * 0xC8) + D_800AEDF0;
+    temp_v0 = (arg0 * PORT_HOST(0xC8, sizeof(Port_800AEDF0))) + D_800AEDF0;
     M2C_FIELD(temp_v0, s32 *, 0x18) = (s32) (M2C_FIELD(temp_v0, s32 *, 0x18) & ~arg1);
 }
 
 void func_80277D60(s16 arg0, s16 arg1) {
     u8 *temp_v0;
 
-    temp_v0 = (arg0 * 0xC8) + D_800AEDF0;
+    temp_v0 = (arg0 * PORT_HOST(0xC8, sizeof(Port_800AEDF0))) + D_800AEDF0;
     M2C_FIELD(temp_v0, s32 *, 0x18) = (s32) (M2C_FIELD(temp_v0, s32 *, 0x18) | arg1);
 }
 
 void func_80277D20(s16 arg0, s16 arg1) {
-    *(s32 *)((u8 *)&D_800AEE08 + (arg0 * 0xC8)) = arg1 | 0x200;
+    *(s32 *)((u8 *)&D_800AEE08 + (arg0 * PORT_HOST(0xC8, sizeof(Port_800AEDF0)))) = arg1 | 0x200;
 }
 
 s32 func_80277CEC(s32 arg0) {
@@ -860,7 +893,7 @@ void func_802779C4(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5
 }
 
 void *func_8027799C(s16 arg0) {
-    return (arg0 * 0x88) + D_8008F438;
+    return (arg0 * PORT_HOST(0x88, sizeof(Ent88))) + D_8008F438;
 }
 
 void func_80277984(s16 *arg0, s16 arg1) {
@@ -892,7 +925,7 @@ void func_8027783C() {
     }
     while (D_802AFE58.next != NULL) {
         n = h->next;
-        func_80270A80((s32 *) h->next);
+        func_80270A80((PORT_IP(s32) *) h->next);
         free(n);
     }
 }
@@ -915,7 +948,7 @@ void func_80277774() {
 
     while (D_802AFE58.next != NULL) {
         n = h->next;
-        func_80270A80((s32 *) h->next);
+        func_80270A80((PORT_IP(s32) *) h->next);
         free(n);
     }
 }
@@ -1171,7 +1204,7 @@ void func_80276D68(Ent88 *arg0) {
                 arg0->unk10 |= 0x100;
                 func_80231408(arg0->obj, 0x2000);
                 func_8026C660(0x1A);
-                arg0->unk8 = func_8028A81C(0x15, 0.0f, 100.0f, 0.0f, (s32) arg0->obj);
+                arg0->unk8 = func_8028A81C(0x15, 0.0f, 100.0f, 0.0f, (PORT_IP(s32)) arg0->obj);
                 arg0->unkC = 0;
                 arg0->obj->unk30 = 0x21;
                 arg0->unk64 |= 0x80;
@@ -1279,7 +1312,7 @@ s32 func_8027655C(Ent88 *arg0) {
         if (func_802712A8(&arg0->unk64, 0x400)) {
             sp154 = func_802308B8(arg0->obj, 0x16);
         } else {
-            sp154 = (void *) func_8022F4AC((s32) arg0->obj, 0x16, (s32) func_802443F4(arg0->unkE));
+            sp154 = (void *) func_8022F4AC((PORT_RET(s32, void *)) arg0->obj, 0x16, (PORT_RET(s32, void *)) func_802443F4(arg0->unkE));
         }
         if (sp154 != NULL) {
             arg0->x = arg0->xf->x = arg0->obj->unk58;
@@ -1333,7 +1366,7 @@ void func_802763DC(s16 *arg0) {
     t = func_8026D7D8((s32) v.x, (s32) v.y, (s32) v.z);
     t &= 0x1C00;
     if (t != 0) {
-        func_8027F858((s32)(e->obj), t >> 10);
+        func_8027F858((PORT_IP(s32))(e->obj), t >> 10);
     }
     e->x = e->xf->x;
     e->y = e->xf->y;
@@ -1406,8 +1439,8 @@ s32 func_80275DD8(Ent88 *arg0, Ent88 *arg1) {
     u8 *temp_v0;
     u8 *temp_v1;
 
-    temp_v0 = M2C_FIELD(M2C_FIELD(arg0, void **, 0x1C), void **, 0x40);
-    temp_v1 = M2C_FIELD(M2C_FIELD(arg1, void **, 0x1C), void **, 0x40);
+    temp_v0 = PORT_FIELD(PORT_FIELD(arg0, void **, 0x1C, Port_Ent88, unk1C), void **, 0x40, Port_UnkStructA, unk40);
+    temp_v1 = PORT_FIELD(PORT_FIELD(arg1, void **, 0x1C, Port_Ent88, unk1C), void **, 0x40, Port_UnkStructA, unk40);
     temp_fa1 = M2C_FIELD(temp_v0, f32 *, 0x10);
     temp_ft4 = M2C_FIELD(temp_v1, f32 *, 0x10);
     temp_fv1 = M2C_FIELD(temp_v0, f32 *, 0x18);
@@ -1597,7 +1630,7 @@ void func_80275C08(u8 *arg0, u8 *arg1) {
 
     e = (Ent88 *) func_802703B4(arg1);
     if (e->unk3C <= 0) {
-        func_8028A81C(0, (*(Sub8E **) (arg1 + 0x40))->x, (*(Sub8E **) (arg1 + 0x40))->y + 100.0f, (*(Sub8E **) (arg1 + 0x40))->z, 0);
+        func_8028A81C(0, (*(Sub8E **) (PORT_AT(arg1, 0x40, Port_UnkStructA, unk40)))->x, (*(Sub8E **) (PORT_AT(arg1, 0x40, Port_UnkStructA, unk40)))->y + 100.0f, (*(Sub8E **) (PORT_AT(arg1, 0x40, Port_UnkStructA, unk40)))->z, 0);
         e->unk3C = 25;
     }
 }
@@ -1726,9 +1759,9 @@ void func_802757E0(s16 *arg0) {
     if (((Ent88 *) arg0)->unk10 & 0x100) {
         k = 9;
     }
-    ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 0, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (s32) &((Ent88 *) arg0)->unk24[0]);
-    ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 5, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (s32) &((Ent88 *) arg0)->unk24[1]);
-    ((Ent88 *) arg0)->unk24[2] = func_80277FC4(id, 6, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (s32) &((Ent88 *) arg0)->unk24[2]);
+    ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 0, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[0]);
+    ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 5, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[1]);
+    ((Ent88 *) arg0)->unk24[2] = func_80277FC4(id, 6, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[2]);
 }
 
 void func_802756DC(s16 *arg0) {
@@ -1744,8 +1777,8 @@ void func_802756DC(s16 *arg0) {
     if (((Ent88 *) arg0)->unk10 & 0x100) {
         k = 9;
     }
-    ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 3, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (s32) &((Ent88 *) arg0)->unk24[0]);
-    ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 0, ((Ent88 *) arg0)->unk10, 8, 40, x, y, z, k, (s32) &((Ent88 *) arg0)->unk24[1]);
+    ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 3, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[0]);
+    ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 0, ((Ent88 *) arg0)->unk10, 8, 40, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[1]);
 }
 
 void func_80275590(s16 *arg0) {
@@ -1761,9 +1794,9 @@ void func_80275590(s16 *arg0) {
     if (((Ent88 *) arg0)->unk10 & 0x100) {
         k = 9;
     }
-    ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 3, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (s32) &((Ent88 *) arg0)->unk24[0]);
-    ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 5, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (s32) &((Ent88 *) arg0)->unk24[1]);
-    ((Ent88 *) arg0)->unk24[2] = func_80277FC4(id, 0, ((Ent88 *) arg0)->unk10, 8, 40, x, y, z, k, (s32) &((Ent88 *) arg0)->unk24[2]);
+    ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 3, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[0]);
+    ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 5, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[1]);
+    ((Ent88 *) arg0)->unk24[2] = func_80277FC4(id, 0, ((Ent88 *) arg0)->unk10, 8, 40, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[2]);
 }
 
 void func_802752BC(s16 *arg0) {
@@ -1780,19 +1813,19 @@ void func_802752BC(s16 *arg0) {
         k = 6;
     }
     if (k == 3) {
-        ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 0, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (s32) &((Ent88 *) arg0)->unk24[0]);
+        ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 0, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[0]);
         ((Ent88 *) arg0)->unk24[1] = NULL;
         ((Ent88 *) arg0)->unk24[2] = NULL;
     }
     if (k == 4) {
-        ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 1, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (s32) &((Ent88 *) arg0)->unk24[0]);
-        ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 7, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (s32) &((Ent88 *) arg0)->unk24[1]);
-        ((Ent88 *) arg0)->unk24[2] = func_80277FC4(id, 8, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (s32) &((Ent88 *) arg0)->unk24[2]);
+        ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 1, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[0]);
+        ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 7, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[1]);
+        ((Ent88 *) arg0)->unk24[2] = func_80277FC4(id, 8, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[2]);
     }
     if (k >= 5) {
-        ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 2, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (s32) &((Ent88 *) arg0)->unk24[0]);
-        ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 7, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (s32) &((Ent88 *) arg0)->unk24[1]);
-        ((Ent88 *) arg0)->unk24[2] = func_80277FC4(id, 4, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (s32) &((Ent88 *) arg0)->unk24[2]);
+        ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 2, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[0]);
+        ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 7, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[1]);
+        ((Ent88 *) arg0)->unk24[2] = func_80277FC4(id, 4, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[2]);
     }
 }
 
@@ -1830,7 +1863,7 @@ s32 func_802750C0(s16 *arg0, s16 arg1) {
     s16 i;
 
     for (i = 0; i < arg1; i++) {
-        if (((s32 *) ((u8 *) arg0 + 0x24))[i] != 0) {
+        if (((PORT_IP(s32) *) PORT_AT(arg0, 0x24, Ent88, unk24))[i] != 0) {
             break;
         }
     }
@@ -1853,17 +1886,17 @@ void func_80275034(s16 *arg0) {
 }
 
 void func_80274FD4(Ent88 *arg0) {
-    M2C_FIELD(M2C_FIELD(arg0, void **, 0x20), f32 *, 0x10) = (f32) M2C_FIELD(arg0, f32 *, 0x40);
-    M2C_FIELD(M2C_FIELD(arg0, void **, 0x20), f32 *, 0x14) = (f32) M2C_FIELD(arg0, f32 *, 0x44);
-    M2C_FIELD(M2C_FIELD(arg0, void **, 0x20), f32 *, 0x18) = (f32) M2C_FIELD(arg0, f32 *, 0x48);
-    M2C_FIELD(M2C_FIELD(arg0, void **, 0x20), f32 *, 0x28) = (f32) M2C_FIELD(arg0, f32 *, 0x78);
-    M2C_FIELD(M2C_FIELD(arg0, void **, 0x20), f32 *, 0x2C) = (f32) M2C_FIELD(arg0, f32 *, 0x78);
-    M2C_FIELD(M2C_FIELD(arg0, void **, 0x20), f32 *, 0x30) = (f32) M2C_FIELD(arg0, f32 *, 0x78);
+    M2C_FIELD(PORT_FIELD(arg0, void **, 0x20, Port_Ent88, unk20), f32 *, 0x10) = (f32) PORT_FIELD(arg0, f32 *, 0x40, Port_Ent88, unk3C[4]);
+    M2C_FIELD(PORT_FIELD(arg0, void **, 0x20, Port_Ent88, unk20), f32 *, 0x14) = (f32) PORT_FIELD(arg0, f32 *, 0x44, Port_Ent88, unk3C[8]);
+    M2C_FIELD(PORT_FIELD(arg0, void **, 0x20, Port_Ent88, unk20), f32 *, 0x18) = (f32) PORT_FIELD(arg0, f32 *, 0x48, Port_Ent88, unk3C[12]);
+    M2C_FIELD(PORT_FIELD(arg0, void **, 0x20, Port_Ent88, unk20), f32 *, 0x28) = (f32) PORT_FIELD(arg0, f32 *, 0x78, Port_Ent88, unk3C[60]);
+    M2C_FIELD(PORT_FIELD(arg0, void **, 0x20, Port_Ent88, unk20), f32 *, 0x2C) = (f32) PORT_FIELD(arg0, f32 *, 0x78, Port_Ent88, unk3C[60]);
+    M2C_FIELD(PORT_FIELD(arg0, void **, 0x20, Port_Ent88, unk20), f32 *, 0x30) = (f32) PORT_FIELD(arg0, f32 *, 0x78, Port_Ent88, unk3C[60]);
 }
 
-PORT_RET(void, s32) func_80274F8C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
+PORT_RET(void, PORT_IP(s32)) func_80274F8C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
     PORT_V0(func_80273F30(arg0, arg1, arg2, arg3, arg4));
-PORT_ONLY(return (s32)port_v0;) }
+PORT_ONLY(return (intptr_t)port_v0;) }
 
 s16 func_80274F64(s16 arg0) {
     return *(s16 *)(D_802AFC78 + (arg0 * 0x12));
@@ -1887,7 +1920,7 @@ s32 func_80274994(s16 arg0) {
 
         e = ENT_HEAD;
         n = e->next;
-        cnt = PORT_WORD_HALF1(D_800AEE0E + arg0 * 0xC8);
+        cnt = PORT_WORD_HALF1(D_800AEE0E + arg0 * PORT_HOST(0xC8, sizeof(Port_800AEDF0)));
         while (n != NULL) {
             live = (e->x != 1e7f) ? 1 : 0;
             if (live && e->xf != NULL && arg0 == e->unkE) {
@@ -2049,7 +2082,7 @@ void func_802741D8(s16 arg0) {
         cur.y = obj->unk40->y;
         break;
     }
-    e = func_80273F30(PORT_WORD_HALF1(D_800AEE0A + arg0 * 0xC8), obj->unk40->x + base.x, cur.y, obj->unk40->z + base.y, arg0);
+    e = func_80273F30(PORT_WORD_HALF1(D_800AEE0A + arg0 * PORT_HOST(0xC8, sizeof(Port_800AEDF0))), obj->unk40->x + base.x, cur.y, obj->unk40->z + base.y, arg0);
     if (e != NULL) {
         t5 = func_80232D18(e->obj, 0x10);
         if (t5) {
@@ -2064,10 +2097,10 @@ void func_802741D8(s16 arg0) {
                         slot = &SLOTS[arg0];
                         slot->unk8 = o->unk8;
                         func_80231408(o, 0x10000);
-                        func_80232AC8((s32) obj, (s32) o);
+                        func_80232AC8((PORT_RET(s32, void *)) obj, (PORT_RET(s32, void *)) o);
                         func_80231408(o, 0x200000);
                         if (!((arg0 >= 0 && arg0 < 5) ? 0 : 1)) {
-                            slot->unkC = (s32) o;
+                            slot->unkC = (PORT_IP(s32)) o;
                         }
                         func_80271010((u8 *) o, arg0);
                         o->unk40->rot = obj->unk40->rot;
@@ -2162,7 +2195,7 @@ void *func_80273F30(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
     if (bad) {
         v = 0;
     } else {
-        v = *(s32 *)(D_802AFCF4 + (arg4 * 0x30));
+        v = PORT_HOST(*(s32 *)(D_802AFCF4 + (arg4 * 0x30)), SLOTS[arg4].unkC != 0);
     }
     if (v != 0) {
         func_80273E2C(arg4);
@@ -2226,11 +2259,11 @@ s32 func_8027356C(s16 arg0) {
 void func_80273544(u8 *arg0) {
     u8 *temp_v0;
 
-    temp_v0 = M2C_FIELD(D_8008F438, void **, 0xA0);
-    M2C_FIELD(D_8008F438, void **, 0xA0) = arg0;
-    M2C_FIELD(temp_v0, void **, 0x14) = arg0;
-    M2C_FIELD(arg0, M2C_UNK **, 0x14) = (M2C_UNK *) D_8008F4C0;
-    M2C_FIELD(arg0, void **, 0x18) = temp_v0;
+    temp_v0 = PORT_ELEM(D_8008F438, void **, 0xA0, Port_Ent88, 1, unk18);
+    PORT_ELEM(D_8008F438, void **, 0xA0, Port_Ent88, 1, unk18) = arg0;
+    PORT_FIELD(temp_v0, void **, 0x14, Port_Ent88, unk14) = arg0;
+    PORT_FIELD(arg0, M2C_UNK **, 0x14, Port_Ent88, unk14) = (M2C_UNK *) D_8008F4C0;
+    PORT_FIELD(arg0, void **, 0x18, Port_Ent88, unk18) = temp_v0;
 }
 
 void func_802734BC(u8 *arg0) {
@@ -2275,22 +2308,22 @@ void func_802733F8(s16 *arg0) {
     u8 *temp_v0;
     u8 *temp_v1;
 
-    temp_v0 = M2C_FIELD(arg0, void **, 0x18);
-    temp_v1 = M2C_FIELD(arg0, void **, 0x14);
-    M2C_FIELD(temp_v0, void **, 0x14) = temp_v1;
-    M2C_FIELD(temp_v1, void **, 0x18) = temp_v0;
-    M2C_FIELD(arg0, s32 *, 0x20) = 0;
+    temp_v0 = PORT_FIELD(arg0, void **, 0x18, Port_Ent88, unk18);
+    temp_v1 = PORT_FIELD(arg0, void **, 0x14, Port_Ent88, unk14);
+    PORT_FIELD(temp_v0, void **, 0x14, Port_Ent88, unk14) = temp_v1;
+    PORT_FIELD(temp_v1, void **, 0x18, Port_Ent88, unk18) = temp_v0;
+    PORT_FIELD(arg0, PORT_IP(s32) *, 0x20, Port_Ent88, unk20) = 0;
 }
 
 void func_802733C8(u8 *arg0) {
     u8 *temp_v0;
 
-    temp_v0 = func_80273370((s32) arg0);
-    func_802731A4(M2C_FIELD(temp_v0, void **, 0xC), M2C_FIELD(temp_v0, s16 *, 0));
+    temp_v0 = func_80273370((PORT_IP(s32)) arg0);
+    func_802731A4(PORT_FIELD(temp_v0, void **, 0xC, Slot30, unkC), M2C_FIELD(temp_v0, s16 *, 0));
     return;
 }
 
-void *func_80273370(s32 arg0) {
+void *func_80273370(PORT_IP(s32) arg0) {
     s16 i;
     Slot30 *p;
 
@@ -2395,7 +2428,7 @@ void func_802727D8(Ctl87 *arg0) {
     Obj8E *p;
     Obj8E *obj;
     Obj8E *hit;
-    s32 v;
+    PORT_IP(s32) v;
     s16 i;
     s32 done;
 
@@ -2432,7 +2465,7 @@ void func_802727D8(Ctl87 *arg0) {
             if (i >= 4) {
                 i = 0;
             }
-            hit = (Obj8E *) func_8022F4AC((s32) obj, 0x8016, func_802442A8(i));
+            hit = (Obj8E *) func_8022F4AC((PORT_RET(s32, void *)) obj, 0x8016, PORT_PTR(func_802442A8(i)));
         } else {
             hit = func_802308B8(obj, 0x8016);
         }
@@ -2523,8 +2556,8 @@ void func_802727D8(Ctl87 *arg0) {
     done = 0;
     if (obj->unk6C == 0.0f && obj->unk68 == 0.0f) {
         if (arg0->flags & 8) {
-            v = (s32) func_8027A1A0(arg0->obj);
-            if (v != 0 && func_802712A8((s16 *) (v + 0x54), 0x40) == 0 && arg0->unk28 < 2) {
+            v = (PORT_IP(s32)) func_8027A1A0(arg0->obj);
+            if (v != 0 && func_802712A8((s16 *) (PORT_HOST(v + 0x54, PORT_INT(PORT_AT(v, 0x54, Port_800BB4A8, unk1C[0x38])))), 0x40) == 0 && arg0->unk28 < 2) {
                 w = (obj->unk40->y <= func_8026E8B8()) ? 1 : 0;
                 if (w == 0) {
                     arg0->unk28++;
@@ -2535,7 +2568,7 @@ void func_802727D8(Ctl87 *arg0) {
             }
         }
         if (done == 0) {
-            func_80271F74((s32 *) arg0);
+            func_80271F74((PORT_IP(s32) *) arg0);
         }
     }
 }
@@ -2571,7 +2604,7 @@ void func_80272494(Obj8E *arg0, Obj8E *arg1, Ctl87 *arg2) {
         for (r = 10.0f; r < d; r += 10.0f) {
             arg2->unk1C = r;
             arg2->unk14 = dir;
-            res = func_802721D4(arg0, (s32) arg1, arg2);
+            res = func_802721D4(arg0, (PORT_IP(s32)) arg1, arg2);
             if (res == 2) {
                 break;
             }
@@ -2582,7 +2615,7 @@ void func_80272494(Obj8E *arg0, Obj8E *arg1, Ctl87 *arg2) {
         if (d <= r) {
             arg2->unk1C = d;
             arg2->unk14 = dir;
-            if (func_802721D4(arg0, (s32) arg1, arg2) == 1) {
+            if (func_802721D4(arg0, (PORT_IP(s32)) arg1, arg2) == 1) {
                 return;
             }
         }
@@ -2620,7 +2653,7 @@ s16 func_8027241C(s16 arg0) {
     return arg0;
 }
 
-s32 func_802721D4(Obj8E *arg0, s32 arg1, Ctl87 *arg2) {
+s32 func_802721D4(Obj8E *arg0, PORT_IP(s32) arg1, Ctl87 *arg2) {
     func_802714C4();
     OBJ_DD8->unk40->x = OBJ_DD8->unk58 = arg0->unk58;
     OBJ_DD8->unk40->y = OBJ_DD8->unk5C = arg0->unk5C;
@@ -2648,7 +2681,7 @@ s32 func_802721D4(Obj8E *arg0, s32 arg1, Ctl87 *arg2) {
     if (func_802909FC(OBJ_DD8, func_80277378) != 0) {
         return 2;
     }
-    if (func_8022E884((s32) OBJ_DD8, arg1) != 0) {
+    if (func_8022E884((PORT_RET(s32, void *)) OBJ_DD8, PORT_PTR(arg1)) != 0) {
         return 0;
     }
     return 1;
@@ -2678,7 +2711,7 @@ void func_802720C8(u8 *arg0) {
     t = func_8026D7D8(t1, t2, t3);
     t &= 0x1C00;
     if (t != 0) {
-        func_8027F858((s32) arg0, t >> 10);
+        func_8027F858((PORT_IP(s32)) arg0, t >> 10);
     }
 }
 
@@ -2717,7 +2750,7 @@ s32 func_80272024(s16 arg0) {
     return sp4;
 }
 
-void func_80271F74(s32 *arg0) {
+void func_80271F74(PORT_IP(s32) *arg0) {
     Ctl87 *c = (Ctl87 *) arg0;
 
     func_802313DC(c->obj, 0x20000);
@@ -2799,9 +2832,9 @@ void func_80271BB8(s16 arg0) {
     } else {
         SLOTS[arg0].unk8 = flags;
         func_80231408(obj, 0x10000);
-        func_80232AC8((s32) pl, (s32) obj);
+        func_80232AC8((PORT_RET(s32, void *)) pl, (PORT_RET(s32, void *)) obj);
         func_80231408(obj, 0x200000);
-        func_80271178(arg0, (s32) obj);
+        func_80271178(arg0, (PORT_IP(s32)) obj);
         func_80271010((u8 *) obj, arg0);
         obj->unk40->rot = pl->unk40->rot;
         s = func_80234434(pl->unk40->rot);
@@ -2830,8 +2863,8 @@ void *func_802716F8(s16 arg0) {
     f32 dz;
     f32 r;
     f32 dist;
-    s32 t1;
-    s32 t2;
+    PORT_IP(s32) t1;
+    PORT_IP(s32) t2;
     f32 a[3];
     f32 b[3];
     f32 ang[3];
@@ -2887,7 +2920,7 @@ void *func_802716F8(s16 arg0) {
             OBJ_DD8->unk30 = obj->unk30;
             OBJ_DD8->unk34 = obj->unk34;
             OBJ_DD8->unk38 = obj->unk38;
-            t1 = func_8022F4AC((s32) OBJ_DD8, 0x10, (s32) obj);
+            t1 = PORT_INT(func_8022F4AC((PORT_RET(s32, void *)) OBJ_DD8, 0x10, (PORT_RET(s32, void *)) obj));
             if (t1 == 0 && func_802909FC(OBJ_DD8, func_80277378) == 0) {
                 obj->unk40->x = pl->unk40->x + dx;
                 obj->unk40->z = pl->unk40->z + dz;
@@ -2901,7 +2934,7 @@ void *func_802716F8(s16 arg0) {
                 OBJ_DD8->unk30 = pl->unk30;
                 OBJ_DD8->unk34 = pl->unk34;
                 OBJ_DD8->unk38 = pl->unk38;
-                t2 = func_8022F4AC((s32) OBJ_DD8, 0x10, (s32) pl);
+                t2 = PORT_INT(func_8022F4AC((PORT_RET(s32, void *)) OBJ_DD8, 0x10, (PORT_RET(s32, void *)) pl));
                 if (t2 == 0 && func_802909FC(OBJ_DD8, func_80277378) == 0) {
                     pl->unk40->x = OBJ_DD8->unk40->x;
                     pl->unk40->z = OBJ_DD8->unk40->z;
@@ -2914,7 +2947,7 @@ void *func_802716F8(s16 arg0) {
     return obj;
 }
 
-s32 func_80271540(s16 arg0) {
+PORT_IP(s32) func_80271540(s16 arg0) {
     int t1;
     f32 sp28;
     f32 sp24;
@@ -2924,8 +2957,8 @@ s32 func_80271540(s16 arg0) {
 
     func_802714C4();
     temp_v0 = func_802443F4((s32) arg0);
-    sp28 = func_80234434(M2C_FIELD(M2C_FIELD(temp_v0, void **, 0x40), f32 *, 0x20)) * 100.0f * 0.8f;
-    sp24 = func_80234408(M2C_FIELD(M2C_FIELD(temp_v0, void **, 0x40), f32 *, 0x20)) * 100.0f * 0.8f;
+    sp28 = func_80234434(M2C_FIELD(PORT_FIELD(temp_v0, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x20)) * 100.0f * 0.8f;
+    sp24 = func_80234408(M2C_FIELD(PORT_FIELD(temp_v0, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x20)) * 100.0f * 0.8f;
     t1 = func_802336E4(sp28);
     if (t1 != 0) {
         sp28 = 0.0f;
@@ -2933,18 +2966,18 @@ s32 func_80271540(s16 arg0) {
     if (func_802336E4(sp24) != 0) {
         sp24 = 0.0f;
     }
-    M2C_FIELD(M2C_FIELD(D_802AFDD8, void **, 0x40), f32 *, 0x10) = (f32) (M2C_FIELD(M2C_FIELD(temp_v0, void **, 0x40), f32 *, 0x10) + sp28);
-    M2C_FIELD(M2C_FIELD(D_802AFDD8, void **, 0x40), f32 *, 0x14) = (f32) (M2C_FIELD(M2C_FIELD(temp_v0, void **, 0x40), f32 *, 0x14) + 60.0f);
-    M2C_FIELD(M2C_FIELD(D_802AFDD8, void **, 0x40), f32 *, 0x18) = (f32) (M2C_FIELD(M2C_FIELD(temp_v0, void **, 0x40), f32 *, 0x18) + sp24);
-    M2C_FIELD(M2C_FIELD(D_802AFDD8, void **, 0x40), f32 *, 0x30) = 0.8f;
-    temp_v1 = M2C_FIELD(D_802AFDD8, void **, 0x40);
+    M2C_FIELD(PORT_FIELD(D_802AFDD8, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x10) = (f32) (M2C_FIELD(PORT_FIELD(temp_v0, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x10) + sp28);
+    M2C_FIELD(PORT_FIELD(D_802AFDD8, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x14) = (f32) (M2C_FIELD(PORT_FIELD(temp_v0, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x14) + 60.0f);
+    M2C_FIELD(PORT_FIELD(D_802AFDD8, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x18) = (f32) (M2C_FIELD(PORT_FIELD(temp_v0, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x18) + sp24);
+    M2C_FIELD(PORT_FIELD(D_802AFDD8, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x30) = 0.8f;
+    temp_v1 = PORT_FIELD(D_802AFDD8, void **, 0x40, Port_UnkStructA, unk40);
     temp_fv0 = M2C_FIELD(temp_v1, f32 *, 0x30);
     M2C_FIELD(temp_v1, f32 *, 0x2C) = temp_fv0;
-    M2C_FIELD(M2C_FIELD(D_802AFDD8, void **, 0x40), f32 *, 0x28) = temp_fv0;
-    M2C_FIELD(D_802AFDD8, s32 *, 0x30) = 1;
-    M2C_FIELD(D_802AFDD8, f32 *, 0x34) = 50.0f;
-    M2C_FIELD(D_802AFDD8, f32 *, 0x38) = 50.0f;
-    return (s32)(func_802308B8(D_802AFDD8, 0xF));
+    M2C_FIELD(PORT_FIELD(D_802AFDD8, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x28) = temp_fv0;
+    PORT_FIELD(D_802AFDD8, s32 *, 0x30, Port_UnkStructA, unk28[8]) = 1;
+    PORT_FIELD(D_802AFDD8, f32 *, 0x34, Port_UnkStructA, unk28[12]) = 50.0f;
+    PORT_FIELD(D_802AFDD8, f32 *, 0x38, Port_UnkStructA, unk28[16]) = 50.0f;
+    return (PORT_IP(s32))(func_802308B8(D_802AFDD8, 0xF));
 }
 
 void func_802714C4() {
@@ -3043,7 +3076,7 @@ void func_802711C8(s16 *arg0) {
     }
 }
 
-void func_80271178(s16 arg0, s32 arg1) {
+void func_80271178(s16 arg0, PORT_IP(s32) arg1) {
     if (func_802702BC(arg0) == 0) {
         SLOTS[arg0].unkC = arg1;
     }
@@ -3085,7 +3118,7 @@ f32 func_80270FC0(u8 *arg0) {
     f32 var_fv1;
     u8 *temp_v0;
 
-    temp_v0 = M2C_FIELD(arg0, void **, 0x40);
+    temp_v0 = PORT_FIELD(arg0, void **, 0x40, Port_UnkStructA, unk40);
     var_fv1 = M2C_FIELD(temp_v0, f32 *, 0x28);
     temp_fv0 = M2C_FIELD(temp_v0, f32 *, 0x2C);
     if (var_fv1 < temp_fv0) {
@@ -3122,11 +3155,11 @@ void func_80270EF0(u8 *arg0) {
     s16 *temp_v0;
 
     temp_v0 = func_802703B4(arg0);
-    M2C_FIELD(temp_v0, s16 *, 0x64) = (s16) (M2C_FIELD(temp_v0, s16 *, 0x64) & 0xFDFF);
+    PORT_FIELD(temp_v0, s16 *, 0x64, Port_Ent88, unk3C[40]) = (s16) (PORT_FIELD(temp_v0, s16 *, 0x64, Port_Ent88, unk3C[40]) & 0xFDFF);
     func_802313DC(arg0, 0x20000);
-    M2C_FIELD(temp_v0, s16 *, 0x3C) = 0;
-    M2C_FIELD(temp_v0, f32 *, 0x50) = 0.0f;
-    M2C_FIELD(temp_v0, s32 *, 0x30) = (s32) M2C_FIELD(temp_v0, s32 *, 0x1C);
+    PORT_FIELD(temp_v0, s16 *, 0x3C, Port_Ent88, unk3C[0]) = 0;
+    PORT_FIELD(temp_v0, f32 *, 0x50, Port_Ent88, unk3C[20]) = 0.0f;
+    PORT_FIELD(temp_v0, PORT_IP(s32) *, 0x30, Port_Ent88, unk30) = (s32) PORT_FIELD(temp_v0, PORT_IP(s32) *, 0x1C, Port_Ent88, unk1C);
 }
 
 void func_80270C24(u8 *arg0, s16 arg1, s32 arg2) {
@@ -3138,7 +3171,7 @@ void func_80270C24(u8 *arg0, s16 arg1, s32 arg2) {
     s32 fl;
 
     for (i = 0; i < 5; i++) {
-        if (func_80270714(i) == (s32) arg0) {
+        if (func_80270714(i) == (PORT_IP(s32)) arg0) {
             func_80270BA4(arg0);
         }
     }
@@ -3148,7 +3181,7 @@ void func_80270C24(u8 *arg0, s16 arg1, s32 arg2) {
         }
     }
     if (c->next != NULL) {
-        func_80270A80((s32 *) c);
+        func_80270A80((PORT_IP(s32) *) c);
         free(c);
     }
     switch (arg2) {
@@ -3194,16 +3227,16 @@ next:
     if (fl & 2) {
         ok = func_80270438(arg0, (s32 *) c);
     } else if (fl & 8) {
-        ok = func_8027A1F4(arg0, (s32) c);
+        ok = func_8027A1F4(arg0, (PORT_IP(s32)) c);
     } else {
         if (fl & 4) {
             ok = func_802870A8(arg0, c);
         } else if (fl & 1) {
-            ok = func_80244F34(arg0, (s32) c);
+            ok = func_80244F34(arg0, (PORT_IP(s32)) c);
         }
     }
     if (ok != 0) {
-        func_80270080((s32 *) c);
+        func_80270080((PORT_IP(s32) *) c);
         func_80231408(arg0, 0x20000);
         ((Obj8E *) arg0)->unk68 = c->unk18;
         ((Obj8E *) arg0)->unk6C = 1.0f;
@@ -3217,18 +3250,18 @@ next:
 void func_80270BA4(u8 *arg0) {
     s16 temp_v0;
 
-    temp_v0 = func_80270B4C((s32) arg0);
+    temp_v0 = func_80270B4C((PORT_IP(s32)) arg0);
     if (temp_v0 != -1) {
-        *(s16 *)((u8 *)&D_802AFCF8 + (temp_v0 * 0x30)) = 0;
+        PORT_HOST(*(s16 *)((u8 *)&D_802AFCF8 + (temp_v0 * 0x30)), SLOTS[temp_v0].unk10) = 0;
         func_802702EC(temp_v0);
         func_802313DC(arg0, 0x10000);
-        func_80232AA8((s32) arg0);
+        func_80232AA8((PORT_RET(s32, void *)) arg0);
         func_802313DC(arg0, 0x200000);
         func_802313DC(arg0, 0x600000);
     }
 }
 
-s16 func_80270B4C(s32 arg0) {
+s16 func_80270B4C(PORT_IP(s32) arg0) {
     s16 i;
 
     for (i = 0; i < 5; i++) {
@@ -3240,11 +3273,11 @@ s16 func_80270B4C(s32 arg0) {
 }
 
 void func_80270B20(u8 *arg0) {
-    func_80270A80((s32 *) arg0);
+    func_80270A80((PORT_IP(s32) *) arg0);
     free(arg0);
 }
 
-void func_80270A80(s32 *arg0) {
+void func_80270A80(PORT_IP(s32) *arg0) {
     Node87 *p;
     s32 found;
 
@@ -3273,7 +3306,7 @@ PORT_RET(void, s32) func_80270770(s16 arg0, s16 arg1) {
     s32 flags;
 
     if (PORT_V0(func_80270714(arg0)) == 0) {
-        PORT_RET(return, return (s32)port_v0);
+        PORT_RET(return, return (intptr_t)port_v0);
     }
     obj = (Obj8E *) func_80270714(arg0);
     switch (arg1) {
@@ -3320,14 +3353,14 @@ next:
     if (flags & 2) {
         ok = func_80270438((u8 *) obj, (s32 *) c);
     } else if (flags & 8) {
-        ok = func_8027A1F4(obj, (s32) c);
+        ok = func_8027A1F4(obj, (PORT_IP(s32)) c);
     } else if (flags & 4) {
         ok = func_802870A8(obj, c);
     } else if (flags & 1) {
-        ok = func_80244F34(obj, (s32) c);
+        ok = func_80244F34(obj, (PORT_IP(s32)) c);
     }
     if (ok != 0) {
-        func_80270080((s32 *) c);
+        func_80270080((PORT_IP(s32) *) c);
         func_80231408(obj, 0x20000);
         obj->unk68 = c->unk18;
         obj->unk6C = 1.0f;
@@ -3335,16 +3368,16 @@ next:
         c->unkC = obj;
         func_802702EC(arg0);
         func_802313DC(obj, 0x10000);
-        *(s16 *) (D_802AFCE8 + arg0 * 0x30 + 0x10) = 0;
-        func_80232AA8((s32) obj);
+        *(s16 *) (D_802AFCE8 + arg0 * PORT_HOST(0x30, sizeof(Slot30)) + PORT_HOST(0x10, offsetof(Slot30, unk10))) = 0;
+        func_80232AA8((PORT_RET(s32, void *)) obj);
         func_802313DC(obj, 0x200000);
         func_802313DC(obj, 0x600000);
-        PORT_RET(return, return (s32)port_v0);
+        PORT_RET(return, return (intptr_t)port_v0);
     }
     free(c);
-PORT_ONLY(return (s32)port_v0;) }
+PORT_ONLY(return (intptr_t)port_v0;) }
 
-s32 func_80270714(s16 arg0) {
+PORT_IP(s32) func_80270714(s16 arg0) {
     if (func_802702BC(arg0) != 0) {
         return 0;
     }
@@ -3415,7 +3448,7 @@ s16 *func_802703B4(u8 *arg0) {
 }
 
 s32 func_80270384(u8 *arg0) {
-    if (M2C_FIELD(arg0, f32 *, 0x40) != 1e7f) {
+    if (PORT_FIELD(arg0, f32 *, 0x40, Ent88, x) != 1e7f) {
         return 1;
     }
     return 0;
@@ -3442,12 +3475,12 @@ void func_802702EC(s16 arg0) {
         var_v0 = 1;
     }
     if (var_v0 == 0) {
-        temp_v0 = (arg0 * 0x30) + D_802AFCE8;
-        M2C_FIELD(temp_v0, s32 *, 0xC) = 0;
-        M2C_FIELD(temp_v0, f32 *, 0x24) = 0.0f;
-        M2C_FIELD(temp_v0, f32 *, 0x20) = 0.0f;
-        M2C_FIELD(temp_v0, f32 *, 0x1C) = 0.0f;
-        M2C_FIELD(temp_v0, f32 *, 0x28) = 0.0f;
+        temp_v0 = (arg0 * PORT_HOST(0x30, sizeof(Slot30))) + D_802AFCE8;
+        PORT_FIELD(temp_v0, PORT_IP(s32) *, 0xC, Slot30, unkC) = 0;
+        PORT_FIELD(temp_v0, f32 *, 0x24, Slot30, unk24) = 0.0f;
+        PORT_FIELD(temp_v0, f32 *, 0x20, Slot30, unk20) = 0.0f;
+        PORT_FIELD(temp_v0, f32 *, 0x1C, Slot30, unk1C) = 0.0f;
+        PORT_FIELD(temp_v0, f32 *, 0x28, Slot30, unk28) = 0.0f;
     }
 }
 
@@ -3468,7 +3501,7 @@ void *func_802700EC(u8 *arg0, u8 *arg1, s32 arg2, f32 arg3) {
         }
     }
     c = malloc(sizeof(Ctl87));
-    func_80270080((s32 *) c);
+    func_80270080((PORT_IP(s32) *) c);
     c->obj = (Obj8E *) arg0;
     c->unk8 = (Obj8E *) arg0;
     c->unkC = (Obj8E *) arg0;
@@ -3503,12 +3536,12 @@ void *func_802700EC(u8 *arg0, u8 *arg1, s32 arg2, f32 arg3) {
     return c;
 }
 
-void func_80270080(s32 *arg0) {
+void func_80270080(PORT_IP(s32) *arg0) {
     Node87 *p;
 
     for (p = &D_802AFDE0; p->next->next != NULL; p = p->next) {
     }
-    *arg0 = (s32) p->next;
+    *arg0 = (PORT_IP(s32)) p->next;
     p->next = (Node87 *) arg0;
     (*(s32 *) &D_802AFE58)++;
 }

@@ -97,8 +97,8 @@
 typedef struct Inner Inner;
 
 typedef struct {
-    u32 w0;
-    u32 w1;
+    PORT_UP(u32) w0;
+    PORT_UP(u32) w1;
 } Gfx_ovl0A_01;
 
 /* A text label: the string, its place, its scale and the handle
@@ -180,7 +180,7 @@ void func_ovl0B_03_80047FF8(f32, f32, f32);
 void func_ovl0B_03_80048018(f32, f32, f32);
 void func_ovl0B_03_80048020(f32 *, f32 *, f32 *);
 void func_ovl0B_03_80048060(s32);
-s32 func_ovl0B_03_80048308(void (*)(void), void *, s32, s32, s32);
+s32 func_ovl0B_03_80048308(void (*)(void), void *, PORT_IP(s32), s32, s32);
 void func_ovl0B_03_80048318(void);
 void func_ovl0B_03_80048328(s32);
 void func_ovl0B_03_80048350(void);
@@ -518,7 +518,7 @@ void func_ovl0B_03_80047198(s32 arg0) {
         func_ovl0B_03_800488A0(0x1D);
         return;
     case 16:
-        func_ovl0B_03_80048308(func_ovl0B_03_8004386C, NULL, (s32) &D_ovl0B_03_80049320, 0x1000, 0x130);
+        func_ovl0B_03_80048308(func_ovl0B_03_8004386C, NULL, (PORT_IP(s32)) &D_ovl0B_03_80049320, 0x1000, 0x130);
         func_ovl0B_03_80048308(func_ovl0B_03_80046510, NULL, 0, 0, 0x130);
         return;
     case 1:
@@ -1061,9 +1061,9 @@ void func_ovl0B_03_8004386C(void) {
                     }
                 }
                 D_ovl0B_03_8004A410 = D_ovl0B_03_8004A328 * 50;
-                M2C_FIELD(D_ovl0B_03_80048E6C, f32 *, 0x1C) = D_ovl0B_03_80048E60[D_ovl0B_03_8004A32C];
+                PORT_ELEM(D_ovl0B_03_80048E6C, f32 *, 0x1C, Box_ovl0B_03, 1, unk4) = D_ovl0B_03_80048E60[D_ovl0B_03_8004A32C];
                 D_ovl0B_03_80048E6C->unk0 = D_ovl0B_03_8004A410 + 60.0f;
-                M2C_FIELD(D_ovl0B_03_80048E6C, f32 *, 0x18) = D_ovl0B_03_8004A410 + 110.0f;
+                PORT_ELEM(D_ovl0B_03_80048E6C, f32 *, 0x18, Box_ovl0B_03, 1, unk0) = D_ovl0B_03_8004A410 + 110.0f;
                 D_ovl0B_03_80048E6C->unk4 = D_ovl0B_03_80048E60[D_ovl0B_03_8004A32C];
                 u = WRAPW_ovl0B_03(t);
                 func_ovl0B_03_80043170(D_ovl0B_03_80048E6C, func_ovl0B_03_800484B8(u) * 0.05f + 0.7f);
@@ -1426,10 +1426,10 @@ void func_ovl0B_03_8004386C(void) {
             h = func_ovl0B_03_80048748(D_ovl0B_03_80049194[D_ovl0B_03_8004A324->unkA0], func_ovl0B_03_80043234(D_ovl0B_03_80049194[D_ovl0B_03_8004A324->unkA0], 1.0f), 0xB4, 1.0f, 1.0f, 2);
 #endif
             func_ovl0B_03_80043340(D_ovl0B_03_80048E6C, 2, 0x39);
-            M2C_FIELD(D_ovl0B_03_80048E6C, f32 *, 0x1C) = 130.0f;
-            D_ovl0B_03_80048E6C->unk4 = M2C_FIELD(D_ovl0B_03_80048E6C, f32 *, 0x1C);
+            PORT_ELEM(D_ovl0B_03_80048E6C, f32 *, 0x1C, Box_ovl0B_03, 1, unk4) = 130.0f;
+            D_ovl0B_03_80048E6C->unk4 = PORT_ELEM(D_ovl0B_03_80048E6C, f32 *, 0x1C, Box_ovl0B_03, 1, unk4);
             D_ovl0B_03_80048E6C->unk0 = 70.0f;
-            M2C_FIELD(D_ovl0B_03_80048E6C, f32 *, 0x18) = 250.0f;
+            PORT_ELEM(D_ovl0B_03_80048E6C, f32 *, 0x18, Box_ovl0B_03, 1, unk0) = 250.0f;
             while (TRUE) {
                 btn = func_ovl0B_03_800432F0();
                 held = func_ovl0B_03_800432A0();

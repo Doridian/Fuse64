@@ -62,7 +62,7 @@ typedef struct Coro {
 } Coro;
 
 typedef struct {
-    int *buf;                   /* the game's buffer */
+    intptr_t *buf;              /* the game's buffer */
     port_jmp_buf jb;            /* the host's, for it */
     Coro *owner;                /* the coroutine that saved it (main: coroutine 0) */
 } Buf;
@@ -76,7 +76,7 @@ static int resume_v;
 static Coro *free_coros[MAX_BUFS];
 static int nfree;
 
-static Buf *find(int *buf, int create) {
+static Buf *find(intptr_t *buf, int create) {
     for (int i = 0; i < nbufs; i++)
         if (bufs[i].buf == buf)
             return &bufs[i];
@@ -93,10 +93,10 @@ static Buf *find(int *buf, int create) {
 int port_task_v;
 #endif
 
-port_jmp_buf *port_task_save(int *buf) {
+port_jmp_buf *port_task_save(intptr_t *buf) {
     Buf *b = find(buf, 1);
     b->owner = cur;
-    buf[0] = (int)MARK;
+    buf[0] = (intptr_t)MARK;
     return &b->jb;
 }
 
@@ -236,7 +236,7 @@ static void coro_switch(Coro *to) {
 }
 #endif
 
-void port_task_jump(int *buf, int v) {
+void port_task_jump(intptr_t *buf, int v) {
     {
         /* PORT_HEAPCHECK=1: the game's heap checked at each switch */
         static int check = -1;
@@ -247,10 +247,10 @@ void port_task_jump(int *buf, int v) {
         }
         if (check && port_heap_check())
             host_fatal("the heap went bad before a switch to task buffer %p (entry %p)", (void *)buf,
-                       (void *)(uintptr_t)(uint32_t)buf[3]);
+                       (void *)buf[3]);
     }
     Buf *b = find(buf, 0);
-    if (b == NULL || (unsigned)buf[0] != MARK) {
+    if (b == NULL || (uintptr_t)buf[0] != MARK) {
         /* a buffer func_80238A10 set up: a new task at its entry (word 3)
            on a stack of its own; the coroutine the buffer had (a task
            that was killed) is done with */
@@ -271,13 +271,13 @@ void port_task_jump(int *buf, int v) {
             if (!c->stack)
                 host_fatal("tasks: no memory for a stack");
         }
-        c->entry = (void (*)(void))(uintptr_t)(uint32_t)buf[3];
+        c->entry = (void (*)(void))buf[3];
         if (host_verbose > 1)
             host_log("task %p: entry %p\n", (void *)buf, (void *)c->entry);
         c->live = 1;
         coro_start(c);
         b->owner = c;
-        buf[0] = (int)MARK;
+        buf[0] = (intptr_t)MARK;
         resume_buf = NULL;
         coro_switch(c);
         after_switch();

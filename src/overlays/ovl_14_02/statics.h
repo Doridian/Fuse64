@@ -96,7 +96,7 @@ void func_ovl14_02_8004D640(UnkStructA *obj) {
             dir.z = 1449.0f;
             func_ovl14_02_8004F5A0(&dir, &pos2);
             spark = (UnkStructA *)(func_ovl14_02_8004EDE8());
-            spark = func_ovl14_02_8004EE48((s32) spark);
+            spark = func_ovl14_02_8004EE48((PORT_IP(s32)) spark);
             D_ovl14_02_80050270.x = spark->unk40->unk10 = D_ovl14_02_800502EC->x + pos2.x;
             D_ovl14_02_80050270.z = spark->unk40->unk18 = D_ovl14_02_800502EC->z + pos2.z;
         }

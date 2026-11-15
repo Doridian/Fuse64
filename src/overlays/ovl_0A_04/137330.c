@@ -16,7 +16,7 @@
  */
 
 typedef struct {
-    /* 0x00 */ u8 unk0[4];
+    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (426E0.c's UnkAnimSlot: its animation) */
     /* 0x04 */ f32 unk4;
 } UnkStruct_ovl0A_04_Anim2;
 
@@ -39,7 +39,7 @@ typedef struct {
     /* 0x30 */ f32 unk30;
     /* 0x34 */ s16 unk34;
     /* 0x36 */ s16 unk36;
-    /* 0x38 */ u8 unk38[0x10];
+    /* 0x38 */ PORT_RET(u8 unk38[0x10];, u8 unk38[0x4]; void *unk3C; void *unk40; void *unk44;)
     /* 0x48 */ UnkStruct_ovl0A_04_Anim *unk48;
 } UnkStruct_ovl0A_04_80045D30_Inner;
 
@@ -121,7 +121,7 @@ void func_ovl0A_04_80045D20(Obj04 *);
 Obj04 *func_ovl0A_04_80045D30(s32, s32, s32, Obj04 *);
 void func_ovl0A_04_80045D40(Obj04 *);
 void func_ovl0A_04_80045DE0(Obj04 *, Obj04 *);
-s32 func_ovl0A_04_80045E58(void (*)(), void *, s32, s32, s32);
+s32 func_ovl0A_04_80045E58(void (*)(), void *, PORT_IP(s32), s32, s32);
 void func_ovl0A_04_80045E68(void);
 void func_ovl0A_04_80045E78(s32);
 Obj04 *func_ovl0A_04_80045E80(void);

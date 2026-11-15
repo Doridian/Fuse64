@@ -15,10 +15,10 @@
  */
 
 typedef struct {
-    /* 0x00 */ s32 unk0;
+    /* 0x00 */ PORT_IP(s32) unk0; /* (426E0.c's UnkAnimSlot: an animation) */
     /* 0x04 */ f32 unk4;
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
+    /* 0x0C */ PORT_IP(s32) unkC;
     /* 0x10 */ f32 unk10;
     /* 0x14 */ s32 unk14;
 } UnkStruct_ovl0A_05_Anim2;
@@ -42,18 +42,18 @@ typedef struct {
     /* 0x30 */ f32 unk30;
     /* 0x34 */ s16 unk34;
     /* 0x36 */ s16 unk36;
-    /* 0x38 */ u8 unk38[0x10];
+    /* 0x38 */ PORT_RET(u8 unk38[0x10];, u8 unk38[0x4]; void *unk3C; void *unk40; void *unk44;)
     /* 0x48 */ UnkStruct_ovl0A_05_Anim *unk48;
 } UnkStruct_ovl0A_05_80048CA0_Inner;
 
 typedef struct {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ u8 unkC[0x1C];
+    /* 0x0C */ PORT_RET(u8 unkC[0x1C];, u8 unkC[0x14]; void *unk20; void *unk24;)
     /* 0x28 */ s32 unk28;
-    /* 0x2C */ u8 unk2C[0x14];
+    /* 0x2C */ PORT_RET(u8 unk2C[0x14];, u8 unk2C[0x10]; void *unk3C;)
     /* 0x40 */ UnkStruct_ovl0A_05_80048CA0_Inner *unk40;
-    /* 0x44 */ s32 unk44;
+    /* 0x44 */ PORT_IP(s32) unk44;
     /* 0x48 */ u8 unk48[4];
     /* 0x4C */ f32 unk4C;
     /* 0x50 */ f32 unk50;
@@ -106,7 +106,7 @@ typedef struct {
 
 /* what ZeroJump 0x3106 returns */
 typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
+    /* 0x00 */ PORT_RET(u8 unk0[0xC];, void *unk0; u8 unk4[0x8];)
     /* 0x0C */ UnkStruct_ovl0A_05_80048958 *unkC;
 } UnkStruct_ovl0A_05_80049518;
 
@@ -174,7 +174,7 @@ UnkStruct_ovl0A_05_80048CA0 *func_ovl0A_05_80048CA0(s32, s32, s32, UnkStruct_ovl
 void func_ovl0A_05_80048D48(UnkStruct_ovl0A_05_80048CA0 *, f32 *); /* 0x182B */
 void func_ovl0A_05_80048D50(UnkStruct_ovl0A_05_80048CA0 *, UnkStruct_ovl0A_05_80048CA0 *); /* 0x182C */
 UnkStruct_ovl0A_05_80048CA0 *func_ovl0A_05_80048D80(s32, Vec3f_ovl0A_05 *, Vec3f_ovl0A_05 *); /* 0x1832 */
-s32 func_ovl0A_05_80048DC8(void (*)(), void *, s32, s32, s32); /* 0x1900 */
+s32 func_ovl0A_05_80048DC8(void (*)(), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0A_05_80048DD8(void); /* 0x1902 */
 void func_ovl0A_05_80048DE8(s32); /* 0x1904 */
 UnkStruct_ovl0A_05_80048CA0 *func_ovl0A_05_80048DF0(void); /* 0x1905 */
@@ -603,7 +603,7 @@ void func_ovl0A_05_800473A0(void) {
 
 void func_ovl0A_05_8004704C(void) {
     s32 pad[2]; /* fake: unused; the original frame has these slots */
-    s32 idx;
+    PORT_IP(s32) idx;
     UnkStruct_ovl0A_05_80049518 *slot;
     f32 sx;
     f32 sy;
@@ -614,7 +614,7 @@ void func_ovl0A_05_8004704C(void) {
     f32 a;
     f32 b;
 
-    idx = (s32) func_ovl0A_05_80048DF0();
+    idx = (PORT_IP(s32)) func_ovl0A_05_80048DF0();
     slot = D_ovl0A_05_80049930[idx];
     sx = D_ovl0A_05_8004957C[idx];
     sy = D_ovl0A_05_8004958C[idx];
@@ -759,7 +759,7 @@ void func_ovl0A_05_800469EC(void) {
 void func_ovl0A_05_800467FC(void) {
     s32 n;
     f32 pad; /* fake: unused; the original frame has this slot */
-    s32 i;
+    PORT_IP(s32) i;
     f32 x0;
     f32 y0;
     f32 x1;
@@ -769,7 +769,7 @@ void func_ovl0A_05_800467FC(void) {
     f32 dx1;
     f32 dy1;
 
-    i = (s32) func_ovl0A_05_80048DF0();
+    i = (PORT_IP(s32)) func_ovl0A_05_80048DF0();
     n = 20;
     if (i >= 10) {
         i -= 10;
@@ -806,7 +806,7 @@ void func_ovl0A_05_800467FC(void) {
 }
 
 void func_ovl0A_05_80046558(void) {
-    s32 idx;
+    PORT_IP(s32) idx;
     s32 k;
     s32 i;
     s32 anim;
@@ -817,7 +817,7 @@ void func_ovl0A_05_80046558(void) {
     f32 ay;
     f32 az;
 
-    idx = (s32) func_ovl0A_05_80048DF0();
+    idx = (PORT_IP(s32)) func_ovl0A_05_80048DF0();
     dx = (D_ovl0A_05_8004959C[idx][3] - D_ovl0A_05_8004959C[idx][0]) / 12.5f;
     dy = (D_ovl0A_05_8004959C[idx][4] - D_ovl0A_05_8004959C[idx][1]) / 12.5f;
     dz = (D_ovl0A_05_8004959C[idx][5] - D_ovl0A_05_8004959C[idx][2]) / 12.5f;
@@ -1158,11 +1158,11 @@ void func_ovl0A_05_80045568(void) {
 }
 
 void func_ovl0A_05_80045350(void) {
-    s32 n;
+    PORT_IP(s32) n;
     s32 i;
     f32 v;
 
-    n = (s32) func_ovl0A_05_80048DF0();
+    n = (PORT_IP(s32)) func_ovl0A_05_80048DF0();
     func_ovl0A_05_80048C78(D_ovl0A_05_80049968, 0x01000000);
     D_ovl0A_05_80049968->unk40->unk10 = 2000.0f;
     D_ovl0A_05_80049968->unk40->unk14 = 200.0f;
@@ -1672,13 +1672,13 @@ void func_ovl0A_05_8004333C(void) {
 }
 
 void func_ovl0A_05_80043150(void) {
-    s32 n;
+    PORT_IP(s32) n;
     s32 i;
     f32 v;
 
     func_ovl0A_05_800490C8(0, 0, 0, 0.0f);
     func_ovl0A_05_800490A8(1);
-    n = (s32) func_ovl0A_05_80048DF0();
+    n = (PORT_IP(s32)) func_ovl0A_05_80048DF0();
     func_ovl0A_05_80048C78(D_ovl0A_05_80049968, 0x01000000);
     D_ovl0A_05_80049968->unk40->unk18 -= 60.0f * n;
     for (i = 0; i < n; i++) {

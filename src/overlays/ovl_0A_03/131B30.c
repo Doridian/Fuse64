@@ -16,10 +16,10 @@
  */
 
 typedef struct {
-    /* 0x00 */ s32 unk0;
+    /* 0x00 */ PORT_IP(s32) unk0; /* (426E0.c's UnkAnimSlot: an animation) */
     /* 0x04 */ f32 unk4;
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
+    /* 0x0C */ PORT_IP(s32) unkC;
     /* 0x10 */ f32 unk10;
     /* 0x14 */ s32 unk14;
 } UnkStruct_ovl0A_03_Anim2;
@@ -43,18 +43,18 @@ typedef struct {
     /* 0x30 */ f32 unk30;
     /* 0x34 */ s16 unk34;
     /* 0x36 */ s16 unk36;
-    /* 0x38 */ u8 unk38[0x10];
+    /* 0x38 */ PORT_RET(u8 unk38[0x10];, u8 unk38[0x4]; void *unk3C; void *unk40; void *unk44;)
     /* 0x48 */ UnkStruct_ovl0A_03_Anim *unk48;
 } UnkStruct_ovl0A_03_80047E20_Inner;
 
 typedef struct {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ u8 unkC[0x1C];
+    /* 0x0C */ PORT_RET(u8 unkC[0x1C];, u8 unkC[0x14]; void *unk20; void *unk24;)
     /* 0x28 */ s32 unk28;
-    /* 0x2C */ u8 unk2C[0x14];
+    /* 0x2C */ PORT_RET(u8 unk2C[0x14];, u8 unk2C[0x10]; void *unk3C;)
     /* 0x40 */ UnkStruct_ovl0A_03_80047E20_Inner *unk40;
-    /* 0x44 */ s32 unk44;
+    /* 0x44 */ PORT_IP(s32) unk44;
     /* 0x48 */ u8 unk48[4];
     /* 0x4C */ f32 unk4C;
     /* 0x50 */ f32 unk50;
@@ -151,9 +151,9 @@ Obj03 * func_ovl0A_03_80047E20(s32, s32, s32, Obj03 *); /* 0x1816 */
 void func_ovl0A_03_80047E30(Obj03 *); /* 0x1818 */
 void func_ovl0A_03_80047EC8(Obj03 *, f32 *); /* 0x182B */
 void func_ovl0A_03_80047ED0(Obj03 *, Obj03 *); /* 0x182C */
-s32 func_ovl0A_03_80047F48(void (*)(), void *, s32, s32, s32); /* 0x1900 */
+s32 func_ovl0A_03_80047F48(void (*)(), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0A_03_80047F58(void); /* 0x1902 */
-void func_ovl0A_03_80047F68(s32); /* 0x1904 */
+void func_ovl0A_03_80047F68(PORT_IP(s32)); /* 0x1904 */
 Obj03 * func_ovl0A_03_80047F70(void); /* 0x1905 */
 s32 func_ovl0A_03_80047F90(void); /* 0x1909 */
 void func_ovl0A_03_80047FA8(u16); /* 0x190C */
@@ -632,7 +632,7 @@ void func_ovl0A_03_80045EE0(void) {
 }
 
 void func_ovl0A_03_80045E98(void) {
-    func_ovl0A_03_80047F68((s32) func_ovl0A_03_80047F70());
+    func_ovl0A_03_80047F68((PORT_IP(s32)) func_ovl0A_03_80047F70());
     func_ovl0A_03_80048500(D_ovl0A_03_80048878);
     func_ovl0A_03_800484E0(0x16);
     func_ovl0A_03_80047F58();

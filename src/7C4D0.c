@@ -276,7 +276,7 @@ void func_80262DE8(Gfx **gdl, Vtx *vtx, u8 *base, s32 idx, u8 align, u8 flip, s3
             if (e->type != 0x1A) {
                 return;
             }
-            pal = (u8 *) ((u32) base + e->offset);
+            pal = (u8 *) ((PORT_UP(u32)) base + e->offset);
             gDPLoadTLUT_pal16(gfx++, 0, pal);
             mode = 0;
             break;
@@ -285,7 +285,7 @@ void func_80262DE8(Gfx **gdl, Vtx *vtx, u8 *base, s32 idx, u8 align, u8 flip, s3
             if (e->type != 0x1A) {
                 return;
             }
-            pal = (u8 *) ((u32) base + e->offset);
+            pal = (u8 *) ((PORT_UP(u32)) base + e->offset);
             gDPLoadTLUT_pal256(gfx++, pal);
             mode = 1;
             break;

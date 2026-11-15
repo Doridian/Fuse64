@@ -30,7 +30,7 @@
 #include "common.h"
 
 typedef struct {
-    /* 0x00 */ u8 unk0[4];
+    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (426E0.c's UnkAnimSlot: its animation) */
     /* 0x04 */ f32 unk4;
 } UnkStruct_ovl0B_05_Anim2;
 
@@ -53,7 +53,7 @@ typedef struct {
     /* 0x30 */ f32 unk30;
     /* 0x34 */ s16 unk34;
     /* 0x36 */ s16 unk36;
-    /* 0x38 */ u8 unk38[0x10];
+    /* 0x38 */ PORT_RET(u8 unk38[0x10];, u8 unk38[0x4]; void *unk3C; void *unk40; void *unk44;)
     /* 0x48 */ UnkStruct_ovl0B_05_Anim *unk48;
 } UnkStruct_ovl0B_05_80045D30_Inner;
 
@@ -102,8 +102,8 @@ typedef struct {
 typedef UnkStruct_ovl0B_05_80045D30 Obj04;
 
 typedef struct {
-    u32 w0;
-    u32 w1;
+    PORT_UP(u32) w0;
+    PORT_UP(u32) w1;
 } Gfx_ovl0B_05;
 
 /* The fade at D_ovl0B_05_8004669C (ovl_0B_01's D_ovl0B_01_80045E34). */
@@ -165,7 +165,7 @@ void func_ovl0B_05_80045B50(s32); /* 0x1711 */
 void func_ovl0B_05_80045CA8(Obj04 *, s32); /* 0x1811 */
 void func_ovl0B_05_80045CB0(Obj04 *, s32); /* 0x1812 */
 Obj04 *func_ovl0B_05_80045CD0(s32, s32, s32, Obj04 *); /* 0x1816 */
-s32 func_ovl0B_05_80045DF8(void (*)(), void *, s32, s32, s32); /* 0x1900 */
+s32 func_ovl0B_05_80045DF8(void (*)(), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0B_05_80045E08(void); /* 0x1902 */
 void func_ovl0B_05_80045E18(s32); /* 0x1904 */
 Obj04 *func_ovl0B_05_80045E20(void); /* 0x1905 */

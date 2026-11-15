@@ -58,7 +58,7 @@ typedef struct {
     /* 0x10 */ f32 unk10;
     /* 0x14 */ f32 unk14;
     /* 0x18 */ f32 unk18;
-    /* 0x1C */ s32 unk1C;
+    /* 0x1C */ PORT_IP(s32) unk1C;
     /* 0x20 */ UnkStructA *unk20;
 } UnkStruct_800BC528; /* size 0x24 */
 
@@ -81,15 +81,15 @@ void func_802297B8(UnkStructA_40 *, s32, s32, s32);
 PORT_RET(s32, void) func_8022984C(UnkStructA_40 *, s32);
 f32 func_80229D3C(UnkStructA_40 *, s32);
 PORT_RET(void, s32) func_8022FC90(UnkStructA *);
-UnkStructA *func_80230CB4(s32, s32, s32, s32, s32);
-UnkStructA *func_80230E6C(s32, s32);
+UnkStructA *func_80230CB4(s32, s32, s32, s32, PORT_RET(s32, void *));
+UnkStructA *func_80230E6C(s32, PORT_IP(s32));
 UnkStructA *func_802311E8(UnkStructA *);
 UnkStructA *func_80231274(s32, s32, s32, UnkStructA *);
 void func_80231408(UnkStructA *, s32);
 void func_80232DB4(UnkStructA *);
 s32 func_80234248(s32);
 f32 func_80234434(f32);
-s32 func_80238A10(void *, void *, s32, s32, s32);
+s32 func_80238A10(void *, void *, PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_80238EA8(s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
@@ -115,10 +115,10 @@ extern UnkStruct_800BC770 D_800BC770[16];
 
 s32 func_8028A4E0(s32 arg0);
 void func_8028A584(void);
-static s32 func_8028A5C4(s32 slot, s32 kind, f32 *pos, s32 arg4, s32 arg3);
+static s32 func_8028A5C4(s32 slot, s32 kind, f32 *pos, PORT_IP(s32) arg4, s32 arg3);
 static s32 func_8028A690(s32 kind);
-PORT_RET(void, s32) func_8028A7CC(s32 kind, f32 *pos, s32 arg2);
-PORT_RET(void, s32) func_8028A81C(s32 kind, f32 x, f32 y, f32 z, s32 arg4);
+PORT_RET(void, s32) func_8028A7CC(s32 kind, f32 *pos, PORT_IP(s32) arg2);
+PORT_RET(void, s32) func_8028A81C(s32 kind, f32 x, f32 y, f32 z, PORT_IP(s32) arg4);
 void func_8028A87C(void);
 void func_8028A8A4(void);
 static void func_8028A978();
@@ -201,7 +201,7 @@ void func_8028A87C(void) {
     func_80297D30(0x26, D_802A1CE4);
 }
 
-PORT_RET(void, s32) func_8028A81C(s32 kind, f32 x, f32 y, f32 z, s32 arg4) {
+PORT_RET(void, s32) func_8028A81C(s32 kind, f32 x, f32 y, f32 z, PORT_IP(s32) arg4) {
     f32 pos[3];
 
     pos[0] = x;
@@ -210,7 +210,7 @@ PORT_RET(void, s32) func_8028A81C(s32 kind, f32 x, f32 y, f32 z, s32 arg4) {
     PORT_V0(func_8028A5C4(func_8028A690(kind), kind, pos, arg4, 0));
 PORT_ONLY(return (s32)port_v0;) }
 
-PORT_RET(void, s32) func_8028A7CC(s32 kind, f32 *pos, s32 arg2) {
+PORT_RET(void, s32) func_8028A7CC(s32 kind, f32 *pos, PORT_IP(s32) arg2) {
     PORT_V0(func_8028A5C4(func_8028A690(kind), kind, pos, arg2, 0));
 PORT_ONLY(return (s32)port_v0;) }
 
@@ -241,7 +241,7 @@ s32 func_8028A4E0(s32 arg0) {
     return 1;
 }
 
-static s32 func_8028A5C4(s32 slot, s32 kind, f32 *pos, s32 arg4, s32 arg3) {
+static s32 func_8028A5C4(s32 slot, s32 kind, f32 *pos, PORT_IP(s32) arg4, s32 arg3) {
     UnkStruct_800BC528 *e;
 
     if (slot == -1) {
@@ -314,7 +314,7 @@ static void func_8028A9D4(UnkStructA **out, s32 kind, UnkStruct_800BC528 *e, s32
     if (mode == 0) {
         *out = func_80230E6C(kind, e->unk1C);
     } else if (mode == 1) {
-        *out = m = func_80230CB4(kind, -1, 0, 0x20, e->unk1C);
+        *out = m = func_80230CB4(kind, -1, 0, 0x20, PORT_PTR(e->unk1C));
         m->unk38 = 0.0f;
     }
     if (e->unk1C == 0) {

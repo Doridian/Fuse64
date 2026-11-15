@@ -67,7 +67,7 @@ UnkStructA *func_ovl17_08_800451B0(UnkStructA *);
 UnkStructA *func_ovl17_08_800451C0(s32, s32, f32, f32, f32);
 void func_ovl17_08_800451F8(UnkStructA *);
 void func_ovl17_08_80045288(UnkStructA *);
-s32 func_ovl17_08_800452C8(void (*)(void), void *, s32, s32, s32);
+s32 func_ovl17_08_800452C8(void (*)(void), void *, PORT_IP(s32), s32, s32);
 void func_ovl17_08_800452D8(void);
 void func_ovl17_08_800452E8(s32);
 void *func_ovl17_08_800452F0(void);

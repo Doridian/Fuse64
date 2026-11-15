@@ -44,7 +44,7 @@ PORT_RET(void, s32) func_8023903C(s32);
 void func_8023AA78(s32);
 void func_8023AE6C(s32, s32, s32);
 void func_8023AED0(s32);
-s32 func_80238A10(void *, s32, s32, s32, s32);
+s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 void func_80239094(void);
 void func_8026D3AC(void *);
 void *func_8026D4B0(void *, s32);
@@ -53,7 +53,7 @@ void func_8028A0B4(void);
 void *func_8022A328(void *, s32, s32, s32, s32);
 void free(void *);
 void *malloc(s32);
-void func_80227D50(s32, s32, s32, s32, s32);
+void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
 void func_802276C8(s32);
 void func_802276D4(s32);
 void func_802276E0(s32, s32, s32);
@@ -67,15 +67,15 @@ void func_80239430(void);
 PORT_RET(s32, u16) func_80239FF8(s32);
 s32 *func_8023A840(void);
 void func_80243DEC(s32);
-void func_80261CD0(void *, void *, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+void func_80261CD0(void *, void *, s32, PORT_RET(s32, void *), s32, s32, s32, s32, s32, s32, s32);
 void func_8026BEB0(void);
 void func_8026C8E8(void);
 void func_80277E1C(void);
 
 /* A display list command (gbi.h's Gfx, as two words) */
 typedef struct {
-    /* 0x00 */ u32 w0;
-    /* 0x04 */ u32 w1;
+    /* 0x00 */ PORT_UP(u32) w0;
+    /* 0x04 */ PORT_UP(u32) w1;
 } UnkStruct_80297564; /* size 0x8 */
 
 /* the game object func_8022A6C4 and func_8022A328 make */
@@ -118,7 +118,7 @@ typedef struct {
 } UnkStruct_802B03C0; /* size 0xA10 */
 
 extern void *D_1000000;
-extern s32 D_802AC5C0;
+extern PORT_RET(s32, void *) D_802AC5C0;
 extern s32 D_802AC5D0;
 
 UnkStruct_802B03C0 *func_80296BEC(s32 arg0);
@@ -259,7 +259,7 @@ void func_80297564(void *arg0, UnkStruct_80297564 **arg1) {
         { UnkStruct_80297564 *g = gfx++; g->w0 = 0xBA000E02; g->w1 = 0; }
         { UnkStruct_80297564 *g = gfx++; g->w0 = 0xBA000903; g->w1 = 0xC00; }
         { UnkStruct_80297564 *g = gfx++; g->w0 = 0xBC000806; g->w1 = 0; }
-        func_80261CD0(&gfx, e->unk10, 2, (s32) e->unk0, e->unk4, e->unk8, 0, 0, 0, 0, 0);
+        func_80261CD0(&gfx, e->unk10, 2, (PORT_RET(s32, void *)) e->unk0, e->unk4, e->unk8, 0, 0, 0, 0, 0);
         { UnkStruct_80297564 *g = gfx++; g->w0 = 0xB7000000; g->w1 = 0x2000; }
         *arg1 = gfx;
     }

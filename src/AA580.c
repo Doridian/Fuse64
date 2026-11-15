@@ -876,7 +876,7 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
             }
             res |= corner;
             res |= 0x20;
-        } else if (*(s32 *) ctx.unk0->unk44 == 0) {
+        } else if (PORT_HOST(*(s32 *) ctx.unk0->unk44, (intptr_t) ctx.unk0->unk44) == 0) {
             p = ctx.unk0->unk40;
             if (ctx.unk0->unk40 == NULL) {
                 DEBUG_PRINT(("ctx.unk0->unk40 == NULL\n"));

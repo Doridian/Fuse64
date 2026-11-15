@@ -35,8 +35,8 @@
 #include "common.h"
 
 typedef struct {
-    u32 w0;
-    u32 w1;
+    PORT_UP(u32) w0;
+    PORT_UP(u32) w1;
 } Gfx_ovl0B_01;
 
 /* The fade at D_ovl0B_01_80045E34: its object, colour, and the rectangle
@@ -101,7 +101,7 @@ void func_ovl0B_01_80045348(f32, f32, f32); /* 0x1704 */
 void func_ovl0B_01_80045368(f32, f32, f32); /* 0x1708 */
 void func_ovl0B_01_80045370(f32 *, f32 *, f32 *); /* 0x1709 */
 void func_ovl0B_01_800453B0(s32); /* 0x1711 */
-s32 func_ovl0B_01_80045658(void (*)(void), void *, s32, s32, s32); /* 0x1900 */
+s32 func_ovl0B_01_80045658(void (*)(void), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0B_01_80045660(s32); /* 0x1901 */
 void func_ovl0B_01_80045668(void); /* 0x1902 */
 void func_ovl0B_01_80045678(s32); /* 0x1904 */

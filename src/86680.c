@@ -127,7 +127,18 @@ void func_8026C77C(void) {
     func_80226368(file);
     func_802690DC(sp28, 0, 0, 0, 0);
     func_80267730(sp24, 0, 0, 0);
+#ifdef TARGET_PC
+    {
+        /* (where pointers are 8 bytes the heap's structures are bigger: a
+           heap twice the size, port/src/memory.c) */
+        s32 len = 300000;
+        u8 *heap = port_audio_heap(D_8019C2E0, &len);
+
+        func_8026A754(0x7E, 4, D_802A89B0, heap, len);
+    }
+#else
     func_8026A754(0x7E, 4, D_802A89B0, D_8019C2E0, 300000);
+#endif
     for (i = 0; i < 8; i++) {
         D_800BD778[i].unk10 = -1;
     }

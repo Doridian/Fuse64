@@ -11,6 +11,7 @@
  * 47A80).  port_addr tells them apart by where the game's memory is.
  */
 #include <stdint.h>
+#include <stdlib.h>
 #include "port.h"
 
 #if defined(__linux__) && !defined(__EMSCRIPTEN__)
@@ -72,6 +73,45 @@ void *port_addr(uintptr_t a) {
 #if UINTPTR_MAX == 0xFFFFFFFFu
     if (port_is_game_memory((void *)(a + 0x80000000u)))
         return (void *)(a + 0x80000000u);
+#else
+    /* (where pointers are 8 bytes the game's pointer less 0x80000000 is
+       still all of it) */
+    if (a > 0xFFFFFFFFu && port_is_game_memory((void *)(a + 0x80000000u)))
+        return (void *)(a + 0x80000000u);
+    /* (and one plus 0x80000000, which on the N64 wraps to the physical
+       address: 47A80.c's segment bases) */
+    if (a > 0xFFFFFFFFu && port_is_game_memory((void *)(a - 0x80000000u)))
+        return (void *)(a - 0x80000000u);
 #endif
     return (void *)a;
+}
+
+/* (the host's allocator: pc_names.h makes calloc the game's) */
+#undef calloc
+#undef free
+void *calloc(size_t n, size_t m);
+void free(void *p);
+
+void *port_alloc(unsigned long size) {
+    void *p = calloc(1, size ? size : 1);
+    if (p == NULL)
+        host_fatal("port_alloc: no memory for %lu bytes", size);
+    return p;
+}
+
+void port_free(void *p) {
+    free(p);
+}
+
+unsigned char *port_audio_heap(unsigned char *n64, int *len) {
+#if PORT_LP64
+    static unsigned char heap[2 * 300000] __attribute__((aligned(16)));
+    if (*len * 2 > (int)sizeof heap)
+        host_fatal("port_audio_heap: %d bytes", *len);
+    *len *= 2;
+    return heap;
+#else
+    (void)len;
+    return n64;
+#endif
 }

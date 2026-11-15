@@ -17,13 +17,13 @@ typedef struct {
 typedef struct {
     /* 0x00 */ u8 unk0[0x8];
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ u8 unkC[0x24];
+    /* 0x0C */ PORT_RET(u8 unkC[0x24];, u8 unkC[0x14]; void *unk20; void *unk24; u8 unk28[0x8];)
     /* 0x30 */ s32 unk30;
     /* 0x34 */ f32 unk34;
     /* 0x38 */ f32 unk38;
-    /* 0x3C */ u8 unk3C[4];
+    /* 0x3C */ PORT_RET(u8 unk3C[4];, void *unk3C;)
     /* 0x40 */ UnkStruct_80279050_10 *unk40;
-    /* 0x44 */ u8 unk44[0x14];
+    /* 0x44 */ PORT_RET(u8 unk44[0x14];, void *unk44; u8 unk48[0x10];)
     /* 0x58 */ f32 unk58;
     /* 0x5C */ f32 unk5C;
     /* 0x60 */ f32 unk60;
@@ -42,7 +42,7 @@ typedef struct UnkStruct_800BB4A8 {
     /* 0x0C */ struct UnkStruct_800BB4A8 *unkC;
     /* 0x10 */ UnkStruct_80279050_10 *unk10;
     /* 0x14 */ UnkStruct_80279050_14 *unk14;
-    /* 0x18 */ s32 unk18;
+    /* 0x18 */ PORT_IP(s32) unk18;
     /* 0x1C */ s16 unk1C;
     /* 0x1E */ s16 unk1E;
     /* 0x20 */ s16 unk20;
@@ -79,7 +79,24 @@ typedef struct {
     /* 0x18 */ s32 unk18;
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ s32 unk20;
+#ifdef TARGET_PC
+    /* 0x24 */ u8 unk24[4];
+    /* (D_800AEDF0's pointers as wide as the host's: 5E3F0.c's
+       UnkStruct_800AEDF0) */
+    /* 0x28 */ intptr_t unk28;
+    /* 0x2C */ intptr_t unk2C;
+    /* 0x30 */ intptr_t unk30;
+    /* 0x34 */ u8 unk34[0x40 - 0x34];
+    /* 0x40 */ intptr_t unk40;
+    /* 0x44 */ u8 unk44[0x4C - 0x44];
+    /* 0x4C */ intptr_t unk4C;
+    /* 0x50 */ u8 unk50[0xB0 - 0x50];
+    /* 0xB0 */ intptr_t unkB0;
+    /* 0xB4 */ intptr_t unkB4;
+    /* 0xB8 */ u8 unkB8[0xC8 - 0xB8];
+#else
     /* 0x24 */ u8 unk24[0xA4];
+#endif
 } UnkStruct_800AEDF0; /* size 0xC8 */
 
 typedef struct {
@@ -143,7 +160,7 @@ void func_80270354(s32 *, s32);
 void func_8027036C(s32 *, s32);
 PORT_RET(s32, s16) func_802712A8(s32 *, s32);
 s32 func_80272024(s16);
-void func_802727D8(s32);
+void func_802727D8(PORT_RET(s32, void *));
 void func_802733C8(UnkStruct_80279050_14 *);
 void func_80277D60(s32, s32);
 s32 func_8027B480(s32 arg0);
@@ -156,7 +173,7 @@ UnkStruct_80279050_14 *func_802443F4(s32);
 UnkStruct_800BB4A8 *func_8027AA74(s16, f32, f32, f32, s32, s32, s32);
 f32 func_80234434(f32);
 void func_8027A950(void);
-PORT_RET(void, s32) func_8028A81C(s32, f32, f32, f32, s32);
+PORT_RET(void, s32) func_8028A81C(s32, f32, f32, f32, PORT_IP(s32));
 PORT_RET(void, s32) func_8029217C(UnkStruct_80279050_14 *, s32, f32, void (*)());
 
 void func_802790E0(UnkStruct_800BB4A8 *arg0);
@@ -170,7 +187,7 @@ UnkStruct_800BB4A8 *func_8027A1A0(UnkStruct_80279050_14 *arg0);
 extern UnkStruct_800BB4A8 *D_800BB4A8;
 extern UnkStruct_802AFED0 D_802AFED0[];
 extern UnkStruct_800AEDF0 D_800AEDF0[];
-extern UnkStruct_800BB4A8 D_800BB4A0[];
+extern UnkStruct_800BB4A8 D_800BB4A0[48];
 extern UnkStruct_800BB4A8 D_800BB4F8; /* [0] the list's head, [1] its sentinel, [2..47] the pool */
 extern s16 D_802AFF60[];
 
@@ -184,7 +201,7 @@ typedef struct {
     /* 0x0C */ s16 unkC;
 } UnkStruct_800BA8A0; /* size 0xE */
 
-void func_80270B20(s32);
+void func_80270B20(PORT_RET(s32, void *));
 void func_80270BA4(UnkStruct_80279050_14 *);
 PORT_RET(void, s32) func_80238EA8(s32);
 void func_8027404C(f32, f32, f32, f32 *, f32 *, f32 *);
@@ -201,9 +218,9 @@ extern s32 D_802AFEC8;
 extern s32 D_802AFECC;
 
 void func_80279628(s16 arg0, s16 arg1);
-s32 func_802311E8(UnkStruct_80279050_14 *);
+PORT_RET(s32, void *) func_802311E8(UnkStruct_80279050_14 *);
 UnkStruct_80279050_14 *func_80231274(s32, s32, s32, void *);
-s32 func_80238A10(void (*)(void), s32, void *, s32, s32);
+s32 func_80238A10(void (*)(void), PORT_IP(s32), void *, s32, s32);
 s32 func_80243DDC(void);
 s32 func_80243EF0(s32);
 void func_8024512C(s32, s32);
@@ -234,7 +251,7 @@ extern s32 D_802AC5D0;
 void func_80279050(void);
 s32 func_802791C4(s16 arg0);
 void func_80279F10(UnkStruct_800BB4A8 *arg0);
-s32 func_8027A1F4(UnkStruct_80279050_14 *arg0, s32 arg1);
+s32 func_8027A1F4(UnkStruct_80279050_14 *arg0, PORT_IP(s32) arg1);
 UnkStruct_800BB4A8 *func_8027AA74(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg4, s32 arg5, s32 arg6);
 s32 func_8027B094(s16 arg0);
 void func_8027B0BC(s16 arg0);
@@ -482,7 +499,7 @@ s32 func_8027B5A8(UnkStruct_80279050_14 *arg0) {
     if (func_802712A8(&node->unk54, 1) != 0) {
         func_8027036C(&node->unk54, 1);
         func_802313DC(node->unk14, 0x20000);
-        func_80270B20(node->unk18);
+        func_80270B20(PORT_PTR(node->unk18));
     }
     func_80270354(&node->unk54, 2);
     func_80270354(&node->unk54, 0x40);
@@ -1058,7 +1075,7 @@ void func_8027A264(UnkStruct_800BB4A8 *arg0, s16 arg1) {
         obj->unk68 = 25.0f;
         obj->unk6C = 1.0f;
         ptr->unk10 = obj->unk8;
-        if (func_8027A1F4(obj, (s32)ptr)) {
+        if (func_8027A1F4(obj, (PORT_IP(s32))ptr)) {
             func_80270080(ptr);
             func_80270354(&arg0->unk54, 0x20);
             func_80231408(obj, 0x20000);
@@ -1070,7 +1087,7 @@ void func_8027A264(UnkStruct_800BB4A8 *arg0, s16 arg1) {
     }
 }
 
-s32 func_8027A1F4(UnkStruct_80279050_14 *arg0, s32 arg1) {
+s32 func_8027A1F4(UnkStruct_80279050_14 *arg0, PORT_IP(s32) arg1) {
     UnkStruct_800BB4A8 *node = func_8027A1A0(arg0);
 
     func_80231408(arg0, 0x20000);

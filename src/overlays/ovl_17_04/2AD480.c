@@ -35,15 +35,15 @@ void func_ovl17_04_80044298(s32);
 void func_ovl17_04_80044310(s32);
 void func_ovl17_04_80044468(UnkStructA *, s32);
 UnkStructA *func_ovl17_04_800444B0(s32, s32, f32, f32, f32);
-void func_ovl17_04_800445B8(void (*)(void), void *, s32, s32, s32);
+void func_ovl17_04_800445B8(void (*)(void), void *, PORT_IP(s32), s32, s32);
 void func_ovl17_04_800445C8(void);
 void *func_ovl17_04_800445E0(void);
 void func_ovl17_04_80044600(void);
 void func_ovl17_04_800448B8(s32, s32, s32, f32);
 void func_ovl17_04_80044920(u32 (*)[3]);
-void func_ovl17_04_80044A08(s32, f32, f32, f32, s32);
+void func_ovl17_04_80044A08(s32, f32, f32, f32, PORT_IP(s32));
 s32 func_ovl17_04_80044A68(UnkStructA *);
-s32 func_ovl17_04_80044A70(s16);
+PORT_IP(s32) func_ovl17_04_80044A70(s16);
 void func_ovl17_04_80044A78(s16, s32);
 
 /* .bss */

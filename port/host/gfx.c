@@ -43,14 +43,25 @@ static uintptr_t seg[16];
 
 /* a display list's address word: segmented (segment 1-15, an offset below
    16 MiB) through the segment table, else as the game made it (port_addr) */
+static const void *cur_cmd;     /* the command being run (for addr_check) */
+
+static uint8_t *addr_check(uint8_t *p, uintptr_t w) {
+    /* host -v -v: an address that is in none of the game's memory, with
+       the command it came in */
+    if (host_verbose > 1 && p != NULL && !port_is_game_memory(p))
+        host_log("gfx: the address %#lx (%p) of the command at %p is in no memory\n", (unsigned long)w,
+                 (void *)p, cur_cmd);
+    return p;
+}
+
 static uint8_t *addr(uintptr_t w) {
     w = port_unproxy(w);
     uint32_t v = (uint32_t)w;
     if (w == v && (v >> 28) == 0 && ((v >> 24) & 0xF) != 0) {
         uintptr_t b = seg[(v >> 24) & 0xF];
-        return port_addr(b + (v & 0xFFFFFF));
+        return addr_check(port_addr(b + (v & 0xFFFFFF)), w);
     }
-    return port_addr(w);
+    return addr_check(port_addr(w), w);
 }
 
 /* ---- state -------------------------------------------------------------------------- */
@@ -1057,7 +1068,8 @@ static void set_other(int h, uint32_t w0, uint32_t w1) {
         gs.om_l = (gs.om_l & ~mask) | (w1 & mask);
 }
 
-static void moveword(uint32_t w0, uint32_t w1) {
+static void moveword(uint32_t w0, uintptr_t w1p) {
+    uint32_t w1 = (uint32_t)w1p;
     int idx = w0 & 0xFF, off = (w0 >> 8) & 0xFFFF;
     switch (idx) {
     case 0x02:                          /* NUMLIGHT */
@@ -1066,7 +1078,7 @@ static void moveword(uint32_t w0, uint32_t w1) {
         if (gs.nlights > 7) gs.nlights = 7;
         break;
     case 0x06:                          /* SEGMENT */
-        seg[(off / 4) & 15] = w1;
+        seg[(off / 4) & 15] = w1p;   /* (an address: as wide as a pointer) */
         break;
     case 0x08:                          /* FOG */
         gs.fog_m = (int16_t)(w1 >> 16);
@@ -1136,14 +1148,34 @@ typedef struct {
     uintptr_t w0, w1;
 } Cmd;
 
+/* A display list the game builds has the port's commands, two words as
+   wide as a pointer; one of the ROM's (a model's, in the asset cache) has
+   the N64's, two 32-bit words in the host's order (port/src/native.c),
+   which where pointers are 8 bytes is another stride: each list runs at
+   the stride of where it is (port_narrow_dl). */
+#define NSTRIDE 8u
+static unsigned stride_at(const void *p) {
+    return sizeof(Cmd) != NSTRIDE && port_narrow_dl(p) ? NSTRIDE : (unsigned)sizeof(Cmd);
+}
+static uint32_t cmd_w0(const uint8_t *c, unsigned st) {
+    return st == NSTRIDE ? ((const uint32_t *)c)[0] : (uint32_t)((const Cmd *)c)->w0;
+}
+static uintptr_t cmd_w1(const uint8_t *c, unsigned st) {
+    return st == NSTRIDE ? ((const uint32_t *)c)[1] : ((const Cmd *)c)->w1;
+}
+
 static void run(const Cmd *dl) {
-    const Cmd *stack[18];
+    const uint8_t *stack[18];
+    unsigned stack_st[18];
     int sp = 0;
-    const Cmd *pc = dl;
+    const uint8_t *pc = (const uint8_t *)dl;
+    unsigned st = stride_at(pc);
     for (int guard = 0; guard < 2000000; guard++) {
-        const Cmd *c = pc++;
-        uint32_t w0 = (uint32_t)c->w0;
-        uintptr_t w1 = c->w1;
+        const uint8_t *c = pc;
+        cur_cmd = c;
+        pc += st;
+        uint32_t w0 = cmd_w0(c, st);
+        uintptr_t w1 = cmd_w1(c, st);
         uint32_t w1l = (uint32_t)w1;
         uint8_t op = w0 >> 24;
         if (host_verbose > 3)
@@ -1162,17 +1194,23 @@ static void run(const Cmd *dl) {
             break;
         case 0x06:
             if (((w0 >> 16) & 0xFF) == 0) {
-                if (sp < 18)
+                if (sp < 18) {
+                    stack_st[sp] = st;
                     stack[sp++] = pc;
+                }
             }
-            pc = (const Cmd *)addr(w1);
+            pc = addr(w1);
+            st = stride_at(pc);
             break;
         case 0xAF:                      /* LOAD_UCODE */
             break;
         case 0xB0: {                    /* BRANCH_Z */
             int v = ((w0 >> 1) & 0x7FF) / 2;
             if (v < 64 && gs.v[v].sz * 1023.0f * 32.0f < (float)(int32_t)w1l)
-                pc = (const Cmd *)addr(gs.rdphalf1);
+            {
+                pc = addr(gs.rdphalf1);
+                st = stride_at(pc);
+            }
             break;
         }
         case 0xB1:                      /* TRI2 */
@@ -1214,7 +1252,7 @@ static void run(const Cmd *dl) {
         case 0xB8:
             if (sp == 0)
                 return;
-            pc = stack[--sp];
+            --sp, pc = stack[sp], st = stack_st[sp];
             break;
         case 0xB9:
             set_other(0, w0, w1l);
@@ -1230,7 +1268,7 @@ static void run(const Cmd *dl) {
             gs.tex_t = (w1l & 0xFFFF) / 65536.0f;
             break;
         case 0xBC:
-            moveword(w0, w1l);
+            moveword(w0, w1);
             break;
         case 0xBD:
             if (gs.mvi > 0)
@@ -1254,7 +1292,7 @@ static void run(const Cmd *dl) {
             if (out && v1 >= v0) {
                 if (sp == 0)
                     return;
-                pc = stack[--sp];
+                --sp, pc = stack[sp], st = stack_st[sp];
             }
             break;
         }
@@ -1266,15 +1304,15 @@ static void run(const Cmd *dl) {
             uint32_t h1 = 0, h2 = 0;
             /* the next two commands carry s, t and their steps */
             /* (F3DEX's RDPHALF_1 and _2; Fast3D's RDPHALF_2 and _CONT) */
-            uint32_t o1 = (uint32_t)pc[0].w0 >> 24;
+            uint32_t o1 = cmd_w0(pc, st) >> 24;
             if (o1 == 0xB4 || o1 == 0xB3 || o1 == 0xE1) {
-                h1 = (uint32_t)pc[0].w1;
-                pc++;
+                h1 = (uint32_t)cmd_w1(pc, st);
+                pc += st;
             }
-            uint32_t o2 = (uint32_t)pc[0].w0 >> 24;
+            uint32_t o2 = cmd_w0(pc, st) >> 24;
             if (o2 == 0xB3 || o2 == 0xB2 || o2 == 0xF1) {
-                h2 = (uint32_t)pc[0].w1;
-                pc++;
+                h2 = (uint32_t)cmd_w1(pc, st);
+                pc += st;
             }
             tex_rect(w0, w1l, h1, h2, op == 0xE5);
             break;

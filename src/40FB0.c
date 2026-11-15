@@ -25,7 +25,7 @@ extern u8 D_8029F5D0[];
 extern s32 D_802A5320;
 extern u32 D_802A5324;
 extern s32 D_802A5328;
-extern s32 D_802A532C;
+extern PORT_IP(s32) D_802A532C;
 
 void func_8022691C(s32 arg0) {
     struct UnkStruct_80225CC0 *file;
@@ -56,7 +56,7 @@ void func_8022691C(s32 arg0) {
         func_80292BD0(file, port_addr(0x80043000), size);
         func_80226368(file);
         func_802267E0(0x18);
-        D_802A532C = (s32) port_overlay_load(D_8019B0D0[arg0].unk0, id);
+        D_802A532C = (PORT_IP(s32)) port_overlay_load(D_8019B0D0[arg0].unk0, id);
 #else
         func_80297D58(ovl, 0x20000);
         func_80297D50(ovl, 0x20000);

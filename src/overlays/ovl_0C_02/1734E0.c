@@ -193,7 +193,7 @@ typedef struct {
 } UnkStruct_ovl0C_02_80049968_C;
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
+    /* 0x00 */ PORT_RET(u8 unk0[0xC];, void *unk0; u8 unk4[0x8];)
     /* 0x0C */ UnkStruct_ovl0C_02_80049968_C *unkC;
 } UnkStruct_ovl0C_02_80049968;
 
@@ -251,13 +251,13 @@ s32 func_ovl0C_02_80049078(UnkStructA *, s32); /* 0x1807 */
 void func_ovl0C_02_800490C8(UnkStructA *, s32); /* 0x1811 */
 void func_ovl0C_02_800490D0(UnkStructA *, s32); /* 0x1812 */
 void func_ovl0C_02_800490E0(UnkStructA *); /* 0x1814 */
-UnkStructA * func_ovl0C_02_800490F0(s32, s32, s32, s32); /* 0x1816 */
+UnkStructA * func_ovl0C_02_800490F0(s32, s32, s32, PORT_IP(s32)); /* 0x1816 */
 UnkStructA * func_ovl0C_02_80049100(UnkStructA *); /* 0x1818 */
 UnkStructA * func_ovl0C_02_80049110(s32, s32, f32, f32, f32); /* 0x181A */
 void func_ovl0C_02_80049148(UnkStructA *); /* 0x1821 */
 UnkStructA * func_ovl0C_02_80049158(UnkStructA *, s32); /* 0x1823 */
-s32 func_ovl0C_02_800491E8(UnkStructA *, s32, UnkStructA *); /* 0x1835 */
-s32 func_ovl0C_02_80049218(void (*)(void), void *, s32, s32, s32); /* 0x1900 */
+PORT_IP(s32) func_ovl0C_02_800491E8(UnkStructA *, s32, UnkStructA *); /* 0x1835 */
+s32 func_ovl0C_02_80049218(void (*)(void), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0C_02_80049220(s32); /* 0x1901 */
 void func_ovl0C_02_80049228(void); /* 0x1902 */
 void func_ovl0C_02_80049238(s32); /* 0x1904 */
@@ -276,7 +276,7 @@ void func_ovl0C_02_80049518(s32, s32, s32, f32); /* 0x2004 */
 void func_ovl0C_02_80049568(s32, s32, s32); /* 0x2201 */
 void func_ovl0C_02_80049580(u32 (*)[3]); /* 0x2300 */
 void func_ovl0C_02_80049598(u32 (*)[3]); /* 0x2303 */
-void func_ovl0C_02_80049668(s32, f32, f32, f32, s32); /* 0x2600 */
+void func_ovl0C_02_80049668(s32, f32, f32, f32, PORT_IP(s32)); /* 0x2600 */
 s32 func_ovl0C_02_80049670(s32, f32 *, s32); /* 0x2601 */
 void func_ovl0C_02_80049678(s32); /* 0x2602 */
 void func_ovl0C_02_800496A8(void); /* 0x2704 */
@@ -1678,7 +1678,7 @@ void func_ovl0C_02_80044A68(UnkStruct_ovl0C_02_80049B50 *arg0, UnkStruct_ovl0C_0
     obj = func_ovl0C_02_80049110(0x2BB, 0xD0, arg0->unk4, arg0->unk8, arg0->unkC);
     fl.i = 0x01000000;
     if (!arg2) {
-        fl.u = 0x01000000 | (s32)obj * 0;
+        fl.u = 0x01000000 | (PORT_IP(s32))obj * 0;
     }
     func_ovl0C_02_800490C8(obj, fl.i);
     arg0->unk0 = obj;

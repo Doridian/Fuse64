@@ -66,8 +66,8 @@
 #include "common.h"
 
 typedef struct {
-    u32 w0;
-    u32 w1;
+    PORT_UP(u32) w0;
+    PORT_UP(u32) w1;
 } Gfx_ovl0B_07;
 
 /* D_ovl0B_07_80046CF0: the four vertices of 800450D0's square */
@@ -98,7 +98,7 @@ void func_ovl0B_07_80046098(f32, f32, f32); /* 0x1704 */
 void func_ovl0B_07_800460B8(f32, f32, f32); /* 0x1708 */
 void func_ovl0B_07_800460C0(f32 *, f32 *, f32 *); /* 0x1709 */
 void func_ovl0B_07_80046100(s32); /* 0x1711 */
-s32 func_ovl0B_07_800463A8(void (*)(), void *, s32, s32, s32); /* 0x1900 */
+s32 func_ovl0B_07_800463A8(void (*)(), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0B_07_800463B8(void); /* 0x1902 */
 void func_ovl0B_07_800463C8(s32); /* 0x1904 */
 void *func_ovl0B_07_800463D0(void); /* 0x1905 */
@@ -117,7 +117,7 @@ s32 func_ovl0B_07_800467E8(u8 *, u16, u16, f32, f32, s32); /* 0x250C */
 #if VERSION_JP
 s32 func_ovl0B_07_80046790(u8 *, u16, u16, f32, f32, s32); /* 0x2707 */
 #endif
-void func_ovl0B_07_800467F8(s32, f32, f32, f32, s32); /* 0x2600 */
+void func_ovl0B_07_800467F8(s32, f32, f32, f32, PORT_IP(s32)); /* 0x2600 */
 s32 func_ovl0B_07_80046930(s32); /* 0x2B00 */
 void func_ovl0B_07_80046940(s32); /* 0x2B02 */
 void func_ovl0B_07_80046948(void); /* 0x2B03 */
@@ -300,7 +300,7 @@ void func_ovl0B_07_800450D0(s32 arg0, Gfx_ovl0B_07 **arg1) {
     { Gfx_ovl0B_07 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFDF6FB; }
     { Gfx_ovl0B_07 *g = gfx++; g->w0 = 0xB900031D; g->w1 = 0x552078; }
     { Gfx_ovl0B_07 *g = gfx++; g->w0 = 0xBB000000; g->w1 = 0x80008000; }
-    { Gfx_ovl0B_07 *g = gfx++; g->w0 = 0x0400103F; g->w1 = (u32) D_ovl0B_07_80046CF0; }
+    { Gfx_ovl0B_07 *g = gfx++; g->w0 = 0x0400103F; g->w1 = (PORT_UP(u32)) D_ovl0B_07_80046CF0; }
     { Gfx_ovl0B_07 *g = gfx++; g->w0 = 0xBF000000; g->w1 = 0x204; }
     { Gfx_ovl0B_07 *g = gfx++; g->w0 = 0xBF000000; g->w1 = 0x406; }
     { Gfx_ovl0B_07 *g = gfx++; g->w0 = 0xB7000000; g->w1 = 0x2000; }

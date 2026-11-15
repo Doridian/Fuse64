@@ -175,7 +175,7 @@ typedef struct {
 
 /* Chunk 3: channels (0x2F: key list; 0x30: a curve, tag 0x31). */
 typedef struct {
-    /* 0x00 */ s32 unk0;
+    /* 0x00 */ PORT_IP(s32) unk0;
     /* 0x04 */ s32 unk4;
     /* 0x08 */ s32 *unk8;
     /* 0x0C */ f32 *unkC;
@@ -257,7 +257,7 @@ typedef struct {
     /* 0x0C */ s32 unkC;
     /* 0x10 */ s32 *unk10;
     /* 0x14 */ s32 *unk14;
-    /* 0x18 */ s32 unk18;
+    /* 0x18 */ PORT_IP(s32) unk18;
     /* 0x1C */ UnkTree *unk1C;
     /* 0x20 */ s32 unk20;
     /* 0x24 */ s32 unk24;
@@ -336,8 +336,8 @@ typedef struct {
 
 /* A display list command, two words (gbi.h's Gfx, not in include/ yet). */
 typedef struct {
-    u32 w0;
-    u32 w1;
+    PORT_UP(u32) w0;
+    PORT_UP(u32) w1;
 } UnkGfx;
 
 typedef struct {
@@ -351,7 +351,7 @@ typedef struct {
         _g->w0 = (a);                \
         _g->w1 = (b);                \
     }
-#define gMoveWd(pkt, index, offset, data) gW(pkt, _SHIFTL(0xBC, 24, 8) | _SHIFTL((offset), 8, 16) | _SHIFTL((index), 0, 8), (u32)(data))
+#define gMoveWd(pkt, index, offset, data) gW(pkt, _SHIFTL(0xBC, 24, 8) | _SHIFTL((offset), 8, 16) | _SHIFTL((index), 0, 8), (PORT_UP(u32))(data))
 #define gSPSegment(pkt, seg, base) gMoveWd(pkt, 6, (seg) * 4, base)
 #define gSPFogPosition(pkt, min, max)                                              \
     gMoveWd(pkt, 8, 0, _SHIFTL(128000 / ((max) - (min)), 16, 16) | _SHIFTL((500 - (min)) * 256 / ((max) - (min)), 0, 16))
@@ -420,8 +420,8 @@ extern UnkTrack *D_802A5504;
 void func_8026CBD4(void *);
 void *func_80227678(s32);
 s32 func_8022769C(s32);
-void func_8022D58C(UnkGfx **, s32, s32);
-void func_8022DAB0(UnkInst *, UnkGfx **, s32);
+void func_8022D58C(UnkGfx **, PORT_IP(s32), s32);
+void func_8022DAB0(UnkInst *, UnkGfx **, PORT_IP(s32));
 void func_80237478(f32 *, f32 *);
 void func_8026437C(UnkGfx **, void *, f32, f32, f32, f32, f32, f32, f32, f32, s32);
 void func_802926EC(void *);
@@ -457,7 +457,7 @@ extern s32 D_802A5368;
 /* One frame's buffers (D_8014C8D0[2], as in 41FD0.c). */
 typedef struct {
     /* 0x00000 */ UnkMtx mtx[0x400];
-    /* 0x10000 */ u8 unk10000[4][0x5000];
+    /* 0x10000 */ u8 unk10000[4][PORT_GFX_BYTES(0x5000)];
     /* 0x24000 */ UnkGfx gfx[0x600];
 } UnkFrame; /* size 0x27000 */
 
@@ -496,7 +496,7 @@ void func_8022984C(UnkObj *arg0, s32 arg1);
 void func_8022997C(void);
 void func_80229BB4(void);
 void func_80229BF4(s32 arg0);
-u32 func_80229C10(UnkObj *arg0, s32 arg1, UnkVtx **arg2);
+u32 func_80229C10(UnkObj *arg0, PORT_IP(s32) arg1, UnkVtx **arg2);
 s32 func_80229C90(UnkObj *arg0, s32 arg1, s16 arg2, s16 arg3, s16 arg4, s16 arg5);
 f32 func_80229D3C(UnkObj *arg0, s32 arg1);
 void func_80229D68(UnkObj *arg0);
@@ -686,7 +686,7 @@ void func_8022A1E8(void *arg0) {
     s32 i;
     s32 prev;
 
-    idx = ((u32)arg0 - (u32)D_800A0D00) / sizeof(UnkObj);
+    idx = ((PORT_UP(u32))arg0 - (PORT_UP(u32))D_800A0D00) / sizeof(UnkObj);
     p = &D_800A0D00[idx];
     if (p->unkC & 8) {
         func_80229D68(arg0);
@@ -827,11 +827,15 @@ s32 func_80229C90(UnkObj *arg0, s32 arg1, s16 arg2, s16 arg3, s16 arg4, s16 arg5
     return -1;
 }
 
-u32 func_80229C10(UnkObj *arg0, s32 arg1, UnkVtx **arg2) {
+#ifdef TARGET_PC
+int port_narrow_dl(const void *p);
+#endif
+
+u32 func_80229C10(UnkObj *arg0, PORT_IP(s32) arg1, UnkVtx **arg2) {
     UnkModel *model;
     UnkChunk *chunks;
     UnkGfx *dl;
-    u32 first;
+    PORT_UP(u32) first;
     s32 i;
 
     if (arg1 < 0) {
@@ -846,6 +850,31 @@ u32 func_80229C10(UnkObj *arg0, s32 arg1, UnkVtx **arg2) {
         DEBUG_PRINT(("chunks == NULL\n"));
     }
     dl = (UnkGfx *)((u8 *)model + chunks[arg1].unk8);
+#ifdef TARGET_PC
+    if (sizeof(UnkGfx) != 8 && port_narrow_dl(dl)) {
+        /* (a model's display list as the ROM has it, 8-byte commands, where
+           the host's are wider: port/src/native.c) */
+        u32 *n = (u32 *) dl;
+
+        first = n[1];
+        for (i = 0; i != 2; i++) {
+            while ((u8) (n[0] >> 24) != 4) {
+                n += 2;
+            }
+            n += 2;
+        }
+        arg1 = n[-1];
+    } else {
+        first = dl->w1;
+        for (i = 0; i != 2; i++) {
+            while (PORT_WORD_BYTE0(dl) != 4) {
+                dl++;
+            }
+            dl++;
+        }
+        arg1 = dl[-1].w1;
+    }
+#else
     first = dl->w1;
     i = 0; if (!arg0) {} for (; i != 2; i++) { /* fake: i = 0, the dead test and the for on one line set the colouring and schedule (header) */
         while (PORT_WORD_BYTE0(dl) != 4) {
@@ -854,7 +883,8 @@ u32 func_80229C10(UnkObj *arg0, s32 arg1, UnkVtx **arg2) {
         dl++;
     }
     arg1 = dl[-1].w1;
-    *arg2 = (UnkVtx *)((arg1 & 0xFFFFFF) + (u32)model);
+#endif
+    *arg2 = (UnkVtx *)((arg1 & 0xFFFFFF) + (PORT_UP(u32))model);
     return (first - arg1) >> 4;
 }
 
@@ -979,7 +1009,7 @@ void func_8022946C(UnkObj *arg0, s32 arg1) {
     UnkObj *p;
     s32 prev;
 
-    idx = ((u32)arg0 - (u32)D_800A0D00) / sizeof(UnkObj);
+    idx = ((PORT_UP(u32))arg0 - (PORT_UP(u32))D_800A0D00) / sizeof(UnkObj);
     i = D_800A0D00[idx].unk0;
     p = &D_800A0D00[idx];
     prev = p->unk4;
@@ -1170,7 +1200,7 @@ static s32 func_802284F8(UnkObj *arg0, UnkGfx **arg1) {
     gfx = *arg1;
     guMtxIdentF(mf);
     guMtxF2L(mf, &D_802A538C->mtx[D_802A5368]);
-    gW(gfx++, 0x01020040, (u32)&D_802A538C->mtx[D_802A5368]);
+    gW(gfx++, 0x01020040, (PORT_UP(u32))&D_802A538C->mtx[D_802A5368]);
     D_802A5368++;
     func_8029CA80(mf, arg0->unk10, arg0->unk14, arg0->unk18);
     rx = arg0->unk1C;
@@ -1192,7 +1222,7 @@ static s32 func_802284F8(UnkObj *arg0, UnkGfx **arg1) {
         func_8029CA00(mf, arg0->unk28, arg0->unk2C, arg0->unk30);
     }
     guMtxF2L(mf, &D_802A538C->mtx[D_802A5368]);
-    gW(gfx++, 0x01060040, (u32)&D_802A538C->mtx[D_802A5368]);
+    gW(gfx++, 0x01060040, (PORT_UP(u32))&D_802A538C->mtx[D_802A5368]);
     D_802A5368++;
     *arg1 = gfx;
     return pushed;
@@ -1232,7 +1262,7 @@ static void func_802284F0(UnkObj *arg0, UnkGfx **arg1) {
             }
             gfx++;
             gSPSegment(g, i + 3, (u8 *)model + model->unkC[anim->unkC[anim->unk4].unk0].unk8);
-            if ((s32)g + (s32)g + (s32)g + (s32)g + (s32)g + (s32)model) {} /* fake: dead sum: colouring order of g and model (header) */
+            if ((PORT_IP(s32))g + (PORT_IP(s32))g + (PORT_IP(s32))g + (PORT_IP(s32))g + (PORT_IP(s32))g + (PORT_IP(s32))model) {} /* fake: dead sum: colouring order of g and model (header) */
         }
     }
     *arg1 = gfx;
@@ -1312,9 +1342,9 @@ void func_802289C0(UnkObj *arg0, UnkGfx **arg1) {
             func_8022827C(arg0);
         }
         t1 = arg0->unk44;
-        func_8022DAB0(t1, &gfx, (s32)arg0->unk3C);
+        func_8022DAB0(t1, &gfx, (PORT_IP(s32))arg0->unk3C);
     } else if (arg0->unkC & 4) {
-        func_8022D58C(&gfx, (s32)arg0->unk3C, arg0->unk38);
+        func_8022D58C(&gfx, (PORT_IP(s32))arg0->unk3C, arg0->unk38);
     } else if (arg0->unkC & 0x10) {
         if (D_802A5470 != 1) {
             gW(gfx++, 0xB9000501, 0);
@@ -1328,7 +1358,7 @@ void func_802289C0(UnkObj *arg0, UnkGfx **arg1) {
         }
         gW(gfx++, 0xB9000401, 0x10);
     } else if (arg0->unkC & 0x800) {
-        gW(gfx++, 0x06000000, (u32)arg0->unk3C);
+        gW(gfx++, 0x06000000, (PORT_UP(u32))arg0->unk3C);
     }
     if (!(arg0->unkC & 0x10)) {
         gW(gfx++, 0xBD000000, 0);
@@ -1368,7 +1398,7 @@ s32 func_802280F4(UnkObj *arg0, s32 arg1) {
     slot = func_802280EC();
     D_80098C18[slot].unk4 = arg0;
     D_80098C18[slot].unk0 = arg1;
-    D_80098C18[slot].unk8 = malloc(arg1 * 4);
+    D_80098C18[slot].unk8 = malloc(arg1 * PORT_HOST(4, sizeof(void *)));
     D_80098C18[slot].unkC = malloc(arg1 * 4);
     for (i = 0; i < arg1; i++) {
         D_80098C18[slot].unk8[i] = NULL;

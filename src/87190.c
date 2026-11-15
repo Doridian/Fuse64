@@ -31,7 +31,7 @@ s32 func_8026CA20(s32 arg0) {
     s32 i;
 
     for (i = 0; i < 100; i++) {
-        if (arg0 == (s32) D_800A7F30[i].unk4 && D_800A7F30[i].unk0 != -1 && D_800A7F30[i].unkC != 0) {
+        if (arg0 == (PORT_IP(s32)) D_800A7F30[i].unk4 && D_800A7F30[i].unk0 != -1 && D_800A7F30[i].unkC != 0) {
             return D_800A7F30[i].unk0;
         }
     }

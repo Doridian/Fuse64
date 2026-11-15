@@ -51,7 +51,7 @@
  */
 
 typedef struct {
-    /* 0x00 */ u8 unk0[4];
+    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (426E0.c's UnkAnimSlot: its animation) */
     /* 0x04 */ f32 unk4;
 } Anim2_0D01;
 
@@ -74,7 +74,7 @@ typedef struct {
     /* 0x30 */ f32 unk30;
     /* 0x34 */ s16 unk34;
     /* 0x36 */ s16 unk36;
-    /* 0x38 */ u8 unk38[0x10];
+    /* 0x38 */ PORT_RET(u8 unk38[0x10];, u8 unk38[0x4]; void *unk3C; void *unk40; void *unk44;)
     /* 0x48 */ Anim_0D01 *unk48;
 } Obj40_0D01;
 
@@ -84,13 +84,13 @@ typedef struct {
     /* 0x0C */ s32 unkC;
     /* 0x10 */ u8 unk10[4];
     /* 0x14 */ s32 unk14;
-    /* 0x18 */ u8 unk18[0x10];
+    /* 0x18 */ PORT_RET(u8 unk18[0x10];, u8 unk18[0x8]; void *unk20; void *unk24;)
     /* 0x28 */ s32 unk28;
     /* 0x2C */ u8 unk2C[4];
     /* 0x30 */ s32 unk30;
     /* 0x34 */ f32 unk34;
     /* 0x38 */ f32 unk38;
-    /* 0x3C */ u8 unk3C[4];
+    /* 0x3C */ PORT_RET(u8 unk3C[4];, void *unk3C;)
     /* 0x40 */ Obj40_0D01 *unk40;
 } Obj_0D01;
 
@@ -139,7 +139,7 @@ typedef struct {
 
 /* what ZeroJump 0x3106 returns (as in ovl_0A_05) */
 typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
+    /* 0x00 */ PORT_RET(u8 unk0[0xC];, void *unk0; u8 unk4[0x8];)
     /* 0x0C */ UnkStructA_40 *unkC;
 } Rec_0D01;
 
@@ -208,10 +208,10 @@ s32 func_ovl0D_01_80046C20(Obj_0D01 *, s32); /* 0x1808 */
 void func_ovl0D_01_80046C68(Obj_0D01 *, s32); /* 0x1811 */
 void func_ovl0D_01_80046C70(Obj_0D01 *, u32); /* 0x1812 */
 void func_ovl0D_01_80046C80(Obj_0D01 *); /* 0x1814 */
-Obj_0D01 *func_ovl0D_01_80046C90(s32, s32, s32, s32); /* 0x1816 */
+Obj_0D01 *func_ovl0D_01_80046C90(s32, s32, s32, PORT_IP(s32)); /* 0x1816 */
 void func_ovl0D_01_80046CA0(Obj_0D01 *); /* 0x1818 */
 Obj_0D01 *func_ovl0D_01_80046CB0(s32, s32, f32, f32, f32); /* 0x181A */
-void func_ovl0D_01_80046DB8(void (*)(void), void *, s32, s32, s32); /* 0x1900 */
+void func_ovl0D_01_80046DB8(void (*)(void), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0D_01_80046DC8(void); /* 0x1902 */
 void func_ovl0D_01_80046DD8(s32); /* 0x1904 */
 void *func_ovl0D_01_80046DE0(void); /* 0x1905 */

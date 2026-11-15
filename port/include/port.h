@@ -85,6 +85,9 @@ static inline void port_wle16(void *p, uint16_t v) {
 void *port_addr(uintptr_t a);
 /* a proxy's address (WebAssembly) to its number; any other as it is */
 uintptr_t port_unproxy(uintptr_t a);
+/* a display list of the ROM's (N64-sized commands): in a file of the asset
+   cache (port/src/native.c) */
+int port_narrow_dl(const void *p);
 /* whether p is memory the game owns (its variables, port_rdram, a thread's
    stack) */
 int port_is_game_memory(const void *p);

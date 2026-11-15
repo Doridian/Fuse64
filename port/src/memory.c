@@ -27,11 +27,19 @@ extern char __ImageBase[];
 #endif
 
 int port_coro_stack(const void *p);
+#ifdef PORT_HOST_MALLOC
+int port_hostmalloc_owns(const void *p);
+#endif
 
 int port_is_game_memory(const void *p) {
     uintptr_t a = (uintptr_t)p;
     if (a >= (uintptr_t)port_rdram && a < (uintptr_t)port_rdram + PORT_RDRAM_SIZE)
         return 1;
+#ifdef PORT_HOST_MALLOC
+    /* (the game's blocks, the host's: host/hostmalloc.c) */
+    if (port_hostmalloc_owns(p))
+        return 1;
+#endif
 #if defined(__EMSCRIPTEN__)
     /* the data from 256 MiB (-sGLOBAL_BASE, CMakeLists.txt) to the memory's end */
     return a >= 0x10000000u && a < (uintptr_t)__builtin_wasm_memory_size(0) * 65536u;

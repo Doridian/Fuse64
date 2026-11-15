@@ -233,6 +233,7 @@ option(PORT_HOST_MALLOC "the game's malloc the host's (debugging, with PORT_SANI
 if(PORT_HOST_MALLOC)
     add_executable(fuse64 ${HOST_C} $<TARGET_OBJECTS:game_c> $<TARGET_OBJECTS:ovl_c> $<TARGET_OBJECTS:port_n64>)
     target_compile_definitions(fuse64 PRIVATE PORT_HOST_MALLOC)
+    target_compile_definitions(port_n64 PRIVATE PORT_HOST_MALLOC)
 else()
     add_executable(fuse64 ${HOST_C} $<TARGET_OBJECTS:game_c> $<TARGET_OBJECTS:ovl_c> $<TARGET_OBJECTS:malloc_c>
         $<TARGET_OBJECTS:port_n64>)

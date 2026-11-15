@@ -20,7 +20,7 @@ As of 2026-11-15:
 | WebAssembly (emscripten), node | yes | the four scenarios are Linux i386's, in us, eu and jp |
 | WebAssembly, a page (`PORT_WASM_TARGET=web`) | yes | plays in a browser (headless Chromium, us, eu and jp: the legal screen, the opening, the attract demos), the ROM from a file picker or `?rom=`, the save in IndexedDB |
 | big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | the four scenarios are Linux i386's, in us, eu and jp |
-| Linux x86-64 | yes | the four scenarios are Linux i386's, in us, eu and jp ("Where pointers are 8 bytes"); under ASan and UBSan too, in us |
+| Linux x86-64 | yes | the four scenarios are Linux i386's, in us, eu and jp ("Where pointers are 8 bytes"); under ASan and UBSan too, with the arena and with the host's malloc, in us, eu and jp |
 | Windows x64 (zig `x86_64-windows-gnu`, under wine) | yes | the four scenarios are Linux i386's, in us, eu and jp |
 | aarch64 (zig, qemu-user) | yes | the four scenarios are Linux i386's, in us, eu and jp |
 | macOS | not tried | ("What's left") |
@@ -508,26 +508,44 @@ HLE (aspmain.c). The AI's buffers go to SDL or `--wav`.
   functions, all covered (func_8023085C's was missing).
 - **Sanitizers**: `-DPORT_SANITIZE=...` (any `-fsanitize=` list), with
   `-DPORT_SANITIZE_RECOVER=ON` (and `ASAN_OPTIONS=halt_on_error=0`) to
-  survey every report instead of stopping at the first. On x86-64,
-  `address,undefined` over test.py's four us scenarios
-  (`ASAN_OPTIONS=detect_leaks=0:detect_stack_use_after_return=0`) gives
-  the references and no AddressSanitizer report since the fixes in "Where
-  pointers are 8 bytes" (four were real overflows there, and an OSThread
-  at an unaligned offset). UBSan's that stay, each read: 412F0.c's
-  func_80227678 indexes through `D_802A538C` while it is still NULL (an
-  address computed, not read: the caller doesn't use it then); 87D80.c's
-  stage map indexes a layer's cells past the decompilation's `[23]` into
-  the next layer (no pointers there, so the same bytes as on the N64); and
-  5E3F0.c's func_80243D90 and func_80243D2C take index -1 (`D_802AC894`,
-  no current entry) of `D_800AEDF0`, clearing bit 0x8000 of the word 0x38
-  bytes before the array and reading another: on the N64 and the 32-bit
-  hosts `D_800AED78[2].unk0` (a pointer), where pointers are 8 bytes
-  another word of `D_800AED78`, as the array's elements are bigger there.
-  Neither changes what the scenarios show; it is the game's own bug, left
-  as it is. `-DPORT_HOST_MALLOC=ON` (the game's blocks the host's, for ASan)
-  runs the legal screen, but the menus crash at retrace 324 in the
-  renderer, a vertex address in none of the blocks (not looked into
-  further: the arena build is the one checked).
+  survey every report instead of stopping at the first.
+  `-DPORT_HOST_MALLOC=ON` makes the game's allocator the host's
+  (host/hostmalloc.c), so that ASan sees each block the game allocates;
+  it records the blocks, as port_addr must know them for game memory (a
+  segment base is a block's address plus 0x80000000: 47A80.c; before
+  that the renderer read a vertex at the sum, and the menus crashed at
+  retrace 324). On x86-64, `address,undefined` with
+  `ASAN_OPTIONS=detect_leaks=0:detect_stack_use_after_return=0`, with
+  and without host malloc, over test.py's four scenarios in us, eu and jp
+  (2026-11-15, 24 runs): each gives the references (framebuffer, sound,
+  EEPROM). With the arena no AddressSanitizer report, since the fixes in
+  "Where pointers are 8 bytes" (four were real overflows there, and an
+  OSThread at an unaligned offset). With host malloc one more, the
+  renderer's, in every scenario of every version (the legal screen's): a
+  TLUT load reads one palette entry, two bytes, past the end of the legal
+  screen's picture (us and eu: asset 0x366, a 38450-byte block from
+  87190.c's func_8026CE28; jp: a 12356-byte block); on the N64 that is
+  whatever gmalloc's block holds past the file, and no texel uses the
+  entry (with 0xA5 bytes past every block, legal and menus give the same
+  digests in all three). UBSan's that stay, each read:
+  412F0.c's func_80227678 indexes through `D_802A538C` while it is still
+  NULL (an address computed, not read: the caller doesn't use it then),
+  in every version; 87D80.c's stage map indexes a layer's cells past the
+  decompilation's `[23]` into the next layer (the layers have no
+  pointers and their region keeps the N64's layout, so the same bytes on
+  every host), us's menus, battle and story, eu's menus, battle and
+  story, all of jp's. 5E3F0.c's index -1 is no longer one: below.
+- **5E3F0.c's entry -1**: `D_802AC894` is -1 when no entry is current,
+  and func_80243DEC (func_80243D90: clear bit 0x8000 of unk68, in us's
+  menus, battle and story) and the scripts' func_80243D2C (read unk14,
+  297 times in us's battle) index `D_800AEDF0` with it all the same, the
+  game's own bug. On the N64 entry -1's unk68 is `D_800AED78[2].unk0` (a
+  pointer, NULL then) and its unk14 the word at `D_800AEBBC + 0x180` (0
+  then); where pointers are 8 bytes the entries and `D_800AED78`'s
+  elements are bigger and the same index reached other words. Under
+  `TARGET_PC` the two functions reach the N64's words for -1 (the
+  pointer's low half for the flag), so every host does what the N64
+  does.
 - `PORT_GFX_TRACE=X,Y` logs every write to that pixel of a color image
   (the color, the othermode, the tile, the texture image and its offset in
   RDRAM, the sample's s and t; with `-v -v` TMEM and the palette), and
@@ -549,9 +567,11 @@ array), `PORT_SPAN2`, `PORT_WORD_BYTE0`, `PORT_BE32_GET`/`SET`,
 macros (530C0), the overlay loader's call (40FB0), the byte-order calls
 where data arrives, declarations a host needs, and data given the type
 the hardware reads it with (ovl_0A_01's and 0A_06's vertices: "Byte
-order"), and buffers the host's size where a callee fills them with
+order"), buffers the host's size where a callee fills them with
 pointers or more than the caller gave room for ("Where pointers are 8
-bytes").
+bytes"), and an index out of bounds whose words depend on the host's
+layout taken to the N64's (5E3F0.c's entry -1: "Checks and debugging
+aids").
 
 ## What's left
 
@@ -560,16 +580,13 @@ bytes").
   overlays, the story's bosses, the options) can still read a pointer
   through an N64 offset or a 32-bit integer, or fill an N64-sized buffer
   with host pointers (the bugs the Windows x64 build and ASan found were
-  of that kind). `ptrcast_scan.py`'s allow-list and m2c_port.py's "no known
+  of that kind), or index out of bounds into words that are other words
+  where pointers are 8 bytes (5E3F0.c's entry -1 was). `ptrcast_scan.py`'s allow-list and m2c_port.py's "no known
   struct" list are the static side of it ("Where pointers are 8 bytes"); a
   run that crashes or differs from i386, on any of the three 64-bit hosts
-  or under ASan, the dynamic one. ASan and UBSan in eu and jp not run;
-  `PORT_HOST_MALLOC` stops in the menus ("Checks and debugging aids").
-- **5E3F0.c's index -1** (func_80243D90, func_80243D2C with no current
-  entry): the word it clears a bit of and the one it reads are other
-  words where pointers are 8 bytes than on the N64 ("Checks and debugging
-  aids"); harmless in the scenarios, but a faithful port would reach the
-  N64's words (not changed: other work is going on in that file).
+  or under ASan (with host malloc too, which sees the heap's blocks:
+  "Checks and debugging aids"), the dynamic one. The sanitizers have
+  run on x86-64 only (not the 32-bit hosts, not Windows).
 - **Packages** (an AppImage, the `.exe` with SDL, a macOS app; Blast
   Corps' "Packages") and a hosted page: after 64-bit, with SDL in the
   Windows cross build.

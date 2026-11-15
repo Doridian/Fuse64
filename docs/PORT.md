@@ -15,12 +15,13 @@ As of 2026-11-14:
 | host | builds | how far it runs |
 |---|---|---|
 | Linux i386 (`-m32`), us | yes | the legal screen, title, file select, the opening, the world select, the first stage played; battle mode against three CPU players. `test.py`'s four scenarios pass |
-| Linux i386, eu | yes | as us (legal, menus and battle scenarios recorded) |
-| Linux i386, jp | yes | the legal screen and menus.txt (recorded); battle.jp.txt stops in the opening logo scene that jp plays by itself (ovl_0A_05, "What's left") |
-| big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | the legal scenario's frames, sound and save are x86's; mips's menus.txt differs from x86 by retrace 900 ("What's left") |
-| WebAssembly (emscripten, node) | yes | legal and battle are x86's; menus.txt is x86's but for the coverage bit of 67 retraces' pixels ("What's left") |
-| 64-bit hosts (x86-64, aarch64, macOS) | no | needs the pointer pass ("32-bit hosts and 64-bit hosts", below) |
-| Windows | not tried | i386 with zig (`x86-windows-gnu`) or mingw should be close: fiber_win32.c is there |
+| Linux i386, eu | yes | as us (legal, menus and battle recorded) |
+| Linux i386, jp | yes | as us (legal, menus and battle recorded; battle with the port's own timing of the script, "Testing") |
+| Windows i386 (zig `x86-windows-gnu`, under wine) | yes | legal, menus and battle are Linux i386's |
+| WebAssembly (emscripten), node | yes | legal, menus and battle are Linux i386's |
+| WebAssembly, a page (`PORT_WASM_TARGET=web`) | yes | plays in a browser (headless Chromium: the legal screen, the opening, the attract demos), the ROM from a file picker or `?rom=`, the save in IndexedDB |
+| big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | mipsel's menus are x86's; mips's and ppc's legal are, and their menus are since the asset fix below ("What's left" if not) |
+| 64-bit hosts (x86-64, aarch64, macOS, Windows x64) | no | needs the pointer pass ("32-bit hosts and 64-bit hosts", "What's left") |
 
 The ROM build is unchanged by all of it: every change to `src/` is under
 `TARGET_PC` or a macro that gives IDO the same text ("Source changes").
@@ -66,6 +67,23 @@ musl has no ucontext, so the threads and tasks there are host threads,
 one running at a time (fiber_pthread.c). aarch64 is 64-bit and doesn't
 build yet.
 
+### Windows
+
+```
+cmake -S port -B build-port-win32 -G Ninja -DCMAKE_TOOLCHAIN_FILE=$PWD/port/tools/cross-win32.cmake
+cmake --build build-port-win32
+port/tools/test.py run build-port-win32 --scenario legal   # under wine
+```
+
+A static i386 `fuse64.exe` by zig cc (`x86-windows-gnu`, MinGW-w64's
+runtime as zig carries it), headless so far (no SDL in the cross build).
+The game's threads and 530C0's tasks are Windows fibers (fiber_win32.c,
+coro.c; a game thread resumes in the fiber it yielded from, as
+swapcontext does), the tasks' setjmp is the compiler's own (MinGW's i386
+longjmp unwinds the SEH chain, which a task switch must not), and
+`port_addr` takes the PE image's bounds (memory.c). test.py runs a `.exe`
+under the build's emulator (wine). 64-bit Windows needs the pointer pass.
+
 ### WebAssembly
 
 ```
@@ -75,8 +93,12 @@ node build-port-wasm/fuse64.js --headless --frames 300 baserom.us.z64
 ```
 
 It runs under node (`-sNODERAWFS`: the ROM and the save are files), the
-threads and tasks on emscripten's fibers (Asyncify). No page yet. What
-differs from the ELF build:
+threads and tasks on emscripten's fibers (Asyncify). The link is `-O2`
+(without it emcc runs no wasm-opt and Asyncify's instrumentation is about
+fifty times slower), with Blast Corps' limit on Binaryen's inlining of
+one-caller functions and the renderer left out of Asyncify
+(`port/web/asyncify_remove.txt`): with them the node build runs about as
+fast as the native one. What differs from the ELF build:
 
 - The program's data starts at 256 MiB (`-sGLOBAL_BASE`), so that no
   pointer of its own looks like an N64 physical or segment address
@@ -96,6 +118,23 @@ differs from the ELF build:
   (`PORT_RET`), and a `void` function whose callers use its value returns
   `port_v0` (67 functions; "Source changes").
 
+### The page
+
+```
+emcmake cmake -S port -B build-port-web -G Ninja -DPORT_WASM_TARGET=web
+cmake --build build-port-web     # fuse64.html, .js, .wasm: serve the three
+```
+
+`port/web/shell.html` (after Blast Corps'): the ROM from a file picker, or
+`?rom=URL` (your own copy on your own server), kept with the save in
+IndexedDB (IDBFS at `/save`); `?args=` adds options (`-v`). SDL2's canvas,
+keyboard and game controllers, and WebAudio. The loop gives the page its
+turn after a retrace when it hasn't had one for 12 ms (the next animation
+frame, or a timer on a hidden page: main.c's `wait_display`), so a game
+that is behind doesn't hold the tab. Checked in headless Chromium
+(scratch: a Playwright script) through the legal screen, the opening and
+the attract demos at full speed.
+
 ## Testing
 
 `port/tools/test.py run BUILD` runs the build headless and deterministic
@@ -114,7 +153,11 @@ sound (`--wav`) and the EEPROM file.
 `--save` records them. `test.py same A B` compares two builds' runs with
 each other (a cross build under qemu, a sanitized build, the WebAssembly
 build against x86). Recorded: us legal, menus, battle and story; eu
-legal, menus and battle; jp legal and menus. The headless clock is virtual (it
+and jp legal, menus and battle. jp's battle input is the port's own
+timing of battle.jp.txt (`port/tools/inputs/battle.jp.txt`, which test.py
+prefers to the shift check's): the port loads without the N64's waits, so
+jp's opening logo scene, which it plays by itself after the title, starts
+150 retraces earlier than on the N64. The headless clock is virtual (it
 moves from one event to the next when every thread waits), so a run is
 the same on every host.
 
@@ -162,7 +205,12 @@ framebuffers) stays big-endian, and the renderer reads it so. A few
 values the game keeps in the N64's order on purpose are read and written
 as such (the EEPROM header and default slot in AD5B0, a palette fade in
 ACA00: `PORT_BE32_GET` and the like). On a big-endian host all of it is
-the identity, which the qemu builds check.
+the identity, which the qemu builds check: a difference between mips and
+x86 that mipsel doesn't share is a byte-order bug on one side. The last
+one was native.c taking the word after an asset container's last record
+for a record type: in a container whose type 4 record's texels follow the
+table there, it swapped the first four texels on little-endian hosts (a
+texture in the opening's fade).
 
 ### Threads, tasks and timing
 
@@ -214,6 +262,42 @@ compressed-sequence player's channel calls, the synthesizer's) and the
 sound player (sndplayer.c). The RSP's audio microcode is Blast Corps'
 HLE (aspmain.c). The AI's buffers go to SDL or `--wav`.
 
+### Checks and debugging aids
+
+- **The width check** (`-DPORT_WIDTHCHECK=ON`, host/widthcheck.c,
+  `port/tools/widthcheck.py`): every load of the game's C is checked
+  against the store that wrote the memory, and a load of another width
+  than the store (a u32 read as its s16 half, a u16 table read as bytes)
+  is reported with both places. On a big-endian N64 such a read gets the
+  high half, on a little-endian host the low one: each report is a place
+  where the port's data must be in the N64's order or the read must
+  change (`PORT_WORD_HALF1`, `PORT_U16_BYTES`...). `widthcheck.py data`
+  seeds it with the initialized variables' types from the build's DWARF,
+  so a table defined as u16s and read as bytes is reported too;
+  `widthcheck.py report` symbolizes the runs' reports.
+- **Names inside another name's object** (`port/tools/gen_inner.py`): the
+  fixed-address names (aliases into `port_rdram`) and the asm data's
+  labels are separate symbols to a host compiler, which takes two
+  symbols for two objects and may keep one's value in a register across a
+  store through the other. On the N64 they are one memory (`D_800AEE14` is
+  `D_800AEDF0[0].unk24`). So in the game's C each is `(*port_p_NAME)`, a
+  pointer the compiler can't see through (but the two whose address a
+  static initializer takes).
+- **`port/tools/v0check.py VERSION BUILD`** lists every function defined
+  `void` whose value a caller uses (directly or through a ZeroJump stub),
+  follows `$v0` through the function's code in the ROM build
+  (build/<v>/bm64.<v>.elf) to its returns, and checks that each call whose
+  value reaches a return is in a `PORT_V0(...)` ("ZeroJump"). us: 7 such
+  functions, all covered (func_8023085C's was missing).
+- **Sanitizers**: `-DPORT_SANITIZE=...` (any `-fsanitize=` list), with
+  `-DPORT_SANITIZE_RECOVER=ON` to survey every report instead of stopping
+  at the first.
+- `PORT_GFX_TRACE=X,Y` logs every write to that pixel of a color image
+  (the color, the othermode, the tile, the texture image and its offset in
+  RDRAM, the sample's s and t; with `-v -v` TMEM and the palette), and
+  `PORT_DUMP_RDRAM=N:FILE` writes the RDRAM buffer at retrace N: together
+  they found the big-endian hosts' difference ("Byte order").
+
 ## Source changes
 
 All of them keep IDO's output the same in every version. Where a file has
@@ -229,34 +313,27 @@ where data arrives, and declarations a host needs.
 
 ## What's left
 
-- **jp's battle.jp.txt**: jp plays the opening logo scene (ovl_0A_05) by
-  itself after the title, and in the port its func_ovl0A_05_80047608
-  finds no object with flag 2 (func_8022F77C, ZeroJump 0x1832) and
-  crashes in func_8022F808; only the player's object is in the list then.
-  The port reaches the scene at retrace ~210, the N64 at 360: the port
-  loads faster, so a wait on the N64 that a load covers may be what the
-  scene depends on. Not found yet.
-- **Names inside another name's object** (`D_800AEE14` is
-  `D_800AEDF0[0].unk24`; the C names 18 inside the players' array
-  alone): a host compiler may reorder their accesses. 54E40's
-  func_8023D0F8 had it (`PORT_ORDER()`, which WebAssembly needed); the
-  others are unchecked. Their own fields in the C would end it.
-- **WebAssembly's coverage bits**: in menus.txt, retraces 739-805 differ
-  from x86 in the framebuffer's coverage bit (what the screenshots don't
-  show). Somewhere the renderer's coverage depends on the host.
-- **`port_v0`**: a `void` function whose callers use a value returns what
-  the last `PORT_V0` saved; each such function's last call needs one
-  (five were missing, which a run under gdb showed). The ZeroJump
-  stubs' list is host_check's; the direct callers' isn't complete.
-- **64-bit**: Blast Corps' pointer pass over the 617 casts and 2273
-  `M2C_FIELD`s ("32-bit hosts and 64-bit hosts"). macOS and aarch64 need
-  it.
-- **Windows** (zig `x86-windows-gnu` or mingw, i386) and a WebAssembly
-  page (canvas, WebAudio, the save in IndexedDB), as Blast Corps' port.
-- **Big-endian past the title**: build-port-mips's menus.txt differs from x86's
-  between retraces 600 and 900 (some data still in the wrong order, or a
-  host difference; not looked at). Then battle, and eu and jp under qemu.
-- The renderer: what the first stage and the menus show is checked by eye
+- **64-bit** (x86-64 Linux, aarch64, macOS, Windows x64; then ASan and
+  UBSan there, which work on i386 now): Blast Corps' pointer pass ("Where
+  pointers are 8 bytes" in its PORT.md) over the 617 casts between
+  pointers and integers and the 2273 `M2C_FIELD`s at N64 offsets ("32-bit
+  hosts and 64-bit hosts", below). Its order here: the regions first
+  (each fixed-address name its own object sized by its host type, the
+  names inside another's an offset into it by `offsetof`, gen_regions.py
+  and gen_inner.py), then the game's structures that hold pointers (305
+  differ under `-m64`: `host_check.py layout`) with their `M2C_FIELD`s
+  turned into fields, file by file, each version's ROM checked, then
+  asm2c's pointer words, the ZeroJump stubs' pointer/integer
+  conversions, and the libultra and libaudio structures the host layer
+  shares (Blast Corps' are already 64-bit clean). `test.py same` against
+  the i386 build is the check at each step. Not started: it changes many
+  of src/'s files, while the fake-reduction passes are editing them.
+- **Packages** (an AppImage, the `.exe` with SDL, a macOS app; Blast
+  Corps' "Packages") and a hosted page: after 64-bit, with SDL in the
+  Windows cross build.
+- **Big-endian past the menus**: battle and story under qemu (slow: a
+  6000-retrace run takes most of an hour), and eu and jp there.
+- **Renderer**: what the first stage and the menus show is checked by eye
   against an emulator, not pixel for pixel.
 - Phase 7 and 8 (docs/ROADMAP.md, docs/NETPLAY.md): the input and the RNG
   seed through the network.

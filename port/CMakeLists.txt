@@ -20,6 +20,7 @@ endif()
 string(TOUPPER "VERSION_${PORT_VERSION}" PORT_VERSION_DEFINE)
 option(PORT_SDL "a window and sound (SDL2); off: headless only" ON)
 set(PORT_SANITIZE "" CACHE STRING "the -fsanitize= list, for the game and the host")
+option(PORT_SANITIZE_RECOVER "a sanitizer's report doesn't stop the run" OFF)
 
 get_filename_component(ROOT "${CMAKE_CURRENT_SOURCE_DIR}/.." ABSOLUTE)
 set(GEN ${CMAKE_CURRENT_BINARY_DIR}/gen)
@@ -76,7 +77,13 @@ set(SAN_FLAGS)
 if(PORT_SANITIZE)
     # (not -fsanitize=function: a call through another declaration of the
     # function is the game's everyday, docs/PORT.md "Source changes")
-    set(SAN_FLAGS -fsanitize=${PORT_SANITIZE} -fno-sanitize=function -fno-omit-frame-pointer -fno-sanitize-recover=all)
+    set(SAN_FLAGS -fsanitize=${PORT_SANITIZE} -fno-sanitize=function -fno-omit-frame-pointer)
+    if(PORT_SANITIZE_RECOVER)
+        # (every report, and the run goes on: a survey)
+        list(APPEND SAN_FLAGS -fsanitize-recover=all)
+    else()
+        list(APPEND SAN_FLAGS -fno-sanitize-recover=all)
+    endif()
     add_link_options(${SAN_FLAGS})
 endif()
 
@@ -244,8 +251,17 @@ elseif(EMSCRIPTEN)
     # program's data starts at 256 MiB, so that no pointer of the game's
     # looks like an N64 physical or segmented address (port/src/memory.c).
     target_compile_definitions(fuse64 PRIVATE PORT_HAVE_ASYNCIFY)
-    target_link_options(fuse64 PRIVATE -sASYNCIFY -sASYNCIFY_STACK_SIZE=65536 -sGLOBAL_BASE=268435456
-        -sINITIAL_MEMORY=384MB -sALLOW_MEMORY_GROWTH=1 -sSTACK_SIZE=1MB --profiling-funcs)
+    # -O2 at the link too: without it emcc runs no wasm-opt, and Asyncify's
+    # instrumentation stays as slow as it was made.  Binaryen would inline
+    # every function that has one caller whatever its size, and a fiber
+    # switch rewinds every frame on the stack by walking its body to the
+    # call (Blast Corps' port/CMakeLists.txt).  The renderer never switches
+    # fibers, so Asyncify leaves it alone (web/asyncify_remove.txt).
+    target_link_options(fuse64 PRIVATE -O2 -sASYNCIFY -sASYNCIFY_STACK_SIZE=65536 -sGLOBAL_BASE=268435456
+        -sINITIAL_MEMORY=384MB -sALLOW_MEMORY_GROWTH=1 -sSTACK_SIZE=1MB --profiling-funcs
+        -sBINARYEN_EXTRA_PASSES=--one-caller-inline-max-function-size=200
+        -sASYNCIFY_REMOVE=@${CMAKE_CURRENT_SOURCE_DIR}/web/asyncify_remove.txt)
+    set_property(TARGET fuse64 APPEND PROPERTY LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/web/asyncify_remove.txt)
     if(PORT_WASM_TARGET STREQUAL "node")
         target_link_options(fuse64 PRIVATE -sNODERAWFS=1 -sEXIT_RUNTIME=1 -sENVIRONMENT=node)
         set_target_properties(fuse64 PROPERTIES SUFFIX ".js")
@@ -255,7 +271,7 @@ elseif(EMSCRIPTEN)
         # keyboard, game controllers and WebAudio
         target_compile_definitions(fuse64 PRIVATE PORT_WASM_WEB PORT_HAVE_SDL)
         target_compile_options(fuse64 PRIVATE -sUSE_SDL=2)
-        target_link_options(fuse64 PRIVATE -O2 -sUSE_SDL=2 -sENVIRONMENT=web -lidbfs.js -sFORCE_FILESYSTEM
+        target_link_options(fuse64 PRIVATE -sUSE_SDL=2 -sENVIRONMENT=web -lidbfs.js -sFORCE_FILESYSTEM
             -sINVOKE_RUN=0 -sEXIT_RUNTIME=0 -sEXPORTED_RUNTIME_METHODS=callMain,FS,IDBFS
             --shell-file ${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html)
         set_target_properties(fuse64 PROPERTIES SUFFIX ".html")

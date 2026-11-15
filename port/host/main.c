@@ -184,6 +184,44 @@ static void usage(const char *argv0) {
 
 static int print_hash;
 
+#if defined(__EMSCRIPTEN__) && defined(PORT_WASM_WEB)
+/* the next animation frame, or a timer if none comes (a hidden page has
+   none): the browser draws the canvas and takes input in between (Blast
+   Corps' main.c, wait_display) */
+EM_ASYNC_JS(void, wait_display, (void), {
+    return new Promise(function (resolve) {
+        var done = false;
+        function fin() { if (!done) { done = true; resolve(); } }
+        requestAnimationFrame(fin);
+        setTimeout(fin, 50);
+    });
+});
+static double last_yield;
+#endif
+
+/* PORT_DUMP_RDRAM=N:FILE writes the RDRAM buffer (the work area, the
+   regions) at retrace N, to compare two hosts' runs (a debugging aid) */
+extern uint8_t port_rdram[];
+static void dump_rdram(void) {
+    static int at = -2;
+    static const char *path;
+    if (at == -2) {
+        const char *e = getenv("PORT_DUMP_RDRAM");
+        at = -1;
+        if (e && strchr(e, ':')) {
+            at = atoi(e);
+            path = strchr(e, ':') + 1;
+        }
+    }
+    if (at >= 0 && (int)host_vi_count == at) {
+        FILE *f = fopen(path, "wb");
+        if (f) {
+            fwrite(port_rdram, 1, 8 << 20, f);
+            fclose(f);
+        }
+    }
+}
+
 int main(int argc, char **argv) {
     const char *rom_path = NULL;
     for (int i = 1; i < argc; i++) {
@@ -228,6 +266,7 @@ int main(int argc, char **argv) {
 
     const uint64_t vi_period = 1000000000ull / PORT_RETRACE_HZ;
     uint64_t next_vi = host_now_ns() + vi_period;
+
     for (;;) {
         deliver_pending();
         uint64_t now = host_now_ns();
@@ -236,6 +275,7 @@ int main(int argc, char **argv) {
             if (!deterministic && now > next_vi + 4 * vi_period)
                 next_vi = now + vi_period;      /* fell behind: don't catch up */
             host_vi_count++;
+            dump_rdram();
             host_input_frame();
             host_video_frame();
             if (print_hash)
@@ -243,6 +283,15 @@ int main(int argc, char **argv) {
             if (host_quit_requested() || (host_max_frames && (int)host_vi_count >= host_max_frames))
                 break;
             port_irq_vi();
+#if defined(__EMSCRIPTEN__) && defined(PORT_WASM_WEB)
+            /* the page: the browser's turn (input, sound, the picture shown)
+               after a retrace when it hasn't had one for 12 ms, even when
+               the game is behind and never sleeps, or the tab hangs */
+            if (emscripten_get_now() - last_yield >= 12.0) {
+                wait_display();
+                last_yield = emscripten_get_now();
+            }
+#endif
             continue;
         }
         uint64_t deadline = port_irq_timers(host_ticks());
@@ -263,6 +312,9 @@ int main(int argc, char **argv) {
         if (wake > now + 50000) {
 #ifdef __EMSCRIPTEN__
             emscripten_sleep((unsigned)((wake - now) / 1000000));
+#ifdef PORT_WASM_WEB
+            last_yield = emscripten_get_now();
+#endif
 #else
             struct timespec ts = { (time_t)((wake - now) / 1000000000ull), (long)((wake - now) % 1000000000ull) };
             nanosleep(&ts, NULL);

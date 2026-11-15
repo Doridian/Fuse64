@@ -1552,7 +1552,7 @@ PORT_RET(void, s32) func_802308B8(f32 *arg0, s32 arg1) {
 PORT_ONLY(return (s32)port_v0;) }
 
 void func_8023085C(f32 *arg0, s32 arg1) {
-    func_802304C0(arg1, arg0, 1);
+    PORT_V0(func_802304C0(arg1, arg0, 1));
 }
 
 void func_80230800(f32 *arg0, s32 arg1) {

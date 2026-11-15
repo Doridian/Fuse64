@@ -191,9 +191,9 @@ static void container(uint8_t *d, uint32_t size) {
         /* a picture's a is its width and height, halves (TexEntry) */
         claim(r, r + 4, is_pic(type) ? U_HALVES : U_WORD);
         claim(r + 4, r + 8, U_WORD);
+        /* the next record's type (after the last record the file's data
+           begins: a type 4 record's texels, which stay bytes) */
         if (r + 12 <= size && i + 1 < n)
-            claim(r + 8, r + 12, U_WORD);
-        else if (r + 12 <= size)
             claim(r + 8, r + 12, U_WORD);
         if (off >= size)
             continue;

@@ -181,6 +181,24 @@ static void update_mvp(void) {
 #define G_TEXTURE_GEN_LINEAR 0x00080000
 #define G_SHADING_SMOOTH 0x00000200
 
+/* acos for linear texgen, the same on every host: libm's acosf differs in
+   its last bits between glibc, musl and emscripten (Abramowitz and Stegun
+   4.4.46, |error| < 2e-8 in exact arithmetic; only + * and sqrtf, which
+   IEEE rounds the same everywhere). */
+static float port_acosf(float x) {
+    float a = x < 0 ? -x : x;
+    float p = -0.0012624911f;
+    p = p * a + 0.0066700901f;
+    p = p * a - 0.0170881256f;
+    p = p * a + 0.0308918810f;
+    p = p * a - 0.0501743046f;
+    p = p * a + 0.0889789874f;
+    p = p * a - 0.2145988016f;
+    p = p * a + 1.5707963050f;
+    p *= sqrtf(1 - a);
+    return x < 0 ? 3.14159265f - p : p;
+}
+
 static void normalize(float *v) {
     float l = sqrtf(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
     if (l > 0) {
@@ -257,8 +275,8 @@ static void do_vtx(uint32_t w0, uintptr_t w1) {
                 float dx = nrm[0] * la[0][0] + nrm[1] * la[0][1] + nrm[2] * la[0][2];
                 float dy = nrm[0] * la[1][0] + nrm[1] * la[1][1] + nrm[2] * la[1][2];
                 if (gs.geom & G_TEXTURE_GEN_LINEAR) {
-                    dx = acosf(dx < -1 ? -1 : dx > 1 ? 1 : dx) / 3.14159265f * 2 - 1;
-                    dy = acosf(dy < -1 ? -1 : dy > 1 ? 1 : dy) / 3.14159265f * 2 - 1;
+                    dx = port_acosf(dx < -1 ? -1 : dx > 1 ? 1 : dx) / 3.14159265f * 2 - 1;
+                    dy = port_acosf(dy < -1 ? -1 : dy > 1 ? 1 : dy) / 3.14159265f * 2 - 1;
                 }
                 s = (dx + 1) * 16384.0f;
                 t = (dy + 1) * 16384.0f;
@@ -457,8 +475,11 @@ static void texel(const Tile *t, int s, int tt, float *o) {
     }
 }
 
+static float trace_s, trace_t;      /* (the last sample's, for PORT_GFX_TRACE) */
 static void sample(int tile, float s, float t, float *o) {
     const Tile *tl = &gs.tile[tile & 7];
+    trace_s = s;
+    trace_t = t;
     if (tl->shifts) {
         if (tl->shifts < 11)
             s /= (float)(1 << tl->shifts);
@@ -639,7 +660,38 @@ static void read_mem(uint8_t *p, float *c) {
     }
 }
 
+/* PORT_GFX_TRACE=X,Y logs every write to that pixel of a color image (a
+   debugging aid: what drew a pixel two hosts disagree on) */
+static int trace_x = -2, trace_y;
+static void trace_px(const uint8_t *p, const float *c) {
+    if (trace_x == -2) {
+        const char *e = getenv("PORT_GFX_TRACE");
+        trace_x = -1;
+        if (e)
+            sscanf(e, "%d,%d", &trace_x, &trace_y);
+    }
+    if (trace_x < 0)
+        return;
+    size_t px = (size_t)(p - gs.cimg) / (gs.cimg_siz == 3 ? 4 : gs.cimg_siz == 2 ? 2 : 1);
+    if ((int)(px % gs.cimg_w) != trace_x || (int)(px / gs.cimg_w) != trace_y)
+        return;
+    const Tile *t = &gs.tile[gs.tex_tile];
+    host_log("trace %u: cimg %p old %02x%02x new %.3f %.3f %.3f %.3f; om %08x %08x; tile %d fmt %d siz %d tmem %d "
+             "line %d pal %d; timg %p (rdram %+ld); st %.4f %.4f\n", host_vi_count, (void *)gs.cimg, p[0], p[1], c[0],
+             c[1], c[2], c[3], gs.om_h, gs.om_l, gs.tex_tile, t->fmt, t->siz, t->tmem, t->line, t->pal,
+             (void *)gs.timg, (long)(gs.timg - port_rdram), trace_s, trace_t);
+    if (host_verbose > 1) {
+        for (int i = 0; i < 64; i++)
+            host_log("%02x%s", tmem[(t->tmem * 8 + i) & 0xFFF], i % 32 == 31 ? "\n" : "");
+        host_log("tlut:");
+        for (int i = 0; i < 16; i++)
+            host_log(" %02x%02x", tmem[0x800 + i * 8], tmem[0x801 + i * 8]);
+        host_log("\n");
+    }
+}
+
 static void write_mem(uint8_t *p, const float *c) {
+    trace_px(p, c);
     if (gs.cimg_siz == 3) {
         for (int k = 0; k < 4; k++)
             p[k] = (uint8_t)(c[k] + 0.5f);

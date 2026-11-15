@@ -64,12 +64,13 @@
  *
  * Pass 9 (scratch/newovl2/r8/): uopt's live ranges and interference
  * are per basic block, and an empty `do {} while (0);` starts a new uopt
- * block without emitting code (fake). 80048ABC has one after the first
+ * block without emitting code (fake). 80048ABC has one after the second
  * link (the 2 stored to unk0 no longer shares a block with the
- * D_8004D5F4 load, so both take v0); 80043010 has one after `arg0++`
- * (arg1 stays in a1, not forbidden by the call's a1, with the dead `addiu
- * a1,a1,40`), and its first two links store unk10, unkC, unk8, unk4 as
- * the third does. 800437B8's frame store is code from another file
+ * D_8004D5F4 load, so both take v0); 80043010 needs a block end after
+ * `arg0++` (arg1 stays in a1, not forbidden by the call's a1, with the
+ * dead `addiu a1,a1,40`), now a compiled-out `*arg0 == NULL` check (pass
+ * 15), and its first two links store unk10, unkC, unk8, unk4 as the
+ * third does. 800437B8's frame store is code from another file
  * (statics.h part 2, a fake in place), as is 80043250 (part 1, included
  * where it is defined): as1 ends a scheduling block where the source
  * switches back to a file it has seen (a first switch to a new name does
@@ -82,12 +83,14 @@
  * Pass 10 (scratch/wrongfix/): fcmp's relocation check found
  * 8004515C's chain storing D_8004D548 and D_8004D550 the wrong way round:
  * the innermost global is stored first, so the chain is `D554 = D548 =
- * D54C = D550 = 0`. 8004654C and 800467C0 match (fake): the original
+ * D54C = D550 = 0`. 8004654C and 800467C0 match: the original
  * stores D_8004D6A0.y with its own lui (%lo(D_8004D6A4)) because uopt's
  * copy propagation folds an ISTR to a constant address into a direct
  * store (istrfold, uoptcopy.c) when it replaces something in the stored
- * value. So the increment is a local, `k = -2.0f; ... D.y = D.y + k`,
- * set before each loop; 800467C0's second step is `d = 45/-45; d /= 30`
+ * value. So the increment is a local, `dy = -20.0f / 10.0f; ... D.y +=
+ * dy`, set before each loop (pass 15: the steps are distance over
+ * frames, 20 down in 10 and back up in 30, which is what 0.6666667f
+ * and 0.33333334f were); 800467C0's second step is `d = 45/-45; d /= 30`
  * like the first, since `d = e / 30` was propagated into the x store and
  * folded that one instead. 800488B0 matches with the inlined 80044FDC's
  * result in `r` and a dead `if (r == m) {}` (m not yet set) at the top
@@ -104,8 +107,9 @@
  *
  * 80049814 (pass 12, scratch/newovl2/r10/) (fake): each arm writes
  *   `a = (uintptr_t) ADDR; D_8004D4DC = (Vec3f *) a;` with `a` a new
- *   uintptr_t local (u32 under IDO, pointer-sized in the port) and the
- *   dead read `if (a) {}` after the join. In uopt, a read of a variable
+ *   uintptr_t local (u32 under IDO, pointer-sized in the port) and a
+ *   read of it after the join (a compiled-out `a == 0` check since pass
+ *   15; a pointer-typed `a` fails with it too). In uopt, a read of a variable
  *   assigned earlier in the same block is replaced by the assigned value,
  *   and copy propagation replaces one assigned in another block, so with
  *   a pointer variable both stores used the LDA itself: two uses in the
@@ -114,7 +118,11 @@
  *   reads `a` (v0, set after the swc1 as the original does) and the
  *   address is used only once. s32 and u32 work, void * / f32 * don't.
  *
- * Several functions need an unused `pad` local for the original's frame.
+ * Frame words the original has beyond the named locals are held values
+ * (pass 15, scratch/fakes-ovl/p15-1401/): constants used once or a few
+ * times kept in a local (`c = 31.0f`, `h = 210.0f`, `lift = 150.0f`,
+ * `steps = 14.0f`, `step = 0.5f`). Which constant is a guess: any held
+ * value fills the word.
  *
  * -O3 drops unreferenced .bss, so the unused static (its body dropped)
  * 8004BB04 stores to every filler and to the unused 8004D614 and
@@ -716,7 +724,7 @@ void func_ovl14_01_8004AF68(void) {
 }
 
 void func_ovl14_01_8004A914(void) {
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 c; /* a guess: any held value fills this frame word (-1, 0.0f, 800.0f work too) */
     Vec3f angle;
     s32 i;
 
@@ -758,9 +766,10 @@ void func_ovl14_01_8004A914(void) {
     D_ovl14_01_8004D690.x = D_ovl14_01_8004D6F0[D_ovl14_01_8004D6C8].x;
     D_ovl14_01_8004D690.y = D_ovl14_01_8004D6F0[D_ovl14_01_8004D6C8].y;
     D_ovl14_01_8004D690.z = D_ovl14_01_8004D6F0[D_ovl14_01_8004D6C8].z;
-    D_ovl14_01_8004D62C = 31.0f;
-    D_ovl14_01_8004D630 = 31.0f;
-    D_ovl14_01_8004D634 = 31.0f;
+    c = 31.0f;
+    D_ovl14_01_8004D62C = c;
+    D_ovl14_01_8004D630 = c;
+    D_ovl14_01_8004D634 = c;
     D_ovl14_01_8004D684 = 0.0f;
     D_ovl14_01_8004D638 = 0;
     D_ovl14_01_8004D63C = 0;
@@ -901,7 +910,7 @@ void func_ovl14_01_8004A11C(void) {
     s32 t3;
     s32 t2;
     s32 t1;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 h; /* a guess: any held value fills this frame word (120, 15 work too) */
     s32 cnt;
     s32 flag;
     s32 n;
@@ -912,6 +921,7 @@ void func_ovl14_01_8004A11C(void) {
     t2 = 0;
     t1 = 0;
     cnt = 0;
+    h = 210.0f;
     for (;;) {
         if (flag == 0 && D_ovl14_01_8004D548 == 0) {
             flag = 1;
@@ -940,7 +950,7 @@ void func_ovl14_01_8004A11C(void) {
             if (D_ovl14_01_8004D548 < 14 && D_ovl14_01_8004D554 != 0 && func_ovl14_01_8004CC70(0x419) != 0) {
                 if (cnt == 0) {
                     v.x = D_ovl14_01_8004D5F0->unk40->unk10;
-                    v.y = D_ovl14_01_8004D5F0->unk40->unk14 + 210.0f;
+                    v.y = D_ovl14_01_8004D5F0->unk40->unk14 + h;
                     v.z = D_ovl14_01_8004D5F0->unk40->unk18;
                     func_ovl14_01_8004CE40(14, (f32 *) &v, 0);
                     cnt = D_ovl14_01_8004D548 * 15;
@@ -1186,7 +1196,7 @@ void func_ovl14_01_80049814(s32 id, UnkStructA **parts, Link_ovl14_01 *links) {
     Link_ovl14_01 * volatile l;
     UnkStructA *o;
     Vec3f *v;
-    uintptr_t a;
+    uintptr_t a; /* fake: the path as an integer, so uopt reads it at the store (see the top) */
     f32 s;
     s32 i;
 
@@ -1201,7 +1211,7 @@ void func_ovl14_01_80049814(s32 id, UnkStructA **parts, Link_ovl14_01 *links) {
         a = (uintptr_t) D_ovl14_01_8004D1CC;
         D_ovl14_01_8004D4DC = (Vec3f *) a;
     }
-    if (a) {} /* fake: a dead test, for the register allocation or schedule */
+    if (a == 0) { DEBUG_PRINT(("no path\n")); } /* a compiled-out debug check */
     PORT_FIELD(*parts, Link_ovl14_01 **, 0x3C, UnkStructA, unk3C) = links;
     parts++;
     *parts = func_ovl14_01_8004C8F0(-1, 0x500000, parts[-1]);
@@ -1253,7 +1263,8 @@ void func_ovl14_01_80049618(void) {
     Vec3f to;
     Vec3f ang;
     s32 done;
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 lift; /* lift, steps: a guess, any two held values fill these frame words */
+    f32 steps;
 
     if (func_ovl14_01_8004CA10() == (void *) 0x1C8) {
         obj = D_ovl14_01_8004D600[4];
@@ -1262,14 +1273,16 @@ void func_ovl14_01_80049618(void) {
         obj = D_ovl14_01_8004D618[4];
         l = D_ovl14_01_8004D5A0;
     }
+    lift = 150.0f;
+    steps = 14.0f;
     from.x = D_ovl14_01_8004D6E0.x;
     from.y = D_ovl14_01_8004D6E0.y;
     from.z = D_ovl14_01_8004D6E0.z;
     to.x = D_ovl14_01_8004D4A0.x;
-    to.y = D_ovl14_01_8004D4A0.y + 150.0f;
+    to.y = D_ovl14_01_8004D4A0.y + lift;
     to.z = D_ovl14_01_8004D4A0.z;
     func_ovl14_01_8004C828(&from, &to, &ang);
-    d = (ang.z - 790.0f) / 14.0f / 3.0f;
+    d = (ang.z - 790.0f) / steps / 3.0f;
     done = 0;
     for (i = 0; i < 14 && func_ovl14_01_80044FDC() == 0; i++) {
         l[0].unk4 += d;
@@ -1437,7 +1450,7 @@ void func_ovl14_01_80048CE8(Vec3f *arg0, s32 arg1) {
 }
 
 void func_ovl14_01_80048ABC(UnkStructA **arg0, Link_ovl14_01 *arg1) {
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 lift; /* a guess: any held value fills this frame word (1.0f, 0.0f work too) */
     Vec3f out;
     Vec3f from;
     Vec3f to;
@@ -1454,18 +1467,19 @@ void func_ovl14_01_80048ABC(UnkStructA **arg0, Link_ovl14_01 *arg1) {
     arg1->unk10 = 0.0f;
     arg1->unk8 = 0.0f;
     arg1->unk4 = 60.0f;
-    do {} while (0); /* fake: a uopt block boundary (no code) */
+    do {} while (0); /* fake: a uopt block boundary (no code); any test here works, none natural found (link store orders, chains, indexing, each link in its own do-while) */
     arg1++;
     arg1->unk0 = 0x10002;
     arg1->unkC = 1.0f;
     arg1->unk10 = 0.0f;
     arg1->unk8 = 0.0f;
     arg1->unk4 = 420.0f;
+    lift = 150.0f;
     from.x = D_ovl14_01_8004D5F4->unk40->unk10;
     from.y = D_ovl14_01_8004D5F4->unk40->unk14;
     from.z = D_ovl14_01_8004D5F4->unk40->unk18;
     to.x = D_ovl14_01_8004D4A0.x;
-    to.y = D_ovl14_01_8004D4A0.y + 150.0f;
+    to.y = D_ovl14_01_8004D4A0.y + lift;
     to.z = D_ovl14_01_8004D4A0.z;
     func_ovl14_01_8004C828(&from, &to, &out);
     arg0++;
@@ -1527,7 +1541,7 @@ void func_ovl14_01_800488B0(void) {
     func_ovl14_01_80048454();
     func_ovl14_01_800487A8();
     if ((r = func_ovl14_01_80044FDC()) == 0) {
-        if (r == m) {} /* fake: keeps m off v0 */
+        if (r == m) {} /* fake: keeps m off v0 (only a read of the unset m works; m = 0 earlier, m = r, the result in m, decl orders and types, checks of n or m do not) */
         func_ovl14_01_8004CA08(60);
         m = 0;
         if (D_ovl14_01_8004D554 != 0) {
@@ -1586,7 +1600,7 @@ void func_ovl14_01_80048454(void) {
     f32 w;
     Vec3f ang;
     Vec3f out;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 step; /* a guess: any held value fills this frame word (90.0f, 360.0f work too) */
 
     func_ovl14_01_80044B38(&D_ovl14_01_8004D4A0, 10);
     func_ovl14_01_80046648(D_ovl14_01_8004D600, D_ovl14_01_8004D560);
@@ -1620,8 +1634,9 @@ void func_ovl14_01_80048454(void) {
         ang.y = w;
     }
     D_ovl14_01_8004D4E4 = func_ovl14_01_800431C4(0xF5, D_ovl14_01_8004D5DC);
+    step = 0.5f;
     r = 0;
-    for (t = 0.0f; t < 360.0f && r == 0 && func_ovl14_01_80044FDC() == 0; t += 0.5f) {
+    for (t = 0.0f; t < 360.0f && r == 0 && func_ovl14_01_80044FDC() == 0; t += step) {
         if (D_ovl14_01_8004D6A0.x + s >= 360.0f) {
             D_ovl14_01_8004D6A0.x = D_ovl14_01_8004D6A0.x + s - 360.0f;
         } else {
@@ -2205,7 +2220,7 @@ void func_ovl14_01_800467C0(UnkStructA **arg0, Link_ovl14_01 *arg1) {
     Vec3f save;
     f32 d;
     s32 i;
-    f32 k;
+    f32 dy;
 
     save.y = D_ovl14_01_8004D6A0.y;
     save.x = D_ovl14_01_8004D6A0.x;
@@ -2221,10 +2236,10 @@ void func_ovl14_01_800467C0(UnkStructA **arg0, Link_ovl14_01 *arg1) {
     } else {
         func_ovl14_01_800431C4(0xFE, D_ovl14_01_8004D618[4]);
     }
-    k = -1.0f; /* fake: a propagated local makes uopt fold the store (own lui) */
+    dy = -10.0f / 10.0f; /* down 10 over these 10 frames, back up over the 30 below */
     for (i = 0; i < 10; i++) {
         D_ovl14_01_8004D6A0.x += d;
-        D_ovl14_01_8004D6A0.y = D_ovl14_01_8004D6A0.y + k;
+        D_ovl14_01_8004D6A0.y += dy;
         func_ovl14_01_8004CA30();
     }
     func_ovl14_01_80043688(arg0, arg1);
@@ -2235,10 +2250,10 @@ void func_ovl14_01_800467C0(UnkStructA **arg0, Link_ovl14_01 *arg1) {
         d = -45.0f;
     }
     d /= 30.0f;
-    k = 0.33333334f;
+    dy = 10.0f / 30.0f;
     for (i = 0; i != 30; i++) {
         D_ovl14_01_8004D6A0.x += d;
-        D_ovl14_01_8004D6A0.y = D_ovl14_01_8004D6A0.y + k;
+        D_ovl14_01_8004D6A0.y += dy;
         func_ovl14_01_8004CA30();
     }
     D_ovl14_01_8004D6A0.y = save.y;
@@ -2287,7 +2302,7 @@ void func_ovl14_01_80046648(UnkStructA **arg0, Link_ovl14_01 *arg1) {
 
 void func_ovl14_01_8004654C(void) {
     Vec3f save;
-    f32 k;
+    f32 dy;
     s32 var_s0;
     s32 var_s0_2;
 
@@ -2295,18 +2310,18 @@ void func_ovl14_01_8004654C(void) {
     func_ovl14_01_8004C8A0(D_ovl14_01_8004D5F0, 0x01000000);
     func_ovl14_01_8004C9E8(func_ovl14_01_80047A10, NULL, 0, 0, 0x150);
     var_s0 = 0;
-    k = -2.0f; /* fake: a propagated local makes uopt fold the store (own lui) */
+    dy = -20.0f / 10.0f; /* down 20 over these 10 frames, back up over the 30 below */
     save.y = D_ovl14_01_8004D6A0.y;
     do {
-        D_ovl14_01_8004D6A0.y = D_ovl14_01_8004D6A0.y + k;
+        D_ovl14_01_8004D6A0.y += dy;
         func_ovl14_01_8004CA30();
         var_s0 += 1;
     } while (var_s0 < 0xA);
     func_ovl14_01_8004CA08(0x1E);
     var_s0 = 0;
-    k = 0.6666667f;
+    dy = 20.0f / 30.0f;
     do {
-        D_ovl14_01_8004D6A0.y = D_ovl14_01_8004D6A0.y + k;
+        D_ovl14_01_8004D6A0.y += dy;
         func_ovl14_01_8004CA30();
         var_s0 += 1;
     } while (var_s0 != 0x1E);
@@ -3171,7 +3186,7 @@ void func_ovl14_01_800437B8(void) {
         func_ovl14_01_80043688(D_ovl14_01_8004D618, D_ovl14_01_8004D5A0);
         func_ovl14_01_80043250(0);
         temp_s0 = D_ovl14_01_8004D5DC;
-        /* fake: in statics.h, from another file (the old #line x.c/y.c alternation) */
+        /* fake: in statics.h, from another file (the old #line x.c/y.c alternation); an inlined static would add its body or stub */
 #define STATICS_PART 2
 #include "overlays/ovl_14_01/statics.h"
 #undef STATICS_PART
@@ -3257,7 +3272,7 @@ void func_ovl14_01_800432D8(void) {
         func_ovl14_01_8004C9E8(func_ovl14_01_80043624, NULL, 0, 0, 0x150);
         for (i = 0; i < 120; i++) {
             func_ovl14_01_8004CA30();
-            /* fake: the comma keeps 100.0 the mul.s's first operand */
+            /* fake: the comma keeps 100.0 the mul.s's first operand (a held local, temporaries, 100.0 / 100 / cast, negated or subtracted forms don't) */
             func_ovl14_01_8004CCE8(0, 0, 0, (0, 100.0f) * (1.0f - (f32) i / 120.0f));
         }
         func_ovl14_01_8004CCE8(0, 0, 0, 0.0f);
@@ -3347,7 +3362,7 @@ void func_ovl14_01_80043010(UnkStructA **arg0, Link_ovl14_01 *arg1) {
     arg1->unk8 = 0.01f;
     arg1->unk4 = 420.0f;
     arg0++;
-    do {} while (0); /* fake: a uopt block boundary (no code) */
+    if (*arg0 == NULL) { DEBUG_PRINT(("no part\n")); } /* a compiled-out debug check (guess: any test here matches) */
     func_ovl14_01_8004C8A0(*arg0, 0x300000);
     func_ovl14_01_8004C898(*arg0, 0x500000);
     (*arg0)->unk50 = -85.0f;

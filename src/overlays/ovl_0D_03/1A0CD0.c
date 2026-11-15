@@ -444,15 +444,16 @@ void func_ovl0D_03_80045EF0(void) {
     s32 r;
     f32 ang;
     Vec3f tgt;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 tile; /* a tile's size held (a guess: any local fills the slot) */
     s32 timer;
 
     idx = (s32) func_ovl0D_03_80047560();
     e = &D_ovl0D_03_80047F1C[idx];
     flag = D_ovl0D_03_80047F8C[idx];
-    pos.x = e->unk14 * 10.0f + 150.0f;
-    pos.y = e->unk18 * 10.0f;
-    pos.z = e->unk1C * 10.0f + 150.0f;
+    tile = 10.0f;
+    pos.x = e->unk14 * tile + 150.0f;
+    pos.y = e->unk18 * tile;
+    pos.z = e->unk1C * tile + 150.0f;
     cnt = 0;
     timer = 240 / (idx + 1);
     func_ovl0D_03_80046A40(pos.x, pos.y, pos.z, grid, 0);
@@ -1285,10 +1286,10 @@ void func_ovl0D_03_80043770(void) {
 static void func_ovl0D_03_80043768(void) {
     s32 i;
 
-    /* fake: (as in ovl_0D_05's 80043210): keeps the first call out of the prologue */
-    if (!D_ovl0D_03_80048180 && !D_ovl0D_03_80048180 && !D_ovl0D_03_80048180) {
-    }
-    UNK_MACRO_ovl0D_03_80043770();
+    /* the macro's run comes from statics.h: its `.file` keeps the first call out of the prologue */
+#define STATICS_PART 3
+#include "overlays/ovl_0D_03/statics.h"
+#undef STATICS_PART
     func_ovl0D_03_80043760();
     for (i = 0; i < 2; i++) {
         func_ovl0D_03_80043758(&D_ovl0D_03_80047E6C[i], D_ovl0D_03_80047EDC[i]);

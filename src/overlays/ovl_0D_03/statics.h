@@ -129,4 +129,6 @@ static void func_ovl0D_03_800441BC(Trio_0D03 *t, s32 count) {
         t++;
     }
 }
+#elif STATICS_PART == 3
+    UNK_MACRO_ovl0D_03_80043770();
 #endif

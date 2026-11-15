@@ -5,8 +5,9 @@ A matching decompilation of Bomberman 64 (Hudson, 1997), aimed at a PC port,
 The port's own names (executable, window, web page, docs/PORT.md) say
 Fuse64, introduced as a port of Bomberman 64; the game, its ROMs and the
 decompilation keep Bomberman 64's name (and `bm64.*` in the ROM build). The model is
-the Blast Corps decomp in `../BlastCorps`: same goals, same rules, and its
-tools are the first place to look before writing a new one. docs/ROADMAP.md
+DozerEncore in `../DozerEncore` (a PC port of Blast Corps, built from its
+matching decompilation): same goals, same rules, and its tools are the
+first place to look before writing a new one. docs/ROADMAP.md
 has the phases. Phases 0-2 are done: the ROM is built from its pieces
 (stage 1) and every code segment from splat's asm (stage 2), and a
 shifted build runs the same as the original. Phase 3 has libultra named

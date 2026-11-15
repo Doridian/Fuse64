@@ -1941,7 +1941,7 @@ void func_ovl12_05_80045D3C(s32 arg0) {
     UnkStruct_ovl12_05_8004A840 *spA0;
     UnkStruct_ovl12_05_800497F8 *sp9C;
     Vec3f sp90;
-    s32 pad6; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad6; /* fake: unused, frame space the original has (cases 18 and 19 as blocks {player, s, pos, +3 words} under 3 function-level words match: the 3+3+3 words are unexplained) */
     UnkStructA_40 *temp_v1;
     UnkStructA_40 *temp_v1_3;
 

@@ -70,8 +70,9 @@
  *   prologue's `li s3, 3`); the loop after the D_ovl0F_01_80048420 = 2
  *   store is renumbered below it (`#line 1229`, 7 words).
  * - 800452CC: obj and the last stores read `*D_ovl0F_01_80048264[idx].unk0`
- *   (not through p), and ovl_0F_04's empty `if (!idx) {}`, here after the
- *   800452C4 call (61 to 0).
+ *   (not through p), and ovl_0F_04's `idx < 0` debug check (compiled-out
+ *   DEBUG_PRINT; it was an empty `if (!idx) {}`), here after the 800452C4
+ *   call (61 to 0).
  * - 80045E38: unk8 is set from the integer 0 (`= 0`), so its 0.0f isn't
  *   the one 80045E30's records share (69 to 0).
  * - 8004464C, 80044408: ovl_0F_04's, without its 0x8C sound calls. The
@@ -1239,7 +1240,7 @@ void func_ovl0F_01_80043B0C(void) {
     func_ovl0F_01_80047760(50.0f, 50.0f, 50.0f);
     func_ovl0F_01_80047750(20);
     D_ovl0F_01_80048420 = 2;
-#line 1229 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1229 /* fake: renumbers the lines (as1 orders a block partly by .loc line); the loop as one of the list-only stubs (80043AEC, i its local) orders it, but its area is 16 bytes: x/sv 8/16 off */
     for (i = 0; i < 3; i++) {
         D_ovl0F_01_80048738[i]->unkC = 0;
         func_ovl0F_01_80047840(D_ovl0F_01_80048738[i], 0x01000030);
@@ -1486,7 +1487,7 @@ static void func_ovl0F_01_80043028(void) {
 }
 
 static void func_ovl0F_01_80043020(void) {
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad[2]; /* fake: unused frame space; case 1's `& 4` block moved in here (q a local) gets the frame but q at 0x54, not 0xF8; q as a parameter: frame 8 short */
 }
 
 /* the cut-scene: a task counts n frames while a message shows */

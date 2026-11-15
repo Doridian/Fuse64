@@ -71,9 +71,14 @@
  * - 800450B4: `dx /= (f32)arg0` comes after dy's normalisation: the
  *   conversion's place follows its first use.
  * - 800477C0's wraps are the macro W360 on the whole expression (a local
- *   for it gets copied to its own register), with a dead `if (!diff) {}`
- *   after the first of the last two, which puts n and the result in the
- *   original's $f0/$f2.
+ *   for it gets copied to its own register), with a debug check of diff
+ *   (DEBUG_PRINT, compiled out; any test of diff matches) after the first
+ *   of the last two, which puts n and the result in the original's
+ *   $f0/$f2.
+ * - Pads that were held values (2026-11-14; any held value fills the slot,
+ *   so which one is a guess): 800465FC's clamp limit `hi`, 800455D0's
+ *   `frames` (45) and 800446FC's `k` (0.2f); 800446FC's `z == 1.0f` dead
+ *   test is a `z > 1.0f` debug check.
  * - 80047CB4's spill at 0x1C is the compiler's temporary for the repeated
  *   `angle + 1.0f`, not a local: written twice, with no pad locals, and
  *   with 80045C60 (inlined into it) declaring no unused local, whose slot
@@ -2285,7 +2290,7 @@ void func_ovl13_01_800446FC(void) {
             DEBUG_PRINT(("z\n"));
         }
         func_ovl13_01_8004B5C8(&D_ovl13_01_8004C388.x, &D_ovl13_01_8004C260.x, &spA8.x);
-        if (a == 90.0f) {} /* fake: 90.0f in $f14 */
+        if (a == 90.0f) {} /* fake: 90.0f in $f14 (any compare of a with 90.0f; other values: no) */
         if (spA8.y - 90.0f >= 360.0f) {
             spA8.y = spA8.y - 90.0f - 360.0f;
         } else {
@@ -2302,7 +2307,7 @@ void func_ovl13_01_800446FC(void) {
             d += 360.0f;
         }
         /* the clamp's result is never used: only the compare is left */
-        if (!a) {} /* fake: dead read, for the register allocation */
+        if (!a) {} /* fake: dead read, for the register allocation (`!d` matches too; float compares of a or d, dead initialisers: no) */
         if (d >= 0.0f) {
             if (D_ovl13_01_8004C2A8 < d) {
                 d = D_ovl13_01_8004C2A8;

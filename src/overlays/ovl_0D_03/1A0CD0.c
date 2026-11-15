@@ -998,7 +998,7 @@ static void func_ovl0D_03_8004449C(Vec3f *corner, Vec3f (*rows)[4]) {
     s32 j;
     s32 k;
 
-    /* fake: (as in ovl_0D_02): j = 0 after the loop's line */
+    /* fake: (as in ovl_0D_02): j = 0 after the loop's line (a statics.h part, do/while, a rows copy: no) */
 #line 3000 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     j = 0;
 #line 1008 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
@@ -1371,7 +1371,7 @@ static void func_ovl0D_03_80043300(s32 axis, s32 *v, s32 *size) {
 /* the models' state from the flags already set */
 void func_ovl0D_03_8004305C(void) {
     s32 i;
-    s32 pad[5]; /* fake: the frame */
+    s32 pad[5]; /* fake: the frame (an index per walk: registers move) */
 
     if (func_ovl0D_03_800477C0(0x407) != 0) {
         func_ovl0D_03_80043054();

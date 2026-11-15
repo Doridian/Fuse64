@@ -20,7 +20,7 @@ As of 2026-11-14:
 | Windows i386 (zig `x86-windows-gnu`, under wine) | yes | legal, menus and battle are Linux i386's |
 | WebAssembly (emscripten), node | yes | legal, menus and battle are Linux i386's |
 | WebAssembly, a page (`PORT_WASM_TARGET=web`) | yes | plays in a browser (headless Chromium: the legal screen, the opening, the attract demos), the ROM from a file picker or `?rom=`, the save in IndexedDB |
-| big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | mipsel's menus are x86's; mips's and ppc's legal are, and their menus are since the asset fix below ("What's left" if not) |
+| big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | us: mips's legal, menus and battle are x86's, ppc's and mipsel's legal and menus (since the asset fix in "Byte order") |
 | 64-bit hosts (x86-64, aarch64, macOS, Windows x64) | no | needs the pointer pass ("32-bit hosts and 64-bit hosts", "What's left") |
 
 The ROM build is unchanged by all of it: every change to `src/` is under
@@ -334,8 +334,8 @@ where data arrives, and declarations a host needs.
 - **Packages** (an AppImage, the `.exe` with SDL, a macOS app; Blast
   Corps' "Packages") and a hosted page: after 64-bit, with SDL in the
   Windows cross build.
-- **Big-endian past the menus**: battle and story under qemu (slow: a
-  6000-retrace run takes most of an hour), and eu and jp there.
+- **Big-endian past battle**: story under qemu (slow: a 6000-retrace
+  run takes most of an hour), and eu and jp there.
 - **Renderer**: what the first stage and the menus show is checked by eye
   against an emulator, not pixel for pixel.
 - Phase 7 and 8 (docs/ROADMAP.md, docs/NETPLAY.md): the input and the RNG

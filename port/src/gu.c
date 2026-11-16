@@ -14,6 +14,16 @@
 
 f32 fcos(f32);
 
+/* gu.h's sqrtf (libultra's gu/sqrtf.s, the FPU's sqrt.s), for the game and
+   the host, in place of libm's: i386's returns the x87's extended result
+   unrounded, and a caller that widens it to double (unit() below) may keep
+   it so, as the code generation goes: an i386 UBSan build's camera matrix
+   differed from the plain build's (docs/PORT.md, "Checks and debugging
+   aids").  The compiler's square root is the IEEE one on every host. */
+float sqrtf(float value) {
+    return __builtin_elementwise_sqrt(value);
+}
+
 
 /* -DPORT_SDK_TRACE=ON: every call's arguments go to the host's log
    ($PORT_SDK_TRACE), port/tools/sdk_check's traced inputs.  One call per

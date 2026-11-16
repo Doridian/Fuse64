@@ -343,9 +343,9 @@ x86-64 with ASan and UBSan (with the arena and with the host's malloc),
 the hashes of every retrace compared between i386 and x86-64.
 In us (2026-11-15) all 77 run to the end on i386 and on x86-64 and give
 the same hashes on both, every retrace; under ASan and UBSan, with the
-arena and with the host's malloc, no report but the known ones ("Checks
-and debugging aids": 412F0.c's address, 87D80.c's index 23; with the
-host's malloc also the legal screen's TLUT); fifteen of them (49, 57, 62,
+arena and with the host's malloc, no report but the ones since fixed ("The scattered layout": 412F0.c's
+address, 87D80.c's index 23, with the host's malloc the legal screen's
+TLUT); fifteen of them (49, 57, 62,
 80, 86, 88, 98, 116, 136-141, 151) under qemu on Linux mips (big-endian)
 give i386's hashes.
 In eu and jp (the same scene numbers) the 77 also run to the end
@@ -421,6 +421,103 @@ into a host pointer. Where pointers are 4 bytes the game's structures have
 their N64 layout (`tools/host_check.py layout`); where they are 8 each
 name that holds pointers takes its host type's size and the names after
 it move up ("Where pointers are 8 bytes").
+
+### The scattered layout
+
+The default build keeps the N64's neighbours: the fixed-address names in
+`port_rdram` at their RDRAM offsets, each asm data file one struct with its
+labels inside, the overlays' variables in their files' order. So a read
+past an object's end, before its start, or from one name into the next
+reaches what the N64 has there, and nothing shows it. The goal, as in
+DozerEncore, is a port that doesn't depend on that. The scattered builds
+check it (64-bit Linux, clang and lld, off by default):
+
+- `-DPORT_SCATTER=SEED` (`port/tools/gen_scatter.py`): every
+  fixed-address name and every asm data label is an object of its own in
+  `port_scatter_arena`, in an order the seed shuffles. Before each object
+  goes padding of 16 to 2048 bytes, plus the size of the object before it
+  up to 16 KB, so an index the N64 had room for lands in padding. Each
+  object keeps its offset modulo 16 (4 KB for objects of 4 KB or more).
+  - An object's size is its declared size (decls.py's types). Where no
+    declaration gives one, it runs to the next name the C uses.
+  - A name inside an object (a member's or an element's own name, a
+    label inside a typed table) stays an alias inside it.
+  - At startup a constructor copies each asm `.data` label's bytes from
+    its file's struct. It fills the padding, and all of `port_rdram`
+    (which nothing should reach any more), with 0xA5.
+  - The C globals (the game's, the overlays', the host's) are shuffled
+    by lld (`-fdata-sections`, `--shuffle-sections` with the same seed).
+  - The work area 40040.c clears from one name to another is cleared
+    object by object (`port_clear_work_area()`, generated in either
+    layout).
+- `-DPORT_SCATTER_CHECK=ON` (with a seed; `port/host/scatter_check.c`)
+  compiles everything but that file with AddressSanitizer's
+  instrumentation as calls and without its runtime. The file supplies the
+  calls: a bit map over the image, the padding, `port_rdram` and each
+  global's redzone marked bad. Each access there is reported once per
+  place and object reached (`scatter: R|W n at ... (past NAME [size] by d;
+  before NAME by e) pc ...`), to `$PORT_SCATTER_OUT` or stderr, and the
+  run goes on. (ASan's own runtime stops after 25 distinct places, even
+  with `halt_on_error=0`.)
+- `port/tools/scatter_list.py --run LABEL BUILD REPORT...` makes the list
+  from the runs' reports. It symbolizes each place, groups the reports by
+  place and object, and gives how far each reaches and what the N64 has
+  there (the ROM build's symbols). It also gives the static report
+  (`gen/scatter_report.txt`): the names the N64 has inside other objects
+  that the compiled C still uses, and the objects of unknown size.
+
+The runs (2026-11-15) were test.py's seven scenarios and the 77 stage
+runs ("Every stage"), on check builds of us with seeds 1, 2 and 3, and
+of eu and jp with seed 1. With the fixes below, nothing is reported. The
+hashes are those of the default build in every run: the scenarios'
+references, and the earlier x86-64 runs' for every stage. The plain
+scattered builds (seeds 1-3, no check) give the references too. On this
+machine a check build is about 6 times slower than a plain one, and
+all 77 stages take about an hour with 16 at a time.
+
+What the runs found, each fixed under `TARGET_PC` (the ROM is the same):
+
+- **Names inside other variables** (27 used by the C: the players'
+  fields, `D_800BCFE8[i]`'s pointers, the entity list's head, three asm
+  structs' words): each is now its variable's field or element, e.g.
+  54E40.c's `D_800AEE14` is `PLAYERS[0].unk24` and 93850.c's `D_800BB4A8`
+  is `D_800BB4A0[0].unk8`. None is left.
+- **Arrays declared as one element**: 54E40.c's `D_800BE818`
+  (`(&D_800BE818)[i]`, the loops going to 5; the N64 names [3]
+  `D_800BE824`) is `[5]`, and `D_802AC858` (one per player, asm bss) is
+  `[4]`.
+- **Entry -1**: below the floor func_8026DCAC gives layer -1, and
+  func_8026DC74 reads `D_800B15D8[-1].unk10` (5E3F0.c's func_8024E088;
+  in warp-stage, warp-boss, warp-battle). On the N64 that byte is the
+  high byte of `D_800B05D8[0xF7]`, and the port now reads that.
+- **A layer's cells**: 87D80.c's layers have as many cells as the stage
+  gives (`unk4 * unk8`), more than the 23 the record has room for. On the
+  N64 they go on into the next layer, all inside `D_800B15D8`. They are
+  reached through the layer's address (`CELL(n, i)`), so no index goes
+  past `[23]` (UBSan's report).
+- **A walk to the next name**: 426E0.c's func_8022A850 clears the object
+  pool until `D_800A3F00`, 48600.c's table and the next name on the N64.
+  With seeds 2 and 3 that cleared everything placed between the two, and
+  seed 3 crashed at boot. It now stops after the pool's 0xA0 objects.
+  (Seed 1 put `D_800A3F00` first, so the loop ran once, and the check
+  had nothing to see: hence more than one seed.)
+- **Through NULL**: 412F0.c's func_80227678 before the first frame gives
+  the N64's number (`0x10000 + n * 0x5000`, unused) without arithmetic on
+  NULL.
+- **The boot loads**: segment 3 and the segments' code are linked in, so
+  their DMAs no longer copy to the N64's addresses (`osPiStartDma` to
+  NULL takes its time and copies nothing). The overlays are inflated
+  into a slot of their own (40FB0.c), and the work area is cleared as
+  above. The depth buffer `D_200000` is a buffer, not a number
+  (gen_regions.py's PHYS). The save image `D_80063000` has its size, and
+  its header's second word is `D_80063000[4]` (AD5B0.c). The scrolls'
+  walk ends at `&D_80098C68[6]`, not at the next name (426E0.c).
+- **Past a host-malloc block**: with `PORT_HOST_MALLOC`, a block is
+  the size gmalloc gives it: a power-of-two fragment up to 2 KB, whole
+  4 KB blocks above. The rest is zero, where the N64 has whatever the heap
+  held. (The legal screen's TLUT load reads past its picture into that
+  rest; no texel uses it.) ASan then sees an overflow only past what the
+  N64 block has.
 
 ### Where pointers are 8 bytes
 
@@ -638,14 +735,17 @@ HLE (aspmain.c). The AI's buffers go to SDL or `--wav`.
   (2026-11-15, 24 runs): each gives the references (framebuffer, sound,
   EEPROM). With the arena no AddressSanitizer report, since the fixes in
   "Where pointers are 8 bytes" (four were real overflows there, and an
-  OSThread at an unaligned offset). With host malloc one more, the
+  OSThread at an unaligned offset). With host malloc there was one more, the
   renderer's, in every scenario of every version (the legal screen's): a
-  TLUT load reads one palette entry, two bytes, past the end of the legal
+  TLUT load reads past the end of the legal
   screen's picture (us and eu: asset 0x366, a 38450-byte block from
   87190.c's func_8026CE28; jp: a 12356-byte block); on the N64 that is
   whatever gmalloc's block holds past the file, and no texel uses the
   entry (with 0xA5 bytes past every block, legal and menus give the same
-  digests in all three). UBSan's that stay, each read:
+  digests in all three). UBSan had two more.
+  Since "The scattered layout" fixed all three, the us scenarios give no
+  report (2026-11-15), with or without host malloc. The two UBSan
+  reports:
   412F0.c's func_80227678 indexes through `D_802A538C` while it is still
   NULL (an address computed, not read: the caller doesn't use it then),
   in every version; 87D80.c's stage map indexes a layer's cells past the
@@ -732,10 +832,16 @@ through its neighbour, a read through NULL given ZeroJump's word
   are 8 bytes"); a run that crashes or differs from i386 the dynamic one.
   The sanitizers have run on x86-64 only (not the 32-bit hosts, not
   Windows).
-- **The N64's layout**: every read past an object, before it or through
-  one name into the next is to be fixed, as DozerEncore's docs/LAYOUT.md
-  did, its padding the bytes the N64 has there. The known ones are in
-  "Checks and debugging aids" and "Every stage".
+- **The N64's layout**: the scattered check builds ("The scattered
+  layout") report nothing in test.py's scenarios or the 77 stage runs. That
+  holds for us with seeds 1, 2 and 3, and for eu and jp with seed 1. Left:
+  - 77 fixed-address names no declaration sizes. Each is checked only
+    against its room up to the next name.
+  - The overlays' .bss structs keep the N64's order inside one object.
+  - A walk that ends at a name placed before it runs once and shows
+    nothing (hence several seeds).
+  - Only the stages' first rooms and fixed walks are covered (see
+    "64-bit, the rest").
 - **Packages** (an AppImage, the `.exe` with SDL, a macOS app; Blast
   Corps' "Packages") and a hosted page: after 64-bit, with SDL in the
   Windows cross build.

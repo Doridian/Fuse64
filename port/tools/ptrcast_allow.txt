@@ -35,7 +35,7 @@ ovl src/overlays/ovl_15_02/296AC0.c 2 2 2
 shorten port/libaudio/reverb.c 2 2 2
 shorten port/src/gu.c 2 2 2
 shorten src/1050.c 3 3 3
-shorten src/40040.c 2 2 2
+shorten src/40040.c 1 2 2
 shorten src/412F0.c 2 2 2
 shorten src/426E0.c 3 3 3
 shorten src/46300.c 1 1 1

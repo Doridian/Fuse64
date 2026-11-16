@@ -13,7 +13,7 @@ typedef struct {
 void func_ovl09_02_800433E8(const char *);
 void func_ovl09_02_80043728(s32);
 void func_ovl09_02_80043740(s32);
-void func_ovl09_02_80043808(void (*)(s32), s32);
+void func_ovl09_02_80043808(void (*)(PORT_IP(s32)), s32);
 void func_ovl09_02_800438D8(void);
 void func_ovl09_02_800438E0(s32, s32, s32);
 void func_ovl09_02_80043938(void);
@@ -36,8 +36,8 @@ Vec3f_ovl09_02_80044B00 D_ovl09_02_80044B00;
 f32 D_ovl09_02_80044B0C;
 f32 D_ovl09_02_80044B10;
 
-void func_ovl09_02_80043010(s32 arg0);
-void func_ovl09_02_80043058(s32 arg0);
+void func_ovl09_02_80043010(PORT_IP(s32) arg0); /* (an object, as 80043058's) */
+void func_ovl09_02_80043058(PORT_IP(s32) arg0); /* (an object: the callback 5E3F0.c's func_8024E088 passes it) */
 s32 func_ovl09_02_8004328C(s32, void *);
 void func_ovl09_02_800432C0(f32);
 void func_ovl09_02_80043308(f32, f32, f32);
@@ -164,14 +164,14 @@ void func_ovl09_02_800430A0(s32 arg0) {
     }
 }
 
-void func_ovl09_02_80043058(s32 arg0) {
+void func_ovl09_02_80043058(PORT_IP(s32) arg0) {
     func_ovl09_02_80044778(arg0, 0x40, 4.0f);
     if (func_ovl09_02_800440D8(arg0, 0x10) != 0) {
         func_ovl09_02_80044778(arg0, 0xC0, 4.0f);
     }
 }
 
-void func_ovl09_02_80043010(s32 arg0) {
+void func_ovl09_02_80043010(PORT_IP(s32) arg0) {
     func_ovl09_02_80044778(arg0, 0x40, 4.0f);
     if (func_ovl09_02_800440D8(arg0, 0x10) != 0) {
         func_ovl09_02_80044778(arg0, 0xC0, 4.0f);

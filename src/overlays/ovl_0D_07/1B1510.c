@@ -46,8 +46,8 @@ typedef struct {
 
 /* what the ZeroJump stub 0x2D03 returns */
 typedef struct {
-    /* 0x00 */ u8 unk0[0xA2];
-    /* 0xA2 */ u16 unkA2;
+    /* 0x00 */ PORT_RET(u8 unk0[0xA2];, u8 unk0[0x18]; void *unk18; void *unk1C; u8 unk20[0x78]; void *unk98; void *unk9C;) /* (6BBE0.c's D_800BCFE8[i], Port_800BCFE8: pointers at 0x18, 0x1C, 0x98, 0x9C) */
+    /* 0xA2 */ PORT_RET(u16 unkA2;, PORT_HALVES(u16 unkA0, u16 unkA2)) /* (the task id's low half) */
 } UnkStruct_ovl0D_07_80046440;
 
 void func_ovl0D_07_800452C0(s32, UnkStructA_40 **); /* 0xD00 */

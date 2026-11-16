@@ -572,7 +572,7 @@ void func_80273E2C(s16 arg0) {
            half at 0x5C, in ZeroJump's page, which is mapped at 0) */
         if (p != NULL)
 #endif
-        p[0x2E] += 0x1E;
+        PORT_RET(p[0x2E], ((Ent88 *) p)->unk5C) += 0x1E; /* (the bomb's unk5C: its offset is 0x5C on the N64 only) */
     }
 }
 

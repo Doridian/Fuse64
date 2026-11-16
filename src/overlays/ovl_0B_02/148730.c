@@ -179,7 +179,8 @@ f64 func_ovl0B_02_80049330(void); /* 0x1D02 */
 s32 func_ovl0B_02_80049338(s32); /* 0x1D03 */
 void func_ovl0B_02_80049340(f32, f32); /* 0x1D04 */
 s32 func_ovl0B_02_800493E0(s32); /* 0x1E04 */
-s32 (*func_ovl0B_02_80049410(s32))[4]; /* 0x1E0A */
+typedef s32 Row4_ovl0B_02[4]; /* (a typedef: tools/host_check.py reads the stub's prototype) */
+Row4_ovl0B_02 *func_ovl0B_02_80049410(s32); /* 0x1E0A */
 void func_ovl0B_02_80049470(void); /* 0x2003 */
 void func_ovl0B_02_80049480(s32, s32, s32, s32); /* 0x2005 */
 void func_ovl0B_02_80049490(s32, s32, s32, s32); /* 0x2007 */

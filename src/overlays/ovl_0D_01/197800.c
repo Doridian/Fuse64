@@ -134,7 +134,7 @@ typedef struct {
     /* 0x14 */ f32 unk14;
     /* 0x18 */ s32 unk18[5];
     /* 0x2C */ f32 unk2C;
-    /* 0x30 */ s32 unk30[5];
+    /* 0x30 */ PORT_RET(s32 unk30[5];, s32 unk30[3]; void *unk3C; void *unk40;) /* (4ED50.c's UnkStruct_802363BC: two links) */
 } Move_0D01;
 
 /* what ZeroJump 0x3106 returns (as in ovl_0A_05) */

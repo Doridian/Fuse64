@@ -60,11 +60,11 @@ typedef struct {
 typedef struct {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ u8 unkC[0x1C];
+    /* 0x0C */ PORT_RET(u8 unkC[0x1C];, u8 unkC[0x14]; void *unk20; void *unk24;) /* (structs.h's UnkStructA: pointers at 0x20, 0x24, 0x3C, 0x40, 0x44) */
     /* 0x28 */ s32 unk28;
-    /* 0x2C */ u8 unk2C[0x14];
+    /* 0x2C */ PORT_RET(u8 unk2C[0x14];, u8 unk2C[0x10]; void *unk3C;)
     /* 0x40 */ UnkStruct_ovl0B_05_80045D30_Inner *unk40;
-    /* 0x44 */ u8 unk44[8];
+    /* 0x44 */ PORT_RET(u8 unk44[8];, void *unk44; u8 unk48[4];)
     /* 0x4C */ f32 unk4C;
     /* 0x50 */ f32 unk50;
     /* 0x54 */ f32 unk54;
@@ -91,7 +91,7 @@ typedef struct {
 } UnkStruct_ovl0B_05_80044E78_Inner;
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0x40];
+    /* 0x00 */ PORT_RET(u8 unk0[0x40];, u8 unk0[0x20]; void *unk20; void *unk24; u8 unk28[0x14]; void *unk3C;) /* (structs.h's UnkStructA: pointers at 0x20, 0x24, 0x3C, 0x40, 0x44) */
     /* 0x40 */ UnkStruct_ovl0B_05_80044E78_Inner *unk40;
 } UnkStruct_ovl0B_05_80044E78;
 

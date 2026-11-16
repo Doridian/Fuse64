@@ -215,6 +215,24 @@ extern uintptr_t port_v0;
 #define PORT_U16_BYTES(hi, lo) ((hi) << 8 | (lo))
 #endif
 
+/* A float converted to u32: IDO's code converts a value below 2^31 as a
+ * signed word (cvt.w.s), so a negative one wraps; on a host it's undefined
+ * (aarch64 and arm give 0). */
+#ifdef TARGET_PC
+#define PORT_F2U(x) ((u32)(s32)(x))
+#else
+#define PORT_F2U(x) ((u32)(x))
+#endif
+
+/* The two halves of a word the C stores as an s32 and a file's view
+ * reads as two u16s (the players' task id, 6BBE0.c's unkA0, read as the
+ * u16 at 0xA2): in the host's order, so that `lo` is the low half. */
+#if defined(TARGET_PC) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#define PORT_HALVES(hi, lo) lo; hi;
+#else
+#define PORT_HALVES(hi, lo) hi; lo;
+#endif
+
 /* The low half of an s32 variable, which IDO's code reads as the s16 at
  * its offset 2 (`((s16 *)&arg5)[1]`). */
 #ifdef TARGET_PC

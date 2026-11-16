@@ -137,7 +137,7 @@ typedef struct {
     /* 0x0C */ f32 unkC;
     /* 0x10 */ f32 unk10;
     /* 0x14 */ f32 unk14;
-    /* 0x18 */ s32 unk18[11];
+    /* 0x18 */ PORT_RET(s32 unk18[11];, s32 unk18[9]; void *unk3C; void *unk40;) /* (4ED50.c's UnkStruct_802363BC: two links) */
 } Move_0D06;
 
 void func_ovl0D_06_80045D88(s32); /* 0xC00 */

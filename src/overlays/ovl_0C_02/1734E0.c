@@ -449,6 +449,24 @@ u32 D_ovl0C_02_800499FC[][3] = {
 UnkStruct_ovl0C_02_80049A38 D_ovl0C_02_80049A38[] = {
     { 0, NULL, 200.0f, 300.0f, 1450.0f, 0x40, 250.0f, 300.0f, 1450.0f, 1, 1, 0xE, 4, 2, 0xF, 1, 1, 0xE, 1, 0xF, 3, 1, 0x10, 0x17, 0x11, 3, 1, 0xD, 0x18, 0x11 },
 };
+#ifdef TARGET_PC
+/* AB0..B04 are one array of four (80045780's loop) and B20, B38 one of
+   two (80045668's): one object each on the host */
+UnkStruct_ovl0C_02_80049AB0 D_ovl0C_02_80049AB0[4] = {
+    { NULL, 2100.0f, 1200.0f, 1200.0f, 0x416, 0x28, 0x15 },
+    { NULL, 2100.0f, 1200.0f, 1700.0f, 0x417, 0x28, 0x16 },
+    { NULL, 2600.0f, 1200.0f, 1200.0f, 0x418, 0x29, 0x1B },
+    { NULL, 2600.0f, 1200.0f, 1700.0f, 0x419, 0x29, 0x1C },
+};
+#define D_ovl0C_02_80049ACC (D_ovl0C_02_80049AB0 + 1)
+#define D_ovl0C_02_80049AE8 (D_ovl0C_02_80049AB0 + 2)
+#define D_ovl0C_02_80049B04 (D_ovl0C_02_80049AB0 + 3)
+UnkStruct_ovl0C_02_80049B20 D_ovl0C_02_80049B20[2] = {
+    { NULL, 3000.0f, 600.0f, 2500.0f, 0x19, 0x418 },
+    { NULL, 4100.0f, 400.0f, 900.0f, 0x1A, 0x419 },
+};
+#define D_ovl0C_02_80049B38 (D_ovl0C_02_80049B20 + 1)
+#else
 UnkStruct_ovl0C_02_80049AB0 D_ovl0C_02_80049AB0[] = {
     { NULL, 2100.0f, 1200.0f, 1200.0f, 0x416, 0x28, 0x15 },
 };
@@ -467,6 +485,7 @@ UnkStruct_ovl0C_02_80049B20 D_ovl0C_02_80049B20[] = {
 UnkStruct_ovl0C_02_80049B20 D_ovl0C_02_80049B38[] = {
     { NULL, 4100.0f, 400.0f, 900.0f, 0x1A, 0x419 },
 };
+#endif
 UnkStruct_ovl0C_02_80049B50 D_ovl0C_02_80049B50[] = {
     { NULL, 2350.0f, 1000.0f, 1450.0f },
 };

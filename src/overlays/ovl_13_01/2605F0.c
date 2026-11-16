@@ -105,7 +105,7 @@ typedef struct {
 /* D_ovl13_01_8004C3E0 and the unused word after it (8004C3EC). */
 typedef struct {
     /* 0x00 */ Vec3f v;
-    /* 0x0C */ u8 unkC[4];
+    /* 0x0C */ u8 unkC[4]; PORT_PAD(10 * 12 - 0x10) /* 800493EC keeps ten Vec3fs here, past .bss's end on the N64 */
 } Vec3fPad_ovl13_01;
 
 /* The camera move ZeroJump 0x170B takes: two vectors' steps and their changes. */
@@ -117,8 +117,8 @@ typedef struct {
     /* 0x18 */ f32 unk18[3];
     /* 0x24 */ f32 unk24[3];
     /* 0x30 */ f32 unk30[3];
-    /* 0x3C */ s32 unk3C;
-    /* 0x40 */ s32 unk40;
+    /* 0x3C */ PORT_RET(s32 unk3C;, void *unk3C;) /* (4ED50.c's UnkStruct_802363BC: two links) */
+    /* 0x40 */ PORT_RET(s32 unk40;, void *unk40;)
 } Move_ovl13_01;
 
 void func_ovl13_01_8004AC48(s32 *); /* 0xC02 */

@@ -490,7 +490,7 @@ UnkStruct_ovl0F_02_80048A8C D_ovl0F_02_80048A8C[2] = {
     { 0xA0, 3, 8.5f, 3, 0, 1, 1 },
 }; /* the scripts' strings, .rodata in this order */ const char D_ovl0F_02_80048B10[] = "MA"; const char D_ovl0F_02_80048B14[] = "MA"; const char D_ovl0F_02_80048B18[] = "WM1 WG1 WSH WAP WDSW WB2"; const char D_ovl0F_02_80048B34[] = "WM1 WG1 WSH WAP WDW WB11 WDNW WB1"; const char D_ovl0F_02_80048B58[] = "M1 ST1 M6 ST1"; const char D_ovl0F_02_80048B68[] = "WM1 WG1 WSH WAP WDNE WB2 WDN WB0"; const char D_ovl0F_02_80048B8C[] = "M2 ST200"; const char D_ovl0F_02_80048B98[] = "WM1 WG1 WSH WAP WDN WB3 WDW WB0"; const char D_ovl0F_02_80048BB8[] = "WM1 WG1 WSH WAP WDW WB5"; const char D_ovl0F_02_80048BD0[] = "M0 M0"; const char D_ovl0F_02_80048BD8[] = "WM1 WG1 WSH WAP WDW WB3 ST10"; const char D_ovl0F_02_80048BF8[] = "WM1 WG1 WSH WAP WDE WB2 ST30";
 /* passed to func_ovl0F_02_80047B60 */
-u32 D_ovl0F_02_80048AC4[17] = {
+u32 D_ovl0F_02_80048AC4[17 PORT_MORE(3 * PORT_LP64)] = { /* (17 words: where pointers are 8 bytes 4ED50.c reads links at 0x40 and 0x48) */
     0x14, 1, 1, 0, 0, 0, 0, 0, 0, 0x40900000, 0, 0, 0xBE75C28F, 0, 0, 0, 0,
 };
 s32 D_ovl0F_02_80048B08[2] = { 0, 0 };
@@ -684,7 +684,7 @@ static void func_ovl0F_02_80045F24(UnkStructA **arg0) {
 
     func_ovl0F_02_80045F1C(arg0);
     func_ovl0F_02_80045F14();
-    func_ovl0F_02_80045F0C((UnkStruct_ovl0F_02_80048734 *)&D_ovl0F_02_800486A4[6], 6);
+    func_ovl0F_02_80045F0C(PORT_HOST((UnkStruct_ovl0F_02_80048734 *)&D_ovl0F_02_800486A4[6], D_ovl0F_02_80048734), 6); /* (the next object on the N64 only) */
     for (i = 0; i < 6; i++) {
         func_ovl0F_02_80047CE8(func_ovl0F_02_80047D20(*D_ovl0F_02_80048734[i].unk0), 0x02100000);
         D_ovl0F_02_800486A4[i].unk11 = 0;
@@ -729,7 +729,7 @@ static void func_ovl0F_02_800454E0(UnkStruct_ovl0F_02_Gfx **gdl) {
         if (func_ovl0F_02_800480C0(0x407) != 0) {
             UnkStruct_ovl0F_02_80048D80 *p = &D_ovl0F_02_80048D80[i];
 
-            { UnkStruct_ovl0F_02_Gfx *g = g2++; g->w0 = _SHIFTL(0xE4, 24, 8) | _SHIFTL((u32) (p->unk8 + p->unk4 - 1) << 2, 0, 12) | _SHIFTL((u32) (p->unk0 + p->unk8 - 1) << 2, 12, 12); g->w1 = _SHIFTL(0, 24, 3) | _SHIFTL((u32) p->unk4 << 2, 0, 12) | _SHIFTL((u32) p->unk0 << 2, 12, 12); { UnkStruct_ovl0F_02_Gfx *g = g2++; g->w0 = 0xB4000000; g->w1 = 0; } { UnkStruct_ovl0F_02_Gfx *g = g2++; g->w0 = 0xB3000000; g->w1 = _SHIFTL((s32) (16.0f / (p->unk8 - 1) * 1024.0f), 0, 16) | _SHIFTL((s32) (16.0f / (p->unk8 - 1) * 1024.0f), 16, 16); } }
+            { UnkStruct_ovl0F_02_Gfx *g = g2++; g->w0 = _SHIFTL(0xE4, 24, 8) | _SHIFTL(PORT_F2U(p->unk8 + p->unk4 - 1) << 2, 0, 12) | _SHIFTL(PORT_F2U(p->unk0 + p->unk8 - 1) << 2, 12, 12); g->w1 = _SHIFTL(0, 24, 3) | _SHIFTL(PORT_F2U(p->unk4) << 2, 0, 12) | _SHIFTL(PORT_F2U(p->unk0) << 2, 12, 12); { UnkStruct_ovl0F_02_Gfx *g = g2++; g->w0 = 0xB4000000; g->w1 = 0; } { UnkStruct_ovl0F_02_Gfx *g = g2++; g->w0 = 0xB3000000; g->w1 = _SHIFTL((s32) (16.0f / (p->unk8 - 1) * 1024.0f), 0, 16) | _SHIFTL((s32) (16.0f / (p->unk8 - 1) * 1024.0f), 16, 16); } }
         }
         if (D_ovl0F_02_800485F4 == 0.0f) {
             continue;

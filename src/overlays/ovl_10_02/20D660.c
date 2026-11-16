@@ -136,7 +136,7 @@ void *D_ovl10_02_80045FA8[8];
 s32 D_ovl10_02_80045FC8;
 s32 D_ovl10_02_80045FD0[8];
 s32 D_ovl10_02_80045FF0[8];
-s32 D_ovl10_02_80046010[4];
+s32 D_ovl10_02_80046010[4 PORT_MORE(4)]; /* (indexed by the eight movers' slots: on the N64 [4..7] are past the .bss's end, free memory in the overlay slot, each set before it is read) */
 
 /* .data */
 s32 D_ovl10_02_80045BE0[8] = { 0, 5, 4, 1, 2, 7, 6, 3 };

@@ -770,7 +770,7 @@ static void func_ovl0F_04_80045E88(UnkStructA **arg0) {
 
     func_ovl0F_04_80045E80(arg0);
     func_ovl0F_04_80045E78();
-    func_ovl0F_04_80045E70((UnkStruct_ovl0F_04_800485C4 *)&D_ovl0F_04_80048534[6], 6);
+    func_ovl0F_04_80045E70(PORT_HOST((UnkStruct_ovl0F_04_800485C4 *)&D_ovl0F_04_80048534[6], D_ovl0F_04_800485C4), 6); /* (the next object on the N64 only) */
     for (i = 0; i < 6; i++) {
         func_ovl0F_04_80047B78(func_ovl0F_04_80047BB0(*D_ovl0F_04_800485C4[i].unk0), 0x02100000);
         D_ovl0F_04_80048534[i].unk11 = 0;
@@ -815,7 +815,7 @@ static void func_ovl0F_04_80045444(UnkStruct_ovl0F_04_Gfx **gdl) {
         if (func_ovl0F_04_80047F50(0x407) != 0) {
             UnkStruct_ovl0F_04_80048AF0 *p = &D_ovl0F_04_80048AF0[i];
 
-            { UnkStruct_ovl0F_04_Gfx *g = g2++; g->w0 = _SHIFTL(0xE4, 24, 8) | _SHIFTL((u32) (p->unk8 + p->unk4 - 1) << 2, 0, 12) | _SHIFTL((u32) (p->unk0 + p->unk8 - 1) << 2, 12, 12); g->w1 = _SHIFTL(0, 24, 3) | _SHIFTL((u32) p->unk4 << 2, 0, 12) | _SHIFTL((u32) p->unk0 << 2, 12, 12); { UnkStruct_ovl0F_04_Gfx *g = g2++; g->w0 = 0xB4000000; g->w1 = 0; } { UnkStruct_ovl0F_04_Gfx *g = g2++; g->w0 = 0xB3000000; g->w1 = _SHIFTL((s32) (16.0f / (p->unk8 - 1) * 1024.0f), 0, 16) | _SHIFTL((s32) (16.0f / (p->unk8 - 1) * 1024.0f), 16, 16); } }
+            { UnkStruct_ovl0F_04_Gfx *g = g2++; g->w0 = _SHIFTL(0xE4, 24, 8) | _SHIFTL(PORT_F2U(p->unk8 + p->unk4 - 1) << 2, 0, 12) | _SHIFTL(PORT_F2U(p->unk0 + p->unk8 - 1) << 2, 12, 12); g->w1 = _SHIFTL(0, 24, 3) | _SHIFTL(PORT_F2U(p->unk4) << 2, 0, 12) | _SHIFTL(PORT_F2U(p->unk0) << 2, 12, 12); { UnkStruct_ovl0F_04_Gfx *g = g2++; g->w0 = 0xB4000000; g->w1 = 0; } { UnkStruct_ovl0F_04_Gfx *g = g2++; g->w0 = 0xB3000000; g->w1 = _SHIFTL((s32) (16.0f / (p->unk8 - 1) * 1024.0f), 0, 16) | _SHIFTL((s32) (16.0f / (p->unk8 - 1) * 1024.0f), 16, 16); } }
         }
         if (D_ovl0F_04_80048484 == 0.0f) {
             continue;

@@ -300,12 +300,21 @@ u32 D_ovl0D_02_80047614[][3] = {
     { 4, 0x980000, 0x84 },
 };
 /* two symbols (a fake, see the top): 80043010 addresses [1] apart */
+#ifdef TARGET_PC
+/* 8004445C walks both from 762C: one array on the host */
+Ent_0D02 D_ovl0D_02_8004762C[2] = {
+    { NULL, -1, 0x14F, 0, 0x400, 0x20, 0x400, 10.0f, 60.0f, 300.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
+    { NULL, -1, 0x14D, 0, 0x400, 0x20, 0x400, 470.0f, -80.0f, 570.0f, 0.0f, 90.0f, 0.0f, 1.0f, 1.0f, 1.0f },
+};
+#define D_ovl0D_02_80047664 (D_ovl0D_02_8004762C + 1)
+#else
 Ent_0D02 D_ovl0D_02_8004762C[1] = {
     { NULL, -1, 0x14F, 0, 0x400, 0x20, 0x400, 10.0f, 60.0f, 300.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
 Ent_0D02 D_ovl0D_02_80047664[1] = {
     { NULL, -1, 0x14D, 0, 0x400, 0x20, 0x400, 470.0f, -80.0f, 570.0f, 0.0f, 90.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
+#endif
 Ent_0D02 D_ovl0D_02_8004769C[1] = {
     { NULL, -1, 0x14B, 0, 0x400, 0x20, 0x400, 460.0f, 20.0f, 350.0f, 0.0f, 90.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
@@ -388,7 +397,12 @@ void func_ovl0D_02_8004596C(void) {
     s32 grid[6];
     s32 cnt;
     s32 r;
+#ifdef TARGET_PC
+    Vec3f port_ang; /* func_8022FF58 (ZeroJump 0x1803) writes three floats through &ang: on the N64 into the frame's next words */
+#define ang port_ang.x
+#else
     f32 ang;
+#endif
     Vec3f tgt;
     s32 n; /* idx + 1 held (the frame's word here; which value: a guess, any held one fits) */
     s32 timer;
@@ -436,6 +450,9 @@ void func_ovl0D_02_8004596C(void) {
     }
     func_ovl0D_02_80046E58();
 }
+#ifdef TARGET_PC
+#undef ang
+#endif
 
 /* every few seconds, when the player is near, the model throws a bomb */
 static void func_ovl0D_02_80045964(Ent_0D02 *e, s32 *timer) {

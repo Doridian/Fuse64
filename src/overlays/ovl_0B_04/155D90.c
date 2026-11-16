@@ -1709,7 +1709,7 @@ static void func_ovl0B_04_800447DC(u16 buttons, u8 *ret) {
                     D_ovl0B_04_8004A1A0 = 0;
                 }
                 if (c != D_ovl0B_04_8004A490.unk1) {
-                    (&D_ovl0B_04_8004A480)[1][1] = c; /* fake: through the neighbour, for its own lui */
+                    PORT_RET((&D_ovl0B_04_8004A480)[1][1], D_ovl0B_04_8004A490.unk1) = c; /* fake: through the neighbour, for its own lui (the port: A490 itself) */
                     t = 0;
                     if ((D_ovl0B_04_8004A490.unk0 == 7 && D_ovl0B_04_8004A290[7][0] == 0) || D_ovl0B_04_8004A490.unk0 != 7) {
                         D_ovl0B_04_8004A490.unk0--;
@@ -2749,7 +2749,7 @@ static void func_ovl0B_04_H5b(void) {
     D_ovl0B_04_8004A19C = *D_ovl0B_04_8004A184;
     a = *D_ovl0B_04_8004A178;
     if (a != 0) {
-        func_ovl0B_04_800478A0((&D_ovl0B_04_8004A16C)[1], 0, (a += 1, a - 1));
+        func_ovl0B_04_800478A0(PORT_HOST((&D_ovl0B_04_8004A16C)[1], D_ovl0B_04_8004A170), 0, (a += 1, a - 1));
     }
     x = *D_ovl0B_04_8004A17C;
     if (x != 0) {

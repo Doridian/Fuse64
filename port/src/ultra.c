@@ -494,6 +494,8 @@ void osSpTaskLoad(OSTask *t) { }
 
 void osSpTaskStartGo(OSTask *t) {
     if (t->t.type == M_GFXTASK) {
+        host_gfx_ucode(port_addr((uintptr_t)t->t.ucode_boot), t->t.ucode_boot_size, port_addr((uintptr_t)t->t.ucode), t->t.ucode_size,
+                       port_addr((uintptr_t)t->t.ucode_data), t->t.ucode_data_size, t->t.dram_stack_size);
         int sync = host_gfx_task(port_addr((uintptr_t)t->t.data_ptr), t->t.data_size);
         host_raise(OS_EVENT_SP);
         if (sync)

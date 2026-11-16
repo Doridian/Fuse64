@@ -135,6 +135,10 @@ void host_raise(int event);                 /* an event for the loop to deliver 
 /* the RCP */
 /* a graphics task: returns 1 if its list ended in a full sync */
 int host_gfx_task(const void *dl, uint32_t size);
+/* the task's microcode (its boot, text and data, for PORT_GFX_REF) and
+   the size of its matrix stack in RDRAM */
+void host_gfx_ucode(const void *boot, uint32_t boot_size, const void *text, uint32_t text_size, const void *data,
+                    uint32_t data_size, uint32_t dram_stack_size);
 void host_audio_task(const void *data_ptr, uint32_t data_size, const void *ucode_data);
 /* the framebuffer the VI shows, and its width */
 void host_vi_set_framebuffer(const void *fb, int width);

@@ -1270,6 +1270,440 @@ static void dl_cmd(int depth, uint32_t w0, uintptr_t w1) {
     fprintf(dl_out, "\n");
 }
 
+/* ---- PORT_GFX_REF: a task for a reference renderer -------------------------------------- */
+
+/* PORT_GFX_REF=FROM:TO:DIR writes each graphics task of retraces FROM to
+   TO as the N64 would have it in RDRAM, for port/tools/gfx_ref.py, which
+   runs it through the game's own microcode on an RSP interpreter and an
+   accurate RDP (docs/PORT.md, "Graphics") and compares the color images
+   with the port's: DIR/rRRRRR_tT.in is a 16 MiB image, the low 8 MiB
+   port_rdram as the task finds it, the high 8 MiB the display lists, the
+   vertices, matrices and viewports the task reads, in the N64's order and
+   with N64 addresses (segments resolved), and the textures it loads from
+   outside port_rdram; DIR/rRRRRR_tT.out is port_rdram after the port drew
+   the task.  The RDP's state at the task's start (the port carries it from
+   the last task, as the RDP does) goes first, as RDP commands, and the
+   microcode (the task's boot, text and data) is in the image too.  The
+   header (XR_HEAD big-endian words after the magic): the retrace, the
+   task, the root list's address, the preamble's start and end, the
+   number of color images and four words each (address, width, size,
+   lines), then the boot's, text's and data's addresses and sizes, the z
+   image's address and the matrix stack's size.  The reference keeps the
+   image's top 256 KiB for the RDP's FIFO and the RSP's stack. */
+#define XR_LIMIT 0xFC0000u
+#define XR_HEAD (8 + 4 * 16 + 8)
+static uint32_t rdp_raw[64][2];         /* the last of each RDP state command */
+static uint32_t tile_raw[8][2][2];      /* SETTILE and SETTILESIZE, per tile */
+static const uint8_t *uc_boot, *uc_text, *uc_data;
+static uint32_t uc_boot_size, uc_text_size, uc_data_size, uc_stack_size;
+
+void host_gfx_ucode(const void *boot, uint32_t boot_size, const void *text, uint32_t text_size, const void *data,
+                    uint32_t data_size, uint32_t dram_stack_size) {
+    uc_stack_size = dram_stack_size;
+    uc_text_size = text_size;
+    uc_boot = boot;
+    uc_boot_size = boot_size;
+    uc_text = text;
+    uc_data = data;
+    uc_data_size = data_size;
+}
+
+static struct {
+    int on;
+    uint8_t *img;                       /* 16 MiB, big-endian */
+    uint32_t top;                       /* the high half's next free byte */
+    int full;
+    /* textures and images outside port_rdram: a copy each, placed at the end */
+    struct { const uint8_t *p; long lo, hi; } blob[512];
+    int nblob;
+    struct { uint32_t at; int blob; } fix[4096];
+    int nfix;
+    struct { uint32_t addr, w, siz, h; } cimg[16];
+    int ncimg;
+    int cur_cimg;
+    uint32_t sc_y1;
+    const uint8_t *timg;
+    int timg_blob, timg_siz, timg_w;
+    uint32_t zimg;                      /* (not compared: the port's depth is its own) */
+} xr;
+
+static uint32_t xr_alloc(uint32_t n) {
+    uint32_t a = (xr.top + 7) & ~7u;
+    if (a + n > XR_LIMIT) {
+        xr.full = 1;
+        return 0xF00000u;
+    }
+    xr.top = a + n;
+    return a;
+}
+
+/* a host pointer the RDP reads or writes: its N64 address, or -1 when it is
+   outside port_rdram (a blob, placed later) */
+static long xr_phys(const void *p) {
+    uintptr_t a = (uintptr_t)p;
+    if (a >= (uintptr_t)port_rdram && a < (uintptr_t)port_rdram + PORT_RDRAM_SIZE)
+        return (long)(a - (uintptr_t)port_rdram);
+    return -1;
+}
+
+static int xr_blob(const uint8_t *p) {
+    for (int i = 0; i < xr.nblob; i++)
+        if (xr.blob[i].p == p)
+            return i;
+    if (xr.nblob == (int)(sizeof xr.blob / sizeof xr.blob[0])) {
+        xr.full = 1;
+        return 0;
+    }
+    xr.blob[xr.nblob].p = p;
+    xr.blob[xr.nblob].lo = 0;
+    xr.blob[xr.nblob].hi = 0;
+    return xr.nblob++;
+}
+
+static void xr_extent(int b, long lo, long hi) {
+    if (xr.blob[b].lo == xr.blob[b].hi) {
+        xr.blob[b].lo = lo;
+        xr.blob[b].hi = hi;
+    } else {
+        if (lo < xr.blob[b].lo) xr.blob[b].lo = lo;
+        if (hi > xr.blob[b].hi) xr.blob[b].hi = hi;
+    }
+}
+
+static void xr_w32(uint32_t at, uint32_t v) { port_wbe32(xr.img + at, v); }
+
+/* an image's address word for the command written at `at` (its second word) */
+static uint32_t xr_image(uint32_t at, const uint8_t *p, int *blob) {
+    long a = xr_phys(p);
+    *blob = -1;
+    if (a >= 0)
+        return (uint32_t)a;
+    *blob = xr_blob(p);
+    if (xr.nfix < (int)(sizeof xr.fix / sizeof xr.fix[0])) {
+        xr.fix[xr.nfix].at = at;
+        xr.fix[xr.nfix].blob = *blob;
+        xr.nfix++;
+    } else {
+        xr.full = 1;
+    }
+    return 0;
+}
+
+/* a load's bytes from the texture image */
+static void xr_load(uint32_t w0, uint32_t w1, int block) {
+    if (xr.timg_blob < 0)
+        return;
+    long uls, ult, lrs, lrt, lo, hi, w = xr.timg_w;
+    int siz = xr.timg_siz;
+    if (block) {
+        uls = (w0 >> 12) & 0xFFF, ult = w0 & 0xFFF, lrs = (w1 >> 12) & 0xFFF;
+        lo = ((ult * w + uls) << siz) >> 1;
+        hi = lo + ((((lrs - uls + 1) << siz) >> 1) + 7) / 8 * 8;
+    } else {
+        uls = ((w0 >> 12) & 0xFFF) >> 2, ult = (w0 & 0xFFF) >> 2;
+        lrs = ((w1 >> 12) & 0xFFF) >> 2, lrt = (w1 & 0xFFF) >> 2;
+        lo = ((ult * w + uls) << siz) >> 1;
+        hi = (((lrt * w + lrs + 1) << siz) >> 1) + 8;
+    }
+    xr_extent(xr.timg_blob, lo, hi);
+}
+
+/* the RSP's structures, in the N64's order: 16-bit or 32-bit host words, or bytes */
+static uint32_t xr_copy(const uint8_t *p, uint32_t n, int unit) {
+    uint32_t a = xr_alloc(n);
+    if (xr.full)
+        return a;
+    for (uint32_t i = 0; i < n; i += unit) {
+        if (unit == 4)
+            port_wbe32(xr.img + a + i, *(const uint32_t *)(p + i));
+        else if (unit == 2)
+            port_wbe16(xr.img + a + i, *(const uint16_t *)(p + i));
+        else
+            xr.img[a + i] = p[i];
+    }
+    return a;
+}
+
+static uint32_t xr_vtx(const uint8_t *p, int n) {
+    uint32_t a = xr_alloc((uint32_t)n * 16);
+    if (xr.full)
+        return a;
+    for (int i = 0; i < n; i++, p += 16) {
+        for (int k = 0; k < 6; k++)
+            port_wbe16(xr.img + a + i * 16 + k * 2, *(const uint16_t *)(p + k * 2));
+        memcpy(xr.img + a + i * 16 + 12, p + 12, 4);
+    }
+    return a;
+}
+
+static uint32_t xr_dl(const uint8_t *pc, int depth);
+
+/* one command into `out` (two words), what it points at exported */
+static void xr_cmd(uint32_t *out, uint32_t w0, uintptr_t w1, int depth, uint32_t at, int *ended) {
+    uint8_t op = w0 >> 24;
+    uint32_t w1l = (uint32_t)w1;
+    out[0] = w0;
+    out[1] = w1l;
+    switch (op) {
+    case 0x01:
+        out[1] = xr_copy(addr(w1), 64, 4);
+        break;
+    case 0x03: {
+        int idx = (w0 >> 16) & 0xFF, n = w0 & 0xFFFF;
+        if (n < 16 || n > 256)
+            n = 16;
+        out[1] = xr_copy(addr(w1), (uint32_t)n, idx == 0x80 ? 2 : 1);
+        break;
+    }
+    case 0x04:
+        out[1] = xr_vtx(addr(w1), (w0 >> 10) & 0x3F);
+        break;
+    case 0x06:
+        out[1] = xr_dl(addr(w1), depth + 1);
+        if (((w0 >> 16) & 0xFF) != 0)
+            *ended = 1;
+        break;
+    case 0xAF:
+        host_log("gfx ref: LOAD_UCODE at retrace %u\n", host_vi_count);
+        break;
+    case 0xB8:
+        *ended = 1;
+        break;
+    case 0xBC:
+        if ((w0 & 0xFF) == 0x06) {
+            seg[((w0 >> 8) & 0xFFFF) / 4 & 15] = w1;
+            out[1] = 0;                 /* (every address is resolved) */
+        }
+        break;
+    case 0xED:
+        if ((w1l & 0xFFF) > xr.sc_y1)
+            xr.sc_y1 = w1l & 0xFFF;
+        if (xr.cur_cimg >= 0 && xr.cimg[xr.cur_cimg].h < xr.sc_y1)
+            xr.cimg[xr.cur_cimg].h = xr.sc_y1;
+        break;
+    case 0xF0:
+    case 0xF4:
+        xr_load(w0, w1l, 0);
+        break;
+    case 0xF3:
+        xr_load(w0, w1l, 1);
+        break;
+    case 0xFD: {
+        const uint8_t *p = addr(w1);
+        int b;
+        out[1] = xr_image(at + 4, p, &b);
+        xr.timg_blob = b;
+        xr.timg_siz = (w0 >> 19) & 3;
+        xr.timg_w = (w0 & 0xFFF) + 1;
+        break;
+    }
+    case 0xFE:
+    case 0xFF: {
+        const uint8_t *p = addr(w1);
+        int b;
+        out[1] = xr_image(at + 4, p, &b);
+        if (b >= 0) {
+            /* (a color or z image outside port_rdram: room for 320x240) */
+            xr_extent(b, 0, (long)((((w0 & 0xFFF) + 1) << ((w0 >> 19) & 3)) >> 1) * 240);
+            if (op == 0xFF)
+                host_log("gfx ref: a color image outside port_rdram at retrace %u\n", host_vi_count);
+        } else if (op == 0xFE) {
+            xr.zimg = out[1];
+        } else {
+            int i;
+            for (i = 0; i < xr.ncimg; i++)
+                if (xr.cimg[i].addr == out[1])
+                    break;
+            if (i == xr.ncimg && i < 16) {
+                xr.cimg[i].addr = out[1];
+                xr.cimg[i].w = (w0 & 0xFFF) + 1;
+                xr.cimg[i].siz = (w0 >> 19) & 3;
+                xr.cimg[i].h = 0;
+                xr.ncimg++;
+            }
+            xr.cur_cimg = i < 16 ? i : -1;
+            if (xr.cur_cimg >= 0 && xr.cimg[i].h < xr.sc_y1)
+                xr.cimg[i].h = xr.sc_y1;
+        }
+        break;
+    }
+    }
+}
+
+/* a display list (as the task runs it: segments as they are when it is
+   called), written to the high half; its address there */
+static uint32_t xr_dl(const uint8_t *pc, int depth) {
+    if (depth > 64 || xr.full) {
+        xr.full = 1;
+        return 0xF00000u;
+    }
+    unsigned st = stride_at(pc);
+    /* the list's length first (to its end or its branch) */
+    int n = 0, ended = 0;
+    for (const uint8_t *c = pc; n < 100000; c += st) {
+        uint8_t op = cmd_w0(c, st) >> 24;
+        n++;
+        if (op == 0xB8 || (op == 0x06 && ((cmd_w0(c, st) >> 16) & 0xFF) != 0))
+            break;
+    }
+    uint32_t base = xr_alloc((uint32_t)n * 8);
+    if (xr.full)
+        return base;
+    uint32_t last_b4 = 0;
+    uintptr_t last_b4_w1 = 0;
+    for (int i = 0; i < n && !ended; i++, pc += st) {
+        uint32_t w0 = cmd_w0(pc, st), out[2];
+        uintptr_t w1 = cmd_w1(pc, st);
+        /* BRANCH_Z: its list's address is the RDPHALF_1 before it */
+        if ((w0 >> 24) == 0xB0 && last_b4)
+            xr_w32(last_b4 + 4, xr_dl(addr((uint32_t)last_b4_w1), depth + 1));
+        xr_cmd(out, w0, w1, depth, base + i * 8, &ended);
+        if ((w0 >> 24) == 0xB4) {
+            last_b4 = base + i * 8;
+            last_b4_w1 = w1;
+        }
+        xr_w32(base + i * 8, out[0]);
+        xr_w32(base + i * 8 + 4, out[1]);
+    }
+    return base;
+}
+
+static void xr_write(const char *path, const void *p, size_t n, const void *head, size_t hn) {
+    FILE *f = fopen(path, "wb");
+    if (!f || (hn && fwrite(head, 1, hn, f) != hn) || fwrite(p, 1, n, f) != n)
+        host_fatal("PORT_GFX_REF: can't write %s", path);
+    fclose(f);
+}
+
+static char xr_dir[1024];
+static unsigned xr_task;
+
+static void xr_begin(const void *dl) {
+    static int done;
+    static unsigned from, to;
+    if (!done) {
+        const char *e = getenv("PORT_GFX_REF");
+        done = 1;
+        if (!e || sscanf(e, "%u:%u:%1000s", &from, &to, xr_dir) != 3)
+            from = 1, to = 0;
+    }
+    xr.on = host_vi_count >= from && host_vi_count <= to;
+    if (!xr.on)
+        return;
+    if (!xr.img)
+        xr.img = malloc(0x1000000);
+    if (!xr.img)
+        host_fatal("PORT_GFX_REF: no memory");
+    memcpy(xr.img, port_rdram, PORT_RDRAM_SIZE);
+    memset(xr.img + PORT_RDRAM_SIZE, 0, 0x1000000 - PORT_RDRAM_SIZE);
+    xr.top = PORT_RDRAM_SIZE;
+    xr.full = 0;
+    xr.nblob = xr.nfix = xr.ncimg = 0;
+    xr.cur_cimg = -1;
+    xr.timg_blob = -1;
+    xr.zimg = gs.zimg && xr_phys(gs.zimg) >= 0 ? (uint32_t)xr_phys(gs.zimg) : 0xFFFFFFFFu;
+    xr.sc_y1 = rdp_raw[0x2D][1] & 0xFFF;
+    /* the RDP's state, as commands (the preamble) */
+    uint32_t pre = xr_alloc(64 * 8), at = pre;
+    int b;
+    for (int op = 0xED; op <= 0xFF; op++) {
+        uint32_t w0 = rdp_raw[op & 0x3F][0], w1 = rdp_raw[op & 0x3F][1];
+        if ((w0 >> 24) != (uint32_t)op || op == 0xF0 || op == 0xF2 || op == 0xF3 || op == 0xF4 || op == 0xF5 ||
+            op == 0xF6)
+            continue;
+        if (op == 0xEF) {
+            w0 = 0xEF000000u | gs.om_h;
+            w1 = gs.om_l;
+        }
+        if (op >= 0xFD)
+            w1 = xr_image(at + 4, op == 0xFD ? gs.timg : op == 0xFE ? gs.zimg : gs.cimg, &b);
+        xr_w32(at, w0);
+        xr_w32(at + 4, w1);
+        at += 8;
+    }
+    for (int t = 0; t < 8; t++)
+        for (int k = 0; k < 2; k++)
+            if (tile_raw[t][k][0]) {
+                xr_w32(at, tile_raw[t][k][0]);
+                xr_w32(at + 4, tile_raw[t][k][1]);
+                at += 8;
+            }
+    uint32_t pre_end = at;
+    /* the task's lists, with the segments as the last task left them (the
+       game sets them in every task) */
+    uintptr_t seg_save[16];
+    memcpy(seg_save, seg, sizeof seg);
+    if (gs.cimg && xr_phys(gs.cimg) >= 0 && gs.cimg_w > 0) {
+        xr.cimg[0].addr = (uint32_t)xr_phys(gs.cimg);
+        xr.cimg[0].w = (uint32_t)gs.cimg_w;
+        xr.cimg[0].siz = (uint32_t)gs.cimg_siz;
+        xr.cimg[0].h = xr.sc_y1;
+        xr.ncimg = 1;
+        xr.cur_cimg = 0;
+    }
+    uint32_t root = xr_dl(dl, 0);
+    memcpy(seg, seg_save, sizeof seg);
+    /* the blobs */
+    for (int i = 0; i < xr.nblob; i++) {
+        long lo = xr.blob[i].lo, hi = xr.blob[i].hi;
+        if (hi <= lo)
+            hi = lo + 8;
+        uint32_t a = xr_alloc((uint32_t)(hi - lo + 8));
+        if (xr.full)
+            break;
+        memcpy(xr.img + a, xr.blob[i].p + lo, (size_t)(hi - lo));
+        for (int k = 0; k < xr.nfix; k++)
+            if (xr.fix[k].blob == i)
+                xr_w32(xr.fix[k].at, (uint32_t)(a - lo));
+    }
+    /* the microcode: F3DEX.NoN 1.21's text is 0x1430 bytes (D_8029D320) */
+    uint32_t boot = 0, text = 0, data = 0;
+    if (uc_boot && uc_text && uc_data) {
+        boot = xr_copy(uc_boot, uc_boot_size, 1);
+        text = xr_copy(uc_text, 0x1430, 1);
+        data = xr_copy(uc_data, uc_data_size, 1);
+    }
+    if (xr.full)
+        host_log("gfx ref: retrace %u task %u doesn't fit\n", host_vi_count, xr_task);
+    /* the header: magic, retrace, task, root list, preamble, the color images */
+    uint32_t head[XR_HEAD];
+    memset(head, 0, sizeof head);
+    memcpy(head, "F64GREF1", 8);
+    head[2] = host_vi_count;
+    head[3] = xr_task;
+    head[4] = root;
+    head[5] = pre;
+    head[6] = pre_end;
+    head[7] = (uint32_t)xr.ncimg;
+    for (int i = 0; i < xr.ncimg; i++) {
+        head[8 + i * 4] = xr.cimg[i].addr;
+        head[9 + i * 4] = xr.cimg[i].w;
+        head[10 + i * 4] = xr.cimg[i].siz;
+        head[11 + i * 4] = xr.cimg[i].h ? xr.cimg[i].h / 4 : 240;
+    }
+    head[72] = boot;
+    head[73] = uc_boot_size;
+    head[74] = text;
+    head[75] = uc_text_size;
+    head[76] = data;
+    head[77] = uc_data_size;
+    head[78] = xr.zimg;
+    head[79] = uc_stack_size;
+    for (int i = 2; i < XR_HEAD; i++)
+        port_wbe32(&head[i], head[i]);
+    char path[1100];
+    snprintf(path, sizeof path, "%s/r%06u_t%u.in", xr_dir, host_vi_count, xr_task);
+    xr_write(path, xr.img, 0x1000000, head, sizeof head);
+}
+
+static void xr_end(void) {
+    if (!xr.on)
+        return;
+    char path[1100];
+    snprintf(path, sizeof path, "%s/r%06u_t%u.out", xr_dir, host_vi_count, xr_task);
+    xr_write(path, port_rdram, PORT_RDRAM_SIZE, NULL, 0);
+}
+
 static void run(const Cmd *dl) {
     const uint8_t *stack[18];
     unsigned stack_st[18];
@@ -1288,6 +1722,15 @@ static void run(const Cmd *dl) {
             host_log("  %p: %08X %08X\n", (const void *)c, w0, (unsigned)w1);
         if (dl_on)
             dl_cmd(sp, w0, w1);
+        if (op >= 0xED) {
+            if (op == 0xF5 || op == 0xF2) {
+                tile_raw[(w1l >> 24) & 7][op == 0xF2][0] = w0;
+                tile_raw[(w1l >> 24) & 7][op == 0xF2][1] = w1l;
+            } else {
+                rdp_raw[op & 0x3F][0] = w0;
+                rdp_raw[op & 0x3F][1] = w1l;
+            }
+        }
         switch (op) {
         case 0x00:
             break;
@@ -1526,7 +1969,10 @@ int host_gfx_task(const void *dl, uint32_t size) {
         gs.sc_x1 = 320;
         gs.sc_y1 = 240;
     }
+    xr_begin(dl);
     run((const Cmd *)dl);
+    xr_end();
+    xr_task++;
     if (dl_on)
         fflush(dl_out);
     return full_sync;

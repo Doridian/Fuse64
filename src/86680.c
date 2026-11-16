@@ -53,10 +53,10 @@ void func_8026BE80(s32 arg0);
 void func_8026BEB0(void);
 void func_8026BFD0(s32 arg0, s8 arg1);
 
-extern s32 D_800BD770[];
-extern s32 D_800BD774[];
-extern UnkStruct_800BD778 D_800BD778[];
-extern u8 D_8019C2E0[];
+extern s32 D_800BD770[PORT_SIZE(1)];
+extern s32 D_800BD774[PORT_SIZE(1)];
+extern UnkStruct_800BD778 D_800BD778[PORT_SIZE(8)];
+extern u8 D_8019C2E0[PORT_SIZE(300000)]; /* the audio heap */
 
 
 extern u8 D_802A89B0[];

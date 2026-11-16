@@ -70,7 +70,7 @@ static s32 func_80292E80(u8 addr, u8 *buf, u8 n);
 static s32 func_80292DB8(u8 addr, u8 *buf, u8 n);
 
 extern u8 D_80063000[PORT_SIZE(0x1B8)]; /* the save: its header, three slots of 0x90 */
-extern u8 D_800631B8[];
+extern u8 D_800631B8[PORT_SIZE(0x1B8)]; /* the save read back, to compare */
 extern s32 D_80063004;
 extern u8 D_802AC3E0[];
 

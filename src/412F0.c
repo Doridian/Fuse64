@@ -76,12 +76,12 @@ PORT_RET(void, s32) func_80297D98(UnkStruct_802A5330 *, PORT_IP(s32), s32);
 
 extern u8 D_1000000[];
 extern u8 D_200000[];
-extern u16 D_80100000[][320 * 240];
+extern u16 D_80100000[PORT_SIZE(2)][320 * 240];
 extern UnkStruct_802A538C D_8014C8D0[2];
-extern u8 D_8019A8D0[];
+extern u8 D_8019A8D0[PORT_SIZE(0x800)];
 extern u64 D_801E56C0[0x2000];
-extern u8 D_8029D250[];
-extern u8 D_8029D320[];
+extern u8 D_8029D250[PORT_SIZE(0xD0)];
+extern u8 D_8029D320[PORT_SIZE(0x1430)];
 extern s32 D_8029F5E0;
 extern s32 D_8029F5E4;
 extern s32 D_8029F5E8;
@@ -96,7 +96,7 @@ extern u8 D_8029F6D8[];
 extern u8 D_8029F718[];
 extern u8 D_8029F7A0[];
 extern u8 D_8029F7C8[];
-extern u8 D_802A4840[];
+extern u8 D_802A4840[PORT_SIZE(0x7C0)];
 extern s32 D_802A5800;
 
 /* This object's .bss (0x802A5330-0x802A53D0). Defined here because the

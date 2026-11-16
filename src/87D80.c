@@ -343,13 +343,13 @@ extern f32 D_802AFC68;
 extern void *D_802AFC6C;
 extern s32 D_802AFC70;
 extern s32 D_802AFC74;
-extern u8 D_802AFC78[];
+extern u8 D_802AFC78[PORT_SIZE(6 * 0x12)];
 extern u8 D_802AFCE8[];
 extern u8 D_802AFCF4[];
 extern s16 D_802AFCF8;
 extern void *D_802AFDD8;
 extern Node87 D_802AFE1C;
-extern u8 D_802AFE60[];
+extern u8 D_802AFE60[PORT_SIZE(0xC)];
 extern s16 D_802AFE70;
 
 void func_8026D580(void);
@@ -1362,7 +1362,7 @@ u8 func_8026DC74(s32 arg0) {
         /* below the floor (func_8026DCAC's -1, 5E3F0.c's func_8024E088):
          * on the N64 entry -1's unk10 is the byte at 0x800B09B4, the high
          * byte of D_800B05D8[0xF7] (docs/PORT.md, "The scattered layout") */
-        extern s32 D_800B05D8[];
+        extern s32 D_800B05D8[PORT_SIZE(255)];
 
         return (u32) D_800B05D8[0xF7] >> 24;
     }

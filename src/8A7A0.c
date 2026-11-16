@@ -377,13 +377,13 @@ extern f32 D_802AFC68;
 extern void *D_802AFC6C;
 extern s32 D_802AFC70;
 extern s32 D_802AFC74;
-extern u8 D_802AFC78[];
+extern u8 D_802AFC78[PORT_SIZE(6 * 0x12)]; /* s16 [6][9] */
 extern u8 D_802AFCE8[];
 extern u8 D_802AFCF4[];
 extern s16 D_802AFCF8;
 extern void *D_802AFDD8;
 extern Node87 D_802AFE1C;
-extern u8 D_802AFE60[];
+extern u8 D_802AFE60[PORT_SIZE(0xC)]; /* a Vec3f */
 extern s16 D_802AFE70;
 
 void func_8026D580(void);

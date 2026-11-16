@@ -187,10 +187,10 @@ void func_802686B8(void);
 void func_8026910C(void);
 void func_802691A8(void);
 
-extern u8 D_8029D250[];
-extern u8 D_8029D320[];
-extern u8 D_8029E750[];
-extern u8 D_802A5040[];
+extern u8 D_8029D250[PORT_SIZE(0xD0)]; /* rspboot */
+extern u8 D_8029D320[PORT_SIZE(0x1430)];
+extern u8 D_8029E750[PORT_SIZE(0xE20)]; /* aspMain's text */
+extern u8 D_802A5040[PORT_SIZE(0x2C0)]; /* and its data */
 /* The holes at 0x802AD694 and 0x802AF92C are IDO's: it puts an 8-byte
  * array or struct 8-aligned. */
 UnkStruct_802AD680 D_802AD680;

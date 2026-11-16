@@ -55,7 +55,7 @@ void func_800018A8(char *expr, char *file, s32 line);
 /* the task types (OS_SC_TYPE_MASK) that are switched on */
 #define SC_TYPE_XBUS 3
 
-extern OSViMode D_8001A3B0[];
+extern OSViMode D_8001A3B0[PORT_SIZE(42)]; /* NTSC, PAL and MPAL's 14 each */
 
 /* .data: Hudson's frame timing */
 s32 D_80019FA0 = 0; /* retraces */

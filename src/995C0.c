@@ -50,7 +50,7 @@ static void func_8027F420(void);
 extern UnkStruct_802A15C0 D_802A15C0;
 extern s32 D_802A15D8;
 extern u8 D_802A15DC[];
-extern s16 D_802A1608[];
+extern s16 D_802A1608[PORT_SIZE(4)];
 
 void func_8027F6B4(void) {
     func_80297D30(0x24, D_802A15DC);

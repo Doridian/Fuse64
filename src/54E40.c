@@ -493,7 +493,7 @@ extern s32 D_800BE818;
 extern s32 D_800BE824;
 #define BE818(i) ((&D_800BE818)[i])
 #endif
-extern u8 D_800BE830[];
+extern u8 D_800BE830[PORT_SIZE(0x18)]; /* 0x2C flags, a word per 8 */
 extern s32 D_802A0038;
 extern s32 D_802AC5CC;
 extern s32 D_802AC5D0;
@@ -589,7 +589,7 @@ extern u32 D_802AC858[4];
 extern u32 D_802AC858;
 #define AC858(i) ((&D_802AC858)[i])
 #endif
-extern u8 D_802AC868[];
+extern u8 D_802AC868[PORT_SIZE(5 * 4)]; /* an s32 per entry */
 
 void func_8023A640(void);
 void func_8023A68C(void);

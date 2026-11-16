@@ -296,7 +296,7 @@ typedef struct {
 } UnkStruct_800AEDF0; /* size 0xC8 */
 
 extern UnkStruct_800AEDF0 D_800AEDF0[5];
-extern u8 D_802ACF08[][0x10];
+extern u8 D_802ACF08[PORT_SIZE(5)][0x10];
 
 typedef struct {
     /* 0x00 */ s32 unk0;

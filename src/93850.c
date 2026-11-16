@@ -201,10 +201,10 @@ UnkStruct_800BB4A8 *func_8027A1A0(UnkStruct_80279050_14 *arg0);
 #else
 extern UnkStruct_800BB4A8 *D_800BB4A8;
 #endif
-extern UnkStruct_802AFED0 D_802AFED0[];
+extern UnkStruct_802AFED0 D_802AFED0[PORT_SIZE(5)];
 extern UnkStruct_800AEDF0 D_800AEDF0[];
 extern UnkStruct_800BB4A8 D_800BB4A0[48]; /* [0] the list's head, [1] its sentinel, [2..47] the pool */
-extern s16 D_802AFF60[];
+extern s16 D_802AFF60[PORT_SIZE(7)];
 
 typedef struct {
     /* 0x00 */ s16 unk0;
@@ -223,11 +223,11 @@ void func_8027404C(f32, f32, f32, f32 *, f32 *, f32 *);
 void func_80297D30(s32, void *);
 void func_8027AFB8(s16 arg0);
 
-extern UnkStruct_800BA8A0 D_800BA8A0[];
+extern UnkStruct_800BA8A0 D_800BA8A0[PORT_SIZE(5)];
 extern u8 D_802A1500[];
 extern u8 *D_802AFE80;
 extern u8 *D_802AFE84;
-extern s16 D_802AFE88[][3];
+extern s16 D_802AFE88[PORT_SIZE(10)][3];
 extern s16 D_802AFEC4;
 extern s32 D_802AFEC8;
 extern s32 D_802AFECC;
@@ -258,7 +258,7 @@ void func_80279560(void);
 void func_80279780(s16 arg0, s32 arg1);
 void func_8027404C(f32, f32, f32, f32 *, f32 *, f32 *);
 void func_8027A640(void);
-extern u8 D_800BD818[];
+extern u8 D_800BD818[PORT_SIZE(0x1000)];
 extern s32 D_802AC5D0;
 
 #define ABSF(x) ((x) < 0.0f ? -(x) : (x))

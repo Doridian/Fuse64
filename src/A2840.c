@@ -106,7 +106,7 @@ typedef struct {
 } UnkStruct_800BA8E8;
 extern UnkStruct_800BA8E8 D_800BA8E8[6];
 #endif
-extern UnkStruct_800BC9F0 D_800BC9F0[];
+extern UnkStruct_800BC9F0 D_800BC9F0[PORT_SIZE(16)];
 
 void func_80229E38(UnkStructA_40 *, s32, s32);
 void func_8022FF58(Vec3f *, Vec3f *, f32 *);

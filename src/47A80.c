@@ -102,7 +102,7 @@ void func_8029C7A8(f32 m[4][4], f32, f32, f32);
 void func_8022928C(f32 m[4][4], f32 n[4][4]);
 
 extern MeshOverride D_80098C18[];
-extern f32 D_80098CF8[][4][4];
+extern f32 D_80098CF8[PORT_SIZE(0x200)][4][4];
 extern s32 D_800A0CF8;
 extern s32 D_8029F840;
 extern s32 D_802A5368;

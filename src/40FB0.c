@@ -23,7 +23,7 @@ void func_80226818(void);
 void func_80297D50(void *, s32);
 void func_80297D58(void *, s32);
 
-extern UnkStruct_8019B0D0 D_8019B0D0[];
+extern UnkStruct_8019B0D0 D_8019B0D0[PORT_SIZE(0x800)]; /* ROM 0x30800's 0x1000 bytes */
 extern UnkStruct_8019C0D0 D_8019C0D0;
 extern u8 D_8029F5D0[];
 extern s32 D_802A5320;

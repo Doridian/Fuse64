@@ -435,7 +435,7 @@ void guMtxIdentF(f32 mf[4][4]);
 
 extern UnkTexOwner D_80098C18[5];
 extern UnkScroll D_80098C68[6];
-extern f32 D_80098CF8[][4][4];
+extern f32 D_80098CF8[PORT_SIZE(0x200)][4][4]; /* the matrix stack, D_800A0CF8 deep */
 extern s32 D_800A0CF8;
 extern UnkObj D_800A0D00[0xA0];
 extern UnkObj D_800A3F00[];

@@ -187,7 +187,10 @@ each other (a cross build under qemu, a sanitized build, the WebAssembly
 build against x86). Recorded: legal, menus, battle and story in us, eu
 and jp (on Linux i386; eu's and jp's story checked by screenshots
 every 500 retraces: the opening, the world select and the first stage
-played, as us's). jp's battle input is the port's own
+played, as us's). The renderer's check ("Graphics", 2026-11-16) changed
+every framebuffer digest of the seven scenarios in all three versions
+(the sound and the EEPROM stayed); they were recorded again on i386, and
+x86-64 gives the same. jp's battle input is the port's own
 timing of battle.jp.txt (`port/tools/inputs/battle.jp.txt`, which test.py
 prefers to the shift check's): the port loads without the N64's waits, so
 jp's opening logo scene, which it plays by itself after the title, starts
@@ -701,6 +704,110 @@ by their formulas in one and two cycles, TMEM with its loads, the texel
 formats, fill and copy modes, texture rectangles, coverage from alpha,
 fog and the z-buffer. About 140 retraces a second headless on one core.
 
+The RDP's side is in integers, as the RDP computes it: texture
+coordinates in s10.5 through the tile's shift, clamp, mask and mirror,
+the three-point filter, the combiner's `((a - b) * c + (d << 8) + 0x80)
+>> 8` with its 9-bit clamp, the blender's 5-bit coefficients, the
+16-bit framebuffer's dither (magic square or Bayer), the coverage rules
+(a pixel is drawn if any of its eight samples is in, CVG_X_ALPHA,
+ALPHA_CVG_SEL), texture rectangles in fixed point, and the z-buffer as
+the RDP keeps it in the z image (18-bit depths squeezed into 14 bits with
+an exponent, the slope dz in the low two bits and the hidden bits, the
+decal test within dz). The RSP's side stays in floats (the vertices, the
+triangles' gradients), with the screen positions cut to quarter pixels
+as the RSP gives them to the RDP and the attributes evaluated at the
+pixel's corner. The matrix stack is as deep as the task's stack in RDRAM
+(0x800 bytes: 32 matrices; the battle stages push 11, and when the port
+kept nine the players' heads turned).
+
+**Against a reference.** `port/tools/gfx_ref.py` compares the port's
+pictures with an accurate renderer's: angrylion-rdp-plus (the RDP) and
+cxd4's RSP interpreter running the game's own microcode (F3DEX.NoN 1.21
+from the task). Neither is part of the port or of this repository
+(angrylion is under the MAME licence); `port/tools/gfx_ref/build.sh DIR`
+fetches both at pinned commits and builds `DIR/gfxref`
+(`port/tools/gfx_ref/gfxref.c` and `rsp_glue.c`: the task through the RSP
+until it breaks, the RDP's commands as it sends them). To keep the
+comparison free of timing, it is per task: with `PORT_GFX_REF=FROM:TO:DIR`
+the port writes each graphics task of those retraces as the N64 would
+have it in RDRAM (the low 8 MiB `port_rdram` as the task finds it, the
+high 8 MiB the display lists, vertices, matrices and viewports in the
+N64's order with segments resolved, the textures it loads from host
+memory, and the microcode), the RDP's state at the task's start as a list
+of RDP commands, and what the port drew; gfxref runs the same task from
+the same memory, and gfx_ref.py compares the images the task drew. A
+difference is that task's alone, whatever the frames before it did.
+
+```
+port/tools/gfx_ref/build.sh scratch/port-gfx/ref   # once (curl, cc)
+GFXREF=scratch/port-gfx/ref/gfxref port/tools/gfx_ref.py run build-port [--screen NAME ...] [--out DIR]
+port/tools/gfx_ref.py list                          # the screens
+```
+
+`run` plays each screen's scenario (test.py's input, warp and save) to
+the screen's retrace and prints, per image, the pixels that differ, those
+by more than one step of a 5-bit channel, and the largest channel
+difference (of 255); for the z image the depths that differ, by more
+than one step, and the largest difference (of 16384). It writes the
+port's, the reference's and the difference's PNGs in `--out`
+(`scratch/port-gfx/out` by default). A jp build gives jp's screens.
+
+us, 2026-11-16, the framebuffer each screen's task drew (pixels that
+differ of 76800 / by more than a 5-bit step / largest difference) and its
+z image (depths that differ / largest), the renderer before this check
+and after:
+
+| screen | before | after | z before | z after |
+|---|---|---|---|---|
+| legal | 3341 / 3128 / 255 | 21 / 0 / 9 | 0 / 0 | 0 / 0 |
+| fade-legal | 3228 / 2865 / 165 | 18 / 0 / 9 | 0 / 0 | 0 / 0 |
+| hudson | 41328 / 32336 / 206 | 18169 / 3366 / 206 | 39734 / 12358 | 32116 / 12358 |
+| fade-white | 40340 / 17595 / 123 | 13715 / 684 / 115 | 39784 / 12358 | 32010 / 12358 |
+| title | 52422 / 19876 / 255 | 973 / 938 / 214 | 0 / 0 | 0 / 0 |
+| fade-title | 55920 / 20725 / 49 | 0 / 0 / 0 | 0 / 0 | 0 / 0 |
+| fade-files | 62096 / 38213 / 132 | 0 / 0 / 0 | 0 / 0 | 0 / 0 |
+| fade-opening | 61078 / 30623 / 157 | 25453 / 2623 / 157 | 68567 / 10590 | 22547 / 1569 |
+| files | 62434 / 40143 / 181 | 26204 / 3402 / 181 | 68567 / 10590 | 23120 / 1569 |
+| modes | 61029 / 47914 / 255 | 26522 / 6063 / 255 | 68781 / 11140 | 39320 / 581 |
+| opening | 62974 / 30994 / 107 | 19606 / 1615 / 107 | 68567 / 10590 | 22498 / 1569 |
+| worlds | 60877 / 47734 / 255 | 26274 / 6155 / 255 | 68781 / 11140 | 39322 / 739 |
+| stage1 | 44814 / 36284 / 255 | 17250 / 5060 / 255 | 32965 / 10596 | 18303 / 10596 |
+| stage1b | 42998 / 32960 / 255 | 15494 / 4695 / 255 | 33534 / 10596 | 18752 / 10596 |
+| battle-menu | 56828 / 23287 / 255 | 18264 / 1815 / 255 | 68781 / 8661 | 31943 / 458 |
+| battle | 57446 / 24778 / 255 | 18398 / 1924 / 255 | 68781 / 8661 | 31385 / 458 |
+| battle-late | 56478 / 21886 / 255 | 17654 / 1478 / 239 | 68781 / 8661 | 31674 / 458 |
+| red-mountain | 58860 / 17720 / 49 | 23155 / 113 / 49 | 68781 / 9774 | 61128 / 9 |
+| boss | 42890 / 17280 / 247 | 17023 / 1617 / 239 | 55110 / 10144 | 17521 / 10140 |
+| battle8 | 55855 / 31635 / 255 | 20070 / 3159 / 255 | 64514 / 10246 | 28460 / 10247 |
+
+jp (its own timing: the same retraces are other screens; 550 is the
+file select, in jp's text):
+
+| retrace (screen name) | before | after |
+|---|---|---|
+| 200 (legal: the Hudson logo) | 51737 / 2320 / 50 | 0 / 0 / 0 |
+| 420 (hudson: the title) | 54486 / 21629 / 255 | 0 / 0 / 0 |
+| 550 (title: the file select) | 59205 / 30135 / 255 | 42 / 42 / 239 |
+| 1400 (files) | 61680 / 36972 / 132 | 20470 / 2328 / 132 |
+| 1700 (modes) | 58550 / 38769 / 132 | 17296 / 1685 / 140 |
+| 2600 (opening) | 61035 / 9460 / 24 | 5583 / 143 / 24 |
+| 4000 (worlds) | 59878 / 46119 / 255 | 26268 / 6141 / 255 |
+| 6000 (stage1) | 44961 / 36458 / 255 | 17523 / 5237 / 255 |
+| battle-menu | 57013 / 23561 / 255 | 17989 / 1653 / 255 |
+| battle | 56803 / 23067 / 255 | 17746 / 1478 / 255 |
+| boss | 47512 / 17627 / 132 | 11509 / 846 / 140 |
+
+The 2D screens match but for a few edge pixels; in 3D most of what is
+left is one step of a 5-bit channel (the RSP's fixed-point triangle
+setup, which the port does in floats: shade and texture coordinates a
+little off, perspective in particular) and edges a quarter pixel off
+(a vertex at 369.9999 quarter pixels where the RSP has 370). The z
+images differ by small amounts for the same reason (before, the port
+kept its depths in a float buffer of its own, and its z image held only
+the clear). No screen draws into another
+color image (the screen captures read the framebuffer back on the CPU),
+and the fades are blended rectangles, matched above.
+
 ### Audio
 
 libaudio is DozerEncore's port of ultralib's (port/libaudio), with the
@@ -886,8 +993,15 @@ through its neighbour, a read through NULL given ZeroJump's word
 - **Packages** (an AppImage, the `.exe` with SDL, a macOS app; Blast
   Corps' "Packages") and a hosted page: after 64-bit, with SDL in the
   Windows cross build.
-- **Renderer**: what the first stage and the menus show is checked by eye
-  against an emulator, not pixel for pixel.
+- **Renderer**: checked task by task against angrylion and the game's
+  microcode ("Graphics": `gfx_ref.py`); the 2D screens match, 3D is
+  mostly within a 5-bit step. Left: the RSP's side in its own fixed
+  point (vertices, triangle setup, 1/w), which would make 3D exact; the
+  coverage the RDP keeps in memory (the hidden bits and the color's low
+  bit), for antialiased edges and color-on-coverage modes (the title's
+  PRESS START, a rectangle at a half pixel, is the last 2D difference);
+  TMEM isn't carried from the previous task into the reference (each task
+  loads its own so far); the VI's filters aren't compared.
 - Phase 7 and 8 (docs/ROADMAP.md, docs/NETPLAY.md): the input and the RNG
   seed through the network.
 

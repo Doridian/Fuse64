@@ -54,6 +54,14 @@ def game_files():
     return sorted(f for f in fs if "/libultra/" not in f and ".__" not in f)
 
 
+def write_atomic(path, text):
+    """path's new text, never seen half written (two builds of one tree run
+    this at once)"""
+    tmp = "%s.%d" % (path, os.getpid())
+    open(tmp, "w").write(text)
+    os.replace(tmp, path)
+
+
 def make_shim():
     os.makedirs(os.path.join(SHIM, "PR"), exist_ok=True)
     os.makedirs(os.path.join(SHIM, "ultralib", "PR"), exist_ok=True)
@@ -61,8 +69,8 @@ def make_shim():
     old = "typedef struct {\n\tunsigned int w0;\n\tunsigned int w1;\n} Gwords;"
     assert old in s, "gbi.h's Gwords"
     s = s.replace(old, "typedef struct {\n\t__UINTPTR_TYPE__ w0;\n\t__UINTPTR_TYPE__ w1;\n} Gwords;")
-    open(os.path.join(SHIM, "PR", "gbi.h"), "w").write("/* host_check.py: Gwords as wide as a pointer */\n" + s)
-    open(os.path.join(SHIM, "ultralib", "PR", "gbi.h"), "w").write("#include <PR/gbi.h>\n")
+    write_atomic(os.path.join(SHIM, "PR", "gbi.h"), "/* host_check.py: Gwords as wide as a pointer */\n" + s)
+    write_atomic(os.path.join(SHIM, "ultralib", "PR", "gbi.h"), "#include <PR/gbi.h>\n")
 
 
 def flags(f, ver, cc="clang", arch=("-m64",), std="gnu89"):
@@ -75,7 +83,8 @@ def flags(f, ver, cc="clang", arch=("-m64",), std="gnu89"):
 def blanked(f):
     """a copy of f with its #line directives blanked (IDO tricks), so that
     clang reports the file's own lines"""
-    tmp = os.path.join(WORK, "blank", f[:-2] + ".__host_check.c")
+    # (the process id in the name: two builds of one tree run this at once)
+    tmp = os.path.join(WORK, "blank", f[:-2] + ".%d.__host_check.c" % os.getpid())
     os.makedirs(os.path.dirname(tmp), exist_ok=True)
     open(tmp, "w").write(re.sub(r"(?m)^#line .*$", "", open(f).read()))
     return tmp
@@ -287,7 +296,7 @@ def ast(ver):
             if body:
                 b = d.get("loc", {})
                 walk(d, f, d["name"], [b.get("spellingLoc", b).get("line", 0)])
-    json.dump({"funcs": funcs, "calls": calls}, open(cache, "w"))
+    write_atomic(cache, json.dumps({"funcs": funcs, "calls": calls}))
     return funcs, calls
 
 

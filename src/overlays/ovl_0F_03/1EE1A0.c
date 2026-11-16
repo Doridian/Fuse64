@@ -424,7 +424,7 @@ static void func_ovl0F_03_80044250(UnkStruct_ovl0F_03_Gfx **gdl) {
         if (func_ovl0F_03_800468D0(0x407) != 0) {
             UnkStruct_ovl0F_03_800470E8 *p = &D_ovl0F_03_800470E8[i];
 
-            { UnkStruct_ovl0F_03_Gfx *g = g2++; g->w0 = _SHIFTL(0xE4, 24, 8) | _SHIFTL((u32) (p->unk8 + p->unk4 - 1) << 2, 0, 12) | _SHIFTL((u32) (p->unk0 + p->unk8 - 1) << 2, 12, 12); g->w1 = _SHIFTL(0, 24, 3) | _SHIFTL((u32) p->unk4 << 2, 0, 12) | _SHIFTL((u32) p->unk0 << 2, 12, 12); { UnkStruct_ovl0F_03_Gfx *g = g2++; g->w0 = 0xB4000000; g->w1 = 0; } { UnkStruct_ovl0F_03_Gfx *g = g2++; g->w0 = 0xB3000000; g->w1 = _SHIFTL((s32) (16.0f / (p->unk8 - 1) * 1024.0f), 0, 16) | _SHIFTL((s32) (16.0f / (p->unk8 - 1) * 1024.0f), 16, 16); } }
+            { UnkStruct_ovl0F_03_Gfx *g = g2++; g->w0 = _SHIFTL(0xE4, 24, 8) | _SHIFTL(PORT_F2U(p->unk8 + p->unk4 - 1) << 2, 0, 12) | _SHIFTL(PORT_F2U(p->unk0 + p->unk8 - 1) << 2, 12, 12); g->w1 = _SHIFTL(0, 24, 3) | _SHIFTL(PORT_F2U(p->unk4) << 2, 0, 12) | _SHIFTL(PORT_F2U(p->unk0) << 2, 12, 12); { UnkStruct_ovl0F_03_Gfx *g = g2++; g->w0 = 0xB4000000; g->w1 = 0; } { UnkStruct_ovl0F_03_Gfx *g = g2++; g->w0 = 0xB3000000; g->w1 = _SHIFTL((s32) (16.0f / (p->unk8 - 1) * 1024.0f), 0, 16) | _SHIFTL((s32) (16.0f / (p->unk8 - 1) * 1024.0f), 16, 16); } }
         }
         if (D_ovl0F_03_80046E04 == 0.0f) {
             continue;

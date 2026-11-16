@@ -280,8 +280,8 @@ static void envmixer(int flags, uintptr_t state) {
     int16_t d, w;
     if (flags & F_INIT) {
         for (int c = 0; c < 2; c++) {
-            v[c] = (int64_t)vol[c] << 19;
-            tgt[c] = (int64_t)target[c] << 19;
+            v[c] = (int64_t)vol[c] * (1 << 19); /* (a multiply: vol can be negative) */
+            tgt[c] = (int64_t)target[c] * (1 << 19);
             r[c] = rate[c];
         }
         d = dry;
@@ -289,7 +289,7 @@ static void envmixer(int flags, uintptr_t state) {
     } else {
         for (int c = 0; c < 2; c++) {
             v[c] = (int64_t)ram32(s, c) * 8 + (s[28 + c] & 7);
-            tgt[c] = (int64_t)ram16(s, 4 + c) << 19;
+            tgt[c] = (int64_t)ram16(s, 4 + c) * (1 << 19);
             r[c] = ram32(s, 4 + c);
         }
         d = ram16(s, 12);

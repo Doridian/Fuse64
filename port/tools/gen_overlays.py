@@ -33,12 +33,13 @@ def main():
     o.append("const PortOverlay port_overlays[] = {")
     for n in ovls:
         bb, ee = n[4:6], n[7:9]
+        # the bank is hex, the entry decimal (ovl_0E_15 is bank 0x0E's 15th)
         o.append("#ifdef __EMSCRIPTEN__")
-        o.append("    { \"%s\", 0x%s, 0x%s, func_ovl%s_%s_80043000, __start_fuse64o_%s, __stop_fuse64o_%s, 0, 0 },"
-                 % (n, bb, ee, bb, ee, n, n))
+        o.append("    { \"%s\", 0x%s, %d, func_ovl%s_%s_80043000, __start_fuse64o_%s, __stop_fuse64o_%s, 0, 0 },"
+                 % (n, bb, int(ee, 10), bb, ee, n, n))
         o.append("#else")
-        o.append("    { \"%s\", 0x%s, 0x%s, func_ovl%s_%s_80043000, __start_fuse64d_%s, __stop_fuse64d_%s, "
-                 "__start_fuse64b_%s, __stop_fuse64b_%s }," % (n, bb, ee, bb, ee, n, n, n, n))
+        o.append("    { \"%s\", 0x%s, %d, func_ovl%s_%s_80043000, __start_fuse64d_%s, __stop_fuse64d_%s, "
+                 "__start_fuse64b_%s, __stop_fuse64b_%s }," % (n, bb, int(ee, 10), bb, ee, n, n, n, n))
         o.append("#endif")
     o.append("};")
     o.append("const unsigned port_noverlays = %d;" % len(ovls))

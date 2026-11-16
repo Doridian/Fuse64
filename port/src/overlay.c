@@ -76,5 +76,5 @@ void *port_overlay_load(int bank, int entry) {
             host_log("%u: overlay %s\n", host_vi_count, o->name);
         return o->start();
     }
-    host_fatal("no overlay %02X_%02X", bank, entry);
+    host_fatal("no overlay %02X_%02d", bank, entry);
 }

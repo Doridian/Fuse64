@@ -76,7 +76,8 @@ def main():
         off = a - 0x80000000
         size = (inram[i + 1][1] - a) if i + 1 < len(inram) else 0
         if lay and cover and off < cover[4]:
-            h = lay.host_off(cover[2], cover[3], off - cover[1])
+            # (an object without pointers: the names inside keep the N64's offsets)
+            h = off - cover[1] if cover[2] is None else lay.host_off(cover[2], cover[3], off - cover[1])
             if h is None:
                 report.append("%s: inside %s at +0x%X: no host offset" % (n, cover[3], off - cover[1]))
                 h = off - cover[1]
@@ -109,9 +110,14 @@ def main():
                 # (as big as its declarations say, and never less than the
                 # N64's room up to the next name: the C may index past a
                 # declaration, D_800BE818's s32 is three)
-                ds = [d.get("s64") for d in full["names"].get(n, []) if d["kind"] == "var"] if lay else []
-                ds = [x for x in ds if x]
+                vs = [d for d in full["names"].get(n, []) if d["kind"] == "var" and d.get("s64")] if lay else []
+                ds = [d["s64"] for d in vs]
                 hend = hoff + max(ds + [size]) if a < FIXED_FROM and n not in END_MARKERS else 0
+                # a declared object past the next name (9CAB0.c's D_800BA8E8[6],
+                # whose D_800BA8E8[0].unk2 is A2840.c's D_800BA8EA) with the same
+                # size on both: the names inside it keep their N64 offsets
+                if ds and max(ds) > size and all(d["s32"] == d["s64"] for d in vs) and a < FIXED_FROM:
+                    cover = (hoff, off, None, None, off + max(ds), base)
         if hoff != off and base == "port_rdram":
             report.append("%s: at 0x%X (+0x%X)" % (n, 0x80000000 + hoff, hoff - off))
         o.append("__asm__(\".globl \" PORT_ULP \"%s\\n.set \" PORT_ULP \"%s, \" PORT_ULP \"%s + 0x%X\\n\");"

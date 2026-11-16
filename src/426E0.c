@@ -1271,7 +1271,10 @@ static void func_802284F0(UnkObj *arg0, UnkGfx **arg1) {
                 continue;
             }
 #endif
-            gSPSegment(gfx++, i + 3, (u8 *)model + model->unkC[idx].unk8);
+            /* (an offset can take the address below 0, where a 32-bit host
+               wraps it as the N64 does: on the integer, not the pointer) */
+            gSPSegment(gfx++, i + 3, PORT_HOST((u8 *)model + model->unkC[idx].unk8,
+                                               (u8 *)((uintptr_t)model + (intptr_t)model->unkC[idx].unk8)));
         } else {
             g = gfx;
             anim = &arg0->unk4C->unk8[i];
@@ -1289,7 +1292,9 @@ static void func_802284F0(UnkObj *arg0, UnkGfx **arg1) {
                 anim->unk8 = count + 1;
             }
             gfx++;
-            gSPSegment(g, i + 3, (u8 *)model + model->unkC[anim->unkC[anim->unk4].unk0].unk8);
+            gSPSegment(g, i + 3, PORT_HOST((u8 *)model + model->unkC[anim->unkC[anim->unk4].unk0].unk8,
+                                           (u8 *)((uintptr_t)model +
+                                                  (intptr_t)model->unkC[anim->unkC[anim->unk4].unk0].unk8)));
             if ((PORT_IP(s32))g + (PORT_IP(s32))g + (PORT_IP(s32))g + (PORT_IP(s32))g + (PORT_IP(s32))g + (PORT_IP(s32))model) {} /* fake: dead sum: colouring order of g and model (header) */
         }
     }

@@ -262,7 +262,11 @@ typedef struct {
 #endif
 } Player87; /* size 0xC8 */
 
+#ifdef TARGET_PC
+#define ENT_HEAD (ENTS[0].next) /* D_8008F44C, its own name on the N64 */
+#else
 #define ENT_HEAD (*(Ent88 **) &D_8008F44C)
+#endif
 #define PLAYERS ((Player87 *) D_800AEDF0)
 #define ENTS ((Ent88 *) D_8008F438)
 #define OBJ_DD8 (*(Obj8E **) &D_802AFDD8)
@@ -345,6 +349,16 @@ extern u8 D_800AEE0A[];
 extern s32 D_800AEE0C;
 extern u8 D_800AEE0E[];
 extern s32 D_800AEE10;
+#ifdef TARGET_PC
+/* the player fields the N64 names on their own (docs/PORT.md, "The
+ * scattered layout") */
+#undef D_800AEE08
+#undef D_800AEE0A
+#undef D_800AEE0E
+#define D_800AEE08 (*(s32 *) &((Port_800AEDF0 *) D_800AEDF0)[0].unk0[0x18])
+#define D_800AEE0A (&((Port_800AEDF0 *) D_800AEDF0)[0].unk0[0x1A])
+#define D_800AEE0E (&((Port_800AEDF0 *) D_800AEDF0)[0].unk0[0x1E])
+#endif
 extern UnkStruct_800B15D8 D_800B15D8[];
 extern u8 D_802A1450[];
 extern s16 D_802A14B4;
@@ -501,7 +515,11 @@ typedef struct {
     u8 pad[0x3C - 8];
 } Node3C;
 
+#ifdef TARGET_PC
+#define ENT_4C0 (&ENTS[1]) /* D_8008F4C0, its own name on the N64 */
+#else
 #define ENT_4C0 ((Ent88 *) D_8008F4C0)
+#endif
 #define IDS ((s16 (*)[9]) D_802AFC78)
 #define LIVE(e) ((e)->x != 1e7f)
 #define NODES ((Node3C *) &D_802AFDE0)
@@ -2262,7 +2280,7 @@ void func_80273544(u8 *arg0) {
     temp_v0 = PORT_ELEM(D_8008F438, void **, 0xA0, Port_Ent88, 1, unk18);
     PORT_ELEM(D_8008F438, void **, 0xA0, Port_Ent88, 1, unk18) = arg0;
     PORT_FIELD(temp_v0, void **, 0x14, Port_Ent88, unk14) = arg0;
-    PORT_FIELD(arg0, M2C_UNK **, 0x14, Port_Ent88, unk14) = (M2C_UNK *) D_8008F4C0;
+    PORT_FIELD(arg0, M2C_UNK **, 0x14, Port_Ent88, unk14) = (M2C_UNK *) PORT_HOST(D_8008F4C0, (u8 *) &ENTS[1]);
     PORT_FIELD(arg0, void **, 0x18, Port_Ent88, unk18) = temp_v0;
 }
 

@@ -184,7 +184,13 @@ s32 func_80279DC8(UnkStruct_800BB4A8 *arg0, f32 arg1);
 void func_80279F30(void);
 UnkStruct_800BB4A8 *func_8027A1A0(UnkStruct_80279050_14 *arg0);
 
+#ifdef TARGET_PC
+/* the list's head is D_800BB4A0[0]'s link (its own name on the N64) */
+#undef D_800BB4A8
+#define D_800BB4A8 (D_800BB4A0[0].unk8)
+#else
 extern UnkStruct_800BB4A8 *D_800BB4A8;
+#endif
 extern UnkStruct_802AFED0 D_802AFED0[];
 extern UnkStruct_800AEDF0 D_800AEDF0[];
 extern UnkStruct_800BB4A8 D_800BB4A0[48];

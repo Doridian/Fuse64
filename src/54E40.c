@@ -513,6 +513,41 @@ extern s32 D_802AC760;
 extern s32 (*D_802AC768)(void *);
 extern s32 D_802AC770[10];
 extern u8 D_802AC780[];
+#ifdef TARGET_PC
+/* names the N64 has inside other variables are their fields here, so the
+ * port doesn't depend on where those variables are (docs/PORT.md, "The
+ * scattered layout") */
+extern u8 D_800BCFE8[];
+#undef D_800AEE04
+#undef D_800AEE14
+#undef D_800AEE58
+#undef D_800AEEDC
+#undef D_800AEF20
+#undef D_800AEFA4
+#undef D_800AEFE8
+#undef D_800AF06C
+#undef D_800AF0B0
+#undef D_800BD000
+#undef D_802AC624
+#undef D_802AC628
+#undef D_802AC714
+#undef D_802AC780
+#define PLAYER_S32_68(i) (*(s32 *) &PLAYERS[i].pad50[0x68 - 0x50])
+#define D_800AEE04 (PLAYERS[0].unk14)
+#define D_800AEE14 (PLAYERS[0].unk24)
+#define D_800AEE58 PLAYER_S32_68(0)
+#define D_800AEEDC (PLAYERS[1].unk24)
+#define D_800AEF20 PLAYER_S32_68(1)
+#define D_800AEFA4 (PLAYERS[2].unk24)
+#define D_800AEFE8 PLAYER_S32_68(2)
+#define D_800AF06C (PLAYERS[3].unk24)
+#define D_800AF0B0 PLAYER_S32_68(3)
+#define D_800BD000 ((u8 *) &((Port_800BCFE8 *) D_800BCFE8)[0].unk18)
+#define D_802AC624 (D_802AC610.unk14)
+#define D_802AC628 (D_802AC610.unk18)
+#define D_802AC714 ((u8 *) D_802AC660.unkB4)
+#define D_802AC780 ((u8 *) &D_802AC770[4])
+#endif
 extern s32 D_802AC798;
 s32 D_802AC7A0[10];
 s32 D_802AC7C8;

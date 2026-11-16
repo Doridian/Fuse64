@@ -98,6 +98,14 @@ typedef struct {
 } UnkStruct_800BA8EA;
 
 extern UnkStruct_800BA8EA D_800BA8EA[];
+#ifdef TARGET_PC
+/* D_800BA8EA[i].unk0 is 9CAB0.c's D_800BA8E8[i].unk2 (its own name on the N64) */
+typedef struct {
+    /* 0x00 */ s16 unk0;
+    /* 0x02 */ s16 unk2;
+} UnkStruct_800BA8E8;
+extern UnkStruct_800BA8E8 D_800BA8E8[6];
+#endif
 extern UnkStruct_800BC9F0 D_800BC9F0[];
 
 void func_80229E38(UnkStructA_40 *, s32, s32);
@@ -465,7 +473,7 @@ s32 func_80289464(UnkStruct_80288040 *arg0) {
     UnkStruct_8023A840 *g = func_8023A840();
     s32 n = arg0->unk4C;
 
-    switch (D_800BA8EA[arg0->unk84].unk0) {
+    switch (PORT_HOST(D_800BA8EA[arg0->unk84].unk0, D_800BA8E8[arg0->unk84].unk2)) {
         case 0xEC:
             if (g->unk10 == 0) {
                 if (n % 25 == 0) {
@@ -509,7 +517,7 @@ s32 func_80289320(UnkStruct_80288040 *arg0) {
 s32 func_80289294(UnkStruct_80288040 *arg0) {
     s32 n;
 
-    if (D_800BA8EA[arg0->unk84].unk0 == 0xE8 && (n = arg0->unk4C) % 25 == 0) {
+    if (PORT_HOST(D_800BA8EA[arg0->unk84].unk0, D_800BA8E8[arg0->unk84].unk2) == 0xE8 && (n = arg0->unk4C) % 25 == 0) {
         func_8026C51C(0x169, arg0->unk0->unk40->unk10, arg0->unk0->unk40->unk14, arg0->unk0->unk40->unk18);
     }
     return !func_80288C08(arg0, arg0->unk54);
@@ -556,7 +564,7 @@ s32 func_80288C40(UnkStruct_80288040 *arg0) {
 
     for (i = 0; i < D_802A1B70; i++) {
         e = &D_800BC9F0[i];
-        k = D_800BA8EA[arg0->unk84].unk0;
+        k = PORT_HOST(D_800BA8EA[arg0->unk84].unk0, D_800BA8E8[arg0->unk84].unk2);
         if (k == e->unk0 + 0xDE) {
             if (e->unk1 == arg0->unk4C) {
                 v->x = e->pos.x;

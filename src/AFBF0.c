@@ -114,6 +114,12 @@ void func_80296808(void);
 void func_8029698C(s32 arg0);
 
 extern s32 D_800AEE04;
+#ifdef TARGET_PC
+extern u8 D_800AEDF0[];
+/* player 0's field (docs/PORT.md, "The scattered layout") */
+#undef D_800AEE04
+#define D_800AEE04 (*(s32 *) &((Port_800AEDF0 *) D_800AEDF0)[0].unk0[0x14])
+#endif
 extern PORT_RET(s32, void *) D_802AC5C0;
 extern s32 D_802AC5CC;
 

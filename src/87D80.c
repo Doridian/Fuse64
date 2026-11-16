@@ -227,7 +227,11 @@ typedef struct {
 #endif
 } Player87; /* size 0xC8 */
 
+#ifdef TARGET_PC
+#define ENT_HEAD (ENTS[0].next) /* D_8008F44C, its own name on the N64 */
+#else
 #define ENT_HEAD (*(Ent88 **) &D_8008F44C)
+#endif
 #define PLAYERS ((Player87 *) D_800AEDF0)
 #define ENTS ((Ent88 *) D_8008F438)
 #define OBJ_DD8 (*(Obj8E **) &D_802AFDD8)

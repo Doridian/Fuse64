@@ -429,6 +429,20 @@ extern PORT_IP(s32) D_800BD1A8;
 extern u8 D_800BD238[];
 extern PORT_IP(s32) D_800BD2D0;
 extern PORT_IP(s32) D_800BD3F8;
+#ifdef TARGET_PC
+/* fields the N64 names on their own (docs/PORT.md, "The scattered layout") */
+#undef D_800AEF94
+#undef D_800BD080
+#undef D_800BD1A8
+#undef D_800BD2D0
+#undef D_800BD3F8
+#define D_800AEF94 (D_800AEDF0[2].unk14)
+#define PORT_BCFE8_98(i) (*(PORT_IP(s32) *) &((Port_800BCFE8 *) D_800BCFE8)[i].unk98)
+#define D_800BD080 PORT_BCFE8_98(0)
+#define D_800BD1A8 PORT_BCFE8_98(1)
+#define D_800BD2D0 PORT_BCFE8_98(2)
+#define D_800BD3F8 PORT_BCFE8_98(3)
+#endif
 extern u8 D_800BD488[];
 extern u8 D_800BE848[];
 extern u8 D_800BE860[];

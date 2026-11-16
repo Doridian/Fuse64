@@ -106,7 +106,12 @@ s32 func_8027B8D4(s16, s16, s16, s16);
 s32 func_8028A7CC(s32, f32 *, PORT_IP(s32));
 
 extern UnkStruct_80090440 D_80090440[50];
+#ifdef TARGET_PC
+#undef D_80090468
+#define D_80090468 (D_80090440[1]) /* the sentinel (its own name on the N64) */
+#else
 extern UnkStruct_80090440 D_80090468;
+#endif
 extern UnkStruct_800B15D8 D_800B15D8[];
 extern s32 D_802AC5D0;
 extern u8 *D_802AFE80;

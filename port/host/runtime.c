@@ -79,3 +79,20 @@ int n64_sprintf(char *buf, const char *fmt, ...) {
     va_end(ap);
     return n;
 }
+
+/* What the N64 reads through a NULL pointer: boot_code maps ZeroJump's page
+   at virtual address 0 (1050.c), so a read through NULL gets that page's
+   word (its code and strings, from the ROM; zeros after them) where a host
+   faults (docs/PORT.md, "Reads through NULL"). */
+unsigned int port_null_word(unsigned int off) {
+#ifdef VERSION_JP
+    const uint32_t rom = 0x1CBA0;
+#else
+    const uint32_t rom = 0x1CBC0;
+#endif
+    if (off >= 0x1000)
+        host_fatal("a read through NULL at %#x: past ZeroJump's page (a TLB miss on the N64)", off);
+    if (off + 4 > 0x130)
+        return 0;
+    return port_be32(host_rom() + rom + off);
+}

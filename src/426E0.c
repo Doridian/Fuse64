@@ -889,6 +889,15 @@ u32 func_80229C10(UnkObj *arg0, PORT_IP(s32) arg1, UnkVtx **arg2) {
 }
 
 void func_80229BF4(s32 arg0) {
+#ifdef TARGET_PC
+    /* entry -1 (ovl_0D_01's 800436C8 frees a record whose scroll is -1):
+       the N64 clears the word 0x18 before the array, 0x80098C50, the
+       texture owners' D_80098C18[3].unk8 (elsewhere where pointers are 8) */
+    if (arg0 == -1) {
+        D_80098C18[3].unk8 = NULL;
+        return;
+    }
+#endif
     D_80098C68[arg0].unk0 = NULL;
 }
 
@@ -1243,6 +1252,15 @@ static void func_802284F0(UnkObj *arg0, UnkGfx **arg1) {
         model = arg0->unk4C->unk4[i].unk0;
         if (arg0->unk4C->unk8 == NULL) {
             idx = arg0->unk4C->unk4[i].unk4;
+#ifdef TARGET_PC
+            /* a slot never filled (ovl_15_02 gives its 80051420 four and
+               fills two): the N64 reads the NULL model's chunk in
+               ZeroJump's page, mapped at 0 (port_null_word) */
+            if (model == NULL) {
+                gSPSegment(gfx++, i + 3, port_null_word(0xC + idx * sizeof(UnkChunk) + 8));
+                continue;
+            }
+#endif
             gSPSegment(gfx++, i + 3, (u8 *)model + model->unkC[idx].unk8);
         } else {
             g = gfx;

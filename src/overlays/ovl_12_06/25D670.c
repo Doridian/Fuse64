@@ -36,10 +36,10 @@ typedef struct {
 
 /* What func_ovl12_06_80045D30 returns (D_ovl12_06_80045FC8). */
 typedef struct {
-    /* 0x00 */ u8 unk0[0x90];
+    /* 0x00 */ PORT_RET(u8 unk0[0x90];, u8 unk0[0x18]; void *unk18; void *unk1C; u8 unk20[0x70];) /* (6BBE0.c's D_800BCFE8[i], Port_800BCFE8: pointers at 0x18, 0x1C, 0x98, 0x9C) */
     /* 0x90 */ s32 unk90;
-    /* 0x94 */ u8 unk94[0xE];
-    /* 0xA2 */ u16 unkA2;
+    /* 0x94 */ PORT_RET(u8 unk94[0xE];, u8 unk94[4]; void *unk98; void *unk9C;)
+    /* 0xA2 */ PORT_RET(u16 unkA2;, PORT_HALVES(u16 unkA0, u16 unkA2)) /* (the task id's low half) */
 } UnkStruct_ovl12_06_80045FC8;
 
 void func_ovl12_06_80044B98(s32);
@@ -451,7 +451,7 @@ static void func_ovl12_06_800430C8(void) {
     Vec3f target;
     UnkStructA *obj1;
     s32 i;
-    f32 angle;
+    PORT_RET(f32 angle;, f32 port_angle[3];) /* (func_8022FF58 writes three floats through &angle: on the N64 into the frame's next words) */
     s32 pad1[3]; /* fake: unused, frame space the original has (no source for it found) */
 
     func_ovl12_06_80044D88(1);
@@ -473,14 +473,14 @@ static void func_ovl12_06_800430C8(void) {
         target.x = 2350.0f;
         target.y = 0.0f;
         target.z = 1550.0f;
-        func_ovl12_06_80045528(&pos.x, &target.x, &angle);
-        target.x = func_ovl12_06_80045890(angle) * 800.0f + pos.x;
+        func_ovl12_06_80045528(&pos.x, &target.x, PORT_RET(&angle, port_angle));
+        target.x = func_ovl12_06_80045890(PORT_RET(angle, port_angle[0])) * 800.0f + pos.x;
         target.y = pos.y;
-        target.z = func_ovl12_06_80045898(angle) * 800.0f + pos.z;
+        target.z = func_ovl12_06_80045898(PORT_RET(angle, port_angle[0])) * 800.0f + pos.z;
         pos.x = obj1->unk40->unk10;
         pos.y = obj1->unk40->unk14;
         pos.z = obj1->unk40->unk18;
-        func_ovl12_06_80045528(&pos.x, &target.x, &angle);
+        func_ovl12_06_80045528(&pos.x, &target.x, PORT_RET(&angle, port_angle));
         func_ovl12_06_80045540(&pos.x, &target.x);
         obj1->unk68 = 51.0f;
         obj1->unk40->unk14 = 0.1f;
@@ -570,7 +570,7 @@ static f32 func_ovl12_06_80043068(UnkStructA_40 *from, UnkStructA_40 *to) {
     Vec3f a;
     Vec3f b;
     f32 pad[2]; /* fake: unused; the original's frame is 8 bytes bigger */
-    f32 angle;
+    PORT_RET(f32 angle;, f32 port_angle[3];) /* (func_8022FF58 writes three floats through &angle: on the N64 into the frame's next words) */
 
     a.x = from->unk10;
     a.y = from->unk14;
@@ -578,8 +578,8 @@ static f32 func_ovl12_06_80043068(UnkStructA_40 *from, UnkStructA_40 *to) {
     b.x = to->unk10;
     b.y = to->unk14;
     b.z = to->unk18;
-    func_ovl12_06_80045528(&a.x, &b.x, &angle);
-    return angle;
+    func_ovl12_06_80045528(&a.x, &b.x, PORT_RET(&angle, port_angle));
+    return PORT_RET(angle, port_angle[0]);
 }
 
 void func_ovl12_06_80043010(void) {

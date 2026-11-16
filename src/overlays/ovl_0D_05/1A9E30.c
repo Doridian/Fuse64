@@ -293,7 +293,12 @@ void func_ovl0D_05_80044290(void) {
     s32 grid[6];
     s32 cnt;
     s32 r;
+#ifdef TARGET_PC
+    Vec3f port_ang; /* func_8022FF58 (ZeroJump 0x1803) writes three floats through &ang: on the N64 into the frame's next words */
+#define ang port_ang.x
+#else
     f32 ang;
+#endif
     Vec3f tgt;
     s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     s32 timer;
@@ -337,6 +342,9 @@ void func_ovl0D_05_80044290(void) {
     }
     func_ovl0D_05_80045758();
 }
+#ifdef TARGET_PC
+#undef ang
+#endif
 
 /* a model's hit: it fades out, scattering debris, and its tiles become solid */
 static void func_ovl0D_05_80044280(Ent05 *e, s32 flag) {

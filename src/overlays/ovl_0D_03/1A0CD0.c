@@ -107,7 +107,7 @@ typedef struct {
     /* 0x14 */ f32 unk14;
     /* 0x18 */ s32 unk18[3];
     /* 0x24 */ f32 unk24;
-    /* 0x28 */ s32 unk28[7];
+    /* 0x28 */ PORT_RET(s32 unk28[7];, s32 unk28[5]; void *unk3C; void *unk40;) /* (4ED50.c's UnkStruct_802363BC: two links) */
 } Cam_0D03;
 
 void func_ovl0D_03_800469E8(s32); /* 0xC00 */
@@ -443,7 +443,12 @@ void func_ovl0D_03_80045EF0(void) {
     s32 grid[6];
     s32 cnt;
     s32 r;
+#ifdef TARGET_PC
+    Vec3f port_ang; /* func_8022FF58 (ZeroJump 0x1803) writes three floats through &ang: on the N64 into the frame's next words */
+#define ang port_ang.x
+#else
     f32 ang;
+#endif
     Vec3f tgt;
     f32 tile; /* a tile's size held (a guess: any local fills the slot) */
     s32 timer;
@@ -488,6 +493,9 @@ void func_ovl0D_03_80045EF0(void) {
     }
     func_ovl0D_03_80047548();
 }
+#ifdef TARGET_PC
+#undef ang
+#endif
 
 /* every few seconds, when the player is near, the model throws a bomb */
 static void func_ovl0D_03_80045EE8(Ent_0D03 *e, s32 *timer) {

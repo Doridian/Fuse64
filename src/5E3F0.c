@@ -2045,9 +2045,20 @@ void func_8024D8C4(Ctl58 *arg0) {
 }
 
 void func_8024D5D0(Ctl58 *arg0) {
+#ifdef TARGET_PC
+    /* yaw, pitch and dist are the frame's 100, 104 and 108 on the N64, and
+       func_8022FF58 writes three floats from &yaw: pitch and dist become
+       the pitch and the horizontal distance it computes, and the code
+       reads dist back from 108 after the call (the ROM's code) */
+    f32 port_angles[3];
+#define yaw port_angles[0]
+#define pitch port_angles[1]
+#define dist port_angles[2]
+#else
     f32 dist;
     f32 pitch;
     f32 yaw;
+#endif
     f32 org[3];
     f32 vec[3];
     f32 x;
@@ -2136,6 +2147,11 @@ void func_8024D5D0(Ctl58 *arg0) {
     arg0->unk0 = dist;
     arg0->unkC = y;
 }
+#ifdef TARGET_PC
+#undef yaw
+#undef pitch
+#undef dist
+#endif
 
 void func_8024D540(s32 arg0, f32 *arg1) {
     Obj88 *obj;

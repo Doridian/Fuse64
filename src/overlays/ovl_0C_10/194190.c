@@ -287,7 +287,12 @@ void func_ovl0C_10_80044A08(void) {
     Vec3f target;
     Vec3f pos;
     f32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
+#ifdef TARGET_PC
+    Vec3f port_angle; /* func_8022FF58 (ZeroJump 0x1803) writes three floats through &angle: on the N64 into the frame's next words */
+#define angle port_angle.x
+#else
     f32 angle;
+#endif
 
     player = func_ovl0C_10_800454A8(0);
     p = ((UnkStructA *) func_ovl0C_10_80045DE0())->unk40;
@@ -304,6 +309,9 @@ void func_ovl0C_10_80044A08(void) {
         func_ovl0C_10_80045E00();
     }
 }
+#ifdef TARGET_PC
+#undef angle
+#endif
 
 /* a task: the camera's moves in D_ovl0C_10_80046560 */
 void func_ovl0C_10_800448C0(void) {
@@ -670,7 +678,12 @@ static void func_ovl0C_10_80043070(void) {
     Vec3f target;
     UnkStructA *obj1;
     UnkStructA *obj;
+#ifdef TARGET_PC
+    Vec3f port_angle; /* func_8022FF58 (ZeroJump 0x1803) writes three floats through &angle: on the N64 into the frame's next words */
+#define angle port_angle.x
+#else
     f32 angle;
+#endif
     s32 pad0; /* fake: unused, frame space the original has (no source for it found) */
     s32 flag;
     s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
@@ -792,6 +805,9 @@ static void func_ovl0C_10_80043070(void) {
     func_ovl0C_10_80045FE0();
     D_ovl0C_10_800466CC = 1;
 }
+#ifdef TARGET_PC
+#undef angle
+#endif
 
 /* The overlay's handler: the entry returns it to the loader. */
 void func_ovl0C_10_80043450(s32 arg0) {

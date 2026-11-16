@@ -73,6 +73,44 @@ if(PORT_WIDTHCHECK)
     add_link_options(-Wl,--wrap=func_80225C7C -Wl,--wrap=func_80225C44 -Wl,--wrap=func_80225BB8)
 endif()
 
+# the scattered layout (docs/PORT.md, "The scattered layout"): a checking
+# build in which every fixed-address name and asm data label is an object
+# of its own, apart from the others in an order the seed shuffles, with
+# poisoned padding (port/tools/gen_scatter.py), and the C files' variables
+# in an order the seed shuffles too (lld's --shuffle-sections); with
+# PORT_SANITIZE=address each access to a place no variable has is reported
+set(PORT_SCATTER "" CACHE STRING "the scattered layout's seed (empty: the default layout)")
+set(SCATTER_ARG)
+if(NOT PORT_SCATTER STREQUAL "")
+    if(NOT PORT_SCATTER MATCHES "^[1-9][0-9]*$")
+        message(FATAL_ERROR "PORT_SCATTER is a seed, a number from 1")
+    endif()
+    if(NOT CMAKE_SIZEOF_VOID_P EQUAL 8 OR EMSCRIPTEN OR WIN32)
+        message(FATAL_ERROR "PORT_SCATTER is a 64-bit Linux build's (it sizes the objects by decls.py's types)")
+    endif()
+    set(SCATTER_ARG --scatter)
+    message(STATUS "the scattered layout, seed ${PORT_SCATTER}")
+    add_compile_options(-fdata-sections)
+    add_link_options(-fuse-ld=lld "LINKER:--shuffle-sections=.data.*=${PORT_SCATTER}"
+        "LINKER:--shuffle-sections=.bss.*=${PORT_SCATTER}" "LINKER:--shuffle-sections=.rodata.*=${PORT_SCATTER}")
+endif()
+# its check (host/scatter_check.c): every load and store of everything but
+# that file a call, each global variable with a redzone, and a report of
+# each access to where no variable is (AddressSanitizer's instrumentation,
+# not its runtime, as the width check)
+option(PORT_SCATTER_CHECK "the scattered layout's check: report each access to where no variable is" OFF)
+if(PORT_SCATTER_CHECK)
+    if(PORT_SCATTER STREQUAL "" OR PORT_SANITIZE OR PORT_WIDTHCHECK)
+        message(FATAL_ERROR "PORT_SCATTER_CHECK needs -DPORT_SCATTER=SEED, and no PORT_SANITIZE or PORT_WIDTHCHECK")
+    endif()
+    add_compile_options(-fsanitize=address -fno-sanitize-link-runtime
+        "SHELL:-mllvm -asan-instrumentation-with-call-threshold=0" "SHELL:-mllvm -asan-stack=0"
+        "SHELL:-mllvm -asan-use-after-scope=0" -fsanitize-address-use-after-return=never -fno-omit-frame-pointer)
+    add_compile_definitions(PORT_SCATTER_CHECK)
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/host/scatter_check.c PROPERTIES
+        COMPILE_OPTIONS "-fno-sanitize=address")
+endif()
+
 set(SAN_FLAGS)
 if(PORT_SANITIZE)
     # (not -fsanitize=function: a call through another declaration of the
@@ -192,21 +230,30 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(DECLS_DEP ${GEN}/decls.json ${CMAKE_CURRENT_SOURCE_DIR}/tools/layouts.py)
 endif()
 add_custom_command(OUTPUT ${GEN}/asm_data.c
-    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/asm2c.py ${DECLS_ARG} ${GEN}/asm_data.c
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/asm2c.py ${DECLS_ARG} ${SCATTER_ARG} ${GEN}/asm_data.c
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/asm2c.py ${DATA_S} ${ROOT}/assets/code.bin ${DECLS_DEP} VERBATIM)
 add_custom_command(OUTPUT ${GEN}/zerojump.c
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_zerojump.py ${PORT_VERSION} ${GEN}/zerojump.c
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_zerojump.py ${ROOT}/tools/host_check.py ${ZJ_S} ${GAME_C} ${OVL_C}
     VERBATIM)
 add_custom_command(OUTPUT ${GEN}/regions.c
-    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_regions.py ${DECLS_ARG} ${GEN}/regions.c
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_regions.py ${DECLS_ARG} ${SCATTER_ARG}
+            ${GEN}/regions.c
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_regions.py ${ROOT}/undefined_syms_auto.txt ${DECLS_DEP} VERBATIM)
+set(SCATTER_C)
+if(NOT PORT_SCATTER STREQUAL "")
+    set(SCATTER_C ${GEN}/scatter.c)
+    add_custom_command(OUTPUT ${GEN}/scatter.c
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_scatter.py ${PORT_SCATTER}
+                ${GEN}/regions_objects.json ${GEN}/asm_data_objects.json --decls ${GEN}/decls.json ${GEN}/scatter.c
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_scatter.py ${GEN}/regions.c ${GEN}/asm_data.c VERBATIM)
+endif()
 # the names other names share memory with, through pointers in the game's C
 # (gen_inner.py; docs/PORT.md, "Names inside another name's object")
 add_custom_command(OUTPUT ${GEN}/port_inner.h ${GEN}/inner.c
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_inner.py ${GEN}/regions.c ${GEN}/asm_data.c
-            ${GEN}/port_inner.h ${GEN}/inner.c
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_inner.py ${GEN}/regions.c ${GEN}/asm_data.c VERBATIM)
+            ${GEN}/port_inner.h ${GEN}/inner.c ${SCATTER_C}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_inner.py ${GEN}/regions.c ${GEN}/asm_data.c ${SCATTER_C} VERBATIM)
 add_custom_target(gen_inner DEPENDS ${GEN}/port_inner.h)
 add_custom_command(OUTPUT ${GEN}/overlays.c
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_overlays.py ${GEN}/overlays.c
@@ -219,7 +266,7 @@ add_custom_command(OUTPUT ${GEN}/sintable.h
 file(GLOB PORT_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
 file(GLOB LIBAUDIO_C ${CMAKE_CURRENT_SOURCE_DIR}/libaudio/*.c)
 add_library(port_n64 OBJECT ${PORT_SRC} ${LIBAUDIO_C} ${GEN}/asm_data.c ${GEN}/zerojump.c ${GEN}/regions.c
-    ${GEN}/overlays.c ${GEN}/inner.c)
+    ${GEN}/overlays.c ${GEN}/inner.c ${SCATTER_C})
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/gu.c PROPERTIES OBJECT_DEPENDS ${GEN}/sintable.h)
 target_include_directories(port_n64 PRIVATE ${N64_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/libaudio)
 target_compile_definitions(port_n64 PRIVATE ${N64_DEFINES})

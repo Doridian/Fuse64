@@ -28,6 +28,9 @@ void port_warp(int *scene, int *sub, int *flags);
 unsigned int port_null_word(unsigned int off);
 /* 13F0's segment loader: the entry of ROM segment seg (main_code's, 2) */
 void *port_segment_entry(int seg);
+/* 40040.c's clear of the work area (0x80063000 up to D_800BEA60): its
+   variables (gen/regions.c, or gen/scatter.c in the scattered layout) */
+void port_clear_work_area(void);
 
 /* where pointers are 8 bytes (docs/PORT.md, "Where pointers are 8 bytes") */
 #if __SIZEOF_POINTER__ == 8

@@ -88,7 +88,12 @@ void func_80225840(PORT_RET(s32, void *) arg0) {
      * put them, zero at the start (main_code runs once) */
     func_80225C7C(D_802A5300, 0, D_802B36D0 - D_802A5300);
 #endif
+#ifdef TARGET_PC
+    /* the work area, each of its variables (gen/regions.c) */
+    port_clear_work_area();
+#else
     func_80225C7C(D_80063000, 0, D_800BEA60 - D_80063000);
+#endif
     func_80225CA8();
     func_80297D30(4, D_8029F570);
     func_80297D30(5, D_8029F590);

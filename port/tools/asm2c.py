@@ -2,7 +2,7 @@
 """The data the game's C names that is still asm (docs/PORT.md, "The asm
 data as C"), as C for the port.
 
-  asm2c.py OUT.c
+  asm2c.py [--decls DECLS.json] [--scatter] OUT.c
 
 Reads the extracted asm/data/*.s (main_code's .data, .rodata and .bss that
 no C object defines yet, and boot_code's VI modes) and the code image
@@ -16,7 +16,14 @@ LAYOUTS below, which gives the widths the C reads it at.  A symbolic word
 is a pointer: to a function, to a label (`+ n`), or into the fixed-address
 memory (port_rdram, for D_8xxxxxxx names that are in no section); a
 D_ name below 0x80000000 (a segment or physical address) is its number.
+
+Where pointers are 8 bytes OUT's _objects.json lists every label (its N64
+address, where it is here, its object's size, the label it is inside of)
+for gen_scatter.py; with --scatter (docs/PORT.md, "The scattered layout")
+OUT has no aliases: each struct is the startup image gen/scatter.c copies
+each label's bytes from, to the place it gives the label.
 """
+import json
 import os
 import re
 import sys
@@ -131,6 +138,11 @@ TYPES = {
 }
 
 
+# physical addresses that are a buffer of the game's (gen_regions.py's
+# PHYS: the depth buffer): a pointer to it, not the number
+PHYS = {"D_200000"}
+
+
 def ctype_of(width):
     return {1: "uint8_t", 2: "uint16_t", 4: "uint32_t"}[width]
 
@@ -142,7 +154,10 @@ def main():
         i = args.index("--decls")
         decls = args[i + 1]
         del args[i:i + 2]
-    out = args[0]
+    scatter = "--scatter" in args
+    if scatter:
+        args.remove("--scatter")
+    out = os.path.abspath(args[0])
     os.chdir(ROOT)
     lay = full = None
     if decls:
@@ -169,10 +184,12 @@ def main():
          "#include <stdint.h>", "#include \"port_game.h\"", "",
          "extern uint8_t port_rdram[];", ""]
     externs, body, report = set(), [], []
+    objs = []       # every label, for gen_scatter.py
+    bases = {}      # each file's struct's size
 
     def ptr_init(a):
         sym, add = sym_value(a)
-        if sym in labelset or sym.startswith("D_8") and lay:
+        if sym in labelset or sym.startswith("D_8") and lay or sym in PHYS:
             externs.add("extern uint8_t %s[];" % sym)
             return "(void *)(%s + 0x%X)" % (sym, add)
         if sym.startswith("func_") or not sym.startswith("D_"):
@@ -221,6 +238,8 @@ def main():
                     report.append("%s: inside %s at +0x%X, no host offset" % (name, cover[3], loff - cover[1]))
                     h = loff - cover[1]
                 aliases.append((name, cover[0] + h))
+                objs.append({"name": name, "n64": vram, "room": size, "base": base, "hoff": cover[0] + h,
+                             "inside": cover[5], "size": None, "file": f})
                 continue
             cover = None
             lt = label_type(name, size) if lay else None
@@ -247,13 +266,26 @@ def main():
                         lay.host_off(tf, t, r) if r < n64 else h64 + (r - n64))
                 ptrs, wide = set(lay.pointers(tf, t)), False
                 if n64 > size:
-                    cover = (None, loff, tf, t, loff + n64)
+                    cover = (None, loff, tf, t, loff + n64, name)
             if lt is not None:
                 hpos = (hpos + 7) & ~7
             if cover is not None and cover[0] is None:
                 cover = (hpos,) + cover[1:]
             lh = hpos if lay else loff
             aliases.append((name, lh))
+            if lay:
+                # (the object's size: its type's, else its declarations', else its room)
+                vs = [d for d in full["names"].get(name, []) if d["kind"] == "var" and d.get("s64")]
+                obj = {"name": name, "n64": vram, "room": size, "base": base, "hoff": lh, "file": f,
+                       "bss": bss, "n64size": max([d["s32"] or 0 for d in vs], default=None)}
+                if lt is not None and lt[0] == "type":
+                    obj.update(size=lay.size(lt[1], lt[2], 64), type=lt[2], n64size=lay.size(lt[1], lt[2], 32))
+                elif lt is not None:
+                    obj.update(size=hsize, type=lt[0], n64size=size)
+                else:
+                    obj.update(size=max([d["s64"] for d in vs], default=None), incomplete=any(
+                        d["kind"] == "var" and d["type"].rstrip().endswith("[]") for d in full["names"].get(name, [])))
+                objs.append(obj)
             hpos = lh + hsize
             if bss or size == 0:
                 continue
@@ -331,6 +363,7 @@ def main():
         if not lay:
             last = labels[-1]
             total = (last[1] - start) + ends[-1]
+        bases[base] = total
         # the struct: fields at their offsets, zero padding between
         body.append("/* %s */" % f)
         body.append("struct __attribute__((packed, aligned(16))) %s_t {" % base)
@@ -358,7 +391,7 @@ def main():
             body.append("struct %s_t %s = {" % (base, base))
             body.extend("    %s," % x for x in inits)
             body.append("};")
-        for n, off in aliases:
+        for n, off in ([] if scatter else aliases):
             body.append("__asm__(\".globl \" PORT_ULP \"%s\\n.set \" PORT_ULP \"%s, \" PORT_ULP \"%s + 0x%X\\n\");"
                         % (n, n, base, off))
         body.append("")
@@ -370,6 +403,8 @@ def main():
     os.replace(tmp, out)
     rep = out[:-2] + "_report.txt"
     open(rep, "w").write("".join(x + "\n" for x in report))
+    if lay:
+        json.dump({"objects": objs, "bases": bases}, open(out[:-2] + "_objects.json", "w"), indent=0)
 
 
 if __name__ == "__main__":

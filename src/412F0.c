@@ -190,7 +190,7 @@ UnkStruct_80226E84 *func_80227464(void) {
     D_802A5390 = D_802A538C->gfx;
     D_802A5368 = 0;
     { UnkStruct_80226E84 *g = D_802A5390++; g->w0 = 0xBC000006; g->w1 = 0; }
-    { UnkStruct_80226E84 *g = D_802A5390++; g->w0 = 0xBC000406; g->w1 = (PORT_UP(u32)) ((char *) D_80100000[D_802A5388] - 0x80000000); }
+    { UnkStruct_80226E84 *g = D_802A5390++; g->w0 = 0xBC000406; g->w1 = PORT_HOST((u32) ((char *) D_80100000[D_802A5388] - 0x80000000), (uintptr_t) D_80100000[D_802A5388] - 0x80000000); }
     { UnkStruct_80226E84 *g = D_802A5390++; g->w0 = 0x06000000; g->w1 = (PORT_UP(u32)) D_8029F718; }
     if (D_8029F5F8 != 0) {
         { UnkStruct_80226E84 *g = D_802A5390++; g->w0 = 0xBA000602; g->w1 = 0xC0; }
@@ -235,7 +235,7 @@ void func_80226E84(UnkStruct_80226E84 *gfx) {
         { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xBA000E02; g->w1 = 0; }
         { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xB9000002; g->w1 = 0; }
         for (i = 0; i < 240; i += 2) {
-            { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xFD100000; g->w1 = (PORT_UP(u32)) ((char *) D_80100000[D_802A5388 ^ 1] - 0x80000000) + i * 640; } { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xF5100000; g->w1 = 0x07000000; } { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xE6000000; g->w1 = 0; } { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xF3000000; g->w1 = 0x0727F01A; } { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xE7000000; g->w1 = 0; } { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xF510A000; g->w1 = 0; } { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xF2000000; g->w1 = 0x4FC004; }
+            { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xFD100000; g->w1 = PORT_HOST((u32) ((char *) D_80100000[D_802A5388 ^ 1] - 0x80000000), (uintptr_t) D_80100000[D_802A5388 ^ 1] - 0x80000000) + i * 640; } { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xF5100000; g->w1 = 0x07000000; } { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xE6000000; g->w1 = 0; } { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xF3000000; g->w1 = 0x0727F01A; } { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xE7000000; g->w1 = 0; } { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xF510A000; g->w1 = 0; } { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xF2000000; g->w1 = 0x4FC004; }
             { UnkStruct_80226E84 *g = gfx++; g->w0 = _SHIFTL(0xE4, 24, 8) | _SHIFTL(320 << 2, 12, 12) | _SHIFTL((i + 2) << 2, 0, 12); g->w1 = _SHIFTL(0, 24, 3) | _SHIFTL(0, 12, 12) | _SHIFTL(i << 2, 0, 12); } { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xB4000000; g->w1 = 0; } { UnkStruct_80226E84 *g = gfx++; g->w0 = 0xB3000000; g->w1 = 0x04000400; }
         }
     }

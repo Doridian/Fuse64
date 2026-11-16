@@ -69,6 +69,18 @@ extern uintptr_t port_v0;
 #endif
 
 /*
+ * PORT_SIZE(n): an array's real size where the C declares it without one
+ * (`extern u8 D_80063000[PORT_SIZE(0x1B8)];`), so that the port's
+ * variable has its room of its own and the names inside it are its
+ * elements (docs/PORT.md, "The scattered layout"); nothing for IDO.
+ */
+#ifdef TARGET_PC
+#define PORT_SIZE(n) n
+#else
+#define PORT_SIZE(n)
+#endif
+
+/*
  * &a[i], where i runs on from the array a into b, its neighbour in the N64's
  * data (the port's variables are wherever the linker puts them).  For IDO
  * it is &a[i] as it is.

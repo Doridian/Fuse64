@@ -347,7 +347,12 @@ void func_80001750(void *arg) {
     if (size == 0) {
         size = 0x80000;
     }
+#ifdef TARGET_PC
+    /* (segment 3 after main_code, linked in: its time, no copy, 13F0.c) */
+    func_80000698(NULL, D_80024820[3] << 11, size + 0x40000);
+#else
     func_80000698(size + entry, D_80024820[3] << 11, size + 0x40000);
+#endif
     for (;;) {
         func_8000083C(D_80024818, entry, &D_80020668);
     }

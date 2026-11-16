@@ -940,7 +940,11 @@ void func_8022997C(void) {
             func_80297D60(s->unk4, s->unk8 * sizeof(UnkVtx));
         }
         s++;
+#ifdef TARGET_PC
+    } while (s != &D_80098C68[6]); /* (the N64's end is the next name, D_80098CF8) */
+#else
     } while (s != (UnkScroll *)D_80098CF8);
+#endif
 }
 
 void func_8022984C(UnkObj *arg0, s32 arg1) {

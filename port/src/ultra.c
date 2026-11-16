@@ -309,9 +309,11 @@ s32 osPiStartDma(OSIoMesg *mb, s32 pri, s32 dir, u32 devAddr, void *vAddr, u32 n
     mb->dramAddr = vAddr;
     mb->devAddr = devAddr;
     mb->size = nbytes;
-    if (dir == OS_READ)
+    /* (a read to NULL takes its time and copies nothing: boot_code's loads
+       of the code the port has linked in, 13F0.c) */
+    if (dir == OS_READ && vAddr != NULL)
         host_rom_read(port_addr((uintptr_t)vAddr), devAddr, nbytes);
-    else if (host_verbose)
+    else if (dir != OS_READ && host_verbose)
         host_log("PI write to %08X ignored\n", (unsigned)devAddr);
     pi_complete(mq, (OSMesg)mb, nbytes);
     return 0;

@@ -11,7 +11,11 @@ typedef struct {
         /* 0x00 */ u8 unk0;
         /* 0x01 */ u8 unk1;
         /* 0x02 */ u8 unk2;
+#ifdef TARGET_PC
+    } unk1[(0x210 - 1) / 3]; /* as many as the N64's room up to D_8019C2E0 holds */
+#else
     } unk1[1];
+#endif
 } UnkStruct_8019C0D0;
 
 void func_802267B0(u32 arg0);
@@ -26,6 +30,10 @@ extern s32 D_802A5320;
 extern u32 D_802A5324;
 extern s32 D_802A5328;
 extern PORT_IP(s32) D_802A532C;
+
+#ifdef TARGET_PC
+static u8 port_ovl_slot[0x20000];
+#endif
 
 void func_8022691C(s32 arg0) {
     struct UnkStruct_80225CC0 *file;
@@ -51,9 +59,10 @@ void func_8022691C(s32 arg0) {
         func_8022616C((u8 *) &size, 4, 1, file);
 #ifdef TARGET_PC
         /* the overlay's code is linked in (port/src/overlay.c): it is
-         * inflated where the N64 has it all the same, for the time it
-         * takes and what it leaves in the archive's buffers */
-        func_80292BD0(file, port_addr(0x80043000), size);
+         * inflated all the same, for the time it takes and what it leaves
+         * in the archive's buffers, into a buffer of the port's (on the
+         * N64 the overlays' slot at 0x80043000, 0x20000 bytes) */
+        func_80292BD0(file, port_ovl_slot, size);
         func_80226368(file);
         func_802267E0(0x18);
         D_802A532C = (PORT_IP(s32)) port_overlay_load(D_8019B0D0[arg0].unk0, id);

@@ -40,5 +40,13 @@ void func_800007F0(s32 seg, void *dst) {
     if (size == 0) {
         size = 0x80000;
     }
+#ifdef TARGET_PC
+    /* the segment is linked in (port/src/boot.c): its DMA takes its time
+     * and copies nothing (port/src/ultra.c's osPiStartDma to NULL), as
+     * nothing of the game's reads the N64's place it would be loaded to */
+    (void)dst;
+    func_80000698(NULL, size, seg << 17);
+#else
     func_80000698(dst, size, seg << 17);
+#endif
 }

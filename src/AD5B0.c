@@ -69,7 +69,7 @@ static s32 func_80292DB0(u8 *a, u8 *b, u8 n);
 static s32 func_80292E80(u8 addr, u8 *buf, u8 n);
 static s32 func_80292DB8(u8 addr, u8 *buf, u8 n);
 
-extern u8 D_80063000[];
+extern u8 D_80063000[PORT_SIZE(0x1B8)]; /* the save: its header, three slots of 0x90 */
 extern u8 D_800631B8[];
 extern s32 D_80063004;
 extern u8 D_802AC3E0[];
@@ -196,7 +196,7 @@ s32 func_80294E54(void) {
         func_80294DC0();
         return -1;
     }
-    if (PORT_BE32_GET(*(s32 *) D_80063000, D_80063000) != 0x42414B55 || (PORT_BE32_GET(D_80063004, &D_80063004) & 0xFFFF00) != 0x487500) {
+    if (PORT_BE32_GET(*(s32 *) D_80063000, D_80063000) != 0x42414B55 || (PORT_BE32_GET(D_80063004, &D_80063000[4]) & 0xFFFF00) != 0x487500) {
         if (func_80294DC0() != 0) {
             return -1;
         }

@@ -178,6 +178,9 @@ sound (`--wav`) and the EEPROM file.
 | menus | 3000 | tools/inputs/menus.txt |
 | battle | 6000 | tools/inputs/battle.<v>.txt |
 | story | 12000 | menus.txt (`--scenario story`: the first stage) |
+| warp-stage | 5000 | port/tools/inputs/warp.<v>.txt from story.<v>.eep, `PORT_WARP=80` (Red Mountain's second stage) |
+| warp-boss | 5000 | the same, `PORT_WARP=141` (Rainbow Palace's last boss) |
+| warp-battle | 6000 | battle.<v>.txt, `PORT_WARP=151` (the eighth battle stage) |
 
 `--save` records them. `test.py same A B` compares two builds' runs with
 each other (a cross build under qemu, a sanitized build, the WebAssembly
@@ -290,6 +293,101 @@ references already. The fixes leave the 32-bit hosts' layouts the N64's
 only 54E40.c's local is bigger on every host): after them Linux i386's
 and big-endian MIPS's four us scenarios gave the references.
 
+### Every stage
+
+The scenarios reach the menus, one battle stage and the story's first
+room; `PORT_WARP` (port/host/warp.c) reaches the rest, as DozerEncore's
+`PORT_LEVEL` does: the game's own code loads the stage, the port only
+changes which one it asks for. The game changes scene through 54E40.c's
+func_8023AE6C(scene, sub, flags); the main loop (func_8023DB0C) loads the
+scene's overlay (40FB0.c, by the table at ROM 0x30800 and the bank's
+index) and func_8023D0F8 sets the stage up from the number alone (the
+world and the stage from `D_802A04C8`'s ranges, a battle stage from
+0x90-0x99). With `PORT_WARP=N` (`N:S` gives the sub-mode too) the first
+request for a story scene (0x28-0x8F) is changed to scene N, and with a
+battle stage every round's request is. `PORT_SCENE_LOG=1` writes every
+request to stderr. A story scene starts from a save past the opening
+(`port/tools/inputs/story.<v>.eep`, the story scenario's EEPROM at
+retrace 12000, the references' own) and `port/tools/inputs/warp.<v>.txt`
+(START and A through the title, the file and the world select, whose
+first stage becomes scene N at retrace 1022, 842 in jp; then a walk with
+bombs), a battle stage from a blank save and battle.<v>.txt. The one
+`TARGET_PC` change in the game's C is the call in func_8023AE6C.
+
+The scenes, us's numbers (the same in eu and jp), by overlay:
+
+| scenes | overlays | what |
+|---|---|---|
+| 40-49 | ovl_0C_01-10 | Green Garden: stage 1 (40-44), stage 2 (45-48), the first boss (49) |
+| 56-62 | ovl_0D_01-07 | Blue Resort: 56-59, 60-61, boss 62 |
+| 72-86 | ovl_0E_01-15 | Red Mountain: 72-79, 80-85, boss 86 |
+| 88-98 | ovl_0F_01-10, ovl_12_06 | White Glacier: 88-93, 94-97, boss 98 |
+| 104-116 | ovl_10_01-13 | Black Fortress: 104-109, 110-115, boss 116 |
+| 120-126 | ovl_12_01-05 | Rainbow Palace: 120-121, 123-124, boss 126 (122 and 125 have no overlay) |
+| 136-141 | ovl_13_01-02, 14_01-02, 15_01-02 | each world's last boss (Green Garden to Rainbow Palace) |
+| 144-153 | ovl_17_01-10 | the ten battle stages |
+| 155 | ovl_16_01 | the ending |
+| 20-38 | ovl_09, 0A, 0B | the logos, the opening, the title and the menus (21-23, 28, 29, 36-38 too reach by warp) |
+
+A stage's first room (40, 45, 56, 60, ...) is entered as the world select
+enters it (sub-mode 16); a later room is reached through its first in
+play, and sub-mode 16 can be another entry of it: 92 and 97 with 16 are
+the credits' (AFBF0.c's scene list, NULL outside the credits: a read
+through NULL), 46 with 16 has no player yet (entry -1); `46:17`,
+`92:17` and `97:17` play them. The ending (155) needs the last boss's
+bank (warped from the world select it opens a file of the wrong one, NULL).
+
+The runs (scratch, `stages.py`): every scene of the table but 20-38 and
+155 for 5000 retraces (6000 for a battle stage), on Linux i386 and x86-64,
+x86-64 with ASan and UBSan (with the arena and with the host's malloc),
+the hashes of every retrace compared between i386 and x86-64.
+In us (2026-11-15) all 77 run to the end on i386 and on x86-64 and give
+the same hashes on both, every retrace; under ASan and UBSan, with the
+arena and with the host's malloc, no report but the known ones ("Checks
+and debugging aids": 412F0.c's address, 87D80.c's index 23; with the
+host's malloc also the legal screen's TLUT); fifteen of them (49, 57, 62,
+80, 86, 88, 98, 116, 136-141, 151) under qemu on Linux mips (big-endian)
+give i386's hashes.
+In eu and jp (the same scene numbers) the 77 also run to the end
+on both and give the same hashes on both.
+
+What the runs found, each fixed under `TARGET_PC` (the ROM is the same):
+
+- read past an object or through one into the next, in an overlay or in
+  6BBE0.c: "One variable through its neighbour" ("Checks and debugging
+  aids"); ovl_14_01 and ovl_14_02 had never written their stage's third
+  coordinate on any host;
+- func_8022FF58 (ZeroJump 0x1803) writes three floats through its third
+  argument, which callers in six overlays and 5E3F0.c give one `f32` (on the
+  N64 the frame's next words): a `Vec3f` or `f32[3]` there (5E3F0.c's
+  func_8024D5D0 reads the third back);
+- 426E0.c's func_80229BF4 freeing scroll -1 (ovl_0D_01) clears the N64's
+  word, D_80098C18[3].unk8;
+- gen_regions.py gave a name inside a declared object without pointers
+  (A2840.c's D_800BA8EA in D_800BA8E8[0], the inner names of a Vec3f) the
+  host layout's offset, which is the N64's there: 57 and 88 differed on
+  x86-64; and 6BBE0.c's func_8025DC60 cleared 54E40.c's
+  `D_802AC610.unk2C` through a view where pointers are 8 bytes, the stage
+  timer's residue on x86-64 (the five bosses differed);
+- a float to `u32` below 2^31 (IDO converts it as a signed word) is
+  `PORT_F2U` (0 on arm hosts otherwise), and aspmain.c's envmixer
+  multiplies a negative volume instead of shifting it (UBSan);
+- the player views' pointer slots, `PORT_HALVES` for the task id's halves
+  ("Where pointers are 8 bytes"), and port_null_word for reads through
+  NULL ("Reads through NULL").
+
+The known warp artefacts (46, 92 and 97 with sub-mode 16, the ending) are
+described above. test.py's `warp-stage` (80), `warp-boss` (141) and
+`warp-battle` (151) run three of them, not by default.
+
+Clang's source coverage (`-fprofile-instr-generate -fcoverage-mapping`,
+us, x86-64): the four scenarios run 16% of the functions and 22% of the
+lines (all the game's own C, the libraries, the host and ZeroJump's
+generated stubs); with the 77 stage runs 50% and 52%. The main code goes
+from 59% to 69% of its functions, each world's overlays from almost none
+(only Green Garden's first stage, 6%) to between 27% and 58%; ovl_09 and
+ovl_16 (the ending) are never run.
+
 ## How it works
 
 ### The build
@@ -341,6 +439,26 @@ same build-port32 build-port64`; "The matrix").
   pointer) has the pointer slots under `TARGET_PC` (`PORT_RET(u8 unk0[4];,
   void *unk0;)` on one line where a file has `#line`), or is the
   canonical type (926A0's objects are structs.h's `UnkStructA`).
+  The views behind a ZeroJump stub aren't linked by a call (views.py
+  doesn't see them); the stage runs ("Every stage") found: 4ED50.c's
+  camera moves (UnkStruct_802363BC, links at 0x3C and 0x40) kept as
+  `u32[17]` or with `s32` links in ovl_0A_05, 0D_01, 0D_03, 0D_06, 0F_02,
+  10_08, 10_12, 13_01, 15_01, 15_02 (the camera task followed a garbage
+  link into its `while (1) {}`); 6BBE0.c's player (Port_800BCFE8,
+  pointers at 0x18, 0x1C, 0x98, 0x9C) in ovl_0D_07, 10_13, 12_05, 12_06,
+  whose task id at 0xA0 they read as the u16 at 0xA2 (`PORT_HALVES`: on
+  a little-endian host, i386 too, that was the id's high half, 0, and
+  the boss's intro suspended task 0, the camera's, instead of the
+  player's); 6BBE0.c's `PORT_FIELD` of an Ent88 (func_802703B4's) as an
+  UnkStructA; 8A7A0.c's func_80273E2C adding to a bomb's unk5C as
+  `p[0x2E]` of an `s16 *`; ovl_15_01's func_8022F698 list (eight object
+  pointers in 32 bytes); and stubs declared without a prototype that
+  pass a pointer (gen_zerojump.py makes their parameters `int`:
+  ovl_10_06, 13_02, 15_01, 15_02; ovl_0B_02's `s32 (*f(s32))[4]`, which
+  host_check.py read as returning an int). gen_zerojump.py's
+  `zerojump_narrow.txt` lists what is left (98 in us; those looked at
+  are numbers in pointer-wide parameters, sound and task ids: not all
+  are read yet).
 - **m2c's field accesses.** `M2C_FIELD(expr, type, offset)` after a
   pointer becomes `PORT_FIELD(expr, type, offset, S, field)`, the same
   text for IDO and S's field for a host; `PORT_ELEM` for the i-th of an
@@ -546,6 +664,30 @@ HLE (aspmain.c). The AI's buffers go to SDL or `--wav`.
   `TARGET_PC` the two functions reach the N64's words for -1 (the
   pointer's low half for the flag), so every host does what the N64
   does.
+- **Reads through NULL**: boot_code maps ZeroJump's page at virtual
+  address 0 (1050.c), so on the N64 a read through NULL gets that page's
+  words (its code, its strings, then zeros) where a host faults.
+  `port_null_word(off)` (port/host/runtime.c) gives that word, from the
+  ROM. 426E0.c's func_802284F0 uses it for a texture slot an overlay
+  never filled (ovl_15_02 gives its 80051420 four and fills two: Rainbow
+  Palace's last boss crashed at once).
+- **One variable through its neighbour, in an overlay**: the overlays'
+  .bss are tentative definitions, which clang emits in the order of their
+  first use, not the source's, so `M2C_FIELD(&D_x, f32 *, 4)` (the next
+  word on the N64) reached whatever the host put after `D_x`. Where the
+  code does that (ovl_13_02: 121 places; ovl_14_01, ovl_14_02, ovl_15_01,
+  ovl_15_02) the file's .bss is one struct under `TARGET_PC`, in the
+  N64's order with its alignment gaps (`port_gap_*`); `.data` (explicit
+  definitions, emitted in order) where a record is split over several
+  names, or `PORT_HOST(...)` naming the next object where a matching
+  fake reaches it (`(&D_x)[1]`). ASan sees the overlays' data and .bss
+  as any other (a global-buffer-overflow at the neighbour's redzone), and
+  an array indexed past its end into the next name (ovl_13_01's ring of
+  ten Vec3f in a 16-byte variable, ovl_0D_04's CCC[2], 6BBE0.c's
+  D_802A1044 walked as ten records) is one object of the right size. In
+  ovl_14_01 and ovl_14_02 that was a port bug on every host:
+  func_802438BC fills three words from the first, and the third (the
+  stage's z) was never written.
 - `PORT_GFX_TRACE=X,Y` logs every write to that pixel of a color image
   (the color, the othermode, the tile, the texture image and its offset in
   RDRAM, the sample's s and t; with `-v -v` TMEM and the palette), and
@@ -571,22 +713,29 @@ order"), buffers the host's size where a callee fills them with
 pointers or more than the caller gave room for ("Where pointers are 8
 bytes"), and an index out of bounds whose words depend on the host's
 layout taken to the N64's (5E3F0.c's entry -1: "Checks and debugging
-aids").
+aids"), an overlay's .bss in one struct where the code reaches a name
+through its neighbour, a read through NULL given ZeroJump's word
+(`port_null_word`), `PORT_HALVES` (a word's halves in the host's order),
+`PORT_F2U` (a float to `u32` as IDO converts it) and PORT_WARP's call in
+54E40.c ("Every stage").
 
 ## What's left
 
-- **64-bit, the rest**: macOS (not tried). The scenarios cover the menus,
-  battle and the first stage: what they don't reach (the other stages and
-  overlays, the story's bosses, the options) can still read a pointer
-  through an N64 offset or a 32-bit integer, or fill an N64-sized buffer
-  with host pointers (the bugs the Windows x64 build and ASan found were
-  of that kind), or index out of bounds into words that are other words
-  where pointers are 8 bytes (5E3F0.c's entry -1 was). `ptrcast_scan.py`'s allow-list and m2c_port.py's "no known
-  struct" list are the static side of it ("Where pointers are 8 bytes"); a
-  run that crashes or differs from i386, on any of the three 64-bit hosts
-  or under ASan (with host malloc too, which sees the heap's blocks:
-  "Checks and debugging aids"), the dynamic one. The sanitizers have
-  run on x86-64 only (not the 32-bit hosts, not Windows).
+- **64-bit, the rest**: macOS (not tried). PORT_WARP's runs ("Every
+  stage") reach every stage, boss and battle stage, but a stage's later
+  rooms only as their first, five thousand retraces each with a fixed
+  walk, so about half of each overlay is still unreached (the coverage
+  there), and eu and jp were compared between i386 and x86-64 but not
+  run under the sanitizers or qemu.
+  `ptrcast_scan.py`'s allow-list, m2c_port.py's "no known struct" list
+  and gen_zerojump.py's narrow list are the static side ("Where pointers
+  are 8 bytes"); a run that crashes or differs from i386 the dynamic one.
+  The sanitizers have run on x86-64 only (not the 32-bit hosts, not
+  Windows).
+- **The N64's layout**: every read past an object, before it or through
+  one name into the next is to be fixed, as DozerEncore's docs/LAYOUT.md
+  did, its padding the bytes the N64 has there. The known ones are in
+  "Checks and debugging aids" and "Every stage".
 - **Packages** (an AppImage, the `.exe` with SDL, a macOS app; Blast
   Corps' "Packages") and a hosted page: after 64-bit, with SDL in the
   Windows cross build.

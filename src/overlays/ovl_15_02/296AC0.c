@@ -3572,6 +3572,10 @@ void func_ovl15_02_80046AEC(UnkStructA *arg0, f32 *arg1) {
     p->z = z + D_ovl15_02_800513D8.z;
 }
 
+#ifdef TARGET_PC
+extern f32 D_ovl15_02_8005104C[4][3];
+#endif
+
 void func_ovl15_02_800468A0() {
     /* The first row as a function-scope static: uopt then reads it as three
      * variables (no address register) and ugen shares one `lui at` for the
@@ -3605,9 +3609,17 @@ void func_ovl15_02_800468A0() {
     ids[0] = 0;
     for (i = 1; i < 5; i++) {
         objs[i] = func_ovl15_02_800505E0(i + 0x30D, 0x01480000, 0x50, objs[i - 1]);
+#ifdef TARGET_PC
+        /* (rows 1-4 are 8005104C's, the N64's next words: here the static is
+           an object of its own) */
+        objs[i]->unk4C = D_ovl15_02_8005104C[i - 1][0] * 10.0f;
+        objs[i]->unk50 = D_ovl15_02_8005104C[i - 1][1] * 10.0f;
+        objs[i]->unk54 = D_ovl15_02_8005104C[i - 1][2] * 10.0f;
+#else
         objs[i]->unk4C = ((f32 (*)[3]) &D_ovl15_02_80051040)[i][0] * 10.0f;
         objs[i]->unk50 = ((f32 (*)[3]) &D_ovl15_02_80051040)[i][1] * 10.0f;
         objs[i]->unk54 = ((f32 (*)[3]) &D_ovl15_02_80051040)[i][2] * 10.0f;
+#endif
         objs[i]->unk34 = 125.0f;
         objs[i]->unk38 = 0.0f;
         objs[i]->unk40->unk36 = 0;

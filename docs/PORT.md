@@ -15,13 +15,13 @@ As of 2026-11-15:
 
 | host | builds | how far it runs |
 |---|---|---|
-| Linux i386 (`-m32`) | yes | the legal screen, title, file select, the opening, the world select, the first stage played; battle mode against three CPU players: `test.py`'s four scenarios, in us, eu and jp (the references are this build's) |
+| Linux i386 (`-m32`) | yes | the legal screen, title, file select, the opening, the world select, the first stage played; battle mode against three CPU players: `test.py`'s four scenarios, in us, eu and jp (the references are this build's); us's seven scenarios and 77 stage runs under ASan and UBSan too |
 | Windows i386 (zig `x86-windows-gnu`, under wine) | yes | the four scenarios are Linux i386's, in us, eu and jp |
 | WebAssembly (emscripten), node | yes | the four scenarios are Linux i386's, in us, eu and jp |
 | WebAssembly, a page (`PORT_WASM_TARGET=web`) | yes | plays in a browser (headless Chromium, us, eu and jp: the legal screen, the opening, the attract demos), the ROM from a file picker or `?rom=`, the save in IndexedDB |
-| big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | the four scenarios are Linux i386's, in us, eu and jp |
-| Linux x86-64 | yes | the four scenarios are Linux i386's, in us, eu and jp ("Where pointers are 8 bytes"); under ASan and UBSan too, with the arena and with the host's malloc, in us, eu and jp |
-| Windows x64 (zig `x86_64-windows-gnu`, under wine) | yes | the four scenarios are Linux i386's, in us, eu and jp |
+| big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | the four scenarios are Linux i386's, in us, eu and jp; big-endian MIPS: the seven in eu and jp too, and stage runs ("Every stage") |
+| Linux x86-64 | yes | the four scenarios are Linux i386's, in us, eu and jp ("Where pointers are 8 bytes"); under ASan and UBSan too, with the arena and with the host's malloc, in us, eu and jp: the seven scenarios and the 77 stage runs |
+| Windows x64 (zig `x86_64-windows-gnu`, under wine) | yes | the four scenarios are Linux i386's, in us, eu and jp; us's seven |
 | aarch64 (zig, qemu-user) | yes | the four scenarios are Linux i386's, in us, eu and jp |
 | macOS | not tried | ("What's left") |
 
@@ -345,11 +345,19 @@ In us (2026-11-15) all 77 run to the end on i386 and on x86-64 and give
 the same hashes on both, every retrace; under ASan and UBSan, with the
 arena and with the host's malloc, no report but the ones since fixed ("The scattered layout": 412F0.c's
 address, 87D80.c's index 23, with the host's malloc the legal screen's
-TLUT); fifteen of them (49, 57, 62,
-80, 86, 88, 98, 116, 136-141, 151) under qemu on Linux mips (big-endian)
-give i386's hashes.
+TLUT); on i386 under ASan and UBSan (the arena) i386's hashes and no
+report but 426E0.c's pointer overflow, since fixed ("Checks and
+debugging aids"). Under qemu on Linux mips (big-endian) all 77 give
+i386's hashes (fifteen in an earlier pass, the other 62 since).
 In eu and jp (the same scene numbers) the 77 also run to the end
-on both and give the same hashes on both.
+on both and give the same hashes on both; under ASan and UBSan on
+x86-64, with the arena and with the host's malloc, all 77 give x86-64's
+hashes and no report but in jp's 141 (Rainbow Palace's last boss):
+ovl_15_02's table read through a static ("Checks and debugging aids"),
+fixed, after which the four runs of 141 give the fixed build's hashes.
+Under qemu on mips, fifteen in each (49, 57, 62, 80, 86, 98, 116, 126,
+136-141, 151) give x86-64's hashes, and test.py's seven scenarios the
+references.
 
 What the runs found, each fixed under `TARGET_PC` (the ROM is the same):
 
@@ -439,7 +447,12 @@ check it (64-bit Linux, clang and lld, off by default):
   up to 16 KB, so an index the N64 had room for lands in padding. Each
   object keeps its offset modulo 16 (4 KB for objects of 4 KB or more).
   - An object's size is its declared size (decls.py's types). Where no
-    declaration gives one, it runs to the next name the C uses.
+    declaration gives one, it runs to the next name the C uses. Where the
+    C declares `T x[]`, `PORT_SIZE(n)` gives the size the code shows
+    (5E3F0.c's per-entry tables are `[PORT_SIZE(5)]`, D_800AEDF0's five
+    entries); 18 objects are left without one: names the C never uses, a
+    thread with its stack after it, end markers, the heap, an
+    ALCSeqMarker, and two words nothing gives an extent.
   - A name inside an object (a member's or an element's own name, a
     label inside a typed table) stays an alias inside it.
   - At startup a constructor copies each asm `.data` label's bytes from
@@ -468,7 +481,9 @@ check it (64-bit Linux, clang and lld, off by default):
 
 The runs (2026-11-15) were test.py's seven scenarios and the 77 stage
 runs ("Every stage"), on check builds of us with seeds 1, 2 and 3, and
-of eu and jp with seed 1. With the fixes below, nothing is reported. The
+of eu and jp with seed 1; then the seven scenarios on eu and jp with
+seeds 2 and 3, and us with seed 1 again (scenarios and stages) once 59 of
+the 77 names below had a size. With the fixes below, nothing is reported. The
 hashes are those of the default build in every run: the scenarios'
 references, and the earlier x86-64 runs' for every stage. The plain
 scattered builds (seeds 1-3, no check) give the references too. On this
@@ -753,6 +768,27 @@ HLE (aspmain.c). The AI's buffers go to SDL or `--wav`.
   pointers and their region keeps the N64's layout, so the same bytes on
   every host), us's menus, battle and story, eu's menus, battle and
   story, all of jp's. 5E3F0.c's index -1 is no longer one: below.
+  Later (2026-11-15): test.py's seven scenarios on x86-64 in eu and jp,
+  with and without host malloc (28 runs), and the 77 stage runs (308),
+  give the references (and x86-64's stage hashes) with no report, but
+  jp's warp-boss and stage 141: ovl_15_02's func_800468A0 reads rows 1-4
+  of its table through the first row, a function-scope static (a
+  matching trick), which on the N64 are the next words,
+  `D_ovl15_02_8005104C`; on a host the static is an object of its own
+  (clang had it in .rodata, every host alike, so they agreed), and the
+  port now reads 8005104C. That changed what jp's boss does from
+  retrace 3688, so jp's warp-boss reference is the fixed build's (us and
+  eu don't reach the function in 5000 retraces). On i386 (`-m32`), us's
+  seven scenarios and 77 stage runs, with the arena: UBSan's
+  pointer-overflow in 412F0.c (a framebuffer's address less 0x80000000)
+  and 426E0.c (a model's address plus a negative offset), the N64's
+  wrapping arithmetic, now on the integer; and battle differed in 19
+  frames (838-1256, a few pixels): i386 libm's sqrtf returns the x87's
+  unrounded result, which gu.c's guLookAt widened to double in the
+  instrumented build (stored as a float in the plain one), so the
+  camera matrix's 1.0 came out 0.99998. The port's sqrtf is the
+  compiler's (port/src/gu.c), IEEE's on every host. After these, every
+  run gives i386's hashes and no report.
 - **5E3F0.c's entry -1**: `D_802AC894` is -1 when no entry is current,
   and func_80243DEC (func_80243D90: clear bit 0x8000 of unk68, in us's
   menus, battle and story) and the scripts' func_80243D2C (read unk14,
@@ -825,18 +861,23 @@ through its neighbour, a read through NULL given ZeroJump's word
   stage") reach every stage, boss and battle stage, but a stage's later
   rooms only as their first, five thousand retraces each with a fixed
   walk, so about half of each overlay is still unreached (the coverage
-  there), and eu and jp were compared between i386 and x86-64 but not
-  run under the sanitizers or qemu.
+  there). eu and jp ran the 77 under ASan and UBSan (x86-64) and a
+  handful under qemu (mips); us all 77 on i386 under the sanitizers and
+  under qemu (mips).
   `ptrcast_scan.py`'s allow-list, m2c_port.py's "no known struct" list
   and gen_zerojump.py's narrow list are the static side ("Where pointers
   are 8 bytes"); a run that crashes or differs from i386 the dynamic one.
-  The sanitizers have run on x86-64 only (not the 32-bit hosts, not
-  Windows).
+  The sanitizers have run on x86-64 (us, eu, jp) and i386 (us only;
+  not with the host's malloc there), not on Windows or the cross hosts.
+  Windows x64 has run the seven scenarios in us only, big-endian MIPS
+  in eu and jp only (us there: the stage runs), the other cross hosts
+  the four.
 - **The N64's layout**: the scattered check builds ("The scattered
   layout") report nothing in test.py's scenarios or the 77 stage runs. That
-  holds for us with seeds 1, 2 and 3, and for eu and jp with seed 1. Left:
-  - 77 fixed-address names no declaration sizes. Each is checked only
-    against its room up to the next name.
+  holds for us with seeds 1, 2 and 3, and for eu and jp with seed 1 (and
+  the seven scenarios with seeds 2 and 3). Left:
+  - 18 names no declaration sizes (of 77 before; "The scattered
+    layout"). Each is checked only against its room up to the next name.
   - The overlays' .bss structs keep the N64's order inside one object.
   - A walk that ends at a name placed before it runs once and shows
     nothing (hence several seeds).

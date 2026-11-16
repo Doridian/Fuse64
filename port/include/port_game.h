@@ -22,6 +22,10 @@ void *port_addr(__UINTPTR_TYPE__ a);
 /* 40FB0's overlay loader: overlay (bank, entry), loaded; what its entry
    returns (port/src/overlay.c) */
 void *port_overlay_load(int bank, int entry);
+/* 54E40.c's scene request, changed by PORT_WARP (port/host/warp.c) */
+void port_warp(int *scene, int *sub, int *flags);
+/* the word the N64 reads at NULL + off: ZeroJump's page (port/host/runtime.c) */
+unsigned int port_null_word(unsigned int off);
 /* 13F0's segment loader: the entry of ROM segment seg (main_code's, 2) */
 void *port_segment_entry(int seg);
 

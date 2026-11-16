@@ -3623,7 +3623,7 @@ void func_8023AED0(s32 arg0) {
 
 void func_8023AE6C(s32 arg0, s32 arg1, s32 arg2) {
     if (!(D_802AC5D0 & 1) && (D_802A01B4 == 0)) {
-        D_802AC5D4 = arg0;
+        PORT_ONLY(port_warp(&arg0, &arg1, &arg2);) D_802AC5D4 = arg0;
         D_802AC5DC = D_802AC5D4;
         D_802AC5D8 = arg1;
         D_802AC5E0 = D_802AC5D8;

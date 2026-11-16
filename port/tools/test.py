@@ -30,13 +30,19 @@ import tempfile
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 REFS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_refs.json")
 
-# name: (frames, input script or None)
+# name: (frames, input script or None[, PORT_WARP scene, save to start from])
 SCENARIOS = {
     "legal": (300, None),
     "menus": (3000, "tools/inputs/menus.txt"),
     "battle": (6000, "tools/inputs/battle.{v}.txt"),
     # (not by default: the opening, the world select and the first stage)
     "story": (12000, "tools/inputs/menus.txt"),
+    # (not by default: a stage reached through PORT_WARP, docs/PORT.md
+    # "Every stage": a story scene from a save past the opening, the
+    # story's own at retrace 12000; a battle stage from a blank save)
+    "warp-stage": (5000, "port/tools/inputs/warp.{v}.txt", 80, "port/tools/inputs/story.{v}.eep"),
+    "warp-boss": (5000, "port/tools/inputs/warp.{v}.txt", 141, "port/tools/inputs/story.{v}.eep"),
+    "warp-battle": (6000, "tools/inputs/battle.{v}.txt", 151, None),
 }
 DEFAULT = ["legal", "menus", "battle"]
 
@@ -54,7 +60,12 @@ def cache_value(build, key):
 
 def run(build, name, qemu=None, timeout=7200):
     ver = cache_value(build, "PORT_VERSION") or "us"
-    frames, script = SCENARIOS[name]
+    frames, script = SCENARIOS[name][:2]
+    warp, save = (SCENARIOS[name][2:] + (None, None))[:2]
+    env = dict(os.environ)
+    env.pop("PORT_WARP", None)
+    if warp is not None:
+        env["PORT_WARP"] = str(warp)
     exe = os.path.join(build, "fuse64")
     emu = qemu or cache_value(build, "CMAKE_CROSSCOMPILING_EMULATOR")
     if os.path.exists(exe + ".js"):     # the WebAssembly build: under node
@@ -65,6 +76,8 @@ def run(build, name, qemu=None, timeout=7200):
     tmp = tempfile.mkdtemp(prefix="fuse64-test-")
     try:
         wav = os.path.join(tmp, "out.wav")
+        if save:
+            shutil.copy(os.path.join(ROOT, save.format(v=ver)), os.path.join(tmp, "fuse64.%s.eep" % ver))
         cmd = ([emu] if emu else []) + [exe, "--headless", "--deterministic", "--hash", "--frames", str(frames),
                                         "--save-dir", tmp, "--wav", wav]
         if script:
@@ -74,7 +87,7 @@ def run(build, name, qemu=None, timeout=7200):
             own = os.path.join(ROOT, "port", script)
             cmd += ["--input", own if os.path.exists(own) else os.path.join(ROOT, script)]
         cmd.append(os.path.join(ROOT, "baserom.%s.z64" % ver))
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, env=env)
         if r.returncode != 0:
             sys.exit("%s: %s exited with %d:\n%s" % (name, exe, r.returncode, r.stderr[-2000:]))
         hashes = [l.split()[1] for l in r.stdout.splitlines() if re.match(r"\d+ [0-9a-f]{8}$", l)]

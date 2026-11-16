@@ -72,13 +72,21 @@ int port_hostmalloc_owns(const void *p) {
     return i > 0 && (uintptr_t)p < blocks[i - 1].hi;
 }
 
-/* gmalloc's blocks are whole 8-byte fragments or more (src/libmalloc), so
- * the bytes up to the next multiple of 8 are the block's on the N64: the
- * legal screen's TLUT load reads two of them past its picture (87190.c's
- * asset, 38450 bytes in us and eu).  Here they are the block's too, zero
- * (on the N64 whatever the heap held there; no texel uses them). */
+/* the size gmalloc gives a request of n (src/libmalloc/gmalloc.c: at least
+ * a struct list, 8 bytes on the N64; up to half a 4 KB block a power-of-two
+ * fragment, else whole blocks): on the N64 the bytes up to it are the
+ * block's, and the legal screen's TLUT load reads past its picture into
+ * them (87190.c's asset, 38450 bytes in us and eu).  Here they are the
+ * block's too, zero (on the N64 whatever the heap held there; no texel
+ * uses them). */
 static size_t whole(size_t n) {
-    return n ? (n + 7) & ~(size_t)7 : 8;
+    size_t w = 8;
+
+    if (n > 0x800)
+        return (n + 0xFFF) & ~(size_t)0xFFF;
+    while (w < n)
+        w *= 2;
+    return w;
 }
 
 void *bm64_malloc(size_t n) {

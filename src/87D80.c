@@ -85,6 +85,16 @@ typedef struct {
     /* 0xBC0 */ u8 unkBC0[0x74];
 } UnkStruct_800B15D8; /* size 0xC34 */
 
+#ifdef TARGET_PC
+/* a layer's cell: a layer has as many as its stage gives (unk4 * unk8),
+ * which can be more than the 23 its record has room for; the N64 goes on
+ * into the next layer, all in D_800B15D8, so the port does the same
+ * without indexing past [23] (docs/PORT.md, "The scattered layout") */
+#define CELL(n, i) (((UnkCell_800B15D8 *) ((u8 *) &D_800B15D8[n] + 0x12))[i])
+#else
+#define CELL(n, i) (D_800B15D8[n].unk12[i])
+#endif
+
 typedef struct {
     /* 0x00 */ u8 pad0[0x10];
     /* 0x10 */ f32 x;
@@ -509,12 +519,12 @@ void func_8026FC08(s32 arg0) {
         }
         p++;
         for (i = 0; i < cnt; i++) {
-            D_800B15D8[n].unk12[i].unk0 = *p++;
-            D_800B15D8[n].unk12[i].unk1 = *p++;
+            CELL(n, i).unk0 = *p++;
+            CELL(n, i).unk1 = *p++;
             for (j = 0; j < 64; j++) {
-                x = D_800B15D8[n].unk12[i].unk0 * 8 + D_800B15D8->unk1 + j % 8;
+                x = CELL(n, i).unk0 * 8 + D_800B15D8->unk1 + j % 8;
                 y = D_800B15D8->unk2 + n;
-                z = D_800B15D8[n].unk12[i].unk1 * 8 + D_800B15D8->unk3 + (j >> 3);
+                z = CELL(n, i).unk1 * 8 + D_800B15D8->unk3 + (j >> 3);
                 p += 2;
                 func_8026D620(x, y, z, (p[-2] << 8) + p[-1]);
             }
@@ -1347,6 +1357,16 @@ void func_8026DCAC(f32 arg0, f32 arg1, f32 arg2, void *arg3, s32 arg4) {
 }
 
 u8 func_8026DC74(s32 arg0) {
+#ifdef TARGET_PC
+    if (arg0 == -1) {
+        /* below the floor (func_8026DCAC's -1, 5E3F0.c's func_8024E088):
+         * on the N64 entry -1's unk10 is the byte at 0x800B09B4, the high
+         * byte of D_800B05D8[0xF7] (docs/PORT.md, "The scattered layout") */
+        extern s32 D_800B05D8[];
+
+        return (u32) D_800B05D8[0xF7] >> 24;
+    }
+#endif
     return D_800B15D8[arg0].unk10;
 }
 
@@ -1461,7 +1481,7 @@ s32 func_8026D7D8(s32 arg0, s32 arg1, s32 arg2) {
     } else {
         cell = func_8026D5F8(arg0, arg1, arg2);
         slot = func_8026D5C0(arg0, arg1, arg2);
-        var_a0 = D_800B15D8[arg1].unk12[cell].unk2[slot];
+        var_a0 = CELL(arg1, cell).unk2[slot];
     }
     if (var_v1 == 1 && (var_a0 & 0xF)) {
         var_a0 = 0xF;
@@ -1489,7 +1509,7 @@ void func_8026D620(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 
     cell = func_8026D5F8(arg0, arg1, arg2);
     slot = func_8026D5C0(arg0, arg1, arg2);
-    D_800B15D8[arg1].unk12[cell].unk2[slot] = arg3;
+    CELL(arg1, cell).unk2[slot] = arg3;
 }
 
 s32 func_8026D5F8(s32 arg0, s32 arg1, s32 arg2) {

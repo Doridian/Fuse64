@@ -480,8 +480,19 @@ extern s32 D_800AEFE8;
 extern s32 D_800AF06C;
 extern s32 D_800AF0B0;
 extern u8 D_800BD000[];
+#ifdef TARGET_PC
+/* five, as the loops over it (i < 5) have it: the N64 names [3]
+ * D_800BE824 (docs/PORT.md, "The scattered layout") */
+extern s32 D_800BE818[5];
+extern s32 D_800BE824;
+#undef D_800BE824
+#define D_800BE824 (D_800BE818[3])
+#define BE818(i) (D_800BE818[i])
+#else
 extern s32 D_800BE818;
 extern s32 D_800BE824;
+#define BE818(i) ((&D_800BE818)[i])
+#endif
 extern u8 D_800BE830[];
 extern s32 D_802A0038;
 extern s32 D_802AC5CC;
@@ -570,7 +581,14 @@ extern PORT_RET(u8, u8 *) D_802AC820[]; /* (two objects: pointers) */
 extern PORT_RET(u8, u8 *) D_802AC828[]; /* (two players' five objects: pointers) */
 extern s32 D_802AC850;
 extern s32 D_802AC854;
+#ifdef TARGET_PC
+/* one per player (id 0-3) */
+extern u32 D_802AC858[4];
+#define AC858(i) (D_802AC858[i])
+#else
 extern u32 D_802AC858;
+#define AC858(i) ((&D_802AC858)[i])
+#endif
 extern u8 D_802AC868[];
 
 void func_8023A640(void);
@@ -2344,7 +2362,7 @@ void func_8023F26C() {
     id = *(s32 *) idp;
     func_80247C50(id);
     if ((D_802AC5D0 & 4) || ((D_802AC5D0 & 8) && (id != 0))) {
-        mode = (&D_802AC858)[id];
+        mode = AC858(id);
         obj = func_802443F4(id);
         if ((D_802AC5D0 & 4) && (D_802AC660.unk0 == 0) && (func_80243EF0(id) == 0)) {
             D_802AC758--;
@@ -2353,7 +2371,7 @@ void func_8023F26C() {
             func_80245208(0, 1);
         }
     } else {
-        mode = D_802AC858;
+        mode = AC858(0);
         obj = func_802443F4(0);
         id = 0;
     }
@@ -2709,7 +2727,7 @@ void func_8023E1D8() {
     TextItem *items;
 
     for (i = 0; i < 5; i++) {
-        if ((&D_800BE818)[i] != 0) {
+        if (BE818(i) != 0) {
             func_8028A3D0(D_802AC5E8 * 20 + D_802AC5EC * 5 + i + 0x2C);
         } else {
             func_8028A428(D_802AC5E8 * 20 + D_802AC5EC * 5 + i + 0x2C);
@@ -3220,12 +3238,12 @@ static s32 func_8023D0F8() {
         D_802AC610.unk8 = D_802AC5EC;
         if ((D_802AC5F0 == 0) && (skip == 0)) {
             for (i = 0, D_802AC610.unk20 = 0; i < 5; i++) {
-                if (((&D_800BE818)[i] = func_8028A36C(D_802AC5E8 * 20 + D_802AC5EC * 5 + i + 0x2C)) != 0) {
+                if ((BE818(i) = func_8028A36C(D_802AC5E8 * 20 + D_802AC5EC * 5 + i + 0x2C)) != 0) {
                     if (i < 3) {
                         D_802AC610.unk20++;
                     }
                 } else {
-                    (&D_800BE818)[i] = 0;
+                    BE818(i) = 0;
                 }
             }
             for (i = 0; i < 0x2C; i++) {
@@ -3511,7 +3529,7 @@ static void func_8023B8D0() {
         model = (PORT_IP(s32))(func_8026CE28(0x19));
         for (i = 0; i < 5; i++) {
             o = D_802AC7F8[i] = func_8022A6C4((void *) model, 0x40);
-            if ((func_8028A36C(D_802AC5E8 * 20 + D_802AC5EC * 5 + i + 0x2C) != 0) || ((i == 3) && ((&D_800BE818)[i] != 0))) {
+            if ((func_8028A36C(D_802AC5E8 * 20 + D_802AC5EC * 5 + i + 0x2C) != 0) || ((i == 3) && (BE818(i) != 0))) {
                 o->unkC |= 0x100;
             } else {
                 o->unkC |= 0x1180;
@@ -3747,7 +3765,7 @@ s32 func_8023BBCC() {
                 func_8026C8E8();
                 func_8026C894();
                 for (i = 0; i < 5; i++) {
-                    if ((&D_800BE818)[i] != 0) {
+                    if (BE818(i) != 0) {
                         func_8028A3D0(D_802AC5E8 * 20 + D_802AC5EC * 5 + i + 0x2C);
                     } else {
                         func_8028A428(D_802AC5E8 * 20 + D_802AC5EC * 5 + i + 0x2C);
@@ -3902,7 +3920,7 @@ s32 func_8023A870(s32 arg0, s32 arg1) {
     if (arg1 == 4) {
         arg1 = D_802AC798;
     }
-    (&D_802AC858)[arg0] = arg1;
+    AC858(arg0) = arg1;
     func_80238A10(func_8023F26C, (PORT_IP(s32)) ((u8 *) D_802A0B98 + arg0 * 4), 0, 0, 0x130);
     return 1;
         }

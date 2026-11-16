@@ -170,6 +170,15 @@ s32 func_8022769C(s32 i) {
 }
 
 void *func_80227678(s32 n) {
+#ifdef TARGET_PC
+    if (D_802A538C == NULL) {
+        /* before the first frame (426E0.c's func_802290CC, which drops
+         * them): the N64 computes the area's address through NULL, a
+         * number nothing uses; the same number, without host arithmetic
+         * on NULL (docs/PORT.md, "The scattered layout") */
+        return (void *) (uintptr_t) (0x10000 + n * 0x5000);
+    }
+#endif
     return D_802A538C->unk10000[n];
 }
 

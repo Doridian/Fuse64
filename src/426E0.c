@@ -527,7 +527,13 @@ static void func_8022A850(void) {
         D_800A0D00[i].unk8 = 0;
         D_800A0D00[i].unk3C = NULL;
         i++;
+#ifdef TARGET_PC
+        /* to the pool's end, not to the next name (48600.c's D_800A3F00;
+         * docs/PORT.md, "The scattered layout") */
+    } while (i < 0xA0);
+#else
     } while (&D_800A0D00[i] < D_800A3F00);
+#endif
     D_800A0D00[0].unk3C = NULL;
     D_800A0D00[1].unk3C = NULL;
     D_800A0D00[1].unk8 = 0xA0;

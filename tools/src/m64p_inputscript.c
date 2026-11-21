@@ -23,6 +23,11 @@
  * without a pak: status 05 00 00, and the buttons as the core would.  The
  * core's own controller says 05 00 02 (no pak) instead.
  *
+ * inputscript_on_poll() sets a callback for every read of the first
+ * plugged-in controller, with the buttons it gets (port/tools/emu_digest.py
+ * reads the game's state there); inputscript_replay() gives it a function
+ * that picks the buttons in place of the script (the input by game frame).
+ *
  * The same script or movie gives the same run every time.
  *
  *   cc -O2 -shared -fPIC -o build/tools/m64p_inputscript.so tools/src/m64p_inputscript.c
@@ -59,6 +64,14 @@ static int reset_wanted;        /* a .m64 sample asked for a reset */
 
 static int present = 1;
 static int raw;
+
+typedef void (*poll_fn)(unsigned int keys, unsigned int frame);
+typedef unsigned int (*replay_fn)(unsigned int scripted, unsigned int frame);
+static poll_fn on_poll;
+static replay_fn replay;
+
+void inputscript_on_poll(poll_fn cb) { on_poll = cb; }
+void inputscript_replay(replay_fn fn) { replay = fn; }
 
 void inputscript_set(frame_fn now, const unsigned int *frames, const unsigned int *buttons, int n)
 {
@@ -125,6 +138,12 @@ static unsigned int keys_for(int control)
     if (control == 0)
         for (int i = 0; i < steps && step_frames[i] <= now; i++)
             held = step_buttons[i];
+    if (control == first_present()) {
+        if (replay)
+            held = replay(held, now);
+        if (on_poll)
+            on_poll(held, now);
+    }
     return held;
 }
 

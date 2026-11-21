@@ -4,45 +4,32 @@
  * the game's color images in its own memory as the RDP would, so that what
  * the game reads back (its screen captures) and what the VI shows are the
  * same as on the hardware, headless or not.  The port's own (docs/PORT.md,
- * "Graphics"), after DozerEncore's port/host/gfx.c in its model (a float
- * z-buffer tied to the z image, TMEM emulated with its loads, the combiner
- * and blender by their formulas).
+ * "Graphics"), after DozerEncore's port/host/gfx.c in its model (TMEM
+ * emulated with its loads, the combiner and blender by their formulas).
  *
- * RSP side: segments, the matrix stack, vertex transform, lighting and
- * texture generation, fog, near-plane clipping, culling, the texture
- * scale, the moveword/movemem state.  RDP side: TMEM loads (LOADBLOCK
- * with its line counter and the odd lines' word swap, LOADTILE,
- * LOADTLUT), tiles, texel formats (RGBA16/32, CI4/8, IA4/8/16, I4/8),
- * the color combiner in one and two cycles, alpha compare, the blender,
- * the z-buffer, fill and copy modes, scissors, texture rectangles.
+ * RSP side: the game's own microcode on the port's RSP interpreter
+ * (port/host/rsp.c) for the matrices, vertices, lighting, texture
+ * generation, fog, clipping, culling and the triangles' setup, so that the
+ * RDP gets the commands it gets on the N64; the display list's flow
+ * stays here.  RDP side: triangles from their edge and attribute
+ * coefficients as the RDP walks them, TMEM loads (LOADBLOCK with its line
+ * counter and the odd lines' word swap, LOADTILE, LOADTLUT), tiles, texel
+ * formats (RGBA16/32, CI4/8, IA4/8/16, I4/8), the color combiner in one
+ * and two cycles, alpha compare, the blender, the z-buffer in the z image,
+ * fill and copy modes, scissors, texture rectangles.
  *
  * What the game's memory holds is read as the N64 has it where the RDP
  * reads bytes (texels, palettes, framebuffers: big-endian, port_be16) and
  * in host order where the RSP reads the game's structures (display list
- * words, vertices, matrices, viewports: the C wrote them).
+ * words, vertices, matrices, viewports: the C wrote them), which go into
+ * the microcode's memory in the N64's order (uc_load).
  */
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "host.h"
-
-/* (within ±2^24: a float to int out of range is a different number on
-   different hosts) */
-static inline float fbound(float f) { return f > 16777216.0f ? 16777216.0f : f < -16777216.0f ? -16777216.0f : f; }
-
-static inline float ffloor(float f) {
-    f = fbound(f);
-    int i = (int)f;
-    return (float)(f < (float)i ? i - 1 : i);
-}
-
-static inline float fceil(float f) {
-    f = fbound(f);
-    int i = (int)f;
-    return (float)(f > (float)i ? i + 1 : i);
-}
+#include "rsp.h"
 
 /* ---- addresses -------------------------------------------------------------------- */
 
@@ -74,40 +61,14 @@ static uint8_t *addr(uintptr_t w) {
 /* ---- state -------------------------------------------------------------------------- */
 
 typedef struct {
-    float x, y, z, w;           /* clip space */
-    float sx, sy, sz;           /* screen (sz 0..1) */
-    float s, t;                 /* texture coordinates, texels */
-    float r, g, b, a;           /* 0..255 */
-    int clip;                   /* outside the near plane */
-} Vert;
-
-typedef struct {
     int fmt, siz, line, tmem, pal;
     int cms, cmt, masks, maskt, shifts, shiftt;
     int sl, tl, sh, th;         /* the tile's bounds, 10.2 */
 } Tile;
 
-/* the modelview matrices F3DEX pushes, at most: its stack in RDRAM's size
-   (the task's) over a matrix's */
-#define MV_MAX 64
-static int mv_pushes = 0x400 / 64;
-
 static struct {
-    float mv[MV_MAX + 1][4][4];
-    int mvi;
-    float proj[4][4];
-    float mvp[4][4];
-    int mvp_ok;
-    Vert v[64];
-    float vscale[3], vtrans[3];
-    uint32_t geom;
     uint32_t om_h, om_l;
-    struct { uint8_t col[3]; int8_t dir[3]; } light[8];
-    int nlights;
-    int8_t lookat[2][3];
-    float fog_m, fog_o;
-    int tex_on, tex_tile, tex_level;
-    float tex_s, tex_t;
+    int tex_tile;
     uint32_t rdphalf1, rdphalf2;
     /* RDP */
     uint8_t *cimg;
@@ -121,7 +82,7 @@ static struct {
     uint32_t fill;
     float prim_lod;
     uint32_t prim_z, prim_dz;           /* (z18, and dz) */
-    float sc_x0, sc_y0, sc_x1, sc_y1;
+    int sc_xh, sc_yh, sc_xl, sc_yl;     /* the scissor, 10.2 */
 } gs;
 
 static uint8_t tmem[4096];
@@ -211,188 +172,6 @@ static void z_store(uint8_t *p, uint8_t *h, uint32_t z, uint32_t dz) {
     int enc = dz_com(dz);
     port_wbe16(p, (uint16_t)(z_com(z) | (uint32_t)(enc >> 2)));
     *h = (uint8_t)(enc & 3);
-}
-
-/* ---- matrices ------------------------------------------------------------------------- */
-
-static void mtx_mul(float r[4][4], float a[4][4], float b[4][4]) {
-    float t[4][4];
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 4; j++)
-            t[i][j] = a[i][0] * b[0][j] + a[i][1] * b[1][j] + a[i][2] * b[2][j] + a[i][3] * b[3][j];
-    memcpy(r, t, sizeof t);
-}
-
-/* an Mtx: 16 words, the integer halves of the 16 elements then the
-   fractions, in host order (the game's C writes them as words) */
-static void load_mtx(float m[4][4], const uint8_t *p) {
-    const uint32_t *w = (const uint32_t *)p;
-    for (int i = 0; i < 16; i++) {
-        uint32_t iw = w[i / 2], fw = w[8 + i / 2];
-        int16_t ip = (int16_t)((i & 1) ? (iw & 0xFFFF) : (iw >> 16));
-        uint16_t fp = (uint16_t)((i & 1) ? (fw & 0xFFFF) : (fw >> 16));
-        m[i / 4][i % 4] = (float)((int32_t)((uint32_t)(uint16_t)ip << 16 | fp)) / 65536.0f;
-    }
-}
-
-static void do_mtx(uint32_t w0, uintptr_t w1) {
-    float m[4][4];
-    int p = (w0 >> 16) & 0xFF;
-    load_mtx(m, addr(w1));
-    if (p & 1) {                        /* projection */
-        if (p & 2)
-            memcpy(gs.proj, m, sizeof m);
-        else
-            mtx_mul(gs.proj, m, gs.proj);
-    } else {
-        if ((p & 4) && gs.mvi < mv_pushes) {
-            memcpy(gs.mv[gs.mvi + 1], gs.mv[gs.mvi], sizeof m);
-            gs.mvi++;
-        }
-        if (p & 2)
-            memcpy(gs.mv[gs.mvi], m, sizeof m);
-        else
-            mtx_mul(gs.mv[gs.mvi], m, gs.mv[gs.mvi]);
-    }
-    gs.mvp_ok = 0;
-}
-
-static void update_mvp(void) {
-    if (!gs.mvp_ok) {
-        mtx_mul(gs.mvp, gs.mv[gs.mvi], gs.proj);
-        gs.mvp_ok = 1;
-    }
-}
-
-/* ---- vertices ---------------------------------------------------------------------------- */
-
-#define G_ZBUFFER 0x00000001
-#define G_SHADE 0x00000004
-#define G_CULL_FRONT 0x00001000
-#define G_CULL_BACK 0x00002000
-#define G_FOG 0x00010000
-#define G_LIGHTING 0x00020000
-#define G_TEXTURE_GEN 0x00040000
-#define G_TEXTURE_GEN_LINEAR 0x00080000
-#define G_SHADING_SMOOTH 0x00000200
-
-/* acos for linear texgen, the same on every host: libm's acosf differs in
-   its last bits between glibc, musl and emscripten (Abramowitz and Stegun
-   4.4.46, |error| < 2e-8 in exact arithmetic; only + * and sqrtf, which
-   IEEE rounds the same everywhere). */
-static float port_acosf(float x) {
-    float a = x < 0 ? -x : x;
-    float p = -0.0012624911f;
-    p = p * a + 0.0066700901f;
-    p = p * a - 0.0170881256f;
-    p = p * a + 0.0308918810f;
-    p = p * a - 0.0501743046f;
-    p = p * a + 0.0889789874f;
-    p = p * a - 0.2145988016f;
-    p = p * a + 1.5707963050f;
-    p *= sqrtf(1 - a);
-    return x < 0 ? 3.14159265f - p : p;
-}
-
-static void normalize(float *v) {
-    float l = sqrtf(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-    if (l > 0) {
-        v[0] /= l;
-        v[1] /= l;
-        v[2] /= l;
-    }
-}
-
-/* a direction into model space: by the modelview's 3x3, transposed */
-static void to_model(const int8_t *d, float *o) {
-    float (*m)[4] = gs.mv[gs.mvi];
-    float x = d[0], y = d[1], z = d[2];
-    o[0] = m[0][0] * x + m[0][1] * y + m[0][2] * z;
-    o[1] = m[1][0] * x + m[1][1] * y + m[1][2] * z;
-    o[2] = m[2][0] * x + m[2][1] * y + m[2][2] * z;
-    normalize(o);
-}
-
-static void project(Vert *v) {
-    float iw = v->w != 0 ? 1.0f / v->w : 1.0f;
-    v->sx = v->x * iw * gs.vscale[0] + gs.vtrans[0];
-    v->sy = -v->y * iw * gs.vscale[1] + gs.vtrans[1];
-    /* (the screen position with two fractional bits, as the RSP gives it the RDP) */
-    v->sx = ffloor(v->sx * 4) / 4;
-    v->sy = ffloor(v->sy * 4) / 4;
-    v->sz = (v->z * iw * gs.vscale[2] + gs.vtrans[2]) / 1023.0f;
-    if (v->sz < 0)
-        v->sz = 0;
-    if (v->sz > 1)
-        v->sz = 1;
-}
-
-static void do_vtx(uint32_t w0, uintptr_t w1) {
-    int n = (w0 >> 10) & 0x3F;
-    int v0 = ((w0 >> 16) & 0xFF) / 2;
-    const uint8_t *p = addr(w1);
-    float ldir[8][3], la[2][3];
-    update_mvp();
-    if (gs.geom & G_LIGHTING) {
-        for (int i = 0; i < gs.nlights; i++)
-            to_model(gs.light[i].dir, ldir[i]);
-        if (gs.geom & G_TEXTURE_GEN) {
-            to_model(gs.lookat[0], la[0]);
-            to_model(gs.lookat[1], la[1]);
-        }
-    }
-    for (int i = 0; i < n && v0 + i < 64; i++, p += 16) {
-        Vert *v = &gs.v[v0 + i];
-        const int16_t *h = (const int16_t *)p;
-        float x = h[0], y = h[1], z = h[2];
-        float (*m)[4] = gs.mvp;
-        v->x = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
-        v->y = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
-        v->z = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
-        v->w = x * m[0][3] + y * m[1][3] + z * m[2][3] + m[3][3];
-        v->clip = v->w < 0.01f || v->z < -v->w;
-        project(v);
-        float s = h[4], t = h[5];
-        if (gs.geom & G_LIGHTING) {
-            float nrm[3] = { (int8_t)p[12], (int8_t)p[13], (int8_t)p[14] };
-            normalize(nrm);
-            const uint8_t *amb = gs.light[gs.nlights].col;
-            float r = amb[0], g = amb[1], b = amb[2];
-            for (int l = 0; l < gs.nlights; l++) {
-                float d = nrm[0] * ldir[l][0] + nrm[1] * ldir[l][1] + nrm[2] * ldir[l][2];
-                if (d > 0) {
-                    r += d * gs.light[l].col[0];
-                    g += d * gs.light[l].col[1];
-                    b += d * gs.light[l].col[2];
-                }
-            }
-            v->r = r > 255 ? 255 : r;
-            v->g = g > 255 ? 255 : g;
-            v->b = b > 255 ? 255 : b;
-            if (gs.geom & G_TEXTURE_GEN) {
-                float dx = nrm[0] * la[0][0] + nrm[1] * la[0][1] + nrm[2] * la[0][2];
-                float dy = nrm[0] * la[1][0] + nrm[1] * la[1][1] + nrm[2] * la[1][2];
-                if (gs.geom & G_TEXTURE_GEN_LINEAR) {
-                    dx = port_acosf(dx < -1 ? -1 : dx > 1 ? 1 : dx) / 3.14159265f * 2 - 1;
-                    dy = port_acosf(dy < -1 ? -1 : dy > 1 ? 1 : dy) / 3.14159265f * 2 - 1;
-                }
-                s = (dx + 1) * 16384.0f;
-                t = (dy + 1) * 16384.0f;
-            }
-        } else {
-            v->r = p[12];
-            v->g = p[13];
-            v->b = p[14];
-        }
-        v->a = p[15];
-        if ((gs.geom & G_FOG) && v->w > 0) {
-            float f = v->z / v->w * gs.fog_m + gs.fog_o;
-            v->a = f < 0 ? 0 : f > 255 ? 255 : f;
-        }
-        /* the texture scale (0.16), then S10.5 to texels */
-        v->s = s * gs.tex_s / 32.0f;
-        v->t = t * gs.tex_t / 32.0f;
-    }
 }
 
 /* ---- TMEM and texels ------------------------------------------------------------------------------ */
@@ -572,22 +351,22 @@ static int tmask(int c, int cm, int mask) {
 /* a coordinate (s10.5 texels) through the tile: shifted, made relative
    to the tile's first texel, clamped; the texel and its fraction */
 static void tcoord(int c, int shift, int lo, int hi, int cm, int mask, int *i, int *frac) {
-    if (shift) {
-        if (shift < 11)
-            c >>= shift;
-        else
-            c = (int)((unsigned)c << (16 - shift));
-    }
+    /* (16 bits through the shift; clamped from where the shifted
+       coordinate reaches the tile's last texel, in its 10.2) */
+    if (shift < 11)
+        c = (int16_t)c >> shift;
+    else
+        c = (int16_t)(uint16_t)((unsigned)c << (16 - shift));
+    int over = (c >> 3) >= hi;
     c -= lo << 3;
     if ((cm & 2) || !mask) {
-        int max = (hi >> 2) - (lo >> 2);
-        if (c < 0) {
-            *i = 0;
+        if (over) {
+            *i = ((hi >> 2) - (lo >> 2)) & 0x3FF;
             *frac = 0;
             return;
         }
-        if ((c >> 5) > max) {
-            *i = max;
+        if (c & 0x10000) {
+            *i = 0;
             *frac = 0;
             return;
         }
@@ -870,10 +649,16 @@ static int blend_px(uint8_t *p, int *c, const int *shade, int cvg) {
     /* coverage: all of the pixel, times alpha (CVG_X_ALPHA); the blender's
        alpha the coverage (ALPHA_CVG_SEL); none, nothing written (AA_EN) */
     int full = !(l & 0x8) || cvg >= 8;
+    /* (as the combiner has it: 255 is 256, and the product's 8 bits of
+       alpha the blender's alpha, its top four the coverage) */
+    int prod = ((alpha == 255 ? 256 : alpha) * cvg + 4) >> 3;
     if (l & 0x1000)
-        cvg = (cvg * alpha) >> 8;
-    if (l & 0x2000)
-        alpha = cvg >= 8 ? 255 : cvg << 5;
+        cvg = (prod >> 5) & 15;
+    if (l & 0x2000) {
+        alpha = (l & 0x1000) ? prod : cvg << 5;
+        if (alpha > 255)
+            alpha = 255;
+    }
     if ((l & 0x8) && cvg == 0)
         return 0;
     read_mem(p, mem);
@@ -929,12 +714,6 @@ static uint8_t *zptr(int x, int y, uint8_t **h) {
 
 /* ---- rasterizing ------------------------------------------------------------------------------------ */
 
-typedef struct {
-    float x, y, z, iw;          /* screen, and 1/w */
-    float s, t;                 /* divided by w when perspective-correct */
-    float c[4];
-} SV;
-
 /* a pixel of a primitive: its depth (z18) and dz (dz_pix), shade
    (0..255) and texture coordinates (s10.5) */
 static void shade_pixel_i(int x, int y, uint32_t z, uint32_t dz, const int *shade, int s, int t, int textured,
@@ -970,202 +749,261 @@ static void shade_pixel_i(int x, int y, uint32_t z, uint32_t dz, const int *shad
         z_store(zp, zh, z, dz);
 }
 
-/* (z: the screen z over 1023, 0..1) */
-static void shade_pixel(int x, int y, float z, uint32_t dz, const float *shade, float s, float t, int textured,
-                        int cvg) {
-    int sh[4];
-    for (int k = 0; k < 4; k++)
-        sh[k] = shade[k] < 0 ? 0 : shade[k] > 255 ? 255 : (int)shade[k];
-    float z18 = ffloor(z * (1023 * 256));
-    shade_pixel_i(x, y, z18 < 0 ? 0 : z18 > 0x3FFFF ? 0x3FFFF : (uint32_t)z18, dz, sh, (int)ffloor(s * 32),
-                  (int)ffloor(t * 32), textured, cvg);
+/* ---- triangles: the RDP's edge walker -------------------------------------------------------------- */
+
+/* A triangle command as the RDP draws it, from its edges' and attributes'
+   coefficients (the microcode's, port/host/rsp.c): the spans of each
+   scanline from the three edges at its four subscanlines, the attributes
+   at each span's start, then stepped across it; coverage from eight
+   samples a pixel, the perspective divide with the RDP's reciprocal
+   table.  After parallel-rdp's span setup and interpolation
+   (Themaister's parallel-rdp, MIT licence; see NOTICES.md), which is
+   bit-exact with angrylion's; the port's check against angrylion is
+   port/tools/gfx_ref.py's. */
+
+static inline int32_t sxt(uint32_t v, int bits) { return (int32_t)(v << (32 - bits)) >> (32 - bits); }
+
+/* the RDP's reciprocal of w: a base and a slope a 64th of the range */
+static const int16_t persp_tab[64][2] = {
+    { 0x4000, -252 * 4 }, { 0x3f04, -244 * 4 }, { 0x3e10, -238 * 4 }, { 0x3d22, -230 * 4 },
+    { 0x3c3c, -223 * 4 }, { 0x3b5d, -218 * 4 }, { 0x3a83, -210 * 4 }, { 0x39b1, -205 * 4 },
+    { 0x38e4, -200 * 4 }, { 0x381c, -194 * 4 }, { 0x375a, -189 * 4 }, { 0x369d, -184 * 4 },
+    { 0x35e5, -179 * 4 }, { 0x3532, -175 * 4 }, { 0x3483, -170 * 4 }, { 0x33d9, -166 * 4 },
+    { 0x3333, -162 * 4 }, { 0x3291, -157 * 4 }, { 0x31f4, -155 * 4 }, { 0x3159, -150 * 4 },
+    { 0x30c3, -147 * 4 }, { 0x3030, -143 * 4 }, { 0x2fa1, -140 * 4 }, { 0x2f15, -137 * 4 },
+    { 0x2e8c, -134 * 4 }, { 0x2e06, -131 * 4 }, { 0x2d83, -128 * 4 }, { 0x2d03, -125 * 4 },
+    { 0x2c86, -123 * 4 }, { 0x2c0b, -120 * 4 }, { 0x2b93, -117 * 4 }, { 0x2b1e, -115 * 4 },
+    { 0x2aab, -113 * 4 }, { 0x2a3a, -110 * 4 }, { 0x29cc, -108 * 4 }, { 0x2960, -106 * 4 },
+    { 0x28f6, -104 * 4 }, { 0x288e, -102 * 4 }, { 0x2828, -100 * 4 }, { 0x27c4, -98 * 4 },
+    { 0x2762, -96 * 4 }, { 0x2702, -94 * 4 }, { 0x26a4, -92 * 4 }, { 0x2648, -91 * 4 },
+    { 0x25ed, -89 * 4 }, { 0x2594, -87 * 4 }, { 0x253d, -86 * 4 }, { 0x24e7, -85 * 4 },
+    { 0x2492, -83 * 4 }, { 0x243f, -81 * 4 }, { 0x23ee, -80 * 4 }, { 0x239e, -79 * 4 },
+    { 0x234f, -77 * 4 }, { 0x2302, -76 * 4 }, { 0x22b6, -74 * 4 }, { 0x226c, -74 * 4 },
+    { 0x2222, -72 * 4 }, { 0x21da, -71 * 4 }, { 0x2193, -70 * 4 }, { 0x214d, -69 * 4 },
+    { 0x2108, -67 * 4 }, { 0x20c5, -67 * 4 }, { 0x2082, -65 * 4 }, { 0x2041, -65 * 4 },
+};
+
+/* s and t (s15.16's integer halves) over w: the texel coordinates, s10.5 */
+static void persp_div(int32_t s, int32_t t, int32_t w, int *os, int *ot) {
+    int carry = w <= 0;
+    w &= 0x7FFF;
+    int msb = -1;
+    for (int b = 14; b >= 0; b--)
+        if (w & (1 << b)) {
+            msb = b;
+            break;
+        }
+    int shift = 14 - msb > 14 ? 14 : 14 - msb;
+    int norm = (w << shift) & 0x3FFF;
+    int rcp = ((persp_tab[norm >> 8][1] * (norm & 0xFF)) >> 10) + persp_tab[norm >> 8][0];
+    int32_t mask = ((1 << 30) - 1) & -((1 << 29) >> shift);
+    int32_t in[2] = { s, t }, out[2];
+    for (int k = 0; k < 2; k++) {
+        int32_t prod = in[k] * rcp;
+        int32_t oob = prod & mask;
+        int32_t v = shift != 14 ? prod >> (13 - shift) : (int32_t)((uint32_t)prod << 1);
+        if (oob != 0 && oob != mask)
+            v = (prod & (1 << 29)) ? -0x8000 : 0x7FFF;
+        if (carry)
+            v = 0x7FFF;
+        out[k] = v < -0x10000 ? -0x10000 : v > 0xFFFF ? 0xFFFF : v;
+    }
+    *os = out[0];
+    *ot = out[1];
 }
 
-static void raster(const SV *a, const SV *b, const SV *c, const float *flat, int textured) {
-    float x0 = a->x, y0 = a->y, x1 = b->x, y1 = b->y, x2 = c->x, y2 = c->y;
-    float area = (x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0);
-    if (fabsf(area) < 1e-6f)
-        return;
-    int minx = (int)ffloor(fminf(x0, fminf(x1, x2))), maxx = (int)fceil(fmaxf(x0, fmaxf(x1, x2)));
-    int miny = (int)ffloor(fminf(y0, fminf(y1, y2))), maxy = (int)fceil(fmaxf(y0, fmaxf(y1, y2)));
-    if (minx < (int)gs.sc_x0) minx = (int)gs.sc_x0;
-    if (miny < (int)gs.sc_y0) miny = (int)gs.sc_y0;
-    if (maxx > (int)gs.sc_x1) maxx = (int)gs.sc_x1;
-    if (maxy > (int)gs.sc_y1) maxy = (int)gs.sc_y1;
-    if (minx >= maxx || miny >= maxy)
-        return;
+/* a shade channel: 9 bits, under 0 to 0 and over 255 to 255 */
+static int clamp9(int v) {
+    v &= 0x1FF;
+    return (v & 0x180) == 0x180 ? 0 : (v & 0x100) ? 255 : v;
+}
+
+static void rdp_tri(const uint32_t *w) {
+    int op = (w[0] >> 24) & 0x3F;
+    int flip = (w[0] >> 23) & 1, tile = (w[0] >> 16) & 7;
+    int32_t yl = sxt(w[0], 14), ym = sxt(w[1] >> 16, 14), yh = sxt(w[1], 14);
+    /* (16.15: the lowest bit of the RDP's 16.16 doesn't count) */
+    int32_t xl = sxt(w[2], 28) >> 1, dxldy = sxt(w[3] >> 2, 28) >> 1;
+    int32_t xh = sxt(w[4], 28) >> 1, dxhdy = sxt(w[5] >> 2, 28) >> 1;
+    int32_t xm = sxt(w[6], 28) >> 1, dxmdy = sxt(w[7] >> 2, 28) >> 1;
+    /* the attributes (r g b a s t w z): at the major edge's start, along x,
+       along the edge, along y */
+    int32_t at[8] = { 0 }, ax[8] = { 0 }, ae[8] = { 0 }, ay[8] = { 0 };
+    const uint32_t *p = w + 8;
+    if (op & 4) {
+        for (int k = 0; k < 2; k++) {
+            at[k * 2] = (int32_t)((p[k] & 0xFFFF0000u) | (p[4 + k] >> 16));
+            at[k * 2 + 1] = (int32_t)((p[k] << 16) | (p[4 + k] & 0xFFFF));
+            ax[k * 2] = (int32_t)((p[2 + k] & 0xFFFF0000u) | (p[6 + k] >> 16));
+            ax[k * 2 + 1] = (int32_t)((p[2 + k] << 16) | (p[6 + k] & 0xFFFF));
+            ae[k * 2] = (int32_t)((p[8 + k] & 0xFFFF0000u) | (p[12 + k] >> 16));
+            ae[k * 2 + 1] = (int32_t)((p[8 + k] << 16) | (p[12 + k] & 0xFFFF));
+            ay[k * 2] = (int32_t)((p[10 + k] & 0xFFFF0000u) | (p[14 + k] >> 16));
+            ay[k * 2 + 1] = (int32_t)((p[10 + k] << 16) | (p[14 + k] & 0xFFFF));
+        }
+        p += 16;
+    }
+    if (op & 2) {
+        at[4] = (int32_t)((p[0] & 0xFFFF0000u) | (p[4] >> 16));
+        at[5] = (int32_t)((p[0] << 16) | (p[4] & 0xFFFF));
+        at[6] = (int32_t)((p[1] & 0xFFFF0000u) | (p[5] >> 16));
+        ax[4] = (int32_t)((p[2] & 0xFFFF0000u) | (p[6] >> 16));
+        ax[5] = (int32_t)((p[2] << 16) | (p[6] & 0xFFFF));
+        ax[6] = (int32_t)((p[3] & 0xFFFF0000u) | (p[7] >> 16));
+        ae[4] = (int32_t)((p[8] & 0xFFFF0000u) | (p[12] >> 16));
+        ae[5] = (int32_t)((p[8] << 16) | (p[12] & 0xFFFF));
+        ae[6] = (int32_t)((p[9] & 0xFFFF0000u) | (p[13] >> 16));
+        ay[4] = (int32_t)((p[10] & 0xFFFF0000u) | (p[14] >> 16));
+        ay[5] = (int32_t)((p[10] << 16) | (p[14] & 0xFFFF));
+        ay[6] = (int32_t)((p[11] & 0xFFFF0000u) | (p[15] >> 16));
+        p += 16;
+    }
+    if (op & 1) {
+        at[7] = (int32_t)p[0];
+        ax[7] = (int32_t)p[1];
+        ae[7] = (int32_t)p[2];
+        ay[7] = (int32_t)p[3];
+    }
+    int cyc = (gs.om_h >> 20) & 3;
+    if (cyc == 2)
+        return;                         /* (copy mode: no triangles in this game) */
     int persp = (gs.om_h >> 19) & 1;
+    int aa = (gs.om_l >> 3) & 1;
+    /* the attributes are latched at the last subscanline when the major
+       edge leans the way the triangle is drawn */
+    int offset = flip == (int)(w[5] >> 31);
+    int32_t diff[8], axh[8];
+    for (int k = 0; k < 8; k++) {
+        int32_t deh = ae[k] & ~0x1FF, dyh = ay[k] & ~0x1FF;
+        diff[k] = offset ? deh - (deh >> 2) - dyh + (dyh >> 2) : 0;
+        axh[k] = (ax[k] >> 8) & ~1;
+    }
+    /* the partly covered pixel's correction steps (13 bits; z's 22) */
+    int32_t cx[8], cy[8];
+    for (int k = 0; k < 4; k++) {
+        cx[k] = sxt((uint32_t)((ax[k] & ~0x1F) >> 14), 13);
+        cy[k] = sxt((uint32_t)(ay[k] >> 14), 13);
+    }
+    cx[7] = sxt((uint32_t)(ax[7] >> 10), 22);
+    cy[7] = sxt((uint32_t)(ay[7] >> 10), 22);
+    int dzx = (ax[7] >> 16) & 0xFFFF, dzy = (ay[7] >> 16) & 0xFFFF;
+    uint32_t dz = dz_pix((uint32_t)(((dzy & 0x8000) ? (~dzy & 0x7FFF) : dzy) + ((dzx & 0x8000) ? (~dzx & 0x7FFF) : dzx)) &
+                         0xFFFF);
+    int ylo = yh > gs.sc_yh ? yh : gs.sc_yh, yhi = yl < gs.sc_yl ? yl : gs.sc_yl;
+    int32_t xlo = gs.sc_xh << 1, xhi = gs.sc_xl << 1;   /* (eighths of a pixel) */
+    int ybase = yh >> 2;
+    int32_t yhb = yh & ~3;
+    int row0 = ylo >> 2, row1 = (yhi + 3) >> 2;
+    if (row0 < 0)
+        row0 = 0;
     tris++;
     cc_begin();
-    /* the barycentric weights are linear in x and y: w = wx * x + wy * y + w0
-       (and every attribute with them), stepped along a row */
-    float ia = 1.0f / area;
-    float w0x = -(y2 - y1) * ia, w0y = (x2 - x1) * ia;
-    float w0c = ((x1) * (y2) - (x2) * (y1)) * ia;
-    float w1x = -(y0 - y2) * ia, w1y = (x0 - x2) * ia;
-    float w1c = ((x2) * (y0) - (x0) * (y2)) * ia;
-    /* attributes: z, the shade's four, s, t, 1/w */
-    enum { NA = 8 };
-    float av[3][NA] = {
-        { a->z, a->c[0], a->c[1], a->c[2], a->c[3], a->s, a->t, a->iw },
-        { b->z, b->c[0], b->c[1], b->c[2], b->c[3], b->s, b->t, b->iw },
-        { c->z, c->c[0], c->c[1], c->c[2], c->c[3], c->s, c->t, c->iw },
-    };
-    float gx[NA], gy[NA], g0[NA];
-    for (int k = 0; k < NA; k++) {
-        /* v = w0 * va + w1 * vb + (1 - w0 - w1) * vc */
-        float da = av[0][k] - av[2][k], db = av[1][k] - av[2][k];
-        gx[k] = w0x * da + w1x * db;
-        gy[k] = w0y * da + w1y * db;
-        g0[k] = w0c * da + w1c * db + av[2][k];
-    }
-    /* dz: how much z18 / 8 steps across a pixel and down one (each 15 bits) */
-    float dzx = ffloor(fabsf(gx[0]) * (1023 * 256 / 8)), dzy = ffloor(fabsf(gy[0]) * (1023 * 256 / 8));
-    uint32_t dz = dz_pix((dzx > 0x7FFF ? 0x7FFF : (uint32_t)dzx) + (dzy > 0x7FFF ? 0x7FFF : (uint32_t)dzy));
-    /* the edges in quarter pixels (the RSP gives the RDP the vertices' screen
-       positions with two fractional bits), for the coverage: each of the
-       pixel's eight samples, two on each of four subscanlines, is in or out */
-    int64_t X[3] = { (int64_t)ffloor(x0 * 4), (int64_t)ffloor(x1 * 4), (int64_t)ffloor(x2 * 4) };
-    int64_t Y[3] = { (int64_t)ffloor(y0 * 4), (int64_t)ffloor(y1 * 4), (int64_t)ffloor(y2 * 4) };
-    int64_t orient = (X[1] - X[0]) * (Y[2] - Y[0]) - (X[2] - X[0]) * (Y[1] - Y[0]);
-    int64_t ea[3], eb[3], ec[3];
-    int ebias[3];
-    for (int i = 0; i < 3; i++) {
-        int j = (i + 1) % 3;
-        /* E(px, py) = ea * px + eb * py + ec, positive inside */
-        ea[i] = -(Y[j] - Y[i]);
-        eb[i] = X[j] - X[i];
-        ec[i] = -(ea[i] * X[i] + eb[i] * Y[i]);
-        if (orient < 0) {
-            ea[i] = -ea[i];
-            eb[i] = -eb[i];
-            ec[i] = -ec[i];
+    gs.tex_tile = tile;
+    for (int y = row0; y < row1; y++) {
+        uint32_t dyr = (uint32_t)(y - ybase);
+        int32_t xr = (int32_t)((uint32_t)xh + dyr * ((uint32_t)dxhdy << 2));
+        if (offset)
+            xr = (int32_t)((uint32_t)xr + 3u * (uint32_t)dxhdy);
+        int base_x = xr >> 15, xfrac = (xr >> 7) & 0xFF;
+        int32_t sp[8];
+        for (int k = 0; k < 8; k++) {
+            int32_t v = (int32_t)((uint32_t)at[k] + dyr * (uint32_t)ae[k]);
+            sp[k] = (int32_t)(((uint32_t)(v & ~0x1FF) + (uint32_t)diff[k] - (uint32_t)xfrac * (uint32_t)axh[k]) & ~0x3FFu);
         }
-        /* (a sample on an edge: in on a left or top edge) */
-        ebias[i] = (ea[i] > 0 || (ea[i] == 0 && eb[i] < 0)) ? 0 : -1;
-    }
-    for (int y = miny; y < maxy; y++) {
-        float px = (float)minx, py = (float)y;
-        float v[NA];
-        for (int k = 0; k < NA; k++)
-            v[k] = gx[k] * px + gy[k] * py + g0[k];
-        for (int x = minx; x < maxx; x++) {
-            int cvg = 0;
-            for (int k = 0; k < 4; k++)
-                for (int j = 0; j < 2; j++) {
-                    int64_t sx = (int64_t)x * 4 + j * 2 + (k & 1);
-                    int64_t sy = (int64_t)y * 4 + k;
-                    int in = 1;
-                    for (int i = 0; i < 3 && in; i++)
-                        in = ea[i] * sx + eb[i] * sy + ec[i] + ebias[i] >= 0;
-                    cvg += in;
-                }
-            if (cvg) {
-                float sh[4];
-                if (flat)
-                    memcpy(sh, flat, sizeof sh);
-                else
-                    memcpy(sh, v + 1, sizeof sh);
-                float s = 0, t = 0;
-                if (textured) {
-                    if (persp) {
-                        float iw = 1.0f / v[7];
-                        s = v[5] * iw;
-                        t = v[6] * iw;
-                    } else {
-                        s = v[5];
-                        t = v[6];
-                    }
-                }
-                /* (full coverage: a partly covered edge pixel needs the coverage
-                   memory keeps, which the port doesn't) */
-                shade_pixel(x, y, v[0], dz, sh, s, t, textured, 8);
+        int32_t lx[4], rx[4];
+        int all_inval = 1, all_over = 1, all_under = 1;
+        for (int j = 0; j < 4; j++) {
+            int32_t ys = y * 4 + j;
+            int32_t xhs = (int32_t)((uint32_t)xh + (uint32_t)(ys - yhb) * (uint32_t)dxhdy);
+            int32_t xms = (int32_t)((uint32_t)xm + (uint32_t)(ys - yhb) * (uint32_t)dxmdy);
+            int32_t xls = ys < ym ? xms : (int32_t)((uint32_t)xl + (uint32_t)(ys - ym) * (uint32_t)dxldy);
+            xls = sxt((uint32_t)xls, 27);
+            xhs = sxt((uint32_t)xhs, 27);
+            int32_t qh = (xhs >> 12) | ((xhs & 0xFFF) != 0), ql = (xls >> 12) | ((xls & 0xFFF) != 0);
+            int32_t l = flip ? qh : ql, r = flip ? ql : qh;
+            int inval = (l >> 1) > (r >> 1);
+            if ((l < r ? l : r) < xhi)
+                all_over = 0;
+            if ((l > r ? l : r) >= xlo)
+                all_under = 0;
+            l = l < xlo ? xlo : l > xhi ? xhi : l;
+            r = r < xlo ? xlo : r > xhi ? xhi : r;
+            if (ys < ylo || ys >= yhi)
+                inval = 1;
+            if (inval) {
+                l = 0xFFFF;
+                r = 0;
+            } else {
+                all_inval = 0;
             }
-            for (int k = 0; k < NA; k++)
-                v[k] += gx[k];
+            lx[j] = l;
+            rx[j] = r;
         }
-    }
-}
-
-static void lerp_vert(Vert *o, const Vert *a, const Vert *b, float t) {
-    o->x = a->x + (b->x - a->x) * t;
-    o->y = a->y + (b->y - a->y) * t;
-    o->z = a->z + (b->z - a->z) * t;
-    o->w = a->w + (b->w - a->w) * t;
-    o->s = a->s + (b->s - a->s) * t;
-    o->t = a->t + (b->t - a->t) * t;
-    o->r = a->r + (b->r - a->r) * t;
-    o->g = a->g + (b->g - a->g) * t;
-    o->b = a->b + (b->b - a->b) * t;
-    o->a = a->a + (b->a - a->a) * t;
-    o->clip = 0;
-    project(o);
-}
-
-static void to_sv(const Vert *v, SV *o, int persp) {
-    o->x = v->sx;
-    o->y = v->sy;
-    o->z = v->sz;
-    o->iw = v->w != 0 ? 1.0f / v->w : 1.0f;
-    o->s = persp ? v->s * o->iw : v->s;
-    o->t = persp ? v->t * o->iw : v->t;
-    o->c[0] = v->r;
-    o->c[1] = v->g;
-    o->c[2] = v->b;
-    o->c[3] = v->a;
-}
-
-static void tri(int i0, int i1, int i2) {
-    if (i0 >= 64 || i1 >= 64 || i2 >= 64)
-        return;
-    Vert *v[3] = { &gs.v[i0], &gs.v[i1], &gs.v[i2] };
-    /* culling, on the screen's winding */
-    if (!v[0]->clip && !v[1]->clip && !v[2]->clip) {
-        float area = (v[1]->sx - v[0]->sx) * (v[2]->sy - v[0]->sy) - (v[2]->sx - v[0]->sx) * (v[1]->sy - v[0]->sy);
-        if ((gs.geom & G_CULL_BACK) && area > 0)
-            return;
-        if ((gs.geom & G_CULL_FRONT) && area < 0)
-            return;
-    }
-    /* the near plane: z >= -w */
-    Vert in[8], out[8];
-    int n = 3;
-    for (int k = 0; k < 3; k++)
-        in[k] = *v[k];
-    int m = 0;
-    for (int k = 0; k < n; k++) {
-        Vert *a = &in[k], *b = &in[(k + 1) % n];
-        float da = a->z + a->w, db = b->z + b->w;
-        if (da >= 0)
-            out[m++] = *a;
-        if ((da >= 0) != (db >= 0) && m < 8)
-            lerp_vert(&out[m++], a, b, da / (da - db));
-    }
-    if (m < 3)
-        return;
-    if (m != 3) {
-        float area = (out[1].sx - out[0].sx) * (out[2].sy - out[0].sy) - (out[2].sx - out[0].sx) * (out[1].sy - out[0].sy);
-        if ((gs.geom & G_CULL_BACK) && area > 0)
-            return;
-        if ((gs.geom & G_CULL_FRONT) && area < 0)
-            return;
-    }
-    int persp = (gs.om_h >> 19) & 1;
-    int textured = gs.tex_on;
-    float flat[4], *fp = NULL;
-    if (!(gs.geom & G_SHADING_SMOOTH)) {
-        flat[0] = v[0]->r;
-        flat[1] = v[0]->g;
-        flat[2] = v[0]->b;
-        flat[3] = v[0]->a;
-        fp = flat;
-    }
-    SV s0, s1, s2;
-    to_sv(&out[0], &s0, persp);
-    for (int k = 1; k + 1 < m; k++) {
-        to_sv(&out[k], &s1, persp);
-        to_sv(&out[k + 1], &s2, persp);
-        raster(&s0, &s1, &s2, fp, textured);
+        if (all_inval || all_over || all_under)
+            continue;
+        int x0 = lx[0], x1 = rx[0];
+        for (int j = 1; j < 4; j++) {
+            if (lx[j] < x0)
+                x0 = lx[j];
+            if (rx[j] > x1)
+                x1 = rx[j];
+        }
+        x0 >>= 3;
+        x1 >>= 3;
+        for (int x = x0; x <= x1; x++) {
+            /* the samples: two on each subscanline, at an eighth's 0 and 4
+               (even ones) or 2 and 6 (odd) */
+            int cvg = 0;
+            for (int j = 0; j < 4; j++) {
+                int32_t s0 = x * 8 + ((j & 1) ? 2 : 0), s1 = s0 + 4;
+                if (s0 >= lx[j] && s0 < rx[j])
+                    cvg |= 1 << (j * 2);
+                if (s1 >= lx[j] && s1 < rx[j])
+                    cvg |= 2 << (j * 2);
+            }
+            /* (without antialiasing only the first sample counts) */
+            if (!cvg || (!aa && !(cvg & 1)))
+                continue;
+            int full = cvg == 0xFF, first = 0;
+            while (!((cvg >> first) & 1))
+                first++;
+            int yoff = first >> 1, xoff = ((first & 1) << 1) + (yoff & 1);
+            uint32_t dxp = (uint32_t)(x - base_x);
+            int sh[4];
+            for (int k = 0; k < 4; k++) {
+                int32_t c = (int32_t)((uint32_t)sp[k] + (uint32_t)(ax[k] & ~0x1F) * dxp) >> 14;
+                sh[k] = clamp9(full ? c >> 2 : (int32_t)((uint32_t)c * 4 + (uint32_t)(xoff * cx[k] + yoff * cy[k])) >> 4);
+            }
+            int32_t zc = (int32_t)(((uint32_t)sp[7] + (uint32_t)ax[7] * dxp) >> 10) & 0x3FFFFF;
+            zc = full ? zc >> 3 : (int32_t)((uint32_t)zc * 4 + (uint32_t)(xoff * cx[7] + yoff * cy[7])) >> 5;
+            int zt = (zc & 0x60000) >> 17;
+            uint32_t z18 = zt == 2 ? 0x3FFFF : zt == 3 ? 0 : (uint32_t)zc & 0x3FFFF;
+            int s = 0, t = 0;
+            if (op & 2) {
+                int32_t ss = (int32_t)((uint32_t)sp[4] + (uint32_t)(ax[4] & ~0x1F) * dxp) >> 16;
+                int32_t st = (int32_t)((uint32_t)sp[5] + (uint32_t)(ax[5] & ~0x1F) * dxp) >> 16;
+                int32_t sw = (int32_t)((uint32_t)sp[6] + (uint32_t)(ax[6] & ~0x1F) * dxp) >> 16;
+                if (persp) {
+                    persp_div(ss, st, sw, &s, &t);
+                } else {
+                    s = ss;
+                    t = st;
+                }
+            }
+            if (cyc == 3) {
+                uint8_t *px;
+                if (cimg_px(x, y, &px)) {
+                    if (gs.cimg_siz == 2)
+                        port_wbe16(px, (uint16_t)((x & 1) ? gs.fill : gs.fill >> 16));
+                    else if (gs.cimg_siz == 3)
+                        port_wbe32(px, gs.fill);
+                }
+                continue;
+            }
+            /* (the pixel drawn whole: the coverage the RDP keeps in memory
+               isn't the port's) */
+            shade_pixel_i(x, y, z18, dz, sh, s, t, (op & 2) != 0, 8);
+        }
     }
 }
 
@@ -1179,10 +1017,10 @@ static void fill_rect(uint32_t w0, uint32_t w1) {
         x1++;
         y1++;
     }
-    if (x0 < (int)gs.sc_x0) x0 = (int)gs.sc_x0;
-    if (y0 < (int)gs.sc_y0) y0 = (int)gs.sc_y0;
-    if (x1 > (int)gs.sc_x1) x1 = (int)gs.sc_x1;
-    if (y1 > (int)gs.sc_y1) y1 = (int)gs.sc_y1;
+    if (x0 < (gs.sc_xh >> 2)) x0 = (gs.sc_xh >> 2);
+    if (y0 < (gs.sc_yh >> 2)) y0 = (gs.sc_yh >> 2);
+    if (x1 > (gs.sc_xl >> 2)) x1 = (gs.sc_xl >> 2);
+    if (y1 > (gs.sc_yl >> 2)) y1 = (gs.sc_yl >> 2);
     /* the z image filled as a colour image: its hidden bits too (from
        the fill's bit 0) */
     if (gs.cimg && gs.cimg == gs.zimg && cyc == 3) {
@@ -1228,10 +1066,10 @@ static void tex_rect(uint32_t w0, uint32_t w1, uint32_t h1, uint32_t h2, int fli
         iy1 = (yl >> 2) + 1;
         dsdx >>= 2;                     /* (four texels a clock: dsdx is 4 a pixel) */
     }
-    if (ix0 < (int)gs.sc_x0) ix0 = (int)gs.sc_x0;
-    if (iy0 < (int)gs.sc_y0) iy0 = (int)gs.sc_y0;
-    if (ix1 > (int)gs.sc_x1) ix1 = (int)gs.sc_x1;
-    if (iy1 > (int)gs.sc_y1) iy1 = (int)gs.sc_y1;
+    if (ix0 < (gs.sc_xh >> 2)) ix0 = (gs.sc_xh >> 2);
+    if (iy0 < (gs.sc_yh >> 2)) iy0 = (gs.sc_yh >> 2);
+    if (ix1 > (gs.sc_xl >> 2)) ix1 = (gs.sc_xl >> 2);
+    if (iy1 > (gs.sc_yl >> 2)) iy1 = (gs.sc_yl >> 2);
     int save_tile = gs.tex_tile;
     cc_begin();
     gs.tex_tile = tile;
@@ -1258,71 +1096,9 @@ static void tex_rect(uint32_t w0, uint32_t w1, uint32_t h1, uint32_t h2, int fli
     gs.tex_tile = save_tile;
 }
 
-/* ---- the display list --------------------------------------------------------------------------- */
+/* ---- tiles, and the display list's words ----------------------------------------------------- */
 
 static int full_sync;
-
-static void set_other(int h, uint32_t w0, uint32_t w1) {
-    int sft = (w0 >> 8) & 0xFF, len = w0 & 0xFF;
-    uint32_t mask = (len >= 32 ? 0xFFFFFFFFu : ((1u << len) - 1)) << sft;
-    if (h)
-        gs.om_h = (gs.om_h & ~mask) | (w1 & mask);
-    else
-        gs.om_l = (gs.om_l & ~mask) | (w1 & mask);
-}
-
-static void moveword(uint32_t w0, uintptr_t w1p) {
-    uint32_t w1 = (uint32_t)w1p;
-    int idx = w0 & 0xFF, off = (w0 >> 8) & 0xFFFF;
-    switch (idx) {
-    case 0x02:                          /* NUMLIGHT */
-        gs.nlights = (int)((w1 - 0x80000000u) / 32) - 1;
-        if (gs.nlights < 0) gs.nlights = 0;
-        if (gs.nlights > 7) gs.nlights = 7;
-        break;
-    case 0x06:                          /* SEGMENT */
-        seg[(off / 4) & 15] = w1p;   /* (an address: as wide as a pointer) */
-        break;
-    case 0x08:                          /* FOG */
-        gs.fog_m = (int16_t)(w1 >> 16);
-        gs.fog_o = (int16_t)(w1 & 0xFFFF);
-        break;
-    case 0x0A:                          /* LIGHTCOL */
-        if ((off & 7) == 0) {
-            int n = off / 0x20;
-            if (n < 8) {
-                gs.light[n].col[0] = w1 >> 24;
-                gs.light[n].col[1] = w1 >> 16;
-                gs.light[n].col[2] = w1 >> 8;
-            }
-        }
-        break;
-    }
-}
-
-static void movemem(uint32_t w0, uintptr_t w1) {
-    int idx = (w0 >> 16) & 0xFF;
-    const uint8_t *p = addr(w1);
-    if (idx == 0x80) {                  /* viewport: s16 scale and translation, 2 fractional bits */
-        const int16_t *h = (const int16_t *)p;
-        gs.vscale[0] = h[0] / 4.0f;
-        gs.vscale[1] = h[1] / 4.0f;
-        gs.vscale[2] = h[2];
-        gs.vtrans[0] = h[4] / 4.0f;
-        gs.vtrans[1] = h[5] / 4.0f;
-        gs.vtrans[2] = h[6];
-    } else if (idx == 0x82 || idx == 0x84) {
-        int k = idx == 0x84 ? 0 : 1;
-        for (int i = 0; i < 3; i++)
-            gs.lookat[k][i] = (int8_t)p[8 + i];
-    } else if (idx >= 0x86 && idx <= 0x94) {
-        int n = (idx - 0x86) / 2;
-        for (int i = 0; i < 3; i++) {
-            gs.light[n].col[i] = p[i];
-            gs.light[n].dir[i] = (int8_t)p[8 + i];
-        }
-    }
-}
 
 static void set_tile(uint32_t w0, uint32_t w1) {
     Tile *t = &gs.tile[(w1 >> 24) & 7];
@@ -1483,7 +1259,8 @@ static void dl_cmd(int depth, uint32_t w0, uintptr_t w1) {
    vertices, matrices and viewports the task reads, in the N64's order and
    with N64 addresses (segments resolved), and the textures it loads from
    outside port_rdram; DIR/rRRRRR_tT.out is port_rdram after the port drew
-   the task.  The RDP's state at the task's start (the port carries it from
+   the task, and DIR/rRRRRR_tT.cmd the RDP commands its RDP took (the
+   microcode's and the list's own, one line each, the words in hex).  The RDP's state at the task's start (the port carries it from
    the last task, as the RDP does) goes first, as RDP commands, and the
    microcode (the task's boot, text and data) is in the image too.  The
    header (XR_HEAD big-endian words after the magic): the retrace, the
@@ -1501,7 +1278,6 @@ static uint32_t uc_boot_size, uc_text_size, uc_data_size, uc_stack_size;
 
 void host_gfx_ucode(const void *boot, uint32_t boot_size, const void *text, uint32_t text_size, const void *data,
                     uint32_t data_size, uint32_t dram_stack_size) {
-    mv_pushes = (int)(dram_stack_size / 64 < MV_MAX ? dram_stack_size / 64 : MV_MAX);
     uc_stack_size = dram_stack_size;
     uc_text_size = text_size;
     uc_boot = boot;
@@ -1779,6 +1555,7 @@ static void xr_write(const char *path, const void *p, size_t n, const void *head
 }
 
 static char xr_dir[1024];
+static FILE *xr_cmds;                   /* the task's RDP commands (gfx_ref.py compares them) */
 static unsigned xr_task;
 
 static void xr_begin(const void *dl) {
@@ -1897,6 +1674,8 @@ static void xr_begin(const void *dl) {
     char path[1100];
     snprintf(path, sizeof path, "%s/r%06u_t%u.in", xr_dir, host_vi_count, xr_task);
     xr_write(path, xr.img, 0x1000000, head, sizeof head);
+    snprintf(path, sizeof path, "%s/r%06u_t%u.cmd", xr_dir, host_vi_count, xr_task);
+    xr_cmds = fopen(path, "w");
 }
 
 static void xr_end(void) {
@@ -1905,7 +1684,316 @@ static void xr_end(void) {
     char path[1100];
     snprintf(path, sizeof path, "%s/r%06u_t%u.out", xr_dir, host_vi_count, xr_task);
     xr_write(path, port_rdram, PORT_RDRAM_SIZE, NULL, 0);
+    if (xr_cmds)
+        fclose(xr_cmds);
+    xr_cmds = NULL;
 }
+
+/* ---- the RDP's commands ------------------------------------------------------------------------- */
+
+static int dl_depth;
+
+/* one of the RDP's two-word commands (a pointer's width for the images) */
+static void rdp_op(uint32_t w0, uintptr_t w1) {
+    uint32_t w1l = (uint32_t)w1;
+    uint8_t op = (w0 >> 24) | 0xC0;
+    if (op >= 0xED) {
+        if (op == 0xF5 || op == 0xF2) {
+            tile_raw[(w1l >> 24) & 7][op == 0xF2][0] = w0;
+            tile_raw[(w1l >> 24) & 7][op == 0xF2][1] = w1l;
+        } else {
+            rdp_raw[op & 0x3F][0] = w0;
+            rdp_raw[op & 0x3F][1] = w1l;
+        }
+    }
+    switch (op) {
+    case 0xE9:
+        full_sync = 1;
+        break;
+    case 0xED:
+        gs.sc_xh = (w0 >> 12) & 0xFFF;
+        gs.sc_yh = w0 & 0xFFF;
+        gs.sc_xl = (w1l >> 12) & 0xFFF;
+        gs.sc_yl = w1l & 0xFFF;
+        break;
+    case 0xEE:
+        gs.prim_z = ((w1l >> 16) & 0x7FFF) << 3;
+        gs.prim_dz = w1l & 0xFFFF;
+        break;
+    case 0xEF:
+        gs.om_h = w0 & 0x00FFFFFF;
+        gs.om_l = w1l;
+        break;
+    case 0xF0:
+        load_tlut(w0, w1l);
+        if (dl_on)
+            fprintf(dl_out, "%*s  tmem %08X\n", dl_depth * 2, "", dl_crc(tmem, sizeof tmem));
+        break;
+    case 0xF2:
+        set_tile_size(w0, w1l);
+        break;
+    case 0xF3:
+        load_block(w0, w1l);
+        if (dl_on)
+            fprintf(dl_out, "%*s  tmem %08X\n", dl_depth * 2, "", dl_crc(tmem, sizeof tmem));
+        break;
+    case 0xF4:
+        load_tile(w0, w1l);
+        if (dl_on)
+            fprintf(dl_out, "%*s  tmem %08X\n", dl_depth * 2, "", dl_crc(tmem, sizeof tmem));
+        break;
+    case 0xF5:
+        set_tile(w0, w1l);
+        break;
+    case 0xF6:
+        fill_rect(w0, w1l);
+        break;
+    case 0xF7:
+        gs.fill = w1l;
+        break;
+    case 0xF8: case 0xF9: case 0xFA: case 0xFB: {
+        uint8_t *d = op == 0xF8 ? gs.fog : op == 0xF9 ? gs.blend : op == 0xFA ? gs.prim : gs.env;
+        d[0] = w1l >> 24;
+        d[1] = w1l >> 16;
+        d[2] = w1l >> 8;
+        d[3] = w1l;
+        if (op == 0xFA)
+            gs.prim_lod = (float)(w0 & 0xFF);
+        break;
+    }
+    case 0xFC:
+        gs.combine = (uint64_t)(w0 & 0xFFFFFF) << 32 | w1l;
+        break;
+    case 0xFD:
+        gs.timg = addr(w1);
+        gs.timg_fmt = (w0 >> 21) & 7;
+        gs.timg_siz = (w0 >> 19) & 3;
+        gs.timg_w = (w0 & 0xFFF) + 1;
+        break;
+    case 0xFE:
+        gs.zimg = addr(w1);
+        break;
+    case 0xFF:
+        gs.cimg = addr(w1);
+        gs.cimg_fmt = (w0 >> 21) & 7;
+        gs.cimg_siz = (w0 >> 19) & 3;
+        gs.cimg_w = (w0 & 0xFFF) + 1;
+        break;
+    default:                            /* the syncs, NOOP */
+        break;
+    }
+}
+
+/* a command's words for PORT_GFX_REF's comparison (gfx_ref.py: the
+   reference's are the microcode's on its RSP) */
+static void rdp_log(const uint32_t *w, int n) {
+    if (!xr_cmds)
+        return;
+    for (int i = 0; i < n; i++)
+        fprintf(xr_cmds, i ? " %08X" : "%08X", w[i]);
+    fputc('\n', xr_cmds);
+}
+
+/* the length of a command in words */
+static int rdp_len(uint32_t w0) {
+    int op = (w0 >> 24) & 0x3F;
+    if (op >= 0x08 && op <= 0x0F)
+        return 8 + ((op & 4) ? 16 : 0) + ((op & 2) ? 16 : 0) + ((op & 1) ? 4 : 0);
+    if (op == 0x24 || op == 0x25)
+        return 4;
+    return 2;
+}
+
+/* a command the microcode sent */
+static void rdp_cmd(const uint32_t *w, int n) {
+    rdp_log(w, n);
+    if (dl_on) {
+        fprintf(dl_out, "%*s>", dl_depth * 2, "");
+        for (int i = 0; i < n; i++)
+            fprintf(dl_out, " %08X", w[i]);
+        fputc('\n', dl_out);
+    }
+    int op = (w[0] >> 24) & 0x3F;
+    if (op >= 0x08 && op <= 0x0F)
+        rdp_tri(w);
+    else if (op == 0x24 || op == 0x25)
+        tex_rect(w[0], w[1], w[2], w[3], op == 0x25);
+    else
+        rdp_op(w[0], w[1]);
+}
+
+/* the microcode's output, a word at a time */
+static uint32_t rdp_buf[44];
+static int rdp_pos, rdp_n;
+
+static void rdp_feed(uint32_t w) {
+    if (rdp_pos == 0)
+        rdp_n = rdp_len(w);
+    rdp_buf[rdp_pos++] = w;
+    if (rdp_pos == rdp_n) {
+        rdp_pos = 0;
+        rdp_cmd(rdp_buf, rdp_n);
+    }
+}
+
+/* ---- the microcode -------------------------------------------------------------------------------- */
+
+/* The game's microcode, run on the RSP's interpreter (port/host/rsp.c) for
+   the commands that are its arithmetic: the matrices, the vertices (their
+   transform, lighting, texture coordinates, fog, clip flags), the
+   triangles (clipping, culling, and the setup of the RDP's edge, shade,
+   texture and depth coefficients), and the state they need (geometry
+   mode, the texture scale, the other modes, moveword's and movemem's).
+   The display list's flow (calls, branches, ends, CULLDL and BRANCH_Z,
+   which read the microcode's vertices), texture rectangles, and the
+   commands it sends the RDP as they are stay the port's: each of the
+   others is put in the microcode's command buffer (DMEM 0x9A0) with what
+   it loads (DMEM 0xAE0, in the N64's order), and run from its dispatch
+   (IMEM 0x090) until it is back for the next; the RDP commands it leaves
+   in its output buffer go to the RDP in order.  Its RDRAM is the port's
+   own: these addresses (the task's) are only seen by the DMAs below. */
+#define UC_TEXT 0x100000u
+#define UC_DATA 0x102000u
+#define UC_STACK 0x104000u
+#define UC_LIST 0x108000u
+#define UC_YIELD 0x10C000u
+#define UC_FIFO 0x200000u
+#define UC_FIFO_END 0x800000u
+#define UC_TEXT_SIZE 0x1430u            /* F3DEX.NoN 1.21's (D_8029D320) */
+#define UC_BUF 0x9A0u
+#define UC_IN 0xAE0u
+#define UC_OUT 0xCE0u
+
+static uint8_t uc_stack[0x2000];        /* the matrix stack, big-endian */
+static int uc_ok;
+
+static void uc_dma(int write, uint32_t dram, uint8_t *mem, uint32_t len) {
+    dram &= 0xFFFFFF;
+    if (write) {
+        if (dram >= UC_FIFO && dram < UC_FIFO_END) {
+            for (uint32_t i = 0; i + 4 <= len; i += 4)
+                rdp_feed(port_be32(mem + i));
+        } else if (dram >= UC_STACK && dram - UC_STACK + len <= sizeof uc_stack) {
+            memcpy(uc_stack + (dram - UC_STACK), mem, len);
+        }
+        return;
+    }
+    const uint8_t *src = NULL;
+    uint32_t off = 0, n = 0;
+    if (dram >= UC_TEXT && dram < UC_TEXT + UC_TEXT_SIZE)
+        src = uc_text, off = dram - UC_TEXT, n = UC_TEXT_SIZE;
+    else if (dram >= UC_DATA && dram < UC_DATA + uc_data_size)
+        src = uc_data, off = dram - UC_DATA, n = uc_data_size;
+    else if (dram >= UC_STACK && dram < UC_STACK + sizeof uc_stack)
+        src = uc_stack, off = dram - UC_STACK, n = sizeof uc_stack;
+    for (uint32_t i = 0; i < len; i++)
+        mem[i] = src && off + i < n ? src[off + i] : 0;
+}
+
+static void uc_w32(uint32_t at, uint32_t v) { port_wbe32(rsp_dmem + at, v); }
+
+/* the task's start: the boot loads the microcode and its data, which
+   initializes itself and stops at its display list loop */
+static void uc_begin(void) {
+    uc_ok = uc_boot && uc_text && uc_data && uc_data_size >= 0x2D0 &&
+            !memcmp(uc_data + 0x2B0, "RSP Gfx ucode F3DEX.NoN     1.21", 32);
+    if (!uc_ok) {
+        static int said;
+        if (!said)
+            host_log("gfx: not the game's microcode: no 3D\n");
+        said = 1;
+        return;
+    }
+    rsp_reset();
+    rsp_dma = uc_dma;
+    rsp_trace = NULL;
+    memset(uc_stack, 0, sizeof uc_stack);
+    memcpy(rsp_imem, uc_boot, uc_boot_size < 0x1000 ? uc_boot_size : 0x1000);
+    uint32_t task[16] = {
+        1, 0, 0, uc_boot_size, UC_TEXT, uc_text_size, UC_DATA, uc_data_size,
+        UC_STACK, uc_stack_size < sizeof uc_stack ? uc_stack_size : (uint32_t)sizeof uc_stack,
+        UC_FIFO, UC_FIFO_END, UC_LIST, 0x100000, UC_YIELD, 0xC00,
+    };
+    for (int i = 0; i < 16; i++)
+        uc_w32(0xFC0 + i * 4, task[i]);
+    static const uint32_t stop[] = { 0x058 };
+    if (rsp_run(0x000, stop, 1, 1000000L) != 0x058) {
+        host_log("gfx: the microcode didn't start\n");
+        uc_ok = 0;
+    }
+}
+
+/* the microcode's output buffer, to the RDP */
+static void uc_drain(void) {
+    uint32_t end = rsp_r[23] & 0xFFF;
+    for (uint32_t a = UC_OUT; a + 4 <= end; a += 4)
+        rdp_feed(port_be32(rsp_dmem + a));
+    rsp_r[23] = UC_OUT;
+}
+
+/* a command on the microcode (what it loads already at UC_IN) */
+static void uc_cmd(uint32_t w0, uint32_t w1) {
+    static const uint32_t stops[] = { 0x09C, 0x0AC };
+    if (!uc_ok)
+        return;
+    uc_w32(UC_BUF, w0);
+    uc_w32(UC_BUF + 4, w1);
+    rsp_r[25] = w0;
+    rsp_r[24] = w1;
+    rsp_r[27] = UC_BUF + 8;
+    rsp_r[1] = (w0 >> 29) & 6;
+    rsp_r[18] = w0 & 0x3FF;
+    rsp_r[19] = w1 & 0xFFFFFF;
+    rsp_r[20] = rsp_r[22] = UC_IN;
+    if (rsp_run(0x090, stops, 2, 10000000L) < 0) {
+        host_log("gfx: the microcode is lost at command %08X %08X\n", w0, w1);
+        uc_begin();
+        return;
+    }
+    uc_drain();
+}
+
+/* a command's data into DMEM, as the N64 has it (the game's C wrote it in
+   the host's order) */
+static void uc_load(uint32_t w0, uintptr_t w1) {
+    const uint8_t *p = addr(w1);
+    uint8_t *d = rsp_dmem + UC_IN;
+    uint8_t op = w0 >> 24;
+    uint32_t n = op == 0x03 ? 16 : (w0 & 0x3FF) + 1;
+    if (n > 0x200)
+        n = 0x200;
+    if (!p) {
+        memset(d, 0, n);
+        return;
+    }
+    if (op == 0x01) {                   /* MTX: words */
+        for (uint32_t i = 0; i < 64; i += 4)
+            port_wbe32(d + i, *(const uint32_t *)(p + i));
+    } else if (op == 0x04) {            /* VTX: six halfwords, then the colour's or normal's bytes */
+        for (uint32_t i = 0; i + 16 <= n; i += 16) {
+            for (int k = 0; k < 12; k += 2)
+                port_wbe16(d + i + k, *(const uint16_t *)(p + i + k));
+            memcpy(d + i + 12, p + i + 12, 4);
+        }
+    } else {                            /* MOVEMEM */
+        int idx = (w0 >> 16) & 0xFF;
+        for (uint32_t i = 0; i < 16; i += 4) {
+            if (idx == 0x80) {          /* the viewport: halfwords */
+                port_wbe16(d + i, *(const uint16_t *)(p + i));
+                port_wbe16(d + i + 2, *(const uint16_t *)(p + i + 2));
+            } else if (idx >= 0x9E && idx <= 0xA4) {        /* a matrix's rows: words */
+                port_wbe32(d + i, *(const uint32_t *)(p + i));
+            } else {                    /* lights, look-at: bytes */
+                memcpy(d + i, p + i, 4);
+            }
+        }
+    }
+}
+
+/* a vertex's record in DMEM, by the index a command gives (times 2) */
+static uint32_t uc_vtx(uint32_t i) { return port_be16(rsp_dmem + ((i + 0x31E) & 0xFFE)) & 0xFFF; }
+
+/* ---- the display list ----------------------------------------------------------------------------- */
 
 static void run(const Cmd *dl) {
     const uint8_t *stack[18];
@@ -1923,28 +2011,20 @@ static void run(const Cmd *dl) {
         uint8_t op = w0 >> 24;
         if (host_verbose > 3)
             host_log("  %p: %08X %08X\n", (const void *)c, w0, (unsigned)w1);
+        dl_depth = sp;
         if (dl_on)
             dl_cmd(sp, w0, w1);
-        if (op >= 0xED) {
-            if (op == 0xF5 || op == 0xF2) {
-                tile_raw[(w1l >> 24) & 7][op == 0xF2][0] = w0;
-                tile_raw[(w1l >> 24) & 7][op == 0xF2][1] = w1l;
-            } else {
-                rdp_raw[op & 0x3F][0] = w0;
-                rdp_raw[op & 0x3F][1] = w1l;
-            }
-        }
         switch (op) {
+        case 0x01: case 0x03: case 0x04:
+            uc_load(w0, w1);
+            uc_cmd(w0, w1l);
+            break;
         case 0x00:
-            break;
-        case 0x01:
-            do_mtx(w0, w1);
-            break;
-        case 0x03:
-            movemem(w0, w1);
-            break;
-        case 0x04:
-            do_vtx(w0, w1);
+        case 0xB1: case 0xB2: case 0xB5: case 0xB6: case 0xB7: case 0xB9: case 0xBA: case 0xBB: case 0xBC:
+        case 0xBD: case 0xBF:
+            if (op == 0xBC && (w0 & 0xFF) == 0x06)          /* SEGMENT: the port's too, */
+                seg[(((w0 >> 8) & 0xFFFF) / 4) & 15] = w1;  /* (an address: as wide as a pointer) */
+            uc_cmd(w0, w1l);
             break;
         case 0x06:
             if (((w0 >> 16) & 0xFF) == 0) {
@@ -1958,101 +2038,39 @@ static void run(const Cmd *dl) {
             break;
         case 0xAF:                      /* LOAD_UCODE */
             break;
-        case 0xB0: {                    /* BRANCH_Z */
-            int v = ((w0 >> 1) & 0x7FF) / 2;
-            if (v < 64 && gs.v[v].sz * 1023.0f * 32.0f < (float)(int32_t)w1l)
-            {
+        case 0xB0:                      /* BRANCH_Z: on the vertex's screen z */
+            if (uc_ok && (int32_t)(port_be32(rsp_dmem + uc_vtx(w0) + 0x1C) - w1l) <= 0) {
                 pc = addr(gs.rdphalf1);
                 st = stride_at(pc);
             }
             break;
-        }
-        case 0xB1:                      /* TRI2 */
-            tri(((w0 >> 16) & 0xFF) / 2, ((w0 >> 8) & 0xFF) / 2, (w0 & 0xFF) / 2);
-            tri(((w1l >> 16) & 0xFF) / 2, ((w1l >> 8) & 0xFF) / 2, (w1l & 0xFF) / 2);
-            break;
-        case 0xB2: {                    /* MODIFYVTX */
-            int v = (w0 & 0xFFFF) / 2, where = (w0 >> 16) & 0xFF;
-            if (v >= 64)
-                break;
-            if (where == 0x10) {
-                gs.v[v].r = w1l >> 24;
-                gs.v[v].g = (w1l >> 16) & 0xFF;
-                gs.v[v].b = (w1l >> 8) & 0xFF;
-                gs.v[v].a = w1l & 0xFF;
-            } else if (where == 0x14) {
-                gs.v[v].s = (int16_t)(w1l >> 16) / 32.0f;
-                gs.v[v].t = (int16_t)(w1l & 0xFFFF) / 32.0f;
-            } else if (where == 0x18) {
-                gs.v[v].sx = (int16_t)(w1l >> 16) / 4.0f;
-                gs.v[v].sy = (int16_t)(w1l & 0xFFFF) / 4.0f;
-            }
-            break;
-        }
         case 0xB3:
             gs.rdphalf2 = w1l;
             break;
         case 0xB4:
             gs.rdphalf1 = w1l;
             break;
-        case 0xB5:                      /* LINE3D: a quad in F3DEX's later microcodes */
-            break;
-        case 0xB6:
-            gs.geom &= ~w1l;
-            break;
-        case 0xB7:
-            gs.geom |= w1l;
-            break;
         case 0xB8:
             if (sp == 0)
                 return;
             --sp, pc = stack[sp], st = stack_st[sp];
             break;
-        case 0xB9:
-            set_other(0, w0, w1l);
-            break;
-        case 0xBA:
-            set_other(1, w0, w1l);
-            break;
-        case 0xBB:
-            gs.tex_on = (w0 & 0xFF) != 0;
-            gs.tex_tile = (w0 >> 8) & 7;
-            gs.tex_level = (w0 >> 11) & 7;
-            gs.tex_s = (w1l >> 16) / 65536.0f;
-            gs.tex_t = (w1l & 0xFFFF) / 65536.0f;
-            break;
-        case 0xBC:
-            moveword(w0, w1);
-            break;
-        case 0xBD:
-            if (gs.mvi > 0)
-                gs.mvi--;
-            gs.mvp_ok = 0;
-            break;
-        case 0xBE: {                    /* CULLDL: vertices all outside the screen's box */
-            int v0 = (w0 & 0xFFF) / 2, v1 = (w1l & 0xFFF) / 2;
-            int out = 0x3F;
-            for (int i = v0; i <= v1 && i < 64; i++) {
-                Vert *v = &gs.v[i];
-                int f = 0;
-                if (v->x < -v->w) f |= 1;
-                if (v->x > v->w) f |= 2;
-                if (v->y < -v->w) f |= 4;
-                if (v->y > v->w) f |= 8;
-                if (v->z > v->w) f |= 16;
-                if (v->w < 0.01f) f |= 32;
-                out &= f;
+        case 0xBE: {                    /* CULLDL: the vertices' clip flags, all outside one plane */
+            if (!uc_ok)
+                break;
+            uint32_t a = uc_vtx(w0), b = uc_vtx(w1l), f = 0x7030;
+            for (int k = 0; k < 64; k++, a = (a + 0x28) & 0xFFF) {
+                f &= port_be16(rsp_dmem + ((a + 0x24) & 0xFFE));
+                if (a == b)
+                    break;
             }
-            if (out && v1 >= v0) {
+            if (f) {
                 if (sp == 0)
                     return;
                 --sp, pc = stack[sp], st = stack_st[sp];
             }
             break;
         }
-        case 0xBF:
-            tri(((w1l >> 16) & 0xFF) / 2, ((w1l >> 8) & 0xFF) / 2, (w1l & 0xFF) / 2);
-            break;
         case 0xE4:
         case 0xE5: {
             uint32_t h1 = 0, h2 = 0;
@@ -2068,86 +2086,19 @@ static void run(const Cmd *dl) {
                 h2 = (uint32_t)cmd_w1(pc, st);
                 pc += st;
             }
+            uint32_t w[4] = { w0, w1l, h1, h2 };
+            rdp_log(w, 4);
             tex_rect(w0, w1l, h1, h2, op == 0xE5);
             break;
         }
-        case 0xE6: case 0xE7: case 0xE8:
-            break;
-        case 0xE9:
-            full_sync = 1;
-            break;
-        case 0xED:
-            gs.sc_x0 = ((w0 >> 12) & 0xFFF) / 4.0f;
-            gs.sc_y0 = (w0 & 0xFFF) / 4.0f;
-            gs.sc_x1 = ((w1l >> 12) & 0xFFF) / 4.0f;
-            gs.sc_y1 = (w1l & 0xFFF) / 4.0f;
-            break;
-        case 0xEE:
-            gs.prim_z = ((w1l >> 16) & 0x7FFF) << 3;
-            gs.prim_dz = w1l & 0xFFFF;
-            break;
-        case 0xEF:
-            gs.om_h = w0 & 0x00FFFFFF;
-            gs.om_l = w1l;
-            break;
-        case 0xF0:
-            load_tlut(w0, w1l);
-            if (dl_on)
-                fprintf(dl_out, "%*s  tmem %08X\n", sp * 2, "", dl_crc(tmem, sizeof tmem));
-            break;
-        case 0xF2:
-            set_tile_size(w0, w1l);
-            break;
-        case 0xF3:
-            load_block(w0, w1l);
-            if (dl_on)
-                fprintf(dl_out, "%*s  tmem %08X\n", sp * 2, "", dl_crc(tmem, sizeof tmem));
-            break;
-        case 0xF4:
-            load_tile(w0, w1l);
-            if (dl_on)
-                fprintf(dl_out, "%*s  tmem %08X\n", sp * 2, "", dl_crc(tmem, sizeof tmem));
-            break;
-        case 0xF5:
-            set_tile(w0, w1l);
-            break;
-        case 0xF6:
-            fill_rect(w0, w1l);
-            break;
-        case 0xF7:
-            gs.fill = w1l;
-            break;
-        case 0xF8: case 0xF9: case 0xFA: case 0xFB: {
-            uint8_t *d = op == 0xF8 ? gs.fog : op == 0xF9 ? gs.blend : op == 0xFA ? gs.prim : gs.env;
-            d[0] = w1l >> 24;
-            d[1] = w1l >> 16;
-            d[2] = w1l >> 8;
-            d[3] = w1l;
-            if (op == 0xFA)
-                gs.prim_lod = (float)(w0 & 0xFF);
-            break;
-        }
-        case 0xFC:
-            gs.combine = (uint64_t)(w0 & 0xFFFFFF) << 32 | w1l;
-            break;
-        case 0xFD:
-            gs.timg = addr(w1);
-            gs.timg_fmt = (w0 >> 21) & 7;
-            gs.timg_siz = (w0 >> 19) & 3;
-            gs.timg_w = (w0 & 0xFFF) + 1;
-            break;
-        case 0xFE:
-            gs.zimg = addr(w1);
-            break;
-        case 0xFF:
-            gs.cimg = addr(w1);
-            gs.cimg_fmt = (w0 >> 21) & 7;
-            gs.cimg_siz = (w0 >> 19) & 3;
-            gs.cimg_w = (w0 & 0xFFF) + 1;
-            break;
         default:
-            if (host_verbose > 2)
+            if (op >= 0xC0) {           /* the RDP's, as they are */
+                uint32_t w[2] = { w0, w1l };
+                rdp_log(w, 2);
+                rdp_op(w0, w1);
+            } else if (host_verbose > 2) {
                 host_log("gfx: command %02X\n", op);
+            }
             break;
         }
     }
@@ -2167,13 +2118,13 @@ int host_gfx_task(const void *dl, uint32_t size) {
     if (no_draw)            /* (debugging: the game's logic alone) */
         return 1;
     full_sync = 0;
-    gs.mvi = 0;
-    gs.mvp_ok = 0;
-    if (!gs.sc_x1) {
-        gs.sc_x1 = 320;
-        gs.sc_y1 = 240;
+    if (!gs.sc_xl) {
+        gs.sc_xl = 320 << 2;
+        gs.sc_yl = 240 << 2;
     }
     xr_begin(dl);
+    rdp_pos = 0;
+    uc_begin();
     run((const Cmd *)dl);
     xr_end();
     xr_task++;

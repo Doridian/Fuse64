@@ -8,6 +8,10 @@
  *
  *   gfxref TASK.in OUT.bin
  *
+ * GFXREF_CMDS=FILE writes the RDP commands the microcode sends, one line
+ * each (the words in hex), for gfx_ref.py to compare with the port's;
+ * GFXREF_NORDP=1 leaves the RDP out (the RSP's alone).
+ *
  * Built by port/tools/gfx_ref/build.sh, which fetches the two (neither is
  * part of the port: angrylion's RDP is under the MAME licence).
  */
@@ -46,7 +50,41 @@ static uint32_t be32(const uint8_t *p) {
     return (uint32_t)p[0] << 24 | (uint32_t)p[1] << 16 | (uint32_t)p[2] << 8 | p[3];
 }
 
-static void rdp_list(void) { n64video_process_list(); }
+/* GFXREF_CMDS=FILE: every RDP command the RSP sends, one line each;
+   GFXREF_NORDP=1: no RDP (timing the RSP) */
+static FILE *cmds_out;
+static int no_rdp;
+static uint32_t cbuf[44];
+static int cpos, clen;
+static int cmd_len(uint32_t w0) {
+    int op = (w0 >> 24) & 0x3F;
+    if (op >= 0x08 && op <= 0x0F)
+        return 8 + ((op & 4) ? 16 : 0) + ((op & 2) ? 16 : 0) + ((op & 1) ? 4 : 0);
+    if (op == 0x24 || op == 0x25)
+        return 4;
+    return 2;
+}
+static void rdp_list(void) {
+    if (cmds_out) {
+        uint32_t cur = regs[11] & ~7u, end = regs[10] & ~7u;
+        for (uint32_t a = cur; a < end; a += 4) {
+            uint32_t w = ((uint32_t *)rdram)[(a & 0xFFFFFF) / 4];
+            if (cpos == 0)
+                clen = cmd_len(w);
+            cbuf[cpos++] = w;
+            if (cpos == clen) {
+                for (int i = 0; i < clen; i++)
+                    fprintf(cmds_out, i ? " %08X" : "%08X", cbuf[i]);
+                fputc('\n', cmds_out);
+                cpos = 0;
+            }
+        }
+    }
+    if (no_rdp)
+        regs[11] = regs[10];
+    else
+        n64video_process_list();
+}
 static void mi_cb(void) {}
 
 /* a big-endian byte image into host-order words */
@@ -120,6 +158,9 @@ int main(int argc, char **argv) {
         stack, stack_size, fifo, fifo + 0x10000, root, 0x100000, yield, 0xC00,
     };
     memcpy(&dmem_w[0xFC0 / 4], task, sizeof task);
+    if (getenv("GFXREF_CMDS"))
+        cmds_out = fopen(getenv("GFXREF_CMDS"), "w");
+    no_rdp = getenv("GFXREF_NORDP") != NULL;
     rsp_glue_init(rdram, (uint8_t *)dmem_w, (uint8_t *)imem_w, regs, rdp_list);
     regs[4] = 0;                        /* SP_STATUS: running */
     regs[8] = 0x04001000;               /* SP_PC */

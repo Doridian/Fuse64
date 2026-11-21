@@ -12,6 +12,8 @@ says where they come from and on what terms they are here.
 | GNU malloc (`gmalloc.c`, 1995) | `src/libmalloc/` | GNU GPL v2 or later (from the LGPL v2 or later); see below |
 | DozerEncore (a PC port of Blast Corps): decomp tools | `tools/elf_mips2.py` and others adapted from `../DozerEncore` | AGPL-3.0, same author |
 | DozerEncore: the PC port | parts of Fuse64 (`port/`) copied or adapted from `../DozerEncore/port` | AGPL-3.0, same author; see below |
+| parallel-rdp (Themaister): the RDP's triangle setup and interpolation | adapted in `port/host/gfx.c` (`rdp_tri`) | MIT; see below |
+| mupen64plus-rsp-cxd4 (Iconoclast): the RSP's vector arithmetic | followed in `port/host/rsp.c` | CC0 1.0 (public domain dedication); see below |
 
 ---
 
@@ -87,3 +89,45 @@ parser renamed `port_alBnkfParse`), `port/include/libaudio_heap.h`,
 `port/src/ultra.c` (libultra on the host), `port/host/main.c`,
 `port/host/runtime.c`, `port/include/port.h`, and the WebAssembly page
 `port/web/shell.html`. Each file's header says where it comes from.
+
+## parallel-rdp
+
+The RDP's triangle rasterizer in `port/host/gfx.c` (`rdp_tri`: the span
+setup from a triangle command's edges, the subscanlines' coverage, the
+attributes' interpolation and coverage correction, the perspective divide
+and its reciprocal table) follows parallel-rdp
+(https://github.com/Themaister/parallel-rdp-standalone, commit
+`1cecd042`, its shaders `span_setup.comp`, `interpolation.h`,
+`perspective.h` and `coverage.h`), rewritten in C for one pixel at a
+time. Its licence:
+
+    Copyright (c) 2020 Themaister
+
+    Permission is hereby granted, free of charge, to any person obtaining
+    a copy of this software and associated documentation files (the
+    "Software"), to deal in the Software without restriction, including
+    without limitation the rights to use, copy, modify, merge, publish,
+    distribute, sublicense, and/or sell copies of the Software, and to
+    permit persons to whom the Software is furnished to do so, subject to
+    the following conditions:
+
+    The above copyright notice and this permission notice shall be
+    included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## mupen64plus-rsp-cxd4
+
+`port/host/rsp.c`, the port's RSP interpreter (it runs the game's
+graphics microcode), is the project's own, but its vector unit's
+arithmetic (the accumulator's clamps, VCL/VCH/VCR, the divide unit and its
+ROM, LTV/STV) follows cxd4's interpreter
+(https://github.com/mupen64plus/mupen64plus-rsp-cxd4), which its author,
+Iconoclast, dedicated to the public domain under CC0 1.0. The port is
+checked against it (port/tools/gfx_ref), which isn't part of the port.

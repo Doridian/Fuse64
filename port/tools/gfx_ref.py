@@ -17,7 +17,9 @@ color image: the pixels whose color differs (the 5-bit channels of a
 16-bit image; its coverage bit is the RDP's and isn't compared) and the
 largest channel difference (of 255), and PNGs in --out: the port's, the
 reference's, and the difference (grey: the same; red: differs, brighter
-the more).
+the more).  Before the images, the task's RDP commands: those the port's
+microcode run sent its RDP (TASK.cmd) against the reference's (gfxref's
+GFXREF_CMDS), how many differ and the first that does.
 """
 import argparse
 import os
@@ -164,9 +166,36 @@ def compare(inp, port_out, ref_out, out_dir, tag):
 
 
 def run_ref(ref, inp, out):
-    r = subprocess.run([ref, inp, out], capture_output=True, text=True, timeout=600)
+    env = dict(os.environ)
+    env["GFXREF_CMDS"] = inp[:-3] + ".rcmd"
+    r = subprocess.run([ref, inp, out], capture_output=True, text=True, timeout=600, env=env)
     if r.returncode != 0:
         sys.exit("%s: %s" % (inp, r.stderr.strip()))
+
+
+def compare_cmds(inp):
+    """the RDP commands of the task, the port's (TASK.cmd) against the
+    reference microcode's (TASK.rcmd): how many each, how many differ (the
+    images' addresses aside: the port's are its own), the first that does
+    (its index and both), or None without the files"""
+    try:
+        a = open(inp[:-3] + ".cmd").read().split("\n")[:-1]
+        b = open(inp[:-3] + ".rcmd").read().split("\n")[:-1]
+    except OSError:
+        return None
+
+    def key(line):
+        w = line.split()
+        return w[:1] if w and w[0][:2] in ("FD", "FE", "FF") else w
+    nd, first = 0, None
+    for i in range(max(len(a), len(b))):
+        la = a[i] if i < len(a) else ""
+        lb = b[i] if i < len(b) else ""
+        if key(la) != key(lb):
+            nd += 1
+            if first is None:
+                first = (i, la, lb)
+    return len(a), len(b), nd, first
 
 
 def run_screen(build, name, ref, out_dir, keep):
@@ -199,13 +228,26 @@ def run_screen(build, name, ref, out_dir, keep):
             inp = os.path.join(tmp, t + ".in")
             refout = os.path.join(tmp, t + ".ref")
             run_ref(ref, inp, refout)
+            rows.append((t, "cmds", compare_cmds(inp)))
             for addr, w, h, nd, nbig, md in compare(inp, os.path.join(tmp, t + ".out"), refout, out_dir,
                                               "%s_%s_%s" % (ver, name, t)):
-                rows.append((t, addr, w, h, nd, nbig, md))
+                rows.append((t, "image", (addr, w, h, nd, nbig, md)))
         return ver, rows
     finally:
         if not keep:
             shutil.rmtree(tmp, ignore_errors=True)
+
+
+def print_cmds(r, lead):
+    if r is None:
+        return
+    na, nb, nd, first = r
+    if not nd:
+        print("%scommands  %d, the same" % (lead, na))
+        return
+    print("%scommands  %d (reference %d), %d differ, the first at %d:" % (lead, na, nb, nd, first[0]))
+    print("%s  port: %s" % (lead, first[1][:200]))
+    print("%s  ref:  %s" % (lead, first[2][:200]))
 
 
 def main():
@@ -228,6 +270,7 @@ def main():
         inp, port_out = a.args
         refout = inp[:-3] + ".ref"
         run_ref(a.ref, inp, refout)
+        print_cmds(compare_cmds(inp), "")
         for addr, w, h, nd, nbig, md in compare(inp, port_out, refout, a.out, os.path.basename(inp)[:-3]):
             print("%s %dx%d: %d pixels differ, %d by more than a step, max %d" % (addr, w, h, nd, nbig, md))
         return
@@ -235,7 +278,11 @@ def main():
     print("%-13s %-13s %-8s %-9s %9s %7s %5s" % ("screen", "task", "image", "size", "differ", ">step", "max"))
     for name in a.screen or list(SCREENS):
         ver, rows = run_screen(build, name, a.ref, a.out, a.keep)
-        for t, addr, w, h, nd, nbig, md in rows:
+        for t, kind, r in rows:
+            if kind == "cmds":
+                print_cmds(r, "%-13s %-13s " % (name, t))
+                continue
+            addr, w, h, nd, nbig, md = r
             print("%-13s %-13s %-8s %-9s %9d %7d %5d" % (name, t, addr, "%dx%d" % (w, h), nd, nbig, md))
         sys.stdout.flush()
 

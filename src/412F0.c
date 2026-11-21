@@ -337,7 +337,8 @@ void func_80226B18(void *arg0) {
         task->unkC = D_80100000[i];
         frame = &D_8014C8D0[i];
         task->unk18 = D_8029D250;
-        task->unk1C = (PORT_UP(u32)) D_8029D320 - (PORT_UP(u32)) D_8029D250;
+        /* (rspboot's size, the two labels' distance on the N64: on a host its array's) */
+        task->unk1C = PORT_HOST((PORT_UP(u32)) D_8029D320 - (PORT_UP(u32)) D_8029D250, sizeof D_8029D250);
         task->unk20 = D_8029D320;
         task->unk28 = PORT_HOST(D_802A4840, port_f3dex());
         task->unk30 = D_8019A8D0;

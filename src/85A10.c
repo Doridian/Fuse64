@@ -484,7 +484,8 @@ static s32 func_8026B238(UnkStruct_8026B238 *info, UnkStruct_8026B238 *lastInfo)
     t->data_size = (cmdp - D_802AD6A0.ACMDList[D_802AF948]) * sizeof(UnkStruct_802AD6A0_0);
     t->type = 2;
     t->ucode_boot = D_8029D250;
-    t->ucode_boot_size = D_8029D320 - D_8029D250;
+    /* (rspboot's size, the two labels' distance on the N64: on a host its array's) */
+    t->ucode_boot_size = PORT_HOST(D_8029D320 - D_8029D250, sizeof D_8029D250);
     t->taskFlags = 0;
     t->ucode = D_8029E750;
     t->ucode_data = D_802A5040;

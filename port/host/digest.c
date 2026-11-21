@@ -45,6 +45,20 @@
  *   pN     entry N's object's model (unk28->unk40, 5E3F0.c's UnkModel):
  *          its position unk10, unk14, unk18, unk20 and unk28-unk30
  *
+ * Then the game's object pools (POOLS below), one key per entry (the
+ * pool's key and the index: obj0 ... obj127), each the entry's fields in
+ * the order its spec lists them.  A spec is "OFF:K" or "OFF-END:K" (hex
+ * N64 offsets, END included), K the field's kind: w a word, h a halfword,
+ * b a byte (each its unsigned value in hex, read with the field's own
+ * width, so that the host's byte order doesn't matter) and p a pointer,
+ * given as which pool entry it points to ("obj12", "+N" past its start),
+ * "-" for NULL, the value for a small number (below 0x10000, or above
+ * 0xFFFF0000: an index some code keeps there) and "*" for any other
+ * pointer.  emu_digest.py reads this table out of this file, so the two
+ * sides read the same fields by construction.  The pools are read where
+ * pointers are 4 bytes (the host's layout is the N64's there); a 64-bit
+ * host writes only the fields above.
+ *
  * The scenario's seed: PORT_SEED=N gives the random generator the seed N
  * where 40040.c seeds it from the clock (osGetTime) at boot, as
  * tools/shift_check.py's patch does in the ROM (0x1997).
@@ -108,6 +122,115 @@ extern u32 D_802AC660[62];
 extern s32 D_802ACFE0;
 extern u32 D_802ACFE8[56];
 
+/* The game's object pools: { key, the array, entries, the N64's stride,
+   fields }.  The structs are the C's (the file named), the pointers and
+   the unions (bytes in one use, a float in another) left out of the words. */
+#define POOL(key, sym, n, stride, spec) { key, sym, n, stride, spec }
+extern char D_800A3F00[], D_800A0D00[], D_8008E658[], D_8008F438[], D_802AFCE8[], D_800BB4A0[], D_800BA900[],
+    D_800BB340[], D_800BC528[], D_800BC770[], D_802B0260[];
+static const struct {
+    const char *key;
+    char *base;
+    unsigned n, stride;
+    const char *spec;
+} pools[] = {
+    /* 48600.c's UnkStructA80: the objects (the three lists), D_800AEDF0's unk28 */
+    POOL("obj", D_800A3F00, 128, 0x80, "0-1c:w 28-38:w 48-74:w 20:p 24:p 3c:p 40:p 44:p 78:p 7c:p"),
+    /* 426E0.c's UnkObj: the models drawn (an object's unk40 is one) */
+    POOL("mdl", D_800A0D00, 160, 0x50, "0-30:w 34:h 36:h 38:w 3c:p 40:p 44:p 48:p 4c:p"),
+    /* 926A0.c's Rec926 */
+    POOL("rec", D_8008E658, 48, 0x48, "0:h c:h e:h 10:h 1c-30:w 36:h 38:h 3a:h 3c-40:w 44:h 46:h 8:p 14:p 18:p"),
+    /* 8A7A0.c's Ent88 (ENTS: [0] the list's head) */
+    POOL("ent", D_8008F438, 22, 0x88,
+         "0:h 4-8:w c:h e:h 10:h 3c:h 40-54:w 5c-68:h 74:h 78-84:w 14-38:p"),
+    /* 8A7A0.c's Slot30 (SLOTS: one a player) */
+    POOL("pslot", D_802AFCE8, 5, 0x30, "0:h 8:w 10:h 1c-2c:w c:p"),
+    /* 93850.c's UnkStruct_800BB4A8: the bonus items ([0] the head, [1] the sentinel) */
+    POOL("item", D_800BB4A0, 48, 0x58, "0:h 2:h 4:w 1c-22:h 24-2c:w 30:h 32:h 34-44:w 48:h 4a-4f:b 50:w 54:h 8-18:p"),
+    /* 9CAB0.c's UnkStruct_800BA900 (its unk14 an UnkStruct_80288040, whose
+       unions at 0x50 and 0x58, bytes or floats by the type, are left
+       out; its 0x8C, at 0xA0, a pointer into D_800BB340) */
+    POOL("tobj", D_800BA900, 16, 0xA4,
+         "0-10:w 18-2c:w 30-33:b 34-4c:w 50:b 51:b 52:h 54-60:w 68:w 70:b 71:b 72:h 74:w 78:w 80:b 81:b 82:h 84:w 88:w "
+         "8c-8e:b 90:h 92:h 94:w 98:w 9c:h 14:p 7c:p a0:p"),
+    /* 9CAB0.c's UnkStruct_800BB340: their tasks */
+    POOL("ttask", D_800BB340, 16, 0x14, "0-c:w 10:p"),
+    /* A4CE0.c's effects */
+    POOL("fx", D_800BC528, 16, 0x24, "0-18:w 1c:p 20:p"),
+    /* A8DE0.c's moving objects */
+    POOL("mv", D_800BC770, 16, 0x28, "0:w c-24:w 4:p 8:p"),
+    /* A1EA0.c's UnkStruct_802B0260 */
+    POOL("a1", D_802B0260, 2, 0x50, "0-4c:w"),
+};
+#define NPOOLS (int)(sizeof pools / sizeof pools[0])
+
+/* a spec's fields, (offset << 8) | kind */
+#define MAXPF 64
+static unsigned pool_fields[NPOOLS][MAXPF];
+static int pool_nf[NPOOLS];
+static char *pool_raw[NPOOLS];
+
+static void pool_parse(int k) {
+    const char *s = pools[k].spec;
+    while (*s) {
+        char *e;
+        unsigned a = (unsigned)strtoul(s, &e, 16), b = a, step;
+        if (*e == '-')
+            b = (unsigned)strtoul(e + 1, &e, 16);
+        if (*e != ':')
+            host_fatal("digest: bad spec %s", pools[k].spec);
+        step = e[1] == 'w' || e[1] == 'p' ? 4 : e[1] == 'h' ? 2 : 1;
+        for (; a <= b; a += step) {
+            if (pool_nf[k] == MAXPF)
+                host_fatal("digest: spec %s too long", pools[k].spec);
+            pool_fields[k][pool_nf[k]++] = a << 8 | (unsigned char)e[1];
+        }
+        s = e + 2;
+        while (*s == ' ')
+            s++;
+    }
+}
+
+/* a pointer as the pool entry it points to */
+static int pool_ptr(char *p, uintptr_t v) {
+    int k;
+    if (!v)
+        return sprintf(p, "-");
+    for (k = 0; k < NPOOLS; k++) {
+        uintptr_t b = (uintptr_t)pools[k].base;
+        if (v >= b && v < b + pools[k].n * pools[k].stride) {
+            unsigned o = (unsigned)(v - b);
+            return o % pools[k].stride ? sprintf(p, "%s%u+%x", pools[k].key, o / pools[k].stride, o % pools[k].stride)
+                                       : sprintf(p, "%s%u", pools[k].key, o / pools[k].stride);
+        }
+    }
+    if (v == (uintptr_t)D_800AEDF0 || (v > (uintptr_t)D_800AEDF0 && v < (uintptr_t)(D_800AEDF0 + 5))) {
+        unsigned o = (unsigned)(v - (uintptr_t)D_800AEDF0);
+        return o % 0xC8 ? sprintf(p, "e%u+%x", o / 0xC8, o % 0xC8) : sprintf(p, "e%u", o / 0xC8);
+    }
+    if ((u32)v < 0x10000 || (u32)v >= 0xFFFF0000u)
+        return sprintf(p, "%x", (unsigned)(u32)v);
+    return sprintf(p, "*");
+}
+
+static void pool_entry(char *val, int k, int i) {
+    const unsigned char *e = (const unsigned char *)pools[k].base + i * pools[k].stride;
+    char *p = val;
+    int j;
+    for (j = 0; j < pool_nf[k]; j++) {
+        unsigned off = pool_fields[k][j] >> 8, kind = pool_fields[k][j] & 0xFF;
+        if (j)
+            *p++ = ',';
+        switch (kind) {
+        case 'w': p += sprintf(p, "%x", (unsigned)*(const u32 *)(e + off)); break;
+        case 'h': p += sprintf(p, "%x", (unsigned)*(const uint16_t *)(e + off)); break;
+        case 'b': p += sprintf(p, "%x", (unsigned)e[off]); break;
+        default: p += pool_ptr(p, (uintptr_t)*(const u32 *)(e + off)); break;
+        }
+    }
+    *p = 0;
+}
+
 /* the pad word this read gives (input.c), chosen by the frame with
    --replay */
 uint32_t host_input_poll(unsigned frame);
@@ -117,8 +240,8 @@ unsigned int port_seed(unsigned int clock) {
     return e && *e ? (unsigned int)strtoul(e, NULL, 0) : clock;
 }
 
-#define MAXF 16
-#define VALLEN 1024
+#define MAXF 640
+#define VALLEN 640
 static char last[MAXF][VALLEN];
 static FILE *out;
 static unsigned polls;
@@ -146,7 +269,7 @@ static void put(char *line, int *len, int idx, const char *key, const char *val,
 
 void port_digest_poll(void) {
     static int init;
-    static char line[16384];
+    static char line[MAXF * VALLEN];
     char val[VALLEN];
     int len, full, i, f = 0;
     unsigned frame = (unsigned)D_8029F600;
@@ -204,5 +327,50 @@ void port_digest_poll(void) {
         sprintf(key, "p%d", i);
         put(line, &len, f++, key, val, full);
     }
+    if (sizeof(void *) == 4) {
+        int k;
+        for (k = 0; k < NPOOLS; k++) {
+            unsigned size = pools[k].n * pools[k].stride;
+            if (!pool_nf[k]) {
+                pool_parse(k);
+                if (!(pool_raw[k] = malloc(size)))
+                    host_fatal("digest: out of memory");
+            }
+            for (i = 0; i < (int)pools[k].n; i++) {
+                char key[16];
+                const char *e = pools[k].base + i * pools[k].stride;
+                char *r = pool_raw[k] + i * pools[k].stride;
+                /* (an entry whose bytes are the last read's gives its value) */
+                if (!full && !memcmp(r, e, pools[k].stride)) {
+                    f++;
+                    continue;
+                }
+                memcpy(r, e, pools[k].stride);
+                pool_entry(val, k, i);
+                sprintf(key, "%s%d", pools[k].key, i);
+                put(line, &len, f++, key, val, full);
+            }
+        }
+    }
     fprintf(out, "%s\n", line);
+    {
+        /* PORT_DIGEST_DUMP=FRAME:FILE: the RDRAM buffer at each read of game
+           frame FRAME (emu_digest.py's --dump: the asm data and the regions
+           are at their N64 offsets there, in the host's byte order) */
+        extern uint8_t port_rdram[];
+        static int at = -2;
+        static const char *path;
+        if (at == -2) {
+            const char *e = getenv("PORT_DIGEST_DUMP");
+            at = e && strchr(e, ':') ? atoi(e) : -1;
+            path = at >= 0 ? strchr(e, ':') + 1 : NULL;
+        }
+        if (at >= 0 && frame == (unsigned)at) {
+            FILE *d = fopen(path, "wb");
+            if (d) {
+                fwrite(port_rdram, 1, 8 << 20, d);
+                fclose(d);
+            }
+        }
+    }
 }

@@ -339,6 +339,126 @@ the same frame (eu's arena at 1052, jp's at 858). The port's own timing
 of jp's battle input (port/tools/inputs/battle.jp.txt) isn't needed with
 `--replay`: the emulator's frames carry the pads.
 
+#### The object pools
+
+The fields above see the bombs, the enemies and the stage's objects
+only through the players. The digest also reads the game's object
+pools field by field, one key per entry (`obj12=...`), each a list of
+the entry's fields in its spec's order (the `POOLS` table in
+port/host/digest.c, which emu_digest.py reads out of that file, so the
+two sides read the same fields by construction):
+
+| key | pool | entries | what |
+|---|---|---|---|
+| `obj` | `D_800A3F00` | 128 × 0x80 | 48600.c's objects (each with a model: the bombs, the enemies, the blocks) |
+| `mdl` | `D_800A0D00` | 160 × 0x50 | 426E0.c's models (position, scale, angles) |
+| `rec` | `D_8008E658` | 48 × 0x48 | 926A0.c's records |
+| `ent` | `D_8008F438` | 22 × 0x88 | 8A7A0.c's list entities |
+| `pslot` | `D_802AFCE8` | 5 × 0x30 | 8A7A0.c's slot for each player |
+| `item` | `D_800BB4A0` | 48 × 0x58 | 93850.c's bonus items |
+| `tobj` | `D_800BA900` | 16 × 0xA4 | 9CAB0.c's enemies (the 0x90-byte state at 0x14) |
+| `ttask` | `D_800BB340` | 16 × 0x14 | their tasks |
+| `fx` | `D_800BC528` | 16 × 0x24 | A4CE0.c's effects |
+| `mv` | `D_800BC770` | 16 × 0x28 | A8DE0.c's moving objects |
+| `a1` | `D_802B0260` | 2 × 0x50 | A1EA0.c's two entries (the boss's state) |
+
+A spec is `OFF:K` or `OFF-END:K` (N64 offsets), K the field's width
+(`w`, `h`, `b`: read with the code's own width, so the host's byte order
+doesn't matter; a field the code reads as a halfword but the spec as a
+word shows as a false difference, item 0x54 did) or `p`, a pointer,
+written as the entry it points into (`obj12`, `obj12+8`, `e0` for
+`D_800AEDF0[0]`), `-` for NULL, the number when it is small (an index
+kept in a pointer's place) and `*` otherwise. 9CAB0.c's two unions (the
+state's 0x50 and 0x58, a float or bytes by the enemy's type) are left
+out. The pools are written only where pointers are 4 bytes (i386 and the
+other 32-bit hosts, where the host's layout is the N64's); a 64-bit host
+writes the fields above. An unchanged entry costs a memcmp.
+
+#### The stages: the warp on the emulator
+
+emu_digest.py reaches the scene PORT_WARP does the way the port does:
+`--warp N[:S]` changes func_8023AE6C's request in RDRAM at the first
+controller read after it is made (`D_802AC5D0` bit 0 set: the scene in
+`D_802AC5D4`/`D_802AC5DC`, the sub-mode in `D_802AC5D8`/`D_802AC5E0`),
+before the main loop takes it after the fade, by warp.c's rule (the
+first story request, or every round's for a battle stage). `--eeprom
+FILE` starts from a save (story.<v>.eep, padded to the 2 KB the core
+keeps), `--dump FRAME:FILE` writes RDRAM (big-endian) at the frame's
+last read, and the port's `PORT_DIGEST_DUMP=FRAME:FILE` writes
+`port_rdram` at its read of that frame. port/tools/rdram_cmp.py compares
+the two word by word (a word, two halfwords, four bytes or a doubleword
+in the host's order count as the same; pointers on both sides are
+skipped). It sees only what the port keeps at its N64 offset (the asm
+data: the pools, the map): the C's globals and the overlays' variables
+are the host's, elsewhere.
+
+```
+port/tools/emu_digest.py us emu.txt --warp 41:17 --eeprom port/tools/inputs/story.us.eep \
+    --input port/tools/inputs/warp.us.txt --frames 5000
+PORT_SEED=0x1997 PORT_WARP=41:17 PORT_DIGEST=port.txt build-port/fuse64 --headless \
+    --save-dir DIR --frames 4810 --replay emu.txt baserom.us.z64   # DIR/fuse64.us.eep: the same save
+port/tools/digest_cmp.py emu.txt port.txt --all
+```
+
+Every scene PORT_WARP reaches in us (2026-11-20, i386, story scenes 5000
+retraces with warp.us.txt, battle stages 8000 with battle.us.txt; the
+warp at frame 999, the scene's first frame at 1034; the port to the
+emulator's last frame; the port as committed, without the range[1]
+experiment below, except where the table says so):
+
+| result | scenes |
+|---|---|
+| the same in every frame (about 4800 story, 6200 battle) | 40, 45, 46:17, 49, 62, 72, 80, 86, 88-98 (92:17, 97:17), 104-116, 120, 126, 136-141, 144-153 |
+| the same with range[1] = 11 (below) | 44:17, 56, 60, 61, 73:17, 74:17, 76:17, 81:17, 83:17, 84:17, 124:17 |
+| an enemy turns otherwise, the N64's generator one draw ahead (with range[1] = 11) | 41:17 (frame 1501), 42:17 (1630), 43:17 (3244, after its exit to 41:30), 47:17 (1559), 48:17 (1442), 57 (2178), 58 (1897), 59 (1800), 75:17 (2526), 77:17 (1517), 78:17 (1472), 79:17 (1472), 82:17 (2362), 85:17 (1472), 121:17 (1870), 123 (2225) |
+
+Every boss and every battle stage is the same. Two things the sweep
+found:
+
+- **A stack byte** (found, not applied): 9CAB0.c's func_80283794 (an
+  enemy's way towards its target) reads `range[1]`, which it sets only
+  for the types 40-45; another type reads the stack's leftover, 0 on the
+  port (`-ftrivial-auto-var-init=zero`), so the enemy stops short on one
+  side and walks on on the other. Measured with a ROM patch (the store
+  into the delay slot at 0x802839EC made `sb a1, 0x8A(s1)`, the struct's
+  padding), it is 11 in every call in scenes 56, 57, 60 and 61 at frames
+  1100, 2500 and 4000. Setting it to 11 (`PORT_ONLY(range[1] = 11;)`)
+  makes Blue Resort's 56, 60 and 61 and the eight rooms in the table the
+  same, but scene 45, the same with 0, then differs at frame 1863, and
+  test.py's warp-stage (scene 80) changes: the leftover isn't always
+  11. What the stack holds there (the caller's frame: which function
+  ran before at that depth) is to be read from the N64 per call before
+  the port can reproduce it.
+- **A warp artefact** (not the port's): a room after a stage's first,
+  warped to with the world select's sub-mode 16, reads its overlay's
+  .bss before setting it (ovl_0C_05's `D_ovl0C_05_80045AA0`, the
+  entrance's facing, is one): the N64 doesn't clear .bss past the
+  inflated image, so it holds the world select's bytes, and the port's
+  overlay loader zeroes it. The player then faces another way from the
+  scene's first frame. Sub-mode 17 (a room entered from the one before)
+  sets it, hence the `:17`s above; the game never enters those rooms
+  with 16.
+
+The sixteen that differ (with range[1] = 11: the N64's generator one draw ahead, an enemy's
+direction and position the first difference, the map, the pools and
+the players the same until then) are not explained yet. In 79:17 the
+port's frame 1472 makes no draw where the N64's makes one; in 41:17
+the port's last draw before it is 9CAB0.c's func_80283FCC (an enemy's
+collision through AA580.c's func_802909FC). Ruled out: the overlay's
+stale .bss (79:17's ovl_0E_08 .bss zeroed on the emulator at the
+warp plays the same), the asm data (rdram_cmp.py finds 41:17's the
+same at frame 1500), x87 precision (the i386 build uses SSE), and
+func_802836F0's and func_80290708's unset `mode`/`dy` (never reached
+with an unset value: the types seen are 0-5, the modes 0 and 2).
+Left to compare: the C globals (not at their N64 offsets on the port,
+so a dump by name would be needed) and the other uninitialised arrays
+(`clang -Wsometimes-uninitialized` doesn't see arrays; range[1] was one).
+
+test.py records two hashes of each run's digest (`PORT_DIGEST`, always
+on): `digest` over the fields every host writes and `digest_pools` over
+the whole file (32-bit hosts only); `run` and `same` compare them when
+both sides have them.
+
 ### The matrix
 
 ```
@@ -1114,11 +1234,15 @@ digest").
   TMEM isn't carried from the previous task into the reference (each task
   loads its own so far); the VI's filters aren't compared.
 - **The gameplay digest** ("The gameplay digest"): checked against
-  mupen64plus in us's battle and story, eu's and jp's battle, on i386.
-  Left: the stages PORT_WARP reaches (a digest from a save, a warp in
-  the ROM), more fields (the bombs, the enemies, the stage's objects:
-  their pools hold pointers, so by field), a digest hash in
-  test_refs.json as DozerEncore has it, and the 64-bit and cross hosts.
+  mupen64plus in us's battle and story, eu's and jp's battle, and us's
+  77 PORT_WARP scenes, with the object pools, on i386. Left: 9CAB0.c's
+  `range[1]`, which the N64 reads from the stack unset (11 in Blue
+  Resort, not everywhere: "The stages: the warp on the emulator"); the
+  sixteen story rooms where an enemy turns otherwise (the N64's
+  generator one draw ahead, cause unknown); eu's and jp's stages; the
+  pools on 64-bit hosts (by field, with the host's struct offsets); the
+  digest hashes in test_refs.json (test.py computes them, none recorded
+  yet: `--save`); 9CAB0.c's two unions.
 - Phase 7 and 8 (docs/ROADMAP.md, docs/NETPLAY.md): the input and the RNG
   seed through the network.
 

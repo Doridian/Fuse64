@@ -9,7 +9,11 @@ the same run every time and on every host) from a blank save, with a
 scripted controller (tools/inputs, the shift check's scripts), and hashes
 what it gives: the framebuffer the VI shows at every retrace (one digest
 of them all, and checkpoints every 300 retraces, so that a difference
-says when it began), the sound (--wav) and the EEPROM file.  `run`
+says when it began), the sound (--wav), the EEPROM file and the gameplay
+digest (PORT_DIGEST, port/host/digest.c: "digest" hashes the fields every
+host writes, "digest_pools" all of them, with the object pools, which
+only hosts where pointers are 4 bytes write; each is compared where both
+runs have it).  `run`
 compares them with port/tools/test_refs.json (--save writes them), `same`
 compares two builds' runs with each other (a big-endian build under qemu
 against the native one, say).
@@ -87,6 +91,7 @@ def run(build, name, qemu=None, timeout=7200):
             own = os.path.join(ROOT, "port", script)
             cmd += ["--input", own if os.path.exists(own) else os.path.join(ROOT, script)]
         cmd.append(os.path.join(ROOT, "baserom.%s.z64" % ver))
+        env["PORT_DIGEST"] = os.path.join(tmp, "digest.txt")
         r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, env=env)
         if r.returncode != 0:
             sys.exit("%s: %s exited with %d:\n%s" % (name, exe, r.returncode, r.stderr[-2000:]))
@@ -98,6 +103,7 @@ def run(build, name, qemu=None, timeout=7200):
             "checkpoints": {str(i + 1): hashes[i] for i in range(299, frames, 300)},
             "wav": hashlib.sha1(open(wav, "rb").read()).hexdigest() if os.path.exists(wav) else None,
         }
+        out.update(digest_hashes(os.path.join(tmp, "digest.txt")))
         eep = os.path.join(tmp, "fuse64.%s.eep" % ver)
         out["eeprom"] = hashlib.sha1(open(eep, "rb").read()).hexdigest() if os.path.exists(eep) else None
         return ver, out
@@ -105,10 +111,38 @@ def run(build, name, qemu=None, timeout=7200):
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+# the digest's fields every host writes (digest.c: the pools only where
+# pointers are 4 bytes)
+BASE_KEYS = re.compile(r"(fl|rng|st|bt|e\d|p\d)=")
+
+
+def digest_hashes(path):
+    """{"digest": the hash of the fields every host writes, "digest_pools":
+    of all of them}; nothing from a build that wrote no digest"""
+    if not os.path.exists(path):
+        return {}
+    base, full = hashlib.sha1(), hashlib.sha1()
+    pools = False
+    with open(path, "rb") as f:
+        for line in f:
+            full.update(line)
+            toks = line.decode().split()
+            keep = [t for t in toks if "=" not in t or BASE_KEYS.match(t)]
+            pools |= len(keep) != len(toks)
+            base.update((" ".join(keep) + "\n").encode())
+    out = {"digest": base.hexdigest()}
+    if pools:
+        out["digest_pools"] = full.hexdigest()
+    return out
+
+
 def diff(name, a, b):
     bad = []
     for k in ("frames", "wav", "eeprom"):
         if a.get(k) != b.get(k):
+            bad.append(k)
+    for k in ("digest", "digest_pools"):
+        if k in a and k in b and a[k] != b[k]:
             bad.append(k)
     if "frames" in bad:
         for c in sorted(a["checkpoints"], key=int):

@@ -28,6 +28,8 @@ port/tools/digest_cmp.py compares the result with a port's digest.
 import argparse
 import ctypes
 import os
+import re
+import struct
 import subprocess
 import sys
 from pathlib import Path
@@ -37,11 +39,35 @@ sys.path.insert(0, str(ROOT / "tools"))
 import emu_ram  # noqa: E402
 import shift_check  # noqa: E402
 
-NAMES = ["D_800AEDF0", "D_8029F600", "D_802AC5D0", "D_802AC5D4", "D_802AC5D8", "D_802AC610",
-         "D_802AC660", "D_802ACFE0", "D_802ACFE8"]
+NAMES = ["D_800AEDF0", "D_8029F600", "D_802AC5D0", "D_802AC5D4", "D_802AC5D8", "D_802AC5DC", "D_802AC5E0",
+         "D_802AC610", "D_802AC660", "D_802ACFE0", "D_802ACFE8"]
 # D_800AEDF0's entries (0xC8 bytes): every word but the pointers
 ENTRY_WORDS = [o for o in range(0, 0xC8, 4) if o not in (0x28, 0x2C, 0x30, 0x40, 0x4C, 0xB0, 0xB4)]
 MODEL_WORDS = [0x10, 0x14, 0x18, 0x20, 0x28, 0x2C, 0x30]
+
+
+def pools():
+    """digest.c's POOLS: [(key, symbol, entries, stride, [(offset, kind)])]."""
+    src = (ROOT / "port/host/digest.c").read_text()
+    out = []
+    for key, sym, n, stride, spec in re.findall(
+            r'POOL\(\s*"(\w+)",\s*(D_[0-9A-F]+),\s*(\w+),\s*(\w+),\s*((?:"[^"]*"\s*)+)\)', src):
+        spec = "".join(re.findall(r'"([^"]*)"', spec))
+        fields = []
+        for tok in spec.split():
+            rng, kind = tok.split(":")
+            a, _, b = rng.partition("-")
+            a = int(a, 16)
+            b = int(b, 16) if b else a
+            step = {"w": 4, "p": 4, "h": 2, "b": 1}[kind]
+            fields += [(o, kind) for o in range(a, b + 1, step)]
+        out.append((key, sym, int(n, 0), int(stride, 0), fields))
+    if not out:
+        sys.exit("port/host/digest.c: no POOL entries found")
+    return out
+
+
+POOLS = pools()
 
 
 def addresses(elf):
@@ -49,9 +75,9 @@ def addresses(elf):
     nm = subprocess.run(["mips-linux-gnu-nm", str(elf)], capture_output=True, text=True, check=True).stdout
     for line in nm.splitlines():
         p = line.split()
-        if len(p) == 3 and p[2] in NAMES:
+        if len(p) == 3 and (p[2] in NAMES or p[2] in {q[1] for q in POOLS}):
             out[p[2]] = int(p[0], 16)
-    missing = [n for n in NAMES if n not in out]
+    missing = [n for n in NAMES + [p[1] for p in POOLS] if n not in out]
     if missing:
         sys.exit(f"{elf}: no {', '.join(missing)}")
     return out
@@ -60,13 +86,80 @@ def addresses(elf):
 class Digest:
     """PORT_DIGEST's lines (port/host/digest.c's format and fields)."""
 
-    def __init__(self, path, addr, ram):
+    def __init__(self, path, addr, ram, warp=None):
         self.f = open(path, "w")
         self.a = addr
         self.ram = ram          # ram() -> the RDRAM words (host order, as the core keeps them)
         self.polls = 0
         self.last = {}
         self.scene = None
+        self.warp = warp        # (scene, sub or None): PORT_WARP's
+        self.warped = False
+        self.dumps = {}         # --dump's {frame: file}
+        self.raw = {}           # a pool's bytes at the last read, and its values
+        # the pools' ranges, for the pointers (digest.c's pool_ptr)
+        self.ranges = [(addr[sym], n, stride, key) for key, sym, n, stride, _ in POOLS]
+        self.ranges.append((addr["D_800AEDF0"], 5, 0xC8, "e"))
+
+    def pointer(self, v):
+        if v == 0:
+            return "-"
+        for base, n, stride, key in self.ranges:
+            if base <= v < base + n * stride:
+                i, o = divmod(v - base, stride)
+                return f"{key}{i}+{o:x}" if o else f"{key}{i}"
+        if v < 0x10000 or v >= 0xFFFF0000:
+            return "%x" % v
+        return "*"
+
+    def pool(self, r, key, sym, n, stride, fields):
+        """[(key, value)] of a pool's entries, from RDRAM (r: host-order words)"""
+        base = self.a[sym]
+        w0 = (base & 0x7FFFFF) >> 2
+        words = r[w0:w0 + (n * stride + 3) // 4]
+        raw = struct.pack(">%dI" % len(words), *words)
+        old = self.raw.get(key)
+        if old and old[0] == raw:
+            return old[1]
+        out = []
+        for i in range(n):
+            e = i * stride
+            vals = []
+            for o, kind in fields:
+                if kind == "w":
+                    vals.append("%x" % struct.unpack_from(">I", raw, e + o)[0])
+                elif kind == "h":
+                    vals.append("%x" % struct.unpack_from(">H", raw, e + o)[0])
+                elif kind == "b":
+                    vals.append("%x" % raw[e + o])
+                else:
+                    vals.append(self.pointer(struct.unpack_from(">I", raw, e + o)[0]))
+            out.append((f"{key}{i}", ",".join(vals)))
+        self.raw[key] = (raw, out)
+        return out
+
+    def do_warp(self, r):
+        """PORT_WARP's change (port/host/warp.c) of a pending scene request:
+        the story's first request for a stage, every battle stage's"""
+        a = self.a
+        target, sub = self.warp
+
+        def at(name):
+            return (a[name] & 0x7FFFFF) >> 2
+
+        if not r[at("D_802AC5D0")] & 1:
+            return
+        scene = r[at("D_802AC5D4")]
+        if 0x90 <= target < 0x9A:
+            hit = 0x90 <= scene < 0x9A and scene != target
+        else:
+            hit = not self.warped and 0x28 <= scene < 0x9A
+        if hit:
+            self.warped = True
+            print(f"warp: scene {scene} -> {target} at frame {r[at('D_8029F600')]}", file=sys.stderr)
+            r[at("D_802AC5D4")] = r[at("D_802AC5DC")] = target
+            if sub is not None:
+                r[at("D_802AC5D8")] = r[at("D_802AC5E0")] = sub
 
     def put(self, line, key, val, full):
         if full or self.last.get(key) != val:
@@ -75,6 +168,8 @@ class Digest:
 
     def poll(self, vi, pad):
         r = self.ram()
+        if self.warp:
+            self.do_warp(r)
 
         def w(addr):
             return r[(addr & 0x7FFFFF) >> 2]
@@ -108,7 +203,14 @@ class Digest:
             model = w(obj + 0x40) if 0x80000000 <= obj < 0x80800000 else 0
             val = hexes(w(model + o) for o in MODEL_WORDS) if 0x80000000 <= model < 0x80800000 else "-"
             self.put(line, f"p{i}", val, full)
+        for p in POOLS:
+            for k, v in self.pool(r, *p):
+                self.put(line, k, v, full)
         self.f.write(" ".join(line) + "\n")
+        frame = w(a["D_8029F600"])
+        if frame in self.dumps:    # --dump: RDRAM as the N64 sees it, at each read of the frame
+            with open(self.dumps[frame], "wb") as f:
+                f.write(struct.pack(">%dI" % len(r), *r))
 
 
 def main():
@@ -122,6 +224,11 @@ def main():
     ap.add_argument("--seed", type=lambda x: int(x, 0), default=shift_check.SEED)
     ap.add_argument("--no-dp", action="store_true", help="no RDP interrupt (the shift check's way)")
     ap.add_argument("--m64p", default=os.environ.get("M64P_DIR"))
+    ap.add_argument("--eeprom", help="the EEPROM to start from (the port's 512-byte save, "
+                    "port/tools/inputs/story.<v>.eep)")
+    ap.add_argument("--warp", help="PORT_WARP's N or N:S: the scene request changed in RDRAM")
+    ap.add_argument("--dump", action="append", default=[],
+                    help="FRAME:FILE: RDRAM (big-endian) at the last read of game frame FRAME")
     a = ap.parse_args()
     v = a.version
     rom = Path(a.rom or ROOT / f"build/{v}/bm64.{v}.z64")
@@ -133,7 +240,15 @@ def main():
                             str(ROOT / f"tools/src/{so}.c")], check=True)
     off, _ = shift_check.seed_patch(elf, rom)
     patch = [(off, (0x24040000 | a.seed & 0xFFFF).to_bytes(4, "big"))]
-    emu = emu_ram.Session(rom, a.m64p, patch, None, True, input=True)
+    eep = None
+    if a.eeprom:
+        eep = Path(a.eeprom).read_bytes()
+        eep += b"\xff" * (0x800 - len(eep))     # the core's file is 2 KB, the 4 Kbit chip its first 512
+    warp = None
+    if a.warp:
+        n, _, sub = a.warp.partition(":")
+        warp = (int(n, 0), int(sub, 0) if sub else None)
+    emu = emu_ram.Session(rom, a.m64p, patch, None, True, eeprom=eep, input=True)
     emu.vic.vicount_dp(0 if a.no_dp else 1)
     keep = []
     if a.input:
@@ -149,7 +264,10 @@ def main():
     def ram():
         return words.from_address(emu.rdram_ptr())
 
-    d = Digest(a.out, addresses(elf), ram)
+    d = Digest(a.out, addresses(elf), ram, warp)
+    for x in a.dump:
+        frame, _, path = x.partition(":")
+        d.dumps[int(frame, 0)] = path
     cb = ctypes.CFUNCTYPE(None, ctypes.c_uint, ctypes.c_uint)(lambda keys, vi: d.poll(vi, keys))
     keep.append(cb)
     emu.inp.inputscript_on_poll(cb)

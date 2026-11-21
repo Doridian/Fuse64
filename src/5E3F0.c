@@ -1252,7 +1252,15 @@ void func_8024E088(s32 arg0) {
     f32 spC8;
     f32 spC4;
     f32 spC0;
+#ifdef TARGET_PC
+    /* spB4[0] is read unset where the stick is let go (func_80239880 sets
+       only [2]) and func_8024C334 keeps it: on the N64 the slot holds what
+       the call before left there (one task calls this for each player in
+       turn, and nothing between the calls reaches that deep) */
+    static f32 spB4[3];
+#else
     f32 spB4[3];
+#endif
     s32 spB0;
     s32 spAC;
     f32 ang;

@@ -133,6 +133,26 @@ s32 D_802B0394;
 s32 *D_802B0398;
 s32 *D_802B039C;
 
+#ifdef TARGET_PC
+/* The next scene of the credits' list.  The lists are set when the credits
+ * start (func_802968BC); a room's credits shot played outside them (75 with
+ * sub-mode 17, its handler's 20; 92 and 97 with 16) reaches its end with
+ * them NULL, and the N64 reads ZeroJump's page, mapped at 0
+ * (port_null_word): scene 0x01004825, its first instruction. */
+static s32 port_credits_next(s32 **list) {
+    uintptr_t p = (uintptr_t) *list;
+
+    *list = (s32 *) (p + sizeof(s32));
+    if (p < 0x1000) {
+        return port_null_word(p);
+    }
+    return *(s32 *) p;
+}
+#define CREDITS_NEXT(list) port_credits_next(&(list))
+#else
+#define CREDITS_NEXT(list) (*(list)++)
+#endif
+
 #if VERSION_JP
 u8 D_802A1050_jp[] = {
     0x1B, 0x1A, 0x24, 0x2E, 0x0F, 0x1B, 0x28, 0x26, 0x1B, 0x1E, 0x2B, 0x26,
@@ -1349,7 +1369,7 @@ void *D_802A2C50[] = { func_80296808, func_802967A4, func_8029698C, func_80295B8
 void func_8029698C(s32 arg0) {
     func_802968BC(arg0);
     func_8026C93C(0x14);
-    func_8023AE6C(*D_802B0398++, *D_802B039C++, 4);
+    func_8023AE6C(CREDITS_NEXT(D_802B0398), CREDITS_NEXT(D_802B039C), 4);
 }
 
 void func_802968BC(s32 arg0) {
@@ -1421,7 +1441,7 @@ void func_802964A0(void) {
     func_80281A40();
     D_802B0388 = 0;
     func_8023AA78(0);
-    func_8023AE6C(*D_802B0398++, *D_802B039C++, 0);
+    func_8023AE6C(CREDITS_NEXT(D_802B0398), CREDITS_NEXT(D_802B039C), 0);
     func_80239430();
 }
 

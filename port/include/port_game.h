@@ -22,8 +22,12 @@ void *port_addr(__UINTPTR_TYPE__ a);
 /* 40FB0's overlay loader: overlay (bank, entry), loaded; what its entry
    returns (port/src/overlay.c) */
 void *port_overlay_load(int bank, int entry);
+/* ... a scene past its table: the N64 goes into garbage there, the port stops */
+void port_scene_unset(int scene) __attribute__((noreturn));
 /* 54E40.c's scene request, changed by PORT_WARP (port/host/warp.c) */
 void port_warp(int *scene, int *sub, int *flags);
+/* the N64's address of a place in a fixed-address name (port/src/memory.c) */
+unsigned int port_n64_address(const void *p);
 /* the word the N64 reads at NULL + off: ZeroJump's page (port/host/runtime.c) */
 unsigned int port_null_word(unsigned int off);
 /* 13F0's segment loader: the entry of ROM segment seg (main_code's, 2) */

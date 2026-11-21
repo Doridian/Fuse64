@@ -43,6 +43,11 @@ void func_8022691C(s32 arg0) {
 
     if (D_802A5328 != arg0) {
         D_802A5328 = arg0;
+#ifdef TARGET_PC
+        if ((u32) arg0 >= sizeof(D_8019B0D0) / sizeof(D_8019B0D0[0])) {
+            port_scene_unset(arg0);
+        }
+#endif
         func_802267B0((D_8019B0D0[arg0].unk0 << 17) + (D_8019B0D0[arg0].unk1 << 11));
         file = func_80226604(0, 1);
         size = func_802266DC(file);

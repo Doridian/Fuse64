@@ -78,3 +78,13 @@ void *port_overlay_load(int bank, int entry) {
     }
     host_fatal("no overlay %02X_%02d", bank, entry);
 }
+
+/* 40FB0's loader asked for a scene past ROM 0x30800's table (its 0x800
+   entries): the credits' next scene read through NULL (AFBF0.c), 0x01004825.
+   The N64 reads its bank far past the table, past its RDRAM, and never
+   reads the controllers again (docs/PORT.md, "The stages: the warp on the
+   emulator"); the port stops there. */
+void port_scene_unset(int scene) {
+    host_fatal("scene %d (%#x) is past the scene table: the N64 never reads the controllers again", scene,
+               (unsigned)scene);
+}

@@ -14,7 +14,7 @@ files come from it).
 As of 2026-11-15:
 
 | host | builds | how far it runs |
-|---|---|---|---|
+|---|---|---|
 | Linux i386 (`-m32`) | yes | the legal screen, title, file select, the opening, the world select, the first stage played; battle mode against three CPU players: `test.py`'s four scenarios, in us, eu and jp (the references are this build's); us's seven scenarios and 77 stage runs under ASan and UBSan too |
 | Windows i386 (zig `x86-windows-gnu`, under wine) | yes | the four scenarios are Linux i386's, in us, eu and jp |
 | WebAssembly (emscripten), node | yes | the four scenarios are Linux i386's, in us, eu and jp |
@@ -175,10 +175,10 @@ from a blank save through scenarios and compares what it gives with
 sound (`--wav`) and the EEPROM file.
 
 | scenario | retraces | input |
-|---|---|---|---|
-| legal | 300 | none | 0 / 0 / 0 |
+|---|---|---|
+| legal | 300 | none |
 | menus | 3000 | tools/inputs/menus.txt |
-| battle | 6000 | tools/inputs/battle.<v>.txt | 2064 / 1264 / 255 |
+| battle | 6000 | tools/inputs/battle.<v>.txt |
 | story | 12000 | menus.txt (`--scenario story`: the first stage) |
 | warp-stage | 5000 | port/tools/inputs/warp.<v>.txt from story.<v>.eep, `PORT_WARP=80` (Red Mountain's second stage) |
 | warp-boss | 5000 | the same, `PORT_WARP=141` (Rainbow Palace's last boss) |
@@ -552,7 +552,7 @@ bombs), a battle stage from a blank save and battle.<v>.txt. The one
 The scenes, us's numbers (the same in eu and jp), by overlay:
 
 | scenes | overlays | what |
-|---|---|---|---|
+|---|---|---|
 | 40-49 | ovl_0C_01-10 | Green Garden: stage 1 (40-44), stage 2 (45-48), the first boss (49) |
 | 56-62 | ovl_0D_01-07 | Blue Resort: 56-59, 60-61, boss 62 |
 | 72-86 | ovl_0E_01-15 | Red Mountain: 72-79, 80-85, boss 86 |
@@ -1335,7 +1335,7 @@ What it took (commit "src: the game's C compiles on a host"; IDO's
 output is unchanged in every version):
 
 | class | sites | change |
-|---|---|---|---|
+|---|---|---|
 | int/pointer and incompatible pointer conversions (calls, assignments, returns; 16 `const char[]` strings) | 229 in 25 files | explicit casts |
 | static function declared non-static first | 20 (9CAB0) | `static` declarations |
 | implicit declarations | func_80239094 (4ED50); gmalloc's sbrk | a `void` declaration under `TARGET_PC` (IDO's code needs the implicit `int`); the unistd.h stub |
@@ -1380,7 +1380,7 @@ declaration without a prototype passes a float.
 What is still asm, and what replaces it in the port:
 
 | asm | what it is | in the port |
-|---|---|---|---|
+|---|---|---|
 | `entry` (0x80000400) | clears boot_code's bss, sets `$sp`, jumps to func_800019A0 | the host's `main`, which calls func_800019A0 |
 | `2630` func_80001A30 | `D_8001BFC0[id] = table` (IDO's code for it is 5 instructions, not these 6) | C under `TARGET_PC` in src/1050.c |
 | `zerojump` func_80042000 | the ZeroJump dispatcher at virtual 0 | "ZeroJump", below |

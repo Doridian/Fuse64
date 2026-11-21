@@ -87,7 +87,8 @@ parser renamed `port_alBnkfParse`), `port/include/libaudio_heap.h`,
 `port/include/audio_log.h`, `port/tools/gen_sintable.py` and
 `port/tools/cross-*.cmake`. Adapted (rewritten in part for this game):
 `port/src/ultra.c` (libultra on the host), `port/host/main.c`,
-`port/host/runtime.c`, `port/include/port.h`, and the WebAssembly page
+`port/host/runtime.c`, `port/host/audio.c` (the AI's queue),
+`port/include/port.h`, and the WebAssembly page
 `port/web/shell.html`. Each file's header says where it comes from.
 
 ## parallel-rdp

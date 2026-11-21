@@ -222,6 +222,9 @@ Acmd *alAudioFrame(Acmd *cmdList, s32 *cmdLen, s16 *outBuf, s32 outLen) {
         s->paramSamples &= ~15;
         client->samplesLeft += usec_to_samples_exact(s, client->handler(client));
     }
+    /* (2.0I's: what a call outside the handlers changes takes effect at the
+       next frame's start, to 16 samples) */
+    s->paramSamples &= ~15;
 
     while (outLen > 0) {
         s32 n = outLen < s->maxOutSamples ? outLen : s->maxOutSamples;
@@ -363,6 +366,11 @@ void alSynStartVoice(ALSynth *s, ALVoice *v, ALWaveTable *w) {
     al_voice_queue(v->pvoice, u);
 }
 
+/* Bomberman 64's alSynStartVoiceParams is Hudson's (docs/LIBULTRA.md): with
+   bit 0 of D_8001C4B0 set (the options' mono, func_80001A04) every voice
+   starts centred */
+extern u8 D_8001C4B0;
+
 void alSynStartVoiceParams(ALSynth *s, ALVoice *v, ALWaveTable *w, f32 pitch, s16 vol, ALPan pan,
                            u8 fxmix, ALMicroTime t) {
     Update *u;
@@ -370,7 +378,7 @@ void alSynStartVoiceParams(ALSynth *s, ALVoice *v, ALWaveTable *w, f32 pitch, s1
     if (v->pvoice == NULL || (u = voice_update(s, v, UPD_START_PARAMS)) == NULL)
         return;
     u->unity = v->unityPitch;
-    u->b.s.pan = pan;
+    u->b.s.pan = (D_8001C4B0 & 1) ? AL_PAN_CENTER : pan;
     u->b.s.volume = vol;
     u->b.s.fxmix = fxmix;
     u->a.f = pitch;

@@ -234,6 +234,7 @@ static void pool_entry(char *val, int k, int i) {
 /* the pad word this read gives (input.c), chosen by the frame with
    --replay */
 uint32_t host_input_poll(unsigned frame);
+void host_replay_wait(unsigned frame);
 
 unsigned int port_seed(unsigned int clock) {
     const char *e = getenv("PORT_SEED");
@@ -273,7 +274,10 @@ void port_digest_poll(void) {
     char val[VALLEN];
     int len, full, i, f = 0;
     unsigned frame = (unsigned)D_8029F600;
-    uint32_t pad = host_input_poll(frame);
+    uint32_t pad;
+
+    host_replay_wait(frame);
+    pad = host_input_poll(frame);
 
     if (!init) {
         const char *e = getenv("PORT_DIGEST");

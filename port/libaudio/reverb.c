@@ -60,7 +60,10 @@ void al_reverb_init(Reverb *r, ALSynConfig *c, ALHeap *hp) {
         s->ff = p[3];
         s->gain = p[4];
         if (p[5] != 0) {
-            s->mod_step = (f32)p[5] / 0xFFFFFF;
+            /* (2.0I's: the rate in thousandths of a cycle a second over
+               the output rate, the sweep's range 2; Blast Corps' library
+               took a fraction of 0xFFFFFF) */
+            s->mod_step = (f32)((((f32)p[5] / 1000) * 2.0) / c->outputRate);
             s->mod_depth = (f32)((f32)p[6] / CENTS_PER_LN2 * (s->out - s->in));
             s->mod_phase = 1.0f;
             s->drift = 0;

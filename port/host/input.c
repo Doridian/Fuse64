@@ -31,6 +31,7 @@ static int have_script;
 
 const char *host_replay_path;
 static uint32_t *replay_pads;           /* the digest's pads, in its order */
+static unsigned *replay_vis;            /* and the retrace of each read */
 static int *replay_first, *replay_count; /* by frame: where its reads start, how many */
 static unsigned replay_frames;
 static unsigned replay_frame = ~0u;     /* the last read's frame, and its reads so far */
@@ -54,9 +55,11 @@ static void replay_init(void) {
             if (n == cap) {
                 cap = cap ? cap * 2 : 4096;
                 replay_pads = realloc(replay_pads, (size_t)cap * sizeof *replay_pads);
+                replay_vis = realloc(replay_vis, (size_t)cap * sizeof *replay_vis);
                 frames = realloc(frames, (size_t)cap * sizeof *frames);
             }
             replay_pads[n] = (uint32_t)pad;
+            replay_vis[n] = vi;
             frames[n++] = fr;
             if (fr + 1 > replay_frames)
                 replay_frames = fr + 1;
@@ -75,6 +78,36 @@ static void replay_init(void) {
     }
     free(frames);
     have_script = 1;
+}
+
+/* PORT_REPLAY_LAG=1 (with --replay): the game's thread at a read of the
+   pads waits (spinning: port_spin_wait, the interrupts and the threads of
+   higher priority go on) until as many retraces have passed since the
+   first read as had in the digest at the same read, so that the port lags
+   as the digest's run did.  The audio thread then makes as much sound
+   between two frames as the N64's did (docs/PORT.md, "Audio"). */
+void port_spin_wait(void);
+
+void host_replay_wait(unsigned frame) {
+    static int on = -1;
+    static long offset;
+    static int have_offset;
+    if (on < 0) {
+        const char *e = getenv("PORT_REPLAY_LAG");
+        on = host_replay_path && e && *e && *e != '0';
+    }
+    if (!on || frame >= replay_frames || !replay_count[frame])
+        return;
+    int k = frame == replay_frame ? replay_k + 1 : 0;
+    if (k >= replay_count[frame])
+        k = replay_count[frame] - 1;
+    unsigned vi = replay_vis[replay_first[frame] + k];
+    if (!have_offset) {
+        offset = (long)vi - (long)host_vi_count;
+        have_offset = 1;
+    }
+    while ((long)host_vi_count < (long)vi - offset)
+        port_spin_wait();
 }
 
 /* the read of a frame (osContGetReadData, through port/src/digest.c): the

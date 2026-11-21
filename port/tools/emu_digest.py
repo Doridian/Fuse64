@@ -2,7 +2,7 @@
 """The gameplay digest from mupen64plus running the original ROM.
 
   emu_digest.py VERSION OUT [--input SCRIPT] [--frames N] [--rom ROM] [--elf ELF]
-                [--seed N] [--no-dp] [--m64p DIR]
+                [--seed N] [--no-dp] [--m64p DIR] [--wav WAV]
 
 Writes OUT in PORT_DIGEST's format (port/host/digest.c, docs/PORT.md "The
 gameplay digest"): at every read of controller 1, the scene, the game's
@@ -24,6 +24,9 @@ script's input is by retrace; the digest records which game frame got
 which pad, and the port's `--replay OUT` gives each frame the same.
 
 port/tools/digest_cmp.py compares the result with a port's digest.
+--wav writes the sound (tools/src/m64p_audiodump.c), which
+port/tools/wav_cmp.py compares with the port's `--wav` of the same
+replay (docs/PORT.md, "Audio").
 """
 import argparse
 import ctypes
@@ -229,11 +232,12 @@ def main():
     ap.add_argument("--warp", help="PORT_WARP's N or N:S: the scene request changed in RDRAM")
     ap.add_argument("--dump", action="append", default=[],
                     help="FRAME:FILE: RDRAM (big-endian) at the last read of game frame FRAME")
+    ap.add_argument("--wav", help="the sound the game gives the AI (and WAV.log: each buffer's retrace and samples)")
     a = ap.parse_args()
     v = a.version
     rom = Path(a.rom or ROOT / f"build/{v}/bm64.{v}.z64")
     elf = Path(a.elf or ROOT / f"build/{v}/bm64.{v}.elf")
-    for so in ("m64p_vicount", "m64p_inputscript"):
+    for so in ("m64p_vicount", "m64p_inputscript", "m64p_audiodump"):
         if not (emu_ram.TOOLS / f"{so}.so").exists():   # (make clean removes them)
             emu_ram.TOOLS.mkdir(parents=True, exist_ok=True)
             subprocess.run(["cc", "-O2", "-shared", "-fPIC", "-o", str(emu_ram.TOOLS / f"{so}.so"),
@@ -248,7 +252,7 @@ def main():
     if a.warp:
         n, _, sub = a.warp.partition(":")
         warp = (int(n, 0), int(sub, 0) if sub else None)
-    emu = emu_ram.Session(rom, a.m64p, patch, None, True, eeprom=eep, input=True)
+    emu = emu_ram.Session(rom, a.m64p, patch, None, True, eeprom=eep, input=True, wav=a.wav)
     emu.vic.vicount_dp(0 if a.no_dp else 1)
     keep = []
     if a.input:

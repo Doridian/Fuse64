@@ -52,6 +52,7 @@ M64CMD_RESET = 19
 M64CORE_SPEED_LIMITER = 5
 M64PLUGIN_RSP = 1
 M64PLUGIN_GFX = 2
+M64PLUGIN_AUDIO = 3
 M64PLUGIN_INPUT = 4
 TOOLS = Path(__file__).resolve().parent.parent / "build/tools"
 M64P_DBG_PTR_RDRAM = 1
@@ -145,15 +146,18 @@ class Session:
     contents to start from (a blank one is all 0xFF in this core).  With
     input=True the input plugin is attached (self.inp), to be set up before
     run().  on_romopen is called once the machine is set up, before the
-    game's first instruction."""
+    game's first instruction.  wav is a file for what the game gives the
+    AI (tools/src/m64p_audiodump.c, which also writes WAV.log: the retrace
+    and the samples of each buffer); without it audio is the core's dummy."""
 
     def __init__(self, rom, m64p=None, patches=(), settings_md5=None, quiet=True,
-                 config=None, eeprom=None, input=False, on_romopen=None):
+                 config=None, eeprom=None, input=False, on_romopen=None, wav=None):
         core_lib, rsp_lib, data_dir = find_m64p(m64p)
         self.core = core = ctypes.CDLL(core_lib)
         self.rsp = rsp = ctypes.CDLL(rsp_lib)
         self.vic = vic = ctypes.CDLL(str(TOOLS / "m64p_vicount.so"))
         self.inp = inp = ctypes.CDLL(str(TOOLS / "m64p_inputscript.so")) if input else None
+        self.aud = aud = ctypes.CDLL(str(TOOLS / "m64p_audiodump.so")) if wav else None
         core.DebugMemGetPointer.restype = ctypes.c_void_p
         core.DebugGetCPUDataPtr.restype = ctypes.c_void_p
 
@@ -214,6 +218,11 @@ class Session:
                 sys.exit("input PluginStartup failed")
             if core.CoreAttachPlugin(M64PLUGIN_INPUT, ctypes.c_void_p(inp._handle)):
                 sys.exit("attaching the input plugin failed")
+        if aud is not None:
+            if aud.audiodump_open(str(wav).encode(), ctypes.cast(vic.vicount_frames, ctypes.c_void_p)):
+                sys.exit(f"can't write {wav}")
+            if core.CoreAttachPlugin(M64PLUGIN_AUDIO, ctypes.c_void_p(aud._handle)):
+                sys.exit("attaching the audio dump failed")
         if core.CoreAttachPlugin(M64PLUGIN_RSP, ctypes.c_void_p(rsp._handle)):
             sys.exit("attaching the RSP plugin failed")
 
@@ -267,6 +276,8 @@ class Session:
         off = ctypes.c_int(0)
         self.core.CoreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_SPEED_LIMITER, ctypes.byref(off))
         self.core.CoreDoCommand(M64CMD_EXECUTE, 0, None)
+        if self.aud is not None:
+            self.aud.audiodump_close()
         self.core.CoreDoCommand(M64CMD_ROM_CLOSE, 0, None)
         self.core.CoreShutdown()
         self._tmp.cleanup()

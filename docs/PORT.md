@@ -194,6 +194,9 @@ every framebuffer digest of the seven scenarios in all three versions
 (the sound and the EEPROM stayed); they were recorded again on i386, and
 x86-64 gives the same; the microcode on the RSP interpreter (2026-11-20)
 changed them again (all but us's and eu's legal), recorded the same way.
+The audio's check ("Audio", 2026-11-21) changed every scenario's sound
+(the AI's frame sizes, the envelope, the sound player) and nothing else;
+the sound was recorded again, i386.
 jp's battle input is the port's own timing of battle.jp.txt
 (`port/tools/inputs/battle.jp.txt`, which test.py prefers to the shift
 check's): the port loads without the N64's waits, so
@@ -292,7 +295,9 @@ port/tools/digest_cmp.py emu.txt port.txt          # --all: every field's first 
   the two different pads at the same moment of the game. `--replay`
   reads a digest's PAD column, and each read of the port gets the pad of
   the digest's read at the same FRAME (the k-th read of a frame the k-th,
-  or the last; none where the digest has none).
+  or the last; none where the digest has none). With `PORT_REPLAY_LAG=1`
+  each read also waits for the digest's retrace (the port lags as the
+  emulator did: "Audio").
 - **The compare** (port/tools/digest_cmp.py) takes each run's state at the
   last read of each frame, lists both runs' scenes with the frame and the
   retrace each began at, then goes frame by frame over the frames both
@@ -1083,11 +1088,93 @@ blended rectangles, matched above.
 
 ### Audio
 
-libaudio is DozerEncore's port of ultralib's (port/libaudio), with the
-calls this game makes that Blast Corps doesn't (extra.c: the
+libaudio is DozerEncore's port of Blast Corps' library (port/libaudio),
+with the calls this game makes that Blast Corps doesn't (extra.c: the
 compressed-sequence player's channel calls, the synthesizer's) and the
 sound player (sndplayer.c). The RSP's audio microcode is DozerEncore's
 HLE (aspmain.c). The AI's buffers go to SDL or `--wav`.
+
+This game's libaudio is 2.0I's (docs/LIBULTRA.md), Blast Corps' older.
+Their C (src/libultra/audio against DozerEncore's
+blastcorps/src/libultra/audio) is the same, but for formatting, in the
+sequence players, the compact sequences, the loaders, the resampler, the
+buses, the events and the heap, which DozerEncore's oracle found the
+port's exact against. What differs, and the port now does as 2.0I:
+- **The envelope** is exponential (env.c's `_getRate`: the factor the
+  volume is multiplied by every 8 samples, (target / volume)^(8 / n),
+  16.16, by rww's table-and-squaring approximation; `_getVol` where a ramp
+  got to), and so is 2.0I's aspMain's envelope mixer (aspmain.c): over
+  each block of 8 samples the volume steps evenly to the next point of
+  the series, the first the volume times the rate twice, and stops at the
+  target. Blast Corps' were linear: the music was 0.7 to 1.3 dB too loud.
+- **The sound player** (sndplayer.c, which Blast Corps has none of) as
+  2.0I's: a sound's volume is the game's (at first its `sampleVolume`
+  out of 127, times 0x7FFF) times the envelope's attack or decay volume
+  out of 127, and the synthesizer squares it (the port's squared it
+  twice: the logos' effects were 13.5 dB too quiet); the voice starts
+  silent and ramps to it; the decay and release times are divided by the
+  pitch; the end drops the sound's pending events.
+- **Hudson's `alSynStartVoiceParams`**: every voice centred while bit 0
+  of `D_8001C4B0` is set (the options' mono); `paramSamples` aligned to
+  16 after the clients ran; the chorus rate's formula (unused: this
+  game's reverb has no chorus).
+
+- **The AI** (port/host/audio.c): `osAiSetFrequency(32000)` gives the
+  divider libultra would (1521: 32006 Hz; eu 1552: 31995 Hz), and the
+  two-deep DMA queue drains at that rate on the same clock as the
+  retraces and timers (DozerEncore's), so `osAiGetLength`, which 85A10.c's
+  audio thread sizes each frame by, reads what it would on the hardware:
+  528 or 544 samples a retrace, 533.4 on average (640 in eu, at 50 Hz).
+  It read 0 before, and every frame was the most, 640 (20% too much
+  sound: in real time SDL's queue cap dropped buffers).
+- **Checked** against mupen64plus (its rsp-hle runs the audio lists):
+  `port/tools/emu_digest.py V OUT --wav W` records what the game gives
+  the AI (tools/src/m64p_audiodump.c, an audio plugin; `W.log` has each
+  buffer's retrace and length), the port replays the digest
+  (`PORT_SEED=0x1997 --replay OUT --wav`) with `PORT_REPLAY_LAG=1`, and
+  `port/tools/wav_cmp.py W PORT.wav` compares: RMS a second, correlation
+  a half-second window at the best lag (followed through the run), the
+  windows' spectra. `PORT_REPLAY_LAG=1` makes the game's thread wait
+  (spinning) at each read of the pads until the retrace the digest's read
+  was at, so the port lags as mupen64plus's run did and its audio frames
+  fall on the same game frames; without it the game is the same (the
+  digest is) but the sound per frame isn't. Results (2026-11-21, i386):
+
+  | scenario | RMS a second, mean difference | window correlation | spectra |
+  |---|---|---|---|
+  | us menus (4000 retraces) | 0.06 dB | median 1.0000, min 0.9993 | 1.0000 |
+  | us story (16000) | 0.17 dB | median 0.9963 | median 1.0000 |
+  | us battle (8000) | 0.15 dB | median 0.76 | median 0.9997 |
+  | eu battle (8000) | 0.99 dB | median 0.73 | median 0.9990 |
+  | jp menus (4000) | 0.38 dB | median 1.0000 | 1.0000 |
+
+  The music is mupen64plus's to the rounding: at a fixed lag 76% of the
+  samples are within 1 of it and 30% the same (a handful of spots differ
+  more, up to 102). The sound effects are the same sounds, each the same
+  where it plays alone, but they start up to three retraces off from the
+  music, against mupen64plus (where in a lagging frame the game asks for
+  them: its work takes no time in the port), so windows with both
+  correlate 0.3 to 0.99. Before (HEAD 8cddbb5d): 640 samples a retrace,
+  the music 0.7 to 1.3 dB loud and correlating 0.99 at best, the logos'
+  effects 13.5 dB quiet.
+- **The rounding** that makes it mupen64plus's, found by output (which
+  operation rounds moved its silence's level, -10 with the reverb's
+  feedback, from -15 to +2): the envelope mixer's gains rounded, its
+  samples times the gains truncated, the mixer truncated, the low-pass's
+  input gain rounded and its output truncated, the resampler and ADPCM
+  truncated. That is rsp-hle's arithmetic, not necessarily the RSP's.
+- **The libaudio oracle** (DozerEncore's "The libaudio oracle"), not done:
+  the port with the original library (src/libultra/audio, built for
+  TARGET_PC in an i386 build, as Blast Corps' `PORT_LIBAUDIO_ORIGINAL`)
+  replaying the same digest, its command lists hashed per frame against
+  port/libaudio's, would check the rest exactly (the parts above found by
+  ear and source). It takes: the bank files' records in host order for a
+  library that reads them in place (DozerEncore's host/native.c),
+  `alBnkfBank` and the game's `SND_SOUND` over relocated banks, the
+  sequence file's and compact sequences' words, `osVirtualToPhysical`,
+  the 2.0I headers beside port/include/sdk's (the same layouts where
+  pointers are 4 bytes), and a CMake option. The HLE then gives both the
+  same samples, so `--wav` alone would compare them.
 
 ### Checks and debugging aids
 
@@ -1284,6 +1371,11 @@ digest").
   warp on the emulator"). Left: 75:17; eu's and jp's stages; the pools
   on 64-bit hosts (by field, with the host's struct offsets); 9CAB0.c's
   two unions.
+- **Audio** ("Audio"): checked against mupen64plus in us's menus, story
+  and battle, eu's battle and jp's menus. Left: the libaudio oracle (what
+  it takes is there); the sound effects' start within a lagging frame
+  (only in a lagged replay); rsp-hle's rounding, not the RSP's (no
+  reference for the microcode itself).
 - Phase 7 and 8 (docs/ROADMAP.md, docs/NETPLAY.md): the input and the RNG
   seed through the network.
 

@@ -5,9 +5,10 @@
  * with its volume ramp, pan and effect send; and the updates that change
  * it at their sample.
  *
- * The microcode's envelope moves the volume linearly towards a target, a
- * step (in 1/65536ths, times 8) per 8 samples; the CPU keeps track of where
- * the ramp got to, in floats, to start the next one from there.
+ * The microcode's envelope multiplies the volume by a factor (16.16) every
+ * 8 samples towards a target (2.0I's; Blast Corps' was a linear step);
+ * the CPU keeps track of where the ramp got to, in floats, to start the
+ * next one from there.
  */
 #include "audio_private.h"
 
@@ -349,10 +350,35 @@ static Acmd *resample(PVoice *pv, s16 out, s32 n, Acmd *cmd) {
 
 /* ---- the envelope and mixer --------------------------------------------------------- */
 
-/* the step towards tgt over count samples (8 times the per-sample step,
-   whole part and 16-bit fraction); with no time, straight there */
-static s16 ramp_step(f32 from, f32 tgt, s32 count, u16 *frac) {
-    f32 step;
+/* The ramp is exponential (2.0I's libaudio and its aspMain, which this
+   game has): the rate is the factor the volume is multiplied by every 8
+   samples, a 16.16 number (whole part and 16-bit fraction).
+   ramp_step gives the factor from `from` to `tgt` over count samples,
+   (tgt / from)^(8 / count), computed as the library does: 1 + eps, eps
+   the 2^30th root's distance from 1 (its log from the ratio's exponent
+   and a log2 of its mantissa from an 8-entry table, the bucket's middle),
+   raised to 2^30 / count by squaring, then to the 8th power.  With no
+   time it is the most or the least there is (straight there). */
+static f64 halve_to_mantissa(f64 x, s32 *ex) {
+    *ex = 0;
+    if (x == 0.0)
+        return x;
+    if (x < 0.0)
+        x = -x;
+    while (x >= 1.0) {
+        x *= 0.5;
+        ++*ex;
+    }
+    while (x < 0.5) {
+        x += x;
+        --*ex;
+    }
+    return x;
+}
+
+static s16 ramp_step(f64 from, f64 tgt, s32 count, u16 *frac) {
+    f64 eps, a, fs, m;
+    s32 ex, k, n;
     s16 whole;
 
     if (count == 0) {
@@ -361,21 +387,57 @@ static s16 ramp_step(f32 from, f32 tgt, s32 count, u16 *frac) {
             return 0x7FFF;
         }
         *frac = 0;
-        return (s16)0x8000;
+        return 0;
     }
-    step = (f32)(((tgt - from) / (f32)count) * 8.0);
-    if (step < 0.0f)
-        step = step - 1.0f;
-    whole = (s16)(s32)step;
-    *frac = (s16)(s32)(0xFFFF * (step - (f32)whole));
+    if (tgt < 1.0)
+        tgt = 1.0;
+    if (from <= 0)
+        from = 1;
+    n = (s32)((1.0 / count) * (f64)(1 << 30));
+    m = halve_to_mantissa(tgt / from, &ex);
+    k = (s32)(m * 16.0);                    /* 8..15: the mantissa's bucket */
+    /* log2 of the bucket's middle, (2k + 1) / 32, to six places as the
+       library's table has it */
+    {
+        static const f64 log2_mid[8] = { -0.912537, -0.752072, -0.607683, -0.476438,
+                                         -0.356144, -0.245112, -0.142019, -0.045804 };
+        eps = (log2_mid[k - 8] + ex) * 0.69314718055994530942;
+    }
+    eps /= (f64)(1 << 30);
+    fs = 1.0 + eps;
+    a = 1.0;
+    while (n) {
+        if (n & 1)
+            a = a * fs;
+        fs *= fs;
+        n >>= 1;
+    }
+    a *= (a *= (a *= a));
+    /* (the conversions as the N64's: to a 32-bit integer, saturating, then
+       its low 16 bits) */
+    whole = (s16)(a >= 2147483648.0 ? 0x7FFFFFFF : (s32)a);
+    *frac = (u16)(s32)(0xFFFF * (a - (f32)whole));
     return whole;
 }
 
-/* where a ramp from vol got to after samples */
+/* where a ramp from vol got to after samples (whole blocks of 8) */
 static f32 ramp_at(f32 vol, s32 samples, s16 whole, u16 frac) {
-    f32 step = (f32)(((f32)(whole << 16) + (f32)frac) / 65536.0);
+    f32 r, a = 1.0f;
+    s32 i;
 
-    return (f32)(vol + step * samples * 0.125);
+    samples >>= 3;
+    if (samples == 0)
+        return vol;
+    r = ((f32)(whole << 16) + (f32)frac) / 65536;
+    for (i = 0; i < 32; i++) {
+        if (samples & 1)
+            a *= r;
+        samples >>= 1;
+        if (samples == 0)
+            break;
+        r *= r;
+    }
+    return vol * a;
 }
 
 static s16 side(PVoice *pv, s32 right) {

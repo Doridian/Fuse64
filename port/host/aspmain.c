@@ -5,16 +5,18 @@
  * Bomberman 64 the resampler's table is at 0xC0 of the microcode's data,
  * D_802A5040, not Blast Corps' 0xD0: a later aspMain.)
  *
- * This game's libaudio is older than ultralib's and its microcode is the
- * matching old aspMain: sixteen commands (PR/abi.h), a linear envelope
- * (env.c's _getRate is a straight line, not the later exponential), a
- * 2-pole ADPCM decoder, a 4-tap resampler, a one-pole low-pass for the
- * reverb.  Every command below is written from what libaudio asks of it
- * (the buffer arithmetic in load.c, resample.c, env.c, reverb.c, save.c)
- * and from the SDK's description of the formats, not from another HLE.  The
- * resampler's filter table isn't copied either: it is read from the
- * microcode's own data segment (the task's ucode_data, offset 0xD0), which
- * the game has in RDRAM.
+ * Blast Corps' libaudio is older than ultralib's, with a linear envelope;
+ * Bomberman 64's is 2.0I's (docs/LIBULTRA.md), and so is its aspMain:
+ * sixteen commands (PR/abi.h), an exponential envelope (env.c's _getRate
+ * gives the factor for every 8 samples), a 2-pole ADPCM decoder, a 4-tap
+ * resampler, a one-pole low-pass for the reverb.  Every command below is
+ * written from what libaudio asks of it (the buffer arithmetic in load.c,
+ * resample.c, env.c, reverb.c, save.c) and from the SDK's description of
+ * the formats, not from another HLE; the envelope's steps within its
+ * blocks and the rounding are what makes the output mupen64plus's
+ * (docs/PORT.md, "Audio").  The resampler's filter table isn't copied
+ * either: it is read from the microcode's own data segment (the task's
+ * ucode_data, offset 0xC0), which the game has in RDRAM.
  *
  * DMEM is 4 KB of big-endian bytes; the addresses in the commands are
  * relative to the buffer area, which starts at 0x5C0 (below it is the
@@ -223,115 +225,81 @@ static void resample(int flags, uint32_t pitch, uintptr_t state) {
     wram16(s, 4, (int16_t)frac);
 }
 
-/* ---- the envelope mixer: linear ramps, dry and wet sends ------------------- */
+/* ---- the envelope mixer: exponential ramps, dry and wet sends -------------- */
 
-/* the envelope mixer's samples [0, n) where nothing wraps: the volumes
-   ramped, each sample into the nout outputs (nout a constant where it is
-   called, so the loop over them unrolls) */
-static inline __attribute__((always_inline)) void env_walk(int nout, int n, uint32_t in, const uint32_t *dst,
-                                                           int64_t *v, const int64_t *tgt, const int32_t *r,
-                                                           int16_t d, int16_t w) {
-    uint8_t *pin = dmem + (in & 0xFFF), *pd[4];
-    int64_t v0 = v[0], v1 = v[1];
+/* The volumes are 16.16.  2.0I's libaudio gives each side a target and a
+   rate, the factor the volume is multiplied by every 8 samples (env.c's
+   _getRate: (target / volume)^(8 / samples), 16.16).  Over each block of
+   8 samples the volume goes in equal steps to the next point of that
+   geometric series (the first block's the volume times the rate twice),
+   and stops at the target: where a step lands on or past it, or a step
+   is 0.  The gains are the volume times the dry and wet amounts, rounded;
+   the samples times the gains are truncated (what mupen64plus's output
+   matches, docs/PORT.md "Audio"). */
 
-    for (int k = 0; k < nout; k++)
-        pd[k] = dmem + (dst[k] & 0xFFF);
-    for (int i = 0; i < n; i++) {
-        int32_t g[4], x, c0 = (int32_t)(v0 >> 19), c1 = (int32_t)(v1 >> 19);
-
-        /* both volumes at rest (no ramp, or at its target, where every
-           step lands back on it): the gains are the same for the rest */
-        if ((r[0] == 0 || v0 == tgt[0]) && (r[1] == 0 || v1 == tgt[1])) {
-            g[0] = (c0 * d) >> 15;
-            g[2] = (c0 * w) >> 15;
-            g[1] = (c1 * d) >> 15;
-            g[3] = (c1 * w) >> 15;
-            for (; i < n; i++) {
-                x = be16_ld(pin + 2 * i);
-                for (int k = 0; k < nout; k++)
-                    be16_st(pd[k] + 2 * i, clamp16(be16_ld(pd[k] + 2 * i) + ((x * g[k] + 0x4000) >> 15)));
-            }
-            break;
-        }
-
-        g[0] = (c0 * d) >> 15;
-        g[2] = (c0 * w) >> 15;
-        g[1] = (c1 * d) >> 15;
-        g[3] = (c1 * w) >> 15;
-        v0 += r[0];
-        if ((r[0] > 0 && v0 > tgt[0]) || (r[0] < 0 && v0 < tgt[0]))
-            v0 = tgt[0];
-        v1 += r[1];
-        if ((r[1] > 0 && v1 > tgt[1]) || (r[1] < 0 && v1 < tgt[1]))
-            v1 = tgt[1];
-        x = be16_ld(pin + 2 * i);
-        for (int k = 0; k < nout; k++)
-            be16_st(pd[k] + 2 * i, clamp16(be16_ld(pd[k] + 2 * i) + ((x * g[k] + 0x4000) >> 15)));
-    }
-    v[0] = v0, v[1] = v1;
-}
-
-/* The volumes are 16.16 plus three bits: the rate is the step per eight
-   samples (env.c: _getVol adds rate * samples / 8). */
 static void envmixer(int flags, uintptr_t state) {
     uint8_t *s = ram(state);
-    int64_t v[2], tgt[2];
-    int32_t r[2];
+    int32_t v[2], tgt[2], r[2], seq[2], step[2];
     int16_t d, w;
     if (flags & F_INIT) {
         for (int c = 0; c < 2; c++) {
-            v[c] = (int64_t)vol[c] * (1 << 19); /* (a multiply: vol can be negative) */
-            tgt[c] = (int64_t)target[c] * (1 << 19);
+            v[c] = vol[c] * 65536;
+            tgt[c] = target[c] * 65536;
             r[c] = rate[c];
+            seq[c] = (int32_t)((int64_t)vol[c] * r[c]);
         }
         d = dry;
         w = wet;
     } else {
         for (int c = 0; c < 2; c++) {
-            v[c] = (int64_t)ram32(s, c) * 8 + (s[28 + c] & 7);
-            tgt[c] = (int64_t)ram16(s, 4 + c) * (1 << 19);
+            v[c] = ram32(s, c);
+            tgt[c] = ram32(s, 2 + c);
             r[c] = ram32(s, 4 + c);
+            seq[c] = ram32(s, 6 + c);
         }
-        d = ram16(s, 12);
-        w = ram16(s, 13);
+        d = ram16(s, 16);
+        w = ram16(s, 17);
     }
+    for (int c = 0; c < 2; c++)
+        step[c] = tgt[c] - v[c];        /* (0: at the target, and it stays) */
     uint32_t in = DMEM_BASE + in_;
     uint32_t dst[4] = { DMEM_BASE + out_, DMEM_BASE + dry_right, DMEM_BASE + wet_left, DMEM_BASE + wet_right };
     int nout = (flags & F_AUX) ? 4 : 2;
-    int n = count_ / 2, ok = flat(in, 2 * n), i = 0;
-    for (int k = 0; k < nout; k++)
-        ok &= flat(dst[k], 2 * n);
-    if (ok) {
-        if (nout == 4)
-            env_walk(4, n, in, dst, v, tgt, r, d, w);
-        else
-            env_walk(2, n, in, dst, v, tgt, r, d, w);
-        i = n;
-    }
-    for (; i < n; i++) {
-        int32_t g[4];
-        for (int c = 0; c < 2; c++) {
-            int32_t cv = (int32_t)(v[c] >> 19);
-            g[c] = (cv * d) >> 15;
-            g[2 + c] = (cv * w) >> 15;
-            v[c] += r[c];
-            if ((r[c] > 0 && v[c] > tgt[c]) || (r[c] < 0 && v[c] < tgt[c]))
-                v[c] = tgt[c];
+    int n = count_ / 2;
+    for (int b = 0; b < n; b += 8) {
+        for (int c = 0; c < 2; c++)
+            if (step[c] != 0) {
+                seq[c] = (int32_t)(((int64_t)seq[c] * r[c]) >> 16);
+                step[c] = (seq[c] - v[c]) >> 3;
+            }
+        for (int i = b; i < b + 8 && i < n; i++) {
+            int32_t g[4];
+            for (int c = 0; c < 2; c++) {
+                if (step[c] != 0) {
+                    v[c] += step[c];
+                    if (step[c] > 0 ? v[c] >= tgt[c] : v[c] <= tgt[c]) {
+                        v[c] = tgt[c];
+                        step[c] = 0;
+                    }
+                }
+                int32_t cv = v[c] >> 16;
+                g[c] = clamp16((cv * d + 0x4000) >> 15);
+                g[2 + c] = clamp16((cv * w + 0x4000) >> 15);
+            }
+            int32_t x = ld(in + 2 * i);
+            for (int k = 0; k < nout; k++)
+                st(dst[k] + 2 * i, clamp16(ld(dst[k] + 2 * i) + ((x * g[k]) >> 15)));
         }
-        int32_t x = ld(in + 2 * i);
-        for (int k = 0; k < nout; k++)
-            st(dst[k] + 2 * i, clamp16(ld(dst[k] + 2 * i) + ((x * g[k] + 0x4000) >> 15)));
     }
-    /* the state: volumes (16.16, and the three extra bits at 28), targets,
-       rates, the dry and wet amounts; 30 of ENVMIX_STATE's 80 bytes */
+    /* the state (the port's own layout: only this reads it) */
     for (int c = 0; c < 2; c++) {
-        wram32(s, c, (int32_t)(v[c] >> 3));
-        s[28 + c] = (uint8_t)(v[c] & 7);
-        wram16(s, 4 + c, (int16_t)(tgt[c] >> 19));
+        wram32(s, c, v[c]);
+        wram32(s, 2 + c, tgt[c]);
         wram32(s, 4 + c, r[c]);
+        wram32(s, 6 + c, seq[c]);
     }
-    wram16(s, 12, d);
-    wram16(s, 13, w);
+    wram16(s, 16, d);
+    wram16(s, 17, w);
 }
 
 /* ---- the reverb's low-pass: the table is the impulse response ------------- */
@@ -352,7 +320,7 @@ static void polef(int flags, int16_t gain, uintptr_t state) {
         int32_t gx[8];
         int16_t y[8];
         for (int i = 0; i < 8; i++)
-            gx[i] = (ld(in + 2 * (b + i)) * gain) >> 14;
+            gx[i] = (ld(in + 2 * (b + i)) * gain + 0x2000) >> 14;  /* (rounded) */
         for (int i = 0; i < 8; i++) {
             int32_t acc = (int32_t)((uint32_t)gx[i] << 14) + table[i] * y2 + table[8 + i] * y1;
             for (int j = 0; j < i; j++)
@@ -472,10 +440,10 @@ static void audio_task(const HostGfx *cmd, uint32_t data_size, const uint8_t *uc
             if (flat(s, 2 * n) && flat(d, 2 * n)) {
                 uint8_t *ps = dmem + (s & 0xFFF), *pd = dmem + (d & 0xFFF);
                 for (; i < n; i++)
-                    be16_st(pd + 2 * i, clamp16(be16_ld(pd + 2 * i) + ((be16_ld(ps + 2 * i) * gain + 0x4000) >> 15)));
+                    be16_st(pd + 2 * i, clamp16(be16_ld(pd + 2 * i) + ((be16_ld(ps + 2 * i) * gain) >> 15)));
             }
             for (; i < n; i++)
-                st(d + 2 * i, clamp16(ld(d + 2 * i) + ((ld(s + 2 * i) * gain + 0x4000) >> 15)));
+                st(d + 2 * i, clamp16(ld(d + 2 * i) + ((ld(s + 2 * i) * gain) >> 15)));
             break;
         }
         case A_INTERLEAVE: {

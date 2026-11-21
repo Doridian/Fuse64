@@ -566,7 +566,7 @@ through NULL), 46 with 16 has no player yet (entry -1); `46:17`,
 `92:17` and `97:17` play them. The ending (155) needs the last boss's
 bank (warped from the world select it opens a file of the wrong one, NULL).
 
-The runs (scratch, `stages.py`): every scene of the table but 20-38 and
+The runs (`port/tools/stages.py run BUILD OUT`): every scene of the table but 20-38 and
 155 for 5000 retraces (6000 for a battle stage), on Linux i386 and x86-64,
 x86-64 with ASan and UBSan (with the arena and with the host's malloc),
 the hashes of every retrace compared between i386 and x86-64.
@@ -613,17 +613,109 @@ What the runs found, each fixed under `TARGET_PC` (the ROM is the same):
   ("Where pointers are 8 bytes"), and port_null_word for reads through
   NULL ("Reads through NULL").
 
+What the monkey's runs found (below; us, 2026-11-20), each fixed under
+`TARGET_PC`:
+
+- leaving an attract demo early with a button: the exit of each demo's
+  stage (ovl_0C_02, ovl_0D_01, ovl_0E_09, ovl_0F_01) sets bit 0 of the
+  demo picture's `unkC` (B11F0.c's `D_802B03C0[i]`) before the picture
+  exists, through NULL ("Reads through NULL"); the port crashed;
+- 5E3F0.c's func_8024E088 hands func_802712C4 entity -1 when
+  func_80274F64 has none: on the N64 its flags are the halfword at
+  0x8008F414, between `D_8008F410` and `D_8008F418`, which nothing writes
+  (the work area is cleared at boot), so bit 4 is clear and nothing
+  happens; where pointers are 8 bytes, and in the scattered layout,
+  other bytes were tested and written (UBSan's pointer overflow, six
+  scatter reports). The port skips -1;
+- 9CAB0.c's func_80283FCC reads `*(UnkStructA **) obj->unk20`, which
+  with IDO's `u8 unk20[8]` is the field's word (the asm: `lw v0,
+  0x20(t9)`), but with the port's `intptr_t unk20` a read through it;
+  battle stage 153 (monkey seed 1) crashed at retrace 3882 with unk20
+  NULL. `PORT_HOST` gives the field's value.
+
 The known warp artefacts (46, 92 and 97 with sub-mode 16, the ending) are
 described above. test.py's `warp-stage` (80), `warp-boss` (141) and
 `warp-battle` (151) run three of them, not by default.
 
-Clang's source coverage (`-fprofile-instr-generate -fcoverage-mapping`,
-us, x86-64): the four scenarios run 16% of the functions and 22% of the
-lines (all the game's own C, the libraries, the host and ZeroJump's
-generated stubs); with the 77 stage runs 50% and 52%. The main code goes
-from 59% to 69% of its functions, each world's overlays from almost none
-(only Green Garden's first stage, 6%) to between 27% and 58%; ovl_09 and
-ovl_16 (the ending) are never run.
+#### The monkey
+
+A fixed walk in a room's start runs about half of each stage overlay.
+`PORT_MONKEY=SEED[:FROM[:START]]` (port/host/input.c) plays controller 1
+at random from retrace FROM (before it the `--input` script, if any): the
+stick held in one of 16 directions (or half tilt, or let go) for 8 to 90
+retraces, A tapped about every 40 retraces and held (30-90) about every
+300, B about every 50, and one of Z, R, L and the C buttons about every
+120; START only with START 1 (the pause menu can leave the stage). The
+generator (xorshift64* from splitmix64 of the seed) is drawn four times
+every retrace, in integers only, so a seed gives the same run on every
+host (i386 and x86-64: the same hashes, every retrace of a 6000-retrace
+stage run). `stages.py run --monkey 1,2,3` runs every target once per
+seed with the monkey from the stage's start (retrace 1100, jp's 920; a
+battle stage's 1300) for 8000 retraces, and `--extra` adds two runs from
+the boot: the attract demos (no input, 30000 retraces) and the menus
+(the monkey from retrace 0 with START, 20000). The monkey's player dies
+in about 1300 retraces, so a story run plays its room three times (each
+life starts it again; about 3700 retraces in all) and then the game over
+and the title; some reach the next room (45 to 46). The menus' monkey
+leaves the attract demos early (that found the demo exits' NULL below). The later rooms are
+already reached directly, each scene number of the table being a
+target.
+
+With `--replay` too, the replay owns controller 1 for as long as it has
+frames: each read whose frame the digest reaches gets the digest's pad
+(or none), whatever the monkey says. Once a read's frame is past the
+digest's last, the replay has ended for good, and the monkey takes the
+pad from then on (from its FROM retrace, if that is later). The monkey's
+generator is drawn every retrace from FROM either way, so the same seed
+gives the same sequence whether a replay came first or not, only
+starting to be used later. Neither drives controllers 2 to 4.
+
+#### Coverage
+
+`port/tools/coverage.py` measures it with clang's source coverage:
+
+```
+cmake -S port -B build-port-cov -G Ninja -DCMAKE_C_COMPILER=clang -DPORT_SDL=OFF \
+      "-DCMAKE_C_FLAGS=-fprofile-instr-generate -fcoverage-mapping"
+port/tools/coverage.py run build-port-cov OUT --wide -j 20     # about 45 minutes
+port/tools/coverage.py report build-port-cov OUT/base.profdata OUT/wide.profdata [--by overlay|file] [--md]
+```
+
+`run` takes test.py's legal, menus, battle and story scenarios and the 77
+stage runs (`base`), and with `--wide` the monkey's 233 runs (seeds 1, 2
+and 3 and the two of `--extra`) too (`wide`). `report` gives the
+functions and lines run by group (the main code, the libraries, the host,
+each overlay bank), by overlay or by file, from `llvm-cov export
+-summary-only`. us, x86-64, 2026-11-20 (lines run; "gen" is mostly
+ZeroJump's stubs, one per overlay entry):
+
+| group | lines | base | wide | gained |
+|---|---|---|---|---|
+| main code (src/*.c) | 37029 | 69.0% | 74.0% | +1851 |
+| ovl_09 (never run) | 365 | 0% | 0% | |
+| ovl_0A (logos, opening, attract) | 5886 | 34.7% | 52.4% | +1043 |
+| ovl_0B (title, menus) | 7061 | 33.3% | 41.1% | +553 |
+| ovl_0C (Green Garden) | 7912 | 29.0% | 33.8% | +377 |
+| ovl_0D (Blue Resort) | 5468 | 48.3% | 51.3% | +166 |
+| ovl_0E (Red Mountain) | 6575 | 41.1% | 42.1% | +68 |
+| ovl_0F (White Glacier) | 6449 | 48.0% | 49.5% | +98 |
+| ovl_10 (Black Fortress) | 12408 | 29.0% | 30.9% | +237 |
+| ovl_12 (Rainbow Palace) | 3308 | 31.6% | 37.3% | +189 |
+| ovl_13-15 (the last bosses) | 17779 | 54.9% | 62.3% | +1309 |
+| ovl_16 (the ending, never run) | 194 | 0% | 0% | |
+| ovl_17 (battle stages) | 3070 | 52.1% | 58.4% | +194 |
+| gen | 17608 | 53.6% | 58.2% | +802 |
+| port, libmalloc, include/ | 7363 | 71.8% | 72.8% | +74 |
+| total | 138475 | 51.6% | 56.6% | +6961 |
+
+(The four scenarios alone ran 22.5% of the lines.) The biggest gains per
+overlay: ovl_0A_05 10% to 90% (the attract and menus runs), ovl_17_01 23% to
+85%, ovl_10_11 23% to 56%, ovl_0B_02 51% to 74%, ovl_0B_07 33% to 63%,
+ovl_0C_06 29% to 43%; most stage overlays gain little or nothing: what
+they don't run is what the room's progress unlocks (switches, doors,
+the bosses' later phases, the rooms past the first's exit), which random
+input in one life doesn't reach. Never run: ovl_09, ovl_0A_03, 0A_04,
+0A_06, ovl_0B_04, 0B_05, ovl_16.
 
 ## How it works
 
@@ -1273,7 +1365,10 @@ port's exact against. What differs, and the port now does as 2.0I:
   `port_null_word(off)` (port/host/runtime.c) gives that word, from the
   ROM. 426E0.c's func_802284F0 uses it for a texture slot an overlay
   never filled (ovl_15_02 gives its 80051420 four and fills two: Rainbow
-  Palace's last boss crashed at once).
+  Palace's last boss crashed at once). A store through NULL changes that
+  page (it is mapped writable): the four attract demos' stages, left
+  early, set bit 0 of `NULL->unkC`, the word 0x312900FF at 0xC whose bit
+  0 is set already, so the store changes nothing, and the port skips it.
 - **One variable through its neighbour, in an overlay**: the overlays'
   .bss are tentative definitions, which clang emits in the order of their
   first use, not the source's, so `M2C_FIELD(&D_x, f32 *, 4)` (the next
@@ -1340,6 +1435,19 @@ digest").
   Windows x64 has run the seven scenarios in us only, big-endian MIPS
   in eu and jp only (us there: the stage runs), the other cross hosts
   the four.
+- **The monkey's sweep** (us, 2026-11-20, "Every stage"): the coverage
+  build ran all 233 monkey runs (with the fixes above not yet in: the
+  demo exits crashed in menus seeds 2 and 3, 153 seed 1 at 3882). With
+  the first two fixes, ASan and UBSan (x86-64, the arena) ran 142 of
+  the 233 and the scattered check (seed 1) 76, every one to the end
+  with no report; the rest (scratch/coverage's asan2-done.txt and
+  scat2-done.txt list those done) and i386, eu and jp are left.
+  Coverage went from 51.6% to 56.6% of the lines; the stage overlays
+  gained little, since what they don't run is behind the room's
+  progress: a monkey that keeps away from its own bombs, or one that
+  follows a recorded route (a TAS, docs/TAS.md) and then plays at random,
+  would reach more. ovl_09, ovl_0A_03, 0A_04, 0A_06, ovl_0B_04, 0B_05 and
+  ovl_16 never run.
 - **The N64's layout**: the scattered check builds ("The scattered
   layout") report nothing in test.py's scenarios or the 77 stage runs. That
   holds for us with seeds 1, 2 and 3, and for eu and jp with seed 1 (and

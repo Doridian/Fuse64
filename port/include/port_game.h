@@ -32,6 +32,10 @@ void *port_segment_entry(int seg);
    variables (gen/regions.c, or gen/scatter.c in the scattered layout) */
 void port_clear_work_area(void);
 
+/* 40040.c's seed for the random generator: PORT_SEED's, or the clock's
+   (port/src/digest.c) */
+unsigned int port_seed(unsigned int clock);
+
 /* where pointers are 8 bytes (docs/PORT.md, "Where pointers are 8 bytes") */
 #if __SIZEOF_POINTER__ == 8
 #define PORT_LP64 1

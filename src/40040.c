@@ -120,7 +120,13 @@ void func_80225840(PORT_RET(s32, void *) arg0) {
     func_8025E16C();
     sp3C = func_8022773C();
     func_8026C77C();
+#ifdef TARGET_PC
+    /* PORT_SEED=N pins the seed, as tools/shift_check.py does in the ROM
+     * (port/src/digest.c) */
+    func_8025E6A4(port_seed(func_80297E38()));
+#else
     func_8025E6A4(func_80297E38());
+#endif
     stack = malloc(0x1000);
     func_80237890();
     func_80238A10(func_80236F54, 0, stack, 0x1000, 0x401);

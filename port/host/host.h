@@ -14,6 +14,7 @@ extern const char *host_screenshot_prefix;  /* --screenshot: PREFIX_<frame>.bmp 
 extern int host_screenshot_every;       /* ... every so many retraces (0: at the end only) */
 extern const char *host_save_dir;       /* where the EEPROM and pak files go */
 extern const char *host_input_script;   /* --input: a scripted controller */
+extern const char *host_replay_path;    /* --replay: a digest's pads, by the game's frame */
 extern unsigned host_vi_count;          /* retraces so far */
 
 /* video.c */

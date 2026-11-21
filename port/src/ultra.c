@@ -379,7 +379,12 @@ s32 osContStartQuery(OSMesgQueue *mq) {
 
 void osContGetQuery(OSContStatus *status) { cont_status(status); }
 
+void port_digest_poll(void);
+
 s32 osContStartReadData(OSMesgQueue *mq) {
+    /* when the PIF reads the pads: the pad for this frame (--replay) and
+       PORT_DIGEST's line (port/host/digest.c) */
+    port_digest_poll();
     port_irq_event(OS_EVENT_SI);
     return 0;
 }

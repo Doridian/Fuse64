@@ -174,6 +174,7 @@ static void usage(const char *argv0) {
             "  --screenshot PREFIX write PREFIX_<retrace>.bmp at the end (and with --every N, every N)\n"
             "  --every N           ...\n"
             "  --input FILE        a scripted controller (port/tools/inputs)\n"
+            "  --replay FILE       controller 1 from a PORT_DIGEST file, by the game's frame\n"
             "  --save-dir DIR      where the EEPROM and controller pak files go (default .)\n"
             "  --wav FILE          the sound to a WAV file\n"
             "  --hash              print each retrace's framebuffer hash\n"
@@ -240,6 +241,10 @@ int main(int argc, char **argv) {
             host_screenshot_every = atoi(argv[++i]);
         else if (!strcmp(a, "--input") && i + 1 < argc)
             host_input_script = argv[++i];
+        else if (!strcmp(a, "--replay") && i + 1 < argc) {
+            host_replay_path = argv[++i];
+            deterministic = 1;
+        }
         else if (!strcmp(a, "--save-dir") && i + 1 < argc)
             host_save_dir = argv[++i];
         else if (!strcmp(a, "--wav") && i + 1 < argc)

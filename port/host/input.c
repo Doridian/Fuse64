@@ -11,7 +11,13 @@
  * same frame (the k-th read of a frame the digest's k-th, or its last),
  * none where the digest has no read of that frame.  The port loads
  * without the N64's waits, so the same retrace is another frame there;
- * the same frame is the same moment of the game.
+ * the same frame is the same moment of the game.  A movie's digest has a
+ * part per soft reset (`# reset VI` lines): PORT_REPLAY_PART=N plays the
+ * N-th (from 0), and a part followed by a reset ends the run at the read
+ * after its last frame; the button (`# prenmi VI`, some frames before)
+ * raises OS_EVENT_PRENMI at the read of the last frame read before it
+ * (port/tools/test.py's tas runs one after the other, with the save the
+ * one before wrote).
  *
  * PORT_MONKEY=SEED[:FROM[:START]] drives controller 1 at random from
  * retrace FROM (default 0; before it the script, if any): the stick held
@@ -31,6 +37,8 @@
 
 #include "host.h"
 
+void host_raise(int event);
+
 typedef struct {
     unsigned frame;
     uint32_t word;
@@ -48,6 +56,9 @@ static int *replay_first, *replay_count; /* by frame: where its reads start, how
 static unsigned replay_frames;
 static unsigned replay_frame = ~0u;     /* the last read's frame, and its reads so far */
 static int replay_k;
+static int replay_ends;                 /* the part ends in a reset */
+static long replay_prenmi = -2;         /* ... whose button came after this frame's read */
+int host_replay_over;                   /* ... and the game is past its frames */
 
 static void replay_init(void) {
     FILE *f = fopen(host_replay_path, "r");
@@ -56,14 +67,25 @@ static void replay_init(void) {
     unsigned *frames = NULL;
     if (!f)
         host_fatal("--replay %s: can't open it", host_replay_path);
-    /* POLL VI SCENE SUB FRAME PAD ... (lines can be long: only the head) */
+    const char *e = getenv("PORT_REPLAY_PART");
+    int want = e && *e ? atoi(e) : 0, part = 0;
+    /* POLL VI SCENE SUB FRAME PAD ... (lines can be long: only the head);
+       `# reset VI` ends a part (emu_digest.py --movie's soft resets) */
     while (fgets(line, sizeof line, f)) {
         unsigned poll, vi, fr;
         int sc, sub;
         unsigned long pad;
         size_t l = strlen(line);
         int whole = l && line[l - 1] == '\n';
-        if (sscanf(line, "%u %u %d %d %u %lx", &poll, &vi, &sc, &sub, &fr, &pad) == 6) {
+        if (!strncmp(line, "# prenmi", 8)) {
+            if (part == want)
+                replay_prenmi = n ? (long)frames[n - 1] : -1;
+        } else if (!strncmp(line, "# reset", 7)) {
+            if (part++ == want) {
+                replay_ends = 1;
+                break;
+            }
+        } else if (part == want && sscanf(line, "%u %u %d %d %u %lx", &poll, &vi, &sc, &sub, &fr, &pad) == 6) {
             if (n == cap) {
                 cap = cap ? cap * 2 : 4096;
                 replay_pads = realloc(replay_pads, (size_t)cap * sizeof *replay_pads);
@@ -82,6 +104,8 @@ static void replay_init(void) {
         }
     }
     fclose(f);
+    if (part < want)
+        host_fatal("--replay %s: no part %d (PORT_REPLAY_PART)", host_replay_path, want);
     replay_first = calloc(replay_frames + 1, sizeof *replay_first);
     replay_count = calloc(replay_frames + 1, sizeof *replay_count);
     for (int i = n - 1; i >= 0; i--) {
@@ -125,7 +149,15 @@ void host_replay_wait(unsigned frame) {
 /* --replay: the pad word of this read of the frame */
 static void replay_poll(unsigned frame) {
     if (frame != replay_frame) {
+        /* the part's frames done, a reset next: the run ends here */
+        if (replay_ends && frame >= replay_frames)
+            host_replay_over = 1;
         replay_frame = frame;
+        /* the reset button: PRE-NMI, which the game handles before the NMI */
+        if (replay_prenmi >= -1 && (long)frame >= replay_prenmi) {
+            replay_prenmi = -2;
+            host_raise(14);     /* OS_EVENT_PRENMI */
+        }
         replay_k = 0;
     } else
         replay_k++;

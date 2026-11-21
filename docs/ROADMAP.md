@@ -338,6 +338,10 @@ docs/PORT.md), for accuracy and fidelity alike:
 - [ ] **A whole-game run**: the TAS movies (docs/TAS.md) replayed on the
       port with `--replay`, as far as they sync on the emulator, the
       digest equal along them (DozerEncore's TAS plays to its end).
+      Done: all three movies' emulator runs, the soft reset included,
+      equal on the port at every frame (`test.py tas`, docs/PORT.md
+      "The TAS"). The whole game needs a movie that syncs on the
+      emulator past the first stage, which none does yet.
 - [ ] **Graphics**: what the RDP draws checked against angrylion task by
       task (`gfx_ref.py`), and an OpenGL renderer beside the software one.
 - [ ] **Audio checked**: against mupen64plus's output (RMS and correlation,

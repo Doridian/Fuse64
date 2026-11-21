@@ -17,18 +17,32 @@ retrace (the clock) is never compared, and neither is the pad (which
 `--replay` takes from the other run).  Exit status 1 on a difference.
 
 `--scenes A` lists one digest's scenes with their frames and retraces.
+A movie's digest (emu_digest.py --movie) starts over at each soft reset
+(`# reset` lines); `--part N` takes the part after the N-th in each file
+that has resets (the port's replay of a part has none).
 """
 import argparse
 import sys
 
 
-def read(path):
+def read(path, part=0):
     """[(frame, poll, vi, scene, sub, pad, state)] at the last read of each
-    frame, in the file's order."""
+    frame, in the file's order; of the part-th part of a movie's digest
+    (`# reset` lines between them), or of the whole of one without."""
     out = []
     state = {}
+    at = 0
     with open(path) as f:
+        if not any(line.startswith("# reset") for line in f):
+            part = 0
+        f.seek(0)
         for line in f:
+            if line.startswith("# reset"):
+                at += 1
+                state = {}
+                continue
+            if at != part:
+                continue
             p = line.split()
             if len(p) < 6:
                 continue
@@ -78,14 +92,16 @@ def main():
     ap.add_argument("--ignore", default="", help="fields left out")
     ap.add_argument("--all", action="store_true", help="the first frame of every field that differs")
     ap.add_argument("--context", type=int, default=0, help="also print N frames after the first difference")
+    ap.add_argument("--part", type=int, default=0,
+                    help="of a digest with soft resets (emu_digest.py --movie), the part after the N-th")
     a = ap.parse_args()
-    ra = read(a.a)
+    ra = read(a.a, a.part)
     sa = scenes(ra)
     if a.scenes or not a.b:
         for sc, sub, frame, vi, n in sa:
             print("scene %3d:%-3d from frame %6d (retrace %6d), %6d frames" % (sc, sub, frame, vi, n))
         return
-    rb = read(a.b)
+    rb = read(a.b, a.part)
     sb = scenes(rb)
     print("scenes (scene:sub, first frame / retrace in A, in B):")
     for i in range(max(len(sa), len(sb))):

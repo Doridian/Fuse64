@@ -15,6 +15,9 @@
    at a time, so the waiting one gives the others their turn (port/host/
    threads.c) */
 void port_spin_wait(void);
+/* the game's wait for the NMI after the reset button (6BBE0.c): the run
+   ends there, a soft reset being the program run again (port/host/main.c) */
+void port_nmi_wait(void);
 
 /* an N64 address (KSEG0, physical) or a host pointer, as a host pointer
    (port/src/memory.c) */

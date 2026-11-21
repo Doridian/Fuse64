@@ -659,7 +659,12 @@ void func_8025E1D4(u8 **arg0) {
         if (D_802ACFD0 >= 3) {
             func_80297FA0(1);
             D_802ACFD0 = 0;
+#ifdef TARGET_PC
+            /* the reset's wipe done: the N64 spins until the NMI */
+            for (;;) port_nmi_wait();
+#else
             for (;;) {}
+#endif
         }
         g = (PORT_UP(s32) *) *arg0;
         { PORT_UP(s32) *_g = g; g += 2; _g[0] = 0xB900031D; _g[1] = 0x5041C8; }

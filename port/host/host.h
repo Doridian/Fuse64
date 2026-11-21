@@ -15,6 +15,7 @@ extern int host_screenshot_every;       /* ... every so many retraces (0: at the
 extern const char *host_save_dir;       /* where the EEPROM and pak files go */
 extern const char *host_input_script;   /* --input: a scripted controller */
 extern const char *host_replay_path;    /* --replay: a digest's pads, by the game's frame */
+extern int host_replay_over;             /* --replay: a part before a reset played out */
 extern unsigned host_vi_count;          /* retraces so far */
 
 /* video.c */

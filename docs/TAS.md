@@ -155,3 +155,19 @@ later (VI 8301 against 8306). That is the same timing effect as in
 so `check --slack N` accepts a drift of N VIs. There is no `make` target:
 until a movie syncs to the end, `make shift-check` is the check, and this
 is a longer smoke test.
+
+## On the port
+
+`port/tools/emu_digest.py jp OUT --movie 4908M` writes the gameplay
+digest (docs/PORT.md, "The gameplay digest") along a movie's run, set up
+as `run` is, with the seed pinned, and `port/tools/test.py tas BUILD`
+replays it on the port by the game's frame, part by part around the soft
+reset (docs/PORT.md, "The TAS"). All three movies' runs give the same
+digest on the port at every frame: 4908M's 74,674 frames (the menus, the
+save trick, the first stage to game over, the attract loop), 2053M's
+84,941 and 2350M's 221,427.
+
+`find_vi_clock()` looks only in the core's own mappings and the
+anonymous one adjoining them (its .bss): a heap mapped after the core
+sometimes held copies of the clock and the rate, and the clock was then
+left as it was (about one run in five, a different run).

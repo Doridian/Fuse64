@@ -3,6 +3,7 @@
 
   emu_digest.py VERSION OUT [--input SCRIPT] [--frames N] [--rom ROM] [--elf ELF]
                 [--seed N] [--no-dp] [--m64p DIR] [--wav WAV]
+  emu_digest.py jp OUT --movie 4908M [--frames N]
 
 Writes OUT in PORT_DIGEST's format (port/host/digest.c, docs/PORT.md "The
 gameplay digest"): at every read of controller 1, the scene, the game's
@@ -22,6 +23,14 @@ video plugin does (tools/src/m64p_vicount.c; --no-dp leaves it out, as the
 shift check does, which changes the game's timing completely).  The
 script's input is by retrace; the digest records which game frame got
 which pad, and the port's `--replay OUT` gives each frame the same.
+
+--movie plays a TAS movie instead (tools/tas.py's ids or a path: its
+input, soft resets and core set up as `tas.py run` does, docs/TAS.md),
+with the seed still pinned.  A soft reset writes `# prenmi VI` where the
+button is pressed (the game gets OS_EVENT_PRENMI and runs on until the
+NMI) and `# reset VI` before the restarted game's first read (its frame
+count from 0); the port's --replay plays each part between resets as a
+run of its own (PORT_REPLAY_PART; docs/PORT.md, "The TAS").
 
 port/tools/digest_cmp.py compares the result with a port's digest.
 --wav writes the sound (tools/src/m64p_audiodump.c), which
@@ -94,6 +103,8 @@ class Digest:
         self.a = addr
         self.ram = ram          # ram() -> the RDRAM words (host order, as the core keeps them)
         self.polls = 0
+        self.frame = 0
+        self.resetting = False
         self.last = {}
         self.scene = None
         self.warp = warp        # (scene, sub or None): PORT_WARP's
@@ -164,6 +175,12 @@ class Digest:
             if sub is not None:
                 r[at("D_802AC5D8")] = r[at("D_802AC5E0")] = sub
 
+    def reset(self, vi):
+        """the reset button: the game gets the PRE-NMI event and goes on
+        until the NMI, then starts over (its frame count from 0)"""
+        self.f.write(f"# prenmi {vi}\n")
+        self.resetting = True
+
     def put(self, line, key, val, full):
         if full or self.last.get(key) != val:
             self.last[key] = val
@@ -184,9 +201,16 @@ class Digest:
             return ",".join("%x" % x for x in v)
 
         a = self.a
+        if self.resetting and w(a["D_8029F600"]) < self.frame:
+            self.f.write(f"# reset {vi}\n")
+            self.resetting = False
+            self.scene = None
+            self.last = {}
+            self.raw = {}
+        self.frame = w(a["D_8029F600"])
         self.polls += 1
         scene = w(a["D_802AC5D4"])
-        full = self.polls == 1 or scene != self.scene
+        full = self.polls == 1 or scene != self.scene or not self.last
         self.scene = scene
         s32 = lambda x: x - (1 << 32) if x & 0x80000000 else x  # noqa: E731
         line = ["%u %u %d %d %u %08x%s" % (self.polls, vi, s32(scene), s32(w(a["D_802AC5D8"])),
@@ -221,7 +245,7 @@ def main():
     ap.add_argument("version")
     ap.add_argument("out")
     ap.add_argument("--input", help="input script for controller 1 (tools/inputs)")
-    ap.add_argument("--frames", type=int, default=6000, help="retraces to run (default 6000)")
+    ap.add_argument("--frames", type=int, help="retraces to run (default 6000; a movie: its length + 600)")
     ap.add_argument("--rom")
     ap.add_argument("--elf")
     ap.add_argument("--seed", type=lambda x: int(x, 0), default=shift_check.SEED)
@@ -233,6 +257,7 @@ def main():
     ap.add_argument("--dump", action="append", default=[],
                     help="FRAME:FILE: RDRAM (big-endian) at the last read of game frame FRAME")
     ap.add_argument("--wav", help="the sound the game gives the AI (and WAV.log: each buffer's retrace and samples)")
+    ap.add_argument("--movie", help="a TAS movie's id or file (tools/tas.py) instead of --input")
     a = ap.parse_args()
     v = a.version
     rom = Path(a.rom or ROOT / f"build/{v}/bm64.{v}.z64")
@@ -252,10 +277,33 @@ def main():
     if a.warp:
         n, _, sub = a.warp.partition(":")
         warp = (int(n, 0), int(sub, 0) if sub else None)
-    emu = emu_ram.Session(rom, a.m64p, patch, None, True, eeprom=eep, input=True, wav=a.wav)
+    movie = None
+    if a.movie:
+        import tas
+        movie = tas.Movie(tas.resolve(a.movie))
+        config = {"R4300Emulator": movie.interpreter, "CountPerOp": 2, "SiDmaDuration": 0x900,
+                  "DisableExtraMem": 0 if movie.expansion else 1}
+
+        def romopen():      # tas.play()'s: BizHawk's frame length
+            at = tas.find_vi_clock()
+            if at is None:
+                sys.exit("couldn't find the core's VI clock to set BizHawk's frame length")
+            ctypes.c_uint32.from_address(at).value = tas.VI_CLOCK_BIZHAWK
+
+        emu = emu_ram.Session(rom, a.m64p, patch, tas.JP_MD5, True, config=config,
+                              eeprom=eep or bytes(0x800), input=True, on_romopen=romopen, wav=a.wav)
+    else:
+        emu = emu_ram.Session(rom, a.m64p, patch, None, True, eeprom=eep, input=True, wav=a.wav)
     emu.vic.vicount_dp(0 if a.no_dp else 1)
     keep = []
-    if a.input:
+    if movie:
+        flat = [k for frame in movie.keys for k in frame]
+        mk = (ctypes.c_uint * len(flat))(*flat)
+        keep.append(mk)
+        now = ctypes.cast(emu.vic.vicount_frames, ctypes.c_void_p)
+        emu.inp.inputscript_controllers(movie.present, movie.present)
+        emu.inp.inputscript_movie(now, mk, len(movie.keys), 2, int(movie.by_poll))
+    elif a.input:
         steps = emu_ram.read_script(a.input)
         n = len(steps)
         fr = (ctypes.c_uint * n)(*[f for f, _ in steps])
@@ -275,7 +323,22 @@ def main():
     cb = ctypes.CFUNCTYPE(None, ctypes.c_uint, ctypes.c_uint)(lambda keys, vi: d.poll(vi, keys))
     keep.append(cb)
     emu.inp.inputscript_on_poll(cb)
-    emu.run(a.frames, lambda f: None)
+    if movie:
+        resets = sorted(movie.resets) if not movie.by_poll else []
+        a.frames = a.frames or (int(movie.vis * 1.05) if movie.by_poll else len(movie.keys) + 2) + 600
+
+        def on_frame(n):    # tas.play()'s resets: at the start of their frame
+            due = bool(resets) and n - 2 == resets[0]
+            if due:
+                resets.pop(0)
+            if due or (movie.by_poll and emu.inp.inputscript_reset_wanted()):
+                emu.reset()
+                d.reset(n)
+            return n + 1 if n < a.frames else None
+        emu.run(1, on_frame)
+    else:
+        a.frames = a.frames or 6000
+        emu.run(a.frames, lambda f: None)
     d.f.close()
     print(f"{a.out}: {d.polls} reads in {a.frames} retraces")
 

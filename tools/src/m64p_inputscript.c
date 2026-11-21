@@ -133,13 +133,12 @@ static unsigned int keys_for(int control)
             reset_wanted = 1;
             k = 0;
         }
-        return k;
-    }
-    if (control == 0)
+        held = k;
+    } else if (control == 0)
         for (int i = 0; i < steps && step_frames[i] <= now; i++)
             held = step_buttons[i];
     if (control == first_present()) {
-        if (replay)
+        if (replay && !movie_keys)
             held = replay(held, now);
         if (on_poll)
             on_poll(held, now);

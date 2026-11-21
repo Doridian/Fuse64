@@ -464,6 +464,55 @@ every battle stage is the same. Three things the sweep found:
   word (`port_credits_next`) and stops there (`port_scene_unset`, a
   scene past the table's 0x800); it used to fault at the NULL.
 
+#### The TAS
+
+The three TAS movies (docs/TAS.md) as played in mupen64plus, replayed on
+the port (jp), as DozerEncore's TAS is ("Replaying it on the port" in its
+docs/PORT.md), but only through the digest's pads by frame: none of the
+movies syncs on the emulator past its first stage, so what the port
+follows is the emulator's run, not the movie's.
+
+```
+make VERSION=jp                                    # the ELF, the plugins
+port/tools/test.py tas build-port-jp [--movie 4908M --movie 2053M --movie 2350M]
+port/tools/emu_digest.py jp emu.txt --movie 4908M  # what test.py does once (build/tas/4908M.digest.txt)
+```
+
+- **The emulator's side**: `emu_digest.py --movie` plays the movie as
+  `tools/tas.py run` does (its core settings, BizHawk's frame length,
+  the zeroed EEPROM, the input by VI or by read, the resets), the seed
+  pinned as above. About four minutes for 4908M, twelve for 2350M.
+- **The soft reset.** Every movie resets once (4908M at VI 523, after
+  saving the hard-mode file). The button raises OS_EVENT_PRENMI, and the
+  game (6BBE0.c's thread, func_8025E100) wipes the screen for 18 frames
+  and spins until the NMI restarts it, its frame count from 0. The digest
+  has `# prenmi VI` at the button and `# reset VI` before the new game's
+  first read, and the port replays each part as a run of its own:
+  `PORT_REPLAY_PART=N` (port/host/input.c) takes the part after the N-th
+  reset, raises PRE-NMI at the read of the last frame the emulator read
+  before the button, and the game's spin (`port_nmi_wait`, under
+  `TARGET_PC`) ends the run; the next part starts from the save the part
+  before wrote. The port has no reset of its own (its globals would all
+  have to start over), so a run again is its soft reset.
+- **Without the pictures**: `PORT_NO_DRAW=1` (the RDP's tasks not run)
+  gives the same digest and save (checked over all of 4908M) about 200
+  times faster: 4908M's 78,636 retraces in 6 seconds instead of 23
+  minutes. test.py's `tas` sets it (`--draw` doesn't).
+
+What it found (2026-11-21, the i386 and x86-64 builds): **every frame of
+every movie's run the same**, with no fix but the reset:
+
+| movie | emulator | part 0 | part 1 |
+|---|---|---|---|
+| 4908M | 78,636 retraces | 366 frames: the menus, the hard file saved, the wipe | 74,308: the title, the file select, Blue Resort's first stage (scene 56) to game over, then the attract loop (the opening, the demos) |
+| 2053M | 89,968 | 330 | 84,611: the attract loop |
+| 2350M | 233,449 | 330 | 221,097: the attract loop |
+
+The check finds a difference where there is one: A held for ten frames
+in 4908M's stage (the digest's pads changed) differs at the first of
+them. test.py records the port's digests' hashes and the final save
+(`jp/tas-<movie>`).
+
 test.py records two hashes of each run's digest (`PORT_DIGEST`, always
 on): `digest` over the fields every host writes and `digest_pools` over
 the whole file (32-bit hosts only); `run` and `same` compare them when
@@ -1433,8 +1482,8 @@ aids"), an overlay's .bss in one struct where the code reaches a name
 through its neighbour, a read through NULL given ZeroJump's word
 (`port_null_word`), `PORT_HALVES` (a word's halves in the host's order),
 `PORT_F2U` (a float to `u32` as IDO converts it), PORT_WARP's call in
-54E40.c ("Every stage") and PORT_SEED's in 40040.c ("The gameplay
-digest").
+54E40.c ("Every stage"), PORT_SEED's in 40040.c ("The gameplay
+digest") and the wait for the NMI in 6BBE0.c ("The TAS").
 
 ## What's left
 

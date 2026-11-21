@@ -283,20 +283,26 @@ def find_vi_clock():
     """The address of struct vi_controller's clock in the core (mupen64plus
     2.6.0, device/rcp/vi/vi_controller.h: 14 registers, field, delay,
     clock, expected_refresh_rate, ...).  It isn't exported, so it's found in
-    the core's writable memory by the clock and refresh rate (60) together,
-    which have to be there exactly once."""
+    the core's writable memory (its own mappings and the anonymous ones
+    adjoining them, its .bss; not a heap mapped after them, which can hold
+    copies) by the clock and refresh rate (60) together, which have to be
+    there exactly once."""
     hits = []
     pattern = struct.pack("<II", VI_CLOCK_NTSC, 60)
     with open("/proc/self/maps") as f:
         maps = [line.split() for line in f]
-    ours = False
-    for m in maps:  # the core's mappings and the anonymous ones after them
-        if len(m) >= 6:
-            ours = "libmupen64plus" in m[5]
-        if not ours or "rw" not in m[1]:
-            continue
+    end = None
+    for m in maps:  # the core's mappings and its .bss right after them
         lo, hi = (int(x, 16) for x in m[0].split("-"))
-        hits += [lo + h.start() for h in re.finditer(re.escape(pattern), ctypes.string_at(lo, hi - lo))]
+        if len(m) >= 6 and "libmupen64plus" in m[5]:
+            end = hi
+        elif len(m) >= 6 or lo != end:  # (another file, or a heap mapped elsewhere)
+            end = None
+            continue
+        else:
+            end = hi
+        if "rw" in m[1]:
+            hits += [lo + h.start() for h in re.finditer(re.escape(pattern), ctypes.string_at(lo, hi - lo))]
     return hits[0] if len(hits) == 1 else None
 
 

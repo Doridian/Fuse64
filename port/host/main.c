@@ -31,6 +31,8 @@
 #include "fiber.h"
 #include "host.h"
 
+void port_spin_wait(void);
+
 #if defined(VERSION_JP)
 #define ROM_DEFAULT "baserom.jp.z64"
 #define ROM_CODE "NBMJ"
@@ -152,6 +154,15 @@ static int npending;
 void host_raise(int event) {
     if (npending < (int)(sizeof pending / sizeof pending[0]))
         pending[npending++] = event;
+}
+
+/* the game after the reset button (PRE-NMI, which only --replay raises)
+   waits for the NMI, which restarts it: here the run ends */
+static int nmi_due;
+
+void port_nmi_wait(void) {
+    nmi_due = 1;
+    port_spin_wait();
 }
 
 static void deliver_pending(void) {
@@ -285,7 +296,7 @@ int main(int argc, char **argv) {
             host_video_frame();
             if (print_hash)
                 printf("%u %08x\n", host_vi_count, host_frame_hash());
-            if (host_quit_requested() || (host_max_frames && (int)host_vi_count >= host_max_frames))
+            if (host_quit_requested() || host_replay_over || nmi_due || (host_max_frames && (int)host_vi_count >= host_max_frames))
                 break;
             port_irq_vi();
 #if defined(__EMSCRIPTEN__) && defined(PORT_WASM_WEB)

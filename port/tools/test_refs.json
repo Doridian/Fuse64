@@ -366,6 +366,8 @@
    "6000": "e12987bd",
    "900": "d8ed0cbf"
   },
+  "digest": "8711c1e5e84207f5b8f47558ae9819fec6510e15",
+  "digest_pools": "b6da58587cee4803874c0a877980a0346b7e22e5",
   "eeprom": "5b7b5f53592bb3c8023106383a3cafadab913b1b",
   "frames": "ccc21aba69598f783e6f7ceb062f47eb1d4f9f22",
   "wav": "00cdf07ef4ddcc07e01f4766c209e5ef2daf0787"
@@ -374,6 +376,8 @@
   "checkpoints": {
    "300": "1b17c57e"
   },
+  "digest": "1edb65dd40bcfa68ecc81f71c302635b99b5c268",
+  "digest_pools": "183833fd2c08d0c8b613ded4310fc644f7ce0063",
   "eeprom": "5b7b5f53592bb3c8023106383a3cafadab913b1b",
   "frames": "b6b9de275e2f53641864489a176c9643c77697ab",
   "wav": "7aee78a2a81888c31ac92f3b77e4f61631591ba1"
@@ -391,6 +395,8 @@
    "600": "3b3242c8",
    "900": "f2e6f34a"
   },
+  "digest": "ee2cd034dfae407220d86d86f1f5520e1f9b96ec",
+  "digest_pools": "1f2521d6ce8b8f1f1bc821e6689fa29b7802119b",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
   "frames": "922bab9c56666473de90b048e44e638a3bed871e",
   "wav": "71f8af00d41d6a5e0d3d80c4255b10c664768f3d"
@@ -438,6 +444,8 @@
    "9600": "20af4095",
    "9900": "26392158"
   },
+  "digest": "a80bea045ebf3b9a55b74e2fc015ccf90a29bb55",
+  "digest_pools": "aee82b310726ee1d1815e7d22a128bc70af4e19f",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
   "frames": "8896905eba7e48b1040fd888a73bb088f46ce6fc",
   "wav": "6b0a5004e94850e4d26b36d7b8e32e14d7f6d8cd"
@@ -465,6 +473,8 @@
    "6000": "493cbde0",
    "900": "d8ed0cbf"
   },
+  "digest": "3d41a5a2dfaa62b3a4895d883f5434c3151c739f",
+  "digest_pools": "bd63d38c00121185beabe8b6e92abe82207f590d",
   "eeprom": "5b7b5f53592bb3c8023106383a3cafadab913b1b",
   "frames": "d40a5fbb948ff71776b80766625a4bc7b2701478",
   "wav": "a93e9df84dde902f2b289f5034768f3c908809fe"
@@ -488,6 +498,8 @@
    "600": "3b3242c8",
    "900": "e369f904"
   },
+  "digest": "abb279520925501e9b58e84389f11655429b58fd",
+  "digest_pools": "150e7eb9d00398904a16f4ba952a2907637b8f88",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
   "frames": "30a1a6a786c533233399623dfd5a127ceeb59a4a",
   "wav": "f2de870a5fc15926a14d34e88ce7c39294d3446d"
@@ -511,6 +523,8 @@
    "600": "3b3242c8",
    "900": "e369f904"
   },
+  "digest": "1a9a2db421b1c3b015b976068bf7a1e4a8250e3a",
+  "digest_pools": "1e8617b7f06dd5c4ae1cae7a2c02694b6ab98259",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
   "frames": "2de74488f53838729c4a6cef2fff354c0f438f1c",
   "wav": "f59e153a5d0106c951d1790a40705c15d4cefd2d"

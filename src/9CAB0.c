@@ -248,6 +248,44 @@ f32 func_8028322C(UnkStruct_80288040 *arg0);
 static u8 func_80283314(UnkStruct_80288040 *arg2, s32 arg0, s32 arg1);
 static void func_802836F0(UnkStruct_80288040 *arg0, s32 arg1);
 static s32 func_80283794(UnkStruct_80288040 *arg0, u8 arg1);
+#ifdef TARGET_PC
+/* func_80283794's range[1] where the enemy's type sets none (only 41-45
+ * do): the N64 reads the byte at its sp+0x1D, a leftover in the stack of
+ * whatever ran there before. Measured per call in mupen64plus (ROM patches
+ * storing the byte, the word, sp and the return addresses into the
+ * enemy's padding, and the word watched at every frame; every story scene
+ * PORT_WARP reaches; docs/PORT.md "The gameplay digest"), it is one of:
+ * - from the spawn (func_80286400's func_80283DF0(a, 1), in the spawner's
+ *   stack): the spawn's position pointer p itself, &D_800BA900[i].unk8,
+ *   saved there by the model's creation before it (func_80230CB4's
+ *   callees save s0), so 0x0B, the second byte of 0x800BAxxx/0x800BBxxx
+ *   for every slot;
+ * - from an update (func_8028425C's func_80283DF0(a, 1)): each enemy's
+ *   task has its own stack (530C0.c's 0x800 bytes), sp 0x1D0 below its
+ *   top there. Its start (func_80285A9C, the task's first run) leaves the
+ *   pointer to the parameter file func_80285A8C reads, func_80226604(0xDD)'s
+ *   (func_8022616C saves it), 0x8014B808 in every scene seen: 0x14. The
+ *   rest of each update (func_80283FCC: func_802909FC's position copy,
+ *   func_8022E884's saved FP registers) then writes 0, all that is
+ *   ever seen there afterwards. So the first update reads 0x14, the later
+ *   ones 0; and the types 41-45 store their own range[1] there.
+ * sRange1[i] is slot i's task's byte, sRange1Spawn set during the spawn's
+ * call. */
+static s8 sRange1[16];
+static s32 sRange1Spawn;
+
+static s8 *port_range1(UnkStruct_80288040 *a) {
+    static s8 none;
+    s32 i;
+
+    for (i = 0; i < 16; i++) {
+        if (&D_800BA900[i].unk14 == a) {
+            return &sRange1[i];
+        }
+    }
+    return &none;
+}
+#endif
 void func_80283B04(UnkStruct_80288040 *arg0, Vec3f *arg1);
 static void func_80283CF0(UnkStruct_80288040 *arg0);
 static s32 func_80283D9C(UnkStruct_80288040 *arg0);
@@ -931,7 +969,9 @@ static void func_80285A94(UnkStruct_80288040 *a_, Vec3f *p, s32 mk) {
         a->unk0 = m;
         func_802847E4(a, 0);
         func_80231408((void *)(func_802311E8(m)), 0x2100000);
+        PORT_ONLY(sRange1Spawn = 1;) /* (func_80283794's stack byte: sRange1) */
         func_80283DF0(a, 1);
+        PORT_ONLY(sRange1Spawn = 0;)
     }
     if (func_8023A840()->unk10 == 0) {
         (a_)->unk2C *= 0.5f;
@@ -959,6 +999,7 @@ static void func_80285A9C(UnkStruct_800BB340 *arg0) {
     if (r != NULL) {
         a = &r->unk14;
         func_80285A7C(a, &D_800BA8E8[a->unk84]);
+        PORT_ONLY(*port_range1(a) = 0x14;) /* (the parameter file's pointer, left in the task's stack: sRange1) */
         if (D_800BA8E8[0].unk0) {} /* fake: dead read */
         a->unk0->unk40->unk28 = 1.0f;
         a->unk0->unk40->unk2C = 1.0f;
@@ -1647,6 +1688,7 @@ static void func_80283FCC(UnkStruct_80288040 *arg0) {
         func_80283DF0(arg0, 2);
     }
     func_80232DB4(arg0->unk0);
+    PORT_ONLY(*port_range1(arg0) = 0;) /* (what the update leaves in the task's stack: sRange1) */
 }
 
 static s32 func_80283F28(UnkStruct_80288040 *arg0) {
@@ -1850,6 +1892,7 @@ static s32 func_80283794(UnkStruct_80288040 *arg0, u8 arg1) {
     gx = arg0->unk4;
     gz = arg0->unkC;
     flags = 0;
+    PORT_ONLY(range[1] = sRange1Spawn ? 0x0B : *port_range1(arg0);) /* (the types other than 41-45 read it unset: sRange1) */
     switch (arg0->unk1F) {
     case 40:
         return 0;
@@ -1869,6 +1912,7 @@ static s32 func_80283794(UnkStruct_80288040 *arg0, u8 arg1) {
         range[1] = 8;
         break;
     }
+    PORT_ONLY(if (!sRange1Spawn) { *port_range1(arg0) = range[1]; }) /* (the byte stays in the task's stack) */
     if (gx >= pos[0]) {
         if (pos[0] < gx) {
             flags = 1;

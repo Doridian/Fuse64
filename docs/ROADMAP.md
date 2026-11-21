@@ -327,6 +327,33 @@ port" (`tools/host_check.py`):
   big-endian host and a 32-bit host. The determinism work is also netplay's
   foundation (docs/NETPLAY.md, "Requirements").
 
+The targets are DozerEncore's (its docs/ROADMAP.md, phase 5, and
+docs/PORT.md), for accuracy and fidelity alike:
+
+- [ ] **No dependency on the N64's layout**: every past-end, alias and
+      unset read fixed (the scattered check reports nothing), then an
+      ordinary C program under ASan and UBSan.
+- [ ] **The gameplay digest equal to the emulator's** in every scene of
+      every version; uninitialised reads given what the N64 leaves there.
+- [ ] **A whole-game run**: the TAS movies (docs/TAS.md) replayed on the
+      port with `--replay`, as far as they sync on the emulator, the
+      digest equal along them (DozerEncore's TAS plays to its end).
+- [ ] **Graphics**: what the RDP draws checked against angrylion task by
+      task (`gfx_ref.py`), and an OpenGL renderer beside the software one.
+- [ ] **Audio checked**: against mupen64plus's output (RMS and correlation,
+      as DozerEncore's "Audio"), and libaudio against the original's (an
+      oracle, as DozerEncore's "The libaudio oracle").
+- [ ] **Pacing**: the game's work takes no time and no frame lags (the
+      bar: the port may differ only where a player couldn't tell;
+      smoother play over the N64's lag), the retraces, swap and waits as
+      the hardware's.
+- [ ] **Enhancements**, each with a `--no-` option, the game's logic
+      unchanged: interpolation and higher frame rates, widescreen,
+      resource packs.
+- [ ] **Hosts and packages**: every host in docs/PORT.md's "Status",
+      a real Mac, packages, a hosted page; no binary published while it
+      carries the ROM's data.
+
 ## Phase 7 — WebAssembly
 
 emsdk, headless under node for the tests, and a page (`port/web/`) that

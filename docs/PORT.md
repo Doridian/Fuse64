@@ -668,7 +668,10 @@ digest's last, the replay has ended for good, and the monkey takes the
 pad from then on (from its FROM retrace, if that is later). The monkey's
 generator is drawn every retrace from FROM either way, so the same seed
 gives the same sequence whether a replay came first or not, only
-starting to be used later. Neither drives controllers 2 to 4.
+starting to be used later. Neither drives controllers 2 to 4. The
+digest's PAD column is the pad controller 1 gets, the monkey's too (in
+mupen64plus's layout), so a monkey run's digest given to `--replay`
+plays that run again (the same digest, frame for frame).
 
 #### Coverage
 

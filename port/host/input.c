@@ -122,11 +122,8 @@ void host_replay_wait(unsigned frame) {
         port_spin_wait();
 }
 
-/* the read of a frame (osContGetReadData, through port/src/digest.c): the
-   pad word controller 1 gets, which --replay picks by the frame */
-uint32_t host_input_poll(unsigned frame) {
-    if (!host_replay_path)
-        return script_word;
+/* --replay: the pad word of this read of the frame */
+static void replay_poll(unsigned frame) {
     if (frame != replay_frame) {
         replay_frame = frame;
         replay_k = 0;
@@ -137,7 +134,6 @@ uint32_t host_input_poll(unsigned frame) {
         int k = replay_k < replay_count[frame] ? replay_k : replay_count[frame] - 1;
         script_word = replay_pads[replay_first[frame] + k];
     }
-    return script_word;
 }
 
 static struct {
@@ -283,20 +279,51 @@ static int replay_owns(void) {
     return !ended;
 }
 
+/* mupen64plus's BUTTONS bits and the N64's */
+static const struct {
+    uint32_t m;
+    uint16_t n;
+} m64p_map[] = {
+    { 0x0001, B_DR }, { 0x0002, B_DL }, { 0x0004, B_DD }, { 0x0008, B_DU }, { 0x0010, B_START },
+    { 0x0020, B_Z }, { 0x0040, B_B }, { 0x0080, B_A }, { 0x0100, B_CR }, { 0x0200, B_CL },
+    { 0x0400, B_CD }, { 0x0800, B_CU }, { 0x1000, B_R }, { 0x2000, B_L },
+};
+
 /* mupen64plus's BUTTONS word to the N64's */
 static void from_m64p(uint32_t w, uint16_t *b, int8_t *x, int8_t *y) {
-    static const struct { uint32_t m; uint16_t n; } map[] = {
-        { 0x0001, B_DR }, { 0x0002, B_DL }, { 0x0004, B_DD }, { 0x0008, B_DU }, { 0x0010, B_START },
-        { 0x0020, B_Z }, { 0x0040, B_B }, { 0x0080, B_A }, { 0x0100, B_CR }, { 0x0200, B_CL },
-        { 0x0400, B_CD }, { 0x0800, B_CU }, { 0x1000, B_R }, { 0x2000, B_L },
-    };
     uint16_t r = 0;
-    for (unsigned i = 0; i < sizeof map / sizeof map[0]; i++)
-        if (w & map[i].m)
-            r |= map[i].n;
+    for (unsigned i = 0; i < sizeof m64p_map / sizeof m64p_map[0]; i++)
+        if (w & m64p_map[i].m)
+            r |= m64p_map[i].n;
     *b = r;
     *x = (int8_t)(w >> 16);
     *y = (int8_t)(w >> 24);
+}
+
+/* the monkey has controller 1 at this retrace */
+static int monkey_has_pad(void) {
+    return monkey.on && host_vi_count >= monkey.from && host_vi_count > 0 && !replay_owns();
+}
+
+/* the N64's buttons and stick to mupen64plus's BUTTONS word */
+static uint32_t to_m64p(uint16_t b, int8_t x, int8_t y) {
+    uint32_t r = 0;
+    for (unsigned i = 0; i < sizeof m64p_map / sizeof m64p_map[0]; i++)
+        if (b & m64p_map[i].n)
+            r |= m64p_map[i].m;
+    return r | (uint32_t)(uint8_t)x << 16 | (uint32_t)(uint8_t)y << 24;
+}
+
+/* the read of a frame (osContStartReadData, through port/host/digest.c):
+   the pad word controller 1 gets, in mupen64plus's layout (the digest's
+   PAD), which --replay picks by the frame, or the monkey's once it has
+   the pad */
+uint32_t host_input_poll(unsigned frame) {
+    if (host_replay_path)
+        replay_poll(frame);
+    if (monkey_has_pad())
+        return to_m64p(monkey.word, monkey.x, monkey.y);
+    return script_word;
 }
 
 int host_input(int pad, uint16_t *buttons, int8_t *x, int8_t *y) {
@@ -304,7 +331,7 @@ int host_input(int pad, uint16_t *buttons, int8_t *x, int8_t *y) {
     *x = *y = 0;
     if (pad < 0 || pad > 3)
         return 0;
-    if (monkey.on && pad == 0 && host_vi_count >= monkey.from && host_vi_count > 0 && !replay_owns()) {
+    if (pad == 0 && monkey_has_pad()) {
         *buttons = monkey.word;
         *x = monkey.x;
         *y = monkey.y;

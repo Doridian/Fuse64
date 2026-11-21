@@ -875,7 +875,8 @@ static void rdp_tri(const uint32_t *w) {
     int32_t diff[8], axh[8];
     for (int k = 0; k < 8; k++) {
         int32_t deh = ae[k] & ~0x1FF, dyh = ay[k] & ~0x1FF;
-        diff[k] = offset ? deh - (deh >> 2) - dyh + (dyh >> 2) : 0;
+        /* (in 32 bits, wrapping as the RDP's adders do) */
+        diff[k] = offset ? (int32_t)((uint32_t)deh - (uint32_t)(deh >> 2) - (uint32_t)dyh + (uint32_t)(dyh >> 2)) : 0;
         axh[k] = (ax[k] >> 8) & ~1;
     }
     /* the partly covered pixel's correction steps (13 bits; z's 22) */

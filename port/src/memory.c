@@ -95,6 +95,41 @@ void *port_addr(uintptr_t a) {
     return (void *)a;
 }
 
+#ifdef PORT_SCATTER_LAYOUT
+/* gen/scatter.c's objects in its arena, by offset (and its end) */
+typedef struct { const char *name; uint32_t off, size, n64, n64size; } PortScatterObj;
+extern const PortScatterObj port_scatter_objs[];
+extern const unsigned port_scatter_nobjs;
+extern uint8_t port_scatter_arena[];
+#endif
+
+/* The N64's (KSEG0) address of p, a place in a name the N64 has at a fixed
+   address: port_rdram's offset, or in the scattered layout the object's own
+   N64 address.  For what the N64 leaves of such a pointer where the game
+   reads it back (9CAB0.c's stack byte). */
+uint32_t port_n64_address(const void *p) {
+    uintptr_t a = (uintptr_t)p;
+    if (a >= (uintptr_t)port_rdram && a < (uintptr_t)port_rdram + PORT_RDRAM_SIZE)
+        return 0x80000000u + (uint32_t)(a - (uintptr_t)port_rdram);
+#ifdef PORT_SCATTER_LAYOUT
+    uintptr_t ar = (uintptr_t)port_scatter_arena;
+    if (a >= ar && a < ar + port_scatter_objs[port_scatter_nobjs].off) {
+        uint32_t off = (uint32_t)(a - ar);
+        unsigned l = 0, h = port_scatter_nobjs;
+        while (l < h) {     /* the first object starting after off */
+            unsigned m = (l + h) / 2;
+            if (port_scatter_objs[m].off <= off)
+                l = m + 1;
+            else
+                h = m;
+        }
+        if (l && off < port_scatter_objs[l - 1].off + port_scatter_objs[l - 1].size)
+            return port_scatter_objs[l - 1].n64 + (off - port_scatter_objs[l - 1].off);
+    }
+#endif
+    host_fatal("port_n64_address: %p is no fixed-address name's", p);
+}
+
 /* (the host's allocator: pc_names.h makes calloc the game's) */
 #undef calloc
 #undef free

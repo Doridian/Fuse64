@@ -90,6 +90,7 @@ if(NOT PORT_SCATTER STREQUAL "")
     endif()
     set(SCATTER_ARG --scatter)
     message(STATUS "the scattered layout, seed ${PORT_SCATTER}")
+    add_compile_definitions(PORT_SCATTER_LAYOUT)
     add_compile_options(-fdata-sections)
     add_link_options(-fuse-ld=lld "LINKER:--shuffle-sections=.data.*=${PORT_SCATTER}"
         "LINKER:--shuffle-sections=.bss.*=${PORT_SCATTER}" "LINKER:--shuffle-sections=.rodata.*=${PORT_SCATTER}")

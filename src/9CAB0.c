@@ -264,7 +264,9 @@ static s32 func_80283794(UnkStruct_80288040 *arg0, u8 arg1);
  *   task has its own stack (530C0.c's 0x800 bytes), sp 0x1D0 below its
  *   top there. Its start (func_80285A9C, the task's first run) leaves the
  *   pointer to the parameter file func_80285A8C reads, func_80226604(0xDD)'s
- *   (func_8022616C saves it), 0x8014B808 in every scene seen: 0x14. The
+ *   (func_8022616C saves it): one of 404C0.c's eight open files at
+ *   D_8014B808 (0x8014B808 in every scene seen), so 0x14, the second byte
+ *   of its N64 address (sRange1File, port_n64_address). The
  *   rest of each update (func_80283FCC: func_802909FC's position copy,
  *   func_8022E884's saved FP registers) then writes 0, all that is
  *   ever seen there afterwards. So the first update reads 0x14, the later
@@ -273,6 +275,7 @@ static s32 func_80283794(UnkStruct_80288040 *arg0, u8 arg1);
  * call. */
 static s8 sRange1[16];
 static s32 sRange1Spawn;
+static void *sRange1File;
 
 static s8 *port_range1(UnkStruct_80288040 *a) {
     static s8 none;
@@ -883,6 +886,7 @@ static void func_80285A8C(UnkStruct_80288040 *a_, UnkStruct_800BA8E8 *e_) {
     s32 v;
 
     f = func_80226604(0xDD, 1);
+    PORT_ONLY(sRange1File = f;) /* (the pointer the task's stack keeps: sRange1) */
     func_80225CCC((void *) f, e_->unk0 * 20, 0);
     func_8022616C(D_800BB488, 1, 20, f);
     func_80226368(f);
@@ -999,7 +1003,7 @@ static void func_80285A9C(UnkStruct_800BB340 *arg0) {
     if (r != NULL) {
         a = &r->unk14;
         func_80285A7C(a, &D_800BA8E8[a->unk84]);
-        PORT_ONLY(*port_range1(a) = 0x14;) /* (the parameter file's pointer, left in the task's stack: sRange1) */
+        PORT_ONLY(*port_range1(a) = port_n64_address(sRange1File) >> 16;) /* (the parameter file's pointer, left in the task's stack: sRange1) */
         if (D_800BA8E8[0].unk0) {} /* fake: dead read */
         a->unk0->unk40->unk28 = 1.0f;
         a->unk0->unk40->unk2C = 1.0f;

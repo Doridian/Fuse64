@@ -12,6 +12,18 @@
  * none where the digest has no read of that frame.  The port loads
  * without the N64's waits, so the same retrace is another frame there;
  * the same frame is the same moment of the game.
+ *
+ * PORT_MONKEY=SEED[:FROM[:START]] drives controller 1 at random from
+ * retrace FROM (default 0; before it the script, if any): the stick held
+ * in one of 16 directions (or let go) for 8 to 90 retraces at a time,
+ * with A tapped and held (bombs, carrying one), B (kicks, throws), Z,
+ * R, L and the C buttons pressed now and then; START too if START is 1
+ * (the pause menu, which can leave the stage: off by default).  The
+ * generator is stepped a fixed number of times every retrace, in integer
+ * arithmetic only, so a seed gives the same run on every host
+ * (docs/PORT.md, "Every stage").  With --replay, the replay owns
+ * controller 1 for as long as it has frames; past its last frame the
+ * monkey takes it, from retrace FROM on.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -128,12 +140,102 @@ uint32_t host_input_poll(unsigned frame) {
     return script_word;
 }
 
+static struct {
+    int on, start;
+    unsigned from;
+    uint64_t s;
+    unsigned seg_left, hold_a, hold_b, hold_o;
+    uint16_t other;
+    int8_t x, y;
+    uint16_t word;
+} monkey;
+
+/* xorshift64*: a 32-bit number */
+static uint32_t monkey_next(void) {
+    monkey.s ^= monkey.s >> 12;
+    monkey.s ^= monkey.s << 25;
+    monkey.s ^= monkey.s >> 27;
+    return (uint32_t)((monkey.s * 0x2545F4914F6CDD1Dull) >> 32);
+}
+
+/* 0 to n-1 */
+static unsigned monkey_below(unsigned n) { return (unsigned)(((uint64_t)monkey_next() * n) >> 32); }
+
+static void monkey_init(void) {
+    const char *e = getenv("PORT_MONKEY");
+    if (!e || !*e)
+        return;
+    char *end;
+    uint64_t seed = strtoull(e, &end, 0);
+    if (*end == ':') {
+        monkey.from = (unsigned)strtoul(end + 1, &end, 0);
+        if (*end == ':')
+            monkey.start = atoi(end + 1);
+    }
+    monkey.on = 1;
+    /* splitmix64 of the seed, never 0 */
+    uint64_t z = seed + 0x9E3779B97F4A7C15ull;
+    z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ull;
+    z = (z ^ (z >> 27)) * 0x94D049BB133111EBull;
+    monkey.s = (z ^ (z >> 31)) | 1;
+}
+
+/* one retrace: always the same number of draws */
+static void monkey_frame(void) {
+    /* 16 directions at full tilt (80 * cos, 80 * sin) */
+    static const int8_t dir[16][2] = {
+        { 80, 0 }, { 74, 31 }, { 57, 57 }, { 31, 74 }, { 0, 80 }, { -31, 74 }, { -57, 57 }, { -74, 31 },
+        { -80, 0 }, { -74, -31 }, { -57, -57 }, { -31, -74 }, { 0, -80 }, { 31, -74 }, { 57, -57 }, { 74, -31 },
+    };
+    static const uint16_t others[] = { B_Z, B_R, B_L, B_CU, B_CD, B_CL, B_CR, B_START };
+    uint32_t r0 = monkey_next(), r1 = monkey_next(), r2 = monkey_next(), r3 = monkey_next();
+    if (monkey.seg_left == 0) {
+        unsigned d = r0 % 16, kind = (r0 >> 4) % 10;
+        monkey.seg_left = 8 + (r0 >> 8) % 83;
+        if (kind == 0) {        /* let go */
+            monkey.x = monkey.y = 0;
+        } else if (kind == 1) { /* half tilt: a walk */
+            monkey.x = (int8_t)(dir[d][0] / 2);
+            monkey.y = (int8_t)(dir[d][1] / 2);
+        } else {
+            monkey.x = dir[d][0];
+            monkey.y = dir[d][1];
+        }
+    }
+    monkey.seg_left--;
+    /* A: a tap (a bomb) about every 40 retraces, a long hold every 300 */
+    if (monkey.hold_a)
+        monkey.hold_a--;
+    else if (r1 % 300 == 0)
+        monkey.hold_a = 30 + (r1 >> 16) % 61;
+    else if (r1 % 40 == 1)
+        monkey.hold_a = 2 + (r1 >> 16) % 5;
+    /* B: a tap about every 50 */
+    if (monkey.hold_b)
+        monkey.hold_b--;
+    else if (r2 % 50 == 0)
+        monkey.hold_b = 2 + (r2 >> 16) % 8;
+    /* the rest: one of them about every 120 */
+    if (monkey.hold_o)
+        monkey.hold_o--;
+    else {
+        monkey.other = 0;
+        if (r3 % 120 == 0) {
+            uint16_t b = others[(r3 >> 8) % (monkey.start ? 8 : 7)];
+            monkey.other = b;
+            monkey.hold_o = 2 + (r3 >> 16) % 20;
+        }
+    }
+    monkey.word = (uint16_t)((monkey.hold_a ? B_A : 0) | (monkey.hold_b ? B_B : 0) | (monkey.hold_o ? monkey.other : 0));
+}
+
 /* the live pads' state (video.c fills them from SDL) */
 uint16_t host_live_buttons[4];
 int8_t host_live_x[4], host_live_y[4];
 int host_live_present[4] = { 1, 0, 0, 0 };
 
 void host_input_init(void) {
+    monkey_init();
     if (host_replay_path) {
         replay_init();
         return;
@@ -163,10 +265,22 @@ void host_input_init(void) {
 }
 
 void host_input_frame(void) {
-    if (host_replay_path)
-        return;
-    while (at < nsteps && steps[at].frame <= host_vi_count)
-        script_word = steps[at++].word;
+    if (!host_replay_path)
+        while (at < nsteps && steps[at].frame <= host_vi_count)
+            script_word = steps[at++].word;
+    if (monkey.on && host_vi_count >= monkey.from)
+        monkey_frame();
+}
+
+/* --replay still has the pad: until a read's frame is past the digest's
+   last (then the replay has ended, for good) */
+static int replay_owns(void) {
+    static int ended;
+    if (!host_replay_path || ended)
+        return 0;
+    if (replay_frame != ~0u && replay_frame >= replay_frames)
+        ended = 1;
+    return !ended;
 }
 
 /* mupen64plus's BUTTONS word to the N64's */
@@ -190,6 +304,12 @@ int host_input(int pad, uint16_t *buttons, int8_t *x, int8_t *y) {
     *x = *y = 0;
     if (pad < 0 || pad > 3)
         return 0;
+    if (monkey.on && pad == 0 && host_vi_count >= monkey.from && host_vi_count > 0 && !replay_owns()) {
+        *buttons = monkey.word;
+        *x = monkey.x;
+        *y = monkey.y;
+        return 1;
+    }
     if (have_script) {
         if (pad != 0)
             return 0;

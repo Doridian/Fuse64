@@ -68,6 +68,7 @@ def run(build, name, qemu=None, timeout=7200):
     warp, save = (SCENARIOS[name][2:] + (None, None))[:2]
     env = dict(os.environ)
     env.pop("PORT_WARP", None)
+    env.pop("PORT_MONKEY", None)
     if warp is not None:
         env["PORT_WARP"] = str(warp)
     exe = os.path.join(build, "fuse64")

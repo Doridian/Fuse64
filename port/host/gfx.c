@@ -15,8 +15,9 @@
  * coefficients as the RDP walks them, TMEM loads (LOADBLOCK with its line
  * counter and the odd lines' word swap, LOADTILE, LOADTLUT), tiles, texel
  * formats (RGBA16/32, CI4/8, IA4/8/16, I4/8), the color combiner in one
- * and two cycles, alpha compare, the blender, the z-buffer in the z image,
- * fill and copy modes, scissors, texture rectangles.
+ * and two cycles, alpha compare, the blender, the coverage the RDP keeps
+ * in memory (RDRAM's hidden bits), the z-buffer in the z image, fill and
+ * copy modes, scissors, rectangles (through the edge walker, as the RDP).
  *
  * What the game's memory holds is read as the N64 has it where the RDP
  * reads bytes (texels, palettes, framebuffers: big-endian, port_be16) and
@@ -90,16 +91,37 @@ static uint64_t tris;
 
 uint64_t host_gfx_tris(void) { return tris; }
 
-/* the z-buffer is the z image in RDRAM, as the RDP keeps it: 16 bits a
-   pixel, the depth (18 bits, z18: the screen z times 256) squeezed into 14
-   with an exponent, and two bits of the four of its slope's (dz's
-   exponent); the other two are in RDRAM's hidden bits on the N64, here
-   zhid (set when the game fills the image to clear it) */
-#define ZW 640
-#define ZH 480
-static uint8_t zhid[ZW * ZH];
+/* RDRAM's hidden bits.  The N64's RDRAM has 9-bit bytes, and only the RDP
+   sees the ninth: two bits a halfword, which it keeps with its images.  A
+   16-bit color pixel's coverage is three bits, its low bit and these two;
+   a z pixel's slope (dz's exponent, four bits) is its two low bits and
+   these two.  HB_CLEAN is a halfword the RDP hasn't written yet: its
+   hidden bits are taken as its low bit, twice (angrylion starts RDRAM so,
+   and gfx_ref.py's reference gets the port's, PORT_GFX_REF) */
+#define HB_CLEAN 4
+static uint8_t hidden[PORT_RDRAM_SIZE / 2];
+
+static void bl_div_init(void);
 
 void host_gfx_init(void) {
+    memset(hidden, HB_CLEAN, sizeof hidden);
+    bl_div_init();
+}
+
+/* the hidden bits of the halfword at p (outside RDRAM: a scratch byte) */
+static uint8_t *hb_at(const uint8_t *p) {
+    static uint8_t none;
+    uintptr_t off = (uintptr_t)p - (uintptr_t)port_rdram;
+    if (off >= PORT_RDRAM_SIZE) {
+        none = HB_CLEAN;
+        return &none;
+    }
+    return &hidden[off >> 1];
+}
+
+static int hb_get(const uint8_t *p) {
+    int h = *hb_at(p);
+    return (h & HB_CLEAN) ? (p[1] & 1) * 3 : h;
 }
 
 /* z18 to its 14 bits (shifted up by 2, as stored) */
@@ -143,35 +165,10 @@ static uint32_t dz_pix(uint32_t sum) {
     return top_bit(sum) << 1;
 }
 
-/* the RDP's depth test of a pixel at z18 z, slope dz (dz_pix) against the
-   z image's p (and hidden bits h); for a fully covered pixel over a fully
-   covered one (the port keeps no coverage in memory) */
-static int z_test(int zmode, uint32_t z, uint32_t dz, const uint8_t *p, const uint8_t *h) {
-    uint16_t zv = port_be16(p);
-    uint32_t oz = z_dec(zv);
-    uint32_t dzmem = 1u << (((zv & 3) << 2) | (*h & 3));
-    int coplanar = 0, pf = (zv >> 13) & 7;
-    if (pf < 3) {
-        if (dzmem != 0x8000) {
-            dzmem <<= 1;
-            if (dzmem < (16u >> pf))
-                dzmem = 16u >> pf;
-        } else {
-            coplanar = 1;
-            dzmem = 0xFFFF;
-        }
-    }
-    int32_t dznew = (int32_t)top_bit((dz | dzmem) & 0xFFFF) << 3;
-    int max = oz == 0x3FFFF;
-    if (zmode == 3)                     /* decal: within dz of what is there */
-        return !max && (coplanar || ((int32_t)z + dznew >= (int32_t)oz && (int32_t)z - dznew <= (int32_t)oz));
-    return max || z < oz;               /* opaque, interpenetrating, transparent */
-}
-
-static void z_store(uint8_t *p, uint8_t *h, uint32_t z, uint32_t dz) {
+static void z_store(uint8_t *p, uint32_t z, uint32_t dz) {
     int enc = dz_com(dz);
     port_wbe16(p, (uint16_t)(z_com(z) | (uint32_t)(enc >> 2)));
-    *h = (uint8_t)(enc & 3);
+    *hb_at(p) = (uint8_t)(enc & 3);
 }
 
 /* ---- TMEM and texels ------------------------------------------------------------------------------ */
@@ -515,7 +512,7 @@ static int cc_clamp(int v) {
     return v;
 }
 
-static void combine(const Inputs *in, int *out) {
+static void combine(const Inputs *in, int *out, int *alpha0) {
     int cycles = ccd.cyc == 1 ? 2 : 1;
     memcpy(slot[S_TEX0], in->tex0, sizeof slot[0]);
     memcpy(slot[S_TEX1], in->tex1, sizeof slot[0]);
@@ -538,6 +535,8 @@ static void combine(const Inputs *in, int *out) {
         for (int k = 0; k < 3; k++)
             r[k] = cc_clamp(((slot[cs[0]][k] - slot[cs[1]][k]) * slot[cs[2]][k] + (slot[cs[3]][k] << 8) + 0x80) >> 8);
         r[3] = cc_clamp(((slot[as[0]][3] - slot[as[1]][3]) * slot[as[2]][3] + (slot[as[3]][3] << 8) + 0x80) >> 8);
+        if (c == 0)
+            *alpha0 = r[3];
         for (int k = 0; k < 4; k++) {
             slot[S_COMB][k] = r[k];
             out[k] = r[k];
@@ -552,20 +551,6 @@ static int cimg_px(int x, int y, uint8_t **p) {
         return 0;
     *p = gs.cimg + ((size_t)y * gs.cimg_w + x) * (gs.cimg_siz == 3 ? 4 : gs.cimg_siz == 2 ? 2 : 1);
     return 1;
-}
-
-static void read_mem(uint8_t *p, int *c) {
-    if (gs.cimg_siz == 3) {
-        c[0] = p[0]; c[1] = p[1]; c[2] = p[2]; c[3] = p[3];
-    } else if (gs.cimg_siz == 2) {
-        uint16_t v = port_be16(p);
-        c[0] = ((v >> 11) & 31) << 3;
-        c[1] = ((v >> 6) & 31) << 3;
-        c[2] = ((v >> 1) & 31) << 3;
-        c[3] = (v & 1) ? 255 : 0;
-    } else {
-        c[0] = c[1] = c[2] = c[3] = p[0];
-    }
 }
 
 /* PORT_GFX_TRACE=X,Y logs every write to that pixel of a color image (a
@@ -584,7 +569,7 @@ static void trace_px(const uint8_t *p, const int *c) {
     if ((int)(px % gs.cimg_w) != trace_x || (int)(px / gs.cimg_w) != trace_y)
         return;
     const Tile *t = &gs.tile[gs.tex_tile];
-    host_log("trace %u: cimg %p old %02x%02x new %d %d %d %d; om %08x %08x; tile %d fmt %d siz %d tmem %d "
+    host_log("trace %u: cimg %p old %02x%02x new %d %d %d cvg %d; om %08x %08x; tile %d fmt %d siz %d tmem %d "
              "line %d pal %d; timg %p (rdram %+ld); st %d %d (s10.5)\n", host_vi_count, (void *)gs.cimg, p[0], p[1],
              c[0], c[1], c[2], c[3], gs.om_h, gs.om_l, gs.tex_tile, t->fmt, t->siz, t->tmem, t->line, t->pal,
              (void *)gs.timg, (long)(gs.timg - port_rdram), trace_s, trace_t);
@@ -598,155 +583,327 @@ static void trace_px(const uint8_t *p, const int *c) {
     }
 }
 
-/* the 16-bit framebuffer's dither (othermode H's RGB dither: the magic
-   square, Bayer's matrix, noise, none), added below the 5 bits kept */
-static const uint8_t dither_magic[16] = { 0, 6, 1, 7, 4, 2, 5, 3, 3, 5, 2, 4, 7, 1, 6, 0 };
-static const uint8_t dither_bayer[16] = { 0, 4, 1, 5, 6, 2, 7, 3, 1, 5, 0, 4, 7, 3, 6, 2 };
-
-static int dither_at(int x, int y) {
-    int sel = (gs.om_h >> 6) & 3;
-    if (sel == 0)
-        return dither_magic[(y & 3) * 4 + (x & 3)];
-    if (sel == 1)
-        return dither_bayer[(y & 3) * 4 + (x & 3)];
-    if (sel == 2)
-        return (int)(noise8() & 7);
-    return -1;
+/* the color image's pixel: its color (0..255) into c, and its coverage
+   (0..7) as the RDP reads them */
+static int read_px(const uint8_t *p, int *c) {
+    if (gs.cimg_siz == 3) {
+        c[0] = p[0];
+        c[1] = p[1];
+        c[2] = p[2];
+        return p[3] >> 5;
+    }
+    if (gs.cimg_siz == 2) {
+        uint16_t v = port_be16(p);
+        if (gs.cimg_fmt != 0) {         /* (an intensity image: the coverage at bit 5) */
+            c[0] = c[1] = c[2] = v >> 8;
+            return (v >> 5) & 7;
+        }
+        c[0] = ((v >> 11) & 31) << 3;
+        c[1] = ((v >> 6) & 31) << 3;
+        c[2] = ((v >> 1) & 31) << 3;
+        return (v & 1) << 2 | hb_get(p);
+    }
+    c[0] = c[1] = c[2] = p[0];
+    return 7;
 }
 
-static void write_mem(uint8_t *p, const int *c, int dith) {
-    trace_px(p, c);
+/* a pixel written with its coverage (0..7): a 16-bit color's top bit in
+   the color's low bit, the other two hidden; a 32-bit color's in the top
+   of its alpha */
+static void write_px(uint8_t *p, const int *c, int cvg) {
+    int t[4] = { c[0], c[1], c[2], cvg };
+    trace_px(p, t);
     if (gs.cimg_siz == 3) {
-        for (int k = 0; k < 4; k++)
-            p[k] = (uint8_t)c[k];
+        p[0] = (uint8_t)c[0];
+        p[1] = (uint8_t)c[1];
+        p[2] = (uint8_t)c[2];
+        p[3] = (uint8_t)(cvg << 5);
+        *hb_at(p) = (uint8_t)((c[1] & 1) * 3);
+        *hb_at(p + 2) = 0;
     } else if (gs.cimg_siz == 2) {
-        int v[3];
-        for (int k = 0; k < 3; k++) {
-            v[k] = c[k] >> 3;
-            if (dith >= 0 && v[k] < 31 && (c[k] & 7) > dith)
-                v[k]++;
+        if (gs.cimg_fmt != 0) {
+            port_wbe16(p, (uint16_t)(c[0] << 8 | cvg << 5));
+            *hb_at(p) = 0;
+        } else {
+            port_wbe16(p, (uint16_t)((c[0] >> 3) << 11 | (c[1] >> 3) << 6 | (c[2] >> 3) << 1 | cvg >> 2));
+            *hb_at(p) = (uint8_t)(cvg & 3);
         }
-        port_wbe16(p, (uint16_t)(v[0] << 11 | v[1] << 6 | v[2] << 1 | 1));
     } else {
         p[0] = (uint8_t)c[0];
     }
 }
 
-/* the blender: (P * A + M * B) by othermode L's selectors, A and B with 5
-   bits, cycle by cycle; returns 0 if nothing is written.  `cvg` is the
-   pixel's coverage (8: all of it) */
-static int blend_px(uint8_t *p, int *c, const int *shade, int cvg) {
-    uint32_t l = gs.om_l;
-    int cycles = ((gs.om_h >> 20) & 3) == 1 ? 2 : 1;
-    int force = (l >> 14) & 1;
-    int mem[4];
-    int alpha = c[3];
-    /* alpha compare */
-    if ((l & 3) == 1 && alpha < gs.blend[3])
-        return 0;
-    if ((l & 3) == 3 && alpha < (int)noise8())
-        return 0;
-    /* coverage: all of the pixel, times alpha (CVG_X_ALPHA); the blender's
-       alpha the coverage (ALPHA_CVG_SEL); none, nothing written (AA_EN) */
-    int full = !(l & 0x8) || cvg >= 8;
-    /* (as the combiner has it: 255 is 256, and the product's 8 bits of
-       alpha the blender's alpha, its top four the coverage) */
-    int prod = ((alpha == 255 ? 256 : alpha) * cvg + 4) >> 3;
-    if (l & 0x1000)
-        cvg = (prod >> 5) & 15;
-    if (l & 0x2000) {
-        alpha = (l & 0x1000) ? prod : cvg << 5;
-        if (alpha > 255)
-            alpha = 255;
+/* fill mode's pixel: the fill color's halfword or word, each halfword's
+   low bit its whole coverage */
+static void fill_px(uint8_t *p, int x) {
+    if (gs.cimg_siz == 2) {
+        uint16_t v = (uint16_t)((x & 1) ? gs.fill : gs.fill >> 16);
+        port_wbe16(p, v);
+        *hb_at(p) = (uint8_t)((v & 1) * 3);
+    } else if (gs.cimg_siz == 3) {
+        port_wbe32(p, gs.fill);
+        *hb_at(p) = (uint8_t)(((gs.fill >> 16) & 1) * 3);
+        *hb_at(p + 2) = (uint8_t)((gs.fill & 1) * 3);
+    } else {
+        p[0] = (uint8_t)(gs.fill >> ((3 - (x & 3)) * 8));
     }
-    if ((l & 0x8) && cvg == 0)
-        return 0;
-    read_mem(p, mem);
-    int out[4];
-    memcpy(out, c, sizeof out);
-    for (int cy = 0; cy < cycles; cy++) {
-        int sh = cy == 0 ? 0 : 2;     /* (the first cycle's selectors are the top bits) */
-        int pm = (l >> (30 - sh)) & 3, a1 = (l >> (26 - sh)) & 3;
-        int mm = (l >> (22 - sh)) & 3, b1 = (l >> (18 - sh)) & 3;
-        const int blc[4] = { gs.blend[0], gs.blend[1], gs.blend[2], gs.blend[3] };
-        const int fgc[4] = { gs.fog[0], gs.fog[1], gs.fog[2], gs.fog[3] };
-        const int *P = pm == 0 ? out : pm == 1 ? mem : pm == 2 ? blc : fgc;
-        const int *M = mm == 0 ? out : mm == 1 ? mem : mm == 2 ? blc : fgc;
-        int A = a1 == 0 ? alpha : a1 == 1 ? gs.fog[3] : a1 == 2 ? shade[3] : 0;
-        int r[4];
-        if (cy == cycles - 1 && !force && full) {
-            /* no forced blend, a fully covered pixel: the first input as it is */
-            memcpy(r, P, sizeof r);
-        } else {
-            int a5 = A >> 3, b5;
-            if (b1 == 0)
-                b5 = ~A >> 3 & 31;
-            else
-                b5 = b1 == 1 ? mem[3] >> 3 : b1 == 2 ? 31 : 0;
-            if (b1 == 0) {
-                for (int k = 0; k < 3; k++)
-                    r[k] = (P[k] * a5 + M[k] * (b5 + 1)) >> 5;
-            } else if (a5 + b5) {
-                for (int k = 0; k < 3; k++)
-                    r[k] = (P[k] * a5 + M[k] * b5) / (a5 + b5);
-            } else {
-                memcpy(r, P, sizeof r);
-            }
-            r[3] = c[3];
-        }
-        memcpy(out, r, sizeof out);
-    }
-    for (int k = 0; k < 3; k++)
-        c[k] = out[k] < 0 ? 0 : out[k] > 255 ? 255 : out[k];
-    return 1;
 }
 
-/* the z image's pixel (and its hidden bits) */
-static uint8_t *zptr(int x, int y, uint8_t **h) {
-    if (!gs.zimg || x < 0 || y < 0 || x >= ZW || y >= ZH || gs.cimg_w > ZW)
+/* the dither, by othermode H's RGB and alpha selectors: the color's (the
+   magic square, Bayer's matrix, noise; -1 none) and the alpha's (the
+   color's matrix, its complement, noise, none; with the color's noise or
+   none, the magic square or Bayer's).  The matrices as parallel-rdp has
+   them */
+static const uint8_t dither_magic[16] = { 0, 6, 1, 7, 4, 2, 5, 3, 3, 5, 2, 4, 7, 1, 6, 0 };
+static const uint8_t dither_bayer[16] = { 0, 4, 1, 5, 4, 0, 5, 1, 3, 7, 2, 6, 7, 3, 6, 2 };
+
+static void dither_at(int x, int y, int *cd, int *ad) {
+    int rgb = (gs.om_h >> 6) & 3, al = (gs.om_h >> 4) & 3, i = (y & 3) * 4 + (x & 3);
+    *cd = rgb == 0 ? dither_magic[i] : rgb == 1 ? dither_bayer[i] : rgb == 2 ? (int)(noise8() & 7) : -1;
+    if (al == 3) {
+        *ad = 0;
+    } else if (al == 2) {
+        *ad = (int)(noise8() & 7);
+    } else {
+        int m = rgb < 2 ? *cd : (rgb & 1) ? dither_bayer[i] : dither_magic[i];
+        *ad = al == 1 ? ~m & 7 : m;
+    }
+}
+
+/* the blender's divider: n (11 bits) over d (4 bits), a quotient bit a
+   step from a 3-bit partial remainder, as the RDP divides: n / d where d
+   is 8 or less and the quotient under 256 (the antialiased blends), and
+   what its steps give beyond (parallel-rdp's table) */
+static uint8_t bl_div_tab[16][2048];
+
+static void bl_div_init(void) {
+    for (int d = 0; d < 16; d++)
+        for (int n = 0; n < 2048; n++) {
+            int q = 0, r = (~d & 15) + (n >> 8) + 1;
+            for (int k = 0; k < 8; k++) {
+                int bit = (n >> (7 - k)) & 1, rem = r & 7;
+                /* after a quotient bit of 1 (the step before) add the
+                   divisor's complement, else the divisor */
+                r = (q & (0x100 >> k)) ? (~d & 15) + (rem << 1) + bit + 1 : d + (rem << 1) + bit;
+                if (r & 16)
+                    q |= 1 << (7 - k);
+            }
+            bl_div_tab[d][n] = (uint8_t)q;
+        }
+}
+
+/* a blender cycle's P * A + M * (B + 1), A and B with 5 bits (when B is
+   the memory's coverage, shifted by how the pixel's and the memory's
+   slopes differ, sh), over 32, or with the RDP's divider over their sum
+   (divide: the last cycle's, not forced) */
+static void blend_eq(const int *P, const int *M, int a, int b, int bmem, const int *sh, int divide, int *out) {
+    a >>= 3;
+    b >>= 3;
+    if (bmem) {
+        a = (a >> sh[0]) & 0x3C;
+        b = (b >> sh[1]) | 3;
+    }
+    for (int k = 0; k < 3; k++) {
+        int v = P[k] * a + M[k] * (b + 1);
+        out[k] = divide ? bl_div_tab[((a >> 2) + (b >> 2) + 1) & 15][(v >> 2) & 0x7FF] : (v >> 5) & 0xFF;
+    }
+}
+
+/* the z image's pixel */
+static uint8_t *zptr(int x, int y) {
+    if (!gs.zimg || x < 0 || y < 0)
         return NULL;
     size_t off = ((size_t)y * gs.cimg_w + x) * 2;
     if (gs.zimg < port_rdram || gs.zimg + off + 2 > port_rdram + PORT_RDRAM_SIZE)
         return NULL;
-    *h = &zhid[y * gs.cimg_w + x];
     return gs.zimg + off;
 }
 
-/* ---- rasterizing ------------------------------------------------------------------------------------ */
+/* the depth test (othermode L's z mode) of a pixel at z18 z, slope dz
+   (dz_pix) and coverage *cvg over the z image's p (NULL: no compare) and
+   the color image's coverage memcvg.  Gives whether the pixel is drawn;
+   *blend, whether it blends (forced; or antialiased, the two coverages
+   not reaching 8, and not in front of what is there by more than the
+   slopes); *wrap, whether they do reach 8; sh, the blender's shifts.  An
+   interpenetrating surface's coverage is scaled by how far behind it
+   goes */
+static int z_test(const uint8_t *p, uint32_t z, uint32_t dz, int *cvg, int memcvg, int *blend, int *wrap, int *sh) {
+    uint32_t l = gs.om_l;
+    int force = (l >> 14) & 1, aa = (l >> 3) & 1, zmode = (l >> 10) & 3;
+    int dzenc = dz_com(dz);
+    int over = (*cvg + memcvg) & 8;
+    *wrap = over;
+    if (!p) {
+        sh[0] = 0;
+        sh[1] = dzenc < 11 ? 4 : 15 - dzenc;
+        *blend = force || (!over && aa);
+        return 1;
+    }
+    uint16_t zv = port_be16(p);
+    uint32_t oz = z_dec(zv);
+    int memenc = (zv & 3) << 2 | hb_get(p);
+    uint32_t dzmem = 1u << memenc;
+    sh[0] = dzenc - memenc < 0 ? 0 : dzenc - memenc > 4 ? 4 : dzenc - memenc;
+    sh[1] = memenc - dzenc < 0 ? 0 : memenc - dzenc > 4 ? 4 : memenc - dzenc;
+    int coplanar = 0, pf = (zv >> 13) & 7;
+    if (pf < 3) {
+        if (dzmem != 0x8000) {
+            dzmem <<= 1;
+            if (dzmem < (16u >> pf))
+                dzmem = 16u >> pf;
+        } else {
+            coplanar = 1;
+            dzmem = 0xFFFF;
+        }
+    }
+    uint32_t dzmax = top_bit((dz | dzmem) & 0xFFFF);
+    int32_t dzn = (int32_t)dzmax << 3;
+    int farther = coplanar || (int32_t)z + dzn >= (int32_t)oz;
+    int nearer = coplanar || (int32_t)z - dzn <= (int32_t)oz;
+    int front = z < oz, max = oz == 0x3FFFF;
+    *blend = force || (!over && aa && farther);
+    switch (zmode) {
+    case 1:                             /* interpenetrating */
+        if (front && farther && over) {
+            int e = dz_com(dzmax);
+            *cvg = (int)((((((oz >> e) - (z >> e)) & 15) * (uint32_t)*cvg) >> 3) & 15);
+            return 1;
+        }
+        /* fall through */
+    case 0:                             /* opaque: in front, or within the slopes if not overflowing */
+        return max || (over ? front : nearer);
+    case 2:                             /* transparent */
+        return front || max;
+    default:                            /* decal: within the slopes of what is there */
+        return farther && nearer && !max;
+    }
+}
 
-/* a pixel of a primitive: its depth (z18) and dz (dz_pix), shade
-   (0..255) and texture coordinates (s10.5) */
-static void shade_pixel_i(int x, int y, uint32_t z, uint32_t dz, const int *shade, int s, int t, int textured,
-                          int cvg) {
-    uint8_t *p, *zh = NULL;
+/* a pixel of a primitive, as the rasterizer gives it */
+typedef struct {
+    int shade[4];               /* 0..255 */
+    int s, t, textured;         /* s10.5 */
+    uint32_t z, dz;             /* z18, dz_pix */
+    int cvg, first;             /* how many of the 8 samples are in; whether the first is */
+} Frag;
+
+/* The RDP's pixel pipeline, one or two cycles: the texels, the combiner,
+   coverage and alpha (CVG_X_ALPHA: the coverage times alpha; ALPHA_CVG_SEL:
+   the coverage as alpha), the memory's color and coverage (IMAGE_READ),
+   the depth test, the alpha compare, the blender (COLOR_ON_CVG: the
+   memory's color until the coverage wraps), the dither, then the color
+   with the coverage CVG_DEST gives (clamp: the sum, or when not blending
+   the pixel's less one; wrap: the sum's low 3 bits; zap: full; save: the
+   memory's) and the depth.  In angrylion's and parallel-rdp's order */
+static void rdp_pixel(int x, int y, const Frag *f) {
+    uint8_t *p;
     if (!cimg_px(x, y, &p))
         return;
     uint32_t l = gs.om_l;
-    int zcmp = (l >> 4) & 1, zupd = (l >> 5) & 1, zmode = (l >> 10) & 3;
-    uint8_t *zp = zcmp || zupd ? zptr(x, y, &zh) : NULL;
+    int two = ((gs.om_h >> 20) & 3) == 1;
+    int aa = (l >> 3) & 1, zcmp = (l >> 4) & 1, zupd = (l >> 5) & 1;
+    int x_alpha = (l >> 12) & 1, cvg_sel = (l >> 13) & 1;
+    uint32_t z = f->z, dz = f->dz;
     if ((l >> 2) & 1) {                 /* z from the primitive's depth */
         z = gs.prim_z;
         dz = gs.prim_dz;
     }
-    if (zp && zcmp && !z_test(zmode, z, dz, zp, zh))
-        return;
     Inputs in;
-    memcpy(in.shade, shade, sizeof in.shade);
+    memcpy(in.shade, f->shade, sizeof in.shade);
     memset(in.tex0, 0, sizeof in.tex0);
     memset(in.tex1, 0, sizeof in.tex1);
-    if (textured) {
+    if (f->textured) {
         if (ccd.tex0)
-            sample(gs.tex_tile, s, t, in.tex0);
+            sample(gs.tex_tile, f->s, f->t, in.tex0);
         if (ccd.tex1)
-            sample(gs.tex_tile + 1, s, t, in.tex1);
+            sample(gs.tex_tile + 1, f->s, f->t, in.tex1);
     }
-    int c[4];
-    combine(&in, c);
-    if (!blend_px(p, c, shade, cvg))
+    int c[4], a0;
+    combine(&in, c, &a0);
+    int cd, ad;
+    dither_at(x, y, &cd, &ad);
+    /* coverage and alpha (the combiner's 255 is 256 here) */
+    int cvg = f->cvg, alpha = c[3] == 255 ? 256 : c[3], prod = 0;
+    if (x_alpha) {
+        prod = (alpha * cvg + 4) >> 3;
+        cvg = (prod >> 5) & 15;
+    }
+    if (cvg_sel) {
+        alpha = x_alpha ? prod : cvg << 5;
+        if (alpha > 255)
+            alpha = 255;
+    } else if ((alpha += ad) & 0x100) {
+        alpha = 255;
+    }
+    int shade_a = f->shade[3] + ad > 255 ? 255 : f->shade[3] + ad;
+    /* (in two cycles the alpha compare takes the first cycle's alpha) */
+    int cmp_a = alpha;
+    if (two) {
+        cmp_a = a0 == 255 ? 256 : a0;
+        if (cvg_sel)
+            cmp_a = x_alpha ? (cmp_a * f->cvg + 4) >> 3 : f->cvg << 5;
+        else
+            cmp_a += ad;
+        if (cmp_a > 255)
+            cmp_a = 255;
+    }
+    /* the memory (without IMAGE_READ: full coverage, the last color read) */
+    static int mem[3];
+    int memcvg = (l & 0x40) ? read_px(p, mem) : 7;
+    uint8_t *zp = zcmp || zupd ? zptr(x, y) : NULL;
+    int blend, wrap, sh[2];
+    if (!z_test(zcmp ? zp : NULL, z, dz, &cvg, memcvg, &blend, &wrap, sh))
         return;
-    write_mem(p, c, dither_at(x, y));
+    if ((l & 1) && cmp_a < ((l & 2) ? (int)noise8() : gs.blend[3]))
+        return;
+    if (!(aa ? cvg : f->first))
+        return;
+    /* the blender (one cycle: cycle 0's selectors; two: cycle 0's result
+       is cycle 1's pixel) */
+    int out[3] = { c[0], c[1], c[2] };
+    const int blc[3] = { gs.blend[0], gs.blend[1], gs.blend[2] };
+    const int fgc[3] = { gs.fog[0], gs.fog[1], gs.fog[2] };
+    for (int cy = 0; cy <= two; cy++) {
+        int hi = cy ? 0 : 2;            /* (cycle 0's selectors are the high bits) */
+        int pm = (l >> (28 + hi)) & 3, am = (l >> (24 + hi)) & 3;
+        int mm = (l >> (20 + hi)) & 3, bm = (l >> (16 + hi)) & 3;
+        int pix[3] = { out[0], out[1], out[2] };
+        const int *P = pm == 0 ? pix : pm == 1 ? mem : pm == 2 ? blc : fgc;
+        const int *M = mm == 0 ? pix : mm == 1 ? mem : mm == 2 ? blc : fgc;
+        int a = am == 0 ? alpha : am == 1 ? gs.fog[3] : am == 2 ? shade_a : 0;
+        int b = bm == 0 ? ~a & 0xFF : bm == 1 ? memcvg << 5 : bm == 2 ? 0xFF : 0;
+        if (cy < two)
+            blend_eq(P, M, a, b, bm == 1, sh, 0, out);
+        else if ((l & 0x80) && !wrap)
+            memcpy(out, M, sizeof out);
+        else if (!blend || (am == 0 && bm == 0 && alpha >= 255))
+            memcpy(out, P, sizeof out);
+        else
+            blend_eq(P, M, a, b, bm == 1, sh, !((l >> 14) & 1), out);
+    }
+    if (cd >= 0)
+        for (int k = 0; k < 3; k++)
+            if ((out[k] & 7) > cd)
+                out[k] = out[k] > 247 ? 255 : (out[k] & 0xF8) + 8;
+    int fcvg;
+    switch ((l >> 8) & 3) {
+    case 0:                             /* clamp */
+        fcvg = blend ? cvg + memcvg : cvg - 1;
+        fcvg = (fcvg & 8) ? 7 : fcvg & 7;
+        break;
+    case 1:                             /* wrap */
+        fcvg = (cvg + memcvg) & 7;
+        break;
+    case 2:                             /* zap */
+        fcvg = 7;
+        break;
+    default:                            /* save */
+        fcvg = memcvg;
+        break;
+    }
+    write_px(p, out, fcvg);
     if (zp && zupd)
-        z_store(zp, zh, z, dz);
+        z_store(zp, z, dz);
 }
 
 /* ---- triangles: the RDP's edge walker -------------------------------------------------------------- */
@@ -993,63 +1150,62 @@ static void rdp_tri(const uint32_t *w) {
             }
             if (cyc == 3) {
                 uint8_t *px;
-                if (cimg_px(x, y, &px)) {
-                    if (gs.cimg_siz == 2)
-                        port_wbe16(px, (uint16_t)((x & 1) ? gs.fill : gs.fill >> 16));
-                    else if (gs.cimg_siz == 3)
-                        port_wbe32(px, gs.fill);
-                }
+                if (cimg_px(x, y, &px))
+                    fill_px(px, x);
                 continue;
             }
-            /* (the pixel drawn whole: the coverage the RDP keeps in memory
-               isn't the port's) */
-            shade_pixel_i(x, y, z18, dz, sh, s, t, (op & 2) != 0, 8);
+            Frag f = { { sh[0], sh[1], sh[2], sh[3] }, s, t, (op & 2) != 0, z18, dz, 0, cvg & 1 };
+            for (int k = 0; k < 8; k++)
+                f.cvg += (cvg >> k) & 1;
+            rdp_pixel(x, y, &f);
         }
     }
 }
 
 /* ---- rectangles ----------------------------------------------------------------------------------- */
 
-static void fill_rect(uint32_t w0, uint32_t w1) {
-    int x1 = ((w0 >> 12) & 0xFFF) >> 2, y1 = (w0 & 0xFFF) >> 2;
-    int x0 = ((w1 >> 12) & 0xFFF) >> 2, y0 = (w1 & 0xFFF) >> 2;
-    int cyc = (gs.om_h >> 20) & 3;
-    if (cyc >= 2) {                     /* fill and copy modes: inclusive */
-        x1++;
-        y1++;
+/* A rectangle in one or two cycles is the RDP's edge walker's too: a
+   triangle command with its three edges upright at the two x and flip
+   set, the texture's coefficients from s, t and their steps (s5.10, into
+   s10.5's 16.16; flipped, s steps down and t across), so that its edges
+   at a quarter pixel get their coverage as a triangle's do (as angrylion
+   and parallel-rdp draw them) */
+static void rect_tri(uint32_t xl, uint32_t yl, uint32_t xh, uint32_t yh, int tile, const int *st) {
+    uint32_t w[24] = { 0 };
+    w[0] = (uint32_t)(st ? 0x0A : 0x08) << 24 | 1u << 23 | (uint32_t)tile << 16 | yl;
+    w[1] = yl << 16 | yh;
+    w[2] = w[6] = (xl >> 2) << 16 | (xl & 3) << 14;
+    w[4] = (xh >> 2) << 16 | (xh & 3) << 14;
+    if (st) {
+        /* st: s, t, d/dx of both, d/dy of both */
+        uint32_t *p = w + 8;
+        p[0] = (uint32_t)st[0] << 16 | ((uint32_t)st[1] & 0xFFFF);
+        p[2] = (uint32_t)(st[2] >> 5) << 16 | ((uint32_t)(st[3] >> 5) & 0xFFFF);
+        p[6] = (uint32_t)(st[2] & 31) << 27 | (uint32_t)(st[3] & 31) << 11;
+        p[8] = p[10] = (uint32_t)(st[4] >> 5) << 16 | ((uint32_t)(st[5] >> 5) & 0xFFFF);
+        p[12] = p[14] = (uint32_t)(st[4] & 31) << 27 | (uint32_t)(st[5] & 31) << 11;
     }
+    rdp_tri(w);
+}
+
+static void fill_rect(uint32_t w0, uint32_t w1) {
+    int cyc = (gs.om_h >> 20) & 3;
+    if (cyc < 2) {
+        rect_tri((w0 >> 12) & 0xFFF, w0 & 0xFFF, (w1 >> 12) & 0xFFF, w1 & 0xFFF, 0, NULL);
+        return;
+    }
+    /* fill and copy modes: whole pixels, the last row and column too */
+    int x1 = (((w0 >> 12) & 0xFFF) >> 2) + 1, y1 = ((w0 & 0xFFF) >> 2) + 1;
+    int x0 = ((w1 >> 12) & 0xFFF) >> 2, y0 = (w1 & 0xFFF) >> 2;
     if (x0 < (gs.sc_xh >> 2)) x0 = (gs.sc_xh >> 2);
     if (y0 < (gs.sc_yh >> 2)) y0 = (gs.sc_yh >> 2);
     if (x1 > (gs.sc_xl >> 2)) x1 = (gs.sc_xl >> 2);
     if (y1 > (gs.sc_yl >> 2)) y1 = (gs.sc_yl >> 2);
-    /* the z image filled as a colour image: its hidden bits too (from
-       the fill's bit 0) */
-    if (gs.cimg && gs.cimg == gs.zimg && cyc == 3) {
-        for (int y = y0; y < y1; y++)
-            for (int x = x0; x < x1; x++) {
-                uint8_t *h;
-                if (zptr(x, y, &h))
-                    *h = (gs.fill >> ((x & 1) ? 0 : 16)) & 1 ? 3 : 0;
-            }
-    }
-    if (cyc < 2)
-        cc_begin();
     for (int y = y0; y < y1; y++)
         for (int x = x0; x < x1; x++) {
             uint8_t *p;
-            if (!cimg_px(x, y, &p))
-                continue;
-            if (cyc == 3) {
-                if (gs.cimg_siz == 2)
-                    port_wbe16(p, (uint16_t)((x & 1) ? gs.fill : gs.fill >> 16));
-                else if (gs.cimg_siz == 3)
-                    port_wbe32(p, gs.fill);
-                else
-                    p[0] = (uint8_t)(gs.fill >> ((3 - (x & 3)) * 8));
-            } else {
-                int sh[4] = { 0, 0, 0, 0 };
-                shade_pixel_i(x, y, 0, 1, sh, 0, 0, 0, 8);
-            }
+            if (cyc == 3 && cimg_px(x, y, &p))
+                fill_px(p, x);
         }
 }
 
@@ -1061,18 +1217,20 @@ static void tex_rect(uint32_t w0, uint32_t w1, uint32_t h1, uint32_t h2, int fli
     int s0 = (int16_t)(h1 >> 16), t0 = (int16_t)(h1 & 0xFFFF);
     int dsdx = (int16_t)(h2 >> 16), dtdy = (int16_t)(h2 & 0xFFFF);
     int cyc = (gs.om_h >> 20) & 3;
-    int ix0 = xh >> 2, iy0 = yh >> 2, ix1 = (xl + 3) >> 2, iy1 = (yl + 3) >> 2;
-    if (cyc >= 2) {                     /* copy mode: the last row and column too */
-        ix1 = (xl >> 2) + 1;
-        iy1 = (yl >> 2) + 1;
-        dsdx >>= 2;                     /* (four texels a clock: dsdx is 4 a pixel) */
+    if (cyc < 2) {
+        int st[6] = { s0, t0, flip ? 0 : dsdx, flip ? dtdy : 0, flip ? dsdx : 0, flip ? 0 : dtdy };
+        rect_tri((uint32_t)xl, (uint32_t)yl, (uint32_t)xh, (uint32_t)yh, tile, st);
+        return;
     }
+    /* copy mode: whole pixels, the last row and column too, the texels as
+       they are (a 16-bit one's alpha bit its whole coverage) */
+    int ix0 = xh >> 2, iy0 = yh >> 2, ix1 = (xl >> 2) + 1, iy1 = (yl >> 2) + 1;
+    dsdx >>= 2;                         /* (four texels a clock: dsdx is 4 a pixel) */
     if (ix0 < (gs.sc_xh >> 2)) ix0 = (gs.sc_xh >> 2);
     if (iy0 < (gs.sc_yh >> 2)) iy0 = (gs.sc_yh >> 2);
     if (ix1 > (gs.sc_xl >> 2)) ix1 = (gs.sc_xl >> 2);
     if (iy1 > (gs.sc_yl >> 2)) iy1 = (gs.sc_yl >> 2);
     int save_tile = gs.tex_tile;
-    cc_begin();
     gs.tex_tile = tile;
     for (int y = iy0; y < iy1; y++)
         for (int x = ix0; x < ix1; x++) {
@@ -1080,18 +1238,19 @@ static void tex_rect(uint32_t w0, uint32_t w1, uint32_t h1, uint32_t h2, int fli
             int dx = x - (xh >> 2), dy = y - (yh >> 2);
             int s = ((s0 << 5) + dsdx * (flip ? dy : dx)) >> 5;
             int t = ((t0 << 5) + dtdy * (flip ? dx : dy)) >> 5;
-            if (cyc == 2) {
-                uint8_t *p;
-                int c[4];
-                if (!cimg_px(x, y, &p))
-                    continue;
-                sample(tile, s, t, c);
-                if ((gs.om_l & 1) && c[3] == 0)
-                    continue;
-                write_mem(p, c, -1);
+            uint8_t *p;
+            int c[4];
+            if (cyc != 2 || !cimg_px(x, y, &p))
+                continue;
+            sample(tile, s, t, c);
+            if ((gs.om_l & 1) && c[3] == 0)
+                continue;
+            if (gs.cimg_siz == 3) {
+                trace_px(p, c);
+                for (int k = 0; k < 4; k++)
+                    p[k] = (uint8_t)c[k];
             } else {
-                static const int sh[4] = { 0, 0, 0, 0 };
-                shade_pixel_i(x, y, 0, 1, sh, s, t, 1, 8);
+                write_px(p, c, c[3] ? 7 : 0);
             }
         }
     gs.tex_tile = save_tile;
@@ -1260,8 +1419,11 @@ static void dl_cmd(int depth, uint32_t w0, uintptr_t w1) {
    vertices, matrices and viewports the task reads, in the N64's order and
    with N64 addresses (segments resolved), and the textures it loads from
    outside port_rdram; DIR/rRRRRR_tT.out is port_rdram after the port drew
-   the task, and DIR/rRRRRR_tT.cmd the RDP commands its RDP took (the
-   microcode's and the list's own, one line each, the words in hex).  The RDP's state at the task's start (the port carries it from
+   the task; both are followed by the RDP's hidden bits of the low 8 MiB
+   (4 MiB, a byte a halfword: the coverage in memory carries from task to
+   task); and DIR/rRRRRR_tT.cmd the RDP commands its RDP took (the
+   microcode's and the list's own, one line each, the words in hex).  The
+   RDP's state at the task's start (the port carries it from
    the last task, as the RDP does) goes first, as RDP commands, and the
    microcode (the task's boot, text and data) is in the image too.  The
    header (XR_HEAD big-endian words after the magic): the retrace, the
@@ -1548,9 +1710,12 @@ static uint32_t xr_dl(const uint8_t *pc, int depth) {
     return base;
 }
 
+/* a task's file: the header (if any), the memory, then the RDP's hidden
+   bits of the low 8 MiB (a byte a halfword, HB_CLEAN as it is) */
 static void xr_write(const char *path, const void *p, size_t n, const void *head, size_t hn) {
     FILE *f = fopen(path, "wb");
-    if (!f || (hn && fwrite(head, 1, hn, f) != hn) || fwrite(p, 1, n, f) != n)
+    if (!f || (hn && fwrite(head, 1, hn, f) != hn) || fwrite(p, 1, n, f) != n ||
+        fwrite(hidden, 1, sizeof hidden, f) != sizeof hidden)
         host_fatal("PORT_GFX_REF: can't write %s", path);
     fclose(f);
 }

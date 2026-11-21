@@ -8,6 +8,11 @@
  *
  *   gfxref TASK.in OUT.bin
  *
+ * The task's file and OUT.bin end with the RDP's hidden bits of the low
+ * 8 MiB (a byte a halfword, 4 marking those never written: the coverage
+ * the RDP keeps in memory), which angrylion takes and gives through the
+ * two functions build.sh adds to its copy.
+ *
  * GFXREF_CMDS=FILE writes the RDP commands the microcode sends, one line
  * each (the words in hex), for gfx_ref.py to compare with the port's;
  * GFXREF_NORDP=1 leaves the RDP out (the RSP's alone).
@@ -35,6 +40,11 @@ uint32_t parallel_num_workers(void) { return 1; }
 void parallel_close(void) {}
 
 #define RDRAM_SIZE 0x1000000u
+#define HIDDEN_SIZE 0x400000u           /* the low 8 MiB's hidden bits */
+
+/* (in angrylion's copy, from build.sh) */
+void gfxref_set_hidden(const uint8_t *h, uint32_t n);
+void gfxref_get_hidden(uint8_t *h, uint32_t n);
 #define HEAD 80                         /* the header's words, after the magic's two */
 
 static uint8_t *rdram;                  /* host-order words, as both plugins have it */
@@ -111,6 +121,8 @@ int main(int argc, char **argv) {
         fprintf(stderr, "%s: not a PORT_GFX_REF task\n", argv[1]);
         return 1;
     }
+    uint8_t *hid = malloc(HIDDEN_SIZE);
+    int has_hidden = fread(hid, 1, HIDDEN_SIZE, f) == HIDDEN_SIZE;
     fclose(f);
     uint32_t h[HEAD];
     for (int i = 0; i < HEAD; i++)
@@ -144,6 +156,8 @@ int main(int argc, char **argv) {
     cfg.parallel = 0;
     cfg.num_workers = 1;
     n64video_init(&cfg);
+    if (has_hidden)
+        gfxref_set_hidden(hid, HIDDEN_SIZE);
     regs[9] = regs[11] = pre;           /* DPC_START, DPC_CURRENT */
     regs[10] = pre_end;                 /* DPC_END */
     regs[12] = 0;                       /* DPC_STATUS: from RDRAM */
@@ -179,7 +193,8 @@ int main(int argc, char **argv) {
         out[i * 4 + 3] = w[i];
     }
     f = fopen(argv[2], "wb");
-    if (!f || fwrite(out, 1, 0x800000, f) != 0x800000) {
+    gfxref_get_hidden(hid, HIDDEN_SIZE);
+    if (!f || fwrite(out, 1, 0x800000, f) != 0x800000 || fwrite(hid, 1, HIDDEN_SIZE, f) != HIDDEN_SIZE) {
         perror(argv[2]);
         return 1;
     }

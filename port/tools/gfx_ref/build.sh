@@ -9,7 +9,8 @@
 # DIR, and builds DIR/gfxref.  Neither is part of the port or of this
 # repository.  angrylion keeps RDRAM up to 8 MiB; the tasks are 16 MiB
 # images (the port's 8 MiB, then what the task reads from elsewhere), so
-# its limit is raised to 16 MiB in DIR's copy.
+# its limit is raised to 16 MiB in DIR's copy, and two functions give
+# gfxref its hidden bits.
 set -e
 ANGRYLION=9c8b9ed3e7d7f00dff8bc872ccdd3fba1a3673fc
 CXD4=b8e747be772b8db017bb981bff188324b919162e
@@ -29,6 +30,16 @@ fi
 AL=angrylion-rdp-plus-$ANGRYLION/src/core
 CX=mupen64plus-rsp-cxd4-$CXD4
 grep -q 'RDRAM_MAX_SIZE 0x1000000' $AL/n64video.h
+# the RDP's hidden bits (the coverage it keeps in memory) in and out
+if ! grep -q gfxref_set_hidden $AL/n64video/rdp/rdram.c; then
+    cat >> $AL/n64video/rdp/rdram.c <<'EOF2'
+
+#ifdef N64VIDEO_C
+void gfxref_set_hidden(const uint8_t *h, uint32_t n) { memcpy(rdram_hidden, h, n); }
+void gfxref_get_hidden(uint8_t *h, uint32_t n) { memcpy(h, rdram_hidden, n); }
+#endif
+EOF2
+fi
 mkdir -p obj
 $CC -O2 -w -c -I$AL $AL/n64video.c -o obj/n64video.o
 for f in su vu/vu vu/multiply vu/add vu/select vu/logical vu/divide; do

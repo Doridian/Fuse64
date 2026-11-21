@@ -12,12 +12,13 @@ the N64 would have them in RDRAM (port/host/gfx.c) and what it drew; then
 runs each task through gfxref (port/tools/gfx_ref/build.sh: the game's own
 microcode on cxd4's RSP interpreter, angrylion-rdp-plus's RDP) and compares
 the color images the task drew: each task starts from the port's memory, so
-a difference is that task's alone, whatever the timing.  Per screen and
-color image: the pixels whose color differs (the 5-bit channels of a
-16-bit image; its coverage bit is the RDP's and isn't compared) and the
-largest channel difference (of 255), and PNGs in --out: the port's, the
-reference's, and the difference (grey: the same; red: differs, brighter
-the more).  Before the images, the task's RDP commands: those the port's
+a difference is that task's alone, whatever the timing (the coverage
+the RDP keeps in memory too: the task files carry RDRAM's hidden bits).
+Per screen and color image: the pixels whose color differs (the 5-bit
+channels of a 16-bit image), the largest channel difference (of 255), the
+pixels whose coverage differs (a 16-bit image's: its low bit and the two
+hidden bits), and PNGs in --out: the port's, the reference's, and the
+difference (grey: the same; red: differs, brighter the more).  Before the images, the task's RDP commands: those the port's
 microcode run sent its RDP (TASK.cmd) against the reference's (gfxref's
 GFXREF_CMDS), how many differ and the first that does.
 """
@@ -125,10 +126,26 @@ def compare_z(port, ref, addr, w, h):
     return nd, nbig, md, bytes(img)
 
 
+RDRAM = 0x800000
+
+
+def coverage(mem, addr, w, h):
+    """a 16-bit image's coverage (0..7) per pixel: its low bit, then its
+    two hidden bits (from the file's tail; 4, never written by the RDP: the
+    low bit's), or None without them"""
+    if len(mem) < RDRAM + RDRAM // 2:
+        return None
+    n = w * h
+    data = struct.unpack(">%dH" % n, mem[addr:addr + n * 2])
+    hb = mem[RDRAM + addr // 2:RDRAM + addr // 2 + n]
+    return [(c & 1) << 2 | ((c & 1) * 3 if b & 4 else b) for c, b in zip(data, hb)]
+
+
 def compare(inp, port_out, ref_out, out_dir, tag):
     """the task's images: [(image, w, h, differing pixels, those by more
-    than a 5-bit step, max diff)]; the z image's ("ADDR z") differing
-    depths, those by more than a step, the largest (of 16384)"""
+    than a 5-bit step, max diff, pixels whose coverage differs or None)];
+    the z image's ("ADDR z") differing depths, those by more than a step,
+    the largest (of 16384)"""
     hd = header(inp)
     port = open(port_out, "rb").read()
     ref = open(ref_out, "rb").read()
@@ -138,7 +155,7 @@ def compare(inp, port_out, ref_out, out_dir, tag):
             continue
         if addr == hd["zimg"]:
             nd, nbig, md, img = compare_z(port, ref, addr, w, h)
-            res.append(("%06X z" % addr, w, h, nd, nbig, md))
+            res.append(("%06X z" % addr, w, h, nd, nbig, md, None))
             if out_dir:
                 png(os.path.join(out_dir, "%s_%06X_zdiff.png" % (tag, addr)), w, h, img)
             continue
@@ -156,7 +173,12 @@ def compare(inp, port_out, ref_out, out_dir, tag):
             else:
                 v = (pa[0] + pa[1] + pa[2]) // 12
                 diff += bytes((v, v, v))
-        res.append(("%06X" % addr, w, h, nd, nbig, md))
+        ncvg = None
+        if siz == 2:
+            ca, cb = coverage(port, addr, w, h), coverage(ref, addr, w, h)
+            if ca is not None and cb is not None:
+                ncvg = sum(x != y for x, y in zip(ca, cb))
+        res.append(("%06X" % addr, w, h, nd, nbig, md, ncvg))
         if out_dir:
             base = os.path.join(out_dir, "%s_%06X" % (tag, addr))
             png(base + "_port.png", w, h, bytes(c for p in a for c in p))
@@ -229,9 +251,8 @@ def run_screen(build, name, ref, out_dir, keep):
             refout = os.path.join(tmp, t + ".ref")
             run_ref(ref, inp, refout)
             rows.append((t, "cmds", compare_cmds(inp)))
-            for addr, w, h, nd, nbig, md in compare(inp, os.path.join(tmp, t + ".out"), refout, out_dir,
-                                              "%s_%s_%s" % (ver, name, t)):
-                rows.append((t, "image", (addr, w, h, nd, nbig, md)))
+            for r in compare(inp, os.path.join(tmp, t + ".out"), refout, out_dir, "%s_%s_%s" % (ver, name, t)):
+                rows.append((t, "image", r))
         return ver, rows
     finally:
         if not keep:
@@ -271,19 +292,22 @@ def main():
         refout = inp[:-3] + ".ref"
         run_ref(a.ref, inp, refout)
         print_cmds(compare_cmds(inp), "")
-        for addr, w, h, nd, nbig, md in compare(inp, port_out, refout, a.out, os.path.basename(inp)[:-3]):
-            print("%s %dx%d: %d pixels differ, %d by more than a step, max %d" % (addr, w, h, nd, nbig, md))
+        for addr, w, h, nd, nbig, md, ncvg in compare(inp, port_out, refout, a.out, os.path.basename(inp)[:-3]):
+            print("%s %dx%d: %d pixels differ, %d by more than a step, max %d; coverage %s" %
+                  (addr, w, h, nd, nbig, md, "-" if ncvg is None else "%d differ" % ncvg))
         return
     build = a.args[0]
-    print("%-13s %-13s %-8s %-9s %9s %7s %5s" % ("screen", "task", "image", "size", "differ", ">step", "max"))
+    print("%-13s %-13s %-8s %-9s %9s %7s %5s %7s" % ("screen", "task", "image", "size", "differ", ">step", "max",
+                                                    "cvg"))
     for name in a.screen or list(SCREENS):
         ver, rows = run_screen(build, name, a.ref, a.out, a.keep)
         for t, kind, r in rows:
             if kind == "cmds":
                 print_cmds(r, "%-13s %-13s " % (name, t))
                 continue
-            addr, w, h, nd, nbig, md = r
-            print("%-13s %-13s %-8s %-9s %9d %7d %5d" % (name, t, addr, "%dx%d" % (w, h), nd, nbig, md))
+            addr, w, h, nd, nbig, md, ncvg = r
+            print("%-13s %-13s %-8s %-9s %9d %7d %5d %7s" % (name, t, addr, "%dx%d" % (w, h), nd, nbig, md,
+                                                             "-" if ncvg is None else ncvg))
         sys.stdout.flush()
 
 

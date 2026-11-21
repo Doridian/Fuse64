@@ -415,10 +415,10 @@ emulator's last frame):
 | result | scenes |
 |---|---|
 | the same in every frame (about 4800 story, 6200 battle) | 40-45 (41:17-44:17), 46:17-48:17, 49, 56-62, 72, 73:17-74:17, 76:17-79:17, 80, 81:17-85:17, 86, 88-98 (92:17, 97:17), 104-116, 120, 121:17, 123, 124:17, 126, 136-141, 144-153 |
-| the port stops (SIGSEGV) at frame 2526, where the N64 goes on into a scene numbered 16795685 at 2551 | 75:17 |
+| the same in every frame the emulator has (to 2585), then the port stops where the N64 hangs (below) | 75:17 |
 
-76 of the 77. Every boss and every battle stage is the same. Two things
-the sweep found:
+All 77, and 75:18 (the room as the game enters it). Every boss and
+every battle stage is the same. Three things the sweep found:
 
 - **A stack byte**: 9CAB0.c's func_80283794 (an enemy's way towards its
   target) reads `range[1]`, which it sets only for the types 41-45;
@@ -433,11 +433,14 @@ the sweep found:
   by the model's creation: its second byte, 0x0B. From an update the
   stack is the enemy's own task's (530C0.c's tasks have 0x800 bytes
   each): the task's start (func_80285A9C) leaves there the pointer to
-  the parameter file it reads (func_80226604(0xDD), 0x8014B808 in every
-  scene seen: 0x14), and the rest of every update (func_80283FCC) then 0.
-  So the port keeps the byte per enemy (`sRange1`, under `TARGET_PC`):
-  0x0B in the spawn, 0x14 until the end of the enemy's first update, 0
-  after. With a constant 0 (the port before) 56-61 differ from frame
+  the parameter file it reads (func_80226604(0xDD): one of 404C0.c's
+  open files at `D_8014B808`, 0x8014B808 in every scene seen: 0x14),
+  and the rest of every update (func_80283FCC) then 0. So the port
+  keeps the byte per enemy (`sRange1`, under `TARGET_PC`): 0x0B in the
+  spawn, the file's N64 address's second byte until the end of the
+  enemy's first update (`port_n64_address`, port/src/memory.c: the
+  offset in `port_rdram`, or the scattered layout's object's address),
+  0 after. With a constant 0 (the port before) 56-61 differ from frame
   1034 and 48:17 (4655), 85:17 (2934) and 123 (2083) later; with a
   constant 11, 45 and sixteen of the rooms.
 - **A warp artefact** (not the port's): a room after a stage's first,
@@ -449,6 +452,17 @@ the sweep found:
   scene's first frame. Sub-mode 17 (a room entered from the one before)
   sets it, hence the `:17`s above; the game never enters those rooms
   with 16.
+- **The credits' end outside the credits** (75:17, not the port's):
+  ovl_0E_04 takes sub-mode 17 as 20, the credits' shot of the room (the
+  game enters 75 with 18 from 74 and 19 from 76), whose end asks
+  AFBF0.c's credits for the next scene (func_802964A0). Their scene
+  lists are NULL outside the credits, so the N64 reads ZeroJump's page
+  (`port_null_word`): scene and sub-mode 0x01004825 (16795685), its
+  first instruction, at frame 2551. After the fade, func_8022691C
+  indexes the scene table with it, far past RDRAM, and the N64 never
+  reads the controllers again (frame 2585). The port reads the same
+  word (`port_credits_next`) and stops there (`port_scene_unset`, a
+  scene past the table's 0x800); it used to fault at the NULL.
 
 test.py records two hashes of each run's digest (`PORT_DIGEST`, always
 on): `digest` over the fields every host writes and `digest_pools` over
@@ -1368,7 +1382,8 @@ port's exact against. What differs, and the port now does as 2.0I:
   `port_null_word(off)` (port/host/runtime.c) gives that word, from the
   ROM. 426E0.c's func_802284F0 uses it for a texture slot an overlay
   never filled (ovl_15_02 gives its 80051420 four and fills two: Rainbow
-  Palace's last boss crashed at once). A store through NULL changes that
+  Palace's last boss crashed at once), AFBF0.c for the credits' scene
+  lists read outside the credits (75:17). A store through NULL changes that
   page (it is mapped writable): the four attract demos' stages, left
   early, set bit 0 of `NULL->unkC`, the word 0x312900FF at 0xC whose bit
   0 is set already, so the store changes nothing, and the port skips it.
@@ -1477,9 +1492,9 @@ digest").
   VI's filters aren't compared.
 - **The gameplay digest** ("The gameplay digest"): checked against
   mupen64plus in us's battle and story, eu's and jp's battle, and us's
-  77 PORT_WARP scenes, with the object pools, on i386: all the same but
-  75:17, where the port stops (SIGSEGV) at frame 2526 ("The stages: the
-  warp on the emulator"). Left: 75:17; eu's and jp's stages; the pools
+  77 PORT_WARP scenes, with the object pools, on i386: all the same
+  (75:17 as far as the N64 goes: "The stages: the warp on the
+  emulator"). Left: eu's and jp's stages; the pools
   on 64-bit hosts (by field, with the host's struct offsets); 9CAB0.c's
   two unions.
 - **Audio** ("Audio"): checked against mupen64plus in us's menus, story

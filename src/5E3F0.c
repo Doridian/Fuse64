@@ -4451,7 +4451,15 @@ void func_80245FD4() {
 /* func_80244354 for D_802AC9E8: its first line kept from that function
  * (a dead store; that it is a copy's leftover is a guess). */
 void func_80245FA0(s32 arg0, s32 arg1) {
+#ifdef TARGET_PC
+    /* arg0 is a bit here (1 to 0x80, 93850.c's func_80246F00 calls), not an
+       entry: the dead read reaches up to 0x6400 bytes past the table's five
+       entries, into whatever follows it in the N64's memory, and nothing
+       uses the value. The port doesn't read it. */
+    s32 v;
+#else
     s32 v = D_800AEDF0[arg0].unk10;
+#endif
 
     v = D_802AC9E8;
 

@@ -58,7 +58,9 @@ extract (CMake checks `.version`). Other options: `-DPORT_SDL=OFF`
 `fuse64 --help` lists the options: `--headless` (no window and no sound;
 a virtual clock), `--deterministic`, `--frames N`, `--screenshot PREFIX`
 and `--every N` (BMP files), `--input FILE` (a scripted controller in the
-shift check's format, `tools/inputs`), `--save-dir DIR` (the EEPROM file
+shift check's format, `tools/inputs`), `--replay FILE` (controller 1
+from a gameplay digest, by the game's frame: "The gameplay digest"),
+`--save-dir DIR` (the EEPROM file
 `fuse64.<v>.eep`), `--wav FILE`, `--hash` (each retrace's framebuffer
 hash), `-v`. With a window the keyboard (arrows, Z, X, C, A, S, Enter)
 and SDL's game controllers are the controller.
@@ -228,6 +230,114 @@ found with gdb's `watch -l` on the native build, a task's locals with
 the Windows build's crash dump (winedbg, with
 `HKCU\Software\Wine\WineDbg\ShowCrashDialog` 0 in the prefix, prints the
 registers and the stack).
+
+### The gameplay digest
+
+The references above are the port's own output: they show that a change
+changed nothing, not that the port plays the game the N64 plays. The
+gameplay digest checks that against the original ROM in mupen64plus, as
+DozerEncore's does (its docs/PORT.md, "The gameplay digest" and
+"Replaying it on the port"):
+
+```
+make VERSION=us                                    # build/us/bm64.us.{z64,elf}, the plugins
+port/tools/emu_digest.py us emu.txt --input tools/inputs/battle.us.txt --frames 8000
+PORT_SEED=0x1997 PORT_DIGEST=port.txt build-port/fuse64 --headless --frames 6000 \
+    --replay emu.txt baserom.us.z64
+port/tools/digest_cmp.py emu.txt port.txt          # --all: every field's first difference
+```
+
+- **The digest** (`PORT_DIGEST=FILE`, port/host/digest.c): a line at every
+  read of the controllers, `POLL VI SCENE SUB FRAME PAD` and the fields
+  that changed since the line before (all of them at the first line of a
+  scene, marked `*`). SCENE and SUB are 54E40.c's `D_802AC5D4` and
+  `D_802AC5D8`, FRAME is `D_8029F600` (412F0.c's func_80226E84 counts
+  every frame of the main loop from boot), PAD the buttons that read
+  gave. The fields, every value its words' bits in hex: `fl` the scene's
+  flags (`D_802AC5D0`), `rng` 78CA0.c's generator (the index
+  `D_802ACFE0` and a hash of its table `D_802ACFE8`), `st` and `bt`
+  54E40.c's `D_802AC610` and `D_802AC660` (the stage clock, the battle's
+  clock, lives and score), `e0`-`e4` 5E3F0.c's `D_800AEDF0` entries (the
+  players and the characters the scripts move: every word but their
+  seven pointers) and `p0`-`p4` the position and angles of each one's
+  model (`unk28->unk40`). It only reads, so test.py's hashes are the same
+  with it.
+- **The read** is osContStartReadData (port/src/ultra.c), where the PIF
+  reads the pads on the N64 and in mupen64plus: 40040.c's main loop
+  starts the read (func_8023A208) after the frame's tasks and before
+  func_80226E84 counts the frame, and takes the result at the start of
+  the next. So a line is the state the frame's tasks left and the pad the
+  next frame plays with, on both sides at the same point of the game.
+- **The emulator's side** (port/tools/emu_digest.py, which builds the
+  two plugins if `make clean` removed them): tools/emu_ram.py's
+  session (the system's mupen64plus 2.6 or `$M64P_DIR`, a blank EEPROM,
+  no speed limit), the input script by retrace in
+  tools/src/m64p_inputscript.c, which now calls back at every read of
+  controller 1 (`inputscript_on_poll`); the Python callback reads the
+  same fields from RDRAM, at the addresses of the ROM build's ELF, and
+  writes the same lines. The RDP's interrupt is raised at each display
+  list's full sync (m64p_vicount.c's `vicount_dp(1)`, as tools/tas.py
+  does; the shift check leaves it out, `--no-dp`). A run of 16000
+  retraces takes about 15 seconds.
+- **The seed**: the game seeds its generator from `osGetTime()` (40040.c),
+  which is the emulated clock on one side and the port's on the other.
+  emu_digest.py patches the ROM as tools/shift_check.py does (the seed
+  0x1997, `--seed`), and `PORT_SEED=N` gives the port's the same
+  (`port_seed`, under `TARGET_PC` in 40040.c).
+- **Input by frame** (`--replay FILE`, port/host/input.c, implies
+  `--deterministic`): the N64 lags (battle runs at about 0.78 frames a
+  retrace in mupen64plus, the port at one), so a script by retrace gives
+  the two different pads at the same moment of the game. `--replay`
+  reads a digest's PAD column, and each read of the port gets the pad of
+  the digest's read at the same FRAME (the k-th read of a frame the k-th,
+  or the last; none where the digest has none).
+- **The compare** (port/tools/digest_cmp.py) takes each run's state at the
+  last read of each frame, lists both runs' scenes with the frame and the
+  retrace each began at, then goes frame by frame over the frames both
+  have and prints the first field that differs (the word in a list), with
+  both reads and retraces. The retrace and the pad aren't compared.
+  `--scenes A` lists one digest's scenes.
+
+What it found (us, 2026-11-20, the i386 build): **the port plays the same
+game as the N64**, every field the same at every frame both have:
+
+| scenario | emulator | port (`--replay`) | frames compared |
+|---|---|---|---|
+| battle (battle.us.txt) | 8000 retraces, 6207 frames | 6000 frames | 6000: the menus, two rounds against the three CPU players and the third begun (scenes 20, 27, 32, 35, 144, 34, 144, 34, 144) |
+| story (menus.txt) | 16000 retraces, 15305 frames | 15300 frames | 15300: the menus, the file select, the opening's scenes (25 and 26 in turn), the world select and 5376 frames of Green Garden's first stage (scene 40) |
+
+Every scene begins at the same frame on both (battle's arena at frame
+1036, retrace 1231 in mupen64plus and 1036 on the port; the story's
+first stage at frame 9924, retrace 10563 and 9924), the generator is the
+same after thousands of draws (its state changes at 4226 of battle's
+6000 frames), and the CPU players' positions and states are the same
+bit for bit; in the story's stage the player's model moves at 1710 of
+its 5376 frames, its entry changes at 311. test.py's legal, menus,
+battle and story give their references with the digest in the build. So
+the port's game logic, 530C0.c's tasks and the frame loop do what the
+original's do, as far as these fields see (the bombs, the enemies and
+the stage's objects only through what they do to the players and to the
+generator); what differs is the timing by retrace, the port running a
+frame every retrace where the N64 lags. That timing is why test.py's scenarios, driven by retrace, can't be
+compared with the emulator directly: battle.us.txt played by retrace on
+the port diverges from the emulator by the menus (sensitivity: below).
+
+The check finds a difference where there is one. The port with another
+seed (`PORT_SEED=0x1998`, the same replayed pads) differs at frame 0
+(`rng`), and with `--ignore rng` at frame 1185, 149 frames into the arena
+(the CPU players `e1` and `e3` act otherwise); its first round ends at
+frame 2684, not 3679. The port played by retrace (`--input
+battle.us.txt`, test.py's way) differs at frame 371, where the
+emulator's game has taken the START of retrace 500 and left the title
+(scene 27) and the port's, at retrace 371, hasn't.
+
+eu and jp, battle only (each version's ROM build for its ELF, a port
+built with `-DPORT_VERSION`, battle.<v>.txt, 8000 retraces in
+mupen64plus): the same in every frame both have, 6000 in eu (7405 frames
+in 8000 retraces at 50 Hz: eu lags less) and 5736 in jp, every scene at
+the same frame (eu's arena at 1052, jp's at 858). The port's own timing
+of jp's battle input (port/tools/inputs/battle.jp.txt) isn't needed with
+`--replay`: the emulator's frames carry the pads.
 
 ### The matrix
 
@@ -959,8 +1069,9 @@ layout taken to the N64's (5E3F0.c's entry -1: "Checks and debugging
 aids"), an overlay's .bss in one struct where the code reaches a name
 through its neighbour, a read through NULL given ZeroJump's word
 (`port_null_word`), `PORT_HALVES` (a word's halves in the host's order),
-`PORT_F2U` (a float to `u32` as IDO converts it) and PORT_WARP's call in
-54E40.c ("Every stage").
+`PORT_F2U` (a float to `u32` as IDO converts it), PORT_WARP's call in
+54E40.c ("Every stage") and PORT_SEED's in 40040.c ("The gameplay
+digest").
 
 ## What's left
 
@@ -1002,6 +1113,12 @@ through its neighbour, a read through NULL given ZeroJump's word
   PRESS START, a rectangle at a half pixel, is the last 2D difference);
   TMEM isn't carried from the previous task into the reference (each task
   loads its own so far); the VI's filters aren't compared.
+- **The gameplay digest** ("The gameplay digest"): checked against
+  mupen64plus in us's battle and story, eu's and jp's battle, on i386.
+  Left: the stages PORT_WARP reaches (a digest from a save, a warp in
+  the ROM), more fields (the bombs, the enemies, the stage's objects:
+  their pools hold pointers, so by field), a digest hash in
+  test_refs.json as DozerEncore has it, and the 64-bit and cross hosts.
 - Phase 7 and 8 (docs/ROADMAP.md, docs/NETPLAY.md): the input and the RNG
   seed through the network.
 

@@ -126,6 +126,11 @@ def main():
     v = a.version
     rom = Path(a.rom or ROOT / f"build/{v}/bm64.{v}.z64")
     elf = Path(a.elf or ROOT / f"build/{v}/bm64.{v}.elf")
+    for so in ("m64p_vicount", "m64p_inputscript"):
+        if not (emu_ram.TOOLS / f"{so}.so").exists():   # (make clean removes them)
+            emu_ram.TOOLS.mkdir(parents=True, exist_ok=True)
+            subprocess.run(["cc", "-O2", "-shared", "-fPIC", "-o", str(emu_ram.TOOLS / f"{so}.so"),
+                            str(ROOT / f"tools/src/{so}.c")], check=True)
     off, _ = shift_check.seed_patch(elf, rom)
     patch = [(off, (0x24040000 | a.seed & 0xFFFF).to_bytes(4, "big"))]
     emu = emu_ram.Session(rom, a.m64p, patch, None, True, input=True)

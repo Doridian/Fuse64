@@ -144,7 +144,7 @@ static void func_ovl0F_01_80045FB0(u32 (*p)[3], s32 count) {
                 D_ovl0F_01_80048430 = -1;
             }
             if (*D_ovl0F_01_80048790 & 4) {
-                func_ovl0F_01_800480D8(2)->unkC->unkC |= 1;
+                PORT_ONLY(if (func_ovl0F_01_800480D8(2)->unkC != NULL)) func_ovl0F_01_800480D8(2)->unkC->unkC |= 1; /* NULL: a demo left early (docs/PORT.md, "Reads through NULL") */
                 func_ovl0F_01_80047CD8(0, 0, 0);
                 func_ovl0F_01_800480C8();
                 q = func_ovl0F_01_800480D8(4);

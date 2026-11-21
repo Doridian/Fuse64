@@ -2239,7 +2239,7 @@ void func_ovl0C_02_80043018(void) {
     UnkStruct_ovl0C_02_80049968_C *temp_v1;
 
     temp_v1 = func_ovl0C_02_80049968(3)->unkC;
-    temp_v1->unkC |= 1;
+    PORT_ONLY(if (temp_v1 != NULL)) temp_v1->unkC |= 1; /* NULL: a demo left early (docs/PORT.md, "Reads through NULL") */
     func_ovl0C_02_80049568(0, 0, 0);
     func_ovl0C_02_80049988();
 }

@@ -1399,7 +1399,7 @@ void func_8024E088(s32 arg0) {
             }
             if (func_802452AC(arg0, 0x2000400)) {
                 if (sp124 & 0x10) {
-                    func_802712C4(func_8027799C((s16)func_80274F64((s16)arg0)));
+                    PORT_ONLY(if ((s16)func_80274F64((s16)arg0) >= 0)) func_802712C4(func_8027799C((s16)func_80274F64((s16)arg0))); /* entity -1: "Checks and debugging aids" */
                 }
                 if (sp124 & 0x2000) {
                     func_8027750C((s16)arg0);

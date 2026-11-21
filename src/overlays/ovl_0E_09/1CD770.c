@@ -702,7 +702,7 @@ void func_ovl0E_09_80043094(void) {
 void func_ovl0E_09_80043018(void) {
     UnkStruct_ovl0E_09_80045D28 *p;
 
-    ((UnkStructA_40 *) func_ovl0E_09_80045D28(1)->unkC)->unkC |= 1;
+    PORT_ONLY(if (func_ovl0E_09_80045D28(1)->unkC != NULL)) ((UnkStructA_40 *) func_ovl0E_09_80045D28(1)->unkC)->unkC |= 1; /* NULL: a demo left early (docs/PORT.md, "Reads through NULL") */
     func_ovl0E_09_80045928(0, 0, 0);
     func_ovl0E_09_80045D18();
     p = func_ovl0E_09_80045D28(4);

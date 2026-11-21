@@ -795,7 +795,7 @@ void func_ovl0D_01_80044E2C(void) {
     Rec_0D01 *r;
 
     if (*D_ovl0D_01_80047B2C & 4) {
-        func_ovl0D_01_80047508(0)->unkC->unkC |= 1;
+        PORT_ONLY(if (func_ovl0D_01_80047508(0)->unkC != NULL)) func_ovl0D_01_80047508(0)->unkC->unkC |= 1; /* NULL: a demo left early (docs/PORT.md, "Reads through NULL") */
         func_ovl0D_01_80047108(0, 0, 0);
         func_ovl0D_01_800474F8();
         r = func_ovl0D_01_80047508(4);

@@ -1659,8 +1659,8 @@ static void func_80283FCC(UnkStruct_80288040 *arg0) {
     if (D_800BA8E8[arg0->unk84].unk0 == 0x1C) {
         p = func_8022F550(arg0->unk0, 0xF);
         if (p == NULL) {
-            if (*(UnkStructA **) arg0->unk0->unk20 != NULL) {
-                p = *(UnkStructA **) arg0->unk0->unk20;
+            if (PORT_HOST(*(UnkStructA **) arg0->unk0->unk20, (UnkStructA *) arg0->unk0->unk20) != NULL) { /* (unk20 is the word on a host: "Checks and debugging aids") */
+                p = PORT_HOST(*(UnkStructA **) arg0->unk0->unk20, (UnkStructA *) arg0->unk0->unk20);
             }
         }
         if ((p != NULL) && (func_8022F4AC(p, 0x10, arg0->unk0) == 0)) {

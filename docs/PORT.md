@@ -198,7 +198,8 @@ The audio's check ("Audio", 2026-11-21) changed every scenario's sound
 (the AI's frame sizes, the envelope, the sound player) and nothing else;
 the sound was recorded again, i386. The RDP's coverage in memory
 ("Graphics", 2026-11-21) changed the framebuffers of all 21 (not the
-sound, the EEPROM or the gameplay digest); recorded again, i386.
+sound, the EEPROM or the gameplay digest); recorded again, i386 (us's
+seven the same on x86-64).
 jp's battle input is the port's own timing of battle.jp.txt
 (`port/tools/inputs/battle.jp.txt`, which test.py prefers to the shift
 check's): the port loads without the N64's waits, so
@@ -1147,21 +1148,21 @@ bits on the N64, and only the RDP sees the ninth; the z image keeps two
 bits of dz there). The port has them for its 8 MiB (`hidden` in gfx.c, a
 byte a halfword; those the RDP never wrote follow the halfword's low bit,
 as in angrylion). A pixel's coverage is how many of its eight samples
-the primitive covers (without AA_EN only the first one counts),
-CVG_X_ALPHA multiplies it by alpha, ALPHA_CVG_SEL makes it the alpha.
-The depth test (`z_test`, after parallel-rdp) takes it with the
-memory's: an antialiased pixel blends (with the memory's coverage as the
+the primitive covers (without AA_EN it is drawn only if the first is
+in), CVG_X_ALPHA multiplies it by alpha, ALPHA_CVG_SEL makes it the
+alpha. The depth test (`z_test`, after parallel-rdp) takes it with the
+memory's: a pixel blends (antialiasing, the memory's coverage the
 blender's second alpha, through its shifts by the two slopes and its
-divider) only where the two coverages add up to less than 8 and it isn't
-in front of what is there by more than their slopes; an opaque surface's
-pixel within the slopes passes only then, and interpenetrating ones lose
+divider) only if the two add up to less than 8 and it isn't in front of
+what is there by more than the slopes; an opaque surface's pixel up to
+the slopes behind passes only then too, and interpenetrating ones lose
 coverage by depth. CVG_DST writes the clamped sum, or the pixel's own
 less one when it didn't blend (clamp), the sum's low three bits (wrap),
 full (zap) or the memory's (save); COLOR_ON_CVG keeps the memory's color
 until the sum reaches 8. So edges blend with what is behind them by how
-much of each was drawn, and the shadows (color on coverage, wrapping,
-the alpha times coverage) and the title's PRESS START (a rectangle at a
-half pixel) draw as on the N64.
+much of each was drawn, and the shadows (color on coverage, wrapping)
+and the title's PRESS START (a rectangle at a half pixel) draw as on the
+N64.
 
 **Against a reference.** `port/tools/gfx_ref.py` compares the port's
 pictures with an accurate renderer's: angrylion-rdp-plus (the RDP) and
@@ -1268,10 +1269,12 @@ blended rectangles, matched above.
 With the coverage (2026-11-21, "Coverage" above; and the rectangles
 through the edge walker, the blender's divider and shifts, the alpha
 dither, Bayer's matrix as the RDP has it), every image of every task of
-the 20 us screens and the 11 jp screens is the reference's: no pixel's
-color, depth or coverage differs (`0 / 0 / 0`, z `0 / 0`, cvg 0 in each
-table's terms). It costs a seventh more: us's battle, 6000 retraces,
-97 s against 85 s before (i386, a busy machine).
+gfx_ref.py's 20 screens is the reference's, in us, eu and jp (at their
+own timing; jp's are the 11 above and 9 more): no pixel's color, depth
+or coverage differs (`0 / 0 / 0`, z `0 / 0`, cvg 0). Before it, us's
+differed as in the microcode columns, and jp's by up to 2939 pixels and
+2969 depths a screen. It costs a seventh more: us's battle, 6000
+retraces, 97 s against 85 s before (i386, a busy machine).
 
 The VI's filters (the antialiasing resample of partly covered pixels,
 the divot filter, the dither filter) read that coverage, but they are
@@ -1566,11 +1569,11 @@ digest") and the wait for the NMI in 6BBE0.c ("The TAS").
 - **Renderer**: checked task by task against angrylion and the game's
   microcode ("Graphics": `gfx_ref.py`); the microcode runs on the port's
   RSP interpreter, so every task's RDP commands are the N64's, and with
-  the coverage in memory every image of the 31 screens (us and jp) is
-  the reference's, colors, depths and coverage. Left: the VI's filters
-  (the AA resample, divot and dither filters: the reference doesn't
-  compare the VI's output, and the port shows the color image as it
-  is); TMEM isn't carried from the previous task into the reference
+  the coverage in memory every image of gfx_ref.py's 20 screens, in us,
+  eu and jp, is the reference's, colors, depths and coverage. Left: the
+  VI's filters (the AA resample, divot and dither filters: the reference
+  doesn't compare the VI's output, and the port shows the color image
+  as it is); TMEM isn't carried from the previous task into the reference
   (each task loads its own so far); rules no screen reaches aren't
   checked (8-bit color images' hidden bits, two cycles' pipelining: the
   alpha compare of the next pixel's first cycle and the memory's color

@@ -124,6 +124,11 @@ static int hb_get(const uint8_t *p) {
     return (h & HB_CLEAN) ? (p[1] & 1) * 3 : h;
 }
 
+/* the z-buffer is the z image in RDRAM, as the RDP keeps it: 16 bits a
+   pixel, the depth (18 bits, z18: the screen z times 256) squeezed into 14
+   with an exponent, and two bits of the four of its slope's (dz's
+   exponent), the other two hidden */
+
 /* z18 to its 14 bits (shifted up by 2, as stored) */
 static uint32_t z_com(uint32_t z) {
     int e = 0;

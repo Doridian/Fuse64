@@ -1,8 +1,7 @@
 /*
- * The VI's picture: the framebuffer the game shows (16-bit RGBA5551 in the
- * N64's byte order, as the RDP writes it), to a window (SDL) or, headless,
- * to screenshots and hashes.  The keyboard and game controllers come in
- * through the window's events.
+ * The VI's picture (vi.c) to a window (SDL) or, headless, to screenshots
+ * and hashes.  The keyboard and game controllers come in through the
+ * window's events.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,68 +14,62 @@
 static SDL_Window *win;
 static SDL_Renderer *ren;
 static SDL_Texture *tex;
+static int tex_w, tex_h;
 static SDL_GameController *pads[4];
 #endif
 
-static const uint8_t *vi_fb;
-static int vi_width = 320;
 static int quit;
 
 extern uint16_t host_live_buttons[4];
 extern int8_t host_live_x[4], host_live_y[4];
 extern int host_live_present[4];
 
-void host_vi_set_framebuffer(const void *fb, int width) {
-    vi_fb = fb;
-    vi_width = width > 0 && width <= 640 ? width : 320;
-}
-
 int host_quit_requested(void) { return quit; }
 
-/* the shown picture as 32-bit XRGB, 320x240 */
-static void to_rgb(uint32_t *out) {
-    for (int y = 0; y < 240; y++)
-        for (int x = 0; x < 320; x++) {
-            uint32_t c = 0;
-            if (vi_fb) {
-                uint16_t p = port_be16(vi_fb + ((size_t)y * vi_width + x) * 2);
-                uint32_t r = (p >> 11) & 31, g = (p >> 6) & 31, b = (p >> 1) & 31;
-                c = (r << 19 | (r >> 2) << 16) | (g << 11 | (g >> 2) << 8) | (b << 3 | b >> 2);
-            }
-            out[y * 320 + x] = c;
-        }
-}
-
+/* FNV-1a of the shown picture (--vi-raw: of the framebuffer's bytes, 0
+   while there is none) */
 uint32_t host_frame_hash(void) {
     uint32_t h = 2166136261u;
-    if (!vi_fb)
-        return 0;
-    for (size_t i = 0; i < (size_t)vi_width * 240 * 2; i++)
-        h = (h ^ vi_fb[i]) * 16777619u;
+    if (host_vi_raw) {
+        const uint8_t *fb = host_vi_raw_fb();
+        if (!fb)
+            return 0;
+        for (size_t i = 0; i < 320 * 240 * 2; i++)
+            h = (h ^ fb[i]) * 16777619u;
+        return h;
+    }
+    int w, ht;
+    const uint32_t *px = host_vi_picture(&w, &ht);
+    for (size_t i = 0; i < (size_t)w * ht; i++)
+        h = (h ^ px[i]) * 16777619u;
     return h;
 }
 
+/* the picture as a BMP; the VI's lines twice (a field's lines are two of
+   the screen's) */
 void host_frame_shot(const char *path) {
-    static uint32_t px[320 * 240];
+    int w, h;
+    const uint32_t *px = host_vi_picture(&w, &h);
+    int rep = host_vi_raw ? 1 : 2;
+    uint32_t size = (uint32_t)(w * 3) * (uint32_t)(h * rep);
     uint8_t hdr[54] = { 'B', 'M' };
     FILE *f = fopen(path, "wb");
     if (!f) {
         host_log("can't write %s\n", path);
         return;
     }
-    to_rgb(px);
-    port_wle32(hdr + 2, 54 + 320 * 240 * 3);
+    port_wle32(hdr + 2, 54 + size);
     port_wle32(hdr + 10, 54);
     port_wle32(hdr + 14, 40);
-    port_wle32(hdr + 18, 320);
-    port_wle32(hdr + 22, 240);
+    port_wle32(hdr + 18, (uint32_t)w);
+    port_wle32(hdr + 22, (uint32_t)(h * rep));
     port_wle16(hdr + 26, 1);
     port_wle16(hdr + 28, 24);
-    port_wle32(hdr + 34, 320 * 240 * 3);
+    port_wle32(hdr + 34, size);
     fwrite(hdr, 1, sizeof hdr, f);
-    for (int y = 239; y >= 0; y--)
-        for (int x = 0; x < 320; x++) {
-            uint32_t c = px[y * 320 + x];
+    for (int y = h * rep - 1; y >= 0; y--)
+        for (int x = 0; x < w; x++) {
+            uint32_t c = px[(y / rep) * w + x];
             uint8_t b[3] = { (uint8_t)c, (uint8_t)(c >> 8), (uint8_t)(c >> 16) };
             fwrite(b, 1, 3, f);
         }
@@ -103,7 +96,6 @@ void host_video_init(void) {
     if (!ren)
         ren = SDL_CreateRenderer(win, -1, 0);
     SDL_RenderSetLogicalSize(ren, 320 * 3, 240 * 3);
-    tex = SDL_CreateTexture(ren, SDL_PIXELFORMAT_XRGB8888, SDL_TEXTUREACCESS_STREAMING, 320, 240);
 #endif
 }
 
@@ -176,6 +168,7 @@ static void keyboard(void) {
 #endif
 
 void host_video_frame(void) {
+    host_vi_frame();
     if (host_screenshot_prefix && host_screenshot_every && host_vi_count % host_screenshot_every == 0) {
         char path[1024];
         snprintf(path, sizeof path, "%s_%05u.bmp", host_screenshot_prefix, host_vi_count);
@@ -198,9 +191,17 @@ void host_video_frame(void) {
             quit = 1;
     }
     keyboard();
-    static uint32_t px[320 * 240];
-    to_rgb(px);
-    SDL_UpdateTexture(tex, NULL, px, 320 * 4);
+    /* the picture at 4:3, whatever its pixels */
+    int w, h;
+    const uint32_t *px = host_vi_picture(&w, &h);
+    if (!tex || w != tex_w || h != tex_h) {
+        if (tex)
+            SDL_DestroyTexture(tex);
+        tex = SDL_CreateTexture(ren, SDL_PIXELFORMAT_XRGB8888, SDL_TEXTUREACCESS_STREAMING, w, h);
+        tex_w = w;
+        tex_h = h;
+    }
+    SDL_UpdateTexture(tex, NULL, px, w * 4);
     SDL_RenderClear(ren);
     SDL_RenderCopy(ren, tex, NULL, NULL);
     SDL_RenderPresent(ren);

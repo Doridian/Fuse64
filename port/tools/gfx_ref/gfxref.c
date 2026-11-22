@@ -7,11 +7,17 @@
  * compare with the port's (docs/PORT.md, "Graphics").
  *
  *   gfxref TASK.in OUT.bin
+ *   gfxref --vi VI.in OUT.pic
  *
  * The task's file and OUT.bin end with the RDP's hidden bits of the low
  * 8 MiB (a byte a halfword, 4 marking those never written: the coverage
  * the RDP keeps in memory), which angrylion takes and gives through the
  * two functions build.sh adds to its copy.
+ *
+ * --vi: the VI's picture instead (PORT_VI_REF, port/host/vi.c): angrylion's
+ * VI (its filters, the whole scanout, no crop) from the registers and the
+ * memory the port wrote, and OUT.pic as the port's: "F64VIPIC", the width
+ * and the height (big-endian words), RGB bytes.
  *
  * GFXREF_CMDS=FILE writes the RDP commands the microcode sends, one line
  * each (the words in hex), for gfx_ref.py to compare with the port's;
@@ -103,9 +109,79 @@ static void to_words(uint32_t *w, const uint8_t *b, size_t n) {
         w[i] = be32(b + i * 4);
 }
 
+static void put32(FILE *f, uint32_t v) {
+    uint8_t b[4] = { v >> 24, v >> 16, v >> 8, v };
+    fwrite(b, 1, 4, f);
+}
+
+/* gfxref --vi VI.in OUT.pic */
+static int vi_main(const char *in, const char *out) {
+    FILE *f = fopen(in, "rb");
+    if (!f) {
+        perror(in);
+        return 1;
+    }
+    uint8_t head[8 + VI_NUM_REG * 4];
+    uint8_t *img = calloc(1, RDRAM_SIZE), *hid = malloc(HIDDEN_SIZE);
+    rdram = malloc(RDRAM_SIZE);
+    if (fread(head, 1, sizeof head, f) != sizeof head || memcmp(head, "F64VIREF", 8) ||
+        fread(img, 1, 0x800000, f) != 0x800000 || fread(hid, 1, HIDDEN_SIZE, f) != HIDDEN_SIZE) {
+        fprintf(stderr, "%s: not a PORT_VI_REF file\n", in);
+        return 1;
+    }
+    fclose(f);
+    to_words((uint32_t *)rdram, img, RDRAM_SIZE);
+    for (int i = 0; i < VI_NUM_REG; i++)
+        vi_regs[i] = be32(head + 8 + i * 4);
+
+    struct n64video_config cfg;
+    static uint32_t *dp_ptrs[DP_NUM_REG], *vi_ptrs[VI_NUM_REG];
+    n64video_config_init(&cfg);
+    for (int i = 0; i < DP_NUM_REG; i++)
+        dp_ptrs[i] = &regs[9 + i];
+    for (int i = 0; i < VI_NUM_REG; i++)
+        vi_ptrs[i] = &vi_regs[i];
+    cfg.gfx.rdram = rdram;
+    cfg.gfx.rdram_size = RDRAM_SIZE;
+    cfg.gfx.dmem = (uint8_t *)dmem_w;
+    cfg.gfx.dp_reg = dp_ptrs;
+    cfg.gfx.vi_reg = vi_ptrs;
+    cfg.gfx.mi_intr_reg = &mi_intr;
+    cfg.gfx.mi_intr_cb = mi_cb;
+    cfg.parallel = 0;
+    cfg.num_workers = 1;
+    cfg.vi.mode = VI_MODE_NORMAL;
+    cfg.vi.hide_overscan = 0;
+    n64video_init(&cfg);
+    gfxref_set_hidden(hid, HIDDEN_SIZE);
+    struct n64video_frame_buffer fb;
+    memset(&fb, 0, sizeof fb);
+    n64video_update_screen(&fb);
+    f = fopen(out, "wb");
+    if (!f) {
+        perror(out);
+        return 1;
+    }
+    /* (no picture: blank, or no active pixels) */
+    uint32_t w = fb.valid ? fb.width : 0, h = fb.valid ? fb.height : 0;
+    fwrite("F64VIPIC", 1, 8, f);
+    put32(f, w);
+    put32(f, h);
+    for (uint32_t y = 0; y < h; y++)
+        for (uint32_t x = 0; x < w; x++) {
+            const struct n64video_pixel *p = &fb.pixels[y * fb.pitch + x];
+            uint8_t b[3] = { p->r, p->g, p->b };
+            fwrite(b, 1, 3, f);
+        }
+    fclose(f);
+    return 0;
+}
+
 int main(int argc, char **argv) {
+    if (argc == 4 && !strcmp(argv[1], "--vi"))
+        return vi_main(argv[2], argv[3]);
     if (argc != 3) {
-        fprintf(stderr, "usage: gfxref TASK.in OUT.bin\n");
+        fprintf(stderr, "usage: gfxref TASK.in OUT.bin | gfxref --vi VI.in OUT.pic\n");
         return 2;
     }
     FILE *f = fopen(argv[1], "rb");

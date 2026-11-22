@@ -3,6 +3,7 @@
 
   gfx_ref.py run BUILD [--screen NAME ...] [--ref GFXREF] [--out DIR] [--keep]
   gfx_ref.py task TASK.in PORT.out [--ref GFXREF] [--out DIR]
+  gfx_ref.py vi VI.in PORT.out [--ref GFXREF] [--out DIR]
   gfx_ref.py list
 
 `run` plays each screen's scenario (test.py's: the same input, PORT_WARP and
@@ -21,6 +22,13 @@ hidden bits), and PNGs in --out: the port's, the reference's, and the
 difference (grey: the same; red: differs, brighter the more).  Before the images, the task's RDP commands: those the port's
 microcode run sent its RDP (TASK.cmd) against the reference's (gfxref's
 GFXREF_CMDS), how many differ and the first that does.
+
+After the tasks, the picture the VI shows at the screen's retrace
+(PORT_VI_REF, port/host/vi.c): the port's from its registers and memory
+against angrylion's VI from the same (gfxref --vi), with the gamma dither
+off in both (its noise is each one's own): the pixels that differ, those
+by more than one, the largest difference, and PNGs (`vi_port`, `vi_ref`,
+`vi_diff`).
 """
 import argparse
 import os
@@ -187,6 +195,47 @@ def compare(inp, port_out, ref_out, out_dir, tag):
     return res
 
 
+def read_pic(path):
+    """a PORT_VI_REF picture: (w, h, rgb bytes)"""
+    d = open(path, "rb").read()
+    if d[:8] != b"F64VIPIC":
+        sys.exit("%s: not a picture" % path)
+    w, h = struct.unpack(">II", d[8:16])
+    return w, h, d[16:16 + w * h * 3]
+
+
+def compare_vi(inp, port_out, ref, out_dir, tag):
+    """the VI's picture, the port's against the reference's: (w, h,
+    differing pixels, those by more than one, the largest difference)"""
+    refout = inp[:-3] + ".rpic"
+    r = subprocess.run([ref, "--vi", inp, refout], capture_output=True, text=True, timeout=600)
+    if r.returncode != 0:
+        sys.exit("%s: %s" % (inp, r.stderr.strip()))
+    wa, ha, a = read_pic(port_out)
+    wb, hb, b = read_pic(refout)
+    if not wb:      # (no picture: black)
+        wb, hb, b = wa, ha, bytes(len(a))
+    if (wa, ha) != (wb, hb):
+        return wa, ha, -1, -1, -1
+    nd, nbig, md = 0, 0, 0
+    diff = bytearray(len(a))
+    for i in range(0, len(a), 3):
+        d = max(abs(a[i] - b[i]), abs(a[i + 1] - b[i + 1]), abs(a[i + 2] - b[i + 2]))
+        if d:
+            nd += 1
+            nbig += d > 1
+            md = max(md, d)
+            diff[i] = min(255, 96 + d * 2)
+        else:
+            diff[i] = diff[i + 1] = diff[i + 2] = (a[i] + a[i + 1] + a[i + 2]) // 12
+    if out_dir:
+        base = os.path.join(out_dir, tag)
+        png(base + "_vi_port.png", wa, ha, a)
+        png(base + "_vi_ref.png", wa, ha, b)
+        png(base + "_vi_diff.png", wa, ha, bytes(diff))
+    return wa, ha, nd, nbig, md
+
+
 def run_ref(ref, inp, out):
     env = dict(os.environ)
     env["GFXREF_CMDS"] = inp[:-3] + ".rcmd"
@@ -232,6 +281,7 @@ def run_screen(build, name, ref, out_dir, keep):
         if warp is not None:
             env["PORT_WARP"] = str(warp)
         env["PORT_GFX_REF"] = "%d:%d:%s" % (retrace, retrace, tmp)
+        env["PORT_VI_REF"] = "%d:%d:%s" % (retrace, retrace, tmp)
         if save:
             shutil.copy(os.path.join(ROOT, save.format(v=ver)), os.path.join(tmp, "fuse64.%s.eep" % ver))
         cmd = [os.path.join(build, "fuse64"), "--headless", "--deterministic", "--frames", str(retrace + 1),
@@ -244,7 +294,7 @@ def run_screen(build, name, ref, out_dir, keep):
         r = subprocess.run(cmd, capture_output=True, text=True, timeout=3600, env=env)
         if r.returncode != 0:
             sys.exit("%s: fuse64 exited with %d:\n%s" % (name, r.returncode, r.stderr[-2000:]))
-        tasks = sorted(f[:-3] for f in os.listdir(tmp) if f.endswith(".in"))
+        tasks = sorted(f[:-3] for f in os.listdir(tmp) if f.endswith(".in") and f.startswith("r"))
         rows = []
         for t in tasks:
             inp = os.path.join(tmp, t + ".in")
@@ -253,6 +303,8 @@ def run_screen(build, name, ref, out_dir, keep):
             rows.append((t, "cmds", compare_cmds(inp)))
             for r in compare(inp, os.path.join(tmp, t + ".out"), refout, out_dir, "%s_%s_%s" % (ver, name, t)):
                 rows.append((t, "image", r))
+        vi = os.path.join(tmp, "v%06d" % retrace)
+        rows.append(("vi", "vi", compare_vi(vi + ".in", vi + ".out", ref, out_dir, "%s_%s" % (ver, name))))
         return ver, rows
     finally:
         if not keep:
@@ -273,7 +325,7 @@ def print_cmds(r, lead):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["run", "task", "list"])
+    ap.add_argument("cmd", choices=["run", "task", "vi", "list"])
     ap.add_argument("args", nargs="*")
     ap.add_argument("--screen", action="append", choices=sorted(SCREENS))
     ap.add_argument("--ref", default=DEFAULT_REF, help="gfxref (port/tools/gfx_ref/build.sh)")
@@ -287,6 +339,11 @@ def main():
     if not os.path.exists(a.ref):
         sys.exit("%s: no gfxref (port/tools/gfx_ref/build.sh DIR)" % a.ref)
     os.makedirs(a.out, exist_ok=True)
+    if a.cmd == "vi":
+        inp, port_out = a.args
+        w, h, nd, nbig, md = compare_vi(inp, port_out, a.ref, a.out, os.path.basename(inp)[:-3])
+        print("VI %dx%d: %d pixels differ, %d by more than one, max %d" % (w, h, nd, nbig, md))
+        return
     if a.cmd == "task":
         inp, port_out = a.args
         refout = inp[:-3] + ".ref"
@@ -304,6 +361,10 @@ def main():
         for t, kind, r in rows:
             if kind == "cmds":
                 print_cmds(r, "%-13s %-13s " % (name, t))
+                continue
+            if kind == "vi":
+                w, h, nd, nbig, md = r
+                print("%-13s %-13s %-8s %-9s %9d %7d %5d" % (name, "VI", "picture", "%dx%d" % (w, h), nd, nbig, md))
                 continue
             addr, w, h, nd, nbig, md, ncvg = r
             print("%-13s %-13s %-8s %-9s %9d %7d %5d %7s" % (name, t, addr, "%dx%d" % (w, h), nd, nbig, md,

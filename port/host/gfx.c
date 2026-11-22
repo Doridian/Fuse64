@@ -98,8 +98,9 @@ uint64_t host_gfx_tris(void) { return tris; }
    these two.  HB_CLEAN is a halfword the RDP hasn't written yet: its
    hidden bits are taken as its low bit, twice (angrylion starts RDRAM so,
    and gfx_ref.py's reference gets the port's, PORT_GFX_REF) */
-#define HB_CLEAN 4
 static uint8_t hidden[PORT_RDRAM_SIZE / 2];
+
+const uint8_t *host_gfx_hidden(void) { return hidden; }
 
 static void bl_div_init(void);
 

@@ -140,8 +140,16 @@ int host_gfx_task(const void *dl, uint32_t size);
 void host_gfx_ucode(const void *boot, uint32_t boot_size, const void *text, uint32_t text_size, const void *data,
                     uint32_t data_size, uint32_t dram_stack_size);
 void host_audio_task(const void *data_ptr, uint32_t data_size, const void *ucode_data);
-/* the framebuffer the VI shows, and its width */
-void host_vi_set_framebuffer(const void *fb, int width);
+/* the VI's registers (VI_STATUS_REG to VI_Y_SCALE_REG, in their order)
+   as libultra last wrote them (__osViSwapContext), the origin RDRAM's
+   physical address; port/host/vi.c makes the picture from them.  fb is
+   the framebuffer itself (NULL while black), for --vi-raw */
+enum {
+    PORT_VI_CONTROL, PORT_VI_ORIGIN, PORT_VI_WIDTH, PORT_VI_INTR, PORT_VI_CURRENT, PORT_VI_BURST,
+    PORT_VI_V_SYNC, PORT_VI_H_SYNC, PORT_VI_LEAP, PORT_VI_H_START, PORT_VI_V_START, PORT_VI_V_BURST,
+    PORT_VI_X_SCALE, PORT_VI_Y_SCALE, PORT_VI_NREGS
+};
+void host_vi_set_regs(const uint32_t regs[PORT_VI_NREGS], const void *fb);
 
 /* the controllers: N64 buttons and the stick, for pad (0-3); returns 0 if
    none is plugged in there */

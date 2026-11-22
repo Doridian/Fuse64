@@ -23,8 +23,17 @@ void host_video_init(void);
 void host_video_frame(void);            /* at each retrace: present (and screenshot) */
 void host_video_shutdown(void);
 int host_quit_requested(void);
-uint32_t host_frame_hash(void);         /* FNV-1a of the shown framebuffer */
-void host_frame_shot(const char *path); /* the shown framebuffer to a BMP */
+uint32_t host_frame_hash(void);         /* FNV-1a of the shown picture */
+void host_frame_shot(const char *path); /* the shown picture to a BMP */
+
+/* vi.c: the VI's picture */
+extern int host_vi_raw;                 /* --vi-raw: the color image as it is, no VI */
+/* the picture the VI shows at this retrace, XRGB (*w by *h); with
+   --vi-raw the color image (320x240), or NULL while there is none */
+const uint32_t *host_vi_picture(int *w, int *h);
+/* with --vi-raw: the framebuffer shown (big-endian RGBA5551) */
+const uint8_t *host_vi_raw_fb(void);
+void host_vi_frame(void);               /* at each retrace (PORT_VI_REF) */
 
 /* audio.c */
 void host_audio_init(void);
@@ -37,6 +46,10 @@ void host_input_frame(void);            /* once a retrace: the script's next lin
 
 /* gfx.c */
 void host_gfx_init(void);
+/* RDRAM's hidden bits, a byte a halfword (HB_CLEAN: never written by the
+   RDP, its hidden bits its low bit twice) */
+#define HB_CLEAN 4
+const uint8_t *host_gfx_hidden(void);
 uint64_t host_gfx_tris(void);           /* triangles drawn so far */
 
 /* N64 buttons */

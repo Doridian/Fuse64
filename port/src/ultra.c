@@ -445,10 +445,22 @@ static OSMesg vi_msg;
 static u32 vi_count, vi_retrace;
 static void *vi_cur_fb, *vi_next_fb;
 static OSViMode *vi_mode;
+static u32 vi_control;                  /* VI_CONTROL_REG: the mode's, with the special features */
 static int vi_black;
 
+/* VI_CONTROL_REG's bits that osViSetSpecialFeatures sets */
+#define VI_CTRL_GAMMA_DITHER_ON 0x00004
+#define VI_CTRL_GAMMA_ON 0x00008
+#define VI_CTRL_DIVOT_ON 0x00010
+#define VI_CTRL_ANTIALIAS_MASK 0x00300
+#define VI_CTRL_DITHER_FILTER_ON 0x10000
+
 void osCreateViManager(OSPri pri) { }
-void osViSetMode(OSViMode *m) { vi_mode = m; }
+
+void osViSetMode(OSViMode *m) {
+    vi_mode = m;
+    vi_control = m->comRegs.ctrl;
+}
 
 void osViSetEvent(OSMesgQueue *mq, OSMesg msg, u32 retraceCount) {
     vi_mq = mq;
@@ -464,17 +476,69 @@ u32 osViGetCurrentMode(void) { return vi_mode ? vi_mode->type : 0; }
 u32 osViGetStatus(void) { return 0; }
 void osViBlack(u8 active) { vi_black = active; }
 void osViFade(u8 active, u16 factor) { }
-void osViSetSpecialFeatures(u32 func) { }
+
+/* libultra's: the game turns the gamma off, the gamma dither, the divot
+   and the dither filter on (40040.c), which takes the antialiasing's mode
+   to 0 (resample and antialias, always fetching the extra lines) */
+void osViSetSpecialFeatures(u32 func) {
+    if (func & OS_VI_GAMMA_ON)
+        vi_control |= VI_CTRL_GAMMA_ON;
+    if (func & OS_VI_GAMMA_OFF)
+        vi_control &= ~VI_CTRL_GAMMA_ON;
+    if (func & OS_VI_GAMMA_DITHER_ON)
+        vi_control |= VI_CTRL_GAMMA_DITHER_ON;
+    if (func & OS_VI_GAMMA_DITHER_OFF)
+        vi_control &= ~VI_CTRL_GAMMA_DITHER_ON;
+    if (func & OS_VI_DIVOT_ON)
+        vi_control |= VI_CTRL_DIVOT_ON;
+    if (func & OS_VI_DIVOT_OFF)
+        vi_control &= ~VI_CTRL_DIVOT_ON;
+    if (func & OS_VI_DITHER_FILTER_ON) {
+        vi_control |= VI_CTRL_DITHER_FILTER_ON;
+        vi_control &= ~VI_CTRL_ANTIALIAS_MASK;
+    }
+    if ((func & OS_VI_DITHER_FILTER_OFF) && vi_mode != NULL) {
+        vi_control &= ~VI_CTRL_DITHER_FILTER_ON;
+        vi_control |= vi_mode->comRegs.ctrl & VI_CTRL_ANTIALIAS_MASK;
+    }
+}
+
+/* (the game never scales the picture) */
 void osViSetXScale(f32 x) { }
 void osViSetYScale(f32 y) { }
 u32 osViGetCurrentLine(void) { return 0; }
 u32 osViGetCurrentField(void) { return 0; }
 
+/* the registers as __osViSwapContext writes them at a retrace: the mode's,
+   the origin the framebuffer's plus the field's offset, no picture
+   (H_START 0) while black; field 0, as the game's modes aren't interlaced */
+static void vi_regs(void) {
+    uint32_t r[PORT_VI_NREGS] = { 0 };
+    const uint8_t *fb = vi_cur_fb != NULL ? port_addr((uintptr_t)vi_cur_fb) : NULL;
+    if (vi_mode != NULL && fb != NULL && fb >= port_rdram && fb < port_rdram + PORT_RDRAM_SIZE) {
+        OSViMode *m = vi_mode;
+        r[PORT_VI_CONTROL] = vi_control;
+        r[PORT_VI_ORIGIN] = (uint32_t)(fb - port_rdram) + m->fldRegs[0].origin;
+        r[PORT_VI_WIDTH] = m->comRegs.width;
+        r[PORT_VI_INTR] = m->fldRegs[0].vIntr;
+        r[PORT_VI_BURST] = m->comRegs.burst;
+        r[PORT_VI_V_SYNC] = m->comRegs.vSync;
+        r[PORT_VI_H_SYNC] = m->comRegs.hSync;
+        r[PORT_VI_LEAP] = m->comRegs.leap;
+        r[PORT_VI_H_START] = vi_black ? 0 : m->comRegs.hStart;
+        r[PORT_VI_V_START] = m->fldRegs[0].vStart;
+        r[PORT_VI_V_BURST] = m->fldRegs[0].vBurst;
+        r[PORT_VI_X_SCALE] = m->comRegs.xScale;
+        r[PORT_VI_Y_SCALE] = m->fldRegs[0].yScale;
+    }
+    host_vi_set_regs(r, vi_black || r[PORT_VI_CONTROL] == 0 ? NULL : fb);
+}
+
 void port_irq_vi(void) {
     host_interrupt();
     if (vi_next_fb != NULL)
         vi_cur_fb = vi_next_fb;
-    host_vi_set_framebuffer(vi_black ? NULL : port_addr((uintptr_t)vi_cur_fb), 320);
+    vi_regs();
     if (vi_mq != NULL && vi_retrace != 0 && ++vi_count >= vi_retrace) {
         vi_count = 0;
         osSendMesg(vi_mq, vi_msg, OS_MESG_NOBLOCK);

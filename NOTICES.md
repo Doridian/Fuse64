@@ -12,7 +12,7 @@ says where they come from and on what terms they are here.
 | GNU malloc (`gmalloc.c`, 1995) | `src/libmalloc/` | GNU GPL v2 or later (from the LGPL v2 or later); see below |
 | DozerEncore (a PC port of Blast Corps): decomp tools | `tools/elf_mips2.py` and others adapted from `../DozerEncore` | AGPL-3.0, same author |
 | DozerEncore: the PC port | parts of Fuse64 (`port/`) copied or adapted from `../DozerEncore/port` | AGPL-3.0, same author; see below |
-| parallel-rdp (Themaister): the RDP's triangle setup and interpolation, its depth test, blender and coverage rules | adapted in `port/host/gfx.c` (`rdp_tri`, `rdp_pixel`) | MIT; see below |
+| parallel-rdp (Themaister): the RDP's triangle setup and interpolation, its depth test, blender and coverage rules; the VI's filters and scaling | adapted in `port/host/gfx.c` (`rdp_tri`, `rdp_pixel`) and `port/host/vi.c` | MIT; see below |
 | mupen64plus-rsp-cxd4 (Iconoclast): the RSP's vector arithmetic | followed in `port/host/rsp.c` | CC0 1.0 (public domain dedication); see below |
 
 ---
@@ -103,7 +103,10 @@ and its reciprocal table) follows parallel-rdp
 time; so do its pixel's rules (`rdp_pixel`, `z_test`, `blend_eq`,
 `dither_at`: the depth test with the coverage, the blender's inputs,
 shifts and divider, the dither matrices; `depth_test.h`, `blender.h`,
-`dither.h`). Its licence:
+`dither.h`). The VI's output in `port/host/vi.c` (the antialiasing and
+dither filters, the divot filter, the scaling, the gamma) follows its VI
+(`vi_fetch.frag`, `vi_divot.frag`, `vi_scale.frag`,
+`video_interface.cpp`) the same way. Its licence:
 
     Copyright (c) 2020 Themaister
 

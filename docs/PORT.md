@@ -61,8 +61,9 @@ and `--every N` (BMP files), `--input FILE` (a scripted controller in the
 shift check's format, `tools/inputs`), `--replay FILE` (controller 1
 from a gameplay digest, by the game's frame: "The gameplay digest"),
 `--save-dir DIR` (the EEPROM file
-`fuse64.<v>.eep`), `--wav FILE`, `--hash` (each retrace's framebuffer
-hash), `-v`. With a window the keyboard (arrows, Z, X, C, A, S, Enter)
+`fuse64.<v>.eep`), `--wav FILE`, `--hash` (each retrace's picture
+hash), `--vi-raw` (the color image as it is, without the VI: "The VI"),
+`-v`. With a window the keyboard (arrows, Z, X, C, A, S, Enter)
 and SDL's game controllers are the controller.
 
 ### Cross builds
@@ -170,7 +171,7 @@ the attract demos at full speed.
 
 `port/tools/test.py run BUILD` runs the build headless and deterministic
 from a blank save through scenarios and compares what it gives with
-`port/tools/test_refs.json`: a digest of the framebuffer at every retrace
+`port/tools/test_refs.json`: a digest of the picture at every retrace
 (and checkpoints every 300, so that a difference says when it began), the
 sound (`--wav`) and the EEPROM file.
 
@@ -199,7 +200,11 @@ The audio's check ("Audio", 2026-11-21) changed every scenario's sound
 the sound was recorded again, i386. The RDP's coverage in memory
 ("Graphics", 2026-11-21) changed the framebuffers of all 21 (not the
 sound, the EEPROM or the gameplay digest); recorded again, i386 (us's
-seven the same on x86-64).
+seven the same on x86-64). The VI ("Graphics", "The VI") changed what is
+hashed, the picture the VI shows instead of the framebuffer: all 21
+recorded again (i386), after `--vi-raw` (the framebuffer's hash, as
+before) gave the old references in all 21, and the sound, the EEPROM and
+the digest stayed (us's seven the same on x86-64).
 jp's battle input is the port's own timing of battle.jp.txt
 (`port/tools/inputs/battle.jp.txt`, which test.py prefers to the shift
 check's): the port loads without the N64's waits, so
@@ -1108,8 +1113,9 @@ entry.
 
 port/host/gfx.c is a software F3DEX 1.x and RDP renderer that draws into
 the game's own color and depth images in `port_rdram`, as the RDP would:
-the game reads back what it drew (its screen captures, the fades). The
-VI's image is shown with SDL or hashed. It does the combiner and blender
+the game reads back what it drew (its screen captures, the fades). What
+the VI makes of the color image (port/host/vi.c, "The VI" below) is
+shown with SDL or hashed. It does the combiner and blender
 by their formulas in one and two cycles, TMEM with its loads, the texel
 formats, fill and copy modes, texture rectangles, the coverage the RDP
 keeps in memory, fog and the z-buffer. Headless on one core it plays the
@@ -1299,10 +1305,47 @@ differed as in the microcode columns, and jp's by up to 2939 pixels and
 2969 depths a screen. It costs a seventh more: us's battle, 6000
 retraces, 97 s against 85 s before (i386, a busy machine).
 
-The VI's filters (the antialiasing resample of partly covered pixels,
-the divot filter, the dither filter) read that coverage, but they are
-the VI's, and the reference compares RDRAM, not what the VI shows: the
-port shows the color image as it is ("What's left").
+**The VI.** What is shown is the VI's picture, made as the VI makes it
+(port/host/vi.c, after parallel-rdp's VI, MIT) from its registers as
+libultra sets them (port/src/ultra.c: the mode, osViSetSpecialFeatures'
+bits, the origin, osViBlack). The game picks NTSC's LAN1 (PAL's in eu)
+and turns the gamma off, the gamma dither, the divot and the dither
+filter on, which takes the antialiasing to its mode 0 (VI_CONTROL
+0x13016). Per pixel it fetches, the VI reads its coverage (the RDP's
+hidden bits): a partly covered one is moved towards the second lowest
+and second highest of each channel among its fully covered neighbours
+(those diagonal to it, and two pixels away on its line), by what wasn't
+covered; a fully covered one gets back the low bits the RDP's dither
+took (each channel's 5 bits << 3, plus one for each of its eight
+neighbours with more, less one for each with less). The divot filter
+takes the median of three pixels on a line where one of them is partly
+covered. Then the scale (x 0.5: each pixel and the half way to the
+next), 8 pixels blanked on the left and 7 on the right, and the gamma
+dither (one step of noise; a hash of the pixel and the retrace, the
+N64's own sequence being unknown). The picture is a field's scanout:
+640 by 240 lines (NTSC: the image from line 1, 237 lines) or 288 (PAL:
+the same image from line 25, as eu shows it on a PAL set), shown at 4:3
+(screenshots: each line twice). `--vi-raw` shows the color image as it
+is, as before (and hashes it so: the old references).
+
+`gfx_ref.py run` compares it too: with `PORT_VI_REF=FROM:TO:DIR` the
+port writes, at the screen's retrace, the VI's registers, RDRAM and its
+hidden bits, and its picture; `gfxref --vi` gives angrylion's VI's
+picture from the same (its whole scanout, uncropped). The gamma dither
+is off in both (each one's noise is its own). Every screen of the 20, in
+us, eu and jp, is the reference's picture exactly (0 pixels differ).
+Before it, the color image as it was shown (each channel's 5 bits to 8
+by repeating its top bits, no filters), placed where the VI places it,
+differed from the reference's picture (us) in about 9,900 pixels of the
+legal screen's 153,600 (3,700 to 4,100 by more than a 5-bit step) and
+105,000 to 140,000 of every other screen's (9,500 to 67,000 by more than
+a step: the half-way pixels of the scale, the edges); the rest of the
+difference is the low bits (the VI's channels are 5 bits << 3 and the
+dither filter's restore, not the top bits repeated). The picture is
+made only when it is shown, hashed or written; with `--hash` (test.py)
+that is every retrace: us's battle, 6000 retraces, 153 s against 139 s
+with `--vi-raw` (i386, the two at once on a very busy machine), about
+2.5 ms a picture there.
 
 ### Audio
 
@@ -1593,11 +1636,12 @@ digest") and the wait for the NMI in 6BBE0.c ("The TAS").
   microcode ("Graphics": `gfx_ref.py`); the microcode runs on the port's
   RSP interpreter, so every task's RDP commands are the N64's, and with
   the coverage in memory every image of gfx_ref.py's 20 screens, in us,
-  eu and jp, is the reference's, colors, depths and coverage. Left: the
-  VI's filters (the AA resample, divot and dither filters: the reference
-  doesn't compare the VI's output, and the port shows the color image
-  as it is); TMEM isn't carried from the previous task into the reference
-  (each task loads its own so far); rules no screen reaches aren't
+  eu and jp, is the reference's, colors, depths and coverage, and so is
+  the VI's picture of it ("The VI"). Left: the VI's 32-bit images,
+  interlace, a vertical scale below 1 (its fetch bug) and the
+  replicating mode, which the game doesn't use; the gamma dither's
+  noise (the N64's sequence); TMEM isn't carried from the previous task
+  into the reference (each task loads its own so far); rules no screen reaches aren't
   checked (8-bit color images' hidden bits, two cycles' pipelining: the
   alpha compare of the next pixel's first cycle and the memory's color
   of the pixel before, which angrylion has; noise isn't the RDP's).

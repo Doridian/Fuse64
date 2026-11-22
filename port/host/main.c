@@ -188,7 +188,8 @@ static void usage(const char *argv0) {
             "  --replay FILE       controller 1 from a PORT_DIGEST file, by the game's frame\n"
             "  --save-dir DIR      where the EEPROM and controller pak files go (default .)\n"
             "  --wav FILE          the sound to a WAV file\n"
-            "  --hash              print each retrace's framebuffer hash\n"
+            "  --hash              print each retrace's picture hash\n"
+            "  --vi-raw            show the color image as it is, without the VI's filters\n"
             "  -v                  more log\n",
             argv0, ROM_DEFAULT);
     exit(2);
@@ -262,6 +263,8 @@ int main(int argc, char **argv) {
             host_wav_path = argv[++i];
         else if (!strcmp(a, "--hash"))
             print_hash = 1;
+        else if (!strcmp(a, "--vi-raw"))
+            host_vi_raw = 1;
         else if (!strcmp(a, "-v"))
             host_verbose++;
         else if (a[0] == '-')

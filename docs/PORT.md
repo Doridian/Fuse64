@@ -11,13 +11,13 @@ files come from it).
 
 ## Status
 
-As of 2026-11-15:
+As of 2026-11-21:
 
 | host | builds | how far it runs |
 |---|---|---|
 | Linux i386 (`-m32`) | yes | the legal screen, title, file select, the opening, the world select, the first stage played; battle mode against three CPU players: `test.py`'s four scenarios, in us, eu and jp (the references are this build's); us's seven scenarios and 77 stage runs under ASan and UBSan too |
 | Windows i386 (zig `x86-windows-gnu`, under wine) | yes | the four scenarios are Linux i386's, in us, eu and jp |
-| WebAssembly (emscripten), node | yes | the four scenarios are Linux i386's, in us, eu and jp |
+| WebAssembly (emscripten), node | yes | the seven scenarios and the 77 stage runs are Linux i386's (the digest's hashes too), in us, eu and jp; the three TAS movies every frame the emulator's |
 | WebAssembly, a page (`PORT_WASM_TARGET=web`) | yes | plays in a browser (headless Chromium, us, eu and jp: the legal screen, the opening, the attract demos), the ROM from a file picker or `?rom=`, the save in IndexedDB |
 | big-endian MIPS and PowerPC, mipsel, armhf (zig, qemu-user) | yes | the four scenarios are Linux i386's, in us, eu and jp; big-endian MIPS: the seven in eu and jp too, and stage runs ("Every stage") |
 | Linux x86-64 | yes | the four scenarios are Linux i386's, in us, eu and jp ("Where pointers are 8 bytes"); under ASan and UBSan too, with the arena and with the host's malloc, in us, eu and jp: the seven scenarios and the 77 stage runs |
@@ -28,7 +28,9 @@ As of 2026-11-15:
 `port/tools/matrix.py` runs the ten hosts with the three versions and the
 four scenarios ("The matrix"). Its last runs: the seven 32-bit hosts on
 2026-11-14 (after the vertex fix in "Byte order"), the references in all
-84; the three 64-bit hosts on 2026-11-15, the references in all 36.
+84; the three 64-bit hosts on 2026-11-15, the references in all 36;
+Linux i386, WebAssembly, big-endian MIPS and Linux x86-64 on 2026-11-21
+(after the soft reset, with the digest's hashes), the references in all 48.
 
 The ROM build is unchanged by all of it: every change to `src/` is under
 `TARGET_PC`, a macro that gives IDO the same text, or a type that gives it
@@ -138,6 +140,11 @@ fast as the native one. What differs from the ELF build:
 - The program's data starts at 256 MiB (`-sGLOBAL_BASE`), so that no
   pointer of its own looks like an N64 physical or segment address
   (port/src/memory.c), as the ELF builds' image base above 8 MiB does.
+  A function's address is its slot in the table, which starts at 64 Ki
+  (`-sTABLE_BASE`), so that the digest's pools write it as `*`, not as
+  a small number (mdl's draw callbacks).
+- The runtime's exit doesn't flush what libc still buffers: main closes
+  the digest's file and flushes the others before it returns.
 - wasm-ld has no absolute symbols: the segment and physical addresses the
   C names (`D_1000000`, `D_200000`) are proxies, 16-byte objects that
   `port_addr` and the renderer turn back into their numbers
@@ -533,7 +540,7 @@ port/tools/emu_digest.py jp emu.txt --movie 4908M  # what test.py does once (bui
   times faster: 4908M's 78,636 retraces in 6 seconds instead of 23
   minutes. test.py's `tas` sets it (`--draw` doesn't).
 
-What it found (2026-11-21, the i386 and x86-64 builds): **every frame of
+What it found (2026-11-21, the i386, x86-64 and WebAssembly builds): **every frame of
 every movie's run the same**, with no fix but the reset; since the reset
 button, in one run each (4908M in 6 seconds, the three in 90 on i386),
 the same with the threads as fibers or as host threads
@@ -621,6 +628,19 @@ references already. The fixes leave the 32-bit hosts' layouts the N64's
 (a buffer sized for 8-byte pointers is its N64 size where they are 4;
 only 54E40.c's local is bigger on every host): after them Linux i386's
 and big-endian MIPS's four us scenarios gave the references.
+
+2026-11-21 (`--platform i386 --platform wasm --platform mips --platform
+x86_64 -j 12`, after the soft reset): the references in all 48, the
+digest's hashes with them (`digest_pools` on the 32-bit three). The
+WebAssembly build's digest had differed (legal's from frame 20, the
+TAS's from frame 20 of 4908M), not its game: a function's address written
+as a small number and the file's last lines lost at the exit
+("WebAssembly"). Its warp scenarios and three movies give the references
+too, after one fix: jp's warp-boss trapped under node (a void function
+called through an `s32` pointer, D_802AC768 in 54E40.c: WebAssembly
+checks an indirect call's type). Then `stages.py run` (node as its
+`--qemu`, `fuse64` a link to `fuse64.js`) gave Linux i386's hashes in
+all 77 stage runs of each version.
 
 ### Every stage
 

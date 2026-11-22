@@ -237,6 +237,10 @@ static void resample(int flags, uint32_t pitch, uintptr_t state) {
    the samples times the gains are truncated (what mupen64plus's output
    matches, docs/PORT.md "Audio"). */
 
+/* (32-bit wrapping, as mupen64plus's int32_t arithmetic: the sequence's
+   product can wrap, and a step with it) */
+static int32_t wrap_sub(int32_t a, int32_t b) { return (int32_t)((uint32_t)a - (uint32_t)b); }
+
 static void envmixer(int flags, uintptr_t state) {
     uint8_t *s = ram(state);
     int32_t v[2], tgt[2], r[2], seq[2], step[2];
@@ -261,7 +265,7 @@ static void envmixer(int flags, uintptr_t state) {
         w = ram16(s, 17);
     }
     for (int c = 0; c < 2; c++)
-        step[c] = tgt[c] - v[c];        /* (0: at the target, and it stays) */
+        step[c] = wrap_sub(tgt[c], v[c]);   /* (0: at the target, and it stays) */
     uint32_t in = DMEM_BASE + in_;
     uint32_t dst[4] = { DMEM_BASE + out_, DMEM_BASE + dry_right, DMEM_BASE + wet_left, DMEM_BASE + wet_right };
     int nout = (flags & F_AUX) ? 4 : 2;
@@ -270,13 +274,13 @@ static void envmixer(int flags, uintptr_t state) {
         for (int c = 0; c < 2; c++)
             if (step[c] != 0) {
                 seq[c] = (int32_t)(((int64_t)seq[c] * r[c]) >> 16);
-                step[c] = (seq[c] - v[c]) >> 3;
+                step[c] = wrap_sub(seq[c], v[c]) >> 3;
             }
         for (int i = b; i < b + 8 && i < n; i++) {
             int32_t g[4];
             for (int c = 0; c < 2; c++) {
                 if (step[c] != 0) {
-                    v[c] += step[c];
+                    v[c] = (int32_t)((uint32_t)v[c] + (uint32_t)step[c]);
                     if (step[c] > 0 ? v[c] >= tgt[c] : v[c] <= tgt[c]) {
                         v[c] = tgt[c];
                         step[c] = 0;

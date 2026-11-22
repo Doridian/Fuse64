@@ -303,9 +303,9 @@
   "eeprom": "6b4c522172e36bd7b31f29fea72f78fda46059a6"
  },
  "jp/tas-4908M": {
-  "digest": "5102343092f509852a5fc9afeac031341fd23faf",
-  "digest_pools": "a7d209a6e2621b05e4d1447d23b6bf82b57b3e6e",
-  "eeprom": "c23dedf97a10e3acb714b11f906b96bbef04d104"
+  "digest": "f74583b02e750fc770e00da29fe43888650c6c16",
+  "digest_pools": "333dc9e67409b453fce09cdb18bef880785c4150",
+  "eeprom": "145adb91e10b652a45a18b321a98e974dbc7bb05"
  },
  "jp/warp-battle": {
   "checkpoints": {

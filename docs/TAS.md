@@ -214,13 +214,15 @@ it), the one that syncs, with the clock's seed: the digest has each boot's
 port's `--replay` seeds that boot with it. The `.m64` movies' are 2.6.0's
 runs with the seed pinned (0x1997, PORT_SEED).
 
-On the port (2026-11-22, jp, i386): 4908M's whole-game digest is the same
-for 24,846 of its 73,577 frames after the reset (the menus, Blue Resort,
-Red Mountain, into White Glacier's first stage), then the player's
-jump in scene 90 (frame 24,846) goes higher and farther on the port than
-on the N64. That is a difference in the port's game code, the first the
-movie finds (docs/PORT.md, "The TAS"). The `.m64` movies' runs are the
-same at every frame (2053M's 84,941, 2350M's 221,427).
+On the port (2026-11-22, jp, i386 and x86-64): **4908M plays to its end
+in sync**: the whole-game digest is the same at every frame, all 317
+before the reset and all 73,577 after it (every stage of the route, to
+the last boss and the movie's last input). It took two fixes to the
+port's game code (docs/PORT.md, "The TAS"): a push in White Glacier's
+first stage undone on little-endian hosts (an `s64` built from two
+words), and a read through NULL in Black Fortress that crashed the port.
+The `.m64` movies' runs are the same at every frame (2053M's 84,941,
+2350M's 221,427).
 
 `find_vi_clock()` looks only in the core's own mappings and the
 anonymous one adjoining them (its .bss): a heap mapped after the core

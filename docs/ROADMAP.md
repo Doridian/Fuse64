@@ -336,16 +336,18 @@ docs/PORT.md), for accuracy and fidelity alike:
       ordinary C program under ASan and UBSan.
 - [ ] **The gameplay digest equal to the emulator's** in every scene of
       every version; uninitialised reads given what the N64 leaves there.
-- [ ] **A whole-game run**: the TAS movies (docs/TAS.md) replayed on the
+- [x] **A whole-game run**: the TAS movies (docs/TAS.md) replayed on the
       port with `--replay`, as far as they sync on the emulator, the
       digest equal along them (DozerEncore's TAS plays to its end).
-      Done: 4908M syncs to its end on BizHawk 2.8's own core (docs/TAS.md;
+      4908M syncs to its end on BizHawk 2.8's own core (docs/TAS.md;
       the controller plugin had written the wrong struct size into that
-      core), and its whole-game digest is equal on the port for 24,846
-      of 73,577 frames after the reset, to a jump in White Glacier's
-      first stage that goes higher on the port (docs/PORT.md, "The TAS");
-      the `.m64` movies' emulator runs (not synced past their reset) are
-      equal at every frame. Left: that jump, then the rest of the game.
+      core), and its whole-game digest is equal on the port at every
+      frame, 317 before the reset and 73,577 after it, to the last boss
+      and the movie's last input (i386 and x86-64), after two fixes: a
+      push in White Glacier undone on little-endian hosts (an `s64` from
+      two words) and a read through NULL in Black Fortress (docs/PORT.md,
+      "The TAS"). The `.m64` movies' emulator runs (not synced past their
+      reset) are equal at every frame.
 - [ ] **Graphics**: what the RDP draws checked against angrylion task by
       task (`gfx_ref.py`), and an OpenGL renderer beside the software one.
 - [x] **Audio checked**: against mupen64plus's output (RMS and correlation,

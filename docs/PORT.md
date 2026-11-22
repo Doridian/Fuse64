@@ -562,18 +562,42 @@ the same with the threads as fibers or as host threads
 | 2350M | 233,449 | 330 | 221,097: the attract loop |
 
 That 4908M run was mupen64plus 2.6.0's, desynced in the first stage. Its
-whole-game run on BizHawk's core (2026-11-22, i386): part 0 all 317
-frames the same; part 1 the same for **24,846 of its 73,577 frames**: the
-title, the file select, Blue Resort and Red Mountain (their stages and
-bosses), into White Glacier's first stage (scene 90, sub 20). At frame
-24,846 Bomberman is launched upward (the entry's word 4 gets 0x8000000 the
-frame before, at the same position on both), and the next frame he is at
-y 8.86 on the port against 6.18 on the N64, and farther along x, after
-which the stage goes its own way. Everything the digest has is the same
-up to there, so it's a difference in the port's game code (that motion's
-velocity: a non-matching or fake function, or a read the port gives
-another value). That is the next thing to find; the test's reference
-(`jp/tas-4908M`) is this run.
+whole-game run on BizHawk's core (2026-11-22, i386 and x86-64) is **the
+same at every frame**: part 0's 317 and part 1's 73,577, the title, the
+file select, every stage and boss of the route (Blue Resort to Black
+Fortress) and the last fight, to the movie's last input; the test's
+reference (`jp/tas-4908M`) is this run. Two differences in the port's
+game code were in the way, both found by the digest's first differing
+frame, a hardware watchpoint on the port (gdb) and breakpoints on
+BizHawk's core (`tools/tas.py`'s `breaks`) on the function the
+watchpoint named:
+
+- **Frame 24,846, White Glacier's first stage (scene 90, ovl_0F_03).**
+  Bomberman, launched up a slope, went higher and farther on the port.
+  Both moved him the same (func_80291944, speed 8.5), then ovl_0F_03's
+  callback for the pushed blocks (func_ovl0F_03_800434AC) pushed him
+  back and asked func_ovl0F_03_80043494 whether the push hit something,
+  to undo it. That function returns an `s64` built in a union of two
+  words (a matching fake: the flag in `w[1]`, the object's `unkC` in
+  `w[0]`), and the caller keeps its low word. On the N64 that is `w[1]`,
+  the flag; on a little-endian host `w[0]`, `unkC`, set here, so the
+  push was undone every time. Under `TARGET_PC` the function builds the
+  N64's value from the two words, on every host.
+- **Frame 59,587, Black Fortress's first stage (scene 108, ovl_10_05):
+  the port crashed.** func_ovl10_05_80043E00 records the two followers'
+  positions (`D_ovl10_05_80047208[i]->unk40`) before it checks whether
+  they exist; until the player comes near they are NULL, and the N64
+  reads ZeroJump's page (word 0x40, 0, then the words at 0x10 and 0x18
+  as floats). Under `TARGET_PC` the port reads them with
+  `port_null_word` ("Reads through NULL").
+
+Replays are exactly repeatable: three runs each on i386 and x86-64 give
+the same digest and save, and the two hosts' digests agree on every
+field both write. One replay that differed from frame 274 of part 0 (the
+title's models) was a `--save-dir` with a save in it: `--replay` starts
+from whatever EEPROM the directory has, and the movie from a blank one
+(test.py uses a new directory each time). With a blank save it differs
+nowhere, in or out of gdb, with or without address randomisation.
 
 The check finds a difference where there is one: A held for ten frames
 in 4908M's stage (the digest's pads changed) differs at the first of
@@ -1152,7 +1176,11 @@ the colour's bytes reversed, and the beam was out of view; they are a
 `Vtx` struct now (the same bytes for IDO), as are ovl_0A_06's and 0B_07's.
 That one was found by comparing the two hosts' display lists, with the
 vertices and matrices they load, for the first retrace that differed
-(4306 of us's story; a temporary log in gfx.c's `run`).
+(4306 of us's story; a temporary log in gfx.c's `run`). And a matching
+fake that builds an `s64` from two words in a union (ovl_0F_03's
+func_ovl0F_03_80043494) gave its caller, which keeps the low word, the
+wrong one on a little-endian host: it returns the N64's value under
+`TARGET_PC` (4908M, "The TAS").
 
 ### Threads and tasks
 
@@ -1793,7 +1821,10 @@ port's exact against. What differs, and the port now does as 2.0I:
   ROM. 426E0.c's func_802284F0 uses it for a texture slot an overlay
   never filled (ovl_15_02 gives its 80051420 four and fills two: Rainbow
   Palace's last boss crashed at once), AFBF0.c for the credits' scene
-  lists read outside the credits (75:17). A store through NULL changes that
+  lists read outside the credits (75:17), ovl_10_05's
+  func_ovl10_05_80043E00 for the two followers' positions, recorded
+  before they exist (Black Fortress's first stage: 4908M crashed there,
+  "The TAS"). A store through NULL changes that
   page (it is mapped writable): the four attract demos' stages, left
   early, set bit 0 of `NULL->unkC`, the word 0x312900FF at 0xC whose bit
   0 is set already, so the store changes nothing, and the port skips it.
@@ -1910,7 +1941,8 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   mupen64plus in us's battle and story, eu's and jp's battle, and the
   77 PORT_WARP scenes in us, eu and jp, with the object pools, on
   i386: all the same (75:17 as far as the N64 goes: "The stages: the
-  warp on the emulator"). Left: the pools
+  warp on the emulator"), and jp's whole game along 4908M on BizHawk's
+  core, every frame to the movie's end ("The TAS"). Left: the pools
   on 64-bit hosts (by field, with the host's struct offsets); 9CAB0.c's
   two unions.
 - **Audio** ("Audio"): checked against mupen64plus in us's menus, story

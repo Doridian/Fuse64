@@ -521,7 +521,7 @@ extern u8 D_802AC714[];
 extern s32 D_802AC758;
 extern s32 D_802AC75C;
 extern s32 D_802AC760;
-extern s32 (*D_802AC768)(void *);
+extern PORT_RET(s32, void) (*D_802AC768)(void *); /* 6BBE0.c's func_8025D1AC and func_8025D008: void */
 extern s32 D_802AC770[10];
 extern u8 D_802AC780[];
 #ifdef TARGET_PC
@@ -658,7 +658,7 @@ void func_80242DA8(void);
 void func_80242FB4();
 void func_802434F8();
 void func_8024364C(u8 *arg0);
-void func_8024368C(s32 (*arg0)(void *));
+void func_8024368C(PORT_RET(s32, void) (*arg0)(void *));
 void func_80243698(s32 arg0);
 void func_80243718(void);
 void func_80243790(void);
@@ -1383,7 +1383,7 @@ void func_80243698(s32 arg0) {
     }
 }
 
-void func_8024368C(s32 (*arg0)(void *)) {
+void func_8024368C(PORT_RET(s32, void) (*arg0)(void *)) {
     D_802AC768 = arg0;
 }
 

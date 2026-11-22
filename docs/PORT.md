@@ -894,9 +894,11 @@ check it (64-bit Linux, clang and lld, off by default):
     declaration gives one, it runs to the next name the C uses. Where the
     C declares `T x[]`, `PORT_SIZE(n)` gives the size the code shows
     (5E3F0.c's per-entry tables are `[PORT_SIZE(5)]`, D_800AEDF0's five
-    entries); 18 objects are left without one: names the C never uses, a
-    thread with its stack after it, end markers, the heap, an
-    ALCSeqMarker, and two words nothing gives an extent.
+    entries). Names that only mark an end (a table's or a stack's
+    top, m2c's base of entry -1) get no room (gen_regions.py's and
+    asm2c.py's `ENDS`). One object is left without a size: 80420.c's
+    first 0x24 bytes of bss (`D_802AD0E0`), which nothing names or
+    reaches, and which are 0 in the emulator's RDRAM.
   - A name inside an object (a member's or an element's own name, a
     label inside a typed table) stays an alias inside it.
   - At startup a constructor copies each asm `.data` label's bytes from
@@ -977,6 +979,27 @@ What the runs found, each fixed under `TARGET_PC` (the ROM is the same):
   held. (The legal screen's TLUT load reads past its picture into that
   rest; no texel uses it.) ASan then sees an overflow only past what the
   N64 block has.
+
+The 2026-11-21 runs (all three versions, the monkey's too) found:
+
+- **The images in the arena**: the RDP's hidden bits (coverage, dz) and
+  the depth buffer were only kept inside `port_rdram`, and the VI read
+  its image there; the color images are in the arena now (every frame
+  differed from retrace 23). gfx.c keeps the arena's hidden bits too, and
+  the VI reads through `port_n64_host` (the object at an N64 address).
+- **80580.c's ALCSeqMarker** (`D_802AD250`): asm2c.py gave it the N64's
+  0xF0 bytes, where pointers are 8 the host's is 0x170, and
+  `alCSeqGetLoc` wrote the rest over `D_802AD340`. It has the host's type
+  (decls.py now resolves the SDK's unnamed records' typedefs).
+- **F3DEX's data head** (412F0.c's `D_802A4840`): us's 0x7C0 in every
+  version; eu's is 0x7D0 and jp's 0x800, which each reads in full.
+- **aspmain.c's envmixer**: the step to the target overflowed `s32`
+  (UBSan); it wraps as the RSP's 32-bit arithmetic.
+- **Sizes**: of the 17 unsized names, 16 have one or are end markers (the
+  two threads, the heap's 1 MB, the exception vectors' 0x400 bytes,
+  libm's NaN, a 0x1D string). 5E3F0.c's entry -1 (`D_800AEBBC`, m2c's
+  base) read the N64's word 0x800AED3C, which nothing names and which
+  is 0: the port gives 0.
 
 ### Where pointers are 8 bytes
 

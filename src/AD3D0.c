@@ -54,6 +54,9 @@ void func_80292BD0(struct UnkStruct_80225CC0 *file, u8 *dst, s32 size) {
         }
     }
     func_80297D60((void *) (((uintptr_t) start + 15) >> 4 << 4), (u32) (size + 15) >> 4 << 4);
+#ifdef TARGET_PC
+    port_lzss_window(D_802B0310);
+#endif
     free(D_802B0310);
     D_802A1D90 = 0;
 }

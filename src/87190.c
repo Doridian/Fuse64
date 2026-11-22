@@ -119,7 +119,15 @@ void *func_8026CE28(s32 arg0) {
         func_802267E0(0x18);
         file = func_80226604(arg0, 1);
         func_8022616C((u8 *) &size, 4, 1, file);
+#ifdef TARGET_PC
+        /* PORT_ASSET_PAD bytes past the file, what the N64 has after it: a
+         * picture ends with its palette, which a TLUT load reads 16 or 256
+         * entries of whatever its count (port/src/native.c) */
+        D_800A7F30[i].unk4 = malloc(size + PORT_ASSET_PAD);
+        port_asset_tail(arg0, D_800A7F30[i].unk4, size);
+#else
         D_800A7F30[i].unk4 = malloc(size);
+#endif
         func_80292BD0(file, D_800A7F30[i].unk4, size);
 #ifdef TARGET_PC
         /* the file in the host's byte order, by what it is */

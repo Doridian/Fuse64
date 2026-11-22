@@ -97,6 +97,12 @@ static inline void port_set_be32(void *p, unsigned int v) {
 void port_native32(void *p, unsigned int n);
 void port_native16(void *p, unsigned int n);
 void port_asset_native(int id, void *p, int size);
+/* what the N64 has past a file of the asset cache (its TLUT loads read
+   there), the PORT_ASSET_PAD bytes the port gives it room for; the LZSS
+   window the decoder frees, which the heap's next block can reuse */
+#define PORT_ASSET_PAD 0x200
+void port_asset_tail(int id, void *p, int size);
+void port_lzss_window(const void *w);
 /* ... and the sound data 80580.c loads */
 void port_bank_native(void *p, int len);
 void port_sounds_native(void *p, int len, int count);

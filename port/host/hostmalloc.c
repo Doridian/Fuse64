@@ -13,6 +13,7 @@
 #ifdef PORT_HOST_MALLOC
 #include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 #include "port.h"
 
@@ -75,13 +76,22 @@ int port_hostmalloc_owns(const void *p) {
 /* the size gmalloc gives a request of n (src/libmalloc/gmalloc.c: at least
  * a struct list, 8 bytes on the N64; up to half a 4 KB block a power-of-two
  * fragment, else whole blocks): on the N64 the bytes up to it are the
- * block's, and the legal screen's TLUT load reads past its picture into
- * them (87190.c's asset, 38450 bytes in us and eu).  Here they are the
- * block's too, zero (on the N64 whatever the heap held there; no texel
- * uses them). */
+ * block's.  Here they are the block's too, zero (on the N64 whatever the
+ * heap held there).  With PORT_HOST_MALLOC_EXACT=1 a block is the size
+ * asked, so that AddressSanitizer reports a read past the request too:
+ * the code's own reach past what it asked for, which the N64's rounding
+ * hides (the asset cache's TLUT loads did, before 87190.c's
+ * PORT_ASSET_PAD). */
 static size_t whole(size_t n) {
+    static int exact = -1;
     size_t w = 8;
 
+    if (exact < 0) {
+        const char *e = getenv("PORT_HOST_MALLOC_EXACT");
+        exact = e != NULL && *e != '\0' && *e != '0';
+    }
+    if (exact)
+        return n ? n : 1;
     if (n > 0x800)
         return (n + 0xFFF) & ~(size_t)0xFFF;
     while (w < n)

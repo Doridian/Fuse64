@@ -270,6 +270,37 @@ int port_narrow_dl(const void *p) {
     return 0;
 }
 
+/* What the N64 has past a file of the asset cache.  A picture ends with
+ * its palette (docs/ASSETS.md), and the TLUT load (78F60.c, 7B2D0.c,
+ * 7C4D0.c, 7D840.c, 54E40.c) reads 16 entries for a CI4 picture and 256
+ * for a CI8 whatever the palette's count: 94 of us's pictures have fewer
+ * colours than that, so the load reads up to 0x1FE bytes past the file,
+ * into the rest of its heap block and on into the next.  The port's block
+ * has PORT_ASSET_PAD bytes more (87190.c), given here the N64's bytes:
+ * - 0x368 (us's and eu's title screen "TM", 19x11 CI4, 5 colours) uses
+ *   entries 7 and 8.  Its 162 bytes take a 256-byte fragment, which on the
+ *   N64 is where the LZSS window of the file loaded just before it (0x367)
+ *   was until the decoder freed it (in the emulator both times the title
+ *   loads them: 0x80308000, then 0x80318000), so the bytes past it are
+ *   that window's: 0F0F 0F0F 0F00 0000, entries 5 to 8, the last two with
+ *   alpha 0.
+ * - Every other: zeros.  The legal screen's picture (0x366, 5 colours of
+ *   16) is the first file the heap gets, and the emulator has zeros after
+ *   it; no other picture has a texel past its count. */
+static uint8_t lzss_window[0x400];
+
+void port_lzss_window(const void *w) {
+    memcpy(lzss_window, w, sizeof lzss_window);
+}
+
+void port_asset_tail(int32_t id, void *p, int32_t size) {
+    uint8_t *t = (uint8_t *)p + size;
+    memset(t, 0, PORT_ASSET_PAD);
+    if (id == 0x368)
+        for (int32_t i = 0; i < PORT_ASSET_PAD; i++)
+            t[i] = lzss_window[(size + i) & 0x3FF];
+}
+
 void port_asset_native(int32_t id, void *p, int32_t size) {
     (void)id;
     if (size >= 0x10 && port_be32(p) == 0x36340038u)

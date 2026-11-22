@@ -96,7 +96,15 @@ extern u8 D_8029F6D8[];
 extern u8 D_8029F718[];
 extern u8 D_8029F7A0[];
 extern u8 D_8029F7C8[];
-extern u8 D_802A4840[PORT_SIZE(0x7C0)];
+/* (F3DEX's data in main_code's rodata: below) */
+#if VERSION_JP
+#define PORT_F3DEX_HEAD 0x800
+#elif VERSION_EU
+#define PORT_F3DEX_HEAD 0x7D0
+#else
+#define PORT_F3DEX_HEAD 0x7C0
+#endif
+extern u8 D_802A4840[PORT_SIZE(PORT_F3DEX_HEAD)];
 #ifdef TARGET_PC
 /*
  * F3DEX.NoN 1.21's data, which the graphics task gives the RSP (unk28, its
@@ -111,11 +119,9 @@ extern u8 D_802A4840[PORT_SIZE(0x7C0)];
 #define port_f3dex() ((void *) D_802A4840)
 #else
 #if VERSION_EU
-#define PORT_F3DEX_HEAD 0x7D0
 extern u8 D_802A5010[PORT_SIZE(0x30)];
 #define PORT_F3DEX_TAIL D_802A5010
 #else
-#define PORT_F3DEX_HEAD 0x7C0
 extern u8 D_802A5000[PORT_SIZE(0x40)];
 #define PORT_F3DEX_TAIL D_802A5000
 #endif

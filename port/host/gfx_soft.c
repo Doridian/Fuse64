@@ -36,12 +36,29 @@ uint64_t host_gfx_tris(void) { return tris; }
    and gfx_ref.py's reference gets the port's, PORT_GFX_REF) */
 static uint8_t hidden[PORT_RDRAM_SIZE / 2];
 
+#ifdef PORT_SCATTER_LAYOUT
+/* the scattered layout's images (the framebuffers, the depth buffer) are
+   objects in its arena (docs/PORT.md, "The scattered layout"): their
+   hidden bits by their place there */
+typedef struct { const char *name; uint32_t off, size, n64, n64size; } PortScatterObj;
+extern const PortScatterObj port_scatter_objs[];
+extern const unsigned port_scatter_nobjs;
+extern uint8_t port_scatter_arena[];
+static uint8_t *hidden_sc;
+#endif
+
 const uint8_t *host_gfx_hidden(void) { return hidden; }
 
 static void bl_div_init(void);
 
 static void soft_init(void) {
     memset(hidden, HB_CLEAN, sizeof hidden);
+#ifdef PORT_SCATTER_LAYOUT
+    hidden_sc = malloc(port_scatter_objs[port_scatter_nobjs].off / 2 + 1);
+    if (hidden_sc == NULL)
+        host_fatal("host_gfx_init: no memory");
+    memset(hidden_sc, HB_CLEAN, port_scatter_objs[port_scatter_nobjs].off / 2 + 1);
+#endif
     bl_div_init();
 }
 
@@ -49,6 +66,11 @@ static void soft_init(void) {
 static uint8_t *hb_at(const uint8_t *p) {
     static uint8_t none;
     uintptr_t off = (uintptr_t)p - (uintptr_t)port_rdram;
+#ifdef PORT_SCATTER_LAYOUT
+    uintptr_t soff = (uintptr_t)p - (uintptr_t)port_scatter_arena;
+    if (off >= PORT_RDRAM_SIZE && soff < port_scatter_objs[port_scatter_nobjs].off)
+        return &hidden_sc[soff >> 1];
+#endif
     if (off >= PORT_RDRAM_SIZE) {
         none = HB_CLEAN;
         return &none;
@@ -423,6 +445,12 @@ static uint8_t *zptr(int x, int y) {
     if (!gs.zimg || x < 0 || y < 0)
         return NULL;
     size_t off = ((size_t)y * gs.cimg_w + x) * 2;
+#ifdef PORT_SCATTER_LAYOUT
+    /* (the scattered layout's depth buffer is in its arena) */
+    if (gs.zimg >= port_scatter_arena &&
+        gs.zimg + off + 2 <= port_scatter_arena + port_scatter_objs[port_scatter_nobjs].off)
+        return gs.zimg + off;
+#endif
     if (gs.zimg < port_rdram || gs.zimg + off + 2 > port_rdram + PORT_RDRAM_SIZE)
         return NULL;
     return gs.zimg + off;

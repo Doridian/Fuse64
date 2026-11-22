@@ -3,7 +3,7 @@
 
   emu_digest.py VERSION OUT [--input SCRIPT] [--frames N] [--rom ROM] [--elf ELF]
                 [--seed N] [--no-dp] [--m64p DIR] [--wav WAV]
-  emu_digest.py jp OUT --movie 4908M [--frames N]
+  emu_digest.py jp OUT --movie 4908M [--frames N] [--bizhawk DIR]
 
 Writes OUT in PORT_DIGEST's format (port/host/digest.c, docs/PORT.md "The
 gameplay digest"): at every read of controller 1, the scene, the game's
@@ -26,7 +26,11 @@ which pad, and the port's `--replay OUT` gives each frame the same.
 
 --movie plays a TAS movie instead (tools/tas.py's ids or a path: its
 input, soft resets and core set up as `tas.py run` does, docs/TAS.md),
-with the seed still pinned.  A soft reset writes `# prenmi VI` where the
+with the seed still pinned.  --bizhawk DIR plays it on BizHawk 2.8's own
+core (tools/bizhawk_core.sh), where 4908M syncs to its end: the seed is
+then the clock's, as the game takes it, and the digest records each
+boot's (`# seed N`, from a breakpoint on 78CA0.c's func_8025E6A4) for the
+port's replay to take.  A soft reset writes `# prenmi VI` where the
 button is pressed (the game gets OS_EVENT_PRENMI and runs on until the
 NMI) and `# reset VI` before the restarted game's first read (its frame
 count from 0); the port's --replay presses its reset button at the same
@@ -110,6 +114,7 @@ class Digest:
         self.warp = warp        # (scene, sub or None): PORT_WARP's
         self.warped = False
         self.dumps = {}         # --dump's {frame: file}
+        self.seeds = []         # the boot's seed (--bizhawk), written before the part's first read
         self.raw = {}           # a pool's bytes at the last read, and its values
         # the pools' ranges, for the pointers (digest.c's pool_ptr)
         self.ranges = [(addr[sym], n, stride, key) for key, sym, n, stride, _ in POOLS]
@@ -207,6 +212,9 @@ class Digest:
             self.scene = None
             self.last = {}
             self.raw = {}
+        for seed in self.seeds:
+            self.f.write(f"# seed {seed}\n")
+        self.seeds.clear()
         self.frame = w(a["D_8029F600"])
         self.polls += 1
         scene = w(a["D_802AC5D4"])
@@ -248,7 +256,9 @@ def main():
     ap.add_argument("--frames", type=int, help="retraces to run (default 6000; a movie: its length + 600)")
     ap.add_argument("--rom")
     ap.add_argument("--elf")
-    ap.add_argument("--seed", type=lambda x: int(x, 0), default=shift_check.SEED)
+    ap.add_argument("--seed", type=lambda x: "none" if x == "none" else int(x, 0),
+                    help="the random seed pinned (default 0x1997; --bizhawk: none), or 'none': the clock's, "
+                    "as the game takes it")
     ap.add_argument("--no-dp", action="store_true", help="no RDP interrupt (the shift check's way)")
     ap.add_argument("--m64p", default=os.environ.get("M64P_DIR"))
     ap.add_argument("--eeprom", help="the EEPROM to start from (the port's 512-byte save, "
@@ -258,6 +268,8 @@ def main():
                     help="FRAME:FILE: RDRAM (big-endian) at the last read of game frame FRAME")
     ap.add_argument("--wav", help="the sound the game gives the AI (and WAV.log: each buffer's retrace and samples)")
     ap.add_argument("--movie", help="a TAS movie's id or file (tools/tas.py) instead of --input")
+    ap.add_argument("--bizhawk", help="with --movie: BizHawk 2.8's core in this directory "
+                    "(tools/bizhawk_core.sh) instead of the system's mupen64plus (tas.py run --bizhawk)")
     a = ap.parse_args()
     v = a.version
     rom = Path(a.rom or ROOT / f"build/{v}/bm64.{v}.z64")
@@ -267,8 +279,14 @@ def main():
             emu_ram.TOOLS.mkdir(parents=True, exist_ok=True)
             subprocess.run(["cc", "-O2", "-shared", "-fPIC", "-o", str(emu_ram.TOOLS / f"{so}.so"),
                             str(ROOT / f"tools/src/{so}.c")], check=True)
-    off, _ = shift_check.seed_patch(elf, rom)
-    patch = [(off, (0x24040000 | a.seed & 0xFFFF).to_bytes(4, "big"))]
+    if a.seed is None:
+        a.seed = "none" if a.bizhawk else shift_check.SEED
+    patch = []
+    if a.seed != "none":
+        off, _ = shift_check.seed_patch(elf, rom)
+        patch = [(off, (0x24040000 | a.seed & 0xFFFF).to_bytes(4, "big"))]
+    if a.bizhawk and (patch or not a.movie or a.eeprom or a.wav):
+        sys.exit("--bizhawk plays a --movie with the clock's seed (and no --eeprom or --wav)")
     eep = None
     if a.eeprom:
         eep = Path(a.eeprom).read_bytes()
@@ -278,6 +296,7 @@ def main():
         n, _, sub = a.warp.partition(":")
         warp = (int(n, 0), int(sub, 0) if sub else None)
     movie = None
+    seeds = []
     if a.movie:
         import tas
         movie = tas.Movie(tas.resolve(a.movie))
@@ -290,8 +309,19 @@ def main():
                 sys.exit("couldn't find the core's VI clock to set BizHawk's frame length")
             ctypes.c_uint32.from_address(at).value = tas.VI_CLOCK_BIZHAWK
 
-        emu = emu_ram.Session(rom, a.m64p, patch, tas.JP_MD5, True, config=config,
-                              eeprom=eep or bytes(0x800), input=True, on_romopen=romopen, wav=a.wav)
+        if a.bizhawk:       # its own frame length; its blank EEPROM is zeros
+            # the seed the clock gives each boot, by a breakpoint on the
+            # generator's seeding (78CA0.c), for the port's replay
+            def at_seed(emu):
+                a0 = ctypes.c_uint64.from_address(emu.core.DebugGetCPUDataPtr(2) + 8 * 4).value
+                seeds.append(a0 & 0xFFFFFFFF)
+
+            emu = tas.BizHawkSession(a.bizhawk, rom, {k: config[k] for k in ("R4300Emulator", "DisableExtraMem")},
+                                     controllers=(movie.present, movie.present),
+                                     breaks={tas.elf_symbol(elf, "func_8025E6A4"): at_seed})
+        else:
+            emu = emu_ram.Session(rom, a.m64p, patch, tas.JP_MD5, True, config=config,
+                                  eeprom=eep or bytes(0x800), input=True, on_romopen=romopen, wav=a.wav)
     else:
         emu = emu_ram.Session(rom, a.m64p, patch, None, True, eeprom=eep, input=True, wav=a.wav)
     emu.vic.vicount_dp(0 if a.no_dp else 1)
@@ -317,6 +347,7 @@ def main():
         return words.from_address(emu.rdram_ptr())
 
     d = Digest(a.out, addresses(elf), ram, warp)
+    d.seeds = seeds
     for x in a.dump:
         frame, _, path = x.partition(":")
         d.dumps[int(frame, 0)] = path

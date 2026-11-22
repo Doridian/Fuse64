@@ -61,7 +61,9 @@
  *
  * The scenario's seed: PORT_SEED=N gives the random generator the seed N
  * where 40040.c seeds it from the clock (osGetTime) at boot, as
- * tools/shift_check.py's patch does in the ROM (0x1997).
+ * tools/shift_check.py's patch does in the ROM (0x1997).  Without it, a
+ * --replay digest's `# seed N` for the boot's part (input.c: the
+ * emulator's clock seed, emu_digest.py --bizhawk), or the port's clock.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -238,7 +240,10 @@ void host_replay_wait(unsigned frame);
 
 unsigned int port_seed(unsigned int clock) {
     const char *e = getenv("PORT_SEED");
-    return e && *e ? (unsigned int)strtoul(e, NULL, 0) : clock;
+    unsigned seed;
+    if (e && *e)
+        return (unsigned int)strtoul(e, NULL, 0);
+    return host_replay_seed(&seed) ? seed : clock;
 }
 
 #define MAXF 640

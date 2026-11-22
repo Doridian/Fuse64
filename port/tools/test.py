@@ -164,6 +164,7 @@ def diff(name, a, b):
 
 
 TAS_SEED = "0x1997"     # emu_digest.py's pinned seed (tools/shift_check.py)
+TAS_BIZHAWK = {"4908M"}  # the movies emu_digest.py plays on BizHawk's core
 
 
 def tas(build, movie, emu_digest=None, qemu=None, draw=False, timeout=7200):
@@ -179,8 +180,16 @@ def tas(build, movie, emu_digest=None, qemu=None, draw=False, timeout=7200):
     if not os.path.exists(emu_digest):
         os.makedirs(os.path.dirname(emu_digest), exist_ok=True)
         print("tas: %s: the emulator's run (a few minutes)" % emu_digest, file=sys.stderr)
-        subprocess.run([sys.executable, os.path.join(ROOT, "port/tools/emu_digest.py"), "jp", emu_digest + ".tmp",
-                        "--movie", movie], check=True, stdout=subprocess.DEVNULL)
+        cmd = [sys.executable, os.path.join(ROOT, "port/tools/emu_digest.py"), "jp", emu_digest + ".tmp",
+               "--movie", movie]
+        # BizHawk's movies on BizHawk's own core (tools/bizhawk_core.sh),
+        # where 4908M syncs, with the clock's seeds (docs/TAS.md)
+        if movie in TAS_BIZHAWK:
+            dist = os.path.join(ROOT, "build/tas/bizhawk/dist")
+            if not os.path.exists(os.path.join(dist, "libmupen64plus.so.2")):
+                sys.exit("tas: %s plays on BizHawk's core: tools/bizhawk_core.sh first" % movie)
+            cmd += ["--bizhawk", dist]
+        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL)
         os.rename(emu_digest + ".tmp", emu_digest)
     parts = 1 + sum(1 for line in open(emu_digest) if line.startswith("# reset"))
     exe = os.path.join(build, "fuse64")
@@ -199,6 +208,8 @@ def tas(build, movie, emu_digest=None, qemu=None, draw=False, timeout=7200):
         # digest, 200 times faster)
         digest = os.path.join(tmp, "digest.txt")
         env = dict(os.environ, PORT_SEED=TAS_SEED, PORT_NO_DRAW="0" if draw else "1", PORT_DIGEST=digest)
+        if any(line.startswith("# seed") for line in open(emu_digest)):
+            del env["PORT_SEED"]    # the digest's own seeds (`# seed N`, input.c)
         for k in ("PORT_WARP", "PORT_REPLAY_PART", "PORT_RESET"):
             env.pop(k, None)
         cmd = ([emu] if emu else []) + [exe, "--headless", "--frames", str(retraces), "--save-dir", tmp,

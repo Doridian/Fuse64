@@ -16,6 +16,9 @@
  * VI`, some frames before the part's end) is pressed (main.c's
  * host_reset_button) at the read of the last frame read before it, and
  * after the NMI the next part's pads go with the new boot's frames.
+ * A `# seed N` line gives its part's boot the random generator's seed N
+ * (the clock's on the emulator, which emu_digest.py --bizhawk records:
+ * digest.c's port_seed), unless PORT_SEED pins one.
  * PORT_REPLAY_PART=N starts at the N-th part (from 0) instead, on a
  * power-on (with the save the part before wrote: a cold boot where the
  * movie had a soft reset).
@@ -58,6 +61,8 @@ typedef struct {
     unsigned frames;
     long prenmi;                        /* the button came after this frame's read (-1: before
                                            any; -2: no button in this part) */
+    int has_seed;                       /* `# seed N`: the boot's seed */
+    unsigned seed;
 } Part;
 
 static Part *parts;
@@ -118,6 +123,9 @@ static void replay_init(void) {
         int whole = l && line[l - 1] == '\n';
         if (!strncmp(line, "# prenmi", 8)) {
             p->prenmi = n ? (long)frames[n - 1] : -1;
+        } else if (!strncmp(line, "# seed ", 7)) {
+            p->seed = (unsigned)strtoul(line + 7, NULL, 0);
+            p->has_seed = 1;
         } else if (sscanf(line, "%u %u %d %d %u %lx", &poll, &vi, &sc, &sub, &fr, &pad) == 6) {
             if (n == cap) {
                 cap = cap ? cap * 2 : 4096;
@@ -145,6 +153,14 @@ static void replay_init(void) {
         host_fatal("--replay %s: no part %d (PORT_REPLAY_PART)", host_replay_path, want);
     part_begin(want);
     have_script = 1;
+}
+
+/* --replay: this part's seed (`# seed N`), if it has one */
+int host_replay_seed(unsigned *seed) {
+    if (!host_replay_path || !parts || replay_ended || !parts[part].has_seed)
+        return 0;
+    *seed = parts[part].seed;
+    return 1;
 }
 
 /* the NMI (main.c): the next part's pads for the new boot's frames */

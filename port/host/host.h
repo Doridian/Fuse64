@@ -79,6 +79,7 @@ void host_ai_reset(void);               /* audio.c */
 void host_asp_reset(void);              /* aspmain.c */
 void host_gfx_reset(uint32_t clean);    /* gfx.c: the hidden bits below clean too */
 void host_input_reset(void);            /* input.c: --replay's next part */
+int host_replay_seed(unsigned *seed);   /* input.c: --replay's part's `# seed N` */
 void port_digest_mark(const char *what);    /* digest.c: `# what VI` */
 
 /* N64 buttons */

@@ -55,7 +55,7 @@ build directory isn't `build/`, which `make clean` removes.
 `-DPORT_VERSION=eu` or `jp` builds another version, from that version's
 extract (CMake checks `.version`). Other options: `-DPORT_SDL=OFF`
 (headless only), `-DPORT_SANITIZE=address,undefined`,
-`-DPORT_HOST_MALLOC=ON` (the game's malloc the host's, for ASan).
+`-DPORT_HOST_MALLOC=ON` (the game's malloc the host's, for ASan; `PORT_HOST_MALLOC_EXACT=1` at run time: blocks of the size asked).
 
 `fuse64 --help` lists the options: `--headless` (no window and no sound;
 a virtual clock), `--deterministic`, `--frames N`, `--screenshot PREFIX`
@@ -943,16 +943,20 @@ check it (64-bit Linux, clang and lld, off by default):
     (5E3F0.c's per-entry tables are `[PORT_SIZE(5)]`, D_800AEDF0's five
     entries). Names that only mark an end (a table's or a stack's
     top, m2c's base of entry -1) get no room (gen_regions.py's and
-    asm2c.py's `ENDS`). One object is left without a size: 80420.c's
-    first 0x24 bytes of bss (`D_802AD0E0`), which nothing names or
-    reaches, and which are 0 in the emulator's RDRAM.
+    asm2c.py's `ENDS`). Every object has a size: the last,
+    80420.c's first 0x24 bytes of bss (`D_802AD0E0`), which no
+    instruction of any module reaches and which are 0 in the emulator's
+    RDRAM, is its room (asm2c.py's `SIZES`).
   - A name inside an object (a member's or an element's own name, a
     label inside a typed table) stays an alias inside it.
   - At startup a constructor copies each asm `.data` label's bytes from
     its file's struct. It fills the padding, and all of `port_rdram`
     (which nothing should reach any more), with 0xA5.
   - The C globals (the game's, the overlays', the host's) are shuffled
-    by lld (`-fdata-sections`, `--shuffle-sections` with the same seed).
+    by lld (`-fdata-sections`, `--shuffle-sections` with the same seed;
+    an overlay's variables within its own section). Each overlay `.bss`
+    name is a variable of its own but for 19 groups of two or three that
+    the code reaches one from another ("Checks and debugging aids").
   - The work area 40040.c clears from one name to another is cleared
     object by object (`port_clear_work_area()`, generated in either
     layout).
@@ -1023,9 +1027,23 @@ What the runs found, each fixed under `TARGET_PC` (the ROM is the same):
 - **Past a host-malloc block**: with `PORT_HOST_MALLOC`, a block is
   the size gmalloc gives it: a power-of-two fragment up to 2 KB, whole
   4 KB blocks above. The rest is zero, where the N64 has whatever the heap
-  held. (The legal screen's TLUT load reads past its picture into that
-  rest; no texel uses it.) ASan then sees an overflow only past what the
-  N64 block has.
+  held, and ASan sees an overflow only past what the N64 block has. With
+  `PORT_HOST_MALLOC_EXACT=1` a block is the size asked, so that ASan also
+  reports a read past the request, which gmalloc's rounding hides. That
+  found one: **the TLUT past the picture**. A picture ends with its
+  palette, and the TLUT load reads 16 entries for a CI4 picture and 256
+  for a CI8 whatever the palette's count: 94 of us's and eu's pictures
+  (88 of jp's) read up to 0x1FE bytes past their file, into the rest of
+  the block and the next. The asset cache's block (87190.c) is
+  `PORT_ASSET_PAD` (0x200) bytes longer, and `port_asset_tail`
+  (port/src/native.c) gives them the N64's bytes: zeros (the legal
+  screen's picture is the heap's first file, zeros after it in the
+  emulator), and for 0x368, the title's TM (19x11 CI4, 5 colours, the one
+  picture whose texels use entries past its count: 7 and 8), the LZSS
+  window of the file decoded just before it, 0x367, whose freed page its
+  256-byte fragment reuses on the N64 (`0F0F 0F0F 0F00 0000` in the
+  emulator, us and eu, both times the title loads it; AD3D0.c keeps a
+  copy). test.py's seven scenarios under it, us, eu and jp: no report.
 
 The 2026-11-21 runs: us, eu and jp, ASan and UBSan (x86-64, the arena)
 and the check build (seed 1), each with test.py's seven scenarios, the

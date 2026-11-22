@@ -1406,7 +1406,7 @@ port's exact against. What differs, and the port now does as 2.0I:
   | us menus (4000 retraces) | 0.06 dB | median 1.0000, min 0.9993 | 1.0000 |
   | us story (16000) | 0.17 dB | median 0.9963 | median 1.0000 |
   | us battle (8000) | 0.15 dB | median 0.76 | median 0.9997 |
-  | eu battle (8000) | 0.99 dB | median 0.73 | median 0.9990 |
+  | eu battle (8000) | 0.30 dB (0.99 before the oracle) | median 0.74 | median 0.9991 |
   | jp menus (4000) | 0.38 dB | median 1.0000 | 1.0000 |
 
   The music is mupen64plus's to the rounding: at a fixed lag 76% of the
@@ -1424,18 +1424,65 @@ port's exact against. What differs, and the port now does as 2.0I:
   samples times the gains truncated, the mixer truncated, the low-pass's
   input gain rounded and its output truncated, the resampler and ADPCM
   truncated. That is rsp-hle's arithmetic, not necessarily the RSP's.
-- **The libaudio oracle** (DozerEncore's "The libaudio oracle"), not done:
-  the port with the original library (src/libultra/audio, built for
-  TARGET_PC in an i386 build, as Blast Corps' `PORT_LIBAUDIO_ORIGINAL`)
-  replaying the same digest, its command lists hashed per frame against
-  port/libaudio's, would check the rest exactly (the parts above found by
-  ear and source). It takes: the bank files' records in host order for a
-  library that reads them in place (DozerEncore's host/native.c),
-  `alBnkfBank` and the game's `SND_SOUND` over relocated banks, the
-  sequence file's and compact sequences' words, `osVirtualToPhysical`,
-  the 2.0I headers beside port/include/sdk's (the same layouts where
-  pointers are 4 bytes), and a CMake option. The HLE then gives both the
-  same samples, so `--wav` alone would compare them.
+- **The libaudio oracle** (`port/tools/audio_oracle`, DozerEncore's "The
+  libaudio oracle"): port/libaudio is the original's exactly in every
+  scenario recorded (test.py's seven, in us, eu and jp): every audio
+  frame's command list (by hash), every result the game gets, what the
+  library gives back through the game's structures and callbacks, and
+  the memory they share after every call.
+  - **Recording**: `-DPORT_LIBAUDIO_ORIGINAL=ON` (i386 only: the
+    structures' N64 layouts) builds the port with src/libultra/audio
+    (lib_objects' list, with ultralib's headers; port/libaudio/orig:
+    what the asm data had, K0_TO_PHYS the identity) instead of
+    port/libaudio; the frames, EEPROM and digest are test_refs.json's.
+    `-DPORT_AUDIO_RECORD=ON` adds the recorder: the game's 46 ZeroJump
+    stubs into libaudio go through port/src/audio_record.c, and
+    `PORT_AUDIO_LOG=FILE` writes each call, the structures handed over and
+    back, the command list's hash, the library's calls back into the game
+    (the DMA routine, the sequence player's oscillators: 80580.c's
+    tremolo and vibrato, from the story on), and what the game, the PI
+    and the RSP changed in the shared memory (the audio heap, 80580.c's
+    sounds' blocks) since the library last had it (format:
+    port/include/audio_log.h). What only the RSP or the PI writes and the
+    library never reads (the reverb's delay lines, the AI's and the DMA's
+    buffers) is left out. The recorder is linked at 0x10000000, non-PIE,
+    re-execs itself without ASLR and keeps the threads' stacks static,
+    so its addresses are the same every run; the replay maps them.
+  - **Replaying**: `make -C port/tools/audio_oracle check VERSION=V`
+    (`oracle.py replay --version V --lib port orig`; the Makefile builds
+    `replay` and both libraries for i386) plays the game's side of every
+    log into port.so and orig.so (orig.so's unshared memory poisoned,
+    which shows the logs are complete) and compares, then compares the
+    two libraries' shared-memory hashes after every call. port/libaudio
+    builds its own bank objects, so the replay translates the file's
+    objects to them (`alog_bank_map`).
+  - **The logs** (1 to 26 MB each, 21 of them: not in the repository)
+    are in the main checkout's `scratch/audio-oracle/refs`
+    (`V-<scenario>.alog`, and `V.json`, the original library's wav
+    hashes), which the replay reads from a worktree too (`REFS=DIR` or
+    `--refs` for others). To remake them: `make VERSION=V extract`, then
+    `oracle.py record --version V [--scenarios ...]`, which builds the
+    recorder (build/oracle-rec-V), plays test.py's scenarios with it and
+    checks their frames, EEPROM and digest against test_refs.json (about
+    20 minutes a version). A change to a scenario's run (its frames or
+    digest) needs its log remade.
+  - **Found**: at a voice's stop, the samples mixed before it didn't
+    move its envelope's ramp (voice.c; env.c's `_pullSubFrame` moves a
+    playing voice's by every sample), so the voice's next note started
+    from another volume (first in menus' frame 631). eu's reverb
+    low-pass gain was cut to 8 bits (reverb.c, from Blast Corps' eu:
+    this game's eu has all 16, 0x2001 against 0x01). And the original
+    library on a host: `_bnkfPatchBank` patched an empty instrument
+    slot, which offset 0 makes the file's header, as an instrument
+    (bnkf.c, TARGET_PC: on the N64 the header's flags byte, bankCount's
+    low byte, isn't 0 and it is left alone). port/libaudio's empty slot
+    is NULL instead of the header: no recorded run selects one.
+    Since, port/libaudio's sound is the original's to the sample (the
+    port's wav hashes, i386 and x86-64, are the recorder's). Against
+    mupen64plus (above) us and jp are as before (us menus 0.06 dB,
+    median 1.0000, its min 0.9773 from 0.9993; story 0.17 dB, 0.9964;
+    battle 0.15 dB, 0.76; jp menus 0.37 dB, 1.0000), and eu's battle
+    went from 0.99 dB to 0.30 dB (median 0.73 to 0.74).
 
 ### Checks and debugging aids
 
@@ -1653,10 +1700,10 @@ digest") and the wait for the NMI in 6BBE0.c ("The TAS").
   on 64-bit hosts (by field, with the host's struct offsets); 9CAB0.c's
   two unions.
 - **Audio** ("Audio"): checked against mupen64plus in us's menus, story
-  and battle, eu's battle and jp's menus. Left: the libaudio oracle (what
-  it takes is there); the sound effects' start within a lagging frame
-  (only in a lagged replay); rsp-hle's rounding, not the RSP's (no
-  reference for the microcode itself).
+  and battle, eu's battle and jp's menus; port/libaudio against the
+  original library by the oracle ("Audio"). Left: the sound effects'
+  start within a lagging frame (only in a lagged replay); rsp-hle's
+  rounding, not the RSP's (no reference for the microcode itself).
 - Phase 7 and 8 (docs/ROADMAP.md, docs/NETPLAY.md): the input and the RNG
   seed through the network.
 

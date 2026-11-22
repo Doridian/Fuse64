@@ -17,7 +17,12 @@ static void *stacks[PORT_MAX_THREADS];
 void *host_thread_stack(int idx, uint32_t *size) {
     *size = PORT_STACK_SIZE;
     if (!stacks[idx]) {
-#ifdef _WIN32
+#if defined(PORT_AUDIO_RECORD)
+        /* (the libaudio oracle's recorder: in the image, at the same
+           addresses every run, which the replay maps) */
+        static uint8_t rec_stacks[PORT_MAX_THREADS][PORT_STACK_SIZE] __attribute__((aligned(0x4000)));
+        stacks[idx] = rec_stacks[idx];
+#elif defined(_WIN32)
         stacks[idx] = _aligned_malloc(PORT_STACK_SIZE, 0x4000);
 #else
         stacks[idx] = aligned_alloc(0x4000, PORT_STACK_SIZE);

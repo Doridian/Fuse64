@@ -445,9 +445,10 @@ static s16 side(PVoice *pv, s32 right) {
 }
 
 /* n samples of the voice into the buses at offset dst (bytes) of the
-   section; *in is where the resampler puts them */
+   section, if it plays; *in is where the resampler puts them.  The ramp
+   moves on by them (env.c's _pullSubFrame: a stopped voice's doesn't) */
 static Acmd *mix(PVoice *pv, s16 *in, s16 dst, s32 n, Acmd *cmd) {
-    if (n == 0)
+    if (!pv->playing || n == 0)
         return cmd;
     cmd = resample(pv, *in, n, cmd);
     aSetBuffer(cmd++, A_MAIN, *in, DMEM_MAIN_L + dst, n << 1);
@@ -468,12 +469,12 @@ static Acmd *mix(PVoice *pv, s16 *in, s16 dst, s32 n, Acmd *cmd) {
         aEnvMixer(cmd++, A_CONTINUE | A_AUX, pv->env_state);
     }
     *in += n << 1;
+    pv->seg_pos += n;
     return cmd;
 }
 
 /* the ramp so far, before a change: done, or where it got to */
-static void ramp_advance(PVoice *pv, s32 samples) {
-    pv->seg_pos += samples;
+static void ramp_advance(PVoice *pv) {
     if (pv->seg_pos >= pv->seg_len) {
         pv->target_l = side(pv, 0);
         pv->target_r = side(pv, 1);
@@ -538,7 +539,7 @@ Acmd *al_voice_mix(PVoice *pv, s32 n, s32 at, Acmd *cmd) {
         case UPD_PAN:
         case UPD_VOLUME:
             cmd = mix(pv, &in, dst, gap, cmd);
-            ramp_advance(pv, gap);
+            ramp_advance(pv);
             if (u->kind == UPD_PAN)
                 pv->pan = (s16)u->a.i;
             if (u->kind == UPD_VOLUME) {
@@ -569,7 +570,6 @@ Acmd *al_voice_mix(PVoice *pv, s32 n, s32 at, Acmd *cmd) {
         }
         default:        /* UPD_PITCH */
             cmd = mix(pv, &in, dst, gap, cmd);
-            pv->seg_pos += gap;
             pv->ratio = u->a.f;
             break;
         }
@@ -582,10 +582,7 @@ Acmd *al_voice_mix(PVoice *pv, s32 n, s32 at, Acmd *cmd) {
         al_update_free(&alGlobals->drvr, u);
     }
 
-    if (pv->playing) {
-        cmd = mix(pv, &in, dst, n, cmd);
-        pv->seg_pos += n;
-    }
+    cmd = mix(pv, &in, dst, n, cmd);
     if (pv->seg_pos > pv->seg_len)
         pv->seg_pos = pv->seg_len;
     return cmd;

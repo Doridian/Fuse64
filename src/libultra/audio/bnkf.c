@@ -83,6 +83,14 @@ void _bnkfPatchBank(ALBank *bank, s32 offset, s32 table)
     for (i = 0; i < bank->instCount; i++) {
         bank->instArray[i] = (ALInstrument *)((u8 *)bank->instArray[i] +
                                               offset);
+#ifdef TARGET_PC
+        /* an empty slot (offset 0) becomes the file's header, whose flags
+           byte on the N64 is bankCount's low byte: not 0, so it is left
+           alone; in the host's order that byte is the high one (the libaudio
+           oracle's original library, docs/PORT.md "Audio") */
+        if (bank->instArray[i] == (ALInstrument *)offset)
+            continue;
+#endif
         if(bank->instArray[i])
             _bnkfPatchInst(bank->instArray[i], offset, table);
     }

@@ -264,14 +264,66 @@ add_custom_command(OUTPUT ${GEN}/sintable.h
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_sintable.py VERBATIM)
 
 # ---- the libultra replacement, libaudio, the generated C (N64 side) -----------------
+# the libaudio oracle (docs/PORT.md, "Audio"): the game with the decompiled
+# original libaudio (src/libultra/audio, the objects lib_objects.<v>.txt
+# lists) instead of port/libaudio, where pointers are 4 bytes; and its
+# recorder, which logs every call the game makes into it (PORT_AUDIO_LOG=FILE;
+# port/src/audio_record.c, port/host/audiolog.c) for port/tools/audio_oracle
+option(PORT_LIBAUDIO_ORIGINAL "the decompiled original libaudio instead of port/libaudio (4-byte pointers)" OFF)
+option(PORT_AUDIO_RECORD "log every libaudio call (the oracle's recorder; implies PORT_LIBAUDIO_ORIGINAL)" OFF)
+if(PORT_AUDIO_RECORD)
+    set(PORT_LIBAUDIO_ORIGINAL ON CACHE BOOL "" FORCE)
+endif()
 file(GLOB PORT_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
-file(GLOB LIBAUDIO_C ${CMAKE_CURRENT_SOURCE_DIR}/libaudio/*.c)
+if(PORT_LIBAUDIO_ORIGINAL)
+    if(NOT CMAKE_SIZEOF_VOID_P EQUAL 4)
+        message(FATAL_ERROR "PORT_LIBAUDIO_ORIGINAL needs 4-byte pointers (-m32)")
+    endif()
+    file(STRINGS ${ROOT}/lib_objects.${PORT_VERSION}.txt LIBAUDIO_OBJS REGEX " src/audio/")
+    set(LIBAUDIO_C)
+    foreach(l ${LIBAUDIO_OBJS})
+        string(REGEX REPLACE ".* src/audio/([a-z0-9_]+)\\.o$" "${ROOT}/src/libultra/audio/\\1.c" f "${l}")
+        list(APPEND LIBAUDIO_C ${f})
+    endforeach()
+    list(REMOVE_DUPLICATES LIBAUDIO_C)
+    list(APPEND LIBAUDIO_C ${CMAKE_CURRENT_SOURCE_DIR}/libaudio/orig/shim.c)
+    add_library(libaudio_orig OBJECT ${LIBAUDIO_C})
+    # (ultralib's headers and flags, as the Makefile's LIB_CPPFLAGS, -O2)
+    target_include_directories(libaudio_orig PRIVATE ${ROOT}/include/ultralib
+        ${ROOT}/include/ultralib/compiler/modern_gcc ${ROOT}/include/ultralib/PR ${ROOT}/src/libultra
+        ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    target_compile_definitions(libaudio_orig PRIVATE _LANGUAGE_C _FINALROM TARGET_PC ${PORT_VERSION_DEFINE}
+        _MIPS_SZLONG=32 _MIPS_SZINT=32 F3DEX_GBI BUILD_VERSION=VERSION_I NDEBUG)
+    target_compile_options(libaudio_orig PRIVATE -std=gnu89 -O2 -g -fsigned-char -fno-strict-aliasing -fwrapv
+        -fno-delete-null-pointer-checks -ftrivial-auto-var-init=zero -ffp-contract=off -fno-common -fno-builtin
+        -fno-stack-protector -msse2 -mfpmath=sse -malign-double -w ${SAN_FLAGS}
+        "SHELL:-include ${CMAKE_CURRENT_SOURCE_DIR}/libaudio/orig/orig.h")
+    set(LIBAUDIO_OBJ $<TARGET_OBJECTS:libaudio_orig>)
+    set(LIBAUDIO_C)
+else()
+    file(GLOB LIBAUDIO_C ${CMAKE_CURRENT_SOURCE_DIR}/libaudio/*.c)
+    set(LIBAUDIO_OBJ)
+endif()
 add_library(port_n64 OBJECT ${PORT_SRC} ${LIBAUDIO_C} ${GEN}/asm_data.c ${GEN}/zerojump.c ${GEN}/regions.c
     ${GEN}/overlays.c ${GEN}/inner.c ${SCATTER_C})
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/gu.c PROPERTIES OBJECT_DEPENDS ${GEN}/sintable.h)
 target_include_directories(port_n64 PRIVATE ${N64_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/libaudio)
 target_compile_definitions(port_n64 PRIVATE ${N64_DEFINES})
 target_compile_options(port_n64 PRIVATE ${N64_FLAGS} -std=gnu11)
+if(PORT_LIBAUDIO_ORIGINAL)
+    target_compile_definitions(port_n64 PRIVATE PORT_LIBAUDIO_ORIGINAL)
+endif()
+if(PORT_AUDIO_RECORD)
+    # the game's calls into libaudio (gen/zerojump.c's stubs) go through the
+    # recorder's (port/include/audio_record.h renames them)
+    target_compile_definitions(port_n64 PRIVATE PORT_AUDIO_RECORD)
+    target_compile_definitions(libaudio_orig PRIVATE PORT_AUDIO_RECORD)
+    set_property(SOURCE ${GEN}/zerojump.c APPEND PROPERTY COMPILE_OPTIONS
+        -include ${CMAKE_CURRENT_SOURCE_DIR}/include/audio_record.h)
+    # (the image at a fixed address, apart from the replay's: the log's
+    # addresses are the recorder's, which the replay maps)
+    set(AUDIO_RECORD_LINK -no-pie -Wl,-Ttext-segment=0x10000000)
+endif()
 
 # ---- the host -------------------------------------------------------------------------
 file(GLOB HOST_C ${CMAKE_CURRENT_SOURCE_DIR}/host/*.c)
@@ -279,14 +331,19 @@ file(GLOB HOST_C ${CMAKE_CURRENT_SOURCE_DIR}/host/*.c)
 # for AddressSanitizer to see the game's blocks
 option(PORT_HOST_MALLOC "the game's malloc the host's (debugging, with PORT_SANITIZE=address)" OFF)
 if(PORT_HOST_MALLOC)
-    add_executable(fuse64 ${HOST_C} $<TARGET_OBJECTS:game_c> $<TARGET_OBJECTS:ovl_c> $<TARGET_OBJECTS:port_n64>)
+    add_executable(fuse64 ${HOST_C} $<TARGET_OBJECTS:game_c> $<TARGET_OBJECTS:ovl_c> $<TARGET_OBJECTS:port_n64>
+        ${LIBAUDIO_OBJ})
     target_compile_definitions(fuse64 PRIVATE PORT_HOST_MALLOC)
     target_compile_definitions(port_n64 PRIVATE PORT_HOST_MALLOC)
 else()
     add_executable(fuse64 ${HOST_C} $<TARGET_OBJECTS:game_c> $<TARGET_OBJECTS:ovl_c> $<TARGET_OBJECTS:malloc_c>
-        $<TARGET_OBJECTS:port_n64>)
+        $<TARGET_OBJECTS:port_n64> ${LIBAUDIO_OBJ})
 endif()
 target_include_directories(fuse64 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/host)
+if(PORT_AUDIO_RECORD)
+    target_compile_definitions(fuse64 PRIVATE PORT_AUDIO_RECORD)
+    target_link_options(fuse64 PRIVATE ${AUDIO_RECORD_LINK})
+endif()
 target_compile_definitions(fuse64 PRIVATE ${PORT_VERSION_DEFINE} _GNU_SOURCE)
 target_compile_options(fuse64 PRIVATE ${HOST_FLAGS})
 include(CheckSymbolExists)

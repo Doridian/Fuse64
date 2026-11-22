@@ -175,12 +175,9 @@ static Acmd *read_out_tap(Reverb *r, Section *s, s32 dmem, s32 n, Acmd *cmd) {
 static Acmd *lowpass(LowPass *lp, s32 dmem, s32 n, Acmd *cmd) {
     aSetBuffer(cmd++, 0, dmem, dmem, n << 1);
     aLoadADPCM(cmd++, 32, lp->coef);
-#ifdef VERSION_EU
-    /* eu's abi.h puts the gain in 8 bits (hd_code 9FE20.c) */
-    aPoleFilter(cmd++, lp->first, lp->gain & 0xFF, lp->state);
-#else
+    /* (all 16 bits in every version: Blast Corps' eu put 8, this game's
+       eu doesn't) */
     aPoleFilter(cmd++, lp->first, lp->gain, lp->state);
-#endif
     lp->first = 0;
     return cmd;
 }

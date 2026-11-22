@@ -344,10 +344,10 @@ docs/PORT.md), for accuracy and fidelity alike:
       emulator past the first stage, which none does yet.
 - [ ] **Graphics**: what the RDP draws checked against angrylion task by
       task (`gfx_ref.py`), and an OpenGL renderer beside the software one.
-- [ ] **Audio checked**: against mupen64plus's output (RMS and correlation,
+- [x] **Audio checked**: against mupen64plus's output (RMS and correlation,
       as DozerEncore's "Audio"), and libaudio against the original's (an
-      oracle, as DozerEncore's "The libaudio oracle"). The first is done
-      (docs/PORT.md, "Audio"); the oracle isn't.
+      oracle, as DozerEncore's "The libaudio oracle"): docs/PORT.md,
+      "Audio".
 - [ ] **Pacing**: the game's work takes no time and no frame lags (the
       bar: the port may differ only where a player couldn't tell;
       smoother play over the N64's lag), the retraces, swap and waits as

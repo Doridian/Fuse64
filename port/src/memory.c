@@ -140,10 +140,21 @@ void *port_alloc(unsigned long size) {
     void *p = calloc(1, size ? size : 1);
     if (p == NULL)
         host_fatal("port_alloc: no memory for %lu bytes", size);
+#ifdef PORT_AUDIO_RECORD
+    {
+        /* (the libaudio oracle's recorder: the blocks are 80580.c's sounds) */
+        void host_alog_block(const void *p, unsigned int len);
+        host_alog_block(p, size ? size : 1);
+    }
+#endif
     return p;
 }
 
 void port_free(void *p) {
+#ifdef PORT_AUDIO_RECORD
+    void host_alog_block_free(const void *p);
+    host_alog_block_free(p);
+#endif
     free(p);
 }
 

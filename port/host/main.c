@@ -235,8 +235,20 @@ static void dump_rdram(void) {
     }
 }
 
+#ifdef PORT_AUDIO_RECORD
+#include <sys/personality.h>
+#endif
+
 int main(int argc, char **argv) {
     const char *rom_path = NULL;
+#ifdef PORT_AUDIO_RECORD
+    /* (the libaudio oracle's recorder: the same addresses every run, the
+       heap's too, for the replay to map) */
+    if (!(personality(0xFFFFFFFF) & ADDR_NO_RANDOMIZE)) {
+        personality(ADDR_NO_RANDOMIZE);
+        execv("/proc/self/exe", argv);
+    }
+#endif
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
         if (!strcmp(a, "--headless"))

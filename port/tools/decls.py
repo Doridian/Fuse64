@@ -89,8 +89,10 @@ def one(u):
     text = r.stdout
     # (an unnamed record's place, as the layouts name it: clang's JSON gives
     # a location's file only where it changes, in the order it prints them)
+    # (an includedFrom's file is not one: deep in the AST its indentation
+    # alone is over 40 characters, hence 120)
     files = [(m.start(), m.group(1)) for m in re.finditer(r'"file": "((?:[^"\\]|\\.)*)"', text)
-             if not re.search(r'"includedFrom":\s*\{\s*$', text[max(0, m.start() - 40):m.start()])]
+             if not re.search(r'"includedFrom":\s*\{\s*$', text[max(0, m.start() - 120):m.start()])]
     starts = [x[0] for x in files]
 
     def place(rid):

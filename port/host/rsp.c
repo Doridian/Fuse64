@@ -67,7 +67,10 @@ static void div_rom_init(void) {
     }
 }
 
-static void do_div(int32_t data, int sqrt, int dp) {
+/* the unit's result for an input (the reciprocal, or the inverse square
+   root), in single precision (a halfword, sign-extended) or double */
+static int32_t div_calc(int32_t data, int sqrt, int dp) {
+    int32_t in = data, out;
     if (!dp)
         data = data < 0 ? -data : data;
     else if (data < 0)
@@ -88,13 +91,22 @@ static void do_div(int32_t data, int sqrt, int dp) {
     }
     shift ^= 31;
     shift >>= sqrt;
-    div_out = (int32_t)((0x40000000u | ((uint32_t)div_rom[addr] << 14)) >> shift);
-    if (div_in == 0)
-        div_out = 0x7FFFFFFF;
-    else if (div_in == -32768)
-        div_out = -0x10000;
-    else if (div_in < 0)
-        div_out = ~div_out;
+    out = (int32_t)((0x40000000u | ((uint32_t)div_rom[addr] << 14)) >> shift);
+    if (in == 0)
+        out = 0x7FFFFFFF;
+    else if (in == -32768)
+        out = -0x10000;
+    else if (in < 0)
+        out = ~out;
+    return out;
+}
+
+static void do_div(int32_t data, int sqrt, int dp) { div_out = div_calc(data, sqrt, dp); }
+
+int32_t rsp_div(int32_t in, int sqrt, int dp) {
+    if (!div_rom[1])
+        div_rom_init();
+    return div_calc(in, sqrt, dp);
 }
 
 /* ---- the vector unit ------------------------------------------------------------------- */

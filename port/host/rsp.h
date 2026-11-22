@@ -23,6 +23,12 @@ void rsp_reset(void);
    instructions); returns the pc it stopped at (-1: BREAK, -2: the limit) */
 int rsp_run(uint32_t pc, const uint32_t *stops, int nstops, long limit);
 
+/* the divide unit's result for an input, without touching the
+   interpreter's state: the reciprocal (sqrt 0) or the inverse square root
+   (1), of a sign-extended halfword (dp 0: VRCP) or a word (dp 1: VRCPL
+   after VRCPH); the 32 bits VRCPL and the VRCPH after it give */
+int32_t rsp_div(int32_t in, int sqrt, int dp);
+
 /* (the lockstep check against another RSP: called before each instruction
    when set) */
 extern void (*rsp_trace)(uint32_t pc, uint32_t insn);

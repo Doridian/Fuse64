@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """The port's deterministic headless tests (docs/PORT.md, "Testing").
 
-  test.py run BUILD [--scenario NAME ...] [--qemu ARCH] [--save]
-  test.py same BUILD_A BUILD_B [--scenario NAME ...]
+  test.py run BUILD [--scenario NAME ...] [--qemu ARCH] [--renderer R] [--save]
+  test.py same BUILD_A BUILD_B [--scenario NAME ...] [--renderer R]
   test.py tas BUILD [--movie 4908M ...] [--emu DIGEST] [--save]
 
 Each scenario runs the build headless and deterministic (a virtual clock,
@@ -17,7 +17,9 @@ only hosts where pointers are 4 bytes write; each is compared where both
 runs have it).  `run`
 compares them with port/tools/test_refs.json (--save writes them), `same`
 compares two builds' runs with each other (a big-endian build under qemu
-against the native one, say).
+against the native one, say).  --renderer runs the build with another
+renderer (its --renderer; the references are soft's, which hle-sw gives
+the same: docs/PORT.md, "The HLE front end").
 
 `tas` replays a TAS movie's run in mupen64plus on a jp build (docs/PORT.md,
 "The TAS"): the emulator's gameplay digest along the movie
@@ -72,7 +74,7 @@ def cache_value(build, key):
     return None
 
 
-def run(build, name, qemu=None, timeout=7200):
+def run(build, name, qemu=None, timeout=7200, renderer=None):
     ver = cache_value(build, "PORT_VERSION") or "us"
     frames, script = SCENARIOS[name][:2]
     warp, save = (SCENARIOS[name][2:] + (None, None))[:2]
@@ -95,6 +97,8 @@ def run(build, name, qemu=None, timeout=7200):
             shutil.copy(os.path.join(ROOT, save.format(v=ver)), os.path.join(tmp, "fuse64.%s.eep" % ver))
         cmd = ([emu] if emu else []) + [exe, "--headless", "--deterministic", "--hash", "--frames", str(frames),
                                         "--save-dir", tmp, "--wav", wav]
+        if renderer:
+            cmd += ["--renderer", renderer]
         if script:
             script = script.format(v=ver)
             # the port's own timing of a script, where the N64's doesn't fit
@@ -241,6 +245,7 @@ def main():
     ap.add_argument("--scenario", action="append", choices=sorted(SCENARIOS))
     ap.add_argument("--qemu", help="the emulator to run the (first) build under")
     ap.add_argument("--save", action="store_true", help="run, tas: write the results as the references")
+    ap.add_argument("--renderer", help="run, same: the builds' --renderer (soft's references)")
     ap.add_argument("--movie", action="append", help="tas: the movies (default 4908M)")
     ap.add_argument("--emu", help="tas: the emulator's digest of the (one) movie")
     ap.add_argument("--draw", action="store_true", help="tas: draw every picture (PORT_NO_DRAW off)")
@@ -269,7 +274,7 @@ def main():
         sys.exit(1 if fails else 0)
     if a.cmd == "run":
         for name in names:
-            ver, got = run(a.builds[0], name, a.qemu)
+            ver, got = run(a.builds[0], name, a.qemu, renderer=a.renderer)
             key = "%s/%s" % (ver, name)
             if a.save:
                 refs[key] = got
@@ -289,8 +294,8 @@ def main():
         if len(a.builds) != 2:
             sys.exit("same: two builds")
         for name in names:
-            _, x = run(a.builds[0], name, a.qemu)
-            _, y = run(a.builds[1], name)
+            _, x = run(a.builds[0], name, a.qemu, renderer=a.renderer)
+            _, y = run(a.builds[1], name, renderer=a.renderer)
             bad = diff(name, x, y)
             print("%s: %s" % (name, "the same" if not bad else "DIFFERS: " + ", ".join(bad)))
             fails += bool(bad)

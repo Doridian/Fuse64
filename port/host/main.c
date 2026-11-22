@@ -249,7 +249,8 @@ static void usage(const char *argv0) {
             "  --wav FILE          the sound to a WAV file\n"
             "  --hash              print each retrace's picture hash\n"
             "  --vi-raw            show the color image as it is, without the VI's filters\n"
-            "  --renderer NAME     the renderer: soft (the RDP in software, exact; the only one)\n"
+            "  --renderer NAME     the renderer: soft (the game's microcode on the RSP, the RDP in software:\n"
+            "                      exact, the default), hle-sw (the microcode's commands in C, the same RDP)\n"
             "  -v                  more log\n",
             argv0, ROM_DEFAULT);
     exit(2);
@@ -339,7 +340,7 @@ int main(int argc, char **argv) {
             host_vi_raw = 1;
         else if (!strcmp(a, "--renderer") && i + 1 < argc) {
             if (!host_gfx_renderer(argv[++i])) {
-                fprintf(stderr, "fuse64: --renderer %s: no such renderer (there is soft)\n", argv[i]);
+                fprintf(stderr, "fuse64: --renderer %s: no such renderer (there are soft and hle-sw)\n", argv[i]);
                 exit(2);
             }
         }

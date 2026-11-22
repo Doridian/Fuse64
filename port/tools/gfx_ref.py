@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """The port's renderer against a reference N64 renderer (docs/PORT.md, "Graphics").
 
-  gfx_ref.py run BUILD [--screen NAME ...] [--ref GFXREF] [--out DIR] [--keep]
+  gfx_ref.py run BUILD [--screen NAME ...] [--ref GFXREF] [--out DIR] [--keep] [--renderer R]
   gfx_ref.py task TASK.in PORT.out [--ref GFXREF] [--out DIR]
   gfx_ref.py vi VI.in PORT.out [--ref GFXREF] [--out DIR]
   gfx_ref.py list
@@ -21,7 +21,9 @@ pixels whose coverage differs (a 16-bit image's: its low bit and the two
 hidden bits), and PNGs in --out: the port's, the reference's, and the
 difference (grey: the same; red: differs, brighter the more).  Before the images, the task's RDP commands: those the port's
 microcode run sent its RDP (TASK.cmd) against the reference's (gfxref's
-GFXREF_CMDS), how many differ and the first that does.
+GFXREF_CMDS), how many differ and the first that does.  With --renderer
+hle-sw, the port's are its HLE front end's (docs/PORT.md, "The HLE front
+end"), against the microcode on cxd4's RSP.
 
 After the tasks, the picture the VI shows at the screen's retrace
 (PORT_VI_REF, port/host/vi.c): the port's from its registers and memory
@@ -269,7 +271,7 @@ def compare_cmds(inp):
     return len(a), len(b), nd, first
 
 
-def run_screen(build, name, ref, out_dir, keep):
+def run_screen(build, name, ref, out_dir, keep, renderer=None):
     scen, retrace = SCREENS[name][:2]
     ver = test.cache_value(build, "PORT_VERSION") or "us"
     frames, script = test.SCENARIOS[scen][:2]
@@ -286,6 +288,8 @@ def run_screen(build, name, ref, out_dir, keep):
             shutil.copy(os.path.join(ROOT, save.format(v=ver)), os.path.join(tmp, "fuse64.%s.eep" % ver))
         cmd = [os.path.join(build, "fuse64"), "--headless", "--deterministic", "--frames", str(retrace + 1),
                "--save-dir", tmp]
+        if renderer:
+            cmd += ["--renderer", renderer]
         if script:
             script = script.format(v=ver)
             own = os.path.join(ROOT, "port", script)
@@ -331,6 +335,7 @@ def main():
     ap.add_argument("--ref", default=DEFAULT_REF, help="gfxref (port/tools/gfx_ref/build.sh)")
     ap.add_argument("--out", default=os.path.join(ROOT, "scratch", "port-gfx", "out"))
     ap.add_argument("--keep", action="store_true", help="keep the tasks' files (in --out)")
+    ap.add_argument("--renderer", help="run: the build's --renderer (hle-sw: the HLE's commands)")
     a = ap.parse_args()
     if a.cmd == "list":
         for k, (s, r, what) in SCREENS.items():
@@ -357,7 +362,7 @@ def main():
     print("%-13s %-13s %-8s %-9s %9s %7s %5s %7s" % ("screen", "task", "image", "size", "differ", ">step", "max",
                                                     "cvg"))
     for name in a.screen or list(SCREENS):
-        ver, rows = run_screen(build, name, a.ref, a.out, a.keep)
+        ver, rows = run_screen(build, name, a.ref, a.out, a.keep, a.renderer)
         for t, kind, r in rows:
             if kind == "cmds":
                 print_cmds(r, "%-13s %-13s " % (name, t))

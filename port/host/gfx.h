@@ -11,6 +11,8 @@
  *               combiner's selectors.  What a back end draws with: the
  *               software one samples and combines from it, a GPU one would
  *               make its shaders and textures of it.
+ *   gfx_hle.c   the HLE front end (--renderer hle-sw): the microcode's
+ *               commands decoded in C, to the same RDP commands
  *   gfx_soft.c  the software back end (--renderer soft): the RDP's
  *               rasterizer as it computes, exact (triangles from their
  *               coefficients, rectangles, the pixel pipeline, coverage and
@@ -108,5 +110,20 @@ typedef struct {
 } GfxBackend;
 
 extern const GfxBackend gfx_soft;       /* gfx_soft.c */
+
+/* ---- the HLE front end (gfx_hle.c) ------------------------------------------------------------ */
+
+/* The microcode's DMEM as the HLE keeps it (big-endian, the microcode's
+   addresses: CULLDL and BRANCH_Z read the vertices there) */
+extern uint8_t gfx_hle_dmem[4096];
+/* where its RDP commands go (whole commands: 2, 4 or 8 to 44 words) */
+extern void (*gfx_hle_out)(const uint32_t *w, int n);
+/* a task's start: the microcode's data (as DMEM has it at the boot), the
+   matrix stack's address and size (the task's) */
+void gfx_hle_begin(const uint8_t *data, uint32_t data_size, uint32_t dram_stack, uint32_t dram_stack_size);
+/* a command (MTX, MOVEMEM, VTX, TRI1, TRI2, MODIFYVTX, the geometry and
+   other modes, TEXTURE, MOVEWORD, POPMTX; others do nothing), `in` what
+   it loads in the N64's order (uc_load) */
+void gfx_hle_cmd(uint32_t w0, uint32_t w1, const uint8_t *in);
 
 #endif

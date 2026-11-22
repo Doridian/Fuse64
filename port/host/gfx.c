@@ -12,7 +12,9 @@
  * list's flow stays here.  It reads the game's structures in the host's
  * order (display list words, vertices, matrices, viewports: the C wrote
  * them), which go into the microcode's memory in the N64's order
- * (uc_load).
+ * (uc_load).  With --renderer hle-sw the HLE front end (gfx_hle.c) does
+ * the microcode's part in C instead, to the same RDP commands; and
+ * PORT_HLE_CHECK runs both and compares them.
  *
  * And the debugging outputs: PORT_DUMP_DL (the lists as text),
  * PORT_GFX_REF (a task for a reference renderer), PORT_GFX_CENSUS and
@@ -816,8 +818,20 @@ static int rdp_len(uint32_t w0) {
     return 2;
 }
 
-/* a command the microcode sent */
+/* PORT_HLE_CHECK: the microcode's commands, for the HLE's to be compared with */
+static int hle_check;
+static uint32_t hc_mc[4096], hc_hle[4096];
+static int hc_nmc, hc_nhle;
+
+static void hc_put(uint32_t *b, int *nb, const uint32_t *w, int n) {
+    for (int i = 0; i < n && *nb < 4096; i++)
+        b[(*nb)++] = w[i];
+}
+
+/* a command the microcode (or the HLE) sent */
 static void rdp_cmd(const uint32_t *w, int n) {
+    if (hle_check)
+        hc_put(hc_mc, &hc_nmc, w, n);
     rdp_log(w, n);
     if (dl_on) {
         fprintf(dl_out, "%*s>", dl_depth * 2, "");
@@ -912,9 +926,17 @@ static void uc_w32(uint32_t at, uint32_t v) { port_wbe32(rsp_dmem + at, v); }
 
 /* the task's start: the boot loads the microcode and its data, which
    initializes itself and stops at its display list loop */
+static int fe_hle;                      /* --renderer hle-sw: the HLE front end (gfx_hle.c) */
+static void hc_begin(void);
+
 static void uc_begin(void) {
     uc_ok = uc_boot && uc_text && uc_data && uc_data_size >= 0x2D0 &&
             !memcmp(uc_data + 0x2B0, "RSP Gfx ucode F3DEX.NoN     1.21", 32);
+    uint32_t stack_size = uc_stack_size < sizeof uc_stack ? uc_stack_size : (uint32_t)sizeof uc_stack;
+    if (uc_ok && (fe_hle || hle_check)) {
+        gfx_hle_out = rdp_cmd;
+        gfx_hle_begin(uc_data, uc_data_size, UC_STACK, stack_size);
+    }
     if (host_census_on) {
         host_census("task");
         cs_geom = 0;
@@ -930,6 +952,8 @@ static void uc_begin(void) {
         said = 1;
         return;
     }
+    if (fe_hle)
+        return;
     rsp_reset();
     rsp_dma = uc_dma;
     rsp_trace = NULL;
@@ -937,7 +961,7 @@ static void uc_begin(void) {
     memcpy(rsp_imem, uc_boot, uc_boot_size < 0x1000 ? uc_boot_size : 0x1000);
     uint32_t task[16] = {
         1, 0, 0, uc_boot_size, UC_TEXT, uc_text_size, UC_DATA, uc_data_size,
-        UC_STACK, uc_stack_size < sizeof uc_stack ? uc_stack_size : (uint32_t)sizeof uc_stack,
+        UC_STACK, stack_size,
         UC_FIFO, UC_FIFO_END, UC_LIST, 0x100000, UC_YIELD, 0xC00,
     };
     for (int i = 0; i < 16; i++)
@@ -947,6 +971,8 @@ static void uc_begin(void) {
         host_log("gfx: the microcode didn't start\n");
         uc_ok = 0;
     }
+    if (hle_check && uc_ok)
+        hc_begin();
 }
 
 /* the microcode's output buffer, to the RDP */
@@ -979,18 +1005,17 @@ static void uc_cmd(uint32_t w0, uint32_t w1) {
     uc_drain();
 }
 
-/* a command's data into DMEM, as the N64 has it (the game's C wrote it in
-   the host's order) */
-static void uc_load(uint32_t w0, uintptr_t w1) {
+/* a command's data, as the N64 has it (the game's C wrote it in the
+   host's order), to d; its length */
+static uint32_t uc_load(uint32_t w0, uintptr_t w1, uint8_t *d) {
     const uint8_t *p = addr(w1);
-    uint8_t *d = rsp_dmem + UC_IN;
     uint8_t op = w0 >> 24;
     uint32_t n = op == 0x03 ? 16 : (w0 & 0x3FF) + 1;
     if (n > 0x200)
         n = 0x200;
     if (!p) {
         memset(d, 0, n);
-        return;
+        return n;
     }
     if (op == 0x01) {                   /* MTX: words */
         for (uint32_t i = 0; i < 64; i += 4)
@@ -1014,10 +1039,131 @@ static void uc_load(uint32_t w0, uintptr_t w1) {
             }
         }
     }
+    return n;
 }
 
+/* the front end's DMEM: the microcode's, or the HLE's (laid out the same) */
+static uint8_t *fe_dmem(void) { return fe_hle ? gfx_hle_dmem : rsp_dmem; }
+
 /* a vertex's record in DMEM, by the index a command gives (times 2) */
-static uint32_t uc_vtx(uint32_t i) { return port_be16(rsp_dmem + ((i + 0x31E) & 0xFFE)) & 0xFFF; }
+static uint32_t dm_vtx(const uint8_t *dm, uint32_t i) { return port_be16(dm + ((i + 0x31E) & 0xFFE)) & 0xFFF; }
+static uint32_t uc_vtx(uint32_t i) { return dm_vtx(fe_dmem(), i); }
+
+/* CULLDL's test: the vertices a to b (their records) all outside one plane */
+static uint32_t dm_culldl(const uint8_t *dm, uint32_t w0, uint32_t w1) {
+    uint32_t a = dm_vtx(dm, w0), b = dm_vtx(dm, w1), f = 0x7030;
+    for (int k = 0; k < 64; k++, a = (a + 0x28) & 0xFFF) {
+        f &= port_be16(dm + ((a + 0x24) & 0xFFE));
+        if (a == b)
+            break;
+    }
+    return f;
+}
+
+/* ---- PORT_HLE_CHECK: the HLE front end against the microcode ------------------------------------ */
+
+/* PORT_HLE_CHECK=1 (with the soft renderer, the microcode drawing): each
+   command is run on the HLE front end too, from the same state, and the
+   RDP commands both send and the state they leave in DMEM (the modes, the
+   lights, the matrices, the vertices' records) are compared, word for
+   word; a difference is logged (the first few) and counted, and the HLE
+   takes the microcode's state again.  The counts are logged at the exit. */
+static uint8_t hc_in[0x200];
+static unsigned long hc_cmds, hc_tris, hc_bad_rdp, hc_bad_dmem, hc_culldl, hc_bad_culldl, hc_said;
+static unsigned hc_task;
+
+/* the DMEM that is state (not the buffers or the scratch): the modes, the
+   segments, the lights, the viewport and fog, the matrices, the vertices;
+   not the output's pointers, 0x128 and 0x150-0x157, nor the clipper's 0x158) */
+static const uint16_t hc_ranges[][2] = {
+    { 0x110, 0x128 }, { 0x12C, 0x150 }, { 0x15C, 0x160 }, { 0x160, 0x1A0 }, { 0x1A0, 0x370 }, { 0x380, 0x3A0 },
+    { 0x3E0, 0x4A0 }, { 0x4A0, 0x9A0 },
+};
+
+static int hc_dmem(uint32_t w0, uint32_t w1) {
+    int bad = 0;
+    for (size_t r = 0; r < sizeof hc_ranges / sizeof hc_ranges[0]; r++) {
+        uint32_t lo = hc_ranges[r][0], hi = hc_ranges[r][1];
+        if (!memcmp(rsp_dmem + lo, gfx_hle_dmem + lo, hi - lo))
+            continue;
+        bad = 1;
+        if (hc_said < 40) {
+            hc_said++;
+            host_log("hle check: task %u, %08X %08X: DMEM differs", hc_task, w0, w1);
+            int k = 0;
+            for (uint32_t a = lo; a < hi && k < 8; a += 2)
+                if (port_be16(rsp_dmem + a) != port_be16(gfx_hle_dmem + a)) {
+                    host_log(" %03X:%04X/%04X", a, port_be16(rsp_dmem + a), port_be16(gfx_hle_dmem + a));
+                    k++;
+                }
+            host_log("\n");
+        }
+    }
+    if (bad) {
+        hc_bad_dmem++;
+        memcpy(gfx_hle_dmem, rsp_dmem, sizeof gfx_hle_dmem);
+    }
+    return bad;
+}
+
+static void hc_out(const uint32_t *w, int n) { hc_put(hc_hle, &hc_nhle, w, n); }
+
+static void hc_begin(void) {
+    hc_task++;
+    hc_dmem(0, 0);
+}
+
+static void hc_report(void) {
+    host_log("hle check: %u tasks, %lu commands (%lu triangle commands), %lu with other RDP commands, %lu with other "
+             "state; CULLDL %lu, %lu decided otherwise\n",
+             hc_task, hc_cmds, hc_tris, hc_bad_rdp, hc_bad_dmem, hc_culldl, hc_bad_culldl);
+}
+
+/* after the microcode ran a command (its RDP commands in hc_mc) */
+static void hc_cmd(uint32_t w0, uint32_t w1, const uint8_t *in) {
+    uint8_t op = w0 >> 24;
+    hc_cmds++;
+    if (op == 0xB1 || op == 0xBF)
+        hc_tris++;
+    hc_nhle = 0;
+    gfx_hle_out = hc_out;
+    gfx_hle_cmd(w0, w1, in ? in : hc_in);
+    gfx_hle_out = rdp_cmd;
+    if (hc_nhle != hc_nmc || memcmp(hc_hle, hc_mc, (size_t)hc_nmc * 4)) {
+        hc_bad_rdp++;
+        if (hc_said < 40) {
+            hc_said++;
+            host_log("hle check: task %u, %08X %08X: the microcode sent %d words, the HLE %d", hc_task, w0, w1, hc_nmc,
+                     hc_nhle);
+            int k = 0;
+            for (int i = 0; i < (hc_nmc > hc_nhle ? hc_nmc : hc_nhle) && k < 8; i++) {
+                uint32_t a = i < hc_nmc ? hc_mc[i] : 0, b = i < hc_nhle ? hc_hle[i] : 0;
+                if (a != b || i >= hc_nmc || i >= hc_nhle) {
+                    host_log(" [%d]%08X/%08X", i, a, b);
+                    k++;
+                }
+            }
+            host_log("\n");
+        }
+    }
+    hc_dmem(w0, w1);
+}
+
+/* a command to the front end: the microcode's (and the HLE's, checked), or the HLE's */
+static void fe_cmd(uint32_t w0, uint32_t w1, const uint8_t *in, uint32_t n) {
+    if (!uc_ok)
+        return;
+    if (fe_hle) {
+        gfx_hle_cmd(w0, w1, in);
+        return;
+    }
+    if (in)
+        memcpy(rsp_dmem + UC_IN, in, n);
+    hc_nmc = 0;
+    uc_cmd(w0, w1);
+    if (hle_check)
+        hc_cmd(w0, w1, in);
+}
 
 /* ---- the display list ----------------------------------------------------------------------------- */
 
@@ -1095,16 +1241,18 @@ static void run(const Cmd *dl) {
         if (host_census_on)
             cs_dl(w0, w1l);
         switch (op) {
-        case 0x01: case 0x03: case 0x04:
-            uc_load(w0, w1);
-            uc_cmd(w0, w1l);
+        case 0x01: case 0x03: case 0x04: {
+            static uint8_t in[0x200];
+            uint32_t n = uc_load(w0, w1, in);
+            fe_cmd(w0, w1l, in, n);
             break;
+        }
         case 0x00:
         case 0xB1: case 0xB2: case 0xB5: case 0xB6: case 0xB7: case 0xB9: case 0xBA: case 0xBB: case 0xBC:
         case 0xBD: case 0xBF:
             if (op == 0xBC && (w0 & 0xFF) == 0x06)          /* SEGMENT: the port's too, */
                 seg[(((w0 >> 8) & 0xFFFF) / 4) & 15] = w1;  /* (an address: as wide as a pointer) */
-            uc_cmd(w0, w1l);
+            fe_cmd(w0, w1l, NULL, 0);
             break;
         case 0x06:
             if (((w0 >> 16) & 0xFF) == 0) {
@@ -1119,7 +1267,7 @@ static void run(const Cmd *dl) {
         case 0xAF:                      /* LOAD_UCODE */
             break;
         case 0xB0:                      /* BRANCH_Z: on the vertex's screen z */
-            if (uc_ok && (int32_t)(port_be32(rsp_dmem + uc_vtx(w0) + 0x1C) - w1l) <= 0) {
+            if (uc_ok && (int32_t)(port_be32(fe_dmem() + uc_vtx(w0) + 0x1C) - w1l) <= 0) {
                 if (host_census_on)
                     host_census("branchz taken");
                 pc = addr(rdphalf1);
@@ -1141,11 +1289,11 @@ static void run(const Cmd *dl) {
         case 0xBE: {                    /* CULLDL: the vertices' clip flags, all outside one plane */
             if (!uc_ok)
                 break;
-            uint32_t a = uc_vtx(w0), b = uc_vtx(w1l), f = 0x7030;
-            for (int k = 0; k < 64; k++, a = (a + 0x28) & 0xFFF) {
-                f &= port_be16(rsp_dmem + ((a + 0x24) & 0xFFE));
-                if (a == b)
-                    break;
+            uint32_t f = dm_culldl(fe_dmem(), w0, w1l);
+            if (hle_check) {
+                hc_culldl++;
+                if (!f != !dm_culldl(gfx_hle_dmem, w0, w1l))
+                    hc_bad_culldl++;
             }
             if (host_census_on)
                 host_census("culldl %s", f ? "culled" : "drawn");
@@ -1192,18 +1340,27 @@ static void run(const Cmd *dl) {
 
 /* ---- the task and the renderer ------------------------------------------------------------------ */
 
+/* --renderer: a front end (the microcode, or "hle-") and a back end */
 static const GfxBackend *const backends[] = { &gfx_soft };
 
 int host_gfx_renderer(const char *name) {
+    int hle = !strcmp(name, "hle-sw");
+    if (hle)
+        name = "soft";
     for (size_t i = 0; i < sizeof backends / sizeof backends[0]; i++)
         if (!strcmp(name, backends[i]->name)) {
             be = backends[i];
+            fe_hle = hle;
             return 1;
         }
     return 0;
 }
 
 void host_gfx_init(void) {
+    const char *e = getenv("PORT_HLE_CHECK");
+    hle_check = !fe_hle && e && *e && *e != '0';
+    if (hle_check)
+        atexit(hc_report);
     be->init();
     host_census_init();
     host_fbw_init();

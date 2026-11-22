@@ -2,7 +2,7 @@
 """Every stage through PORT_WARP (docs/PORT.md, "Every stage").
 
   stages.py run BUILD OUT [-j N] [--only T,...] [--frames N] [--monkey SEEDS]
-                [--extra] [--ver V] [--qemu Q]
+                [--extra] [--ver V] [--qemu Q] [--renderer R]
   stages.py cmp OUTA OUTB
 
 `run` runs the build headless and deterministic for each target, keeping
@@ -24,7 +24,9 @@ Every run gets LLVM_PROFILE_FILE=OUT/prof/<run>-%p.profraw (a coverage
 build's profile: port/tools/coverage.py) and PORT_SCATTER_OUT=OUT/<run>.scat
 (a scattered check build's reports: port/tools/scatter_list.py).
 
-`cmp` gives the first retrace two sets of runs differ.
+`--renderer` runs the build with another renderer (hle-sw against
+soft's runs: `cmp`).  `cmp` gives the first retrace two sets of runs
+differ.
 """
 import argparse
 import concurrent.futures as cf
@@ -70,7 +72,8 @@ def one(a, tok, seed):
         shutil.copy(eep, os.path.join(save, "fuse64.%s.eep" % ver))
     cmd = ["nice", "-n", "10"] + (a.qemu.split() if a.qemu else []) + [
         os.path.join(a.build, "fuse64"), "--headless", "--deterministic", "--hash", "--frames", str(frames),
-        "--save-dir", save] + (["--input", inp] if inp else []) + [os.path.join(ROOT, "baserom.%s.z64" % ver)]
+        "--save-dir", save] + (["--input", inp] if inp else []) + (
+        ["--renderer", a.renderer] if a.renderer else []) + [os.path.join(ROOT, "baserom.%s.z64" % ver)]
     env = dict(os.environ, PORT_SCENE_LOG="1",
                LLVM_PROFILE_FILE=os.path.join(a.out, "prof", "%s-%%p.profraw" % name),
                PORT_SCATTER_OUT=os.path.join(a.out, "%s.scat" % name),
@@ -112,9 +115,9 @@ def hashes(p):
 
 
 def run(build, out, targets=None, seeds=None, extra=False, frames=None, ver="us", jobs=8, qemu=None,
-        timeout=7200, echo=True):
+        timeout=7200, echo=True, renderer=None):
     a = argparse.Namespace(build=os.path.abspath(build), out=os.path.abspath(out), frames=frames, ver=ver,
-                           qemu=qemu, timeout=timeout)
+                           qemu=qemu, timeout=timeout, renderer=renderer)
     os.makedirs(os.path.join(a.out, "prof"), exist_ok=True)
     ts = list(targets or ALL) + (EXTRA if extra else [])
     jobs_l = [(t, s) for t in ts for s in ([None] if t == "attract" else seeds or [None])]
@@ -141,12 +144,13 @@ def main():
     p.add_argument("--qemu")
     p.add_argument("--ver", default="us")
     p.add_argument("--timeout", type=int, default=7200)
+    p.add_argument("--renderer", help="the build's --renderer")
     a = p.parse_args()
     if a.cmd == "run":
         build, out = a.args
         seeds = a.monkey.split(",") if a.monkey else None
         run(build, out, a.only.split(",") if a.only else None, seeds, a.extra, a.frames, a.ver, a.j, a.qemu,
-            a.timeout)
+            a.timeout, renderer=a.renderer)
     else:
         da, db = a.args
         for f in sorted(os.listdir(da)):

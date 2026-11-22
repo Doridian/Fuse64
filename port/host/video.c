@@ -189,6 +189,8 @@ void host_video_frame(void) {
                 }
         } else if (e.type == SDL_KEYDOWN && e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
             quit = 1;
+        else if (e.type == SDL_KEYDOWN && e.key.keysym.scancode == SDL_SCANCODE_F9 && !e.key.repeat)
+            host_reset_button();        /* the console's reset button (main.c) */
     }
     keyboard();
     /* the picture at 4:3, whatever its pixels */

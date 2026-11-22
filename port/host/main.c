@@ -156,13 +156,72 @@ void host_raise(int event) {
         pending[npending++] = event;
 }
 
-/* the game after the reset button (PRE-NMI, which only --replay raises)
-   waits for the NMI, which restarts it: here the run ends */
-static int nmi_due;
+/* ---- the reset button ---------------------------------------------------------------- */
 
-void port_nmi_wait(void) {
-    nmi_due = 1;
-    port_spin_wait();
+/* The N64's reset button (docs/PORT.md, "The reset button"): the PIF raises
+   PRE-NMI at once (OS_EVENT_PRENMI: the game wipes the screen, then
+   spins), and the NMI half a second later, which restarts the CPU: the
+   boot as after a power-on, but with RDRAM as it was (port/src/reset.c).
+   Here the NMI comes from the loop, no thread running: each part of the
+   console is reset, then port_boot runs again.  F9, PORT_RESET=N[,N...]
+   (at retrace N), --replay's resets and the page's button press it. */
+#define NMI_DELAY_NS 500000000ull
+static int nmi_pending;
+static uint64_t nmi_at;
+static int nmi_end;             /* a build without the soft reset: the run ends at the NMI */
+
+#ifdef __EMSCRIPTEN__
+EMSCRIPTEN_KEEPALIVE
+#endif
+void host_reset_button(void) {
+    if (nmi_pending)
+        return;
+    nmi_pending = 1;
+    nmi_at = host_now_ns() + NMI_DELAY_NS;
+    if (host_verbose)
+        host_log("%u: the reset button\n", host_vi_count);
+    port_digest_mark("prenmi");
+    host_raise(14);             /* OS_EVENT_PRENMI */
+}
+
+/* the game's spin after the reset's wipe (6BBE0.c): until the NMI */
+void port_nmi_wait(void) { port_spin_wait(); }
+
+static void soft_reset(void) {
+    nmi_pending = 0;
+    if (!port_reset_supported() || !port_coro_resettable()) {
+        host_log("fuse64: no soft reset in this build (docs/PORT.md, \"The reset button\"): the run ends\n");
+        nmi_end = 1;
+        return;
+    }
+    if (host_verbose)
+        host_log("%u: the NMI\n", host_vi_count);
+    npending = 0;
+    host_threads_reset();
+    port_coro_reset();
+    port_reset_game();
+    host_gfx_reset(0x100400);   /* (what IPL3 writes: port/src/reset.c) */
+    host_vi_reset();
+    host_ai_reset();
+    host_asp_reset();
+    host_input_reset();
+    port_digest_mark("reset");
+    port_boot();
+}
+
+/* PORT_RESET=N[,N...]: the button at those retraces */
+static const char *reset_at;
+
+static void reset_script(void) {
+    for (const char *p = reset_at; p && *p;) {
+        char *e;
+        unsigned long n = strtoul(p, &e, 0);
+        if (e == p)
+            break;
+        if (n == host_vi_count)
+            host_reset_button();
+        p = *e == ',' ? e + 1 : e;
+    }
 }
 
 static void deliver_pending(void) {
@@ -298,9 +357,16 @@ int main(int argc, char **argv) {
     const uint64_t vi_period = 1000000000ull / PORT_RETRACE_HZ;
     uint64_t next_vi = host_now_ns() + vi_period;
 
+    reset_at = getenv("PORT_RESET");
     for (;;) {
         deliver_pending();
         uint64_t now = host_now_ns();
+        if (nmi_pending && now >= nmi_at) {
+            soft_reset();
+            if (nmi_end)
+                break;
+            continue;
+        }
         if (now >= next_vi) {
             next_vi += vi_period;
             if (!deterministic && now > next_vi + 4 * vi_period)
@@ -309,9 +375,10 @@ int main(int argc, char **argv) {
             dump_rdram();
             host_input_frame();
             host_video_frame();
+            reset_script();
             if (print_hash)
                 printf("%u %08x\n", host_vi_count, host_frame_hash());
-            if (host_quit_requested() || host_replay_over || nmi_due || (host_max_frames && (int)host_vi_count >= host_max_frames))
+            if (host_quit_requested() || (host_max_frames && (int)host_vi_count >= host_max_frames))
                 break;
             port_irq_vi();
 #if defined(__EMSCRIPTEN__) && defined(PORT_WASM_WEB)
@@ -330,6 +397,8 @@ int main(int argc, char **argv) {
         /* (rounded up: at deadline * 64 / 3 the counter may not be there yet) */
         if (deadline != ~0ull && (deadline * 64 + 2) / 3 < wake)
             wake = (deadline * 64 + 2) / 3;
+        if (nmi_pending && nmi_at < wake)
+            wake = nmi_at;
         if (npending)
             continue;
         if (host_run_one())

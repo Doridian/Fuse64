@@ -12,8 +12,11 @@ void func_800019A0(void);
 
 /* boot_code's entry (asm/entry.s): clears its bss and jumps to
    func_800019A0, which starts the idle thread.  Called from the host's loop
-   (no thread runs yet), as the entry runs before any. */
+   (no thread runs yet), as the entry runs before any: at the power-on, and
+   again after each NMI (port/host/main.c), port_reset_game having put the
+   N64 side's memory as the boot finds it. */
 void port_boot(void) {
+    port_reset_init();
     port_overlay_init();
     func_800019A0();
 }

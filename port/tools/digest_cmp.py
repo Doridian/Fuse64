@@ -17,9 +17,10 @@ retrace (the clock) is never compared, and neither is the pad (which
 `--replay` takes from the other run).  Exit status 1 on a difference.
 
 `--scenes A` lists one digest's scenes with their frames and retraces.
-A movie's digest (emu_digest.py --movie) starts over at each soft reset
-(`# reset` lines); `--part N` takes the part after the N-th in each file
-that has resets (the port's replay of a part has none).
+A movie's digest (emu_digest.py --movie, or the port's replay of one)
+starts over at each soft reset (`# reset` lines); `--part N` takes the
+part after the N-th in each file that has resets (one that has none, a
+replay from PORT_REPLAY_PART=N, is that part).
 """
 import argparse
 import sys

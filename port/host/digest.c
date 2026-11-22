@@ -268,8 +268,31 @@ static void put(char *line, int *len, int idx, const char *key, const char *val,
     *len += sprintf(line + *len, " %s=%s", key, val);
 }
 
-void port_digest_poll(void) {
+static int force_full;
+
+static void open_out(void) {
     static int init;
+    if (!init) {
+        const char *e = getenv("PORT_DIGEST");
+        init = 1;
+        if (e && *e && !(out = fopen(e, "w")))
+            host_fatal("PORT_DIGEST=%s: can't write it", e);
+    }
+}
+
+/* the reset button (`# prenmi VI`) and the NMI (`# reset VI`, before the
+   new boot's first read, whose line then has every field), as
+   emu_digest.py writes them */
+void port_digest_mark(const char *what) {
+    open_out();
+    if (!out)
+        return;
+    fprintf(out, "# %s %u\n", what, host_vi_count);
+    if (!strcmp(what, "reset"))
+        force_full = 1;
+}
+
+void port_digest_poll(void) {
     static char line[MAXF * VALLEN];
     char val[VALLEN];
     int len, full, i, f = 0;
@@ -279,16 +302,12 @@ void port_digest_poll(void) {
     host_replay_wait(frame);
     pad = host_input_poll(frame);
 
-    if (!init) {
-        const char *e = getenv("PORT_DIGEST");
-        init = 1;
-        if (e && *e && !(out = fopen(e, "w")))
-            host_fatal("PORT_DIGEST=%s: can't write it", e);
-    }
+    open_out();
     if (!out)
         return;
     polls++;
-    full = polls == 1 || D_802AC5D4 != last_scene;
+    full = polls == 1 || D_802AC5D4 != last_scene || force_full;
+    force_full = 0;
     last_scene = D_802AC5D4;
     len = sprintf(line, "%u %u %d %d %u %08x%s", polls, host_vi_count, (int)D_802AC5D4, (int)D_802AC5D8, frame,
                   (unsigned)pad, full ? " *" : "");

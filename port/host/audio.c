@@ -65,6 +65,14 @@ static uint32_t rate_hz(void) {
     return (uint32_t)((VI_CLOCK + dacrate / 2) / dacrate);
 }
 
+/* the NMI (main.c): the AI as at the power-on, its queued buffers dropped;
+   what was already played stays in the WAV file and SDL's queue */
+void host_ai_reset(void) {
+    nfifo = 0;
+    memset(fifo, 0, sizeof fifo);
+    dacrate = (PORT_VI_CLOCK + 32000 / 2) / 32000;
+}
+
 void host_ai_set_dacrate(uint32_t d) {
     if (d > 0)
         dacrate = d;

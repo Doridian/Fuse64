@@ -85,7 +85,7 @@ void func_80225840(PORT_RET(s32, void *) arg0) {
     func_80297D20();
 #ifndef TARGET_PC
     /* main_code's .bss: in the port its variables are wherever the linker
-     * put them, zero at the start (main_code runs once) */
+     * put them, zero at the start (and after an NMI: port/src/reset.c) */
     func_80225C7C(D_802A5300, 0, D_802B36D0 - D_802A5300);
 #endif
 #ifdef TARGET_PC

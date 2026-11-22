@@ -278,6 +278,18 @@ int host_run_one(void) {
     return 1;
 }
 
+/* the NMI (main.c, from the loop: no thread running): every thread's
+   frames dropped, as the CPU's reset drops them */
+void host_threads_reset(void) {
+    if (cur)
+        host_fatal("a reset from a thread");
+    for (int i = 0; i < PORT_MAX_THREADS; i++) {
+        if (threads[i].fiber)
+            fiber_free(threads[i].fiber);
+        memset(&threads[i], 0, sizeof threads[i]);
+    }
+}
+
 void host_threads_dump(void) {
     for (int i = 0; i < PORT_MAX_THREADS; i++) {
         HThread *t = &threads[i];

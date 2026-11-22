@@ -38,7 +38,8 @@
   </div>
   <div id="status">Loading...</div>
   <button id="full" hidden>Full screen</button>
-  <div id="keys">Arrows = the stick, X or Space = A, C or Ctrl = B, Z = Z, A/S = L/R, Enter = START; a gamepad works too.  Click the picture for the keyboard.</div>
+  <button id="reset" hidden>Reset</button>
+  <div id="keys">Arrows = the stick, X or Space = A, C or Ctrl = B, Z = Z, A/S = L/R, Enter = START, F9 = the reset button; a gamepad works too.  Click the picture for the keyboard.</div>
 </div>
 <script>
   var statusEl = document.getElementById('status');
@@ -104,6 +105,7 @@
     args.push(ROM);
     status('Running. Click the picture for the keyboard.');
     document.getElementById('full').hidden = !document.fullscreenEnabled;
+    document.getElementById('reset').hidden = false;
     Module.canvas.focus();
     Module.callMain(args);
   }
@@ -124,6 +126,11 @@
     if (ac && ac.state !== 'running' && ac.state !== 'closed') ac.resume();
   }
   ['keydown', 'pointerdown', 'touchstart'].forEach(function (e) { addEventListener(e, resumeAudio, true); });
+  /* the console's reset button (port/host/main.c, docs/PORT.md "The reset button") */
+  document.getElementById('reset').onclick = function () {
+    Module._host_reset_button();
+    Module.canvas.focus();
+  };
   document.getElementById('full').onclick = function () {
     document.getElementById('stage').requestFullscreen().then(function () {
       Module.canvas.focus();

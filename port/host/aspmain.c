@@ -472,6 +472,21 @@ static void audio_task(const HostGfx *cmd, uint32_t data_size, const uint8_t *uc
     }
 }
 
+/* the NMI (main.c): the audio microcode's DMEM and what it keeps between
+   commands as at the power-on */
+void host_asp_reset(void) {
+    memset(dmem, 0, sizeof dmem);
+    memset(table, 0, sizeof table);
+    memset(segments, 0, sizeof segments);
+    loop_addr = 0;
+    in_ = out_ = count_ = 0;
+    dry_right = wet_left = wet_right = 0;
+    memset(vol, 0, sizeof vol);
+    memset(target, 0, sizeof target);
+    dry = wet = 0;
+    memset(rate, 0, sizeof rate);
+}
+
 /* (the pointers the N64 side's: a KSEG1 one is KSEG0's memory) */
 void host_audio_task(const void *data_ptr, uint32_t data_size, const void *ucode_data) {
     static int init;

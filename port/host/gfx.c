@@ -2493,3 +2493,31 @@ int host_gfx_task(const void *dl, uint32_t size) {
         fflush(dl_out);
     return full_sync;
 }
+
+/* The NMI (main.c): the RSP's and the RDP's state as at the power-on, and
+   RDRAM's hidden bits below `clean` (what IPL3 writes again, port/src/
+   reset.c) as at startup; the rest of RDRAM keeps its hidden bits, as it
+   keeps its bytes. */
+void host_gfx_reset(uint32_t clean) {
+    memset(&gs, 0, sizeof gs);
+    memset(tmem, 0, sizeof tmem);
+    memset(seg, 0, sizeof seg);
+    memset(slot, 0, sizeof slot);
+    memset(&ccd, 0, sizeof ccd);
+    ccd.combine = ~0ull;
+    ccd.cyc = ~0u;
+    noise_state = 0x12345678u;
+    full_sync = 0;
+    memset(rdp_raw, 0, sizeof rdp_raw);
+    memset(tile_raw, 0, sizeof tile_raw);
+    uc_boot = uc_text = uc_data = NULL;
+    uc_boot_size = uc_text_size = uc_data_size = uc_stack_size = 0;
+    memset(rdp_buf, 0, sizeof rdp_buf);
+    rdp_pos = rdp_n = 0;
+    memset(uc_stack, 0, sizeof uc_stack);
+    uc_ok = 0;
+    dl_depth = 0;
+    cur_cmd = NULL;
+    rsp_reset();
+    memset(hidden, HB_CLEAN, clean / 2 < sizeof hidden ? clean / 2 : sizeof hidden);
+}

@@ -22,9 +22,10 @@ against the native one, say).
 `tas` replays a TAS movie's run in mupen64plus on a jp build (docs/PORT.md,
 "The TAS"): the emulator's gameplay digest along the movie
 (port/tools/emu_digest.py --movie, made once into build/tas/ unless --emu
-gives it), each part between soft resets replayed with --replay and the
-save the part before wrote, each compared with the emulator's frame by
-frame (digest_cmp.py), and the port's digests' hashes with the
+gives it), replayed with --replay in one run through the movie's soft
+resets (the port's reset button: docs/PORT.md, "The reset button"), each
+part between resets compared with the emulator's frame by frame
+(digest_cmp.py), and the port's digest's hashes and save with the
 references.
 
 A cross build (port/tools/cross-*.cmake) runs under the emulator its
@@ -166,9 +167,9 @@ TAS_SEED = "0x1997"     # emu_digest.py's pinned seed (tools/shift_check.py)
 
 
 def tas(build, movie, emu_digest=None, qemu=None, draw=False, timeout=7200):
-    """Replay a movie's emulator digest, part by part: (ver, hashes, [(part,
-    frames the same before the first difference, the emulator's frames,
-    the first frame that differs or None)])"""
+    """Replay a movie's emulator digest in one run, through its soft resets:
+    (ver, hashes, [(part, frames the same before the first difference, the
+    emulator's frames, the first frame that differs or None)])"""
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import digest_cmp
     ver = cache_value(build, "PORT_VERSION") or "us"
@@ -191,36 +192,32 @@ def tas(build, movie, emu_digest=None, qemu=None, draw=False, timeout=7200):
         os.environ.setdefault("WINEDEBUG", "-all")
     tmp = tempfile.mkdtemp(prefix="fuse64-tas-")
     results = []
-    base, full = hashlib.sha1(), hashlib.sha1()
     try:
+        rows = [digest_cmp.read(emu_digest, k) for k in range(parts)]
+        retraces = max(r[-1][2] for r in rows if r) + 1000   # (the port runs no slower than the N64)
+        # (the game's logic never reads what the RDP draws: the same
+        # digest, 200 times faster)
+        digest = os.path.join(tmp, "digest.txt")
+        env = dict(os.environ, PORT_SEED=TAS_SEED, PORT_NO_DRAW="0" if draw else "1", PORT_DIGEST=digest)
+        for k in ("PORT_WARP", "PORT_REPLAY_PART", "PORT_RESET"):
+            env.pop(k, None)
+        cmd = ([emu] if emu else []) + [exe, "--headless", "--frames", str(retraces), "--save-dir", tmp,
+                                        "--replay", emu_digest, os.path.join(ROOT, "baserom.jp.z64")]
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, env=env)
+        if r.returncode != 0:
+            sys.exit("tas %s: %s exited with %d:\n%s" % (movie, exe, r.returncode, r.stderr[-2000:]))
+        port_parts = 1 + sum(1 for line in open(digest) if line.startswith("# reset"))
         for k in range(parts):
-            rows = digest_cmp.read(emu_digest, k)
-            retraces = rows[-1][2] - rows[0][2] + 1000   # (the port runs no slower than the N64)
-            # (the game's logic never reads what the RDP draws: the same
-            # digest, 200 times faster)
-            env = dict(os.environ, PORT_SEED=TAS_SEED, PORT_REPLAY_PART=str(k), PORT_NO_DRAW="0" if draw else "1",
-                       PORT_DIGEST=os.path.join(tmp, "digest%d.txt" % k))
-            env.pop("PORT_WARP", None)
-            cmd = ([emu] if emu else []) + [exe, "--headless", "--frames", str(retraces), "--save-dir", tmp,
-                                            "--replay", emu_digest, os.path.join(ROOT, "baserom.jp.z64")]
-            r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, env=env)
-            if r.returncode != 0:
-                sys.exit("tas %s part %d: %s exited with %d:\n%s" % (movie, k, exe, r.returncode, r.stderr[-2000:]))
-            h = digest_hashes(env["PORT_DIGEST"])
-            base.update(h.get("digest", "").encode())
-            full.update(h.get("digest_pools", "").encode())
-            pools = "digest_pools" in h
-            emu_state = {row[0]: row[6] for row in rows}
-            port = [(row[0], row[6]) for row in digest_cmp.read(env["PORT_DIGEST"]) if row[0] in emu_state]
+            emu_state = {row[0]: row[6] for row in rows[k]}
+            port = [(row[0], row[6]) for row in digest_cmp.read(digest, k) if row[0] in emu_state] \
+                if k < port_parts else []
             # (the fields the port writes: a 64-bit host writes no pools)
             first = next((f for f, st in port if {x: emu_state[f].get(x) for x in st} != st), None)
             same = sum(1 for f, _ in port if first is None or f < first)
-            results.append((k, same, len(rows), first))
+            results.append((k, same, len(rows[k]), first))
         eep = os.path.join(tmp, "fuse64.jp.eep")
-        hashes = {"digest": base.hexdigest(),
-                  "eeprom": hashlib.sha1(open(eep, "rb").read()).hexdigest() if os.path.exists(eep) else None}
-        if pools:
-            hashes["digest_pools"] = full.hexdigest()
+        hashes = digest_hashes(digest)
+        hashes["eeprom"] = hashlib.sha1(open(eep, "rb").read()).hexdigest() if os.path.exists(eep) else None
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     return ver, hashes, results

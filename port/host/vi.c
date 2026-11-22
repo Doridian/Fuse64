@@ -61,6 +61,14 @@ void host_vi_set_regs(const uint32_t r[PORT_VI_NREGS], const void *fb) {
 
 const uint8_t *host_vi_raw_fb(void) { return raw_fb; }
 
+/* the NMI (main.c): the registers as at the power-on, nothing shown until
+   the game sets a mode again */
+void host_vi_reset(void) {
+    memset(regs, 0, sizeof regs);
+    raw_fb = NULL;
+    pic_valid = 0;
+}
+
 /* ---- the fetch: a pixel of the color image, filtered ---------------------------------- */
 
 static int aa_on;                       /* the coverage read (AA modes 0 and 1) */

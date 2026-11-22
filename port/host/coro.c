@@ -292,6 +292,41 @@ void port_task_jump(intptr_t *buf, int v) {
     host_fatal("tasks: a coroutine resumed with nothing to do");
 }
 
+/* The NMI (main.c, after the threads' frames are dropped): every task
+   done with, its coroutine free for the next, the scheduler coroutine 0
+   again.  Not with a host thread per task (CORO_PTHREAD): a game thread
+   can be waiting inside one, and the threads' reset can't end it there. */
+int port_coro_resettable(void) {
+#if CORO_PTHREAD
+    return 0;
+#else
+    return 1;
+#endif
+}
+
+void port_coro_reset(void) {
+    for (int i = 0; i < nbufs; i++) {
+        Coro *c = bufs[i].owner;
+        if (!c || c == &main_coro || !c->live)
+            continue;
+        c->live = 0;
+#if CORO_WIN32
+        DeleteFiber(c->fiber);
+        c->fiber = NULL;
+#endif
+        free_coros[nfree++] = c;
+    }
+    memset(bufs, 0, sizeof bufs);
+    nbufs = 0;
+    cur = &main_coro;
+    resume_buf = NULL;
+    resume_v = 0;
+#if CORO_WIN32
+    /* (the game thread's own fiber, which the threads' reset deleted) */
+    main_coro.fiber = NULL;
+#endif
+}
+
 /* whether p is on a task's stack (port/src/memory.c: a display list built
    in a local) */
 int port_coro_stack(const void *p) {

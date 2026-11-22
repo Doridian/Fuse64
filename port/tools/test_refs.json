@@ -293,18 +293,18 @@
   "wav": "5146e77ef561b57a57e348b3ce6d156a9b3f976e"
  },
  "jp/tas-2053M": {
-  "digest": "f284f92cb71d03b8f93c08e3e6ce19d81a7b806d",
-  "digest_pools": "eb87490acc95cb2eb1cf09578491ce971236bcc1",
+  "digest": "c94a4c420db12391a0d91ea4c12ef8b28df1813d",
+  "digest_pools": "9dce98cd2c138ae9b38565b70f44a88eaedbbadd",
   "eeprom": "6b4c522172e36bd7b31f29fea72f78fda46059a6"
  },
  "jp/tas-2350M": {
-  "digest": "3738b94a663b47b60236beea137033b112814de5",
-  "digest_pools": "98a52c8008059dac68db22dfe994725f18569c7d",
+  "digest": "784c65816b70da12e4055044070d73cc89cc8994",
+  "digest_pools": "e9da45f3a3bf8c2594ae84b6b43dcbbd98471794",
   "eeprom": "6b4c522172e36bd7b31f29fea72f78fda46059a6"
  },
  "jp/tas-4908M": {
-  "digest": "044eece140bf08d25516f029247698f09de2995e",
-  "digest_pools": "493fe8a60cfc45934787ccae49f92ea6e68d1158",
+  "digest": "d16eb9d69af8701d67aa757a30b265afaea64dc0",
+  "digest_pools": "67bd8e0dcd2de92a9ade9ced5b4408bfbd60e7db",
   "eeprom": "1487c36ac3a482c70c4920a706b039b5226617bc"
  },
  "jp/warp-battle": {

@@ -29,8 +29,8 @@ input, soft resets and core set up as `tas.py run` does, docs/TAS.md),
 with the seed still pinned.  A soft reset writes `# prenmi VI` where the
 button is pressed (the game gets OS_EVENT_PRENMI and runs on until the
 NMI) and `# reset VI` before the restarted game's first read (its frame
-count from 0); the port's --replay plays each part between resets as a
-run of its own (PORT_REPLAY_PART; docs/PORT.md, "The TAS").
+count from 0); the port's --replay presses its reset button at the same
+frame and writes the same two lines (docs/PORT.md, "The TAS").
 
 port/tools/digest_cmp.py compares the result with a port's digest.
 --wav writes the sound (tools/src/m64p_audiodump.c), which

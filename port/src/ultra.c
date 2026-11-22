@@ -17,6 +17,7 @@
  */
 #include <ultra64.h>
 #include <PR/rcp.h>
+#include <string.h>
 #include "port.h"
 #include <PR/libaudio.h>
 
@@ -272,7 +273,11 @@ void osInitialize(void) {
     osTvType = OS_TV_NTSC;
 #endif
     osRomBase = (void *)(uintptr_t)0xB0000000u;
-    osResetType = 0;
+    /* (IPL3's, from the PIF: 1 after an NMI; libultra's osInitialize then
+       keeps the application's NMI buffer, which a power-on clears) */
+    osResetType = port_reset_count() > 0;
+    if (osResetType == 0)
+        memset(osAppNMIBuffer, 0, sizeof osAppNMIBuffer);
     osMemSize = 0x400000;
 }
 

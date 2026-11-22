@@ -338,7 +338,8 @@ docs/PORT.md), for accuracy and fidelity alike:
 - [ ] **A whole-game run**: the TAS movies (docs/TAS.md) replayed on the
       port with `--replay`, as far as they sync on the emulator, the
       digest equal along them (DozerEncore's TAS plays to its end).
-      Done: all three movies' emulator runs, the soft reset included,
+      Done: all three movies' emulator runs, each in one run through the
+      soft reset (docs/PORT.md, "The reset button"),
       equal on the port at every frame (`test.py tas`, docs/PORT.md
       "The TAS"). The whole game needs a movie that syncs on the
       emulator past the first stage, which none does yet.
@@ -348,10 +349,11 @@ docs/PORT.md), for accuracy and fidelity alike:
       as DozerEncore's "Audio"), and libaudio against the original's (an
       oracle, as DozerEncore's "The libaudio oracle"): docs/PORT.md,
       "Audio".
-- [ ] **Pacing**: the game's work takes no time and no frame lags (the
+- [x] **Pacing**: the game's work takes no time and no frame lags (the
       bar: the port may differ only where a player couldn't tell;
       smoother play over the N64's lag), the retraces, swap and waits as
-      the hardware's.
+      the hardware's. Held without a change (2026-11-21): a frame a
+      retrace everywhere, loads included (docs/PORT.md, "Timing").
 - [ ] **Enhancements**, each with a `--no-` option, the game's logic
       unchanged: interpolation and higher frame rates, widescreen,
       resource packs.

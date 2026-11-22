@@ -64,7 +64,9 @@ from a gameplay digest, by the game's frame: "The gameplay digest"),
 `fuse64.<v>.eep`), `--wav FILE`, `--hash` (each retrace's picture
 hash), `--vi-raw` (the color image as it is, without the VI: "The VI"),
 `-v`. With a window the keyboard (arrows, Z, X, C, A, S, Enter)
-and SDL's game controllers are the controller.
+and SDL's game controllers are the controller, and F9 is the console's
+reset button (`PORT_RESET=N[,N...]` presses it at those retraces; "The
+reset button").
 
 ### Cross builds
 
@@ -518,20 +520,23 @@ port/tools/emu_digest.py jp emu.txt --movie 4908M  # what test.py does once (bui
   game (6BBE0.c's thread, func_8025E100) wipes the screen for 18 frames
   and spins until the NMI restarts it, its frame count from 0. The digest
   has `# prenmi VI` at the button and `# reset VI` before the new game's
-  first read, and the port replays each part as a run of its own:
-  `PORT_REPLAY_PART=N` (port/host/input.c) takes the part after the N-th
-  reset, raises PRE-NMI at the read of the last frame the emulator read
-  before the button, and the game's spin (`port_nmi_wait`, under
-  `TARGET_PC`) ends the run; the next part starts from the save the part
-  before wrote. The port has no reset of its own (its globals would all
-  have to start over), so a run again is its soft reset.
+  first read. The port plays the whole movie in one run: `--replay`
+  presses its reset button ("The reset button") at the read of the last
+  frame the emulator read before the button, and after the NMI gives the
+  next part's pads to the new boot's frames; its digest has the same two
+  lines. `PORT_REPLAY_PART=N` (port/host/input.c) starts at the N-th
+  part from a power-on instead, with the save the part before wrote (how
+  the parts were replayed before the port had a reset).
 - **Without the pictures**: `PORT_NO_DRAW=1` (the RDP's tasks not run)
   gives the same digest and save (checked over all of 4908M) about 200
   times faster: 4908M's 78,636 retraces in 6 seconds instead of 23
   minutes. test.py's `tas` sets it (`--draw` doesn't).
 
 What it found (2026-11-21, the i386 and x86-64 builds): **every frame of
-every movie's run the same**, with no fix but the reset:
+every movie's run the same**, with no fix but the reset; since the reset
+button, in one run each (4908M in 6 seconds, the three in 90 on i386),
+the same with the threads as fibers or as host threads
+(`PORT_THREADS=pthread`):
 
 | movie | emulator | part 0 | part 1 |
 |---|---|---|---|
@@ -541,7 +546,7 @@ every movie's run the same**, with no fix but the reset:
 
 The check finds a difference where there is one: A held for ten frames
 in 4908M's stage (the digest's pads changed) differs at the first of
-them. test.py records the port's digests' hashes and the final save
+them. test.py records the port's digest's hashes and the final save
 (`jp/tas-<movie>`).
 
 test.py records two hashes of each run's digest (`PORT_DIGEST`, always
@@ -1077,7 +1082,7 @@ That one was found by comparing the two hosts' display lists, with the
 vertices and matrices they load, for the first retrace that differed
 (4306 of us's story; a temporary log in gfx.c's `run`).
 
-### Threads, tasks and timing
+### Threads and tasks
 
 The game's libultra threads are fibers (DozerEncore's threads.c and
 fiber_*.c: ucontext, Win32 fibers, Asyncify, or host threads one at a
@@ -1087,6 +1092,41 @@ Hz, 50 in eu; timers; SP and DP done). 530C0's cooperative tasks
 (func_80297C10/func_80297C7C, setjmp and longjmp on the N64) are
 coroutines too (port/include/port_task.h, port/host/coro.c). The two
 busy-waits on the audio thread call `port_spin_wait()`.
+
+### Timing
+
+DozerEncore's policy ("Timing", "Lag frames" in its docs/PORT.md): the
+game's work takes no time and no frame lags; the port may differ only
+where a player couldn't tell, and prefers smoother play to the N64's lag.
+Fuse64 follows it without a change of its own:
+
+- **Retraces.** The VI is raised at 60 Hz (50 in eu). Hudson's scheduler
+  (14B0.c, `osCreateScheduler(..., numFields 1)`) gets a message every
+  retrace, and the game's frame (40040.c's loop) waits for one
+  (func_80237F44), so the game runs at most a frame a retrace.
+- **The swap** is at the gfx task's RDP done (`osViSwapBuffer`), latched
+  at the next retrace; the scheduler starts the next gfx task only once
+  the frame before it shows (func_800008B0).
+- **No time for the game's work.** The clock (virtual headless and with
+  `--deterministic`, real otherwise) moves only in main.c's loop, from
+  one retrace, PI DMA or NMI to the next. The RDP is instant; PI DMA
+  takes a count tick per 8 bytes; loading main_code and the overlays
+  takes none of the N64's DMA and inflate time (battle.jp.txt's 130
+  retraces). The game sets no timers, and reads `osGetTime` only for
+  the seed. Busy-waits are `port_spin_wait`.
+- **So no lag frames**: one frame a retrace everywhere, loads included
+  (4908M: the retrace minus the frame the same at each of its 80,000
+  frames, 0 before the reset and 377 after). The emulator runs 0.84
+  frames a retrace in the movie's menus and 0.95 in its stage and attract
+  loop, and takes 132 retraces before the first frame. The game's clocks
+  count frames, not retraces, so a frame does the same in both (the
+  digest's `st`/`bt` by frame), only sooner on the port.
+- **In real time** (a window, `--realtime`) the loop doesn't catch up
+  when the host falls more than four retraces behind; then the game
+  slows. Only the host's renderer does that (about 14 ms a retrace in
+  battle, on a busy machine); headless and `PORT_NO_DRAW` it keeps up.
+  DozerEncore's page paces virtual time within a retrace
+  (`PORT_PACED`); Fuse64's uses the real clock.
 
 ### ZeroJump
 
@@ -1108,6 +1148,40 @@ overlay file's variables go to sections of their own
 (40FB0.c's loader, port/src/overlay.c) puts them back as they were at
 startup, which is what inflating it gave on the N64, then calls its
 entry.
+
+### The reset button
+
+F9, the page's Reset button (`host_reset_button()`),
+`PORT_RESET=N,...` or the replay's reset points raise OS_EVENT_PRENMI;
+the game wipes the screen for 18 frames and spins (`port_nmi_wait`), and
+0.5 s of the clock later main.c's `soft_reset()` restarts the console as
+an NMI does: a power-on boot, but `osResetType` 1 and `osAppNMIBuffer`'s
+64 bytes kept (the game reads neither), and RDRAM not cleared except
+what IPL3 and the loaders overwrite.
+
+- **The game's variables.** Every file of the N64 side (the game's C,
+  libultra, libaudio, libmalloc, port/src) puts its variables in two
+  sections of their own (`port_reset_section.h`, force-included: fuse64rd
+  and fuse64rb on ELF; on wasm a wrapper file per source with `#pragma
+  clang attribute`, section fuse64r). port/src/reset.c copies the data
+  section at startup and puts it back at the reset, and zeroes the bss:
+  each global as the boot found it, the overlays' (their own sections)
+  too, as their loader does. Files with no variables, and the port's
+  bookkeeping (overlay.c, reset.c, regions.c's tables), stay out.
+- **RDRAM** below 0x80100400 (IPL3's copy of the ROM's first MiB) is
+  zeroed, as the port's power-on has it; the rest is kept, and the boot
+  clears main_code's and the work area's variables as on the N64.
+- **The host**: the threads' fibers freed, 530C0's coroutines and their
+  stacks dropped, and the renderer, VI, AI and audio microcode state put
+  back as at startup (`host_*_reset`); then `port_boot()` again (the
+  same with `PORT_THREADS=pthread`). Where the coroutines are host
+  threads (no ucontext: musl) they can't be dropped mid-run, and the
+  scattered layout has no sections, so there the run ends at the NMI as
+  before.
+- **Checked**: after the reset, every picture (`--vi-raw`) and the digest
+  are the same as a power-on with the save the first part wrote, for
+  4908M's 1,990 retraces after it; and the three movies replay in one
+  run ("The TAS").
 
 ### Graphics
 
@@ -1689,7 +1763,7 @@ through its neighbour, a read through NULL given ZeroJump's word
 (`port_null_word`), `PORT_HALVES` (a word's halves in the host's order),
 `PORT_F2U` (a float to `u32` as IDO converts it), PORT_WARP's call in
 54E40.c ("Every stage"), PORT_SEED's in 40040.c ("The gameplay
-digest") and the wait for the NMI in 6BBE0.c ("The TAS").
+digest") and the wait for the NMI in 6BBE0.c ("The reset button").
 
 ## What's left
 

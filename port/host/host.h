@@ -15,7 +15,6 @@ extern int host_screenshot_every;       /* ... every so many retraces (0: at the
 extern const char *host_save_dir;       /* where the EEPROM and pak files go */
 extern const char *host_input_script;   /* --input: a scripted controller */
 extern const char *host_replay_path;    /* --replay: a digest's pads, by the game's frame */
-extern int host_replay_over;             /* --replay: a part before a reset played out */
 extern unsigned host_vi_count;          /* retraces so far */
 
 /* video.c */
@@ -63,6 +62,20 @@ extern int host_fbw_on;
 void host_fbw_init(void);
 void host_fbw_image(const uint8_t *p, size_t n, int z);    /* an image the RDP drew to */
 void host_fbw_task(int begin);          /* a task's start (1) and end (0) */
+
+/* the reset button (main.c; docs/PORT.md, "The reset button"): PRE-NMI
+   now, the NMI half a second later, when every part below is reset and
+   the game boots again */
+void host_reset_button(void);
+void host_threads_reset(void);          /* threads.c: every thread's frames dropped */
+int port_coro_resettable(void);         /* coro.c */
+void port_coro_reset(void);
+void host_vi_reset(void);               /* vi.c */
+void host_ai_reset(void);               /* audio.c */
+void host_asp_reset(void);              /* aspmain.c */
+void host_gfx_reset(uint32_t clean);    /* gfx.c: the hidden bits below clean too */
+void host_input_reset(void);            /* input.c: --replay's next part */
+void port_digest_mark(const char *what);    /* digest.c: `# what VI` */
 
 /* N64 buttons */
 enum {

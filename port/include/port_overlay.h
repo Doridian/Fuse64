@@ -18,5 +18,7 @@ extern const unsigned port_noverlays;
 void *port_overlay_load(int bank, int entry);
 /* at startup, before anything runs: the copies of the overlays' .data */
 void port_overlay_init(void);
+/* overlay i's variables as they were at startup (the soft reset) */
+void port_overlay_reset(unsigned i);
 
 #endif

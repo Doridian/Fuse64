@@ -12,12 +12,13 @@
  * none where the digest has no read of that frame.  The port loads
  * without the N64's waits, so the same retrace is another frame there;
  * the same frame is the same moment of the game.  A movie's digest has a
- * part per soft reset (`# reset VI` lines): PORT_REPLAY_PART=N plays the
- * N-th (from 0), and a part followed by a reset ends the run at the read
- * after its last frame; the button (`# prenmi VI`, some frames before)
- * raises OS_EVENT_PRENMI at the read of the last frame read before it
- * (port/tools/test.py's tas runs one after the other, with the save the
- * one before wrote).
+ * part per soft reset (`# reset VI` lines): the reset button (`# prenmi
+ * VI`, some frames before the part's end) is pressed (main.c's
+ * host_reset_button) at the read of the last frame read before it, and
+ * after the NMI the next part's pads go with the new boot's frames.
+ * PORT_REPLAY_PART=N starts at the N-th part (from 0) instead, on a
+ * power-on (with the save the part before wrote: a cold boot where the
+ * movie had a soft reset).
  *
  * PORT_MONKEY=SEED[:FROM[:START]] drives controller 1 at random from
  * retrace FROM (default 0; before it the script, if any): the stick held
@@ -37,8 +38,6 @@
 
 #include "host.h"
 
-void host_raise(int event);
-
 typedef struct {
     unsigned frame;
     uint32_t word;
@@ -50,53 +49,90 @@ static uint32_t script_word;
 static int have_script;
 
 const char *host_replay_path;
-static uint32_t *replay_pads;           /* the digest's pads, in its order */
-static unsigned *replay_vis;            /* and the retrace of each read */
-static int *replay_first, *replay_count; /* by frame: where its reads start, how many */
-static unsigned replay_frames;
+
+/* a part of the digest: from the power-on or a reset to the next reset */
+typedef struct {
+    uint32_t *pads;                     /* the digest's pads, in its order */
+    unsigned *vis;                      /* and the retrace of each read */
+    int *first, *count;                 /* by frame: where its reads start, how many */
+    unsigned frames;
+    long prenmi;                        /* the button came after this frame's read (-1: before
+                                           any; -2: no button in this part) */
+} Part;
+
+static Part *parts;
+static int nparts, part;
+static unsigned replay_frames;          /* parts[part]'s */
 static unsigned replay_frame = ~0u;     /* the last read's frame, and its reads so far */
 static int replay_k;
-static int replay_ends;                 /* the part ends in a reset */
-static long replay_prenmi = -2;         /* ... whose button came after this frame's read */
-int host_replay_over;                   /* ... and the game is past its frames */
+static long replay_prenmi = -2;
+static int replay_ended;                /* past the last part's frames: the replay is done */
+static int lag_have_offset;             /* PORT_REPLAY_LAG's offset, per part */
+static long lag_offset;
+
+static void part_begin(int k) {
+    part = k;
+    replay_frames = parts[k].frames;
+    replay_prenmi = parts[k].prenmi;
+    replay_frame = ~0u;
+    replay_k = 0;
+    lag_have_offset = 0;
+}
 
 static void replay_init(void) {
     FILE *f = fopen(host_replay_path, "r");
     char line[256];
-    int n = 0, cap = 0;
+    int n = 0, cap = 0, fcap = 0;
     unsigned *frames = NULL;
     if (!f)
         host_fatal("--replay %s: can't open it", host_replay_path);
     const char *e = getenv("PORT_REPLAY_PART");
-    int want = e && *e ? atoi(e) : 0, part = 0;
+    int want = e && *e ? atoi(e) : 0;
+    Part *p = NULL;
     /* POLL VI SCENE SUB FRAME PAD ... (lines can be long: only the head);
        `# reset VI` ends a part (emu_digest.py --movie's soft resets) */
-    while (fgets(line, sizeof line, f)) {
+    for (int more = 1; more;) {
         unsigned poll, vi, fr;
         int sc, sub;
         unsigned long pad;
+        more = fgets(line, sizeof line, f) != NULL;
+        if (!p) {
+            parts = realloc(parts, (size_t)(nparts + 1) * sizeof *parts);
+            p = &parts[nparts++];
+            memset(p, 0, sizeof *p);
+            p->prenmi = -2;
+            n = cap = 0;
+        }
+        if (!more || !strncmp(line, "# reset", 7)) {
+            /* the part's reads by frame */
+            p->first = calloc(p->frames + 1, sizeof *p->first);
+            p->count = calloc(p->frames + 1, sizeof *p->count);
+            for (int i = n - 1; i >= 0; i--) {
+                p->first[frames[i]] = i;
+                p->count[frames[i]]++;
+            }
+            p = NULL;
+            continue;
+        }
         size_t l = strlen(line);
         int whole = l && line[l - 1] == '\n';
         if (!strncmp(line, "# prenmi", 8)) {
-            if (part == want)
-                replay_prenmi = n ? (long)frames[n - 1] : -1;
-        } else if (!strncmp(line, "# reset", 7)) {
-            if (part++ == want) {
-                replay_ends = 1;
-                break;
-            }
-        } else if (part == want && sscanf(line, "%u %u %d %d %u %lx", &poll, &vi, &sc, &sub, &fr, &pad) == 6) {
+            p->prenmi = n ? (long)frames[n - 1] : -1;
+        } else if (sscanf(line, "%u %u %d %d %u %lx", &poll, &vi, &sc, &sub, &fr, &pad) == 6) {
             if (n == cap) {
                 cap = cap ? cap * 2 : 4096;
-                replay_pads = realloc(replay_pads, (size_t)cap * sizeof *replay_pads);
-                replay_vis = realloc(replay_vis, (size_t)cap * sizeof *replay_vis);
-                frames = realloc(frames, (size_t)cap * sizeof *frames);
+                p->pads = realloc(p->pads, (size_t)cap * sizeof *p->pads);
+                p->vis = realloc(p->vis, (size_t)cap * sizeof *p->vis);
             }
-            replay_pads[n] = (uint32_t)pad;
-            replay_vis[n] = vi;
+            if (n == fcap) {
+                fcap = fcap ? fcap * 2 : 4096;
+                frames = realloc(frames, (size_t)fcap * sizeof *frames);
+            }
+            p->pads[n] = (uint32_t)pad;
+            p->vis[n] = vi;
             frames[n++] = fr;
-            if (fr + 1 > replay_frames)
-                replay_frames = fr + 1;
+            if (fr + 1 > p->frames)
+                p->frames = fr + 1;
         }
         while (!whole && fgets(line, sizeof line, f)) {
             l = strlen(line);
@@ -104,16 +140,21 @@ static void replay_init(void) {
         }
     }
     fclose(f);
-    if (part < want)
-        host_fatal("--replay %s: no part %d (PORT_REPLAY_PART)", host_replay_path, want);
-    replay_first = calloc(replay_frames + 1, sizeof *replay_first);
-    replay_count = calloc(replay_frames + 1, sizeof *replay_count);
-    for (int i = n - 1; i >= 0; i--) {
-        replay_first[frames[i]] = i;
-        replay_count[frames[i]]++;
-    }
     free(frames);
+    if (want < 0 || want >= nparts)
+        host_fatal("--replay %s: no part %d (PORT_REPLAY_PART)", host_replay_path, want);
+    part_begin(want);
     have_script = 1;
+}
+
+/* the NMI (main.c): the next part's pads for the new boot's frames */
+void host_input_reset(void) {
+    if (!host_replay_path || replay_ended)
+        return;
+    if (part + 1 < nparts)
+        part_begin(part + 1);
+    else
+        replay_ended = 1;       /* (a reset the digest doesn't have: the replay is over) */
 }
 
 /* PORT_REPLAY_LAG=1 (with --replay): the game's thread at a read of the
@@ -126,45 +167,47 @@ void port_spin_wait(void);
 
 void host_replay_wait(unsigned frame) {
     static int on = -1;
-    static long offset;
-    static int have_offset;
     if (on < 0) {
         const char *e = getenv("PORT_REPLAY_LAG");
         on = host_replay_path && e && *e && *e != '0';
     }
-    if (!on || frame >= replay_frames || !replay_count[frame])
+    const Part *p = parts ? &parts[part] : NULL;
+    if (!on || replay_ended || frame >= replay_frames || !p->count[frame])
         return;
     int k = frame == replay_frame ? replay_k + 1 : 0;
-    if (k >= replay_count[frame])
-        k = replay_count[frame] - 1;
-    unsigned vi = replay_vis[replay_first[frame] + k];
-    if (!have_offset) {
-        offset = (long)vi - (long)host_vi_count;
-        have_offset = 1;
+    if (k >= p->count[frame])
+        k = p->count[frame] - 1;
+    unsigned vi = p->vis[p->first[frame] + k];
+    if (!lag_have_offset) {
+        lag_offset = (long)vi - (long)host_vi_count;
+        lag_have_offset = 1;
     }
-    while ((long)host_vi_count < (long)vi - offset)
+    while ((long)host_vi_count < (long)vi - lag_offset)
         port_spin_wait();
 }
 
 /* --replay: the pad word of this read of the frame */
 static void replay_poll(unsigned frame) {
+    const Part *p = &parts[part];
+    script_word = 0;
+    if (replay_ended)
+        return;
     if (frame != replay_frame) {
-        /* the part's frames done, a reset next: the run ends here */
-        if (replay_ends && frame >= replay_frames)
-            host_replay_over = 1;
         replay_frame = frame;
-        /* the reset button: PRE-NMI, which the game handles before the NMI */
+        /* the last part's frames done: the replay is over */
+        if (frame >= replay_frames && part + 1 == nparts)
+            replay_ended = 1;
+        /* the reset button, which the game hears before the NMI */
         if (replay_prenmi >= -1 && (long)frame >= replay_prenmi) {
             replay_prenmi = -2;
-            host_raise(14);     /* OS_EVENT_PRENMI */
+            host_reset_button();
         }
         replay_k = 0;
     } else
         replay_k++;
-    script_word = 0;
-    if (frame < replay_frames && replay_count[frame]) {
-        int k = replay_k < replay_count[frame] ? replay_k : replay_count[frame] - 1;
-        script_word = replay_pads[replay_first[frame] + k];
+    if (frame < replay_frames && p->count[frame]) {
+        int k = replay_k < p->count[frame] ? replay_k : p->count[frame] - 1;
+        script_word = p->pads[p->first[frame] + k];
     }
 }
 
@@ -303,12 +346,7 @@ void host_input_frame(void) {
 /* --replay still has the pad: until a read's frame is past the digest's
    last (then the replay has ended, for good) */
 static int replay_owns(void) {
-    static int ended;
-    if (!host_replay_path || ended)
-        return 0;
-    if (replay_frame != ~0u && replay_frame >= replay_frames)
-        ended = 1;
-    return !ended;
+    return host_replay_path && !replay_ended;
 }
 
 /* mupen64plus's BUTTONS bits and the N64's */

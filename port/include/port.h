@@ -168,8 +168,17 @@ int host_ai_submit(const void *buf, uint32_t len);
 uint32_t host_ai_length(void);
 uint32_t host_ai_status(void);
 
-/* port/src/boot.c: the game's start, on its first thread */
+/* port/src/boot.c: the game's start, on its first thread (at the power-on
+   and after each NMI) */
 void port_boot(void);
+
+/* the soft reset (port/src/reset.c; docs/PORT.md, "The reset button"):
+   whether this build has one; the startup copy (port_boot's first);
+   the N64 side's memory as the boot after an NMI finds it; the NMIs so far */
+int port_reset_supported(void);
+void port_reset_init(void);
+void port_reset_game(void);
+int port_reset_count(void);
 
 /* --deterministic: the clock moves only from event to event (main.c) */
 int host_is_deterministic(void);

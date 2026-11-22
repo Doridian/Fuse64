@@ -46,6 +46,8 @@ static NO_ASAN void zero(char *d, size_t n, const char *mask) {
 
 void port_overlay_init(void) {
     unsigned i;
+    if (initial)                /* (again after an NMI: the copies made) */
+        return;
     initial = calloc(port_noverlays, sizeof *initial);
     for (i = 0; i < port_noverlays; i++) {
         const PortOverlay *o = &port_overlays[i];
@@ -62,16 +64,21 @@ void port_overlay_init(void) {
     }
 }
 
+void port_overlay_reset(unsigned i) {
+    const PortOverlay *o = &port_overlays[i];
+    if (o->data && o->data_end > o->data)
+        copy(o->data, initial[i], (size_t)(o->data_end - o->data));
+    if (o->bss && o->bss_end > o->bss)
+        zero(o->bss, (size_t)(o->bss_end - o->bss), NULL);
+}
+
 void *port_overlay_load(int bank, int entry) {
     unsigned i;
     for (i = 0; i < port_noverlays; i++) {
         const PortOverlay *o = &port_overlays[i];
         if (o->bank != bank || o->entry != entry)
             continue;
-        if (o->data && o->data_end > o->data)
-            copy(o->data, initial[i], (size_t)(o->data_end - o->data));
-        if (o->bss && o->bss_end > o->bss)
-            zero(o->bss, (size_t)(o->bss_end - o->bss), NULL);
+        port_overlay_reset(i);
         if (host_verbose)
             host_log("%u: overlay %s\n", host_vi_count, o->name);
         return o->start();

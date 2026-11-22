@@ -184,183 +184,123 @@ void func_ovl13_02_8004D450(void); /* 0x3001 */
 
 /* .bss */
 #ifdef TARGET_PC
-/* the .bss in one object, in the N64's order: the code reaches some of
-   it through its neighbours (M2C_FIELD(&D_x, f32 *, 4) is the next
-   word), which the host would otherwise lay out as it likes */
-struct port_bss_ovl13_02 {
-    Vec3f D_ovl13_02_8004DC90;
-    u8 port_gap_8004DC9C[0x4]; /* (the N64's bytes between: no name) */
-    s32 D_ovl13_02_8004DCA0[3];
-    s32 D_ovl13_02_8004DCAC;
-    u8 D_ovl13_02_8004DCB0[0x4];
-    s32 D_ovl13_02_8004DCB4;
-    s32 D_ovl13_02_8004DCB8;
-    u8 port_gap_8004DCBC[0x4]; /* (the N64's bytes between: no name) */
-    Vec3f D_ovl13_02_8004DCC0;
-    u8 D_ovl13_02_8004DCCC[0x4]; /* unused (func_ovl13_02_8004BE60) */
+/* each name an object of its own (the scattered check's, docs/PORT.md "The
+   scattered layout"), but where the code reaches one name from another:
+   those few in one struct, in the N64's order */
+Vec3f D_ovl13_02_8004DC90;
+s32 D_ovl13_02_8004DCA0[3];
+s32 D_ovl13_02_8004DCAC;
+u8 D_ovl13_02_8004DCB0[0x4];
+s32 D_ovl13_02_8004DCB4;
+s32 D_ovl13_02_8004DCB8;
+Vec3f D_ovl13_02_8004DCC0;
+u8 D_ovl13_02_8004DCCC[0x4]; /* unused (func_ovl13_02_8004BE60) */
+/* (802438BC (0xC02) writes three words: x, its count, y) */
+struct port_bss_ovl13_02_8004DCD0 {
     s32 D_ovl13_02_8004DCD0;
     u8 D_ovl13_02_8004DCD4[0x4];
     s32 D_ovl13_02_8004DCD8;
-    s32 * D_ovl13_02_8004DCDC;
+} port_bss_ovl13_02_8004DCD0;
+#define D_ovl13_02_8004DCD0 (port_bss_ovl13_02_8004DCD0.D_ovl13_02_8004DCD0)
+#define D_ovl13_02_8004DCD4 (port_bss_ovl13_02_8004DCD0.D_ovl13_02_8004DCD4)
+#define D_ovl13_02_8004DCD8 (port_bss_ovl13_02_8004DCD0.D_ovl13_02_8004DCD8)
+s32 * D_ovl13_02_8004DCDC;
+/* (a Vec3f: M2C_FIELD(&D_8004DCE0, f32 *, 4 and 8), func_8004CAD8) */
+struct port_bss_ovl13_02_8004DCE0 {
     f32 D_ovl13_02_8004DCE0;
     u8 D_ovl13_02_8004DCE4[0x4];
     u8 D_ovl13_02_8004DCE8[0x4];
-    f32 D_ovl13_02_8004DCEC;
-    f32 D_ovl13_02_8004DCF0;
-    UnkStructA * D_ovl13_02_8004DCF4;
-    s32 D_ovl13_02_8004DCF8;
-    UnkStructA * D_ovl13_02_8004DCFC;
-    UnkStructA * D_ovl13_02_8004DD00;
-    u8 D_ovl13_02_8004DD04[0x4];
-    f32 D_ovl13_02_8004DD08;
-    u8 D_ovl13_02_8004DD0C[0x4];
+} port_bss_ovl13_02_8004DCE0;
+#define D_ovl13_02_8004DCE0 (port_bss_ovl13_02_8004DCE0.D_ovl13_02_8004DCE0)
+#define D_ovl13_02_8004DCE4 (port_bss_ovl13_02_8004DCE0.D_ovl13_02_8004DCE4)
+#define D_ovl13_02_8004DCE8 (port_bss_ovl13_02_8004DCE0.D_ovl13_02_8004DCE8)
+f32 D_ovl13_02_8004DCEC;
+f32 D_ovl13_02_8004DCF0;
+UnkStructA * D_ovl13_02_8004DCF4;
+s32 D_ovl13_02_8004DCF8;
+UnkStructA * D_ovl13_02_8004DCFC;
+UnkStructA * D_ovl13_02_8004DD00;
+u8 D_ovl13_02_8004DD04[0x4];
+f32 D_ovl13_02_8004DD08;
+u8 D_ovl13_02_8004DD0C[0x4];
+/* (a Vec3f: M2C_FIELD(&D_8004DD10, f32 *, 4 and 8)) */
+struct port_bss_ovl13_02_8004DD10 {
     f32 D_ovl13_02_8004DD10;
     f32 D_ovl13_02_8004DD14;
     u8 D_ovl13_02_8004DD18[0x8];
-    s32 D_ovl13_02_8004DD20[4];
-    s32 D_ovl13_02_8004DD30[3];
-    f32 D_ovl13_02_8004DD3C;
-    s32 D_ovl13_02_8004DD40[2];
-    s32 D_ovl13_02_8004DD48[4];
-    s32 D_ovl13_02_8004DD58[4];
-    UnkStructA *D_ovl13_02_8004DD68[10];
-    s32 D_ovl13_02_8004DD90[10];
-    Vec3f D_ovl13_02_8004DDB8[9];
-    s32 D_ovl13_02_8004DE24;
-    s32 D_ovl13_02_8004DE28;
-    s32 D_ovl13_02_8004DE2C;
-    s32 D_ovl13_02_8004DE30;
-    s32 D_ovl13_02_8004DE34;
-    s32 D_ovl13_02_8004DE38;
-    UnkStructA * D_ovl13_02_8004DE3C;
-    UnkStructA * D_ovl13_02_8004DE40;
-    UnkStructA * D_ovl13_02_8004DE44;
-    UnkStructA * D_ovl13_02_8004DE48;
-    UnkStructA * D_ovl13_02_8004DE4C;
-    UnkStructA *D_ovl13_02_8004DE50[8];
-    UnkStructA * D_ovl13_02_8004DE70;
-    f32 D_ovl13_02_8004DE74;
-    f32 D_ovl13_02_8004DE78;
-    u8 port_gap_8004DE7C[0x4]; /* (the N64's bytes between: no name) */
-    Sub18_ovl13_02 D_ovl13_02_8004DE80;
-    Sub18_ovl13_02 D_ovl13_02_8004DE98;
-    Sub18_ovl13_02 D_ovl13_02_8004DEB0;
+} port_bss_ovl13_02_8004DD10;
+#define D_ovl13_02_8004DD10 (port_bss_ovl13_02_8004DD10.D_ovl13_02_8004DD10)
+#define D_ovl13_02_8004DD14 (port_bss_ovl13_02_8004DD10.D_ovl13_02_8004DD14)
+#define D_ovl13_02_8004DD18 (port_bss_ovl13_02_8004DD10.D_ovl13_02_8004DD18)
+s32 D_ovl13_02_8004DD20[4];
+s32 D_ovl13_02_8004DD30[3];
+f32 D_ovl13_02_8004DD3C;
+s32 D_ovl13_02_8004DD40[2];
+s32 D_ovl13_02_8004DD48[4];
+s32 D_ovl13_02_8004DD58[4];
+UnkStructA *D_ovl13_02_8004DD68[10];
+s32 D_ovl13_02_8004DD90[10];
+Vec3f D_ovl13_02_8004DDB8[9];
+s32 D_ovl13_02_8004DE24;
+s32 D_ovl13_02_8004DE28;
+s32 D_ovl13_02_8004DE2C;
+s32 D_ovl13_02_8004DE30;
+s32 D_ovl13_02_8004DE34;
+s32 D_ovl13_02_8004DE38;
+UnkStructA * D_ovl13_02_8004DE3C;
+UnkStructA * D_ovl13_02_8004DE40;
+UnkStructA * D_ovl13_02_8004DE44;
+UnkStructA * D_ovl13_02_8004DE48;
+UnkStructA * D_ovl13_02_8004DE4C;
+UnkStructA *D_ovl13_02_8004DE50[8];
+UnkStructA * D_ovl13_02_8004DE70;
+f32 D_ovl13_02_8004DE74;
+f32 D_ovl13_02_8004DE78;
+Sub18_ovl13_02 D_ovl13_02_8004DE80;
+Sub18_ovl13_02 D_ovl13_02_8004DE98;
+Sub18_ovl13_02 D_ovl13_02_8004DEB0;
+/* (a Vec3f: M2C_FIELD(&D_8004DEC8, f32 *, 4 and 8), (Vec3f *) &D_8004DEC8) */
+struct port_bss_ovl13_02_8004DEC8 {
     f32 D_ovl13_02_8004DEC8;
     f32 D_ovl13_02_8004DECC;
     u8 D_ovl13_02_8004DED0[0x8];
+} port_bss_ovl13_02_8004DEC8;
+#define D_ovl13_02_8004DEC8 (port_bss_ovl13_02_8004DEC8.D_ovl13_02_8004DEC8)
+#define D_ovl13_02_8004DECC (port_bss_ovl13_02_8004DEC8.D_ovl13_02_8004DECC)
+#define D_ovl13_02_8004DED0 (port_bss_ovl13_02_8004DEC8.D_ovl13_02_8004DED0)
+/* (a Vec3f: M2C_FIELD(&D_8004DED8, f32 *, 4 and 8)) */
+struct port_bss_ovl13_02_8004DED8 {
     f32 D_ovl13_02_8004DED8;
     f32 D_ovl13_02_8004DEDC;
     u8 D_ovl13_02_8004DEE0[0x4];
-    f32 D_ovl13_02_8004DEE4;
-    f32 D_ovl13_02_8004DEE8;
-    f32 D_ovl13_02_8004DEEC;
-    f32 D_ovl13_02_8004DEF0;
-    f32 D_ovl13_02_8004DEF4;
-    f32 D_ovl13_02_8004DEF8;
-    f32 D_ovl13_02_8004DEFC;
-    f32 D_ovl13_02_8004DF00;
-    f32 D_ovl13_02_8004DF04;
-    f32 D_ovl13_02_8004DF08;
-    f32 D_ovl13_02_8004DF0C;
-    f32 D_ovl13_02_8004DF10;
-    u8 port_gap_8004DF14[0x4]; /* (the N64's bytes between: no name) */
-    s32 D_ovl13_02_8004DF18[18];
-    s32 D_ovl13_02_8004DF60[4];
-    s32 D_ovl13_02_8004DF70[4];
-    s32 D_ovl13_02_8004DF80[4];
-    s32 D_ovl13_02_8004DF90[4];
-    s32 D_ovl13_02_8004DFA0[3];
-    UnkStructA * D_ovl13_02_8004DFAC;
-    s32 D_ovl13_02_8004DFB0[3];
-    f32 D_ovl13_02_8004DFBC;
-    s32 D_ovl13_02_8004DFC0[4];
-    s32 D_ovl13_02_8004DFD0[4];
-    Move_ovl13_02 D_ovl13_02_8004DFE0;
-} port_bss_ovl13_02;
-#define D_ovl13_02_8004DC90 (port_bss_ovl13_02.D_ovl13_02_8004DC90)
-#define D_ovl13_02_8004DCA0 (port_bss_ovl13_02.D_ovl13_02_8004DCA0)
-#define D_ovl13_02_8004DCAC (port_bss_ovl13_02.D_ovl13_02_8004DCAC)
-#define D_ovl13_02_8004DCB0 (port_bss_ovl13_02.D_ovl13_02_8004DCB0)
-#define D_ovl13_02_8004DCB4 (port_bss_ovl13_02.D_ovl13_02_8004DCB4)
-#define D_ovl13_02_8004DCB8 (port_bss_ovl13_02.D_ovl13_02_8004DCB8)
-#define D_ovl13_02_8004DCC0 (port_bss_ovl13_02.D_ovl13_02_8004DCC0)
-#define D_ovl13_02_8004DCCC (port_bss_ovl13_02.D_ovl13_02_8004DCCC)
-#define D_ovl13_02_8004DCD0 (port_bss_ovl13_02.D_ovl13_02_8004DCD0)
-#define D_ovl13_02_8004DCD4 (port_bss_ovl13_02.D_ovl13_02_8004DCD4)
-#define D_ovl13_02_8004DCD8 (port_bss_ovl13_02.D_ovl13_02_8004DCD8)
-#define D_ovl13_02_8004DCDC (port_bss_ovl13_02.D_ovl13_02_8004DCDC)
-#define D_ovl13_02_8004DCE0 (port_bss_ovl13_02.D_ovl13_02_8004DCE0)
-#define D_ovl13_02_8004DCE4 (port_bss_ovl13_02.D_ovl13_02_8004DCE4)
-#define D_ovl13_02_8004DCE8 (port_bss_ovl13_02.D_ovl13_02_8004DCE8)
-#define D_ovl13_02_8004DCEC (port_bss_ovl13_02.D_ovl13_02_8004DCEC)
-#define D_ovl13_02_8004DCF0 (port_bss_ovl13_02.D_ovl13_02_8004DCF0)
-#define D_ovl13_02_8004DCF4 (port_bss_ovl13_02.D_ovl13_02_8004DCF4)
-#define D_ovl13_02_8004DCF8 (port_bss_ovl13_02.D_ovl13_02_8004DCF8)
-#define D_ovl13_02_8004DCFC (port_bss_ovl13_02.D_ovl13_02_8004DCFC)
-#define D_ovl13_02_8004DD00 (port_bss_ovl13_02.D_ovl13_02_8004DD00)
-#define D_ovl13_02_8004DD04 (port_bss_ovl13_02.D_ovl13_02_8004DD04)
-#define D_ovl13_02_8004DD08 (port_bss_ovl13_02.D_ovl13_02_8004DD08)
-#define D_ovl13_02_8004DD0C (port_bss_ovl13_02.D_ovl13_02_8004DD0C)
-#define D_ovl13_02_8004DD10 (port_bss_ovl13_02.D_ovl13_02_8004DD10)
-#define D_ovl13_02_8004DD14 (port_bss_ovl13_02.D_ovl13_02_8004DD14)
-#define D_ovl13_02_8004DD18 (port_bss_ovl13_02.D_ovl13_02_8004DD18)
-#define D_ovl13_02_8004DD20 (port_bss_ovl13_02.D_ovl13_02_8004DD20)
-#define D_ovl13_02_8004DD30 (port_bss_ovl13_02.D_ovl13_02_8004DD30)
-#define D_ovl13_02_8004DD3C (port_bss_ovl13_02.D_ovl13_02_8004DD3C)
-#define D_ovl13_02_8004DD40 (port_bss_ovl13_02.D_ovl13_02_8004DD40)
-#define D_ovl13_02_8004DD48 (port_bss_ovl13_02.D_ovl13_02_8004DD48)
-#define D_ovl13_02_8004DD58 (port_bss_ovl13_02.D_ovl13_02_8004DD58)
-#define D_ovl13_02_8004DD68 (port_bss_ovl13_02.D_ovl13_02_8004DD68)
-#define D_ovl13_02_8004DD90 (port_bss_ovl13_02.D_ovl13_02_8004DD90)
-#define D_ovl13_02_8004DDB8 (port_bss_ovl13_02.D_ovl13_02_8004DDB8)
-#define D_ovl13_02_8004DE24 (port_bss_ovl13_02.D_ovl13_02_8004DE24)
-#define D_ovl13_02_8004DE28 (port_bss_ovl13_02.D_ovl13_02_8004DE28)
-#define D_ovl13_02_8004DE2C (port_bss_ovl13_02.D_ovl13_02_8004DE2C)
-#define D_ovl13_02_8004DE30 (port_bss_ovl13_02.D_ovl13_02_8004DE30)
-#define D_ovl13_02_8004DE34 (port_bss_ovl13_02.D_ovl13_02_8004DE34)
-#define D_ovl13_02_8004DE38 (port_bss_ovl13_02.D_ovl13_02_8004DE38)
-#define D_ovl13_02_8004DE3C (port_bss_ovl13_02.D_ovl13_02_8004DE3C)
-#define D_ovl13_02_8004DE40 (port_bss_ovl13_02.D_ovl13_02_8004DE40)
-#define D_ovl13_02_8004DE44 (port_bss_ovl13_02.D_ovl13_02_8004DE44)
-#define D_ovl13_02_8004DE48 (port_bss_ovl13_02.D_ovl13_02_8004DE48)
-#define D_ovl13_02_8004DE4C (port_bss_ovl13_02.D_ovl13_02_8004DE4C)
-#define D_ovl13_02_8004DE50 (port_bss_ovl13_02.D_ovl13_02_8004DE50)
-#define D_ovl13_02_8004DE70 (port_bss_ovl13_02.D_ovl13_02_8004DE70)
-#define D_ovl13_02_8004DE74 (port_bss_ovl13_02.D_ovl13_02_8004DE74)
-#define D_ovl13_02_8004DE78 (port_bss_ovl13_02.D_ovl13_02_8004DE78)
-#define D_ovl13_02_8004DE80 (port_bss_ovl13_02.D_ovl13_02_8004DE80)
-#define D_ovl13_02_8004DE98 (port_bss_ovl13_02.D_ovl13_02_8004DE98)
-#define D_ovl13_02_8004DEB0 (port_bss_ovl13_02.D_ovl13_02_8004DEB0)
-#define D_ovl13_02_8004DEC8 (port_bss_ovl13_02.D_ovl13_02_8004DEC8)
-#define D_ovl13_02_8004DECC (port_bss_ovl13_02.D_ovl13_02_8004DECC)
-#define D_ovl13_02_8004DED0 (port_bss_ovl13_02.D_ovl13_02_8004DED0)
-#define D_ovl13_02_8004DED8 (port_bss_ovl13_02.D_ovl13_02_8004DED8)
-#define D_ovl13_02_8004DEDC (port_bss_ovl13_02.D_ovl13_02_8004DEDC)
-#define D_ovl13_02_8004DEE0 (port_bss_ovl13_02.D_ovl13_02_8004DEE0)
-#define D_ovl13_02_8004DEE4 (port_bss_ovl13_02.D_ovl13_02_8004DEE4)
-#define D_ovl13_02_8004DEE8 (port_bss_ovl13_02.D_ovl13_02_8004DEE8)
-#define D_ovl13_02_8004DEEC (port_bss_ovl13_02.D_ovl13_02_8004DEEC)
-#define D_ovl13_02_8004DEF0 (port_bss_ovl13_02.D_ovl13_02_8004DEF0)
-#define D_ovl13_02_8004DEF4 (port_bss_ovl13_02.D_ovl13_02_8004DEF4)
-#define D_ovl13_02_8004DEF8 (port_bss_ovl13_02.D_ovl13_02_8004DEF8)
-#define D_ovl13_02_8004DEFC (port_bss_ovl13_02.D_ovl13_02_8004DEFC)
-#define D_ovl13_02_8004DF00 (port_bss_ovl13_02.D_ovl13_02_8004DF00)
-#define D_ovl13_02_8004DF04 (port_bss_ovl13_02.D_ovl13_02_8004DF04)
-#define D_ovl13_02_8004DF08 (port_bss_ovl13_02.D_ovl13_02_8004DF08)
-#define D_ovl13_02_8004DF0C (port_bss_ovl13_02.D_ovl13_02_8004DF0C)
-#define D_ovl13_02_8004DF10 (port_bss_ovl13_02.D_ovl13_02_8004DF10)
-#define D_ovl13_02_8004DF18 (port_bss_ovl13_02.D_ovl13_02_8004DF18)
-#define D_ovl13_02_8004DF60 (port_bss_ovl13_02.D_ovl13_02_8004DF60)
-#define D_ovl13_02_8004DF70 (port_bss_ovl13_02.D_ovl13_02_8004DF70)
-#define D_ovl13_02_8004DF80 (port_bss_ovl13_02.D_ovl13_02_8004DF80)
-#define D_ovl13_02_8004DF90 (port_bss_ovl13_02.D_ovl13_02_8004DF90)
-#define D_ovl13_02_8004DFA0 (port_bss_ovl13_02.D_ovl13_02_8004DFA0)
-#define D_ovl13_02_8004DFAC (port_bss_ovl13_02.D_ovl13_02_8004DFAC)
-#define D_ovl13_02_8004DFB0 (port_bss_ovl13_02.D_ovl13_02_8004DFB0)
-#define D_ovl13_02_8004DFBC (port_bss_ovl13_02.D_ovl13_02_8004DFBC)
-#define D_ovl13_02_8004DFC0 (port_bss_ovl13_02.D_ovl13_02_8004DFC0)
-#define D_ovl13_02_8004DFD0 (port_bss_ovl13_02.D_ovl13_02_8004DFD0)
-#define D_ovl13_02_8004DFE0 (port_bss_ovl13_02.D_ovl13_02_8004DFE0)
+} port_bss_ovl13_02_8004DED8;
+#define D_ovl13_02_8004DED8 (port_bss_ovl13_02_8004DED8.D_ovl13_02_8004DED8)
+#define D_ovl13_02_8004DEDC (port_bss_ovl13_02_8004DED8.D_ovl13_02_8004DEDC)
+#define D_ovl13_02_8004DEE0 (port_bss_ovl13_02_8004DED8.D_ovl13_02_8004DEE0)
+f32 D_ovl13_02_8004DEE4;
+f32 D_ovl13_02_8004DEE8;
+f32 D_ovl13_02_8004DEEC;
+f32 D_ovl13_02_8004DEF0;
+f32 D_ovl13_02_8004DEF4;
+f32 D_ovl13_02_8004DEF8;
+f32 D_ovl13_02_8004DEFC;
+f32 D_ovl13_02_8004DF00;
+f32 D_ovl13_02_8004DF04;
+f32 D_ovl13_02_8004DF08;
+f32 D_ovl13_02_8004DF0C;
+f32 D_ovl13_02_8004DF10;
+s32 D_ovl13_02_8004DF18[18];
+s32 D_ovl13_02_8004DF60[4];
+s32 D_ovl13_02_8004DF70[4];
+s32 D_ovl13_02_8004DF80[4];
+s32 D_ovl13_02_8004DF90[4];
+s32 D_ovl13_02_8004DFA0[3];
+UnkStructA * D_ovl13_02_8004DFAC;
+s32 D_ovl13_02_8004DFB0[3];
+f32 D_ovl13_02_8004DFBC;
+s32 D_ovl13_02_8004DFC0[4];
+s32 D_ovl13_02_8004DFD0[4];
+Move_ovl13_02 D_ovl13_02_8004DFE0;
 #else
 Vec3f D_ovl13_02_8004DC90;
 s32 D_ovl13_02_8004DCA0[3];

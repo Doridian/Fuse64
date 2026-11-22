@@ -218,146 +218,99 @@ static void func_ovl15_01_8004C03C(void);
 
 /* .bss */
 #ifdef TARGET_PC
-/* the .bss in one object, in the N64's order: the code reaches some of
-   it through its neighbours (M2C_FIELD(&D_x, f32 *, 4) is the next
-   word), which the host would otherwise lay out as it likes */
-struct port_bss_ovl15_01 {
-    Vec3f D_ovl15_01_8004DF30;
-    u8 port_gap_8004DF3C[0x4]; /* (the N64's bytes between: no name) */
-    Vec3f D_ovl15_01_8004DF40;
-    s32 D_ovl15_01_8004DF4C;
-    u8 D_ovl15_01_8004DF50[4];
-    s32 D_ovl15_01_8004DF54;
-    s32 D_ovl15_01_8004DF58;
-    u8 port_gap_8004DF5C[0x4]; /* (the N64's bytes between: no name) */
-    Vec3f D_ovl15_01_8004DF60;
-    u8 port_gap_8004DF6C[0x4]; /* (the N64's bytes between: no name) */
-    s32 D_ovl15_01_8004DF70[15];
-    s32 * D_ovl15_01_8004DFAC;
-    s32 D_ovl15_01_8004DFB0;
-    s32 D_ovl15_01_8004DFB4;
-    s32 D_ovl15_01_8004DFB8;
-    u8 port_gap_8004DFBC[0x4]; /* (the N64's bytes between: no name) */
-    Vec3f D_ovl15_01_8004DFC0;
-    f32 D_ovl15_01_8004DFCC;
-    Vec3f D_ovl15_01_8004DFD0;
-    u8 D_ovl15_01_8004DFDC[4];
+/* each name an object of its own (the scattered check's, docs/PORT.md "The
+   scattered layout"), but where the code reaches one name from another:
+   those few in one struct, in the N64's order */
+Vec3f D_ovl15_01_8004DF30;
+Vec3f D_ovl15_01_8004DF40;
+s32 D_ovl15_01_8004DF4C;
+u8 D_ovl15_01_8004DF50[4];
+s32 D_ovl15_01_8004DF54;
+s32 D_ovl15_01_8004DF58;
+Vec3f D_ovl15_01_8004DF60;
+s32 D_ovl15_01_8004DF70[15];
+s32 * D_ovl15_01_8004DFAC;
+s32 D_ovl15_01_8004DFB0;
+s32 D_ovl15_01_8004DFB4;
+s32 D_ovl15_01_8004DFB8;
+Vec3f D_ovl15_01_8004DFC0;
+f32 D_ovl15_01_8004DFCC;
+Vec3f D_ovl15_01_8004DFD0;
+u8 D_ovl15_01_8004DFDC[4];
+/* (802438BC (0xC02) writes three words; M2C_FIELD(&D_8004DFE0, s32 *, 8)) */
+struct port_bss_ovl15_01_8004DFE0 {
     s32 D_ovl15_01_8004DFE0;
     u8 D_ovl15_01_8004DFE4[4];
     u8 D_ovl15_01_8004DFE8[4];
-    UnkStructA * D_ovl15_01_8004DFEC;
-    UnkStructA * D_ovl15_01_8004DFF0;
-    f32 D_ovl15_01_8004DFF4;
-    f32 D_ovl15_01_8004DFF8;
-    s32 D_ovl15_01_8004DFFC;
-    s32 D_ovl15_01_8004E000;
+} port_bss_ovl15_01_8004DFE0;
+#define D_ovl15_01_8004DFE0 (port_bss_ovl15_01_8004DFE0.D_ovl15_01_8004DFE0)
+#define D_ovl15_01_8004DFE4 (port_bss_ovl15_01_8004DFE0.D_ovl15_01_8004DFE4)
+#define D_ovl15_01_8004DFE8 (port_bss_ovl15_01_8004DFE0.D_ovl15_01_8004DFE8)
+UnkStructA * D_ovl15_01_8004DFEC;
+UnkStructA * D_ovl15_01_8004DFF0;
+f32 D_ovl15_01_8004DFF4;
+f32 D_ovl15_01_8004DFF8;
+s32 D_ovl15_01_8004DFFC;
+s32 D_ovl15_01_8004E000;
+/* ((&D_8004E004)[1] reads D_8004E008) */
+struct port_bss_ovl15_01_8004E004 {
     s32 D_ovl15_01_8004E004;
     s32 D_ovl15_01_8004E008;
-    s32 D_ovl15_01_8004E00C;
-    UnkStructA * D_ovl15_01_8004E010;
-    UnkStructA * D_ovl15_01_8004E014;
-    UnkStructA * D_ovl15_01_8004E018;
-    UnkStructA * D_ovl15_01_8004E01C;
-    UnkStructA * D_ovl15_01_8004E020;
-    UnkStructA * D_ovl15_01_8004E024;
-    UnkStructA * D_ovl15_01_8004E028;
-    UnkStructA * D_ovl15_01_8004E02C;
-    UnkStructA * D_ovl15_01_8004E030;
-    UnkStructA * D_ovl15_01_8004E034;
-    UnkStructA * D_ovl15_01_8004E038;
+} port_bss_ovl15_01_8004E004;
+#define D_ovl15_01_8004E004 (port_bss_ovl15_01_8004E004.D_ovl15_01_8004E004)
+#define D_ovl15_01_8004E008 (port_bss_ovl15_01_8004E004.D_ovl15_01_8004E008)
+s32 D_ovl15_01_8004E00C;
+UnkStructA * D_ovl15_01_8004E010;
+UnkStructA * D_ovl15_01_8004E014;
+UnkStructA * D_ovl15_01_8004E018;
+UnkStructA * D_ovl15_01_8004E01C;
+UnkStructA * D_ovl15_01_8004E020;
+UnkStructA * D_ovl15_01_8004E024;
+UnkStructA * D_ovl15_01_8004E028;
+UnkStructA * D_ovl15_01_8004E02C;
+UnkStructA * D_ovl15_01_8004E030;
+UnkStructA * D_ovl15_01_8004E034;
+UnkStructA * D_ovl15_01_8004E038;
+/* ((&D_8004E040)[-1] = 2 writes D_8004E03C) */
+struct port_bss_ovl15_01_8004E03C {
     s32 D_ovl15_01_8004E03C;
     s32 D_ovl15_01_8004E040;
-    s32 D_ovl15_01_8004E044;
-    s32 D_ovl15_01_8004E048;
-    u8 port_gap_8004E04C[0x4]; /* (the N64's bytes between: no name) */
-    Vec3f D_ovl15_01_8004E050;
-    u8 port_gap_8004E05C[0x4]; /* (the N64's bytes between: no name) */
-    Vec3f D_ovl15_01_8004E060;
-    f32 D_ovl15_01_8004E06C;
-    UnkStructA * D_ovl15_01_8004E070;
-    u8 port_gap_8004E074[0x4]; /* (the N64's bytes between: no name) */
+} port_bss_ovl15_01_8004E03C;
+#define D_ovl15_01_8004E03C (port_bss_ovl15_01_8004E03C.D_ovl15_01_8004E03C)
+#define D_ovl15_01_8004E040 (port_bss_ovl15_01_8004E03C.D_ovl15_01_8004E040)
+s32 D_ovl15_01_8004E044;
+s32 D_ovl15_01_8004E048;
+Vec3f D_ovl15_01_8004E050;
+Vec3f D_ovl15_01_8004E060;
+f32 D_ovl15_01_8004E06C;
+UnkStructA * D_ovl15_01_8004E070;
+/* (func_8022F698 writes eight object pointers from D_8004E078 (port_room_8004E078)) */
+struct port_bss_ovl15_01_8004E078 {
     Vec3f D_ovl15_01_8004E078 __attribute__((aligned(sizeof(void *)))); /* (written as pointers) */
     u8 port_gap_8004E084[0x4]; /* (the N64's bytes between: no name) */
     u8 D_ovl15_01_8004E088[16];
     u8 port_room_8004E078[PORT_LP64 * 32]; /* (80044088 has func_8022F698 write eight object pointers from E078: 64 bytes where pointers are 8) */
-    s32 D_ovl15_01_8004E098;
-    s32 D_ovl15_01_8004E09C;
-    UnkStructA * D_ovl15_01_8004E0A0;
-    UnkStructA * D_ovl15_01_8004E0A4;
-    UnkStructA * D_ovl15_01_8004E0A8;
-    u8 port_gap_8004E0AC[0x4]; /* (the N64's bytes between: no name) */
-    Vec3f D_ovl15_01_8004E0B0;
+} port_bss_ovl15_01_8004E078;
+#define D_ovl15_01_8004E078 (port_bss_ovl15_01_8004E078.D_ovl15_01_8004E078)
+#define D_ovl15_01_8004E088 (port_bss_ovl15_01_8004E078.D_ovl15_01_8004E088)
+s32 D_ovl15_01_8004E098;
+s32 D_ovl15_01_8004E09C;
+UnkStructA * D_ovl15_01_8004E0A0;
+UnkStructA * D_ovl15_01_8004E0A4;
+UnkStructA * D_ovl15_01_8004E0A8;
+Vec3f D_ovl15_01_8004E0B0;
+/* ((&D_8004E0BC)[1] writes D_8004E0C0) */
+struct port_bss_ovl15_01_8004E0BC {
     f32 D_ovl15_01_8004E0BC;
     f32 D_ovl15_01_8004E0C0;
-    f32 D_ovl15_01_8004E0C4;
-    f32 D_ovl15_01_8004E0C8;
-    s32 D_ovl15_01_8004E0CC;
-    s32 D_ovl15_01_8004E0D0;
-    u8 port_gap_8004E0D4[0x4]; /* (the N64's bytes between: no name) */
-    s32 __attribute__((aligned(sizeof(void *)))) D_ovl15_01_8004E0D8[PORT_HOST(2, 0x11 + 3 * PORT_LP64)]; /* (and where pointers are 8 bytes the links 4ED50.c reads at 0x40 and 0x48) */ /* (80043EB0 writes 0x44 bytes: past its end on the N64) */
-} port_bss_ovl15_01;
-#define D_ovl15_01_8004DF30 (port_bss_ovl15_01.D_ovl15_01_8004DF30)
-#define D_ovl15_01_8004DF40 (port_bss_ovl15_01.D_ovl15_01_8004DF40)
-#define D_ovl15_01_8004DF4C (port_bss_ovl15_01.D_ovl15_01_8004DF4C)
-#define D_ovl15_01_8004DF50 (port_bss_ovl15_01.D_ovl15_01_8004DF50)
-#define D_ovl15_01_8004DF54 (port_bss_ovl15_01.D_ovl15_01_8004DF54)
-#define D_ovl15_01_8004DF58 (port_bss_ovl15_01.D_ovl15_01_8004DF58)
-#define D_ovl15_01_8004DF60 (port_bss_ovl15_01.D_ovl15_01_8004DF60)
-#define D_ovl15_01_8004DF70 (port_bss_ovl15_01.D_ovl15_01_8004DF70)
-#define D_ovl15_01_8004DFAC (port_bss_ovl15_01.D_ovl15_01_8004DFAC)
-#define D_ovl15_01_8004DFB0 (port_bss_ovl15_01.D_ovl15_01_8004DFB0)
-#define D_ovl15_01_8004DFB4 (port_bss_ovl15_01.D_ovl15_01_8004DFB4)
-#define D_ovl15_01_8004DFB8 (port_bss_ovl15_01.D_ovl15_01_8004DFB8)
-#define D_ovl15_01_8004DFC0 (port_bss_ovl15_01.D_ovl15_01_8004DFC0)
-#define D_ovl15_01_8004DFCC (port_bss_ovl15_01.D_ovl15_01_8004DFCC)
-#define D_ovl15_01_8004DFD0 (port_bss_ovl15_01.D_ovl15_01_8004DFD0)
-#define D_ovl15_01_8004DFDC (port_bss_ovl15_01.D_ovl15_01_8004DFDC)
-#define D_ovl15_01_8004DFE0 (port_bss_ovl15_01.D_ovl15_01_8004DFE0)
-#define D_ovl15_01_8004DFE4 (port_bss_ovl15_01.D_ovl15_01_8004DFE4)
-#define D_ovl15_01_8004DFE8 (port_bss_ovl15_01.D_ovl15_01_8004DFE8)
-#define D_ovl15_01_8004DFEC (port_bss_ovl15_01.D_ovl15_01_8004DFEC)
-#define D_ovl15_01_8004DFF0 (port_bss_ovl15_01.D_ovl15_01_8004DFF0)
-#define D_ovl15_01_8004DFF4 (port_bss_ovl15_01.D_ovl15_01_8004DFF4)
-#define D_ovl15_01_8004DFF8 (port_bss_ovl15_01.D_ovl15_01_8004DFF8)
-#define D_ovl15_01_8004DFFC (port_bss_ovl15_01.D_ovl15_01_8004DFFC)
-#define D_ovl15_01_8004E000 (port_bss_ovl15_01.D_ovl15_01_8004E000)
-#define D_ovl15_01_8004E004 (port_bss_ovl15_01.D_ovl15_01_8004E004)
-#define D_ovl15_01_8004E008 (port_bss_ovl15_01.D_ovl15_01_8004E008)
-#define D_ovl15_01_8004E00C (port_bss_ovl15_01.D_ovl15_01_8004E00C)
-#define D_ovl15_01_8004E010 (port_bss_ovl15_01.D_ovl15_01_8004E010)
-#define D_ovl15_01_8004E014 (port_bss_ovl15_01.D_ovl15_01_8004E014)
-#define D_ovl15_01_8004E018 (port_bss_ovl15_01.D_ovl15_01_8004E018)
-#define D_ovl15_01_8004E01C (port_bss_ovl15_01.D_ovl15_01_8004E01C)
-#define D_ovl15_01_8004E020 (port_bss_ovl15_01.D_ovl15_01_8004E020)
-#define D_ovl15_01_8004E024 (port_bss_ovl15_01.D_ovl15_01_8004E024)
-#define D_ovl15_01_8004E028 (port_bss_ovl15_01.D_ovl15_01_8004E028)
-#define D_ovl15_01_8004E02C (port_bss_ovl15_01.D_ovl15_01_8004E02C)
-#define D_ovl15_01_8004E030 (port_bss_ovl15_01.D_ovl15_01_8004E030)
-#define D_ovl15_01_8004E034 (port_bss_ovl15_01.D_ovl15_01_8004E034)
-#define D_ovl15_01_8004E038 (port_bss_ovl15_01.D_ovl15_01_8004E038)
-#define D_ovl15_01_8004E03C (port_bss_ovl15_01.D_ovl15_01_8004E03C)
-#define D_ovl15_01_8004E040 (port_bss_ovl15_01.D_ovl15_01_8004E040)
-#define D_ovl15_01_8004E044 (port_bss_ovl15_01.D_ovl15_01_8004E044)
-#define D_ovl15_01_8004E048 (port_bss_ovl15_01.D_ovl15_01_8004E048)
-#define D_ovl15_01_8004E050 (port_bss_ovl15_01.D_ovl15_01_8004E050)
-#define D_ovl15_01_8004E060 (port_bss_ovl15_01.D_ovl15_01_8004E060)
-#define D_ovl15_01_8004E06C (port_bss_ovl15_01.D_ovl15_01_8004E06C)
-#define D_ovl15_01_8004E070 (port_bss_ovl15_01.D_ovl15_01_8004E070)
-#define D_ovl15_01_8004E078 (port_bss_ovl15_01.D_ovl15_01_8004E078)
-#define D_ovl15_01_8004E088 (port_bss_ovl15_01.D_ovl15_01_8004E088)
-#define D_ovl15_01_8004E098 (port_bss_ovl15_01.D_ovl15_01_8004E098)
-#define D_ovl15_01_8004E09C (port_bss_ovl15_01.D_ovl15_01_8004E09C)
-#define D_ovl15_01_8004E0A0 (port_bss_ovl15_01.D_ovl15_01_8004E0A0)
-#define D_ovl15_01_8004E0A4 (port_bss_ovl15_01.D_ovl15_01_8004E0A4)
-#define D_ovl15_01_8004E0A8 (port_bss_ovl15_01.D_ovl15_01_8004E0A8)
-#define D_ovl15_01_8004E0B0 (port_bss_ovl15_01.D_ovl15_01_8004E0B0)
-#define D_ovl15_01_8004E0BC (port_bss_ovl15_01.D_ovl15_01_8004E0BC)
-#define D_ovl15_01_8004E0C0 (port_bss_ovl15_01.D_ovl15_01_8004E0C0)
-#define D_ovl15_01_8004E0C4 (port_bss_ovl15_01.D_ovl15_01_8004E0C4)
-#define D_ovl15_01_8004E0C8 (port_bss_ovl15_01.D_ovl15_01_8004E0C8)
-#define D_ovl15_01_8004E0CC (port_bss_ovl15_01.D_ovl15_01_8004E0CC)
-#define D_ovl15_01_8004E0D0 (port_bss_ovl15_01.D_ovl15_01_8004E0D0)
-#define D_ovl15_01_8004E0D8 (port_bss_ovl15_01.D_ovl15_01_8004E0D8)
+} port_bss_ovl15_01_8004E0BC;
+#define D_ovl15_01_8004E0BC (port_bss_ovl15_01_8004E0BC.D_ovl15_01_8004E0BC)
+#define D_ovl15_01_8004E0C0 (port_bss_ovl15_01_8004E0BC.D_ovl15_01_8004E0C0)
+f32 D_ovl15_01_8004E0C4;
+f32 D_ovl15_01_8004E0C8;
+s32 D_ovl15_01_8004E0CC;
+s32 D_ovl15_01_8004E0D0;
+s32 __attribute__((aligned(sizeof(void *)))) D_ovl15_01_8004E0D8[PORT_HOST(2, 0x11 + 3 * PORT_LP64)]; /* (and where pointers are 8 bytes the links 4ED50.c reads at 0x40 and 0x48) */ /* (80043EB0 writes 0x44 bytes: past its end on the N64) */
 #else
 Vec3f D_ovl15_01_8004DF30;
 Vec3f D_ovl15_01_8004DF40;

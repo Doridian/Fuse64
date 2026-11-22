@@ -93,7 +93,9 @@ if(NOT PORT_SCATTER STREQUAL "")
     add_compile_definitions(PORT_SCATTER_LAYOUT)
     add_compile_options(-fdata-sections)
     add_link_options(-fuse-ld=lld "LINKER:--shuffle-sections=.data.*=${PORT_SCATTER}"
-        "LINKER:--shuffle-sections=.bss.*=${PORT_SCATTER}" "LINKER:--shuffle-sections=.rodata.*=${PORT_SCATTER}")
+        "LINKER:--shuffle-sections=.bss.*=${PORT_SCATTER}" "LINKER:--shuffle-sections=.rodata.*=${PORT_SCATTER}"
+        # (the overlays' variables, port_ovl_section.h: within each overlay's own)
+        "LINKER:--shuffle-sections=fuse64*=${PORT_SCATTER}")
 endif()
 # its check (host/scatter_check.c): every load and store of everything but
 # that file a call, each global variable with a redzone, and a report of

@@ -300,136 +300,89 @@ static void func_ovl14_02_8004DF98(void);
 
 /* .bss */
 #ifdef TARGET_PC
-/* the .bss in one object, in the N64's order: the code reaches some of
-   it through its neighbours (M2C_FIELD(&D_x, f32 *, 4) is the next
-   word), which the host would otherwise lay out as it likes */
-struct port_bss_ovl14_02 {
-    Vec3f D_ovl14_02_80050270;
-    u8 port_gap_8005027C[0x4]; /* (the N64's bytes between: no name) */
-    s32 D_ovl14_02_80050280[3];
-    s32 D_ovl14_02_8005028C;
-    u8 D_ovl14_02_80050290[4];
-    s32 D_ovl14_02_80050294;
-    s32 D_ovl14_02_80050298;
-    u8 port_gap_8005029C[0x4]; /* (the N64's bytes between: no name) */
-    Vec3f D_ovl14_02_800502A0;
-    u8 D_ovl14_02_800502AC[0x4]; /* unused (func_ovl14_02_8004E824) */
-    s32 * D_ovl14_02_800502B0;
-    s32 D_ovl14_02_800502B4;
-    Vec3f D_ovl14_02_800502B8;
-    f32 D_ovl14_02_800502C4;
+/* each name an object of its own (the scattered check's, docs/PORT.md "The
+   scattered layout"), but where the code reaches one name from another:
+   those few in one struct, in the N64's order */
+Vec3f D_ovl14_02_80050270;
+s32 D_ovl14_02_80050280[3];
+s32 D_ovl14_02_8005028C;
+u8 D_ovl14_02_80050290[4];
+s32 D_ovl14_02_80050294;
+s32 D_ovl14_02_80050298;
+Vec3f D_ovl14_02_800502A0;
+u8 D_ovl14_02_800502AC[0x4]; /* unused (func_ovl14_02_8004E824) */
+s32 * D_ovl14_02_800502B0;
+s32 D_ovl14_02_800502B4;
+Vec3f D_ovl14_02_800502B8;
+f32 D_ovl14_02_800502C4;
+/* ((&D_800502C8)[1]: a second Vec3f, D_800502D4's three) */
+struct port_bss_ovl14_02_800502C8 {
     Vec3f D_ovl14_02_800502C8;
     f32 D_ovl14_02_800502D4; /* a Vec3f, split: IDO would 8-align it */
     f32 D_ovl14_02_800502D8;
     f32 D_ovl14_02_800502DC;
+} port_bss_ovl14_02_800502C8;
+#define D_ovl14_02_800502C8 (port_bss_ovl14_02_800502C8.D_ovl14_02_800502C8)
+#define D_ovl14_02_800502D4 (port_bss_ovl14_02_800502C8.D_ovl14_02_800502D4)
+#define D_ovl14_02_800502D8 (port_bss_ovl14_02_800502C8.D_ovl14_02_800502D8)
+#define D_ovl14_02_800502DC (port_bss_ovl14_02_800502C8.D_ovl14_02_800502DC)
+/* (802438BC (0xC02) writes three words: x, its count, y) */
+struct port_bss_ovl14_02_800502E0 {
     s32 D_ovl14_02_800502E0;
     u8 D_ovl14_02_800502E4[4];
     s32 D_ovl14_02_800502E8;
-    Vec3f * D_ovl14_02_800502EC;
-    UnkStructA *D_ovl14_02_800502F0[16];
-    s32 D_ovl14_02_80050330[16];
-    f32 D_ovl14_02_80050370;
-    s32 D_ovl14_02_80050374;
-    s32 D_ovl14_02_80050378;
-    s32 D_ovl14_02_8005037C;
-    s32 D_ovl14_02_80050380;
-    s32 D_ovl14_02_80050384;
-    s32 D_ovl14_02_80050388;
-    s32 D_ovl14_02_8005038C;
-    s32 D_ovl14_02_80050390;
-    s32 D_ovl14_02_80050394;
-    s32 D_ovl14_02_80050398;
-    s32 D_ovl14_02_8005039C;
-    s32 D_ovl14_02_800503A0;
-    s32 D_ovl14_02_800503A4;
-    s32 D_ovl14_02_800503A8;
-    s32 D_ovl14_02_800503AC;
-    s32 D_ovl14_02_800503B0;
-    s32 D_ovl14_02_800503B4;
-    s32 D_ovl14_02_800503B8; /* s32, not u32: 8004C240 then shares one constant 1 (in $a1) between its stores */
-    s32 D_ovl14_02_800503BC;
-    UnkStructA * D_ovl14_02_800503C0;
-    UnkStructA * D_ovl14_02_800503C4;
-    UnkStructA * D_ovl14_02_800503C8;
-    UnkStructA * D_ovl14_02_800503CC;
-    UnkStructA * D_ovl14_02_800503D0;
-    UnkStructA * D_ovl14_02_800503D4;
-    UnkStructA * D_ovl14_02_800503D8;
-    u8 port_gap_800503DC[0x4]; /* (the N64's bytes between: no name) */
-    Vec3f D_ovl14_02_800503E0;
-    u8 D_ovl14_02_800503EC[4];
+} port_bss_ovl14_02_800502E0;
+#define D_ovl14_02_800502E0 (port_bss_ovl14_02_800502E0.D_ovl14_02_800502E0)
+#define D_ovl14_02_800502E4 (port_bss_ovl14_02_800502E0.D_ovl14_02_800502E4)
+#define D_ovl14_02_800502E8 (port_bss_ovl14_02_800502E0.D_ovl14_02_800502E8)
+Vec3f * D_ovl14_02_800502EC;
+UnkStructA *D_ovl14_02_800502F0[16];
+s32 D_ovl14_02_80050330[16];
+f32 D_ovl14_02_80050370;
+s32 D_ovl14_02_80050374;
+s32 D_ovl14_02_80050378;
+s32 D_ovl14_02_8005037C;
+s32 D_ovl14_02_80050380;
+s32 D_ovl14_02_80050384;
+s32 D_ovl14_02_80050388;
+s32 D_ovl14_02_8005038C;
+s32 D_ovl14_02_80050390;
+s32 D_ovl14_02_80050394;
+s32 D_ovl14_02_80050398;
+s32 D_ovl14_02_8005039C;
+s32 D_ovl14_02_800503A0;
+s32 D_ovl14_02_800503A4;
+s32 D_ovl14_02_800503A8;
+s32 D_ovl14_02_800503AC;
+s32 D_ovl14_02_800503B0;
+s32 D_ovl14_02_800503B4;
+s32 D_ovl14_02_800503B8; /* s32, not u32: 8004C240 then shares one constant 1 (in $a1) between its stores */
+s32 D_ovl14_02_800503BC;
+UnkStructA * D_ovl14_02_800503C0;
+UnkStructA * D_ovl14_02_800503C4;
+UnkStructA * D_ovl14_02_800503C8;
+UnkStructA * D_ovl14_02_800503CC;
+UnkStructA * D_ovl14_02_800503D0;
+UnkStructA * D_ovl14_02_800503D4;
+UnkStructA * D_ovl14_02_800503D8;
+Vec3f D_ovl14_02_800503E0;
+u8 D_ovl14_02_800503EC[4];
+/* (a Vec3f: (&D_800503F0)[1] and [2]) */
+struct port_bss_ovl14_02_800503F0 {
     f32 D_ovl14_02_800503F0;
     f32 D_ovl14_02_800503F4;
     u8 D_ovl14_02_800503F8[4];
-    f32 D_ovl14_02_800503FC;
-    s32 D_ovl14_02_80050400;
-    f32 D_ovl14_02_80050404;
-    s32 D_ovl14_02_80050408;
-    s32 D_ovl14_02_8005040C;
-    f32 D_ovl14_02_80050410;
-    u8 D_ovl14_02_80050414[4];
-} port_bss_ovl14_02;
-#define D_ovl14_02_80050270 (port_bss_ovl14_02.D_ovl14_02_80050270)
-#define D_ovl14_02_80050280 (port_bss_ovl14_02.D_ovl14_02_80050280)
-#define D_ovl14_02_8005028C (port_bss_ovl14_02.D_ovl14_02_8005028C)
-#define D_ovl14_02_80050290 (port_bss_ovl14_02.D_ovl14_02_80050290)
-#define D_ovl14_02_80050294 (port_bss_ovl14_02.D_ovl14_02_80050294)
-#define D_ovl14_02_80050298 (port_bss_ovl14_02.D_ovl14_02_80050298)
-#define D_ovl14_02_800502A0 (port_bss_ovl14_02.D_ovl14_02_800502A0)
-#define D_ovl14_02_800502AC (port_bss_ovl14_02.D_ovl14_02_800502AC)
-#define D_ovl14_02_800502B0 (port_bss_ovl14_02.D_ovl14_02_800502B0)
-#define D_ovl14_02_800502B4 (port_bss_ovl14_02.D_ovl14_02_800502B4)
-#define D_ovl14_02_800502B8 (port_bss_ovl14_02.D_ovl14_02_800502B8)
-#define D_ovl14_02_800502C4 (port_bss_ovl14_02.D_ovl14_02_800502C4)
-#define D_ovl14_02_800502C8 (port_bss_ovl14_02.D_ovl14_02_800502C8)
-#define D_ovl14_02_800502D4 (port_bss_ovl14_02.D_ovl14_02_800502D4)
-#define D_ovl14_02_800502D8 (port_bss_ovl14_02.D_ovl14_02_800502D8)
-#define D_ovl14_02_800502DC (port_bss_ovl14_02.D_ovl14_02_800502DC)
-#define D_ovl14_02_800502E0 (port_bss_ovl14_02.D_ovl14_02_800502E0)
-#define D_ovl14_02_800502E4 (port_bss_ovl14_02.D_ovl14_02_800502E4)
-#define D_ovl14_02_800502E8 (port_bss_ovl14_02.D_ovl14_02_800502E8)
-#define D_ovl14_02_800502EC (port_bss_ovl14_02.D_ovl14_02_800502EC)
-#define D_ovl14_02_800502F0 (port_bss_ovl14_02.D_ovl14_02_800502F0)
-#define D_ovl14_02_80050330 (port_bss_ovl14_02.D_ovl14_02_80050330)
-#define D_ovl14_02_80050370 (port_bss_ovl14_02.D_ovl14_02_80050370)
-#define D_ovl14_02_80050374 (port_bss_ovl14_02.D_ovl14_02_80050374)
-#define D_ovl14_02_80050378 (port_bss_ovl14_02.D_ovl14_02_80050378)
-#define D_ovl14_02_8005037C (port_bss_ovl14_02.D_ovl14_02_8005037C)
-#define D_ovl14_02_80050380 (port_bss_ovl14_02.D_ovl14_02_80050380)
-#define D_ovl14_02_80050384 (port_bss_ovl14_02.D_ovl14_02_80050384)
-#define D_ovl14_02_80050388 (port_bss_ovl14_02.D_ovl14_02_80050388)
-#define D_ovl14_02_8005038C (port_bss_ovl14_02.D_ovl14_02_8005038C)
-#define D_ovl14_02_80050390 (port_bss_ovl14_02.D_ovl14_02_80050390)
-#define D_ovl14_02_80050394 (port_bss_ovl14_02.D_ovl14_02_80050394)
-#define D_ovl14_02_80050398 (port_bss_ovl14_02.D_ovl14_02_80050398)
-#define D_ovl14_02_8005039C (port_bss_ovl14_02.D_ovl14_02_8005039C)
-#define D_ovl14_02_800503A0 (port_bss_ovl14_02.D_ovl14_02_800503A0)
-#define D_ovl14_02_800503A4 (port_bss_ovl14_02.D_ovl14_02_800503A4)
-#define D_ovl14_02_800503A8 (port_bss_ovl14_02.D_ovl14_02_800503A8)
-#define D_ovl14_02_800503AC (port_bss_ovl14_02.D_ovl14_02_800503AC)
-#define D_ovl14_02_800503B0 (port_bss_ovl14_02.D_ovl14_02_800503B0)
-#define D_ovl14_02_800503B4 (port_bss_ovl14_02.D_ovl14_02_800503B4)
-#define D_ovl14_02_800503B8 (port_bss_ovl14_02.D_ovl14_02_800503B8)
-#define D_ovl14_02_800503BC (port_bss_ovl14_02.D_ovl14_02_800503BC)
-#define D_ovl14_02_800503C0 (port_bss_ovl14_02.D_ovl14_02_800503C0)
-#define D_ovl14_02_800503C4 (port_bss_ovl14_02.D_ovl14_02_800503C4)
-#define D_ovl14_02_800503C8 (port_bss_ovl14_02.D_ovl14_02_800503C8)
-#define D_ovl14_02_800503CC (port_bss_ovl14_02.D_ovl14_02_800503CC)
-#define D_ovl14_02_800503D0 (port_bss_ovl14_02.D_ovl14_02_800503D0)
-#define D_ovl14_02_800503D4 (port_bss_ovl14_02.D_ovl14_02_800503D4)
-#define D_ovl14_02_800503D8 (port_bss_ovl14_02.D_ovl14_02_800503D8)
-#define D_ovl14_02_800503E0 (port_bss_ovl14_02.D_ovl14_02_800503E0)
-#define D_ovl14_02_800503EC (port_bss_ovl14_02.D_ovl14_02_800503EC)
-#define D_ovl14_02_800503F0 (port_bss_ovl14_02.D_ovl14_02_800503F0)
-#define D_ovl14_02_800503F4 (port_bss_ovl14_02.D_ovl14_02_800503F4)
-#define D_ovl14_02_800503F8 (port_bss_ovl14_02.D_ovl14_02_800503F8)
-#define D_ovl14_02_800503FC (port_bss_ovl14_02.D_ovl14_02_800503FC)
-#define D_ovl14_02_80050400 (port_bss_ovl14_02.D_ovl14_02_80050400)
-#define D_ovl14_02_80050404 (port_bss_ovl14_02.D_ovl14_02_80050404)
-#define D_ovl14_02_80050408 (port_bss_ovl14_02.D_ovl14_02_80050408)
-#define D_ovl14_02_8005040C (port_bss_ovl14_02.D_ovl14_02_8005040C)
-#define D_ovl14_02_80050410 (port_bss_ovl14_02.D_ovl14_02_80050410)
-#define D_ovl14_02_80050414 (port_bss_ovl14_02.D_ovl14_02_80050414)
+} port_bss_ovl14_02_800503F0;
+#define D_ovl14_02_800503F0 (port_bss_ovl14_02_800503F0.D_ovl14_02_800503F0)
+#define D_ovl14_02_800503F4 (port_bss_ovl14_02_800503F0.D_ovl14_02_800503F4)
+#define D_ovl14_02_800503F8 (port_bss_ovl14_02_800503F0.D_ovl14_02_800503F8)
+f32 D_ovl14_02_800503FC;
+s32 D_ovl14_02_80050400;
+f32 D_ovl14_02_80050404;
+s32 D_ovl14_02_80050408;
+s32 D_ovl14_02_8005040C;
+f32 D_ovl14_02_80050410;
+u8 D_ovl14_02_80050414[4];
 #else
 Vec3f D_ovl14_02_80050270;
 s32 D_ovl14_02_80050280[3];

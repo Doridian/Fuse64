@@ -1833,8 +1833,14 @@ port's exact against. What differs, and the port now does as 2.0I:
   first use, not the source's, so `M2C_FIELD(&D_x, f32 *, 4)` (the next
   word on the N64) reached whatever the host put after `D_x`. Where the
   code does that (ovl_13_02: 121 places; ovl_14_01, ovl_14_02, ovl_15_01,
-  ovl_15_02) the file's .bss is one struct under `TARGET_PC`, in the
-  N64's order with its alignment gaps (`port_gap_*`); `.data` (explicit
+  ovl_15_02) the names it reaches one from another are one struct under
+  `TARGET_PC`, in the N64's order with its alignment gaps (`port_gap_*`):
+  19 groups of two or three names (a Vec3f named x by x, the three words
+  func_802438BC writes, a fake's `(&D_x)[1]` or `[-1]`), each found from
+  the source (every `M2C_FIELD(&D_x, ...)` and `(&D_x)[i]`, and every
+  call given a `.bss` name's address, by what the callee reaches), every
+  other name a variable of its own. (Until 2026-11-22 each file's whole
+  .bss was one struct, which the scattered check saw as one object.) `.data` (explicit
   definitions, emitted in order) where a record is split over several
   names, or `PORT_HOST(...)` naming the next object where a matching
   fake reaches it (`(&D_x)[1]`). ASan sees the overlays' data and .bss

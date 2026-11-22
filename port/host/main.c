@@ -439,5 +439,9 @@ int main(int argc, char **argv) {
     }
     host_audio_shutdown();
     host_video_shutdown();
+    host_digest_close();
+    /* (and any other file still open, PORT_DUMP_DL's: under node nothing
+       flushes them at the exit) */
+    fflush(NULL);
     return 0;
 }

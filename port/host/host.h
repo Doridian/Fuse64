@@ -37,6 +37,7 @@ void host_vi_frame(void);               /* at each retrace (PORT_VI_REF) */
 /* audio.c */
 void host_audio_init(void);
 void host_audio_shutdown(void);
+void host_digest_close(void);
 extern const char *host_wav_path;
 
 /* input.c */

@@ -268,6 +268,14 @@ static void put(char *line, int *len, int idx, const char *key, const char *val,
     *len += sprintf(line + *len, " %s=%s", key, val);
 }
 
+/* the end of the run: the file closed (under node, emscripten's runtime
+   exits without flushing what libc still buffers: the last lines) */
+void host_digest_close(void) {
+    if (out)
+        fclose(out);
+    out = NULL;
+}
+
 static int force_full;
 
 static void open_out(void) {

@@ -418,7 +418,10 @@ elseif(EMSCRIPTEN)
     # WebAssembly (emcmake cmake ...): headless under node.  The game's
     # threads and 530C0's tasks are emscripten's fibers (Asyncify).  The
     # program's data starts at 256 MiB, so that no pointer of the game's
-    # looks like an N64 physical or segmented address (port/src/memory.c).
+    # looks like an N64 physical or segmented address (port/src/memory.c),
+    # and the functions' table at 64 Ki, so that no function's address (its
+    # slot) looks like a small number (an index the game keeps in a pointer:
+    # the gameplay digest's pools, port/host/digest.c).
     target_compile_definitions(fuse64 PRIVATE PORT_HAVE_ASYNCIFY)
     # -O2 at the link too: without it emcc runs no wasm-opt, and Asyncify's
     # instrumentation stays as slow as it was made.  Binaryen would inline
@@ -426,7 +429,7 @@ elseif(EMSCRIPTEN)
     # switch rewinds every frame on the stack by walking its body to the
     # call (DozerEncore's port/CMakeLists.txt).  The renderer never switches
     # fibers, so Asyncify leaves it alone (web/asyncify_remove.txt).
-    target_link_options(fuse64 PRIVATE -O2 -sASYNCIFY -sASYNCIFY_STACK_SIZE=65536 -sGLOBAL_BASE=268435456
+    target_link_options(fuse64 PRIVATE -O2 -sASYNCIFY -sASYNCIFY_STACK_SIZE=65536 -sGLOBAL_BASE=268435456 -sTABLE_BASE=65536
         -sINITIAL_MEMORY=384MB -sALLOW_MEMORY_GROWTH=1 -sSTACK_SIZE=1MB --profiling-funcs
         -sBINARYEN_EXTRA_PASSES=--one-caller-inline-max-function-size=200
         -sASYNCIFY_REMOVE=@${CMAKE_CURRENT_SOURCE_DIR}/web/asyncify_remove.txt)

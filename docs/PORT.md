@@ -421,7 +421,15 @@ emulator's last frame):
 | the same in every frame the emulator has (to 2585), then the port stops where the N64 hangs (below) | 75:17 |
 
 All 77, and 75:18 (the room as the game enters it). Every boss and
-every battle stage is the same. Three things the sweep found:
+every battle stage is the same.
+
+eu and jp (2026-11-21, the same 77 and 75:18, each version's ROM build
+and port, warp.<v>.txt and story.<v>.eep, battle.<v>.txt): all 78 the
+same in every frame, 75:17 to the N64's last (eu 2606, jp 2408; the
+same word and the same stop as us). Before the fix below, eu's 150
+differed at frame 3642 (CPU player 3 throws player 0 a frame later on
+the port) and jp's 149 and 148 for a frame each (1567, 4881: e3's
+unk10 bit 0x200). Four things the sweeps found:
 
 - **A stack byte**: 9CAB0.c's func_80283794 (an enemy's way towards its
   target) reads `range[1]`, which it sets only for the types 41-45;
@@ -446,6 +454,21 @@ every battle stage is the same. Three things the sweep found:
   0 after. With a constant 0 (the port before) 56-61 differ from frame
   1034 and 48:17 (4655), 85:17 (2934) and 123 (2083) later; with a
   constant 11, 45 and sixteen of the rooms.
+- **Two stack slots** (eu's 150, jp's 148 and 149): 5E3F0.c's
+  func_8024E088, which one task (func_8024FFF0) calls for each player in
+  turn, reads two locals unset. `spB4[0]`, the stick's angle:
+  func_80239880 sets only the length when the stick is let go, and
+  func_8024C334 keeps the angle in `D_802ACA30[]` anyway, which the
+  holder's count to a throw (func_8024AF24) compares with. `sp74`,
+  passed to func_8024C334 with its only store before the call in a
+  branch: non-NULL, func_80247A54 makes it the entity picked up
+  (func_80247928, `unk10` bit 0x200). On the N64 each slot holds what
+  the call before left: the frame is 0x128 bytes, and between calls only
+  the yield runs (func_80239094 to func_80238D98 and the task's
+  setjmp/longjmp, about 0x50 bytes deep; the slots are 0x74 and 0xB4
+  below the caller's sp). So both are `static` under `TARGET_PC`;
+  `D_802ACA30[3]` in eu's 150 then takes exactly the N64's values at the
+  N64's frames (watched on both).
 - **A warp artefact** (not the port's): a room after a stage's first,
   warped to with the world select's sub-mode 16, reads its overlay's
   .bss before setting it (ovl_0C_05's `D_ovl0C_05_80045AA0`, the
@@ -1579,10 +1602,10 @@ digest") and the wait for the NMI in 6BBE0.c ("The TAS").
   alpha compare of the next pixel's first cycle and the memory's color
   of the pixel before, which angrylion has; noise isn't the RDP's).
 - **The gameplay digest** ("The gameplay digest"): checked against
-  mupen64plus in us's battle and story, eu's and jp's battle, and us's
-  77 PORT_WARP scenes, with the object pools, on i386: all the same
-  (75:17 as far as the N64 goes: "The stages: the warp on the
-  emulator"). Left: eu's and jp's stages; the pools
+  mupen64plus in us's battle and story, eu's and jp's battle, and the
+  77 PORT_WARP scenes in us, eu and jp, with the object pools, on
+  i386: all the same (75:17 as far as the N64 goes: "The stages: the
+  warp on the emulator"). Left: the pools
   on 64-bit hosts (by field, with the host's struct offsets); 9CAB0.c's
   two unions.
 - **Audio** ("Audio"): checked against mupen64plus in us's menus, story

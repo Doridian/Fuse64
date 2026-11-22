@@ -22,6 +22,8 @@
    "6000": "5645eda4",
    "900": "8e48826d"
   },
+  "digest": "54a2966ae5da48cb888e5ecb410569d2189bafd8",
+  "digest_pools": "f279ec64161363edf34b3874a5eabd0826b230bb",
   "eeprom": "5b7b5f53592bb3c8023106383a3cafadab913b1b",
   "frames": "4c6bbdd09e1a45821bb65ba103ae012d827e23b0",
   "wav": "e05bcd8afdc1e1753aa6ff77107aef8eda0fc4d6"
@@ -30,6 +32,8 @@
   "checkpoints": {
    "300": "4a817bd2"
   },
+  "digest": "52015fa56d630745cac415d3729200206a24c697",
+  "digest_pools": "1e0e098f3dd8e74a14e09cfe8d4c110952bdd080",
   "eeprom": "5b7b5f53592bb3c8023106383a3cafadab913b1b",
   "frames": "f82cfcdc2c7ffb7828f31df8ad3241c324aa8642",
   "wav": "138c22d272f3cd2c0a805e6f080e199f10d0c524"
@@ -47,6 +51,8 @@
    "600": "3b3242c8",
    "900": "322d6fa0"
   },
+  "digest": "ce53661d618ec863c9c0e38915751970bbba2db5",
+  "digest_pools": "cf580f5bc1ea359130b88251f47be1c04ef8045c",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
   "frames": "a660d4123bfad1cf04ef8c61f4cb75df351de408",
   "wav": "c8f2a6ef01282123a82f4b44a55c11e68642e871"
@@ -94,6 +100,8 @@
    "9600": "41c2d4e4",
    "9900": "9a2e4161"
   },
+  "digest": "595c62398fe1ccf913f2859baa67131891d193c7",
+  "digest_pools": "1fd71e8ce41cb62d3da4075486797c9e57babd58",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
   "frames": "07ea4d501ecd989bb0cba894c0db84e18753ba03",
   "wav": "2d0d349ea775db681b63105e4ffbbae736f2e321"
@@ -121,6 +129,8 @@
    "6000": "dcb27eea",
    "900": "8e48826d"
   },
+  "digest": "bc36ef7f35b7c2a3a6fc981b2862f61bea6cd655",
+  "digest_pools": "5371c68d2ec8ade31f0cba3579a1fdbbd9c0d74a",
   "eeprom": "5b7b5f53592bb3c8023106383a3cafadab913b1b",
   "frames": "458d91b8689d90497116afde4b7d6fcbd4657dfd",
   "wav": "e724be5e4e029bc16b466e080083fa00c0593e10"
@@ -144,6 +154,8 @@
    "600": "3b3242c8",
    "900": "f3cc566d"
   },
+  "digest": "8c802fd1f3ff430ca5a72e792e312b142d0821a9",
+  "digest_pools": "4ef418959aa40c72caf56236277da01352ebc934",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
   "frames": "2b29096285fb9efa7f8ca9d42411a1485d48b52c",
   "wav": "75e1dd95d09566b723e073ef40bf0035358368c4"
@@ -167,6 +179,8 @@
    "600": "3b3242c8",
    "900": "f3cc566d"
   },
+  "digest": "ba17e8ca05efccbd3c05a3e9349d533b2980b7c2",
+  "digest_pools": "073e895604558906c9df1c2a6febb966f99e5743",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
   "frames": "1a29a43ae041f0864d1ffc651c1830d60ff21eba",
   "wav": "81eba6ff8d02cf2ac0e35a36e0f01e2ae21a77f2"
@@ -194,6 +208,8 @@
    "6000": "0f2d537c",
    "900": "2e643084"
   },
+  "digest": "ecbfd5053ceb3926a6d5f62f3fb6c15ad49815c3",
+  "digest_pools": "5ddadd497ce49a955d5e52b098ca444ff7107845",
   "eeprom": "6b4c522172e36bd7b31f29fea72f78fda46059a6",
   "frames": "780d2b130dc4b407b20ab44241e922d1c7c24a5d",
   "wav": "3d8fafbff5a54d3d31937a34da134e3e25d08041"
@@ -202,6 +218,8 @@
   "checkpoints": {
    "300": "cb7b5d6a"
   },
+  "digest": "abc4f5922b6a3a1241c292599ac046293104cef0",
+  "digest_pools": "8ecdcadc927fe2ce56fe85fe7cb6c8545da81c69",
   "eeprom": "6b4c522172e36bd7b31f29fea72f78fda46059a6",
   "frames": "91de139e34166d9de6715f852fe47c92bf81e83d",
   "wav": "6c8ee6d63381ea7e43ce7eb6820265910072d43f"
@@ -219,6 +237,8 @@
    "600": "9cb64e13",
    "900": "7e48217f"
   },
+  "digest": "18ed2b5d30aac7f7e8bb60e92e21b672acd7e848",
+  "digest_pools": "48c6ffdba654919d986c637602999d5ffd8bb705",
   "eeprom": "2e939a4b4c54e88a202a0ddda9310a089445e547",
   "frames": "164cb99fdc560d40d5a3db555833e676556ac873",
   "wav": "ff981fdfcbc358519b9eb568b6b41713cb240a46"
@@ -266,6 +286,8 @@
    "9600": "c70d16be",
    "9900": "4a89d1ff"
   },
+  "digest": "26097e3d593c4a6105eea4a2958239f01da94eb2",
+  "digest_pools": "95f550e61cbc37cf38c0b0dddf7c149adea6b1c5",
   "eeprom": "2e939a4b4c54e88a202a0ddda9310a089445e547",
   "frames": "66c321afa7b4ff642596cb8d262f4398c6565421",
   "wav": "0dd0eb6020e50baa135ee5d45edf12ad02c0cb9e"
@@ -308,6 +330,8 @@
    "6000": "6f484e00",
    "900": "2e643084"
   },
+  "digest": "17976f4c663601b0b3563c5aa5663ebdf7e78566",
+  "digest_pools": "db36209c80b244066364c71d027b257b262d6d2c",
   "eeprom": "6b4c522172e36bd7b31f29fea72f78fda46059a6",
   "frames": "9ef5fad62e1e6a4e34b7256828ddca5377282180",
   "wav": "e40b5b297e8f3ca322f93ac579a5fac46855876a"
@@ -331,6 +355,8 @@
    "600": "e0f01ebd",
    "900": "a139b12a"
   },
+  "digest": "3381e7010e45a203d6e91b00c3980bab7ced0fed",
+  "digest_pools": "2d831d6bc9042aae1147f04e1135489d2a0ef366",
   "eeprom": "2e939a4b4c54e88a202a0ddda9310a089445e547",
   "frames": "1b3e9449e51c227b1deb7b2ec8d800014ed6b948",
   "wav": "38cd9cf28edf26f03023b870ace370edce550c26"
@@ -354,6 +380,8 @@
    "600": "e0f01ebd",
    "900": "4b499f5a"
   },
+  "digest": "ac8c74498628ae4183a92c2cda212af35ed406a6",
+  "digest_pools": "7bfde4971ef7f7f6b6c01023dfbcbfa98e848cbb",
   "eeprom": "2e939a4b4c54e88a202a0ddda9310a089445e547",
   "frames": "a8c7b021debaed44aad5b812ae8e21f3f495f18b",
   "wav": "dbce61fe4fa0f3ea7220c8c2e2d2dc9562de77c4"

@@ -47,6 +47,12 @@ typedef struct {
     CONTROL *Controls;
 } CONTROL_INFO;
 
+/* CONTROL's size in ints: 4 in mupen64plus 2.x, 3 in BizHawk's 2013 core
+ * (no Type); inputscript_control_ints() sets it before the plugin is
+ * attached */
+static int control_ints = 4;
+void inputscript_control_ints(int n) { control_ints = n; }
+
 typedef unsigned int (*frame_fn)(void);
 
 static frame_fn frame_now;
@@ -167,10 +173,12 @@ int PluginGetVersion(int *type, int *version, int *api, const char **name, int *
 void InitiateControllers(CONTROL_INFO info)
 {
     for (int i = 0; i < 4; i++) {
-        info.Controls[i].Present = present >> i & 1;
-        info.Controls[i].RawData = raw >> i & 1;
-        info.Controls[i].Plugin = 1; /* PLUGIN_NONE: no pak */
-        info.Controls[i].Type = 0;   /* CONT_TYPE_STANDARD */
+        int *c = (int *)info.Controls + i * control_ints;
+        c[0] = present >> i & 1; /* Present */
+        c[1] = raw >> i & 1;     /* RawData */
+        c[2] = 1;                /* Plugin: PLUGIN_NONE, no pak */
+        if (control_ints > 3)
+            c[3] = 0;            /* Type: CONT_TYPE_STANDARD */
     }
 }
 

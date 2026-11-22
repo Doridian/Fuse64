@@ -9,8 +9,9 @@
 
 MOVIE is a known movie's id (`tas.py fetch` lists them and downloads one
 into build/tas/movies/ if it isn't there) or a path to a .bk2 or .m64.
-docs/TAS.md has the details, and how far the movies sync (they don't, all
-the way).
+docs/TAS.md has the details, and how far the movies sync: 4908M to its
+end on BizHawk's own core (--bizhawk build/tas/bizhawk/dist, built by
+tools/bizhawk_core.sh), the others not past their reset.
 
 The movie's input is played by tools/src/m64p_inputscript.c, by frame
 (BizHawk's .bk2: one line per VI, BizHawk's first two VIs before it) or by
@@ -23,7 +24,8 @@ blank EEPROM (zeros), and its controller (BizHawk's input plugin answers
 the joybus itself).  The video plugin is m64p_vicount.c, which raises the
 RDP's interrupt for each display list with a full sync, as a real plugin
 does.  The core's own frames are VIs (tools/src/m64p_vicount.c counts
-them); soft resets in the movie happen at their frame.
+them); soft resets in the movie happen at their frame.  --bizhawk runs
+BizHawk 2.8's own core instead (BizHawkSession), with the same plugins.
 
 Each VI the run records:
 - the overlay at 0x80043000 (against the overlays of the ROM being run),
@@ -76,9 +78,12 @@ MOVIES = {
         "zip_sha1": "8164fb6f0ded53e8d4996d3f0db9190a81fdf516",
         "file": "zvsp-bomberman64.bk2",
         "sha1": "09cfd140372fb2c58a41a5ad37b0cf0af1ee6e75",
-        # the first stage times, read off the clear screens of the
-        # publication's encode (Blue Resort 1 and 2)
-        "stage_times": [1431, 316],
+        # the stage times of BizHawk's core's run (tools/bizhawk_core.sh):
+        # the clear screens of the publication's encode show the same 15
+        # (the four bosses' fights have none: 2329, 2521, 2161, 1641), and
+        # its last frames the clock at 4.99 in the last fight
+        "stage_times": [1431, 316, 1911, 2329, 3554, 423, 2716, 2521, 5529, 444, 4296, 2161, 3568, 381,
+                        4674, 1641, 5599, 1338, 7481],
     },
     "2053M": {
         "page": "https://tasvideos.org/2053M",
@@ -335,7 +340,10 @@ class BizHawkSession(emu_ram.Session):
     M64CMD_ADVANCE_FRAME = 20
     M64CMD_SET_VI_CALLBACK = 21
 
-    def __init__(self, libdir, rom, config, quiet=True):
+    def __init__(self, libdir, rom, config, quiet=True, controllers=(1, 1), breaks=None):
+        """breaks: {address: fn(session)}, called when the CPU is about to
+        run the instruction there (the core's debugger, as BizHawk turns
+        it on; it changes nothing of the run)."""
         import threading
         libdir = Path(libdir)
         self.core = core = ctypes.CDLL(str(libdir / "libmupen64plus.so.2"))
@@ -372,6 +380,8 @@ class BizHawkSession(emu_ram.Session):
             sys.exit("CoreStartup failed")
         sec = ctypes.c_void_p()
         core.ConfigOpenSection(b"Core", ctypes.byref(sec))
+        if breaks:
+            config = dict(config, EnableDebugger=1)
         for name, value in config.items():
             v = ctypes.c_int(value)
             core.ConfigSetParameter(sec, name.encode(), emu_ram.M64TYPE_INT, ctypes.byref(v))
@@ -381,10 +391,35 @@ class BizHawkSession(emu_ram.Session):
             sys.exit("ROM_OPEN failed")
         if core.CoreDoCommand(self.M64CMD_SET_VI_CALLBACK, 0, vi):
             sys.exit("SET_VI_CALLBACK failed")
+        if breaks:
+            # the debugger stops at a breakpoint (and at its start) until
+            # it is told to run on
+            @ctypes.CFUNCTYPE(None)
+            def dbg_init():
+                core.DebugSetRunState(2)
+
+            @ctypes.CFUNCTYPE(None, ctypes.c_int)
+            def dbg_update(_bpt):
+                fn = breaks.get(ctypes.c_uint32.from_address(core.DebugGetCPUDataPtr(1)).value)
+                if fn:
+                    fn(self)
+                core.DebugSetRunState(2)
+                core.DebugStep()
+
+            self._keep += [dbg_init, dbg_update]
+            core.DebugSetCallbacks(dbg_init, dbg_update, None)
+            for addr in breaks:
+                bp = (ctypes.c_uint * 3)(addr, addr, 0x21)     # BPT_FLAG_ENABLED | BPT_FLAG_EXEC
+                core.DebugBreakpointCommand(2, 0, bp)           # M64P_BKP_CMD_ADD_STRUCT
         if rsp.PluginStartup(ctypes.c_void_p(core._handle), None, debug):
             sys.exit("RSP PluginStartup failed")
         if inp.PluginStartup(ctypes.c_void_p(core._handle), None, debug):
             sys.exit("input PluginStartup failed")
+        # this core asks the input plugin about its controllers once, when
+        # it is attached (InitiateControllers), not at every start, and its
+        # CONTROL has no Type (three ints, not four)
+        inp.inputscript_controllers(*controllers)
+        inp.inputscript_control_ints(3)
         for kind, lib in ((emu_ram.M64PLUGIN_GFX, vic), (emu_ram.M64PLUGIN_INPUT, inp),
                           (emu_ram.M64PLUGIN_RSP, rsp)):
             if core.CoreAttachPlugin(kind, ctypes.c_void_p(lib._handle)):
@@ -447,7 +482,7 @@ def timer_address(rom, rom_sha1, elf=None):
 
 def play(movie, rom, frames=None, offset=2, vi="bizhawk", raw=True, eeprom=0x00, dp=1,
          elf=None, settings_md5=JP_MD5, bizhawk=None, dumps=(), dump_dir=None, hook=None,
-         quiet=True, log=None):
+         quiet=True, log=None, breaks=None):
     """Run the movie on the ROM; returns the report (a dict).
 
     offset: a poll during VI n reads movie frame n - offset (BizHawk
@@ -457,7 +492,7 @@ def play(movie, rom, frames=None, offset=2, vi="bizhawk", raw=True, eeprom=0x00,
     BizHawk's input plugin.  eeprom: the byte a blank EEPROM is filled with
     (BizHawk's is zeros; None for the core's, 0xFF).  dp: the RDP interrupt
     (m64p_vicount.c).  bizhawk: a directory with BizHawk's own core instead
-    (tools/bizhawk_core.sh)."""
+    (tools/bizhawk_core.sh); breaks: its breakpoints (BizHawkSession)."""
     rom_data = Path(rom).read_bytes()
     rom_sha1 = sha1(rom_data)
     ovl = Overlays(rom_data)
@@ -478,7 +513,8 @@ def play(movie, rom, frames=None, offset=2, vi="bizhawk", raw=True, eeprom=0x00,
     if bizhawk:
         emu = BizHawkSession(bizhawk, rom, {"R4300Emulator": movie.interpreter,
                                             "DisableExtraMem": config["DisableExtraMem"]},
-                             quiet=quiet)
+                             quiet=quiet, controllers=(movie.present, movie.present if raw else 0),
+                             breaks=breaks)
     else:
         emu = emu_ram.Session(rom, quiet=quiet, config=config, input=True, on_romopen=romopen,
                               settings_md5=settings_md5,

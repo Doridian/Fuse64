@@ -33,6 +33,22 @@ C=$B/src/mupen64plus-core
 sed -i 's/^\t\tShowWindow(SysInfo.window,0);/\t\t;/' "$C/src/api/vidext.c"
 sed -i 's/\bfsqrt\b/x86_fsqrt/g' "$C"/src/r4300/x86/*.[ch] "$C"/src/r4300/x86_64/*.[ch]
 sed -i 's/ -ffast-math//' "$C/projects/unix/Makefile"
+# BizHawk builds with MSVC, whose branch of fpu.h has its own round and
+# trunc: round half up (floor(x + 0.5)), trunc through int.  The FPU's
+# rounding conversions (round.w.s and the like) go through them, and they
+# give other results than C99's at the halves.  The same here, so the core
+# rounds as BizHawk's DLL does (4908M plays the same either way, and VI for
+# VI as BizHawk 2.8's own mupen64plus.dll under wine).
+sed -i 's|^  #include <fenv.h>$|&\
+  static inline double msvc_round(double x) { return floor(x + 0.5); }\
+  static inline float msvc_roundf(float x) { return (float) floor(x + 0.5); }\
+  static inline double msvc_trunc(double x) { return (double) (int) x; }\
+  static inline float msvc_truncf(float x) { return (float) (int) x; }\
+  #define round msvc_round\
+  #define roundf msvc_roundf\
+  #define trunc msvc_trunc\
+  #define truncf msvc_truncf|' "$C/src/r4300/fpu.h"
+grep -q msvc_roundf "$C/src/r4300/fpu.h"
 
 mkdir -p shim
 cat > shim/Windows.h <<'EOF'

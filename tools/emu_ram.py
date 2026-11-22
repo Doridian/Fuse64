@@ -157,6 +157,8 @@ class Session:
         self.rsp = rsp = ctypes.CDLL(rsp_lib)
         self.vic = vic = ctypes.CDLL(str(TOOLS / "m64p_vicount.so"))
         self.inp = inp = ctypes.CDLL(str(TOOLS / "m64p_inputscript.so")) if input else None
+        if inp:
+            inp.inputscript_control_ints(4)     # 2.x's CONTROL (tas.py's BizHawkSession sets 3)
         self.aud = aud = ctypes.CDLL(str(TOOLS / "m64p_audiodump.so")) if wav else None
         core.DebugMemGetPointer.restype = ctypes.c_void_p
         core.DebugGetCPUDataPtr.restype = ctypes.c_void_p

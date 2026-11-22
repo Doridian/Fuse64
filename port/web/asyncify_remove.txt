@@ -2,12 +2,27 @@
 # Corps' port/web/asyncify_remove.txt): a graphics task runs to its end
 # without a fiber switch, so no unwind or rewind passes through them, and the
 # instrumentation only costs.  One name a line (the ones the link keeps after
-# inlining); each is defined once in the link.
+# inlining, which Asyncify would otherwise instrument: those that call
+# through a pointer or the log); each is defined once in the link.
+# gfx.c: the task and the microcode on the RSP interpreter (rsp.c)
 host_gfx_task
-mtx_mul
-gfx_texel
+rsp_run
+uc_begin
+uc_cmd
+uc_dma
+xr_dl
+cs_load
+cs_prim
+addr
+# gfx_rdp.c, gfx_soft.c: the RDP
+rdp_feed
+rdp_op
+rdp_tri
+fill_rect
+tex_rect
+write_px
+trace_px
 sample
-cc_begin
-write_mem
-shade_pixel
-tri
+# vi.c: the VI's picture, after each retrace
+host_vi_frame
+host_vi_picture

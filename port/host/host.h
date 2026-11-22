@@ -52,6 +52,18 @@ void host_gfx_init(void);
 const uint8_t *host_gfx_hidden(void);
 uint64_t host_gfx_tris(void);           /* triangles drawn so far */
 
+/* gfxcensus.c: PORT_GFX_CENSUS=FILE, what the graphics tasks use, counted */
+extern int host_census_on;
+void host_census_init(void);
+void host_census(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
+
+/* fbwatch.c: PORT_FB_WATCH=FILE, the CPU's reads and writes of the color
+   and depth images between graphics tasks */
+extern int host_fbw_on;
+void host_fbw_init(void);
+void host_fbw_image(const uint8_t *p, size_t n, int z);    /* an image the RDP drew to */
+void host_fbw_task(int begin);          /* a task's start (1) and end (0) */
+
 /* N64 buttons */
 enum {
     B_A = 0x8000, B_B = 0x4000, B_Z = 0x2000, B_START = 0x1000, B_DU = 0x0800, B_DD = 0x0400,

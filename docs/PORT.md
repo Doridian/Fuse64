@@ -1347,6 +1347,62 @@ that is every retrace: us's battle, 6000 retraces, 153 s against 139 s
 with `--vi-raw` (i386, the two at once on a very busy machine), about
 2.5 ms a picture there.
 
+**The GBI census.** What a renderer other than the microcode's (a GPU's,
+from the display lists) must do, counted over the runs:
+`port/tools/gbi_census.py run BUILD OUT` plays test.py's seven
+scenarios, the 77 `PORT_WARP` stages and 75:18, and monkey runs (the
+attract demos, the menus' monkey, the eleven bosses, battle stages 144
+and 151; seed 1), each with `PORT_GFX_CENSUS=FILE` (port/host/gfxcensus.c:
+gfx.c names each command, each primitive's kind, cycle type, combiner
+and other modes, each tile it samples, each TMEM load and where it reads,
+each image, and counts them) and `PORT_FB_WATCH` (below); `report OUT`
+gives the tables (`--md` as Markdown), `fbwatch OUT --build BUILD` the
+framebuffer's other users. us, 2026-11-21: 101 runs, 598,875 graphics
+tasks (jp the same 101: 598,839 tasks, the same answers below but for
+three keys, a tile size and two combiner/mode pairs; eu's 23 scenario and
+monkey runs nothing us lacks):
+
+| what | found |
+|---|---|
+| microcode | F3DEX.NoN 1.21 in every task; LOAD_UCODE never (no S2DEX, no line microcode; the ROM has no other graphics microcode) |
+| RSP commands | MTX, MOVEMEM (VIEWPORT, L0-L2 once a task), VTX (3 to 32 vertices), DL (calls only), TRI1, TRI2, CULLDL (42% culled), ENDDL, POPMTX, MOVEWORD (SEGMENT, LIGHTCOL every object, FOG, NUMLIGHT, CLIP, PERSPNORM), TEXTURE, SETOTHERMODE_H/L, SET/CLEARGEOMETRYMODE; MODIFYVTX (RGBA only) in the opening (scene 26) alone, 8,960 times. Never: BRANCH_Z, LINE3D/LineW3D, LookAt, a DL branch, RDPHALF outside texture rectangles |
+| geometry modes | ZBUFFER, SHADE, SHADING_SMOOTH and LIGHTING always; CULL_BACK but on the attract title's pictures (0.03% of the triangles); FOG on 14% of the vertices (64 fog ranges, some stages moving theirs every frame); TEXTURE_GEN (not linear) on 2.8%, with the microcode's default LookAt (the lists never set one); no LOD |
+| cycle types | 1-cycle for every triangle and texture rectangle; fill for the clears (every frame the z image, and the color image); 1-cycle fill rectangles (the fades, PRIMITIVE through the blender). Never 2-cycle, never copy mode |
+| combiners | 13: MODULATEIDECALA, DECALRGBA, SHADE (as `0*0+SHADE / 1`), HILITERGBA (with texgen), MODULATEIA, PRIMITIVE, DECALRGB, and TEXEL0 with ENV, PRIM or SHADE alpha |
+| render modes | 31 (other modes and blender): AA_ZB_TEX_EDGE (65% of the 117 million primitives), AA_TEX_EDGE (texture rectangles), fog (FOG\*A_SHADE + IN\*1MA, 1-cycle), the shadows' and clouds' IN\*A_FOG + MEM\*1MA with CVG_X_ALPHA, ALPHA_CVG_SEL, COLOR_ON_CVG and wrap, AA_ZB_XLU_SURF/DECAL, CLD_SURF (the after-image), alpha compare on some; texture filter bilinear (some rectangles point), TLUT RGBA16, perspective, RGB dither magic square, no alpha dither |
+| textures | CI4 and CI8 (LOADBLOCK as 16b, LOADTILE as 8b) with RGBA16 palettes (LOADTLUT), IA8, RGBA32, RGBA16; one tile (0), one level; wrap, mirror and clamp on each axis, masks to 128 texels, no shifts. Texture rectangles 1:1 or scaled (never flipped) |
+| images | the color images at 0x100000 and 0x125800 (RGBA16 320, double-buffered) and the z image at 0x200000; nothing drawn anywhere else. Scissor the screen, (8,6)-(311,233) and the attract pictures' shrinking rectangles |
+| from a framebuffer | the after-image: LOADBLOCKs of the other color image (below), in the last bosses (136-141) and the attract demos; nothing else loads from a color or z image |
+
+So against the design: one microcode, F3DEX 1.x's command set less
+BRANCH_Z, LINE3D and LOAD_UCODE (never sent), nothing 2-cycle, no copy
+mode, no LOD; CULLDL and fog are the culling and the blending a GPU
+front end needs; the one render-to-texture is the after-image's read of
+the previous frame.
+
+**The framebuffer's other users.** With `PORT_FB_WATCH=FILE`
+(port/host/fbwatch.c, Linux x86) the pages of the color and z images the
+RDP drew to in the last 60 retraces are inaccessible between graphics
+tasks; each access faults, is recorded (the instruction, the call chain,
+the offset) and stepped with the page open. Over the same runs (us and
+jp; eu's scenarios and monkey) the only CPU accesses are reads, by one
+pair of functions; nothing between tasks writes a color image or touches
+the z image. With the sources, the uses a GPU renderer has to serve:
+
+| where | what | when | hook |
+|---|---|---|---|
+| B11F0.c func_80296D4C (from func_80297114, ZeroJump 0x3103 func_8029750C) | the end of an attract demo: copies the shown color image, 320x240 halfwords \| 1, into the full-screen picture (a "64" RGBA16 image, D_802B03C0[4]), which then shrinks 40 frames as a texture | the attract demos' four stages (56, 80, 88, 41; `m_attract`, `m_menus`) | readback |
+| B11F0.c func_80296C10 | then copies the 148x111 at (86,72) of the shown image, where the shrunk picture was drawn (the RDP's filtering of it), into the demo's picture D_802B03C0[i], shown on the title afterwards | the same | readback |
+| AFBF0.c func_802957C0 (func_8029670C, func_80295B80; ZeroJump 0x3000, 0x3003) | the credits: each room's shot copied as above into a 320x240 picture the names scroll over | the credits after the last boss (not reached by the runs: scenes 92 and 97 with sub-mode 16 are warp artefacts) | readback |
+| 412F0.c func_80226E4C(1) | the accessor all three read through: `D_80100000[D_802A5388 ^ 1]`, the image last shown; they first stop the task submission with func_80226E40(0) (412F0.c's frame end then submits no graphics task) and wait 8-10 retraces | | the readback point: the shown image into port_rdram |
+| 412F0.c func_80226E84 with D_8029F5F8 (func_802276D4(1), ZeroJump 0x2202; alpha func_802276C8, 0x2203) | the after-image: the frame's list ends with 120 LOADBLOCKs of the previous color image (`D_80100000[cur ^ 1]`, two lines each, RGBA16) and texture rectangles of it over the new one, `TEXEL0 / PRIM` alpha (0x40 in the attract's, 0xBF in 136's), CLD_SURF | the last bosses' overlays (ovl_13_01 to ovl_15_02: 136-141), the attract capture's shrink (B11F0.c), ovl_0A_05's func_ovl0A_05_800446AC, ovl_0B_04's (never run) | texture from the previous framebuffer (SETTIMG into a color image) |
+| port/host/vi.c | the VI: the shown image and its coverage (hidden bits) | every retrace | the output stage |
+
+func_80280814 (9A5F0.c) writes a "64" image too, but from the font (a
+text slot), not from a framebuffer. The fades are fill rectangles in
+1-cycle mode, the shadows and PRESS START coverage blends in the
+RDP's own memory, both inside the tasks.
+
 ### Audio
 
 libaudio is DozerEncore's port of Blast Corps' library (port/libaudio),

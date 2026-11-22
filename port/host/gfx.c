@@ -107,6 +107,8 @@ static void bl_div_init(void);
 void host_gfx_init(void) {
     memset(hidden, HB_CLEAN, sizeof hidden);
     bl_div_init();
+    host_census_init();
+    host_fbw_init();
 }
 
 /* the hidden bits of the halfword at p (outside RDRAM: a scratch byte) */
@@ -1176,6 +1178,8 @@ static void rdp_tri(const uint32_t *w) {
    s10.5's 16.16; flipped, s steps down and t across), so that its edges
    at a quarter pixel get their coverage as a triangle's do (as angrylion
    and parallel-rdp draw them) */
+static void cs_prim(const char *kind, int textured, int tile, int levels);   /* (PORT_GFX_CENSUS) */
+
 static void rect_tri(uint32_t xl, uint32_t yl, uint32_t xh, uint32_t yh, int tile, const int *st) {
     uint32_t w[24] = { 0 };
     w[0] = (uint32_t)(st ? 0x0A : 0x08) << 24 | 1u << 23 | (uint32_t)tile << 16 | yl;
@@ -1223,6 +1227,13 @@ static void tex_rect(uint32_t w0, uint32_t w1, uint32_t h1, uint32_t h2, int fli
     int s0 = (int16_t)(h1 >> 16), t0 = (int16_t)(h1 & 0xFFFF);
     int dsdx = (int16_t)(h2 >> 16), dtdy = (int16_t)(h2 & 0xFFFF);
     int cyc = (gs.om_h >> 20) & 3;
+    if (host_census_on) {
+        int one = cyc == 2 ? 4 << 10 : 1 << 10;
+        host_census("rdp %02X", flip ? 0xE5 : 0xE4);
+        cs_prim(flip ? "texrectflip" : "texrect", 1, tile, 1);
+        host_census("texrect cyc=%d flip=%d scale=%s", cyc, flip,
+                    dsdx == one && dtdy == 1 << 10 ? "1:1" : dsdx == -one ? "mirrored" : "scaled");
+    }
     if (cyc < 2) {
         int st[6] = { s0, t0, flip ? 0 : dsdx, flip ? dtdy : 0, flip ? dsdx : 0, flip ? 0 : dtdy };
         rect_tri((uint32_t)xl, (uint32_t)yl, (uint32_t)xh, (uint32_t)yh, tile, st);
@@ -1866,8 +1877,86 @@ static void xr_end(void) {
 static int dl_depth;
 
 /* one of the RDP's two-word commands (a pointer's width for the images) */
+/* ---- PORT_GFX_CENSUS and PORT_FB_WATCH -------------------------------------------------- */
+
+/* PORT_GFX_CENSUS (gfxcensus.c, port/tools/gbi_census.py): what each
+   primitive draws with (its kind, cycle type, combiner and other modes),
+   what it samples (the tiles), what is loaded into TMEM and from where:
+   a load from a color or z image the RDP drew to is "fbload" */
+static struct {
+    const uint8_t *p;
+    size_t n;
+    int z;
+} cs_img[32];
+static int cs_nimg;
+static uint32_t cs_geom;                /* the geometry mode, as the list set it this task */
+
+static size_t cs_bytes(int siz) { return siz == 0 ? 1 : (size_t)1 << (siz - 1); }
+
+static void cs_image(const uint8_t *p, int w, int siz, int z) {
+    /* (an image's lines aren't in its command: 240, the screen's) */
+    size_t n = (size_t)w * 240 * (siz == 0 ? 1 : cs_bytes(siz));
+    if (siz == 0)
+        n /= 2;
+    if (p >= port_rdram && p < port_rdram + PORT_RDRAM_SIZE && n > (size_t)(port_rdram + PORT_RDRAM_SIZE - p))
+        n = (size_t)(port_rdram + PORT_RDRAM_SIZE - p);
+    if (host_fbw_on)
+        host_fbw_image(p, n, z);
+    if (!host_census_on)
+        return;
+    for (int i = 0; i < cs_nimg; i++)
+        if (cs_img[i].p == p) {
+            if (n > cs_img[i].n)
+                cs_img[i].n = n;
+            return;
+        }
+    if (cs_nimg < 32) {
+        cs_img[cs_nimg].p = p;
+        cs_img[cs_nimg].n = n;
+        cs_img[cs_nimg++].z = z;
+    }
+}
+
+static long cs_off(const void *p) {
+    const uint8_t *b = p;
+    return b >= port_rdram && b < port_rdram + PORT_RDRAM_SIZE ? (long)(b - port_rdram) : -1;
+}
+
+static void cs_tile(const char *kind, int tile) {
+    const Tile *t = &gs.tile[tile & 7];
+    host_census("tile %s fmt=%d siz=%d cms=%d cmt=%d masks=%d maskt=%d shifts=%d shiftt=%d", kind, t->fmt, t->siz,
+                t->cms, t->cmt, t->masks, t->maskt, t->shifts, t->shiftt);
+}
+
+/* a primitive the RDP draws: KIND (tri.S/T/Z, texrect, fillrect) */
+static void cs_prim(const char *kind, int textured, int tile, int levels) {
+    int cyc = (gs.om_h >> 20) & 3;
+    host_census("prim %s cyc=%d cc=%014llX omh=%06X oml=%08X", kind, cyc, (unsigned long long)gs.combine,
+                (unsigned)gs.om_h, (unsigned)gs.om_l);
+    host_census("target %s cimg=%06lX fmt=%d siz=%d w=%d%s", kind, cs_off(gs.cimg), gs.cimg_fmt, gs.cimg_siz,
+                gs.cimg_w, gs.cimg == gs.zimg ? " (the z image)" : "");
+    if (textured && cyc != 3) {
+        host_census("ptex %s tile=%d levels=%d", kind, tile, levels);
+        cs_tile(kind, tile);
+        if (cyc == 1)
+            cs_tile("tri.2nd", tile + 1);
+    }
+}
+
+/* a load into TMEM from gs.timg */
+static void cs_load(const char *kind, size_t n) {
+    host_census("load %s fmt=%d siz=%d w=%d", kind, gs.timg_fmt, gs.timg_siz, gs.timg_w);
+    const uint8_t *a = gs.timg, *b = gs.timg + n;
+    for (int i = 0; i < cs_nimg; i++)
+        if (a < cs_img[i].p + cs_img[i].n && b > cs_img[i].p)
+            host_census("fbload %s from %s %06lX (+%ld) fmt=%d siz=%d w=%d", kind, cs_img[i].z ? "zimg" : "cimg",
+                        cs_off(cs_img[i].p), (long)(a - cs_img[i].p), gs.timg_fmt, gs.timg_siz, gs.timg_w);
+}
+
 static void rdp_op(uint32_t w0, uintptr_t w1) {
     uint32_t w1l = (uint32_t)w1;
+    if (host_census_on)
+        host_census("rdp %02X", (unsigned)((w0 >> 24) | 0xC0));
     uint8_t op = (w0 >> 24) | 0xC0;
     if (op >= 0xED) {
         if (op == 0xF5 || op == 0xF2) {
@@ -1887,6 +1976,8 @@ static void rdp_op(uint32_t w0, uintptr_t w1) {
         gs.sc_yh = w0 & 0xFFF;
         gs.sc_xl = (w1l >> 12) & 0xFFF;
         gs.sc_yl = w1l & 0xFFF;
+        if (host_census_on)
+            host_census("scissor %d %d %d %d mode=%d", gs.sc_xh, gs.sc_yh, gs.sc_xl, gs.sc_yl, (int)(w1l >> 24) & 3);
         break;
     case 0xEE:
         gs.prim_z = ((w1l >> 16) & 0x7FFF) << 3;
@@ -1897,6 +1988,8 @@ static void rdp_op(uint32_t w0, uintptr_t w1) {
         gs.om_l = w1l;
         break;
     case 0xF0:
+        if (host_census_on)
+            cs_load("tlut", (((w1l >> 14) & 0x3FF) - ((w0 >> 14) & 0x3FF) + 1) * 2);
         load_tlut(w0, w1l);
         if (dl_on)
             fprintf(dl_out, "%*s  tmem %08X\n", dl_depth * 2, "", dl_crc(tmem, sizeof tmem));
@@ -1905,11 +1998,16 @@ static void rdp_op(uint32_t w0, uintptr_t w1) {
         set_tile_size(w0, w1l);
         break;
     case 0xF3:
+        if (host_census_on)
+            cs_load("block", ((((w1l >> 12) & 0xFFF) - ((w0 >> 12) & 0xFFF) + 1) * cs_bytes(gs.timg_siz)) /
+                                 (gs.timg_siz ? 1 : 2));
         load_block(w0, w1l);
         if (dl_on)
             fprintf(dl_out, "%*s  tmem %08X\n", dl_depth * 2, "", dl_crc(tmem, sizeof tmem));
         break;
     case 0xF4:
+        if (host_census_on)
+            cs_load("tile", (size_t)gs.timg_w * (((w1l & 0xFFF) >> 2) + 1) * (gs.timg_siz ? cs_bytes(gs.timg_siz) : 1));
         load_tile(w0, w1l);
         if (dl_on)
             fprintf(dl_out, "%*s  tmem %08X\n", dl_depth * 2, "", dl_crc(tmem, sizeof tmem));
@@ -1918,6 +2016,8 @@ static void rdp_op(uint32_t w0, uintptr_t w1) {
         set_tile(w0, w1l);
         break;
     case 0xF6:
+        if (host_census_on)
+            cs_prim("fillrect", 0, 0, 0);
         fill_rect(w0, w1l);
         break;
     case 0xF7:
@@ -1944,12 +2044,23 @@ static void rdp_op(uint32_t w0, uintptr_t w1) {
         break;
     case 0xFE:
         gs.zimg = addr(w1);
+        if (host_census_on || host_fbw_on) {
+            cs_image(gs.zimg, 320, 2, 1);
+            if (host_census_on)
+                host_census("zimg %06lX", cs_off(gs.zimg));
+        }
         break;
     case 0xFF:
         gs.cimg = addr(w1);
         gs.cimg_fmt = (w0 >> 21) & 7;
         gs.cimg_siz = (w0 >> 19) & 3;
         gs.cimg_w = (w0 & 0xFFF) + 1;
+        if (host_census_on || host_fbw_on) {
+            cs_image(gs.cimg, gs.cimg_w, gs.cimg_siz, gs.cimg == gs.zimg);
+            if (host_census_on)
+                host_census("cimg %06lX fmt=%d siz=%d w=%d%s", cs_off(gs.cimg), gs.cimg_fmt, gs.cimg_siz, gs.cimg_w,
+                            gs.cimg == gs.zimg ? " (the z image)" : "");
+        }
         break;
     default:                            /* the syncs, NOOP */
         break;
@@ -1986,6 +2097,12 @@ static void rdp_cmd(const uint32_t *w, int n) {
         fputc('\n', dl_out);
     }
     int op = (w[0] >> 24) & 0x3F;
+    if (host_census_on && op >= 0x08 && op <= 0x0F) {
+        char k[16];
+        snprintf(k, sizeof k, "tri.%s%s%s", op & 4 ? "S" : "", op & 2 ? "T" : "", op & 1 ? "Z" : "");
+        host_census("rdp %02X", op | 0xC0);
+        cs_prim(k, op & 2, (w[0] >> 16) & 7, ((w[0] >> 19) & 7) + 1);
+    }
     if (op >= 0x08 && op <= 0x0F)
         rdp_tri(w);
     else if (op == 0x24 || op == 0x25)
@@ -2069,6 +2186,14 @@ static void uc_w32(uint32_t at, uint32_t v) { port_wbe32(rsp_dmem + at, v); }
 static void uc_begin(void) {
     uc_ok = uc_boot && uc_text && uc_data && uc_data_size >= 0x2D0 &&
             !memcmp(uc_data + 0x2B0, "RSP Gfx ucode F3DEX.NoN     1.21", 32);
+    if (host_census_on) {
+        host_census("task");
+        cs_geom = 0;
+        if (uc_data && uc_data_size >= 0x2D0)
+            host_census("ucode %.32s", (const char *)uc_data + 0x2B0);
+        else
+            host_census("ucode none");
+    }
     if (!uc_ok) {
         static int said;
         if (!said)
@@ -2167,6 +2292,58 @@ static uint32_t uc_vtx(uint32_t i) { return port_be16(rsp_dmem + ((i + 0x31E) & 
 
 /* ---- the display list ----------------------------------------------------------------------------- */
 
+/* PORT_GFX_CENSUS: a display list's command, and what it sets */
+static void cs_dl(uint32_t w0, uint32_t w1) {
+    uint8_t op = w0 >> 24;
+    host_census("dl %02X", op);
+    switch (op) {
+    case 0x01:
+        host_census("mtx params=%02X", (w0 >> 16) & 0xFF);
+        break;
+    case 0x03:
+        host_census("movemem %02X len=%d", (w0 >> 16) & 0xFF, w0 & 0xFFFF);
+        break;
+    case 0x04:
+        host_census("geom vtx %08X", cs_geom);
+        host_census("vtx n=%d", (w0 >> 10) & 0x3F);
+        break;
+    case 0x06:
+        host_census("dl 06 %s", ((w0 >> 16) & 0xFF) ? "branch" : "call");
+        break;
+    case 0xAF:
+        host_census("loaducode %08X %08X", w0, w1);
+        break;
+    case 0xB1: case 0xBF:
+        host_census("geom tri %08X", cs_geom);
+        break;
+    case 0xB5:
+        host_census("geom line %08X", cs_geom);
+        host_census("line3d width=%d", w1 & 0xFF);
+        break;
+    case 0xB2:
+        host_census("modifyvtx where=%02X", (w0 >> 16) & 0xFF);
+        break;
+    case 0xB6:
+        cs_geom &= ~w1;
+        break;
+    case 0xB7:
+        cs_geom |= w1;
+        break;
+    case 0xBB:
+        host_census("texture level=%d tile=%d on=%d scale=%s", (w0 >> 11) & 7, (w0 >> 8) & 7, w0 & 0xFF,
+                    w1 == 0xFFFFFFFFu ? "1" : w1 == 0x80008000u ? "1/2" : "other");
+        break;
+    case 0xBC:
+        if ((w0 & 0xFF) == 0x06)
+            host_census("moveword 06 segment %d", ((w0 >> 8) & 0xFFFF) / 4);
+        else if ((w0 & 0xFF) == 0x08)
+            host_census("moveword 08 fog %08X", w1);
+        else
+            host_census("moveword %02X off=%04X", w0 & 0xFF, (w0 >> 8) & 0xFFFF);
+        break;
+    }
+}
+
 static void run(const Cmd *dl) {
     const uint8_t *stack[18];
     unsigned stack_st[18];
@@ -2186,6 +2363,8 @@ static void run(const Cmd *dl) {
         dl_depth = sp;
         if (dl_on)
             dl_cmd(sp, w0, w1);
+        if (host_census_on)
+            cs_dl(w0, w1l);
         switch (op) {
         case 0x01: case 0x03: case 0x04:
             uc_load(w0, w1);
@@ -2212,8 +2391,12 @@ static void run(const Cmd *dl) {
             break;
         case 0xB0:                      /* BRANCH_Z: on the vertex's screen z */
             if (uc_ok && (int32_t)(port_be32(rsp_dmem + uc_vtx(w0) + 0x1C) - w1l) <= 0) {
+                if (host_census_on)
+                    host_census("branchz taken");
                 pc = addr(gs.rdphalf1);
                 st = stride_at(pc);
+            } else if (host_census_on) {
+                host_census("branchz not taken");
             }
             break;
         case 0xB3:
@@ -2236,6 +2419,8 @@ static void run(const Cmd *dl) {
                 if (a == b)
                     break;
             }
+            if (host_census_on)
+                host_census("culldl %s", f ? "culled" : "drawn");
             if (f) {
                 if (sp == 0)
                     return;
@@ -2289,6 +2474,8 @@ int host_gfx_task(const void *dl, uint32_t size) {
     (void)size;
     if (no_draw)            /* (debugging: the game's logic alone) */
         return 1;
+    if (host_fbw_on)
+        host_fbw_task(1);
     full_sync = 0;
     if (!gs.sc_xl) {
         gs.sc_xl = 320 << 2;
@@ -2300,6 +2487,8 @@ int host_gfx_task(const void *dl, uint32_t size) {
     run((const Cmd *)dl);
     xr_end();
     xr_task++;
+    if (host_fbw_on)
+        host_fbw_task(0);
     if (dl_on)
         fflush(dl_out);
     return full_sync;

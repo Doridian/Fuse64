@@ -63,10 +63,11 @@ from a gameplay digest, by the game's frame: "The gameplay digest"),
 `--save-dir DIR` (the EEPROM file
 `fuse64.<v>.eep`), `--wav FILE`, `--hash` (each retrace's picture
 hash), `--vi-raw` (the color image as it is, without the VI: "The VI"),
-`-v`. With a window the keyboard (arrows, Z, X, C, A, S, Enter)
-and SDL's game controllers are the controller, and F9 is the console's
-reset button (`PORT_RESET=N[,N...]` presses it at those retraces; "The
-reset button").
+`--renderer soft` (the only one: "Graphics"), `-v`. With a window the
+keyboard (arrows, Z, X, C, A, S, Enter) and SDL's game controllers are
+the controller, and F9 is the console's reset button
+(`PORT_RESET=N[,N...]` presses it at those retraces; "The reset
+button").
 
 ### Cross builds
 
@@ -1185,7 +1186,7 @@ what IPL3 and the loaders overwrite.
 
 ### Graphics
 
-port/host/gfx.c is a software F3DEX 1.x and RDP renderer that draws into
+The port's renderer is a software F3DEX 1.x and RDP renderer that draws into
 the game's own color and depth images in `port_rdram`, as the RDP would:
 the game reads back what it drew (its screen captures, the fades). What
 the VI makes of the color image (port/host/vi.c, "The VI" below) is
@@ -1196,6 +1197,15 @@ keeps in memory, fog and the z-buffer. Headless on one core it plays the
 battle scenario's 6000 retraces in 76 s (i386, on a busy machine; the
 float renderer before the microcode took 150 s there, about 140
 retraces a second on an idle one; the coverage adds about a seventh).
+
+Its parts (port/host/gfx.h has the interface between them):
+
+| file | what |
+|---|---|
+| gfx.c | the graphics task: the display list's flow, the game's microcode on rsp.c, the RDP commands it sends (to gfx_rdp.c's state, or drawn by the back end); `PORT_DUMP_DL`, `PORT_GFX_REF`, the census |
+| gfx_rdp.c | the RDP's state and its decoding, what a back end draws with: the state commands, tiles, TMEM and its loads, the texel formats, the combiner's selectors |
+| gfx_soft.c | the software back end (`--renderer soft`, the only one): the RDP's rasterizer, exact (triangles, rectangles, the pixel pipeline, coverage and the hidden bits, the z-buffer) |
+| vi.c | the VI ("The VI") |
 
 **The RSP's side is the game's microcode.** port/host/rsp.c interprets
 the RSP: its scalar unit, and its vector unit with the 48-bit
@@ -1227,7 +1237,7 @@ stage's task about 680,000; the interpreter runs them in a few
 milliseconds).
 
 The RDP's side is in integers, as the RDP computes it. A triangle is
-drawn from its command as the RDP walks it (`rdp_tri`, after
+drawn from its command as the RDP walks it (`rdp_tri` in gfx_soft.c, after
 parallel-rdp, MIT; NOTICES.md): the span of each scanline from the three
 edges at its four subscanlines (x in eighths of a pixel, the scissor
 there), eight coverage samples a pixel, the attributes at the major
@@ -1248,7 +1258,7 @@ coverage; fill and copy modes write whole pixels.
 **Coverage.** The RDP keeps a pixel's coverage in memory: three bits, a
 16-bit color's low bit and two of RDRAM's hidden bits (its bytes are 9
 bits on the N64, and only the RDP sees the ninth; the z image keeps two
-bits of dz there). The port has them for its 8 MiB (`hidden` in gfx.c, a
+bits of dz there). The port has them for its 8 MiB (`hidden` in gfx_soft.c, a
 byte a halfword; those the RDP never wrote follow the halfword's low bit,
 as in angrylion). A pixel's coverage is how many of its eight samples
 the primitive covers (without AA_EN it is drawn only if the first is

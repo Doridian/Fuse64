@@ -12,7 +12,7 @@ says where they come from and on what terms they are here.
 | GNU malloc (`gmalloc.c`, 1995) | `src/libmalloc/` | GNU GPL v2 or later (from the LGPL v2 or later); see below |
 | DozerEncore (a PC port of Blast Corps): decomp tools | `tools/elf_mips2.py` and others adapted from `../DozerEncore` | AGPL-3.0, same author |
 | DozerEncore: the PC port | parts of Fuse64 (`port/`) copied or adapted from `../DozerEncore/port` | AGPL-3.0, same author; see below |
-| parallel-rdp (Themaister): the RDP's triangle setup and interpolation, its depth test, blender and coverage rules; the VI's filters and scaling | adapted in `port/host/gfx.c` (`rdp_tri`, `rdp_pixel`) and `port/host/vi.c` | MIT; see below |
+| parallel-rdp (Themaister): the RDP's triangle setup and interpolation, its depth test, blender and coverage rules; the VI's filters and scaling | adapted in `port/host/gfx_soft.c` (`rdp_tri`, `rdp_pixel`) and `port/host/vi.c` | MIT; see below |
 | mupen64plus-rsp-cxd4 (Iconoclast): the RSP's vector arithmetic | followed in `port/host/rsp.c` | CC0 1.0 (public domain dedication); see below |
 
 ---
@@ -93,7 +93,7 @@ parser renamed `port_alBnkfParse`), `port/include/libaudio_heap.h`,
 
 ## parallel-rdp
 
-The RDP's triangle rasterizer in `port/host/gfx.c` (`rdp_tri`: the span
+The RDP's triangle rasterizer in `port/host/gfx_soft.c` (`rdp_tri`: the span
 setup from a triangle command's edges, the subscanlines' coverage, the
 attributes' interpolation and coverage correction, the perspective divide
 and its reciprocal table) follows parallel-rdp

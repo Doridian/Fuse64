@@ -4,7 +4,7 @@
  * the mode the game picks, osViSetSpecialFeatures' bits, the framebuffer).
  * docs/PORT.md, "Graphics" ("The VI").  The VI reads the 16-bit image
  * with its coverage (RDRAM's hidden bits, which the port's RDP keeps:
- * gfx.c) and, per pixel it fetches:
+ * gfx_soft.c) and, per pixel it fetches:
  *
  * - a partly covered pixel (an edge) is "restored" from its neighbours
  *   (the antialiasing filter): of the centre and those of the six around

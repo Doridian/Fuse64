@@ -43,10 +43,11 @@ extern const char *host_wav_path;
 void host_input_init(void);
 void host_input_frame(void);            /* once a retrace: the script's next line, SDL's events */
 
-/* gfx.c */
+/* gfx.c: the graphics tasks (gfx.h has the renderer's parts) */
+int host_gfx_renderer(const char *name);    /* --renderer: 0 if there is none of that name */
 void host_gfx_init(void);
-/* RDRAM's hidden bits, a byte a halfword (HB_CLEAN: never written by the
-   RDP, its hidden bits its low bit twice) */
+/* gfx_soft.c: RDRAM's hidden bits, a byte a halfword (HB_CLEAN: never
+   written by the RDP, its hidden bits its low bit twice) */
 #define HB_CLEAN 4
 const uint8_t *host_gfx_hidden(void);
 uint64_t host_gfx_tris(void);           /* triangles drawn so far */

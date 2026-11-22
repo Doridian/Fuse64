@@ -5,7 +5,7 @@
 # inlining); each is defined once in the link.
 host_gfx_task
 mtx_mul
-texel
+gfx_texel
 sample
 cc_begin
 write_mem

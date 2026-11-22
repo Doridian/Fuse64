@@ -980,12 +980,17 @@ What the runs found, each fixed under `TARGET_PC` (the ROM is the same):
   rest; no texel uses it.) ASan then sees an overflow only past what the
   N64 block has.
 
-The 2026-11-21 runs (all three versions, the monkey's too) found:
+The 2026-11-21 runs: us, eu and jp, ASan and UBSan (x86-64, the arena)
+and the check build (seed 1), each with test.py's seven scenarios, the
+78 stage runs (the 77 and 75:18) and the monkey's 238 (seeds 1, 2 and 3,
+`--extra`), and jp's TAS under ASan. With the fixes below, every run goes
+to the end with no report, and the scenarios and the TAS give the
+references. They found:
 
 - **The images in the arena**: the RDP's hidden bits (coverage, dz) and
   the depth buffer were only kept inside `port_rdram`, and the VI read
   its image there; the color images are in the arena now (every frame
-  differed from retrace 23). gfx.c keeps the arena's hidden bits too, and
+  differed from retrace 23). gfx_soft.c keeps the arena's hidden bits too, and
   the VI reads through `port_n64_host` (the object at an N64 address).
 - **80580.c's ALCSeqMarker** (`D_802AD250`): asm2c.py gave it the N64's
   0xF0 bytes, where pointers are 8 the host's is 0x170, and
@@ -1840,8 +1845,9 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   demo exits crashed in menus seeds 2 and 3, 153 seed 1 at 3882). With
   the first two fixes, ASan and UBSan (x86-64, the arena) ran 142 of
   the 233 and the scattered check (seed 1) 76, every one to the end
-  with no report; the rest (scratch/coverage's asan2-done.txt and
-  scat2-done.txt list those done) and i386, eu and jp are left.
+  with no report. On 2026-11-21 both ran all of them (238 with
+  `--extra`) in us, eu and jp, with no report ("The scattered layout").
+  i386 is left.
   Coverage went from 51.6% to 56.6% of the lines; the stage overlays
   gained little, since what they don't run is behind the room's
   progress: a monkey that keeps away from its own bombs, or one that
@@ -1851,9 +1857,11 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
 - **The N64's layout**: the scattered check builds ("The scattered
   layout") report nothing in test.py's scenarios or the 77 stage runs. That
   holds for us with seeds 1, 2 and 3, and for eu and jp with seed 1 (and
-  the seven scenarios with seeds 2 and 3). Left:
-  - 18 names no declaration sizes (of 77 before; "The scattered
-    layout"). Each is checked only against its room up to the next name.
+  the seven scenarios with seeds 2 and 3), and for the monkey's runs in
+  all three with seed 1 (2026-11-21). Left:
+  - One name without a size, `D_802AD0E0` (of 77; "The scattered
+    layout"), checked only against its room up to the next name.
+  - The monkey's runs with seeds 2 and 3 of the layout.
   - The overlays' .bss structs keep the N64's order inside one object.
   - A walk that ends at a name placed before it runs once and shows
     nothing (hence several seeds).

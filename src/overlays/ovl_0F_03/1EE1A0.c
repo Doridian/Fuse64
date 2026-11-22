@@ -779,7 +779,15 @@ static s64 func_ovl0F_03_80043494(UnkStructA *arg0) {
         u.w[1] = 1;
     }
     arg0->unkC = u.w[0];
+#ifdef TARGET_PC
+    /* the N64's s64 is big-endian: w[0] its high word, w[1] the low one
+       that the caller's (s32) keeps (the flag); on a little-endian host
+       u.ll's low word was w[0], arg0->unkC, and a push that hit nothing
+       was undone whenever unkC was set (4908M's White Glacier) */
+    return (s64)((u64)(u32)u.w[0] << 32 | (u32)u.w[1]);
+#else
     return u.ll;
+#endif
 }
 
 static void func_ovl0F_03_8004349C(UnkStructA *arg0, f32 angle) {

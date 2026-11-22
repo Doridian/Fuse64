@@ -78,6 +78,9 @@ static uint8_t *hb_at(const uint8_t *p) {
     return &hidden[off >> 1];
 }
 
+/* (the VI's: host/vi.c) */
+uint8_t host_gfx_hb(const uint8_t *p) { return *hb_at(p); }
+
 static int hb_get(const uint8_t *p) {
     int h = *hb_at(p);
     return (h & HB_CLEAN) ? (p[1] & 1) * 3 : h;

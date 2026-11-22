@@ -103,8 +103,17 @@ static const Src *src(int line) {
     int n = col_s1 - col_s0 + 1 + 2 * SRC_PAD;
     for (int k = 0; k < n; k++) {
         uint32_t i = (at + (uint32_t)k) & (HALVES - 1);
+#ifdef PORT_SCATTER_LAYOUT
+        /* (the scattered layout's framebuffers are objects in its arena,
+           found by their N64 addresses; past them, black) */
+        const uint8_t *q = port_n64_host(0x80000000u + i * 2);
+        uint16_t c = q ? port_be16(q) : 0;
+        int h = q ? host_gfx_hb(q) : 0;
+        (void)hid;
+#else
         uint16_t c = port_be16(port_rdram + i * 2);
         int h = hid[i];
+#endif
         if (h & HB_CLEAN)
             h = (c & 1) * 3;
         s->c[0][k] = c >> 11 & 31;

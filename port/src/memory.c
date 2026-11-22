@@ -130,6 +130,27 @@ uint32_t port_n64_address(const void *p) {
     host_fatal("port_n64_address: %p is no fixed-address name's", p);
 }
 
+/* The other way: the host's place of the N64's (KSEG0) address a, NULL in
+   the scattered layout where no object has it (the VI's image) */
+void *port_n64_host(uint32_t a) {
+#ifdef PORT_SCATTER_LAYOUT
+    static unsigned last;
+    const PortScatterObj *o = &port_scatter_objs[last];
+    if (a - o->n64 < o->size)
+        return port_scatter_arena + o->off + (a - o->n64);
+    for (unsigned i = 0; i < port_scatter_nobjs; i++) {
+        o = &port_scatter_objs[i];
+        if (a - o->n64 < o->size) {
+            last = i;
+            return port_scatter_arena + o->off + (a - o->n64);
+        }
+    }
+    return NULL;
+#else
+    return port_rdram + ((a - 0x80000000u) & (PORT_RDRAM_SIZE - 1));
+#endif
+}
+
 /* (the host's allocator: pc_names.h makes calloc the game's) */
 #undef calloc
 #undef free

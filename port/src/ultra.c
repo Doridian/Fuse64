@@ -520,10 +520,16 @@ u32 osViGetCurrentField(void) { return 0; }
 static void vi_regs(void) {
     uint32_t r[PORT_VI_NREGS] = { 0 };
     const uint8_t *fb = vi_cur_fb != NULL ? port_addr((uintptr_t)vi_cur_fb) : NULL;
-    if (vi_mode != NULL && fb != NULL && fb >= port_rdram && fb < port_rdram + PORT_RDRAM_SIZE) {
+    int in_ram = fb != NULL && fb >= port_rdram && fb < port_rdram + PORT_RDRAM_SIZE;
+#ifdef PORT_SCATTER_LAYOUT
+    /* (the scattered layout's framebuffers are objects of their own, which
+       the VI finds by their N64 addresses) */
+    in_ram = in_ram || fb != NULL;
+#endif
+    if (vi_mode != NULL && in_ram) {
         OSViMode *m = vi_mode;
         r[PORT_VI_CONTROL] = vi_control;
-        r[PORT_VI_ORIGIN] = (uint32_t)(fb - port_rdram) + m->fldRegs[0].origin;
+        r[PORT_VI_ORIGIN] = (port_n64_address(fb) & 0x7FFFFF) + m->fldRegs[0].origin;
         r[PORT_VI_WIDTH] = m->comRegs.width;
         r[PORT_VI_INTR] = m->fldRegs[0].vIntr;
         r[PORT_VI_BURST] = m->comRegs.burst;

@@ -51,6 +51,8 @@ void host_gfx_init(void);
    written by the RDP, its hidden bits its low bit twice) */
 #define HB_CLEAN 4
 const uint8_t *host_gfx_hidden(void);
+/* the hidden bits of the halfword at p, wherever the image is (gfx.c) */
+uint8_t host_gfx_hb(const uint8_t *p);
 uint64_t host_gfx_tris(void);           /* triangles drawn so far */
 
 /* gfxcensus.c: PORT_GFX_CENSUS=FILE, what the graphics tasks use, counted */

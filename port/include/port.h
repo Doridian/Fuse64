@@ -83,6 +83,10 @@ static inline void port_wle16(void *p, uint16_t v) {
    where the game's C adds and subtracts 0x80000000 to convert between
    virtual and physical, a host pointer that conversion moved. */
 void *port_addr(uintptr_t a);
+/* the host's place of the N64's (KSEG0) address (memory.c; NULL: none) */
+void *port_n64_host(uint32_t a);
+/* the N64's address of a place in a fixed-address name (memory.c) */
+unsigned int port_n64_address(const void *p);
 /* a proxy's address (WebAssembly) to its number; any other as it is */
 uintptr_t port_unproxy(uintptr_t a);
 /* a display list of the ROM's (N64-sized commands): in a file of the asset

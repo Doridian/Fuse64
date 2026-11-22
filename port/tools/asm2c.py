@@ -148,7 +148,12 @@ ENDS = {"D_802A1C35": "&D_802A1C2C[9] (then 0 up to the next file's 16-byte alig
 # the size of a label no declaration of the port's sizes (the rest of its
 # room is the next one's alignment)
 SIZES = {"__libm_qnan_f": 4,       # a float (libultra's guint.h; the port's gu.c has its own)
-         "D_802A2D00": 0x1D}       # the build's date, "SAT SEP  6 14:57:59 JST 1997" (no C reads it)
+         "D_802A2D00": 0x1D,       # the build's date, "SAT SEP  6 14:57:59 JST 1997" (no C reads it)
+         # 80420.c's first 0x24 bytes of .bss: no instruction of any module
+         # (us, eu, jp) reaches them, by this name or another's offset, and
+         # they stay 0 in the emulator's runs; an object of its room, so
+         # that a reach from it or into it is reported like any other
+         "D_802AD0E0": 0x24}
 
 
 # physical addresses that are a buffer of the game's (gen_regions.py's

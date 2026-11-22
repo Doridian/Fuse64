@@ -1,6 +1,6 @@
 #include "common.h"
 
-extern u8 D_80300000[];
+extern u8 D_80300000[PORT_SIZE(0x100000)]; /* the sbrk arena (func_80225B00's limit) */
 extern s32 __malloc_initialized;
 
 /* .data: func_80225B00's bump pointer, from 0x80300000 up (1 MiB) */

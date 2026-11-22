@@ -68,7 +68,7 @@ extern void *D_802A8970[16];
 extern u8 D_802A89B0[0x2288];
 extern UnkStruct_802A8938 *D_802AAC38;
 extern u8 D_802AAC40[];
-extern u8 D_802AAC48[];
+extern u8 D_802AAC48[PORT_SIZE(PORT_SIZEOF_OSTHREAD)]; /* an OSThread (its stack after it, up to D_802AB1F0, is the host thread's own) */
 extern u8 D_802AB1F0[];
 
 void func_80237F84(void *arg0);

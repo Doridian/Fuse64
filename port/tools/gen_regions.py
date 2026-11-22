@@ -42,6 +42,15 @@ FIXED_FROM = 0x80100000
 # names that are the end of what is before them (40040.c clears the work
 # area up to D_800BEA60), not an object
 END_MARKERS = {"D_800BEA60"}
+# names that are no object either: the end of the array before them (the
+# original's loop ends, which the C writes as counts), a thread's stack
+# top, and m2c's bases of an index into another array (which the C writes
+# as that array's).  The scattered layout gives them no room, so that a
+# read past the array reaches padding; the default layout keeps the N64's
+# bytes after them, which nothing names (0 in the emulator's RDRAM)
+ENDS = {"D_80090C10": "&D_80090440[50]", "D_800A8570": "&D_800A7F30[100]", "D_800BD488": "&D_800BCFE8[4]",
+        "D_800BEA58": "the top of D_800BE868's thread's stack (a host thread has its own)",
+        "D_800AEBBC": "&D_800AEDF0[-3].unk24", "D_800AED4C": "&D_800AEDF0[-1].unk24"}
 # a name whose declarations disagree: the one that is its object
 # (426E0.c's D_800A3F00 is the end of D_800A0D00[], 48600.c's the pool after it)
 TYPES = {"D_800A3F00": ("src/48600.c", "UnkStructA80[128]"), "D_800BCFE8": ("src/6BBE0.c", "Port_800BCFE8[4]"),
@@ -56,6 +65,9 @@ TYPES = {"D_800A3F00": ("src/48600.c", "UnkStructA80[128]"), "D_800BCFE8": ("src
 PHYS = {"D_200000": 0x25800}
 # the size of a name no declaration sizes
 SIZES = dict(PHYS)
+# the exception vectors and libultra's boot words (osTvType at 0x80000300),
+# up to boot_code's entry at 0x80000400 (only F3DEX's data has the number)
+SIZES["D_80000000"] = 0x400
 
 
 def main():
@@ -132,7 +144,7 @@ def main():
                 vs = [d for d in full["names"].get(n, []) if d["kind"] == "var" and d.get("s64")] if lay else []
                 ds = [d["s64"] for d in vs]
                 obj = {"size": max(ds) if ds else SIZES.get(n),
-                       "n64size": max(d["s32"] or 0 for d in vs) if vs else SIZES.get(n), "end": n in END_MARKERS,
+                       "n64size": max(d["s32"] or 0 for d in vs) if vs else SIZES.get(n), "end": n in END_MARKERS or n in ENDS,
                        "incomplete": n not in SIZES and lay is not None and any(
                            d["kind"] == "var" and d["type"].rstrip().endswith("[]") for d in full["names"].get(n, []))}
                 hend = hoff + max(ds + [size]) if a < FIXED_FROM and n not in END_MARKERS else 0

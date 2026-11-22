@@ -446,7 +446,7 @@ extern PORT_IP(s32) D_800BD3F8;
 extern u8 D_800BD488[];
 extern u8 D_800BE848[];
 extern u8 D_800BE860[];
-extern u8 D_800BE868[];
+extern u8 D_800BE868[PORT_SIZE(PORT_SIZEOF_OSTHREAD)]; /* an OSThread (its stack after it, up to D_800BEA58, is the host thread's own) */
 extern u8 D_800BEA58[];
 typedef struct { f32 x, z; } Pt2;
 typedef struct { Pt2 p[4]; } Pt2x4;

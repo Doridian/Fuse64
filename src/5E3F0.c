@@ -215,7 +215,9 @@ extern UnkStruct_800AEDF0 D_800AEDF0[5];
  * all the same (the game's own bug; the scenarios reach both). On the N64
  * entry -1's unk68 is the word 0x60 bytes before the array,
  * D_800AED78[2].unk0 (5E090.c's: a pointer, NULL then), and its unk14 the
- * word 0xB4 before it, D_800AEBBC + 0x180 (0 then). Where pointers are 8
+ * word 0xB4 before it, 0x800AED3C: in the bytes after D_800A7F30[100] that
+ * nothing names or writes, 0 (the work area is cleared at boot; the
+ * emulator's RDRAM has 0 there in every scenario). Where pointers are 8
  * bytes the entries and D_800AED78's elements are bigger, so the same
  * index reaches other words; a host reaches the N64's (on a 32-bit host
  * the same words as the original's index).
@@ -226,7 +228,6 @@ typedef struct {
     /* 0x08 */ s32 unk8;
 } Port_800AED78;
 extern Port_800AED78 D_800AED78[];
-extern u8 D_800AEBBC[];
 #endif
 
 typedef struct {
@@ -5336,7 +5337,7 @@ s32 *func_80243D54(s32 arg0) {
 s32 func_80243D2C(s32 arg0) {
 #ifdef TARGET_PC
     if (arg0 == -1) {
-        return *(s32 *)(D_800AEBBC + 0x180);
+        return 0; /* (the N64's word 0x800AED3C) */
     }
 #endif
     return D_800AEDF0[arg0].unk14;

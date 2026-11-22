@@ -141,6 +141,16 @@ TYPES = {
 }
 
 
+# labels that are no object (gen_regions.py's ENDS): the end of the array
+# before them, a thread's stack top; no room in the scattered layout
+ENDS = {"D_802A1C35": "&D_802A1C2C[9] (then 0 up to the next file's 16-byte alignment)",
+        "D_802AB1F0": "the top of D_802AAC48's thread's stack (a host thread has its own)"}
+# the size of a label no declaration of the port's sizes (the rest of its
+# room is the next one's alignment)
+SIZES = {"__libm_qnan_f": 4,       # a float (libultra's guint.h; the port's gu.c has its own)
+         "D_802A2D00": 0x1D}       # the build's date, "SAT SEP  6 14:57:59 JST 1997" (no C reads it)
+
+
 # physical addresses that are a buffer of the game's (gen_regions.py's
 # PHYS: the depth buffer): a pointer to it, not the number
 PHYS = {"D_200000"}
@@ -288,6 +298,9 @@ def main():
                 else:
                     obj.update(size=max([d["s64"] for d in vs], default=None), incomplete=any(
                         d["kind"] == "var" and d["type"].rstrip().endswith("[]") for d in full["names"].get(name, [])))
+                    if obj["size"] is None and name in SIZES:
+                        obj.update(size=SIZES[name], n64size=SIZES[name])
+                obj["end"] = name in ENDS
                 objs.append(obj)
             hpos = lh + hsize
             if bss or size == 0:

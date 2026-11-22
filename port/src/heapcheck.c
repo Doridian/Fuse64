@@ -11,7 +11,7 @@ struct port_list {
 
 extern struct port_list bm64__fraghead[] __attribute__((weak));
 /* the sbrk arena (40300.c: 1 MiB) */
-extern uint8_t D_80300000[];
+extern uint8_t D_80300000[0x100000];
 
 
 int port_heap_check(void) {

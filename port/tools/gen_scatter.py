@@ -74,7 +74,7 @@ def main():
                 return e["room"]
             hroom = room(False)
             e["hroom"] = hroom
-            e["unsized"] = e.get("size") is None
+            e["unsized"] = e.get("size") is None and not e.get("end")
             # (where no declaration has a size, or one is `T x[]`, the object
             # runs to the next name the C uses: the names between that only
             # the asm data names are inside it)
@@ -202,6 +202,11 @@ def main():
     for e, cont, d in sorted(inner, key=lambda x: x[0]["n64"]):
         r.append("%s %s in %s +0x%X (here +0x%X): %s" % (e["name"], e["kind"], cont["name"], e["n64"] - cont["n64"], d,
                                                        users(e["name"]) or "-"))
+    ends = [e for e in objects if e.get("end")]
+    r.append("")
+    r.append("# names that are no object (an end, a stack's top, a base of another's index): no room (%d)" % len(ends))
+    for e in sorted(ends, key=lambda e: e["n64"]):
+        r.append("%s %s: %s" % (e["name"], e["kind"], users(e["name"]) or "-"))
     uns = [e for e in objects if e["unsized"]]
     r.append("")
     r.append("# objects no declaration gives a size (%d): their room to the next name" % len(uns))

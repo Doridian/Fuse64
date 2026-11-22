@@ -507,11 +507,13 @@ unk10 bit 0x200). Four things the sweeps found:
 
 #### The TAS
 
-The three TAS movies (docs/TAS.md) as played in mupen64plus, replayed on
-the port (jp), as DozerEncore's TAS is ("Replaying it on the port" in its
-docs/PORT.md), but only through the digest's pads by frame: none of the
-movies syncs on the emulator past its first stage, so what the port
-follows is the emulator's run, not the movie's.
+The three TAS movies (docs/TAS.md) as played on the emulator, replayed
+on the port (jp), as DozerEncore's TAS is ("Replaying it on the port" in
+its docs/PORT.md), through the digest's pads by frame. 4908M's emulator
+run is BizHawk 2.8's own core's, which plays the movie to its end (every
+stage, to the last boss), so the port follows the movie itself; the
+`.m64` movies don't sync past their reset, and the port follows those
+emulator runs.
 
 ```
 make VERSION=jp                                    # the ELF, the plugins
@@ -522,7 +524,14 @@ port/tools/emu_digest.py jp emu.txt --movie 4908M  # what test.py does once (bui
 - **The emulator's side**: `emu_digest.py --movie` plays the movie as
   `tools/tas.py run` does (its core settings, BizHawk's frame length,
   the zeroed EEPROM, the input by VI or by read, the resets), the seed
-  pinned as above. About four minutes for 4908M, twelve for 2350M.
+  pinned as above; twelve minutes for 2350M. 4908M plays on BizHawk's
+  core (`--bizhawk build/tas/bizhawk/dist`, tools/bizhawk_core.sh; test.py
+  passes it), about seven minutes, with the seed the clock gives, which
+  the movie needs: a breakpoint on the generator's seeding (78CA0.c's
+  `func_8025E6A4`, the core's debugger) records each boot's as `# seed N`
+  in its part, and `--replay` seeds that boot with it (input.c,
+  digest.c's `port_seed`; PORT_SEED, if set, still wins, so test.py
+  leaves it out for such a digest).
 - **The soft reset.** Every movie resets once (4908M at VI 523, after
   saving the hard-mode file). The button raises OS_EVENT_PRENMI, and the
   game (6BBE0.c's thread, func_8025E100) wipes the screen for 18 frames
@@ -551,6 +560,20 @@ the same with the threads as fibers or as host threads
 | 4908M | 78,636 retraces | 366 frames: the menus, the hard file saved, the wipe | 74,308: the title, the file select, Blue Resort's first stage (scene 56) to game over, then the attract loop (the opening, the demos) |
 | 2053M | 89,968 | 330 | 84,611: the attract loop |
 | 2350M | 233,449 | 330 | 221,097: the attract loop |
+
+That 4908M run was mupen64plus 2.6.0's, desynced in the first stage. Its
+whole-game run on BizHawk's core (2026-11-22, i386): part 0 all 317
+frames the same; part 1 the same for **24,846 of its 73,577 frames**: the
+title, the file select, Blue Resort and Red Mountain (their stages and
+bosses), into White Glacier's first stage (scene 90, sub 20). At frame
+24,846 Bomberman is launched upward (the entry's word 4 gets 0x8000000 the
+frame before, at the same position on both), and the next frame he is at
+y 8.86 on the port against 6.18 on the N64, and farther along x, after
+which the stage goes its own way. Everything the digest has is the same
+up to there, so it's a difference in the port's game code (that motion's
+velocity: a non-matching or fake function, or a read the port gives
+another value). That is the next thing to find; the test's reference
+(`jp/tas-4908M`) is this run.
 
 The check finds a difference where there is one: A held for ten frames
 in 4908M's stage (the digest's pads changed) differs at the first of

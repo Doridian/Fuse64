@@ -4,21 +4,24 @@ TASVideos has three movies of this game, all on *Baku Bomberman* (jp,
 `NBMJ`). Played headless, a movie is a long, input-driven run through
 every system of the game, and two ROMs (the original and a rebuilt or
 shifted one) can be compared along it. `tools/tas.py` plays them on the
-system's mupen64plus 2.6.0 with our two plugins. **None of them syncs to
-the end**: the current any% desyncs in its first stage (below). The tool
-still gives a repeatable 78,000-frame run that a rebuilt ROM has to follow
-exactly.
+system's mupen64plus 2.6.0, or on BizHawk 2.8's own core (`--bizhawk`),
+with our two plugins. **The current any%, 4908M, syncs to its end on
+BizHawk's core**: all of its 19 stages, the stage times its encode shows,
+to the last boss's fight (below). On 2.6.0 it desyncs in its first stage,
+and the two `.m64` movies don't get past their reset on either core.
 
 ```
 tools/tas.py fetch                       # download the movies into build/tas/movies/
 tools/tas.py info 4908M                  # what the movie is and needs
+tools/bizhawk_core.sh                    # BizHawk 2.8's own core, for --bizhawk
+tools/tas.py run 4908M baserom.jp.z64 --bizhawk build/tas/bizhawk/dist
 tools/tas.py run 4908M baserom.jp.z64 --json build/tas/orig.json
 tools/tas.py check 4908M build/jp/bm64.jp.z64 build/jp-shift/bm64.jp.z64
 tools/tas.py compare a.json b.json
-tools/bizhawk_core.sh                    # BizHawk 2.8's own core, for --bizhawk
 ```
 
-Run them under `nice -n 10`. A full run of 4908M takes about a minute.
+Run them under `nice -n 10`. A full run of 4908M takes about a minute on
+2.6.0, two on BizHawk's core.
 
 ## The movies
 
@@ -50,7 +53,10 @@ is 0xC000, mupen64-rr's soft reset.
 
 ## How the core is set up
 
-`tools/tas.py` (`play()`) matches what can be matched in 2.6.0:
+`tools/tas.py` (`play()`) matches what can be matched in 2.6.0 (with
+`--bizhawk DIR`, BizHawk's own core, `BizHawkSession`, has its own frame
+length, count per op, SI DMA time and zeroed EEPROM, and the rest below
+is the same):
 
 - **Frame length.** BizHawk's core times a frame as (V_SYNC + 1) lines of
   1500 counts, 789000 counts at NTSC's V_SYNC. 2.6.0 divides its VI clock
@@ -89,83 +95,132 @@ read the controller. For a build the timer's address comes from its ELF.
 
 ## How far 4908M syncs
 
-On 2.6.0, set up as above, the run follows the publication's encode
-through power-on, the title, mode and file select, the hard-mode file
-saved and the reset at frame 521, the title again, the file select (Data 1
-now the hard file), the world select (Blue Resort) and the first stage's
-map and start (overlays `ovl_0B_01`, `ovl_0A_05`, `ovl_0B_06`, reset,
-`ovl_0B_01`, `ovl_0A_05`, `ovl_0B_01`, `ovl_0B_06`, `ovl_0B_02`, then
-`ovl_0D_01` at VI 1301). The stage timer starts at VI 1603.
+**To its end, on BizHawk's core** (`tas.py run 4908M baserom.jp.z64
+--bizhawk build/tas/bizhawk/dist`): power-on, the hard-mode file saved
+and the reset at frame 521, the menus, then every stage of the any% route
+(five worlds, from Blue Resort to Black Fortress), to the last fight (`ovl_10_13` from VI 75,901), with the clock at 4.99 when the
+movie's input ends, as the encode's last frames show it. The stage times
+(the timer when it starts over) are
 
-It desyncs at the stage's first move, around movie frame 1610. In the
-encode Bomberman lifts his first bomb (stage timer 46) and throws it over
-the gate; here the bomb stays where it was put and he walks on. He loses
-his lives, it's game over at VI ~4500, the continue countdown runs out, and
-from VI 5385 the game is in its attract loop (the opening, `ovl_0A_02`
-and `ovl_0A_01`; the title; the demos `ovl_0D_01`, `ovl_0E_09`,
-`ovl_0F_01`, `ovl_0C_02`) to the end of the movie. The first stage time
-should be 1431 (the encode's clear screen); it's never reached.
+```
+1431 316 1911 2329 3554 423 2716 2521 5529 444 4296 2161 3568 381 4674 1641 5599 1338 7481
+```
 
-What was ruled out, each giving the same game over at VI 5385 (or the same
-VI shifted by the change):
+and the clear screens of the publication's encode (archive.org's
+`bomberman64-tas-zvsp.mp4`, its frame n is about VI n − 120) show the same
+fifteen (the four boss fights have no clear screen). `MOVIES` in
+`tools/tas.py` has them, and `run` says whether a run matches.
 
-- the VI clock (BizHawk's or 2.6.0's), the EEPROM fill (00 or FF), bkm's
-  controller or the core's, the pure, cached or recompiling CPU, the RDP
-  interrupt never, on full sync or always;
-- the input offset, from −50 to +20 VIs from the stage's load on (the
-  game over moves with it, frame for frame);
-- the random number generator: the game seeds it from `osGetTime()` when
-  main_code starts, and its state differs between cores, but setting its
-  index to other values at VI 1400, 4500 or 5392 changes nothing before
-  5385;
-- **BizHawk's own core.** `tools/bizhawk_core.sh` builds BizHawk 2.8's
-  mupen64plus fork for Linux (a shim for its Win32 frame-advance semaphore;
-  sha256-pinned source), and `tas.py run --bizhawk build/tas/bizhawk/dist`
-  drives it the way BizHawk does (frame advance, two frames before the
-  movie, resets between frames). It reproduces the save trick and the
-  menus and fails the same way, at VI 5385.
+The same run is BizHawk's own, VI for VI: BizHawk 2.8's Windows DLLs
+(`mupen64plus.dll`, `mupen64plus-input-bkm.dll`, `mupen64plus-rsp-hle.dll`,
+`mupen64plus-audio-bkm.dll`, out of its release) driven under wine by a
+small harness as BizHawk drives them (frame advance, the debugger on, the
+controller's pak type and connection set after attaching), with our
+`m64p_vicount.c` built for Windows as the video plugin, give the same
+controller reads, game frames, generator index and count register at
+every one of the movie's 78,636 VIs as `BizHawkSession` on the Linux build
+of the same source. (The harness isn't in the tree: it needs the release's
+DLLs, and the Linux build gives the same.)
 
-So the cause isn't 2.6.0's core: both cores with our plugins miss the same
-input. It is a timing question: dropping the single C-Up press at movie
-frame 1361 (the camera, just after the stage's load) lets the 2.6.0 run
-survive to VI 10634 (but not BizHawk's core), which says that a press's
-effect depends on the exact frame state when it lands. What our runs
-don't have of BizHawk's is its video plugin, GLideN64: the RDP itself
-(colour and depth written to RDRAM, which these plugins never write) and
-the moments it raises the DP interrupt. A headless run without a renderer
-can't reproduce that, so this is as far as it goes on mupen64plus 2.6.0
-with our plugins: the menus, the reset and the stage's start, about movie
-frame 1606 of 78034.
+### What kept BizHawk's core from syncing
 
-The `.m64` movies desync before their reset: Mupen64 0.5 read the
+`m64p_inputscript.c`'s `InitiateControllers` filled the controllers as
+mupen64plus 2.x declares them: `CONTROL` is four ints there (`Present`,
+`RawData`, `Plugin`, `Type`). BizHawk's 2013 fork has no `Type`: three
+ints. Written with the wrong stride, controller 1 came out right, but the
+core saw controller 3 plugged in (another controller's `Plugin`, 1, landed
+on its `Present`), answering with the core's own controller, and the
+four words after the array were overwritten. The game polls every port,
+so from its first read (VI 44) each frame ran a few instructions more,
+the count register drifted by a few cycles, and the stage load drew from
+the generator a different number of times (VI 1331): the enemies, the
+crates and the first stage's outcome all changed. That was the "timing
+question" this page used to blame on the video plugin. Besides, that core
+asks the plugin about its controllers once, when it is attached (2.x does
+at every start), so `BizHawkSession` now tells the plugin its controllers
+and `CONTROL`'s size (`inputscript_control_ints(3)`) before attaching it.
+
+How it was found: the run's per-VI log (controller reads, game frame, the
+generator's index, the count register) against BizHawk's DLLs under wine
+matched to VI 1330 in everything but the count, which differed from VI
+44; the same harness on the Linux build with BizHawk's input plugin
+(`mupen64plus-input-bkm` built for Linux) matched the DLLs exactly, with
+ours it didn't.
+
+Ruled out on the way (the run is the same with each): BizHawk's audio
+plugin or none, its debugger on or off, `init_saveram()` or not,
+and the MSVC build's `round`/`trunc` in `fpu.h` (`tools/bizhawk_core.sh`
+builds with them, as BizHawk's DLL has them; 4908M plays the same without
+them).
+
+### The seed
+
+The game seeds its generator from the cycle counter at boot (`osGetTime()`
+in main_code's init, 78CA0.c's `func_8025E6A4`), and the movie depends on
+it: the stage's enemies and crates come from it. On BizHawk's core the run
+is exactly repeatable, so the clock's seed is too: 119,457,098 at power-on
+and 55,693,450 after the reset (the second is the one that counts; the
+menus don't draw from the generator), so a run with another (the shift
+check's pinned 0x1997, or a shifted build's) plays the stages otherwise.
+
+### On mupen64plus 2.6.0
+
+Set up as above, the 2.6.0 run follows the encode through power-on, the
+title, mode and file select, the hard-mode file saved and the reset at
+frame 521, the title again, the file select, the world select and the
+first stage's map and start (`ovl_0D_01` at VI 1301), and desyncs at the
+stage's first move, around movie frame 1610: in the encode Bomberman
+lifts his first bomb and throws it over the gate; here the bomb stays.
+That core's timing isn't BizHawk's (its interrupts, its cycle counts, so
+its seed and the moment each press lands), and nothing in its settings
+makes it so; BizHawk's own core is the reference for this movie.
+
+### The .m64 movies
+
+They desync before or at their reset. On 2.6.0, Mupen64 0.5 read the
 controller at other moments during boot, so the samples land elsewhere
-(the reset sample 318 comes at the title, VI 464). Their parser and the
-per-read playback are there, unverified.
+(the reset sample 318 comes at the title, VI 464). On BizHawk's core
+(whose interpreter descends from Mupen64's) the reset sample comes where
+the movie means it, on the hard-mode file's save screen (`ovl_0B_06`, VI
+553), but after it the title isn't left in time and the game goes to its
+demos. mupen64-rr's reset (no PRE-NMI wait?) and its reads during the
+reboot are what to look at next.
 
 ## As a validation run
 
-Though it desyncs, the run is exactly repeatable, so it is still a
-check: a rebuilt ROM has to give the same checkpoints at the same VIs.
+The run (on either core) is exactly repeatable, so it is a check: a
+rebuilt ROM has to give the same checkpoints at the same VIs. The numbers
+below are 2.6.0's run.
 `build/jp/bm64.jp.z64` (byte for byte the original) does, all 80 of them.
 The shifted build (`build/jp-shift/bm64.jp.z64`, unpinned) follows the
 original through the first 14 checkpoints exactly (boot, reset, menus,
 the stage, the game over and the opening at VI 7289), with one controller read fewer; then the attract loop's scenes come a few VIs earlier or
 later (VI 8301 against 8306). That is the same timing effect as in
 `shift-check` (the bigger DMAs change the cycle count and the RNG seed),
-so `check --slack N` accepts a drift of N VIs. There is no `make` target:
-until a movie syncs to the end, `make shift-check` is the check, and this
-is a longer smoke test.
+so `check --slack N` accepts a drift of N VIs. On BizHawk's core the
+same drift changes the clock's seed, and with it the stages: a shifted
+build doesn't follow 4908M past its first stage. There is no `make`
+target: `make shift-check` is the check, and this is a longer smoke test.
 
 ## On the port
 
 `port/tools/emu_digest.py jp OUT --movie 4908M` writes the gameplay
 digest (docs/PORT.md, "The gameplay digest") along a movie's run, set up
-as `run` is, with the seed pinned, and `port/tools/test.py tas BUILD`
-replays it on the port by the game's frame, part by part around the soft
-reset (docs/PORT.md, "The TAS"). All three movies' runs give the same
-digest on the port at every frame: 4908M's 74,674 frames (the menus, the
-save trick, the first stage to game over, the attract loop), 2053M's
-84,941 and 2350M's 221,427.
+as `run` is, and `port/tools/test.py tas BUILD` replays it on the port by
+the game's frame, through the soft reset (docs/PORT.md, "The TAS").
+4908M's is BizHawk's core's run (`--bizhawk`, which test.py passes for
+it), the one that syncs, with the clock's seed: the digest has each boot's
+(`# seed N`, from a breakpoint on the generator's seeding), and the
+port's `--replay` seeds that boot with it. The `.m64` movies' are 2.6.0's
+runs with the seed pinned (0x1997, PORT_SEED).
+
+On the port (2026-11-22, jp, i386): 4908M's whole-game digest is the same
+for 24,846 of its 73,577 frames after the reset (the menus, Blue Resort,
+Red Mountain, into White Glacier's first stage), then the player's
+jump in scene 90 (frame 24,846) goes higher and farther on the port than
+on the N64. That is a difference in the port's game code, the first the
+movie finds (docs/PORT.md, "The TAS"). The `.m64` movies' runs are the
+same at every frame (2053M's 84,941, 2350M's 221,427).
 
 `find_vi_clock()` looks only in the core's own mappings and the
 anonymous one adjoining them (its .bss): a heap mapped after the core

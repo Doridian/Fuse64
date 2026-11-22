@@ -123,7 +123,8 @@ describes the pieces:
   TASVideos' any% (4908M, BizHawk 2.8, jp) headless on mupen64plus 2.6.0.
   It follows the movie through the menus, the save-and-reset trick and
   into the first stage, then desyncs at the stage's first move (movie
-  frame ~1610 of 78034), as BizHawk's own core does with our plugins. The
+  frame ~1610 of 78034). On BizHawk 2.8's own core (`--bizhawk`) it
+  plays to its end (2026-11-22), every stage time as in the encode. The
   run is repeatable: the jp build matches the original at all 80
   checkpoints, the shifted build (unpinned) at the first 14, then drifts by
   a few VIs.
@@ -338,11 +339,13 @@ docs/PORT.md), for accuracy and fidelity alike:
 - [ ] **A whole-game run**: the TAS movies (docs/TAS.md) replayed on the
       port with `--replay`, as far as they sync on the emulator, the
       digest equal along them (DozerEncore's TAS plays to its end).
-      Done: all three movies' emulator runs, each in one run through the
-      soft reset (docs/PORT.md, "The reset button"),
-      equal on the port at every frame (`test.py tas`, docs/PORT.md
-      "The TAS"). The whole game needs a movie that syncs on the
-      emulator past the first stage, which none does yet.
+      Done: 4908M syncs to its end on BizHawk 2.8's own core (docs/TAS.md;
+      the controller plugin had written the wrong struct size into that
+      core), and its whole-game digest is equal on the port for 24,846
+      of 73,577 frames after the reset, to a jump in White Glacier's
+      first stage that goes higher on the port (docs/PORT.md, "The TAS");
+      the `.m64` movies' emulator runs (not synced past their reset) are
+      equal at every frame. Left: that jump, then the rest of the game.
 - [ ] **Graphics**: what the RDP draws checked against angrylion task by
       task (`gfx_ref.py`), and an OpenGL renderer beside the software one.
 - [x] **Audio checked**: against mupen64plus's output (RMS and correlation,

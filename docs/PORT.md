@@ -1071,6 +1071,26 @@ references. They found:
   base) read the N64's word 0x800AED3C, which nothing names and which
   is 0: the port gives 0.
 
+The 2026-11-22 runs (after the overlays' .bss split, PORT_ASSET_PAD and
+`D_802AD0E0`'s size), cut short when the machine was needed; nothing
+they ran reported anything, and nothing needed a fix:
+
+| build | test.py's 7 | 78 stage runs | monkey (of 238) |
+|---|---|---|---|
+| us, i386, ASan and UBSan | 7 | 78 | 238 |
+| eu, i386, ASan and UBSan | 7 | 78 | 79 |
+| us, check build, seed 1 | 7 | 78 | 109 |
+| us, check build, seed 2 | 7 | 78 | 163 |
+| us, check build, seed 3 | 7 | 78 | 99 |
+| eu, check build, seeds 2 and 3 | 7 | 78 | 96 each |
+
+The attract run (30000 retraces) went past `stages.py`'s 7200 s in each
+check build under the machine's load (about 25000 retraces, no report);
+the others ran to the end. jp after the split (the check build and i386
+ASan) and eu's seed 1 didn't run. i386 against x86-64
+(`stages.py cmp`): the same hashes, every retrace, in the stage runs the
+x86-64 build finished (us 24 whole and 13 in part, eu 10 and 6).
+
 ### Where pointers are 8 bytes
 
 DozerEncore's pointer pass ("Where pointers are 8 bytes" in its PORT.md),
@@ -1925,26 +1945,36 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   the 233 and the scattered check (seed 1) 76, every one to the end
   with no report. On 2026-11-21 both ran all of them (238 with
   `--extra`) in us, eu and jp, with no report ("The scattered layout").
-  i386 is left.
+  On i386 under ASan and UBSan (2026-11-22) us ran all 238 and eu 79,
+  with no report; jp's are left.
   Coverage went from 51.6% to 56.6% of the lines; the stage overlays
   gained little, since what they don't run is behind the room's
   progress: a monkey that keeps away from its own bombs, or one that
   follows a recorded route (a TAS, docs/TAS.md) and then plays at random,
   would reach more. ovl_09, ovl_0A_03, 0A_04, 0A_06, ovl_0B_04, 0B_05 and
   ovl_16 never run.
-- **The N64's layout**: the scattered check builds ("The scattered
-  layout") report nothing in test.py's scenarios or the 77 stage runs. That
-  holds for us with seeds 1, 2 and 3, and for eu and jp with seed 1 (and
-  the seven scenarios with seeds 2 and 3), and for the monkey's runs in
-  all three with seed 1 (2026-11-21). Left:
-  - One name without a size, `D_802AD0E0` (of 77; "The scattered
-    layout"), checked only against its room up to the next name.
-  - The monkey's runs with seeds 2 and 3 of the layout.
-  - The overlays' .bss structs keep the N64's order inside one object.
+- **The N64's layout** (docs/ROADMAP.md, phase 6, unticked): the
+  scattered check builds ("The scattered layout") report nothing in
+  test.py's scenarios, the 78 stage runs or the monkey's runs: us with
+  seeds 1, 2 and 3 and eu and jp with seed 1 (2026-11-21, all 238);
+  after the overlays' .bss split (2026-11-22) us with seeds 1, 2 and 3
+  and eu with 2 and 3, the monkey's in part (99 to 163 of 238). Every
+  name has a size now (`D_802AD0E0` its room). Left:
+  - jp after the .bss split (the check build, i386 ASan), and the
+    monkey's runs the 2026-11-22 sweep didn't reach (the table in "The
+    scattered layout"), with a longer `--timeout` for the attract run.
+  - The overlays' .bss: 19 groups of two or three names the code reaches
+    one from another keep the N64's order.
   - A walk that ends at a name placed before it runs once and shows
     nothing (hence several seeds).
-  - Only the stages' first rooms and fixed walks are covered (see
-    "64-bit, the rest").
+  - Only each stage's first room and fixed walks are covered, about 57%
+    of the lines (see "64-bit, the rest").
+  - The default build itself: the fixed-address names are still aliases
+    into the 8 MiB `port_rdram` laid out as RDRAM, and each asm data file
+    one packed struct with its labels inside ("Memory"); only the check
+    build makes them objects of their own. DozerEncore's default build
+    is an ordinary C program with its fixed buffers as arrays of their
+    own.
 - **Packages** (an AppImage, the `.exe` with SDL, a macOS app; Blast
   Corps' "Packages") and a hosted page: after 64-bit, with SDL in the
   Windows cross build.

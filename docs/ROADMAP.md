@@ -334,6 +334,15 @@ docs/PORT.md), for accuracy and fidelity alike:
 - [ ] **No dependency on the N64's layout**: every past-end, alias and
       unset read fixed (the scattered check reports nothing), then an
       ordinary C program under ASan and UBSan.
+      What still stands in the way (2026-11-22): by DozerEncore's
+      standard the default build is an ordinary C program whose fixed
+      buffers are arrays of their own. Fuse64's default build still
+      keeps the fixed-address names inside the 8 MiB `port_rdram` laid
+      out as RDRAM, and each asm data file is one packed struct with its
+      labels inside; only the check build (`PORT_SCATTER`) separates
+      them. And the runs that find what depends on the layout cover each
+      stage's first room only, about 57% of the lines (docs/PORT.md,
+      "What's left").
 - [ ] **The gameplay digest equal to the emulator's** in every scene of
       every version; uninitialised reads given what the N64 leaves there.
 - [x] **A whole-game run**: the TAS movies (docs/TAS.md) replayed on the

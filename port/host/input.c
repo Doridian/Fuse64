@@ -19,6 +19,9 @@
  * A `# seed N` line gives its part's boot the random generator's seed N
  * (the clock's on the emulator, which emu_digest.py --bizhawk records:
  * digest.c's port_seed), unless PORT_SEED pins one.
+ * A `# set KEY=V,...` line (emu_digest.py --segment: a recorded room played
+ * from a warp) sets that state at the read of the next line's frame, before
+ * the read's line is written (digest.c's port_digest_set).
  * PORT_REPLAY_PART=N starts at the N-th part (from 0) instead, on a
  * power-on (with the save the part before wrote: a cold boot where the
  * movie had a soft reset).
@@ -63,6 +66,8 @@ typedef struct {
                                            any; -2: no button in this part) */
     int has_seed;                       /* `# seed N`: the boot's seed */
     unsigned seed;
+    long set_frame;                     /* `# set ...`: the frame it is set at (-1: none) */
+    char *set;
 } Part;
 
 static Part *parts;
@@ -106,6 +111,7 @@ static void replay_init(void) {
             p = &parts[nparts++];
             memset(p, 0, sizeof *p);
             p->prenmi = -2;
+            p->set_frame = -1;
             n = cap = 0;
         }
         if (!more || !strncmp(line, "# reset", 7)) {
@@ -121,6 +127,21 @@ static void replay_init(void) {
         }
         size_t l = strlen(line);
         int whole = l && line[l - 1] == '\n';
+        if (!strncmp(line, "# set ", 6)) {
+            /* (long: read it whole) */
+            char *t = malloc(l + 1);
+            memcpy(t, line + 6, l - 5);
+            while (!whole && fgets(line, sizeof line, f)) {
+                size_t m = strlen(line), u = strlen(t);
+                whole = m && line[m - 1] == '\n';
+                t = realloc(t, u + m + 1);
+                memcpy(t + u, line, m + 1);
+            }
+            free(p->set);
+            p->set = t;
+            p->set_frame = -2;          /* the next read's frame */
+            continue;
+        }
         if (!strncmp(line, "# prenmi", 8)) {
             p->prenmi = n ? (long)frames[n - 1] : -1;
         } else if (!strncmp(line, "# seed ", 7)) {
@@ -138,6 +159,8 @@ static void replay_init(void) {
             }
             p->pads[n] = (uint32_t)pad;
             p->vis[n] = vi;
+            if (p->set_frame == -2)
+                p->set_frame = fr;
             frames[n++] = fr;
             if (fr + 1 > p->frames)
                 p->frames = fr + 1;
@@ -202,6 +225,8 @@ void host_replay_wait(unsigned frame) {
         port_spin_wait();
 }
 
+void port_digest_set(const char *kv);
+
 /* --replay: the pad word of this read of the frame */
 static void replay_poll(unsigned frame) {
     const Part *p = &parts[part];
@@ -219,6 +244,8 @@ static void replay_poll(unsigned frame) {
             host_reset_button();
         }
         replay_k = 0;
+        if (p->set && (long)frame == p->set_frame)
+            port_digest_set(p->set);
     } else
         replay_k++;
     if (frame < replay_frames && p->count[frame]) {

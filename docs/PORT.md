@@ -841,6 +841,118 @@ digest's PAD column is the pad controller 1 gets, the monkey's too (in
 mupen64plus's layout), so a monkey run's digest given to `--replay`
 plays that run again (the same digest, frame for frame).
 
+#### Every room
+
+"Every stage" checks each stage from its first room. The digest's sweep
+(`port/tools/rooms.py`, 2026-11-22) compares each **room and entry**
+with mupen64plus by the gameplay digest: the emulator plays the original
+ROM with the warp in RDRAM (`emu_digest.py --warp`), the port replays
+its digest by frame (`--replay`, `PORT_WARP` the same), and
+digest_cmp.py compares the two.
+
+```
+port/tools/rooms.py census                       # each room's entries
+port/tools/rooms.py run BUILD OUT -v V [-j N] [--set census,monkey,battle,extra,tas]
+```
+
+- **The census.** A room is entered with a sub-mode, the message its
+  handler (the function the overlay's entry returns) switches on: its
+  cases 0x10-0x2F are the room's entries, from the other rooms' doors,
+  the bosses' phases, the credits' shots and the attract's demos.
+  `rooms.py census` reads them from the C, adds every entry 4908M's run
+  makes, and gives 295 (scene, sub-mode) pairs (the battle stages with
+  16). Each is warped to (`PORT_WARP=N:S`, the game's own numbers) and
+  played for 5000 retraces with warp.<v>.txt's walk. `monkey` plays
+  each with random input from the stage's start (8000 retraces).
+  `battle` plays the ten battle stages with random input from the
+  battle setup's first screen (the players, the rules, the teams; two
+  seeds).
+- **Off the warp: 4908M's route** (`tas`). The warp reaches a room's
+  entry, not the state its earlier rooms leave. The route is played
+  from a warp, as DozerEncore plays its TAS from a level:
+  `emu_digest.py --segment` warps to 56:16 (Blue Resort, the movie's
+  first stage), sets the generator (from the part's `# seed`, refilled
+  until its hash is the movie's) and the stage's words (D_802AC610: the
+  hard-mode flag) to 4908M's at that frame, and from the scene's first
+  read gives the movie's pads by the frame relative to it. It writes
+  `# set rng=... st=...` there, which the port's `--replay` applies at
+  the same read (input.c, digest.c's `port_digest_set`). The movie then
+  plays in **us and eu as well as jp**: every stage and boss of its
+  route, the last fight, the ending (28:17) and its credits (150,000
+  retraces). `--request DELTA:SCENE:SUB` makes the game's own request
+  (func_8023AE6C's writes; `# set req=...` on the port) for a room a
+  warp can't reach.
+- **`extra`**: the scenes outside the stages, from the world select:
+  both endings and their credits (28:16 and 28:17, 70,000 retraces),
+  the attract's demos (29), the menus 21-23, and the boot with no input
+  (the attract loop, 30,000 retraces).
+
+The results (i386, the seed pinned):
+
+| | census (295 pairs) | monkey @m1 | battle setup | 4908M's route from 56:16 |
+|---|---|---|---|---|
+| us | 280 the same (23 as far as the N64 goes), 13 where both stop, 126:18 and 126:19 | 256 of 257 the same; 123:16 differs from frame 3161 | 20 the same (most left the setup with B) | the same, 144,601 frames |
+| eu | 279 the same, the rest as us's; **116:18 hangs on the port** | not run | not run | the same, 146,210 frames |
+| jp | 279 the same, the rest as us's; **116:18 and 116:19 hang on the port** | not run | not run | the same, 144,660 frames |
+
+us's extras: 21, 22 and 23 the same; 24 and 155 stop on both. The two
+endings, the demos and the attract weren't rerun to the end after an
+emulator run was cut short. The Rainbow Palace boss's 126:18 and 126:19
+differ in all three versions (the .bss residue below).
+
+**Where both stop.** A warp can enter a room in a state play never
+gives it; then the N64 itself dies or hangs, and the port does the same
+at the same frame (it stops reading the controllers there: crashes
+within the frame, or, for a hang, `rooms.py`'s timeout). These are the
+warp's, not the port's:
+
+- the credits' shots (the AFBF0.c lists, 23 of the census's pairs, as
+  92:16 and 97:16 above): the room plays its shot, then asks the
+  credits' next scene, NULL outside the credits (scene 16795685 in the
+  digest); the port gives the N64's (`port_credits_next`);
+- the attract's demo entries out of the attract (41:29, 80:17, 80:22):
+  B11F0.c's func_80296D4C reads its demo through NULL;
+- rooms whose objects the earlier room makes (45:22 and 46:19, ovl_0C_07's
+  lift; 48:19, ovl_0C_09's object): read through NULL;
+- 116:32, 126:32, 126:33, 24:16 and 155:16: the scene's file is in
+  another bank (NULL), the N64 stops at the load;
+- 41:23-26: the room hands over to 40:21-22 or 41:27-28, which loop
+  forever in func_8022FDE8 waiting for an object the warp didn't make.
+
+**Overlay .bss residue.** The N64 doesn't clear an overlay's .bss when
+it loads one (only the port does: "Overlays"), so a variable the room
+reads before writing has the previous overlay's bytes. Only one warp
+shows it: Rainbow Palace's boss with 126:18 and 126:19 (the second and
+third phases) reads D_ovl12_05_8004AC74, which the first phase sets as
+it ends (func_ovl12_05_80044534); warped past it, the N64 has
+0x00401825 there (an instruction of the overlay before) and the port 0,
+and the boss differs from frame 1034. In play the phase always sets it
+first.
+
+**Black Fortress's boss hangs in eu and jp** (116:18 and 116:19, not
+fixed). The port loops forever in 6BBE0.c's func_802553D4: a CPU player
+is moved to random places within 80 of its target (player 0, falling
+into a pit, y below -370), with no yield, until one is free of objects
+(func_8022F550) and of walls and holes (func_80251AC8 of func_8026D7D8's
+cell). The N64 finds one within the frame (jp frame 3023 there; eu
+3011), so a cell or collision read differs there, probably past the
+map's end with the target below the floor (func_8026DCAC's layer
+search). us plays the same entries to the end.
+
+Found by a scan, not by a run, and fixed under `TARGET_PC` as
+ovl_10_05's was ("The TAS"): the three other Black Fortress rooms with
+**followers** read
+their positions before the followers exist (until the player comes near,
+the pointer is NULL and the N64 reads ZeroJump's page): ovl_10_01
+(D_ovl10_01_80047618), ovl_10_03
+(D_ovl10_03_800472D8) and ovl_10_06 (D_ovl10_06_8004B9A4). The port
+reads them with `port_null_word`. The patterns 4908M showed were looked
+for everywhere: no other `s64` built from two words in a union (426E0.c's
+halves are native.c's `U_HALVES`, 949A0.c's already fixed), and reads
+through a pointer before its NULL check (a scan of every function) found
+only these; the others are guarded by an invariant (the fades of
+ovl_10_07-09 and 10_12 run only after their object is made).
+
 #### Coverage
 
 `port/tools/coverage.py` measures it with clang's source coverage:
@@ -2054,7 +2166,11 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   77 PORT_WARP scenes in us, eu and jp, with the object pools, on
   i386: all the same (75:17 as far as the N64 goes: "The stages: the
   warp on the emulator"), and jp's whole game along 4908M on BizHawk's
-  core, every frame to the movie's end ("The TAS"). Left: the pools
+  core, every frame to the movie's end ("The TAS"); every room's entry
+  and 4908M's route from a warp in us, eu and jp ("Every room"). Left:
+  Black Fortress's boss hangs on the port in eu and jp (116:18, 116:19);
+  us's monkey in 123 differs; eu's and jp's monkey and battle-setup
+  runs; overlay .bss residue (126:18, 126:19 warped). Also left: the pools
   on 64-bit hosts (by field, with the host's struct offsets); 9CAB0.c's
   two unions.
 - **Audio** ("Audio"): checked against mupen64plus in us's menus, story

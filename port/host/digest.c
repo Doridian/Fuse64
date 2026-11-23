@@ -305,6 +305,51 @@ void port_digest_mark(const char *what) {
         force_full = 1;
 }
 
+void func_8023AE6C(s32 scene, s32 sub, s32 flags);
+
+/* --replay's `# set KEY=V,...` (input.c; emu_digest.py --segment and
+   --request), in hex: rng (the index, then the table's 56 words), st
+   (D_802AC610's 20) and req (the game's own request for a scene: scene,
+   sub-mode, flags) */
+void port_digest_set(const char *kv) {
+    char key[64];
+    while (*kv) {
+        u32 w[64];
+        int n = 0, k = 0;
+        while (*kv == ' ')
+            kv++;
+        while (*kv && *kv != '=' && k < 63)
+            key[k++] = *kv++;
+        key[k] = 0;
+        if (*kv != '=')
+            break;
+        kv++;
+        while (n < 64) {
+            char *end;
+            w[n++] = (u32)strtoul(kv, &end, 16);
+            kv = end;
+            if (*kv != ',')
+                break;
+            kv++;
+        }
+        if (!strcmp(key, "rng") && n == 57) {
+            D_802ACFE0 = (s32)w[0];
+            memcpy(D_802ACFE8, w + 1, sizeof D_802ACFE8);
+        } else if (!strcmp(key, "st") && n == 20) {
+            memcpy(D_802AC610, w, sizeof D_802AC610);
+        } else if (!strcmp(key, "req") && n == 3) {
+            func_8023AE6C((s32)w[0], (s32)w[1], (s32)w[2]);
+        } else {
+            fprintf(stderr, "--replay: can't set %s (%d words)\n", key, n);
+            exit(1);
+        }
+        while (*kv && *kv != ' ' && *kv != '\n')
+            kv++;
+        while (*kv == '\n')
+            kv++;
+    }
+}
+
 void port_digest_poll(void) {
     static char line[MAXF * VALLEN];
     char val[VALLEN];

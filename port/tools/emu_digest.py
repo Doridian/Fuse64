@@ -3,6 +3,7 @@
 
   emu_digest.py VERSION OUT [--input SCRIPT] [--frames N] [--rom ROM] [--elf ELF]
                 [--seed N] [--no-dp] [--m64p DIR] [--wav WAV]
+  emu_digest.py VERSION OUT --warp N[:S] [--segment DIGEST:PART:FRAME[:st]] [--request DELTA:SCENE:SUB[:FLAGS]] ...
   emu_digest.py jp OUT --movie 4908M [--frames N] [--bizhawk DIR]
 
 Writes OUT in PORT_DIGEST's format (port/host/digest.c, docs/PORT.md "The
@@ -36,6 +37,17 @@ NMI) and `# reset VI` before the restarted game's first read (its frame
 count from 0); the port's --replay presses its reset button at the same
 frame and writes the same two lines (docs/PORT.md, "The TAS").
 
+--warp N[:S] changes the first story request in RDRAM as PORT_WARP does
+(port/host/warp.c; every round's, for a battle stage).  After it,
+--segment DIGEST:PART:FRAME[:st] plays a recorded run's room (a TAS's)
+from the warped scene's first read: that digest part's pads by the frame
+relative to FRAME, with the generator (and with `st` D_802AC610, the
+stage's words: the hard-mode flag) set to the run's there; --request
+DELTA:SCENE:SUB[:FLAGS] makes the game's own request (func_8023AE6C's
+writes) DELTA frames after the warp.  Each writes a `# set KEY=...` line
+(rng, st, req) that the port's --replay applies at the same read
+(port/host/digest.c's port_digest_set; docs/PORT.md, "Every room").
+
 port/tools/digest_cmp.py compares the result with a port's digest.
 --wav writes the sound (tools/src/m64p_audiodump.c), which
 port/tools/wav_cmp.py compares with the port's `--wav` of the same
@@ -56,6 +68,7 @@ import emu_ram  # noqa: E402
 import shift_check  # noqa: E402
 
 NAMES = ["D_800AEDF0", "D_8029F600", "D_802AC5D0", "D_802AC5D4", "D_802AC5D8", "D_802AC5DC", "D_802AC5E0",
+         "D_802AC5E4", "D_802A01B4",
          "D_802AC610", "D_802AC660", "D_802ACFE0", "D_802ACFE8"]
 # D_800AEDF0's entries (0xC8 bytes): every word but the pointers
 ENTRY_WORDS = [o for o in range(0, 0xC8, 4) if o not in (0x28, 0x2C, 0x30, 0x40, 0x4C, 0xB0, 0xB4)]
@@ -84,6 +97,118 @@ def pools():
 
 
 POOLS = pools()
+
+
+def seeded(mj):
+    """78CA0.c's generator seeded with mj (func_8025E6A4): its 56 words"""
+    s32 = lambda x: (x + (1 << 31)) % (1 << 32) - (1 << 31)  # noqa: E731
+    MBIG = 1000000000
+    t = [0] * 56
+    mj = s32(mj)
+    t[55] = mj
+    mk = 1
+    for i in range(1, 55):
+        ii = (21 * i) % 55
+        t[ii] = mk
+        mk = s32(mj - mk)
+        if mk < 0:
+            mk = s32(mk + MBIG)
+        mj = t[ii]
+    for _ in range(3):
+        for i in range(1, 56):
+            j = s32(t[i] - t[i + 31 if i < 25 else i - 24])
+            t[i] = s32(j + MBIG) if j < 0 else j
+    return [x & 0xFFFFFFFF for x in t]
+
+
+def fnv(words):
+    """digest.c's hash of the generator's table"""
+    h = 0x811C9DC5
+    for x in words:
+        for b in range(0, 32, 8):
+            h = ((h ^ (x >> b & 0xFF)) * 16777619) & 0xFFFFFFFF
+    return h
+
+
+class Segment:
+    """--segment DIGEST:PART:FRAME[:st]: from the first read in the warp's
+    scene on, controller 1 gets DIGEST's pads (its part PART) by the frame
+    relative to FRAME there, and at that read the generator (and with :st
+    the stage's words, D_802AC610) is set to the digest's state at FRAME:
+    a room of a recorded run (a TAS's) played from a warp.  The table is
+    found from the part's seed by refilling it until its hash is the
+    digest's.  The state set is written as `# set KEY=V,...` before the
+    read's line, which the port's --replay sets at the same read."""
+
+    def __init__(self, spec):
+        path, part, frame, *opt = spec.split(":")
+        part, self.src = int(part), int(frame)
+        self.keys = ["rng"] + opt
+        self.pads = {}
+        self.state = {}
+        cur, seed, p = {}, None, 0
+        for line in open(path):
+            if line.startswith("# reset"):
+                p += 1
+                cur = {}
+            elif p != part:
+                continue
+            elif line.startswith("# seed "):
+                seed = int(line.split()[2], 0)
+            elif line[:1].isdigit():
+                f = line.split()
+                fr = int(f[4])
+                for kv in f[6:]:
+                    if "=" in kv:
+                        k, _, v = kv.partition("=")
+                        cur[k] = v
+                if fr >= self.src:
+                    self.pads.setdefault(fr - self.src, []).append(int(f[5], 16))
+                if fr == self.src and not self.state:
+                    self.state = dict(cur)
+        if not self.state:
+            sys.exit(f"--segment: no frame {self.src} in part {part} of {path}")
+        idx, h = self.state["rng"].split(",")
+        t = seeded(seed if seed is not None else shift_check.SEED)
+        for _ in range(200000):
+            if "%08x" % fnv(t) == h:
+                break
+            for i in range(1, 56):
+                j = t[i] - t[i + 31 if i < 25 else i - 24]
+                t[i] = (j + 1000000000 if j < 0 else j) & 0xFFFFFFFF
+        else:
+            sys.exit("--segment: the generator's table not found from the seed")
+        self.rng = [int(idx) & 0xFFFFFFFF] + t
+        self.start = None
+        self.frame = None
+        self.k = 0
+
+    def pad(self, frame, held):
+        if self.start is None:
+            return held
+        rel = frame - self.start
+        if frame != self.frame:
+            self.frame, self.k = frame, 0
+        else:
+            self.k += 1
+        pads = self.pads.get(rel)
+        return pads[min(self.k, len(pads) - 1)] if pads else 0
+
+    def begin(self, r, at, frame):
+        """the first read in the scene: the state set (RDRAM words r)"""
+        self.start = frame
+        r[at("D_802ACFE0")] = self.rng[0]
+        base = at("D_802ACFE8")
+        for i, x in enumerate(self.rng[1:]):
+            r[base + i] = x
+        sets = ["rng=" + ",".join("%x" % x for x in self.rng)]
+        if "st" in self.keys:
+            ws = [int(x, 16) for x in self.state["st"].split(",")]
+            base = at("D_802AC610")
+            for i, x in enumerate(ws):
+                r[base + i] = x
+            sets.append("st=" + ",".join("%x" % x for x in ws))
+        return "# set " + " ".join(sets)
 
 
 def addresses(elf):
@@ -116,6 +241,11 @@ class Digest:
         self.dumps = {}         # --dump's {frame: file}
         self.seeds = []         # the boot's seed (--bizhawk), written before the part's first read
         self.raw = {}           # a pool's bytes at the last read, and its values
+        self.segment = None     # --segment's Segment
+        self.pending = None     # its `# set` line, for the read's line
+        self.req_frame = None
+        self.requests = []      # --request's [(frames after the warp, scene, sub, flags)]
+        self.warp_frame = None
         # the pools' ranges, for the pointers (digest.c's pool_ptr)
         self.ranges = [(addr[sym], n, stride, key) for key, sym, n, stride, _ in POOLS]
         self.ranges.append((addr["D_800AEDF0"], 5, 0xC8, "e"))
@@ -174,11 +304,35 @@ class Digest:
         else:
             hit = not self.warped and 0x28 <= scene < 0x9A
         if hit:
+            if not self.warped:
+                self.warp_frame = r[at("D_8029F600")]
             self.warped = True
             print(f"warp: scene {scene} -> {target} at frame {r[at('D_8029F600')]}", file=sys.stderr)
             r[at("D_802AC5D4")] = r[at("D_802AC5DC")] = target
             if sub is not None:
                 r[at("D_802AC5D8")] = r[at("D_802AC5E0")] = sub
+
+    def request(self, r):
+        """--request: the game's own func_8023AE6C(scene, sub, flags) at the
+        first read of a frame, once the frame is reached and the game takes
+        a request; the port's --replay makes the same call there (`# set
+        req=...`)"""
+        def at(name):
+            return (self.a[name] & 0x7FFFFF) >> 2
+        frame = r[at("D_8029F600")]
+        if frame == self.req_frame:
+            return
+        self.req_frame = frame
+        delta, scene, sub, flags = self.requests[0]
+        if frame < self.warp_frame + delta or r[at("D_802AC5D0")] & 1 or r[at("D_802A01B4")]:
+            return
+        self.requests.pop(0)
+        r[at("D_802AC5D4")] = r[at("D_802AC5DC")] = scene
+        r[at("D_802AC5D8")] = r[at("D_802AC5E0")] = sub
+        r[at("D_802AC5D0")] |= 1
+        r[at("D_802AC5E4")] = flags
+        self.f.write(f"# set req={scene:x},{sub:x},{flags:x}\n")
+        print(f"request: scene {scene}:{sub} at frame {frame}", file=sys.stderr)
 
     def reset(self, vi):
         """the reset button: the game gets the PRE-NMI event and goes on
@@ -195,6 +349,11 @@ class Digest:
         r = self.ram()
         if self.warp:
             self.do_warp(r)
+        if self.pending:
+            self.f.write(self.pending + "\n")
+            self.pending = None
+        if self.requests and self.warp_frame is not None:
+            self.request(r)
 
         def w(addr):
             return r[(addr & 0x7FFFFF) >> 2]
@@ -270,6 +429,11 @@ def main():
     ap.add_argument("--movie", help="a TAS movie's id or file (tools/tas.py) instead of --input")
     ap.add_argument("--bizhawk", help="with --movie: BizHawk 2.8's core in this directory "
                     "(tools/bizhawk_core.sh) instead of the system's mupen64plus (tas.py run --bizhawk)")
+    ap.add_argument("--request", action="append", default=[],
+                    help="DELTA:SCENE:SUB[:FLAGS]: the game asked for that scene DELTA frames after the warp (at the "
+                    "first read of a frame where it takes a request), as its own func_8023AE6C call does")
+    ap.add_argument("--segment", help="DIGEST:PART:FRAME[:st]: from the warp's scene on, that digest's pads "
+                    "by the frame relative to FRAME, and its generator's state (and the stage's words) set there")
     a = ap.parse_args()
     v = a.version
     rom = Path(a.rom or ROOT / f"build/{v}/bm64.{v}.z64")
@@ -351,6 +515,27 @@ def main():
     for x in a.dump:
         frame, _, path = x.partition(":")
         d.dumps[int(frame, 0)] = path
+    for x in a.request:
+        q = [int(v, 0) for v in x.split(":")]
+        d.requests.append((q[0], q[1], q[2], q[3] if len(q) > 3 else 0))
+    if d.requests and not warp:
+        sys.exit("--request needs --warp")
+    if a.segment:
+        if not warp:
+            sys.exit("--segment needs --warp")
+        seg = d.segment = Segment(a.segment)
+        frame_at0 = (d.a["D_8029F600"] & 0x7FFFFF) >> 2
+
+        def seg_pad(held, vi):
+            r = ram()
+            if seg.start is None:
+                d.do_warp(r)
+                if d.warped:
+                    d.pending = seg.begin(r, lambda n: (d.a[n] & 0x7FFFFF) >> 2, r[frame_at0])
+            return seg.pad(r[frame_at0], held)
+        scb = ctypes.CFUNCTYPE(ctypes.c_uint, ctypes.c_uint, ctypes.c_uint)(seg_pad)
+        keep.append(scb)
+        emu.inp.inputscript_replay(scb)
     cb = ctypes.CFUNCTYPE(None, ctypes.c_uint, ctypes.c_uint)(lambda keys, vi: d.poll(vi, keys))
     keep.append(cb)
     emu.inp.inputscript_on_poll(cb)

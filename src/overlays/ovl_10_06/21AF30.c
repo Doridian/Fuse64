@@ -779,8 +779,24 @@ void func_ovl10_06_80047E10(void) {
         D_ovl10_06_8004AFA8[10 - j - 1] = D_ovl10_06_8004AFA8[10 - j - 2];
         D_ovl10_06_8004AFD0[10 - j - 1] = D_ovl10_06_8004AFD0[10 - j - 2];
     }
+#ifdef TARGET_PC
+    if (D_ovl10_06_8004B9A4 == NULL) {
+        /* not spawned yet (func_ovl10_06_80047D14 below, when the player comes
+           near): the N64 reads ZeroJump's page, mapped at 0
+           (port_null_word), as ovl_10_05's twin does */
+        union { u32 w; f32 f; } x, z;
+        u32 m = port_null_word(0x40);
+        x.w = port_null_word(m + 0x10);
+        z.w = port_null_word(m + 0x18);
+        D_ovl10_06_8004AFA8[0] = x.f;
+        D_ovl10_06_8004AFD0[0] = z.f;
+    } else {
+#endif
     D_ovl10_06_8004AFA8[0] = D_ovl10_06_8004B9A4->unk40->unk10;
     D_ovl10_06_8004AFD0[0] = D_ovl10_06_8004B9A4->unk40->unk18;
+#ifdef TARGET_PC
+    }
+#endif
     func_ovl10_06_8004A068(D_ovl10_06_8004ADD0[0], &pos);
     pos.y = player.y;
     if (func_ovl10_06_80049F40(&player, &pos) < 1500.0f) {

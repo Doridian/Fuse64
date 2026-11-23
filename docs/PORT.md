@@ -65,7 +65,8 @@ from a gameplay digest, by the game's frame: "The gameplay digest"),
 `--save-dir DIR` (the EEPROM file
 `fuse64.<v>.eep`), `--wav FILE`, `--hash` (each retrace's picture
 hash), `--vi-raw` (the color image as it is, without the VI: "The VI"),
-`--renderer soft` (the only one: "Graphics"), `-v`. With a window the
+`--renderer soft` (the microcode, the default) or `hle-sw` (the HLE front
+end: "Graphics"), `-v`. With a window the
 keyboard (arrows, Z, X, C, A, S, Enter) and SDL's game controllers are
 the controller, and F9 is the console's reset button
 (`PORT_RESET=N[,N...]` presses it at those retraces; "The reset
@@ -1339,9 +1340,10 @@ Its parts (port/host/gfx.h has the interface between them):
 
 | file | what |
 |---|---|
-| gfx.c | the graphics task: the display list's flow, the game's microcode on rsp.c, the RDP commands it sends (to gfx_rdp.c's state, or drawn by the back end); `PORT_DUMP_DL`, `PORT_GFX_REF`, the census |
+| gfx.c | the graphics task: the display list's flow, the game's microcode on rsp.c (or the HLE front end), the RDP commands it sends (to gfx_rdp.c's state, or drawn by the back end); `PORT_DUMP_DL`, `PORT_GFX_REF`, the census, `PORT_HLE_CHECK` |
+| gfx_hle.c | the HLE front end (`--renderer hle-sw`): the microcode's commands in C, its arithmetic exactly ("The HLE front end") |
 | gfx_rdp.c | the RDP's state and its decoding, what a back end draws with: the state commands, tiles, TMEM and its loads, the texel formats, the combiner's selectors |
-| gfx_soft.c | the software back end (`--renderer soft`, the only one): the RDP's rasterizer, exact (triangles, rectangles, the pixel pipeline, coverage and the hidden bits, the z-buffer) |
+| gfx_soft.c | the software back end (`--renderer soft` and `hle-sw`; the only one): the RDP's rasterizer, exact (triangles, rectangles, the pixel pipeline, coverage and the hidden bits, the z-buffer) |
 | vi.c | the VI ("The VI") |
 
 **The RSP's side is the game's microcode.** port/host/rsp.c interprets
@@ -1372,6 +1374,62 @@ DMEM), texture rectangles and the commands the RDP takes as they are stay
 in C. A display list costs the microcode's instructions (the first
 stage's task about 680,000; the interpreter runs them in a few
 milliseconds).
+
+**The HLE front end.** `--renderer hle-sw` does the microcode's part in
+C instead of running it (port/host/gfx_hle.c, after DozerEncore's front
+end and the microcode's own code, read from its disassembly), and draws
+with the same software back end: the first half of the OpenGL
+renderer's plan, an HLE front end whose vertices and triangles a GPU back
+end will take. It is not a float approximation but the microcode's
+arithmetic, a step at a time: each vector instruction's lanes as
+integers, the products through the 48-bit accumulator and its clamps
+(VMUDL to VMADH, VMULF, the saturating adds with their carries, VCH and
+VCL for the clip flags), the divide unit's reciprocal and inverse square
+root from rsp.c's ROM (`rsp_div`), and its state in a DMEM laid out as
+the microcode keeps it, from the microcode's data at each task's start:
+the modes, the segments, the lights, the viewport and fog, the three
+matrices, the 32 vertices' 40-byte records, the matrix stack at the
+task's address. So the RDP gets the same commands, word for word, and
+CULLDL and BRANCH_Z (gfx.c's, for both) read the same records. It does
+MTX (load or multiply, the push, the combined matrix), POPMTX, MOVEMEM,
+MOVEWORD (at the microcode's bases, whatever it writes), TEXTURE,
+SETOTHERMODE_H/L (and the RDP command they send),
+SET/CLEARGEOMETRYMODE, MODIFYVTX; VTX (the transform, the lights'
+directions into the model's space after a matrix, as the microcode
+transposes the modelview, lighting, texture generation and its linear
+form, the texture scale, fog, 1/w, the viewport and the guard band's
+clamp, the clip flags with the microcode's own: the second vertex of a
+pair carries the first's w sign); TRI1 and TRI2 (the trivial reject,
+the clipper: against w, the far plane and the guard band, in the
+microcode's order, its new vertices made as it makes them, the polygon
+drawn as its fan; culling; and the setup of the edges, shade, texture,
+with its scale to fit the RDP's range, and depth). Not LINE3D (never
+sent: "The GBI census") or LOAD_UCODE (neither front end).
+
+`PORT_HLE_CHECK=1` (with the soft renderer) runs each command on both:
+the microcode first, which draws, then the HLE from the same state, and
+compares the RDP commands each sent and the state each left in DMEM (all
+of the above but the output's pointers and a word of the clipper's), and
+each CULLDL's decision; a difference is logged and the HLE takes the
+microcode's state again; the counts are logged at the exit. With
+`--renderer`, test.py, stages.py and gfx_ref.py run the build with
+another renderer (soft's references and runs).
+
+Measured 2026-11-22, all exact:
+
+| | us | eu | jp |
+|---|---|---|---|
+| `PORT_HLE_CHECK=1`, stages.py's 77 runs (5000 retraces each): tasks | 394,923 | 394,923 | 394,923 |
+| commands compared | 345,794,860 | 345,031,008 | 360,647,146 |
+| triangle commands among them | 77,741,877 | 77,782,813 | 81,042,015 |
+| CULLDLs | 18,435,878 | 18,385,437 | 19,263,792 |
+| with other RDP commands, other state, CULLDL decided otherwise | 0 | 0 | 0 |
+| stages.py `cmp`, hle-sw against soft (every retrace's hash) | 77 of 77 the same | 77 of 77 | 77 of 77 |
+| gfx_ref.py, hle-sw against angrylion's references | 20 of 20 tasks 0/0/0 | 20 of 20 | 20 of 20 |
+| test.py legal, menus, battle (hle-sw against soft's references) | ok | ok | ok |
+
+Wherever it was measured, the HLE front end sends the microcode's RDP
+commands, word for word; the OpenGL back end is still to come.
 
 The RDP's side is in integers, as the RDP computes it. A triangle is
 drawn from its command as the RDP walks it (`rdp_tri` in gfx_soft.c, after

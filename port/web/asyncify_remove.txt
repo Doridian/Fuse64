@@ -8,17 +8,14 @@
 host_gfx_task
 rsp_run
 uc_begin
-uc_cmd
 uc_dma
 fe_cmd
-hc_cmd
 xr_dl
 cs_load
 cs_prim
 addr
 gfx_hle_cmd
 # gfx_rdp.c, gfx_soft.c: the RDP
-rdp_feed
 rdp_op
 rdp_tri
 fill_rect

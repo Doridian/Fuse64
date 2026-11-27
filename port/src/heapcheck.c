@@ -10,8 +10,8 @@ struct port_list {
 
 
 extern struct port_list bm64__fraghead[] __attribute__((weak));
-/* the sbrk arena (40300.c: 1 MiB) */
-extern uint8_t D_80300000[0x100000];
+/* the sbrk arena (40300.c: 1 MiB, 2 where pointers are 8 bytes) */
+extern uint8_t D_80300000[PORT_SBRK_SIZE];
 
 
 int port_heap_check(void) {
@@ -22,7 +22,7 @@ int port_heap_check(void) {
         struct port_list *p = &bm64__fraghead[log];
         int n = 0;
         for (struct port_list *q = p->next; q != NULL; q = q->next) {
-            if ((uint8_t *)q < D_80300000 || (uint8_t *)q >= D_80300000 + 0x100000) {
+            if ((uint8_t *)q < D_80300000 || (uint8_t *)q >= D_80300000 + PORT_SBRK_SIZE) {
                 host_log("heap: fragment list %d: node %d at %p, outside the arena\n", log, n, (void *)q);
                 return 1;
             }

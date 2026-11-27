@@ -10,7 +10,7 @@ void *func_80225B00(s32 size) {
     u8 *p = D_8029F5A0;
 
     D_8029F5A0 += size;
-    if (D_8029F5A0 - D_80300000 >= 0x100000) {
+    if (D_8029F5A0 - D_80300000 >= PORT_HOST(0x100000, PORT_SBRK_SIZE)) {
         return (void *)-1;
     }
     return p;

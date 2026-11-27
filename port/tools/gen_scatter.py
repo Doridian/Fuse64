@@ -32,7 +32,9 @@ import random
 import sys
 
 POISON = 0xA5
-SBRK_SIZE = 0x100000    # (D_80300000, the last name: gmalloc's arena)
+# (D_80300000, the last name: gmalloc's arena; twice that where pointers
+# are 8 bytes, --decls: port_game.h's PORT_SBRK_SIZE)
+SBRK_SIZE = 0x100000
 WORK_FROM, WORK_END = 0x80063000, 0x800BEA60    # the work area 40040.c clears
 
 
@@ -70,7 +72,7 @@ def main():
                 if base in bases:
                     return bases[base] - e["hoff"]
                 if e["name"] == "D_80300000":
-                    return SBRK_SIZE
+                    return SBRK_SIZE * (2 if decls else 1)
                 return e["room"]
             hroom = room(False)
             e["hroom"] = hroom

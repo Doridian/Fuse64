@@ -54,6 +54,11 @@ unsigned int port_seed(unsigned int clock);
    pointers are 4 bytes; where they are 8, whose structures in it are
    bigger, a heap of twice the size (port/src/memory.c) */
 unsigned char *port_audio_heap(unsigned char *n64, int *len);
+/* 40300.c's sbrk arena at 0x80300000 (gmalloc's: the game's heap): the
+   N64's 1 MiB where pointers are 4 bytes; where they are 8, whose blocks
+   and gmalloc's own records are bigger, twice that (up to 0x80500000 in
+   port_rdram, where nothing else is) */
+#define PORT_SBRK_SIZE (PORT_LP64 ? 0x200000 : 0x100000)
 
 /* the host's sizes of SDK objects the game's C keeps as bytes or words
    (checked in port/src/ultra.c) */

@@ -1182,9 +1182,11 @@ base, then base with `extra`, then with `ovl` too:
 | ovl_0B_05 (Options) | 614 | 0% | 0% | 49.5% |
 | ovl_16_01 | 194 | 0% | 8.2% | 8.2% |
 
-(x86-64 there: its 28:16 runs out of the 1 MiB heap at the credits'
-last picture, AFBF0.c's func_802957C0, as i386 did before the heap's
-fix, in "Every room"; the 8-byte pointers' structures are larger.)
+(The coverage build is x86-64. Built before d05997b9, its 28:16 ran
+out of the 1 MiB heap at the credits' last picture, AFBF0.c's
+func_802957C0, since the 8-byte pointers' structures are larger;
+gmalloc's arena is 2 MiB on 64-bit hosts since, "Where pointers are 8
+bytes".)
 
 ## How it works
 

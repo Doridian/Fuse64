@@ -1170,8 +1170,15 @@ What the runs found, each fixed under `TARGET_PC` (the ROM is the same):
   palette, and the TLUT load reads 16 entries for a CI4 picture and 256
   for a CI8 whatever the palette's count: 94 of us's and eu's pictures
   (88 of jp's) read up to 0x1FE bytes past their file, into the rest of
-  the block and the next. The asset cache's block (87190.c) is
-  `PORT_ASSET_PAD` (0x200) bytes longer, and `port_asset_tail`
+  the block and the next. In gmalloc's arena the asset cache's block
+  (87190.c) is the N64's size, at the N64's address, and the bytes past
+  it are the heap's own, as on the N64 (0x368's are the emulator's
+  `0F0F 0F0F 0F00 0000`, eu checked; the only other bytes that differ
+  are gmalloc's links in the free fragments after it, host pointers,
+  which no texel reads). A longer block there used the arena up sooner:
+  jp's 116:28 and 126:30 with random input ran out of it, 24 KB short,
+  where the N64 didn't ("Every room"). With the host's malloc the
+  block is `PORT_ASSET_PAD` (0x200) bytes longer, and `port_asset_tail`
   (port/src/native.c) gives them the N64's bytes: zeros (the legal
   screen's picture is the heap's first file, zeros after it in the
   emulator), and for 0x368, the title's TM (19x11 CI4, 5 colours, the one

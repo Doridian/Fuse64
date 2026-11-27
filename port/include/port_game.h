@@ -98,7 +98,8 @@ void port_native32(void *p, unsigned int n);
 void port_native16(void *p, unsigned int n);
 void port_asset_native(int id, void *p, int size);
 /* what the N64 has past a file of the asset cache (its TLUT loads read
-   there), the PORT_ASSET_PAD bytes the port gives it room for; the LZSS
+   there), the PORT_ASSET_PAD bytes the port gives it room for with the
+   host's malloc (in gmalloc's arena they are the heap's own); the LZSS
    window the decoder frees, which the heap's next block can reuse */
 #define PORT_ASSET_PAD 0x200
 void port_asset_tail(int id, void *p, int size);

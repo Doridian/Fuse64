@@ -275,8 +275,11 @@ int port_narrow_dl(const void *p) {
  * 7C4D0.c, 7D840.c, 54E40.c) reads 16 entries for a CI4 picture and 256
  * for a CI8 whatever the palette's count: 94 of us's pictures have fewer
  * colours than that, so the load reads up to 0x1FE bytes past the file,
- * into the rest of its heap block and on into the next.  The port's block
- * has PORT_ASSET_PAD bytes more (87190.c), given here the N64's bytes:
+ * into the rest of its heap block and on into the next.  In gmalloc's
+ * arena the port's block is the N64's, at the N64's address, and the bytes
+ * past it are the heap's own, as there (a longer block used the arena up
+ * sooner).  With the host's malloc (PORT_HOST_MALLOC) the block has
+ * PORT_ASSET_PAD bytes more (87190.c), given here the N64's bytes:
  * - 0x368 (us's and eu's title screen "TM", 19x11 CI4, 5 colours) uses
  *   entries 7 and 8.  Its 162 bytes take a 256-byte fragment, which on the
  *   N64 is where the LZSS window of the file loaded just before it (0x367)

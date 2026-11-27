@@ -119,10 +119,14 @@ void *func_8026CE28(s32 arg0) {
         func_802267E0(0x18);
         file = func_80226604(arg0, 1);
         func_8022616C((u8 *) &size, 4, 1, file);
-#ifdef TARGET_PC
+#if defined(TARGET_PC) && defined(PORT_HOST_MALLOC)
         /* PORT_ASSET_PAD bytes past the file, what the N64 has after it: a
          * picture ends with its palette, which a TLUT load reads 16 or 256
-         * entries of whatever its count (port/src/native.c) */
+         * entries of whatever its count (port/src/native.c).  Only with the
+         * host's malloc: in gmalloc's arena the block is the N64's size and
+         * the bytes past it the heap's own, as on the N64 (a longer block
+         * used the arena up sooner: jp's 116:28 and 126:30 with random
+         * input ran out of it where the N64 didn't) */
         D_800A7F30[i].unk4 = malloc(size + PORT_ASSET_PAD);
         port_asset_tail(arg0, D_800A7F30[i].unk4, size);
 #else

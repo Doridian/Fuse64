@@ -9,28 +9,29 @@
 
 #include "host.h"
 
-/* A thread's host stack: from the host's allocator, one for each thread
-   slot, the first time it is used, zeroed; page-aligned, as a pthread
-   stack must be. */
+/* A thread's host stack: one for each thread slot, in the image (not the
+   host's heap), so that where it is doesn't depend on what else the host
+   allocated before it (the GL driver, from its threads as well): the
+   game's structures keep pointers into it (a message queue in a local),
+   and RDRAM must be the same whatever the renderer (docs/PORT.md, "The
+   host's blocks the game keeps").  Page-aligned, as a pthread stack must
+   be; zero until used, as the image's bss is.  (The libaudio oracle's
+   recorder, PORT_AUDIO_RECORD, has them at the same addresses every run
+   too, which its replay maps.)  On Windows the fibers have stacks of
+   their own (fiber_win32.c's CreateFiberEx), and PE sections align to
+   8 KiB at most. */
+#ifdef _WIN32
+#define STACK_ALIGN 0x1000
+#else
+#define STACK_ALIGN 0x4000
+#endif
+static uint8_t stack_pool[PORT_MAX_THREADS][PORT_STACK_SIZE] __attribute__((aligned(STACK_ALIGN)));
 static void *stacks[PORT_MAX_THREADS];
 
 void *host_thread_stack(int idx, uint32_t *size) {
     *size = PORT_STACK_SIZE;
-    if (!stacks[idx]) {
-#if defined(PORT_AUDIO_RECORD)
-        /* (the libaudio oracle's recorder: in the image, at the same
-           addresses every run, which the replay maps) */
-        static uint8_t rec_stacks[PORT_MAX_THREADS][PORT_STACK_SIZE] __attribute__((aligned(0x4000)));
-        stacks[idx] = rec_stacks[idx];
-#elif defined(_WIN32)
-        stacks[idx] = _aligned_malloc(PORT_STACK_SIZE, 0x4000);
-#else
-        stacks[idx] = aligned_alloc(0x4000, PORT_STACK_SIZE);
-#endif
-        if (!stacks[idx])
-            host_fatal("no memory for thread %d's stack", idx);
-        memset(stacks[idx], 0, PORT_STACK_SIZE);
-    }
+    if (!stacks[idx])
+        stacks[idx] = stack_pool[idx];
     return stacks[idx];
 }
 

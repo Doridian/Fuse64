@@ -20,6 +20,9 @@
 
 #include "host.h"
 #include "port_task.h"
+#ifdef PORT_ASAN
+#include <sanitizer/asan_interface.h>
+#endif
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -39,6 +42,10 @@
 
 #define CORO_STACK (256 * 1024)
 #define MAX_BUFS 128
+/* (a coroutine for each buffer at most: the 80 tasks' (D_80063370) and the
+   scheduler's; the story to its first stage has had 35.  The stacks are the
+   image's bss, which costs only the pages a task touches.) */
+#define MAX_COROS MAX_BUFS
 #define MARK 0x434F524Fu        /* "CORO": the buffer was saved since func_80238A10 set it up */
 
 typedef struct Coro {
@@ -75,6 +82,17 @@ static Buf *resume_buf;         /* what the coroutine switched to longjmps to */
 static int resume_v;
 static Coro *free_coros[MAX_BUFS];
 static int nfree;
+
+/* The coroutines and their stacks, in the image rather than the host's
+   heap: a task's buffer keeps its stack pointer (func_80238A10's), the
+   game's structures pointers to its locals, so where a stack is must not
+   depend on what else the host allocated (the GL driver, from its threads
+   too: docs/PORT.md, "The host's blocks the game keeps").  Taken in
+   order, the same every run; a killed task's is used again (free_coros).
+   (Windows' fibers have the OS's stacks: CreateFiberEx.) */
+static Coro coros[MAX_COROS];
+static uint8_t coro_stacks[MAX_COROS][CORO_STACK] __attribute__((aligned(0x1000)));
+static int ncoros;
 
 static Buf *find(intptr_t *buf, int create) {
     for (int i = 0; i < nbufs; i++)
@@ -209,7 +227,7 @@ static void coro_start(Coro *c) {
         pthread_attr_t a;
         pthread_cond_init(&c->cv, NULL);
         pthread_attr_init(&a);
-        pthread_attr_setstacksize(&a, CORO_STACK);
+        pthread_attr_setstack(&a, c->stack, CORO_STACK);
         if (pthread_create(&c->th, &a, thread_start, c) != 0)
             host_fatal("tasks: pthread_create failed");
         pthread_attr_destroy(&a);
@@ -264,17 +282,21 @@ void port_task_jump(intptr_t *buf, int v) {
         if (nfree > 0) {
             c = free_coros[--nfree];
         } else {
-            c = calloc(1, sizeof *c);
-            if (!c)
-                host_fatal("tasks: no memory");
-            c->stack = malloc(CORO_STACK);
-            if (!c->stack)
-                host_fatal("tasks: no memory for a stack");
+            if (ncoros == MAX_COROS)
+                host_fatal("tasks: more than %d coroutines", MAX_COROS);
+            c = &coros[ncoros];
+            c->stack = coro_stacks[ncoros++];
+            if (host_verbose)
+                host_log("tasks: coroutine %d\n", ncoros);
         }
         c->entry = (void (*)(void))buf[3];
         if (host_verbose > 1)
             host_log("task %p: entry %p\n", (void *)buf, (void *)c->entry);
         c->live = 1;
+#ifdef PORT_ASAN
+        /* (a killed task's frames leave their redzones poisoned) */
+        ASAN_UNPOISON_MEMORY_REGION(c->stack, CORO_STACK);
+#endif
         coro_start(c);
         b->owner = c;
         buf[0] = (intptr_t)MARK;
@@ -305,17 +327,19 @@ int port_coro_resettable(void) {
 }
 
 void port_coro_reset(void) {
-    for (int i = 0; i < nbufs; i++) {
-        Coro *c = bufs[i].owner;
-        if (!c || c == &main_coro || !c->live)
-            continue;
-        c->live = 0;
+    /* (every coroutine done with, taken again from the first as at
+       power-on, so that the tasks' stacks are where they were then) */
+    for (int i = 0; i < ncoros; i++) {
+        Coro *c = &coros[i];
 #if CORO_WIN32
-        DeleteFiber(c->fiber);
+        if (c->fiber)
+            DeleteFiber(c->fiber);
         c->fiber = NULL;
 #endif
-        free_coros[nfree++] = c;
+        c->live = 0;
     }
+    ncoros = 0;
+    nfree = 0;
     memset(bufs, 0, sizeof bufs);
     nbufs = 0;
     cur = &main_coro;

@@ -75,6 +75,7 @@ void host_reset_button(void);
 void host_threads_reset(void);          /* threads.c: every thread's frames dropped */
 int port_coro_resettable(void);         /* coro.c */
 void port_coro_reset(void);
+void port_alloc_reset(void);            /* port/src/memory.c: port_alloc's arena emptied */
 void host_vi_reset(void);               /* vi.c */
 void host_ai_reset(void);               /* audio.c */
 void host_asp_reset(void);              /* aspmain.c */

@@ -199,6 +199,7 @@ static void soft_reset(void) {
     npending = 0;
     host_threads_reset();
     port_coro_reset();
+    port_alloc_reset();
     port_reset_game();
     host_gfx_reset(0x100400);   /* (what IPL3 writes: port/src/reset.c) */
     host_vi_reset();

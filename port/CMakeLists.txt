@@ -126,6 +126,10 @@ if(PORT_SANITIZE)
         list(APPEND SAN_FLAGS -fno-sanitize-recover=all)
     endif()
     add_link_options(${SAN_FLAGS})
+    if(PORT_SANITIZE MATCHES "address")
+        # (the port's own arenas poisoned where they have no block: port/src/memory.c)
+        add_compile_definitions(PORT_ASAN)
+    endif()
 endif()
 
 # ---- the game's C ---------------------------------------------------------------

@@ -1111,6 +1111,37 @@ their N64 layout (`tools/host_check.py layout`); where they are 8 each
 name that holds pointers takes its host type's size and the names after
 it move up ("Where pointers are 8 bytes").
 
+#### The host's blocks the game keeps
+
+What the port allocates and the game keeps a pointer to is never the
+host's heap, whose addresses depend on everything else the host
+allocated before (the renderer, the GL driver, from its own threads as
+well), so that the game's memory (RDRAM, the save state) is the same
+whatever the renderer and however the host's heap went:
+
+- **The threads' stacks** (runtime.c, `host_thread_stack`): 16 of 1 MiB,
+  a static array (the game's message queues and display lists in locals).
+- **530C0's tasks' coroutines and stacks** (coro.c): 128 of 256 KiB,
+  static, taken in order and a killed task's used again; the NMI takes
+  them from the first again, as at power-on. A task's buffer keeps its
+  stack pointer. (Windows' fibers have the OS's stacks, CreateFiberEx's,
+  for the threads and the tasks alike.)
+- **port_alloc** (port/src/memory.c; 80580.c's sounds laid out as the host
+  has them): a 1 MiB arena in the image, first fit in address order, the
+  blocks' records apart from it and 16 bytes after each block; the NMI
+  empties it. With ASan (`PORT_SANITIZE=address`, which defines
+  `PORT_ASAN`) everything in it but the blocks' bytes is poisoned, so an
+  overrun or a use after `port_free` is reported as the host's calloc's
+  would be; `-v -v` logs its high-water mark.
+
+All three are bss: only the pages used cost memory. Their addresses are
+the image's, as the game's variables are (the same each run without
+address randomization: `setarch -R`, as gl_cmp.py runs). The game's own
+heap is gmalloc's arena in `port_rdram` (with `PORT_HOST_MALLOC`, a
+checking build, the host's, which isn't deterministic). What else the
+port allocates (the overlays' and the reset's copies, the renderers'
+buffers, the input script, the digest's) the game never sees.
+
 ### The scattered layout
 
 The default build keeps the N64's neighbours: the fixed-address names in
@@ -1514,7 +1545,7 @@ what IPL3 and the loaders overwrite.
   zeroed, as the port's power-on has it; the rest is kept, and the boot
   clears main_code's and the work area's variables as on the N64.
 - **The host**: the threads' fibers freed, 530C0's coroutines and their
-  stacks dropped, and the renderer, VI, AI and audio microcode state put
+  stacks dropped (taken from the first again), port_alloc's arena emptied, and the renderer, VI, AI and audio microcode state put
   back as at startup (`host_*_reset`); then `port_boot()` again (the
   same with `PORT_THREADS=pthread`). Where the coroutines are host
   threads (no ucontext: musl) they can't be dropped mid-run, and the
@@ -1686,26 +1717,27 @@ retraces (the mean channel difference of 255, the share of pixels more
 than 24 off: the bars are under 3 and under 0.1%), the gameplay digest,
 and RDRAM at the last retrace outside the images and with them, and
 writes the worst pair as PNGs (`--out`). Measured 2026-11-27 (us every 50
-retraces, eu and jp's battle every 100):
+retraces, eu and jp's battle every 100; RDRAM again once the host's blocks
+had arenas, eu's not since):
 
 | | pictures the same | mean, >24 | digest | RDRAM: the images | RDRAM outside them |
 |---|---|---|---|---|---|
 | us legal | 6 of 6 | 0, 0% | the same | the same | the same |
-| us menus | 60 of 60 | 0, 0% | the same | the same | 19 words differ |
-| us battle | 120 of 120 | 0, 0% | the same | the same | 16 words differ |
-| eu battle | 60 of 60 | 0, 0% | the same | the same | 20 words differ |
-| jp battle | 60 of 60 | 0, 0% | the same | the same | 16 words differ |
+| us menus | 60 of 60 | 0, 0% | the same | the same | the same (19 words differed) |
+| us battle | 120 of 120 | 0, 0% | the same | the same | the same (16 words differed) |
+| eu battle | 60 of 60 | 0, 0% | the same | the same | 20 words differed |
+| jp battle | 60 of 60 | 0, 0% | the same | the same | the same (16 words differed) |
 
 test.py's legal, menus and battle with `--renderer gl` give soft's
 references (every retrace's picture, the sound, the save, the digest). The
-words that differ are host pointers the game's structures keep where the
+words that differed are host pointers the game's structures keep where the
 N64 had its own: the tasks' saved stack pointers in their buffers
 (coro.c's stacks, from malloc) and 80580.c's sound records (port_alloc,
-the host's calloc). Where those are depends on the host's heap, which
-the GL driver uses too, from its threads as well (two gl runs differ
-there; two soft runs do without `setarch -R`); what the game computes
-from them is the same. Pinning them (the stacks and records in an arena
-of their own) is left.
+the host's calloc). Where those were depended on the host's heap, which
+the GL driver uses too, from its threads as well (two gl runs differed
+there). They are in arenas of their own now ("The host's blocks the game
+keeps"), and all of RDRAM is the same: us's legal, menus and battle and
+jp's battle, soft against gl, and two gl runs of us's menus.
 
 Battle's 6000 retraces headless take 27 s with gl, 58 s with hle-sw
 and 78 s with soft (i386, a Radeon RX 7900 XTX with Mesa's radeonsi,

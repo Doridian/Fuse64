@@ -156,7 +156,15 @@ Vec3f_ovl0A_04_800466F0 D_ovl0A_04_800466F0;
 UnkStruct_ovl0A_04_80045EE0 *D_ovl0A_04_800466FC;
 s32 D_ovl0A_04_80046700;
 s32 D_ovl0A_04_80046704;
+#ifdef TARGET_PC
+/* func_ovl0A_04_80043B68 writes six, and nothing reads them: on the N64
+ * the last four go past the overlay's .bss, to 0x80046710-0x8004671F in
+ * its slot; the port gives them room (docs/PORT.md, "The
+ * scattered layout") */
+Obj04 *D_ovl0A_04_80046708[6];
+#else
 Obj04 *D_ovl0A_04_80046708[2]; /* func_ovl0A_04_80043B68 writes six */
+#endif
 
 void func_ovl0A_04_80043010(void);
 void func_ovl0A_04_80043124(void);

@@ -908,8 +908,15 @@ us's extras: 21, 22 and 23 the same; 24 and 155 stop on both; 28:17
 (the ending and its credits) the same to its end (frame 68,659), the
 demos (29) to 18,154 and the attract to 28,607; 28:16 (the other
 ending and its credits) the same to the emulator's end (frame 57,160,
-into the attract after it). The Rainbow Palace boss's 126:18 and 126:19
-differ in all three versions (the .bss residue below).
+into the attract after it). eu's and jp's extras (2026-11-27, on
+758adf84) are as us's: 21, 22 and 23 the same; 24 and 155 stop on
+both (eu at frame 1054, jp at 856); 28:16 the same to the emulator's
+end (eu 66,844, jp 57,085, into the attract after it); 28:17 to its
+end (eu 69,041, jp 68,555); the demos (29) to 19,159 and 18,098; and
+the attract to 28,926 and 28,607 (its digest has no retrace column
+without a warp, so `rooms.py`'s "N64 stops" there is the harness's).
+The Rainbow Palace boss's 126:18 and 126:19 differ in all three
+versions (the .bss residue below).
 
 **The heap's 1 MiB** (us, 2026-11-27): while the asset cache's blocks
 were PORT_ASSET_PAD (0x200) bytes longer in gmalloc's arena too, the
@@ -2314,7 +2321,9 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   i386: all the same (75:17 as far as the N64 goes: "The stages: the
   warp on the emulator"), and jp's whole game along 4908M on BizHawk's
   core, every frame to the movie's end ("The TAS"); every room's entry
-  and 4908M's route from a warp in us, eu and jp ("Every room"). Left:
+  and 4908M's route from a warp in us, eu and jp, and the scenes
+  outside the stages (`extra`: the menus, both endings and their
+  credits, the attract) in all three ("Every room"). Left:
   overlay .bss residue (126:18, 126:19 warped). Also left: the pools
   on 64-bit hosts (by field, with the host's struct offsets); 9CAB0.c's
   two unions.

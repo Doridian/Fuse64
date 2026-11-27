@@ -384,6 +384,8 @@ if(PORT_HOST_MALLOC)
         ${LIBAUDIO_OBJ})
     target_compile_definitions(fuse64 PRIVATE PORT_HOST_MALLOC)
     target_compile_definitions(port_n64 PRIVATE PORT_HOST_MALLOC)
+    # (87190.c's asset cache pads its blocks only then: PORT_ASSET_PAD)
+    target_compile_definitions(game_c PRIVATE PORT_HOST_MALLOC)
 else()
     add_executable(fuse64 ${HOST_C} $<TARGET_OBJECTS:game_c> $<TARGET_OBJECTS:ovl_c> $<TARGET_OBJECTS:malloc_c>
         $<TARGET_OBJECTS:port_n64> ${LIBAUDIO_OBJ})

@@ -899,25 +899,28 @@ The results (i386, the seed pinned):
 
 | | census (295 pairs) | monkey @m1 | battle setup | 4908M's route from 56:16 |
 |---|---|---|---|---|
-| us | 278 the same (21 as far as the N64 goes), 13 where both stop, 126:18 and 126:19, 116:28 and 126:30 (the heap, below) | all 257 the same (with the stack byte's last writer, 2026-11-27) | 20 the same (B released until 2500: each plays its stage) | the same, 144,601 frames |
+| us | 280 the same (23 as far as the N64 goes; 116:28 and 126:30 since the heap, below), 13 where both stop, 126:18 and 126:19 | all 257 the same (with the stack byte's last writer, 2026-11-27) | 20 the same (B released until 2500: each plays its stage) | the same, 144,601 frames |
 | eu | 280 the same (116:18 with them), the rest as us's (the battle stages rerun: eu's input was right) | 248 of 286 the same to the end, 23 credits' shots as far as the N64 goes, 13 where both stop, 126:18 and 126:19 | 20 the same, every stage entered | the same, 146,210 frames |
 | jp | 280 the same (116:19 with them), 116:18 where both stop, the rest as us's (the battle stages rerun with the emulator's input below) | 248 of 286 the same to the end, 23 credits' shots as far as the N64 goes, 13 where both stop, 126:18 and 126:19 | 20 the same, every stage entered | the same, 144,660 frames |
 
 us's extras: 21, 22 and 23 the same; 24 and 155 stop on both; 28:17
 (the ending and its credits) the same to its end (frame 68,659), the
-demos (29) to 18,154 and the attract to 28,607; 28:16 differs (the
-heap, below). The Rainbow Palace boss's 126:18 and 126:19
+demos (29) to 18,154 and the attract to 28,607; 28:16 (the other
+ending and its credits) the same to the emulator's end (frame 57,160,
+into the attract after it). The Rainbow Palace boss's 126:18 and 126:19
 differ in all three versions (the .bss residue below).
 
-**The heap's 1 MiB** (us, 2026-11-27): since the asset cache's files
-are PORT_ASSET_PAD (0x200) bytes longer ("The scattered layout"), the port's
-game heap (40300.c's sbrk arena, 1 MiB as on the N64) runs out where the
-N64's doesn't: a malloc returns NULL and the port crashes writing a
-picture's header. In 28:16 at frame 48,957 (AFBF0.c's func_802957C0,
-the credits' last picture, 0x25818 bytes), and in the credits' shots
-116:28 (1742) and 126:30 (1839) warped to (9A5F0.c's func_80280814,
-6408 bytes), all three the same to the end with the pad 0. Fixed with jp's
-(below): the pad only with PORT_HOST_MALLOC.
+**The heap's 1 MiB** (us, 2026-11-27): while the asset cache's blocks
+were PORT_ASSET_PAD (0x200) bytes longer in gmalloc's arena too, the
+port's game heap (40300.c's sbrk arena, 1 MiB as on the N64) ran out
+where the N64's doesn't, and a malloc gave NULL: in 28:16 at frame
+48,957 (AFBF0.c's func_802957C0, the credits' last picture, 0x25818
+bytes), and in the credits' shots 116:28 (1742) and 126:30 (1839)
+warped to (9A5F0.c's func_80280814, 6408 bytes). With the block the
+N64's size in the arena (the pad only with `PORT_HOST_MALLOC`: "Past a
+host-malloc block") all three are the same: 28:16 to the emulator's end,
+116:28 and 126:30 as far as the N64 goes (2363 and 2478, the credits'
+next scene).
 
 jp's monkey and battle setup (2026-11-27): the monkey's differences
 are the census's artefacts and the residue. Two credits' shots, 116:28
@@ -1208,6 +1211,10 @@ What the runs found, each fixed under `TARGET_PC` (the ROM is the same):
   256-byte fragment reuses on the N64 (`0F0F 0F0F 0F00 0000` in the
   emulator, us and eu, both times the title loads it; AD3D0.c keeps a
   copy). test.py's seven scenarios under it, us, eu and jp: no report.
+  (87190.c and AD3D0.c are the game's C, `game_c`, which CMake gives
+  `PORT_HOST_MALLOC` too: without it the pad is gone there, and
+  `PORT_HOST_MALLOC_EXACT=1` reports the legal screen's 38450 bytes
+  again; us's legal checked both ways, 2026-11-27.)
 
 The 2026-11-21 runs: us, eu and jp, ASan and UBSan (x86-64, the arena)
 and the check build (seed 1), each with test.py's seven scenarios, the

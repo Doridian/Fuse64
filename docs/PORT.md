@@ -892,8 +892,8 @@ The results (i386, the seed pinned):
 | | census (295 pairs) | monkey @m1 | battle setup | 4908M's route from 56:16 |
 |---|---|---|---|---|
 | us | 280 the same (23 as far as the N64 goes), 13 where both stop, 126:18 and 126:19 | 256 of 257 the same; 123:16 differs from frame 3161 | 20 the same (most left the setup with B) | the same, 144,601 frames |
-| eu | 279 the same, the rest as us's; **116:18 hangs on the port** | not run | not run | the same, 146,210 frames |
-| jp | 279 the same, the rest as us's; **116:18 and 116:19 hang on the port** | not run | not run | the same, 144,660 frames |
+| eu | 280 the same (116:18 with them), the rest as us's | not run | not run | the same, 146,210 frames |
+| jp | 280 the same (116:19 with them), 116:18 where both stop, the rest as us's | not run | not run | the same, 144,660 frames |
 
 us's extras: 21, 22 and 23 the same; 24 and 155 stop on both. The two
 endings, the demos and the attract weren't rerun to the end after an
@@ -929,15 +929,20 @@ it ends (func_ovl12_05_80044534); warped past it, the N64 has
 and the boss differs from frame 1034. In play the phase always sets it
 first.
 
-**Black Fortress's boss hangs in eu and jp** (116:18 and 116:19, not
-fixed). The port loops forever in 6BBE0.c's func_802553D4: a CPU player
-is moved to random places within 80 of its target (player 0, falling
-into a pit, y below -370), with no yield, until one is free of objects
-(func_8022F550) and of walls and holes (func_80251AC8 of func_8026D7D8's
-cell). The N64 finds one within the frame (jp frame 3023 there; eu
-3011), so a cell or collision read differs there, probably past the
-map's end with the target below the floor (func_8026DCAC's layer
-search). us plays the same entries to the end.
+**Black Fortress's boss** (116:18 in eu, 116:19 in jp) read through
+NULL on the port: 6BBE0.c's func_802553D4 tests the flags of the Ent88
+func_802703B4 gives a CPU player before testing it for NULL, and with
+none the N64 reads ZeroJump's page. The port reads the same
+halfword with `port_null_word` (`TARGET_PC`); both rooms are then the
+same to the end. jp's 116:18 is one **where both stop**: the CPU
+player is put back near player 0 while player 0 falls into a pit, and
+every cell within 80 of it is one func_80251AC8 refuses (0x10 and
+0x8010), so the loop that picks a cell (no yield) never ends, on the N64
+(mupen64plus: the PC, sampled from retrace 3300 to 4000, in
+func_8022F550 and what the loop calls; player 0 at the port's x, y, z) as on the port. The N64's
+other threads still read the controllers for two more frames (to 3026,
+the rows showing the loop's random positions), the port's stop at the
+loop (3023).
 
 Found by a scan, not by a run, and fixed under `TARGET_PC` as
 ovl_10_05's was ("The TAS"): the three other Black Fortress rooms with
@@ -2168,7 +2173,6 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   warp on the emulator"), and jp's whole game along 4908M on BizHawk's
   core, every frame to the movie's end ("The TAS"); every room's entry
   and 4908M's route from a warp in us, eu and jp ("Every room"). Left:
-  Black Fortress's boss hangs on the port in eu and jp (116:18, 116:19);
   us's monkey in 123 differs; eu's and jp's monkey and battle-setup
   runs; overlay .bss residue (126:18, 126:19 warped). Also left: the pools
   on 64-bit hosts (by field, with the host's struct offsets); 9CAB0.c's

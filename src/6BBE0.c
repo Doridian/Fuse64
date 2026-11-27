@@ -2413,7 +2413,14 @@ block_401:
                                         var_s3 = ((s16) PORT_FIELD(var_s0, s16 *, 0x66, Port_Ent88, unk3C[42]) /* (an Ent88: func_802703B4) */ >> 1) + 2;
                                     }
                                     if (sp12C <= ((f32) var_s3 * 100.0f)) {
+#ifdef TARGET_PC
+                                        /* the flags are read before the NULL test: with no
+                                           Ent88 (func_802703B4's NULL) the N64 reads
+                                           ZeroJump's page, mapped at 0 (port_null_word) */
+                                        if (((var_s0 != NULL ? M2C_FIELD(var_s0, s16 *, 0x10) : (s16) (port_null_word(0x10) >> 16)) & 0x100) || (func_80254DC8((PORT_AT(var_fp, 0x20, Port_800BCFE8, unk20)), 2, 300.0f) >= 3) || (var_s0 == 0)) {
+#else
                                         if ((M2C_FIELD(var_s0, s16 *, 0x10) & 0x100) || (func_80254DC8((PORT_AT(var_fp, 0x20, Port_800BCFE8, unk20)), 2, 300.0f) >= 3) || (var_s0 == 0)) {
+#endif
                                             func_8024585C(1);
                                             func_802452E8(1);
                                             func_8024585C(0);

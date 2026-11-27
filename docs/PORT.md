@@ -1418,9 +1418,10 @@ check it (64-bit Linux, clang and lld, off by default):
     RDRAM, is its room (asm2c.py's `SIZES`).
   - A name inside an object (a member's or an element's own name, a
     label inside a typed table) stays an alias inside it.
-  - At startup a constructor copies each asm `.data` label's bytes from
-    its file's struct. It fills the padding, and all of `port_rdram`
-    (which nothing should reach any more), with 0xA5.
+  - At startup each asm `.data` label's bytes are copied from its file's
+    struct (`port_scatter_copy`, after the ROM's data is filled in: "The
+    ROM's data"), and a constructor fills the padding, and all of
+    `port_rdram` (which nothing should reach any more), with 0xA5.
   - The C globals (the game's, the overlays', the host's) are shuffled
     by lld (`-fdata-sections`, `--shuffle-sections` with the same seed;
     an overlay's variables within its own section). Each overlay `.bss`

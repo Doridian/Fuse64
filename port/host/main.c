@@ -130,6 +130,9 @@ static void load_rom(const char *path) {
         host_fatal("%s: game code %.4s, this port is built for %s", path, (const char *)rom + 0x3B, ROM_CODE);
     /* the game's data, before anything reads it */
     host_rom_fill(rom, rom_size);
+#ifdef PORT_SCATTER_LAYOUT
+    port_scatter_copy();
+#endif
 }
 
 /* ---- time -------------------------------------------------------------------- */

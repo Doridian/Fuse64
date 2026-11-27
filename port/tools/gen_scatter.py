@@ -16,9 +16,9 @@ to 2048 bytes plus the size of the one before (up to 16 KB: an index the
 N64 had room for lands in padding), keeping its offset modulo 16 (4 KB for
 objects of 4 KB or more).  A name inside another object (a member's or an
 element's own name, a label inside a typed table) stays inside it, at its
-host offset.  At startup (a constructor) each asm .data label's bytes are
-copied from its file's struct (asm2c.py --scatter: the startup image) and
-the padding, and all of port_rdram, which nothing should reach any more,
+host offset.  At startup each asm .data label's bytes are copied from its
+file's struct (asm2c.py --scatter: the startup image; port_scatter_copy,
+after the ROM's data is filled in) and (a constructor) the padding, and all of port_rdram, which nothing should reach any more,
 are filled with PORT_SCATTER_POISON (0xA5) and, under AddressSanitizer,
 poisoned, so that each access there is reported with its place.
 
@@ -166,12 +166,19 @@ def main():
         "#define PORT_SCATTER_POISON 0x%X" % POISON,
         "#endif",
         "",
+        "/* the asm .data labels' bytes, from their files' structs: after",
+        "   host_rom_fill, which gives those structs the ROM's data the strip",
+        "   took out (main.c's load_rom; docs/PORT.md, \"The ROM's data\") */",
+        "void port_scatter_copy(void) {",
+        "    unsigned i;",
+        "    for (i = 0; copies[i].n; i++)",
+        "        memcpy(port_scatter_arena + copies[i].off, copies[i].src, copies[i].n);",
+        "}",
+        "",
         "/* (before anything of the game's runs: AddressSanitizer's own",
         "   constructors, which make the globals accessible, come first) */",
         "__attribute__((constructor(101))) static void port_scatter_init(void) {",
         "    unsigned i;",
-        "    for (i = 0; copies[i].n; i++)",
-        "        memcpy(port_scatter_arena + copies[i].off, copies[i].src, copies[i].n);",
         "    for (i = 0; i < sizeof gaps / sizeof gaps[0]; i++) {",
         "        memset(port_scatter_arena + gaps[i][0], PORT_SCATTER_POISON, gaps[i][1]);",
         "        POISON(port_scatter_arena + gaps[i][0], gaps[i][1]);",

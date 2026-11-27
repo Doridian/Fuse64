@@ -113,6 +113,11 @@ void host_rom_read(void *dst, uint32_t rom, uint32_t len);
 /* the game's data the strip took out of the executable, back from the ROM
    (host/romfill.c; docs/PORT.md, "The ROM's data") */
 void host_rom_fill(const uint8_t *rom, uint32_t size);
+#ifdef PORT_SCATTER_LAYOUT
+/* the scattered layout's copy of the asm data into its objects, after the
+   fill (gen_scatter.py) */
+void port_scatter_copy(void);
+#endif
 
 /* the CPU's count since boot (46.875 MHz) */
 uint64_t host_ticks(void);

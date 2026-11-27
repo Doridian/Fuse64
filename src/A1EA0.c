@@ -264,7 +264,7 @@ void func_80286F70(void);
 void func_80286F98(void);
 void func_80287008(s32 arg0, s16 arg1, s16 arg2);
 UnkStruct_80288040 *func_80287024(UnkStructA *arg0);
-s32 func_802870A8(UnkStructA *arg0, s32 arg1);
+s32 func_802870A8(UnkStructA *arg0, PORT_IP(s32) arg1);
 s32 func_80287150(void);
 UnkStruct_800BB340 *func_802871C8(UnkStruct_80288040 *arg0);
 s32 func_802871D0(UnkStruct_80288040 *arg0);

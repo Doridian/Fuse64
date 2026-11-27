@@ -2533,9 +2533,9 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
     with the census the runs cover 65.5% of the lines (from 56.3%:
     "Coverage"). Left: the census on seeds 2 and 3 and on eu and jp;
     the rest of each room is behind its progress (switches, doors, the
-    bosses' later phases), which a fixed walk doesn't reach; ovl_09,
-    0A_03, 0A_06, 0B_04, 0B_05 and ovl_16 (but for the 155:16 artefact)
-    still never run.
+    bosses' later phases), which a fixed walk doesn't reach; the
+    scattered check over the `extra` and `ovl` sets (the overlays off
+    the stages: "The overlays off the stages").
   - The default build itself: the fixed-address names are still aliases
     into the 8 MiB `port_rdram` laid out as RDRAM, and each asm data file
     one packed struct with its labels inside ("Memory"); only the check

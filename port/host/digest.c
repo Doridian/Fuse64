@@ -324,7 +324,8 @@ static void open_out(void) {
     if (!init) {
         const char *e = getenv("PORT_DIGEST");
         init = 1;
-        if (e && *e && !(out = fopen(e, "w")))
+        /* (binary: the same bytes on Windows, no CRs) */
+        if (e && *e && !(out = fopen(e, "wb")))
             host_fatal("PORT_DIGEST=%s: can't write it", e);
     }
 }

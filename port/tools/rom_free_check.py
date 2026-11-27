@@ -615,14 +615,15 @@ def build_objects(dirs):
     return b"\xA5\x5A\xC3\x3C".join(parts), names
 
 
-def split_ours(binary, view, runs, objects, window=16):
+def split_ours(binary, view, runs, objects, window=8):
     """The runs as (ours, theirs).  A run is theirs where the ELF's symbols
     put it after a library's own data (the nearest local data symbol before
     it is a file not among the objects': the library's table can be the
     game's too, byte for byte).  Otherwise each word of a run is ours where
-    a window of the run's bytes around it (4-aligned, within the run) is in
-    the objects' data, so that a run over two objects' data is ours on
-    both sides."""
+    an 8-byte window of the run's bytes around it (4-aligned, within the
+    run) is in the objects' data, so that a run over two objects' data, or
+    over two variables the linker put side by side in another order than
+    their object's (wasm-ld), is ours on both sides."""
     blob, names = objects
     ours, theirs = [], []
     for s, si, r, perms in runs:

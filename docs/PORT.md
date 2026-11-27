@@ -1301,9 +1301,10 @@ can have a table the game has too, and its runtime may read it before
 main, before the fill. AddressSanitizer's runtime has 0, 0x20, ... 0xE0
 as 32-bit words, as 5E3F0's data has; stripped, ASan's start hung before
 main. A run counts as the objects' where its bytes are their data
-(`rom_free_check.split_ours`: each 16-byte window of it in their
+(`rom_free_check.split_ours`: each 8-byte window of it in their
 initialized sections, an end shorter than a run next to one that is
-counting too, the padding between two objects) and, in an ELF, where the
+counting too, the padding between two objects; wasm-ld puts an object's
+variables side by side in another order than the object has them) and, in an ELF, where the
 nearest local data symbol before it is one of their files' (its `FILE`
 symbol): ASan's table is byte for byte the game's, but it follows the
 sanitizer's own symbols. `rom_free_check.py --objects DIR` counts the

@@ -55,9 +55,13 @@
  * "-" for NULL, the value for a small number (below 0x10000, or above
  * 0xFFFF0000: an index some code keeps there) and "*" for any other
  * pointer.  emu_digest.py reads this table out of this file, so the two
- * sides read the same fields by construction.  The pools are read where
- * pointers are 4 bytes (the host's layout is the N64's there); a 64-bit
- * host writes only the fields above.
+ * sides read the same fields by construction.  Where pointers are 8 bytes
+ * the host's structures aren't the N64's: port/tools/gen_digest_pools.py
+ * writes each pool's host stride, the host offset of each N64 offset and
+ * back (gen/digest_pools.c, from the types gen_regions.py and asm2c.py laid
+ * the arrays out by), so a field is read where the host has it, a pointer
+ * as wide as the host's, and "+N" is the N64's offset: the digest is the
+ * emulator's on any host.
  *
  * The scenario's seed: PORT_SEED=N gives the random generator the seed N
  * where 40040.c seeds it from the clock (osGetTime) at boot, as
@@ -166,11 +170,33 @@ static const struct {
 };
 #define NPOOLS (int)(sizeof pools / sizeof pools[0])
 
-/* a spec's fields, (offset << 8) | kind */
+/* the host's layout of each pool and of D_800AEDF0 (`e`), in the order
+   above (gen/digest_pools.c: a NULL map is the N64's layout) */
+struct port_digest_layout {
+    const char *key;
+    unsigned stride;
+    const uint16_t *host, *n64, *ptrs;
+};
+extern const struct port_digest_layout port_digest_layouts[];
+#define PL(k) (&port_digest_layouts[k])
+
+/* a spec's fields, (host offset << 8) | kind, 'P' a pointer as wide as the
+   host's */
 #define MAXPF 64
 static unsigned pool_fields[NPOOLS][MAXPF];
 static int pool_nf[NPOOLS];
 static char *pool_raw[NPOOLS];
+
+/* a pointer begins at N64 offset off, 8 bytes on the host */
+static int pool_wide(const struct port_digest_layout *l, unsigned off) {
+    const uint16_t *p;
+    if (!l->ptrs || sizeof(void *) == 4)
+        return 0;
+    for (p = l->ptrs; *p != 0xFFFF; p++)
+        if (*p == off)
+            return 1;
+    return 0;
+}
 
 static void pool_parse(int k) {
     const char *s = pools[k].spec;
@@ -183,9 +209,15 @@ static void pool_parse(int k) {
             host_fatal("digest: bad spec %s", pools[k].spec);
         step = e[1] == 'w' || e[1] == 'p' ? 4 : e[1] == 'h' ? 2 : 1;
         for (; a <= b; a += step) {
+            const struct port_digest_layout *l = PL(k);
+            unsigned h = l->host ? l->host[a] : a, kind = (unsigned char)e[1];
             if (pool_nf[k] == MAXPF)
                 host_fatal("digest: spec %s too long", pools[k].spec);
-            pool_fields[k][pool_nf[k]++] = a << 8 | (unsigned char)e[1];
+            if (h == 0xFFFF || (kind != 'p' && pool_wide(l, a)))
+                host_fatal("digest: %s's %x:%c isn't a field of the host's", pools[k].key, a, kind);
+            if (kind == 'p' && pool_wide(l, a))
+                kind = 'P';
+            pool_fields[k][pool_nf[k]++] = h << 8 | kind;
         }
         s = e + 2;
         while (*s == ' ')
@@ -193,30 +225,33 @@ static void pool_parse(int k) {
     }
 }
 
-/* a pointer as the pool entry it points to */
+/* a pointer as the pool entry it points to (or D_800AEDF0's: `e`), "+N"
+   at the N64's offset */
 static int pool_ptr(char *p, uintptr_t v) {
     int k;
     if (!v)
         return sprintf(p, "-");
-    for (k = 0; k < NPOOLS; k++) {
-        uintptr_t b = (uintptr_t)pools[k].base;
-        if (v >= b && v < b + pools[k].n * pools[k].stride) {
-            unsigned o = (unsigned)(v - b);
-            return o % pools[k].stride ? sprintf(p, "%s%u+%x", pools[k].key, o / pools[k].stride, o % pools[k].stride)
-                                       : sprintf(p, "%s%u", pools[k].key, o / pools[k].stride);
+    for (k = 0; k <= NPOOLS; k++) {
+        const struct port_digest_layout *l = PL(k);
+        uintptr_t b = (uintptr_t)(k < NPOOLS ? pools[k].base : (char *)D_800AEDF0);
+        unsigned n = k < NPOOLS ? pools[k].n : 5;
+        if (v >= b && v < b + n * l->stride) {
+            unsigned o = (unsigned)(v - b), r = o % l->stride;
+            if (!r)
+                return sprintf(p, "%s%u", l->key, o / l->stride);
+            if (l->n64 && l->n64[r] == 0xFFFF)
+                return sprintf(p, "%s%u+?%x", l->key, o / l->stride, r);
+            return sprintf(p, "%s%u+%x", l->key, o / l->stride, l->n64 ? l->n64[r] : r);
         }
     }
-    if (v == (uintptr_t)D_800AEDF0 || (v > (uintptr_t)D_800AEDF0 && v < (uintptr_t)(D_800AEDF0 + 5))) {
-        unsigned o = (unsigned)(v - (uintptr_t)D_800AEDF0);
-        return o % 0xC8 ? sprintf(p, "e%u+%x", o / 0xC8, o % 0xC8) : sprintf(p, "e%u", o / 0xC8);
-    }
-    if ((u32)v < 0x10000 || (u32)v >= 0xFFFF0000u)
+    /* (an index some code keeps in a pointer: the N64's word) */
+    if (v < 0x10000 || (v >= 0xFFFF0000u && v <= 0xFFFFFFFFu) || v >= (uintptr_t)-0x10000)
         return sprintf(p, "%x", (unsigned)(u32)v);
     return sprintf(p, "*");
 }
 
 static void pool_entry(char *val, int k, int i) {
-    const unsigned char *e = (const unsigned char *)pools[k].base + i * pools[k].stride;
+    const unsigned char *e = (const unsigned char *)pools[k].base + i * PL(k)->stride;
     char *p = val;
     int j;
     for (j = 0; j < pool_nf[k]; j++) {
@@ -227,6 +262,7 @@ static void pool_entry(char *val, int k, int i) {
         case 'w': p += sprintf(p, "%x", (unsigned)*(const u32 *)(e + off)); break;
         case 'h': p += sprintf(p, "%x", (unsigned)*(const uint16_t *)(e + off)); break;
         case 'b': p += sprintf(p, "%x", (unsigned)e[off]); break;
+        case 'P': p += pool_ptr(p, *(const uintptr_t *)(e + off)); break;
         default: p += pool_ptr(p, (uintptr_t)*(const u32 *)(e + off)); break;
         }
     }
@@ -408,25 +444,27 @@ void port_digest_poll(void) {
         sprintf(key, "p%d", i);
         put(line, &len, f++, key, val, full);
     }
-    if (sizeof(void *) == 4) {
+    {
         int k;
         for (k = 0; k < NPOOLS; k++) {
-            unsigned size = pools[k].n * pools[k].stride;
+            unsigned stride = PL(k)->stride, size = pools[k].n * stride;
             if (!pool_nf[k]) {
+                if (!PL(k)->key || strcmp(PL(k)->key, pools[k].key))
+                    host_fatal("digest: gen/digest_pools.c isn't digest.c's pools (%s)", pools[k].key);
                 pool_parse(k);
                 if (!(pool_raw[k] = malloc(size)))
                     host_fatal("digest: out of memory");
             }
             for (i = 0; i < (int)pools[k].n; i++) {
                 char key[16];
-                const char *e = pools[k].base + i * pools[k].stride;
-                char *r = pool_raw[k] + i * pools[k].stride;
+                const char *e = pools[k].base + i * stride;
+                char *r = pool_raw[k] + i * stride;
                 /* (an entry whose bytes are the last read's gives its value) */
-                if (!full && !memcmp(r, e, pools[k].stride)) {
+                if (!full && !memcmp(r, e, stride)) {
                     f++;
                     continue;
                 }
-                memcpy(r, e, pools[k].stride);
+                memcpy(r, e, stride);
                 pool_entry(val, k, i);
                 sprintf(key, "%s%d", pools[k].key, i);
                 put(line, &len, f++, key, val, full);

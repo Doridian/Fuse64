@@ -297,7 +297,8 @@ def main():
                 obj = {"name": name, "n64": vram, "room": size, "base": base, "hoff": lh, "file": f,
                        "bss": bss, "n64size": max([d["s32"] or 0 for d in vs], default=None)}
                 if lt is not None and lt[0] == "type":
-                    obj.update(size=lay.size(lt[1], lt[2], 64), type=lt[2], n64size=lay.size(lt[1], lt[2], 32))
+                    obj.update(size=lay.size(lt[1], lt[2], 64), type=lt[2], n64size=lay.size(lt[1], lt[2], 32),
+                               cfile=lt[1])
                 elif lt is not None:
                     obj.update(size=hsize, type=lt[0], n64size=size)
                 else:

@@ -380,6 +380,20 @@ endif()
 
 # ---- the host -------------------------------------------------------------------------
 file(GLOB HOST_C ${CMAKE_CURRENT_SOURCE_DIR}/host/*.c)
+# the gameplay digest's pools as the host lays them out (host/digest.c:
+# where pointers are 8 bytes, by the types the arrays were laid out by)
+set(DIGEST_POOLS_ARG)
+set(DIGEST_POOLS_DEP)
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(DIGEST_POOLS_ARG --decls ${GEN}/decls.json ${GEN}/regions_objects.json ${GEN}/asm_data_objects.json)
+    set(DIGEST_POOLS_DEP ${DECLS_DEP} ${GEN}/regions.c ${GEN}/asm_data.c)
+endif()
+add_custom_command(OUTPUT ${GEN}/digest_pools.c
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_digest_pools.py ${GEN}/digest_pools.c
+            ${DIGEST_POOLS_ARG}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_digest_pools.py ${CMAKE_CURRENT_SOURCE_DIR}/host/digest.c
+            ${DIGEST_POOLS_DEP} VERBATIM)
+list(APPEND HOST_C ${GEN}/digest_pools.c)
 # a debugging build: the game's allocator the host's (host/hostmalloc.c),
 # for AddressSanitizer to see the game's blocks
 option(PORT_HOST_MALLOC "the game's malloc the host's (debugging, with PORT_SANITIZE=address)" OFF)

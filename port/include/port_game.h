@@ -22,9 +22,9 @@ void port_nmi_wait(void);
 /* an N64 address (KSEG0, physical) or a host pointer, as a host pointer
    (port/src/memory.c) */
 void *port_addr(__UINTPTR_TYPE__ a);
-/* 40FB0's overlay loader: overlay (bank, entry), loaded; what its entry
-   returns (port/src/overlay.c) */
-void *port_overlay_load(int bank, int entry);
+/* 40FB0's overlay loader: overlay (bank, entry), its image of size bytes
+   inflated, loaded; what its entry returns (port/src/overlay.c) */
+void *port_overlay_load(int bank, int entry, int size);
 /* ... a scene past its table: the N64 goes into garbage there, the port stops */
 void port_scene_unset(int scene) __attribute__((noreturn));
 /* 54E40.c's scene request, changed by PORT_WARP (port/host/warp.c) */

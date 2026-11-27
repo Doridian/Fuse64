@@ -32,7 +32,9 @@ extern s32 D_802A5328;
 extern PORT_IP(s32) D_802A532C;
 
 #ifdef TARGET_PC
-static u8 port_ovl_slot[0x20000];
+/* the N64's overlay slot, 0x80043000's 0x20000 bytes, as it holds them
+   (port/src/overlay.c) */
+extern u8 port_ovl_slot[0x20000];
 #endif
 
 void func_8022691C(s32 arg0) {
@@ -65,12 +67,13 @@ void func_8022691C(s32 arg0) {
 #ifdef TARGET_PC
         /* the overlay's code is linked in (port/src/overlay.c): it is
          * inflated all the same, for the time it takes and what it leaves
-         * in the archive's buffers, into a buffer of the port's (on the
-         * N64 the overlays' slot at 0x80043000, 0x20000 bytes) */
+         * in the archive's buffers, into the port's copy of the N64's
+         * overlays' slot at 0x80043000 (0x20000 bytes): what the image
+         * leaves past its end is the .bss's start (port/src/overlay.c) */
         func_80292BD0(file, port_ovl_slot, size);
         func_80226368(file);
         func_802267E0(0x18);
-        D_802A532C = (PORT_IP(s32)) port_overlay_load(D_8019B0D0[arg0].unk0, id);
+        D_802A532C = (PORT_IP(s32)) port_overlay_load(D_8019B0D0[arg0].unk0, id, size);
 #else
         func_80297D58(ovl, 0x20000);
         func_80297D50(ovl, 0x20000);

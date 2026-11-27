@@ -900,9 +900,9 @@ The results (i386, the seed pinned):
 
 | | census (295 pairs) | monkey @m1 | battle setup | 4908M's route from 56:16 |
 |---|---|---|---|---|
-| us | 280 the same (23 as far as the N64 goes; 116:28 and 126:30 since the heap, below), 13 where both stop, 126:18 and 126:19 | all 257 the same (with the stack byte's last writer, 2026-11-27) | 20 the same (B released until 2500: each plays its stage) | the same, 144,601 frames |
-| eu | 280 the same (116:18 with them), the rest as us's (the battle stages rerun: eu's input was right) | 248 of 286 the same to the end, 23 credits' shots as far as the N64 goes, 13 where both stop, 126:18 and 126:19 | 20 the same, every stage entered | the same, 146,210 frames |
-| jp | 280 the same (116:19 with them), 116:18 where both stop, the rest as us's (the battle stages rerun with the emulator's input below) | 248 of 286 the same to the end, 23 credits' shots as far as the N64 goes, 13 where both stop, 126:18 and 126:19 | 20 the same, every stage entered | the same, 144,660 frames |
+| us | 282 the same (23 as far as the N64 goes; 116:28 and 126:30 since the heap, 126:18 and 126:19 since the .bss residue's model, below), 13 where both stop | all 257 the same (with the stack byte's last writer, 2026-11-27) | 20 the same (B released until 2500: each plays its stage) | the same, 144,601 frames |
+| eu | 280 the same (116:18 with them), the rest as us's (the battle stages rerun: eu's input was right) | 248 of 286 the same to the end, 23 credits' shots as far as the N64 goes, 13 where both stop, 126:18 and 126:19 (the same since the .bss residue's model) | 20 the same, every stage entered | the same, 146,210 frames |
+| jp | 280 the same (116:19 with them), 116:18 where both stop, the rest as us's (the battle stages rerun with the emulator's input below) | 248 of 286 the same to the end, 23 credits' shots as far as the N64 goes, 13 where both stop, 126:18 and 126:19 (the same since the .bss residue's model) | 20 the same, every stage entered | the same, 144,660 frames |
 
 us's extras: 21, 22 and 23 the same; 24 and 155 stop on both; 28:17
 (the ending and its credits) the same to its end (frame 68,659), the
@@ -915,8 +915,8 @@ end (eu 66,844, jp 57,085, into the attract after it); 28:17 to its
 end (eu 69,041, jp 68,555); the demos (29) to 19,159 and 18,098; and
 the attract to 28,926 and 28,607 (its digest has no retrace column
 without a warp, so `rooms.py`'s "N64 stops" there is the harness's).
-The Rainbow Palace boss's 126:18 and 126:19 differ in all three
-versions (the .bss residue below).
+The Rainbow Palace boss's 126:18 and 126:19 differed in all three
+versions until the port modelled the .bss residue (below): now the same.
 
 **The heap's 1 MiB** (us, 2026-11-27): while the asset cache's blocks
 were PORT_ASSET_PAD (0x200) bytes longer in gmalloc's arena too, the
@@ -970,14 +970,36 @@ warp's, not the port's:
   forever in func_8022FDE8 waiting for an object the warp didn't make.
 
 **Overlay .bss residue.** The N64 doesn't clear an overlay's .bss when
-it loads one (only the port does: "Overlays"), so a variable the room
-reads before writing has the previous overlay's bytes. Only one warp
-shows it: Rainbow Palace's boss with 126:18 and 126:19 (the second and
-third phases) reads D_ovl12_05_8004AC74, which the first phase sets as
-it ends (func_ovl12_05_80044534); warped past it, the N64 has
-0x00401825 there (an instruction of the overlay before) and the port 0,
-and the boss differs from frame 1034. In play the phase always sets it
-first.
+it loads one: 40FB0's func_8022691C inflates the image (text, .data,
+.rodata) into the slot at 0x80043000 and calls it, so past the image
+the slot keeps what was there. That is IPL3's copy of the ROM's first
+MiB (ROM 0x1000 on at 0x80000400, again at each NMI) as the overlays
+loaded since left it: their images, and their .bss and .data as they
+were when the next one was loaded. A scene's overlay is loaded only
+when the scene changes (a room's phases, 126:16 to 126:19, are one
+scene), so in play a room's own words stay. Rainbow Palace's boss
+(ovl_12_05) entered warped with 126:18 or 126:19 (the second and third
+phases) reads D_ovl12_05_8004AC74 first, which the phase before sets as
+it ends (func_ovl12_05_80044534) and the warp skips. After the world
+select's overlays (0B_01, 0A_05, 0B_01, 0B_06, 0B_02: none reaches
+0x8004AC74) the N64 has the ROM's word there, 0x00401825 (main_code's
+text at ROM 0x4B874; the emulator's RDRAM before and after the load is
+the ROM's over the whole .bss), and the boss differed from frame 1034
+(eu 1055, jp 857). The port models it (port/src/overlay.c,
+`TARGET_PC`'s 40FB0): `port_ovl_slot` is the N64's slot, the ROM's
+bytes at the boot and each NMI with every image inflated into it, and a
+table of .bss words takes those read before they're written from it
+when their overlay loads (D_ovl12_05_8004AC74, 0x84 past the image in
+us, eu and jp) and puts back those that reach them when theirs leaves:
+12_05's own, and 10_06's, 10_07's, 10_09's and 10_13's s32 arrays
+(the other overlays reaching 0x8004AC74, 13_01 to 15_02, have text
+there). Only that word is read: with it the N64's, both rooms are the
+same to the end in us, eu and jp; the rest of 12_05's .bss can stay 0.
+Something else writes the slot too (0x8004B424-0x8004B66C hold return
+addresses in the world select; no overlay's image or .bss), which the
+model leaves out: it doesn't reach 12_05's .bss. The same mechanism
+would give ovl_0C_05's entrance facing (a warp artefact above) its
+world select bytes, if a warp with sub-mode 16 ever needs it.
 
 **Black Fortress's boss** (116:18 in eu, 116:19 in jp) read through
 NULL on the port: 6BBE0.c's func_802553D4 tests the flags of the Ent88
@@ -1463,8 +1485,11 @@ Every overlay is linked in (their names carry the bank and entry). Each
 overlay file's variables go to sections of their own
 (port_ovl_section.h: fuse64d_/fuse64b_ on ELF), and loading an overlay
 (40FB0.c's loader, port/src/overlay.c) puts them back as they were at
-startup, which is what inflating it gave on the N64, then calls its
-entry.
+startup, then calls its entry. Inflating it gave that .data on the N64,
+but not that .bss: the slot keeps what was there past the image, and
+`port_ovl_slot`, the N64's slot (the ROM's bytes at the boot and each
+NMI, every image inflated into it), gives the words a room reads before
+writing ("Every room", the .bss residue).
 
 ### The reset button
 
@@ -2323,8 +2348,8 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   core, every frame to the movie's end ("The TAS"); every room's entry
   and 4908M's route from a warp in us, eu and jp, and the scenes
   outside the stages (`extra`: the menus, both endings and their
-  credits, the attract) in all three ("Every room"). Left:
-  overlay .bss residue (126:18, 126:19 warped). Also left: the pools
+  credits, the attract) in all three ("Every room"), the overlay .bss
+  residue modelled (126:18, 126:19 warped). Left: the pools
   on 64-bit hosts (by field, with the host's struct offsets); 9CAB0.c's
   two unions.
 - **Audio** ("Audio"): checked against mupen64plus in us's menus, story

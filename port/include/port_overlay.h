@@ -13,9 +13,11 @@ typedef struct PortOverlay {
 extern const PortOverlay port_overlays[];
 extern const unsigned port_noverlays;
 
-/* load overlay (bank, entry): its variables as they were at startup, then
-   its entry; what that returns (port/src/overlay.c) */
-void *port_overlay_load(int bank, int entry);
+/* load overlay (bank, entry), its image (size bytes) inflated into
+   port_ovl_slot: its variables as they were at startup (and the words of
+   its .bss the N64 leaves to what was there before), then its entry; what
+   that returns (port/src/overlay.c) */
+void *port_overlay_load(int bank, int entry, int size);
 /* at startup, before anything runs: the copies of the overlays' .data */
 void port_overlay_init(void);
 /* overlay i's variables as they were at startup (the soft reset) */

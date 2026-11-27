@@ -95,6 +95,66 @@ typedef struct {
 #define CELL(n, i) (D_800B15D8[n].unk12[i])
 #endif
 
+#ifdef TARGET_PC
+/* 99F40.c's blocks of cells, which follow D_800B15D8 on the N64 */
+typedef struct {
+    /* 0x00 */ u8 unk0;
+    /* 0x01 */ u8 unk1;
+    /* 0x02 */ u16 unk2[64];
+} UnkStruct_800B5F30; /* size 0x82 */
+
+typedef struct {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ u8 *unk4;
+    /* 0x08 */ s32 unk8;
+    /* 0x0C */ s32 unkC;
+    /* 0x10 */ UnkStruct_800B5F30 unk10[24];
+} UnkStruct_800B5F20; /* size 0xC40 */
+
+extern UnkStruct_800B5F20 D_800B5F20[6];
+
+/* A cell past D_800B15D8's 0x4948 bytes: Blue Resort's 58:19 fills a box
+ * on layer 6 of a map with six (func_8026DA2C through the overlay's
+ * script), and the N64 writes past the layers, into D_800B5F20 (99F40.c's
+ * blocks), which follows them.  The port writes the same field there, by
+ * its N64 offset (the halves of a word big-endian); the block's pointer
+ * (0x4) the N64 would overwrite is left alone (docs/PORT.md, "The
+ * scattered layout").  Returns whether the cell was past the layers. */
+static int port_cell_past(s32 layer, s32 cell, s32 slot, u16 v) {
+    u32 off = layer * sizeof(UnkStruct_800B15D8) + 0x12 + cell * sizeof(UnkCell_800B15D8) + 2 + slot * 2;
+    u32 r, i;
+    UnkStruct_800B5F30 *b;
+    s32 *w;
+
+    if (off < 0x4948) {
+        return 0;
+    }
+    r = off - 0x4948;
+    i = r / 0xC40; /* (the N64's size: the host's has a longer pointer) */
+    r %= 0xC40;
+    if (i >= 6) {
+        return 1; /* (past D_800B5F20 too: no stage reaches it) */
+    }
+    if (r >= 0x10) {
+        b = &D_800B5F20[i].unk10[(r - 0x10) / sizeof(UnkStruct_800B5F30)];
+        r = (r - 0x10) % sizeof(UnkStruct_800B5F30);
+        if (r == 0) {
+            b->unk0 = v >> 8;
+            b->unk1 = v;
+        } else {
+            b->unk2[(r - 2) / 2] = v;
+        }
+        return 1;
+    }
+    if (r >= 4 && r < 8) {
+        return 1;
+    }
+    w = r < 4 ? &D_800B5F20[i].unk0 : r < 0xC ? &D_800B5F20[i].unk8 : &D_800B5F20[i].unkC;
+    *w = (r & 2) ? (s32) ((*w & 0xFFFF0000) | v) : (s32) ((*w & 0xFFFF) | ((u32) v << 16));
+    return 1;
+}
+#endif
+
 typedef struct {
     /* 0x00 */ u8 pad0[0x10];
     /* 0x10 */ f32 x;
@@ -1509,6 +1569,11 @@ void func_8026D620(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 
     cell = func_8026D5F8(arg0, arg1, arg2);
     slot = func_8026D5C0(arg0, arg1, arg2);
+#ifdef TARGET_PC
+    if (port_cell_past(arg1, cell, slot, arg3)) {
+        return;
+    }
+#endif
     CELL(arg1, cell).unk2[slot] = arg3;
 }
 

@@ -873,7 +873,7 @@ digest_cmp.py compares the two.
 
 ```
 port/tools/rooms.py census                       # each room's entries
-port/tools/rooms.py run BUILD OUT -v V [-j N] [--set census,monkey,battle,extra,tas]
+port/tools/rooms.py run BUILD OUT -v V [-j N] [--set census,monkey,battle,extra,tas,ovl]
 ```
 
 - **The census.** A room is entered with a sub-mode, the message its
@@ -907,6 +907,12 @@ port/tools/rooms.py run BUILD OUT -v V [-j N] [--set census,monkey,battle,extra,
   both endings and their credits (28:16 and 28:17, 70,000 retraces),
   the attract's demos (29), the menus 21-23, and the boot with no input
   (the attract loop, 30,000 retraces).
+- **`ovl`** (us only): the overlays no other set loads (below, "The
+  overlays off the stages"): 20:16 warped to; the title's Options and
+  Custom from the power-on by the menus (`menu:options`, `menu:custom`,
+  the pads in rooms.py's ROUTES, the emulator's timing), alone and with
+  random input after them (@m1, @m2); 37:16 and 38:16 warped to, with
+  the walk and @m1; and the boot with START held (`menu:pak`).
 
 The results (i386, the seed pinned):
 
@@ -956,6 +962,51 @@ the attract to 28,926 and 28,607 (its digest has no retrace column
 without a warp, so `rooms.py`'s "N64 stops" there is the harness's).
 The Rainbow Palace boss's 126:18 and 126:19 differed in all three
 versions until the port modelled the .bss residue (below): now the same.
+
+**The overlays off the stages** (us, 2026-11-27). The scene table at
+ROM 0x30800 gives each scene its bank and the bank's index its overlay
+(40FB0.c's func_8022691C): bank 0x09 has 20-23 (ovl_09_01-04; 24 has
+no entry), 0x0A 25, 26, 28, 29, 27, 36 (ovl_0A_01-06 in that order),
+0x0B 32, 33, 35, 37, 38, 31, 34 (ovl_0B_01-07), 0x16 155 (ovl_16_01;
+156-164 have no entry). A scene is asked for by func_8023AE6C (ZeroJump
+0x0F00 in the overlays) and the tables of AFBF0.c (the credits), B11F0.c
+(the attract) and ovl_0B_02 (the world select). The overlays the
+coverage's runs never loaded:
+
+- **ovl_09_01-04** (20-23): an empty room each (a model, a camera, no
+  object): nothing asks for them. 20 is D_802AC5D4's value from the
+  boot to the first request (54E40.c's func_8023DB0C: the digest's
+  first scene), but the boot loads 32 or 36 itself (54BE0.c). 21-23 are
+  `extra`'s, 20:16 `ovl`'s: the same (to frame 5,714).
+- **ovl_0A_03** (28, the ending) and **ovl_0A_04** (29, after the
+  credits: AFBF0.c's lists end with 28 and 29) run in `extra`'s 28:16,
+  28:17 and 29:16 and 4908M's route: the same.
+- **ovl_0A_06** (36, the Controller Pak menu): 54BE0.c's func_8023A3E0
+  loads it in place of the title when controller 1 holds START at the
+  boot's first read (40040.c's func_8023A22C). With no pak (the port's
+  pfs.c has none, nor has the emulator's input plugin) it keeps the
+  legal screen, polls the pak and asks for the title (32:16) at frame
+  360. `menu:pak`: the same to the emulator's end (2,638, through the
+  attract). The menu itself needs a pak on both.
+- **ovl_0B_05** (38, Options) and **ovl_0B_04** (37, Custom: the
+  bomber's name and parts) are the title menu's fourth and third
+  entries (ovl_0B_01's 80044C00 calls), Custom through the file select
+  (31:17, ovl_0B_06's 0x25 request). `menu:options` and `menu:custom`
+  play them from the power-on. Options is the same (alone and @m1, @m2,
+  and 38:16 warped; its sound test and ending entries stay locked with
+  story.us.eep). Custom differed from the first character pressed
+  (frame 1,403): its cursor's box at (61685, 44277) where the N64 has
+  (230, 162). The character pages' Nav table, &D_ovl0B_04_80048DCC[0],
+  goes on into D_ovl0B_04_80048DDC, 48 Navs that are bytes in the C, and
+  a little-endian host read their s16s swapped; under `TARGET_PC` the
+  two are one `Nav[50]` (2937e38c). Then all five Custom targets are
+  the same to the end.
+- **ovl_16_01** (155): the other overlays' template built `-g`, its debug
+  messages kept; nothing asks for 155 (no request, no table holds it,
+  4908M's whole game never loads it). Warped to or requested from the
+  last bosses' rooms (`--request`, 136, 140, 141) it runs 35 frames and
+  reads its file through NULL (404C0.c's func_8022616C), on the N64 as
+  on the port (`extra`'s 155:16, where both stop).
 
 **The heap's 1 MiB** (us, 2026-11-27): while the asset cache's blocks
 were PORT_ASSET_PAD (0x200) bytes longer in gmalloc's arena too, the
@@ -1113,8 +1164,27 @@ overlay: ovl_0A_05 10% to 90% (the attract and menus runs), ovl_17_01 23% to
 ovl_0C_06 29% to 43%; most stage overlays gain little or nothing: what
 they don't run is what the room's progress unlocks (switches, doors,
 the bosses' later phases, the rooms past the first's exit), which random
-input in one life doesn't reach. Never run: ovl_09, ovl_0A_03, 0A_04,
-0A_06, ovl_0B_04, 0B_05, ovl_16.
+input in one life doesn't reach. Never run in these: ovl_09, ovl_0A_03,
+0A_04, 0A_06, ovl_0B_04, 0B_05, ovl_16. `rooms.py`'s `extra` and `ovl`
+load them ("The overlays off the stages"); on the coverage build
+(2026-11-27, `LLVM_PROFILE_FILE` around `rooms.py run`, the runs that
+stop as the N64 does written out under gdb at the fault), lines run,
+base, then base with `extra`, then with `ovl` too:
+
+| overlay | lines | base | + extra | + ovl |
+|---|---|---|---|---|
+| ovl_09_01 | 84 | 0% | 0% | 50.0% |
+| ovl_09_02-04 | 281 | 0% | 54.4% | 54.4% |
+| ovl_0A_03 (the ending) | 1070 | 0% | 96.0% | 96.0% |
+| ovl_0A_04 (after the credits) | 534 | 0% | 46.4% | 46.4% |
+| ovl_0A_06 (Controller Pak menu) | 876 | 0% | 0% | 15.6% |
+| ovl_0B_04 (Custom) | 1305 | 0% | 0% | 69.8% |
+| ovl_0B_05 (Options) | 614 | 0% | 0% | 49.5% |
+| ovl_16_01 | 194 | 0% | 8.2% | 8.2% |
+
+(x86-64 there: its 28:16 runs out of the 1 MiB heap at the credits'
+last picture, AFBF0.c's func_802957C0, as i386 did before the heap's
+fix, in "Every room"; the 8-byte pointers' structures are larger.)
 
 ## How it works
 
@@ -2374,8 +2444,13 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   gained little, since what they don't run is behind the room's
   progress: a monkey that keeps away from its own bombs, or one that
   follows a recorded route (a TAS, docs/TAS.md) and then plays at random,
-  would reach more. ovl_09, ovl_0A_03, 0A_04, 0A_06, ovl_0B_04, 0B_05 and
-  ovl_16 never run.
+  would reach more. The overlays the coverage's runs never loaded
+  (ovl_09, ovl_0A_03, 0A_04, 0A_06, ovl_0B_04, 0B_05 and ovl_16) are
+  `rooms.py`'s `extra` and `ovl` now, all the same as the emulator or
+  where both stop ("Every room", "The overlays off the stages"); left
+  there: ovl_0A_06's menu with a Controller Pak (the port has none),
+  ovl_0B_05's locked entries (a save with them open), and the `ovl`
+  set in eu and jp (its menu routes have us's timing).
 - **The N64's layout** (docs/ROADMAP.md, phase 6, unticked): the
   scattered check builds ("The scattered layout") report nothing in
   test.py's scenarios, the 78 stage runs or the monkey's runs: us with

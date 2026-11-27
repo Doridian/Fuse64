@@ -31,6 +31,15 @@ Targets (the sets):
   select: 21-24, 28:16 and 28:17 (the two endings and their credits,
   70000 retraces), 29 (the attract demos), 155 (the ending's room, a warp
   artefact), and `attract` (the boot with no input, 30000 retraces).
+- `ovl`: the overlays no other set loads (docs/PORT.md, "Every room"):
+  20:16 (ovl_09_01, the boot's nominal scene, never loaded in play), the
+  menu routes from the power-on (`menu:R`, the pads in ROUTES, us's
+  timing, from story.<v>.eep): `pak` holds START through the boot's
+  first read (54BE0.c loads ovl_0A_06, the Controller Pak menu, in place
+  of the title), `options` and `custom` pick the title menu's fourth and
+  third entries (ovl_0B_05, the options; through the file select
+  ovl_0B_04, the custom bomber's name and parts), with @mK random input
+  after the route; and 37:16 and 38:16 warped to, with the walk and @m1.
 - `tas`: seg:56:16:541:73577, 4908M's route from its first stage: the
   warp to 56:16, then from the scene's first read 4908M's pads by the
   frame relative to its frame 541 (part 1), with its generator and its
@@ -79,6 +88,36 @@ BATTLE = range(144, 154)
 EXTRA = ["28:16=70000", "28:17=70000", "29:16=20000", "attract=30000", "21:16=8000", "22:16=6000",
          "23:16=20000", "24:16=6000", "155:16=6000"]
 TAS_ROUTE = ["seg:56:16:541:73577=150000"]
+OVLS = ["20:16=6000", "menu:pak=3000", "menu:options=4000", "menu:options@m1=8000", "menu:options@m2=8000",
+        "menu:custom=4000", "menu:custom@m1=8000", "menu:custom@m2=8000",
+        "37:16", "37:16@m1", "38:16", "38:16@m1"]
+# controller 1 by the emulator's retrace from the power-on, us's timing:
+# START and A in turn every 30 from 300 (warp.<v>.txt's), the title
+# (27:16) from 421, the logo (32:17) from 541, whose menu START at 660
+# opens; it takes the stick
+_TITLE = [(f + d, w if d == 0 else 0) for i, f in enumerate(range(300, 661, 30))
+          for w in [0x10 if i % 2 == 0 else 0x80] for d in (0, 4)]
+_DOWN = 0xB0000000
+
+
+def _taps(t0, t1):
+    """A, then the stick down 60 retraces later, every 120"""
+    return [(f, w) for t in range(t0, t1, 120) for f, w in ((t, 0x80), (t + 4, 0), (t + 60, _DOWN), (t + 66, 0))]
+
+
+ROUTES = {
+    # START held through the boot's first read (40040.c's func_8023A22C,
+    # before 54BE0.c's func_8023A3E0 picks the overlay): ovl_0A_06; then A
+    "pak": [(0, 0x10), (200, 0)] + [(f, w) for t in range(400, 3000, 300) for f, w in ((t, 0x80), (t + 4, 0))],
+    # Options (ovl_0B_05, 38:16) from 963
+    "options": _TITLE + [(760, _DOWN), (766, 0), (810, _DOWN), (816, 0), (860, _DOWN), (866, 0),
+                         (960, 0x80), (964, 0)] + _taps(1200, 4000),
+    # Custom: the file select (31:17) from 963, its first file, the name
+    # entry (ovl_0B_04, 37:16) from 1317
+    "custom": _TITLE + [(760, _DOWN), (766, 0), (810, _DOWN), (816, 0), (960, 0x80), (964, 0),
+                        (1300, 0x80), (1304, 0)] + _taps(1500, 4000),
+}
+ROUTE_END = {"pak": 400, "options": 1200, "custom": 1500}   # where @mK's random input starts
 
 
 def body(src, name):
@@ -135,6 +174,8 @@ def targets(sets):
             out += EXTRA
         elif s == "tas":
             out += TAS_ROUTE
+        elif s == "ovl":
+            out += OVLS
         else:
             sys.exit("no set " + s)
     return out
@@ -212,8 +253,13 @@ def one(a, tok):
         nframes = nframes or str(1300 + int((seg[1] - seg[0]) * 1.2) + 400)
     warp, _, kind = tok.partition("@")
     tag = tok.replace(":", "_").replace("@", "_")
+    route = None
     if tok == "attract":
         warp = None
+    elif warp.startswith("menu:"):
+        if v != "us":
+            raise ValueError("the menu routes have us's timing")
+        route, warp = warp[5:], None
     emu, port = os.path.join(a.out, tag + ".emu.txt"), os.path.join(a.out, tag + ".port.txt")
     battle = warp is not None and int(warp.split(":")[0]) in BATTLE
     if battle:
@@ -222,16 +268,20 @@ def one(a, tok):
         base = os.path.join(ROOT, "tools/inputs/battle.%s.txt" % v)
     else:
         base = os.path.join(ROOT, "port/tools/inputs/warp.%s.txt" % v)
-    eep = os.path.join(ROOT, "port/tools/inputs/story.%s.eep" % v) if warp and not battle else None
+    eep = os.path.join(ROOT, "port/tools/inputs/story.%s.eep" % v) if (warp or route) and not battle else None
     frames = int(nframes) if nframes else 10000 if kind[:1] == "b" else 8000 if battle or kind else 5000
     inp = base if warp else None
+    if route:
+        base = inp = os.path.join(a.out, "menu_%s.route.txt" % route)
+        with open(base, "w") as f:
+            f.write("".join("%d %X\n" % fw for fw in sorted(ROUTES[route])))
     if kind and not seg:
         inp = os.path.join(a.out, tag + ".input.txt")
-        start = 1300 if battle else (920 if v == "jp" else 1100)
+        start = 1300 if battle else ROUTE_END[route] if route else (920 if v == "jp" else 1100)
         if kind[0] == "b":          # from the battle setup's first screen: the first A there and 50
             start = min(int(l.split()[0]) for l in open(base)
                         if l.strip() and not l.startswith("#") and int(l.split()[1], 16) == 0x80) + 50
-        monkey_script(base, inp, int(kind[1:]) * 1000003 + sum(map(ord, warp)) * 7919, start, frames,
+        monkey_script(base, inp, int(kind[1:]) * 1000003 + sum(map(ord, warp or route)) * 7919, start, frames,
                       2500 if kind[0] == "b" else 0)
     cmd = ["nice", "-n", "10", sys.executable, os.path.join(ROOT, "port/tools/emu_digest.py"), v, emu,
            "--frames", str(frames)]
@@ -240,8 +290,12 @@ def one(a, tok):
     cmd += ["--eeprom", eep] if eep else []
     cmd += ["--segment", "%s:1:%d:st" % (TAS, seg[0])] if seg else []
     if not os.path.exists(emu) or os.path.getsize(emu) == 0:
-        r = subprocess.run(cmd, capture_output=True, text=True)
-        open(emu + ".log", "w").write(r.stdout + r.stderr)
+        try:
+            r = subprocess.run(cmd, capture_output=True, text=True, timeout=a.emu_timeout)
+            open(emu + ".log", "w").write(r.stdout + r.stderr)
+        except subprocess.TimeoutExpired:
+            open(emu + ".log", "w").write("timeout\n")
+            return "%s: the emulator timed out (%d s)" % (tok, a.emu_timeout)
     last, lastvi = last_read(emu)
     tmp = tempfile.mkdtemp(prefix="rooms-", dir=a.out)
     hung = False
@@ -294,6 +348,7 @@ def main():
     p.add_argument("--only", help="targets, comma-separated")
     p.add_argument("--file", help="targets, one per line")
     p.add_argument("--timeout", type=int, default=600, help="seconds for a port run")
+    p.add_argument("--emu-timeout", type=int, default=1800, help="seconds for an emulator run")
     a = p.parse_args()
     if a.cmd == "census":
         for n, subs in sorted(census().items()):

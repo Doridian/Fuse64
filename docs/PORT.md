@@ -1614,6 +1614,27 @@ through NULL, ovl_16_01 driving 87D80.c's loader (func_8026FC08,
 func_8026D7D8, func_8026DC74) far past `D_800B15D8` and into most of the
 work area (325 places). It is the warp's, not the game's.
 
+Then (us, 2026-11-27, check builds of seeds 1, 2 and 3): `extra` and
+`ovl` on each seed, and the census on seeds 2 and 3 (the emulator's
+digests reused). One finding, fixed under `TARGET_PC`:
+
+- **Entry -1's object** (20:16, ovl_09_01's empty room, seed 1): its
+  handler calls func_802512C0 with no entry current (D_802AC894 -1), so
+  5E3F0.c's func_802511EC reads `D_800AEDF0[-1].unk28` (R 8, 192 bytes
+  before `D_800AEDF0`), the N64's word 0x800AED50 in the bytes after
+  `D_800A7F30[100]` that nothing names: 0, on i386 too. The padding's
+  0xA5 made it an object and the run crashed at frame 1033.
+  func_802443F4 gives 0 for entry -1, and func_802511EC leaves out its
+  write of the position to entry -1's unk0-unk8 (unnamed words; only
+  func_802512F8 reads entry -1's, through the NULL object). 20:16 is the
+  same as the emulator to frame 5,714 on i386 and in the check build.
+
+With it the three seeds' `extra` and `ovl` and the census on seeds 2
+and 3 report nothing but 155:16 (on seeds 2 and 3 it stops at the load
+with the N64, frame 1,033; its reports are the same loader's), and each
+run stops where it does on i386: the 36 census entries that aren't the
+same to their end are the 23 credits' shots and the 13 where both stop.
+
 ### Where pointers are 8 bytes
 
 DozerEncore's pointer pass ("Where pointers are 8 bytes" in its PORT.md),
@@ -2655,11 +2676,11 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   - Every room's entry (`rooms.py`'s census, extras and room monkey,
     us, seed 1, 2026-11-27) reports nothing after the three fixes there;
     with the census the runs cover 65.5% of the lines (from 56.3%:
-    "Coverage"). Left: the census on seeds 2 and 3 and on eu and jp;
-    the rest of each room is behind its progress (switches, doors, the
-    bosses' later phases), which a fixed walk doesn't reach; the
-    scattered check over the `extra` and `ovl` sets (the overlays off
-    the stages: "The overlays off the stages").
+    "Coverage"). The census on seeds 2 and 3 and `extra` and `ovl` on
+    seeds 1-3 report nothing after one more fix (20:16's entry -1).
+    Left: the census on eu and jp, the room monkey on seeds 2 and 3; the
+    rest of each room is behind its progress (switches, doors, the
+    bosses' later phases), which a fixed walk doesn't reach.
   - The default build itself: the fixed-address names are still aliases
     into the 8 MiB `port_rdram` laid out as RDRAM, and each asm data file
     one packed struct with its labels inside ("Memory"); only the check

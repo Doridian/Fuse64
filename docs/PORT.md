@@ -901,7 +901,7 @@ The results (i386, the seed pinned):
 |---|---|---|---|---|
 | us | 278 the same (21 as far as the N64 goes), 13 where both stop, 126:18 and 126:19, 116:28 and 126:30 (the heap, below) | all 257 the same (with the stack byte's last writer, 2026-11-27) | 20 the same (B released until 2500: each plays its stage) | the same, 144,601 frames |
 | eu | 280 the same (116:18 with them), the rest as us's | not run | not run | the same, 146,210 frames |
-| jp | 280 the same (116:19 with them), 116:18 where both stop, the rest as us's | not run | not run | the same, 144,660 frames |
+| jp | 280 the same (116:19 with them), 116:18 where both stop, the rest as us's (the battle stages rerun with the emulator's input below) | 248 of 286 the same to the end, 23 credits' shots as far as the N64 goes, 13 where both stop, 126:18 and 126:19 | 20 the same, every stage entered | the same, 144,660 frames |
 
 us's extras: 21, 22 and 23 the same; 24 and 155 stop on both; 28:17
 (the ending and its credits) the same to its end (frame 68,659), the
@@ -916,7 +916,19 @@ N64's doesn't: a malloc returns NULL and the port crashes writing a
 picture's header. In 28:16 at frame 48,957 (AFBF0.c's func_802957C0,
 the credits' last picture, 0x25818 bytes), and in the credits' shots
 116:28 (1742) and 126:30 (1839) warped to (9A5F0.c's func_80280814,
-6408 bytes), all three the same to the end with the pad 0. Not fixed.
+6408 bytes), all three the same to the end with the pad 0. Fixed with jp's
+(below): the pad only with PORT_HOST_MALLOC.
+
+jp's monkey and battle setup (2026-11-27): the monkey's differences
+are the census's artefacts and the residue. Two credits' shots, 116:28
+and 126:30, ran out of gmalloc's arena with the monkey's input where
+the N64 didn't (malloc gave NULL at frames 1563 and 1663): the asset
+cache's blocks were `PORT_ASSET_PAD` longer ("Past a host-malloc
+block"); with the N64's size both go as far as the N64. The battle sets
+had played `port/tools/inputs/battle.jp.txt`, moved to the port's boot,
+on the emulator, which then never left the attract (the census's
+144-153:16 too): `rooms.py` gives the emulator `tools/inputs`', and the
+ten stages and the twenty setups are the same.
 
 **Where both stop.** A warp can enter a room in a state play never
 gives it; then the N64 itself dies or hangs, and the port does the same
@@ -2198,8 +2210,8 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   warp on the emulator"), and jp's whole game along 4908M on BizHawk's
   core, every frame to the movie's end ("The TAS"); every room's entry
   and 4908M's route from a warp in us, eu and jp ("Every room"). Left:
-  the heap's 1 MiB with PORT_ASSET_PAD (us 28:16, 116:28, 126:30); eu's and jp's monkey and battle-setup
-  runs; overlay .bss residue (126:18, 126:19 warped). Also left: the pools
+  eu's monkey and battle-setup runs (us's and jp's are the same);
+  overlay .bss residue (126:18, 126:19 warped). Also left: the pools
   on 64-bit hosts (by field, with the host's struct offsets); 9CAB0.c's
   two unions.
 - **Audio** ("Audio"): checked against mupen64plus in us's menus, story

@@ -17,6 +17,9 @@
  *               rasterizer as it computes, exact (triangles from their
  *               coefficients, rectangles, the pixel pipeline, coverage and
  *               RDRAM's hidden bits, the z-buffer), into the game's images
+ *   gfx_gl.c    the OpenGL back end (--renderer gl): the same commands
+ *               drawn by the GPU into a copy of the color image, read
+ *               back into it at the task's end
  *
  * The task draws through a back end (GfxBackend), which --renderer picks;
  * a primitive is drawn with the state gs holds when it comes.
@@ -53,6 +56,7 @@ typedef struct {
 
 extern GfxRdpState gs;
 extern uint8_t gfx_tmem[4096];
+extern uint32_t gfx_tmem_gen;           /* bumped by every TMEM load */
 
 /* an RDP command that sets state or loads TMEM (the scissor, primitive
    depth, other modes, the loads, tiles, fill and constant colors, the
@@ -107,9 +111,20 @@ typedef struct {
     void (*tri)(const uint32_t *w);     /* a triangle command (8 to 44 words) */
     void (*fill_rect)(uint32_t w0, uint32_t w1);
     void (*tex_rect)(uint32_t w0, uint32_t w1, uint32_t h1, uint32_t h2, int flip);   /* h1 h2: s t, steps */
+    /* (may be NULL) a task's end; a TMEM load from gs.timg about to be done */
+    void (*task_end)(void);
+    void (*texture_source)(const uint8_t *timg);
 } GfxBackend;
 
 extern const GfxBackend gfx_soft;       /* gfx_soft.c */
+#ifdef PORT_HAVE_GL
+extern const GfxBackend gfx_gl;         /* gfx_gl.c */
+#endif
+/* gfx_soft.c: a 16-bit color pixel's coverage (0..7: its low bit and
+   RDRAM's hidden bits), read and written as the RDP does (the OpenGL back
+   end's copy of the color image) */
+int gfx_soft_cvg(const uint8_t *p);
+void gfx_soft_set_cvg(uint8_t *p, int cvg);
 
 /* ---- the HLE front end (gfx_hle.c) ------------------------------------------------------------ */
 

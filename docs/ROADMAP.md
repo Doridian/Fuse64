@@ -361,7 +361,10 @@ docs/PORT.md), for accuracy and fidelity alike:
       task (`gfx_ref.py`), and an OpenGL renderer beside the software one.
       Done: the HLE front end (`--renderer hle-sw`), the microcode's RDP
       commands exactly in every stage of every version (docs/PORT.md,
-      "The HLE front end"); the OpenGL back end is to come.
+      "The HLE front end"); the OpenGL back end at 1x (`--renderer gl`),
+      every picture the same as soft's in us's legal, menus and battle and
+      eu and jp's battle ("The OpenGL renderer"); scaling and the
+      enhancements are to come.
 - [x] **Audio checked**: against mupen64plus's output (RMS and correlation,
       as DozerEncore's "Audio"), and libaudio against the original's (an
       oracle, as DozerEncore's "The libaudio oracle"): docs/PORT.md,

@@ -250,7 +250,8 @@ static void usage(const char *argv0) {
             "  --hash              print each retrace's picture hash\n"
             "  --vi-raw            show the color image as it is, without the VI's filters\n"
             "  --renderer NAME     the renderer: soft (the game's microcode on the RSP, the RDP in software:\n"
-            "                      exact, the default), hle-sw (the microcode's commands in C, the same RDP)\n"
+            "                      exact, the default), hle-sw (the microcode's commands in C, the same RDP),\n"
+            "                      gl (hle-sw's commands drawn by OpenGL, offscreen: docs/PORT.md, \"The OpenGL renderer\")\n"
             "  -v                  more log\n",
             argv0, ROM_DEFAULT);
     exit(2);
@@ -340,7 +341,7 @@ int main(int argc, char **argv) {
             host_vi_raw = 1;
         else if (!strcmp(a, "--renderer") && i + 1 < argc) {
             if (!host_gfx_renderer(argv[++i])) {
-                fprintf(stderr, "fuse64: --renderer %s: no such renderer (there are soft and hle-sw)\n", argv[i]);
+                fprintf(stderr, "fuse64: --renderer %s: no such renderer (there are soft, hle-sw and, in a build with OpenGL, gl)\n", argv[i]);
                 exit(2);
             }
         }

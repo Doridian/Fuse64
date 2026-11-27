@@ -65,8 +65,9 @@ from a gameplay digest, by the game's frame: "The gameplay digest"),
 `--save-dir DIR` (the EEPROM file
 `fuse64.<v>.eep`), `--wav FILE`, `--hash` (each retrace's picture
 hash), `--vi-raw` (the color image as it is, without the VI: "The VI"),
-`--renderer soft` (the microcode, the default) or `hle-sw` (the HLE front
-end: "Graphics"), `-v`. With a window the
+`--renderer soft` (the microcode, the default), `hle-sw` (the HLE front
+end: "Graphics") or `gl` (the HLE front end drawn by OpenGL, offscreen:
+"The OpenGL renderer"), `-v`. With a window the
 keyboard (arrows, Z, X, C, A, S, Enter) and SDL's game controllers are
 the controller, and F9 is the console's reset button
 (`PORT_RESET=N[,N...]` presses it at those retraces; "The reset
@@ -1513,7 +1514,8 @@ Its parts (port/host/gfx.h has the interface between them):
 | gfx.c | the graphics task: the display list's flow, the game's microcode on rsp.c (or the HLE front end), the RDP commands it sends (to gfx_rdp.c's state, or drawn by the back end); `PORT_DUMP_DL`, `PORT_GFX_REF`, the census, `PORT_HLE_CHECK` |
 | gfx_hle.c | the HLE front end (`--renderer hle-sw`): the microcode's commands in C, its arithmetic exactly ("The HLE front end") |
 | gfx_rdp.c | the RDP's state and its decoding, what a back end draws with: the state commands, tiles, TMEM and its loads, the texel formats, the combiner's selectors |
-| gfx_soft.c | the software back end (`--renderer soft` and `hle-sw`; the only one): the RDP's rasterizer, exact (triangles, rectangles, the pixel pipeline, coverage and the hidden bits, the z-buffer) |
+| gfx_soft.c | the software back end (`--renderer soft` and `hle-sw`): the RDP's rasterizer, exact (triangles, rectangles, the pixel pipeline, coverage and the hidden bits, the z-buffer) |
+| gfx_gl.c | the OpenGL back end (`--renderer gl`): the same pixel pipeline in a fragment shader, exact ("The OpenGL renderer") |
 | vi.c | the VI ("The VI") |
 
 **The RSP's side is the game's microcode.** port/host/rsp.c interprets
@@ -1599,7 +1601,94 @@ Measured 2026-11-22, all exact:
 | test.py legal, menus, battle (hle-sw against soft's references) | ok | ok | ok |
 
 Wherever it was measured, the HLE front end sends the microcode's RDP
-commands, word for word; the OpenGL back end is still to come.
+commands, word for word, which the OpenGL back end takes:
+
+**The OpenGL renderer.** `--renderer gl` draws the HLE front end's RDP
+commands with the GPU, at the N64's resolution (port/host/gfx_gl.c,
+after DozerEncore's gfx_gl.c: its GL state cache, texture cache, batches
+and the image's upload and read-back, AGPL-3.0-or-later; NOTICES.md). Its
+context is offscreen, EGL without a surface (Mesa's surfaceless platform,
+through libepoxy), OpenGL 3.3 core: it runs headless as well as with a
+window, where the VI's picture of the color image is shown as before
+(SDL's software renderer presents it then, since the port's context is
+current on the same thread behind SDL's back; not tried yet). It
+is built where libepoxy is found (`-DPORT_GL=OFF` leaves it out; not the
+WebAssembly build yet). `--renderer soft` stays the default, and the one
+for deterministic runs and replays.
+
+It isn't an approximation of the RDP but gfx_soft.c's pixel in GLSL
+integers:
+
+- The game's 320-wide RGBA16 color image is a texture (RGBA8: each
+  channel's five bits << 3, the coverage in alpha), and its z image another
+  (R32UI: the halfword << 2 and its two hidden bits). Both are uploaded
+  from RDRAM when a task first draws, and read back into it, the hidden
+  bits too, at the task's end, before a texture load from the color image
+  (the screen captures, the after-image), and before the z image is
+  cleared (fill mode on it: gfx_soft.c clears it in memory). Other images
+  would go to gfx_soft.c ("The GBI census": the game has none).
+- A primitive (a triangle command, a rectangle as the triangle soft makes
+  of it, a fill or copy rectangle) is one instance of a quad over its
+  bounding box, carrying its command decoded: the edges and the eight
+  attributes' coefficients. The fragment shader walks the edges at the
+  pixel's four subscanlines as the RDP does (x in eighths, the scissor),
+  takes eight coverage samples, steps the attributes from the major edge
+  with the centroid correction, divides s and t by w with the RDP's
+  reciprocal table, samples the tile (texelFetch from its texels, which
+  gfx_texel decodes from TMEM, cached by TMEM's contents) with its
+  clamp, mask, mirror and three-point filter, and runs the combiner,
+  alpha compare, the z test (the RDP's: the 18-bit depth squeezed, dz and
+  the slopes, the four z modes, interpenetration's coverage), coverage
+  times alpha, the blender with its divider, the dither, CVG_DST.
+- What the RDP reads from memory, the color image's pixel and coverage
+  (IMAGE_READ) and the z image's (a z compare), comes from copies of the
+  two images: a batch that reads them gets the images as the batches
+  before it left them (a blit of its box), and no two of its primitives
+  may cover the same cell of 8×8 pixels, or the later would read the
+  memory before the earlier drew there: a new batch then. GL's blend and
+  depth test aren't used.
+
+`port/tools/gl_cmp.py BUILD` runs test.py's scenarios with soft and gl
+side by side (headless, `setarch -R`), compares the VI's pictures every N
+retraces (the mean channel difference of 255, the share of pixels more
+than 24 off: the bars are under 3 and under 0.1%), the gameplay digest,
+and RDRAM at the last retrace outside the images and with them, and
+writes the worst pair as PNGs (`--out`). Measured 2026-11-27 (us every 50
+retraces, eu and jp's battle every 100):
+
+| | pictures the same | mean, >24 | digest | RDRAM: the images | RDRAM outside them |
+|---|---|---|---|---|---|
+| us legal | 6 of 6 | 0, 0% | the same | the same | the same |
+| us menus | 60 of 60 | 0, 0% | the same | the same | 19 words differ |
+| us battle | 120 of 120 | 0, 0% | the same | the same | 16 words differ |
+| eu battle | 60 of 60 | 0, 0% | the same | the same | 20 words differ |
+| jp battle | 60 of 60 | 0, 0% | the same | the same | 16 words differ |
+
+test.py's legal, menus and battle with `--renderer gl` give soft's
+references (every retrace's picture, the sound, the save, the digest). The
+words that differ are host pointers the game's structures keep where the
+N64 had its own: the tasks' saved stack pointers in their buffers
+(coro.c's stacks, from malloc) and 80580.c's sound records (port_alloc,
+the host's calloc). Where those are depends on the host's heap, which
+the GL driver uses too, from its threads as well (two gl runs differ
+there; two soft runs do without `setarch -R`); what the game computes
+from them is the same. Pinning them (the stacks and records in an arena
+of their own) is left.
+
+Battle's 6000 retraces headless take 27 s with gl, 58 s with hle-sw
+and 78 s with soft (i386, a Radeon RX 7900 XTX with Mesa's radeonsi,
+on a busy machine). Almost every batch reads the memory (the game's
+antialiasing reads the coverage), and neighbouring triangles share their
+edges' cells, so a batch is about 1.2 primitives (1.25 million batches
+for 1.52 million primitives), each with its blit. `-v` logs the counts; `PORT_GL_CHECK=1`
+checks GL's errors after each flush.
+
+What it doesn't do yet (the later steps): scaling, or anything but 1x;
+the enhancements; read-backs only where the game reads (now the whole
+image at each task's end); fewer batches (the framebuffer read in the
+shader, interlock or a texture barrier, where the GPU has them);
+WebGL2 (the z image's write mask is `glColorMaski`, which GLES 3.0
+lacks, and the context is EGL's).
 
 The RDP's side is in integers, as the RDP computes it. A triangle is
 drawn from its command as the RDP walks it (`rdp_tri` in gfx_soft.c, after

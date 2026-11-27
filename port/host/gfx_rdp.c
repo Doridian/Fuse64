@@ -14,6 +14,7 @@
 
 GfxRdpState gs;
 uint8_t gfx_tmem[4096];
+uint32_t gfx_tmem_gen;
 
 /* ---- TMEM and texels ------------------------------------------------------------------------------ */
 
@@ -277,15 +278,18 @@ void gfx_rdp_set(uint32_t w0, uint32_t w1, uint8_t *img) {
         break;
     case 0xF0:
         load_tlut(w0, w1);
+        gfx_tmem_gen++;
         break;
     case 0xF2:
         set_tile_size(w0, w1);
         break;
     case 0xF3:
         load_block(w0, w1);
+        gfx_tmem_gen++;
         break;
     case 0xF4:
         load_tile(w0, w1);
+        gfx_tmem_gen++;
         break;
     case 0xF5:
         set_tile(w0, w1);
@@ -329,6 +333,7 @@ void gfx_rdp_set(uint32_t w0, uint32_t w1, uint8_t *img) {
 void gfx_rdp_reset(void) {
     memset(&gs, 0, sizeof gs);
     memset(gfx_tmem, 0, sizeof gfx_tmem);
+    gfx_tmem_gen++;
     memset(&gfx_cc, 0, sizeof gfx_cc);
     gfx_cc.combine = ~0ull;
     gfx_cc.cyc = ~0u;

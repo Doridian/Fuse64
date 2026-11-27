@@ -739,6 +739,8 @@ static void rdp_op(uint32_t w0, uintptr_t w1) {
             host_census("scissor %d %d %d %d mode=%d", gs.sc_xh, gs.sc_yh, gs.sc_xl, gs.sc_yl, (int)(w1l >> 24) & 3);
         break;
     case 0xF0: case 0xF3: case 0xF4:
+        if (be->texture_source)
+            be->texture_source(gs.timg);
         if (host_census_on) {
             if (op == 0xF0)
                 cs_load("tlut", (((w1l >> 14) & 0x3FF) - ((w0 >> 14) & 0x3FF) + 1) * 2);
@@ -1340,12 +1342,26 @@ static void run(const Cmd *dl) {
 
 /* ---- the task and the renderer ------------------------------------------------------------------ */
 
-/* --renderer: a front end (the microcode, or "hle-") and a back end */
-static const GfxBackend *const backends[] = { &gfx_soft };
+/* --renderer: a front end (the microcode, or "hle-") and a back end;
+   gl is the HLE front end's */
+static const GfxBackend *const backends[] = {
+    &gfx_soft,
+#ifdef PORT_HAVE_GL
+    &gfx_gl,
+#endif
+};
+
+int host_gfx_gl(void) {
+#ifdef PORT_HAVE_GL
+    return be == &gfx_gl;
+#else
+    return 0;
+#endif
+}
 
 int host_gfx_renderer(const char *name) {
-    int hle = !strcmp(name, "hle-sw");
-    if (hle)
+    int hle = !strcmp(name, "hle-sw") || !strcmp(name, "gl");
+    if (!strcmp(name, "hle-sw"))
         name = "soft";
     for (size_t i = 0; i < sizeof backends / sizeof backends[0]; i++)
         if (!strcmp(name, backends[i]->name)) {
@@ -1389,6 +1405,8 @@ int host_gfx_task(const void *dl, uint32_t size) {
     rdp_pos = 0;
     uc_begin();
     run((const Cmd *)dl);
+    if (be->task_end)
+        be->task_end();
     xr_end();
     xr_task++;
     if (host_fbw_on)

@@ -91,6 +91,13 @@ parser renamed `port_alBnkfParse`), `port/include/libaudio_heap.h`,
 `port/include/port.h`, and the WebAssembly page
 `port/web/shell.html`. Each file's header says where it comes from.
 
+The OpenGL back end, `port/host/gfx_gl.c`, adapts DozerEncore's
+`port/host/gfx_gl.c` (commit `98fe9a6`, the same author's, AGPL-3.0): its
+offscreen context, GL state cache, texture cache, batches and the color
+image's upload and read-back, taken to this port's RDP state and RDP
+commands. Its shaders are this port's: gfx_soft.c's pixel in GLSL
+(parallel-rdp's rules, below).
+
 ## parallel-rdp
 
 The RDP's triangle rasterizer in `port/host/gfx_soft.c` (`rdp_tri`: the span
@@ -103,7 +110,8 @@ and its reciprocal table) follows parallel-rdp
 time; so do its pixel's rules (`rdp_pixel`, `z_test`, `blend_eq`,
 `dither_at`: the depth test with the coverage, the blender's inputs,
 shifts and divider, the dither matrices; `depth_test.h`, `blender.h`,
-`dither.h`). The VI's output in `port/host/vi.c` (the antialiasing and
+`dither.h`), and `port/host/gfx_gl.c`'s fragment shader, the same pixel
+in GLSL. The VI's output in `port/host/vi.c` (the antialiasing and
 dither filters, the divot filter, the scaling, the gamma) follows its VI
 (`vi_fetch.frag`, `vi_divot.frag`, `vi_scale.frag`,
 `video_interface.cpp`) the same way. Its licence:

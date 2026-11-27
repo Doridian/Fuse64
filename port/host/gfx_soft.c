@@ -86,6 +86,9 @@ static int hb_get(const uint8_t *p) {
     return (h & HB_CLEAN) ? (p[1] & 1) * 3 : h;
 }
 
+int gfx_soft_cvg(const uint8_t *p) { return (p[1] & 1) << 2 | hb_get(p); }
+void gfx_soft_set_cvg(uint8_t *p, int cvg) { *hb_at(p) = (uint8_t)(cvg & 3); }
+
 /* the z-buffer is the z image in RDRAM, as the RDP keeps it: 16 bits a
    pixel, the depth (18 bits, z18: the screen z times 256) squeezed into 14
    with an exponent, and two bits of the four of its slope's (dz's
@@ -1008,4 +1011,4 @@ static void soft_reset(uint32_t clean) {
     memset(hidden, HB_CLEAN, clean / 2 < sizeof hidden ? clean / 2 : sizeof hidden);
 }
 
-const GfxBackend gfx_soft = { "soft", soft_init, soft_reset, rdp_tri, fill_rect, tex_rect };
+const GfxBackend gfx_soft = { "soft", soft_init, soft_reset, rdp_tri, fill_rect, tex_rect, NULL, NULL };

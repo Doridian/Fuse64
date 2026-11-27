@@ -9,7 +9,6 @@
  * the bytes that differ from the shadow are logged (MEM) and the shadow
  * updated.
  */
-#include <elf.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,6 +17,8 @@
 #include "audio_log.h"
 
 #ifdef PORT_AUDIO_RECORD
+
+#include <elf.h>
 
 #define MAX_RANGES 256
 

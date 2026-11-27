@@ -462,14 +462,22 @@ unk10 bit 0x200). Four things the sweeps found:
   each): the task's start (func_80285A9C) leaves there the pointer to
   the parameter file it reads (func_80226604(0xDD): one of 404C0.c's
   open files at `D_8014B808`, 0x8014B808 in every scene seen: 0x14),
-  and the rest of every update (func_80283FCC) then 0. So the port
-  keeps the byte per enemy (`sRange1`, under `TARGET_PC`): 0x0B in the
-  spawn, the file's N64 address's second byte until the end of the
-  enemy's first update (`port_n64_address`, port/src/memory.c: the
-  offset in `port_rdram`, or the scattered layout's object's address),
-  0 after. With a constant 0 (the port before) 56-61 differ from frame
-  1034 and 48:17 (4655), 85:17 (2934) and 123 (2083) later; with a
-  constant 11, 45 and sixteen of the rooms.
+  and the rest of every update then the last of: func_80291944's saved
+  ra (0x28), func_802909FC's `save[1]` (the enemy's y, when it keeps
+  the position: 0x48 for 200.0), a func_8022E884's saved f24 (called by
+  func_8022F550: 0x48) or f22 (called by func_80232DB4: 0). The last is
+  the usual one (0 everywhere the first measure looked), but while no
+  other object's collision mask overlaps func_80232DB4 doesn't call it:
+  in us 123:16 with the monkey's input the enemy then reads 0x48 at
+  frame 3161 and keeps the way towards the player func_80283B04 picks,
+  where the port, with 0, picked one at random. So the port keeps the byte per enemy (`sRange1`, under
+  `TARGET_PC`): 0x0B in the spawn, the file's N64 address's second byte
+  until the end of the enemy's first update (`port_n64_address`,
+  port/src/memory.c: the offset in `port_rdram`, or the scattered
+  layout's object's address), then those writes (9CAB0.c's comment has
+  the addresses). With a constant 0 (the port before) 56-61 differ from
+  frame 1034 and 48:17 (4655), 85:17 (2934) and 123 (2083) later; with
+  a constant 11, 45 and sixteen of the rooms.
 - **Two stack slots** (eu's 150, jp's 148 and 149): 5E3F0.c's
   func_8024E088, which one task (func_8024FFF0) calls for each player in
   turn, reads two locals unset. `spB4[0]`, the stick's angle:
@@ -891,7 +899,7 @@ The results (i386, the seed pinned):
 
 | | census (295 pairs) | monkey @m1 | battle setup | 4908M's route from 56:16 |
 |---|---|---|---|---|
-| us | 280 the same (23 as far as the N64 goes), 13 where both stop, 126:18 and 126:19 | 256 of 257 the same; 123:16 differs from frame 3161 | 20 the same (most left the setup with B) | the same, 144,601 frames |
+| us | 280 the same (23 as far as the N64 goes), 13 where both stop, 126:18 and 126:19 | the other 256 the same before the stack byte's fix above, 123:16 since (rerun with it: 123:16, 123:17, 48:17, 56:16) | 20 the same (most left the setup with B) | the same, 144,601 frames |
 | eu | 280 the same (116:18 with them), the rest as us's | not run | not run | the same, 146,210 frames |
 | jp | 280 the same (116:19 with them), 116:18 where both stop, the rest as us's | not run | not run | the same, 144,660 frames |
 

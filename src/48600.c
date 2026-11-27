@@ -2252,12 +2252,18 @@ static s32 func_8022E178(f32 *a, f32 *b) {
     return 1;
 }
 
+#ifdef TARGET_PC
+/* func_8022E884's calls so far: its prologue saves f20-f27 into its
+ * caller's stack (9CAB0.c's sRange1) */
+s32 port_e884_calls;
+#endif
 s32 func_8022E884(UnkStructA80 *arg0, UnkStructA80 *arg1) {
     s32 sa;
     s32 sb;
     s32 hit;
 
-    sa = arg0->unk30 & ~0x20;
+    PORT_ONLY(port_e884_calls++;)
+    sa =arg0->unk30 & ~0x20;
     sb = arg1->unk30 & ~0x20;
     switch (sa | sb) {
     case 1:

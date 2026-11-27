@@ -267,15 +267,40 @@ static s32 func_80283794(UnkStruct_80288040 *arg0, u8 arg1);
  *   (func_8022616C saves it): one of 404C0.c's eight open files at
  *   D_8014B808 (0x8014B808 in every scene seen), so 0x14, the second byte
  *   of its N64 address (sRange1File, port_n64_address). The
- *   rest of each update (func_80283FCC: func_802909FC's position copy,
- *   func_8022E884's saved FP registers) then writes 0, all that is
- *   ever seen there afterwards. So the first update reads 0x14, the later
- *   ones 0; and the types 41-45 store their own range[1] there.
+ *   rest of each update then leaves there the last of (in this order;
+ *   us 123:16 with the monkey's input, watched every frame and dumped,
+ *   the task's stack at 0x800689D8, the byte at 0x80069025):
+ *   func_8028456C's func_80291944, its saved ra (0x80284698: 0x28);
+ *   func_80283FCC's func_802909FC when it keeps the position in save[]
+ *   (sp+0x90), save[1], the y's second byte (0x48 for 200.0f); a
+ *   func_8022E884 called by func_8022F550 (0x28 bytes of frame), the
+ *   saved f24, the task's 50.0f (func_80285658's): 0x48; one called by
+ *   func_80232DB4 (0x20 bytes), the saved f22, the update's 0.0f: 0.
+ *   func_80232DB4 calls it while another object's collision mask
+ *   overlaps, the usual case (0 is all the first sweep saw there); in us
+ *   123:16 it doesn't for a few frames, save[1] stays and the enemy
+ *   reads 0x48 (port_e884_calls, port_909FC_saved).
+ *   So the first update reads 0x14; and the types 41-45 store their own
+ *   range[1] there.
  * sRange1[i] is slot i's task's byte, sRange1Spawn set during the spawn's
  * call. */
 static s8 sRange1[16];
 static s32 sRange1Spawn;
 static void *sRange1File;
+extern s32 port_e884_calls;
+extern s32 port_909FC_saved;
+extern f32 port_909FC_y;
+
+/* the second byte of a float's bits, as the N64's big-endian word has it */
+static s8 port_f32_byte1(f32 f) {
+    union {
+        f32 f;
+        u32 w;
+    } u;
+
+    u.f = f;
+    return (s8) (u.w >> 16);
+}
 
 static s8 *port_range1(UnkStruct_80288040 *a) {
     static s8 none;
@@ -1519,6 +1544,7 @@ static s32 func_8028456C(UnkStruct_80288040 *arg0) {
         break;
     }
     func_80291944(arg0->unk0, arg0->unk1C & 0xF0, speed);
+    PORT_ONLY(*port_range1(arg0) = 0x28;) /* (its saved ra, 0x80284698 in us and eu, 0x80283D98 in jp: sRange1) */
     tile = func_8026D7D8((s32) ((arg0->unk0->unk40->unk10 + 50.0f) * 0.01), func_8026EE18(arg0->unk0->unk40->unk14), (s32) ((arg0->unk0->unk40->unk18 + 50.0f) * 0.01));
     if (arg0->unk6C & 0x20) {
         if (tile & 0x1C00) {
@@ -1649,6 +1675,7 @@ static void func_80283FC4() {
 
 static void func_80283FCC(UnkStruct_80288040 *arg0) {
     UnkStructA *p;
+    PORT_ONLY(s32 e884;)
 
     func_80283FC4();
     func_80283FBC();
@@ -1660,6 +1687,8 @@ static void func_80283FCC(UnkStruct_80288040 *arg0) {
         func_80283F38(arg0);
         func_80283DF0(arg0, 0);
     }
+    PORT_ONLY(if (port_909FC_saved) { *port_range1(arg0) = port_f32_byte1(port_909FC_y); }) /* (save[1]: sRange1) */
+    PORT_ONLY(e884 = port_e884_calls;)
     if (D_800BA8E8[arg0->unk84].unk0 == 0x1C) {
         p = func_8022F550(arg0->unk0, 0xF);
         if (p == NULL) {
@@ -1672,6 +1701,7 @@ static void func_80283FCC(UnkStruct_80288040 *arg0) {
         }
     }
     p = func_8022F550(arg0->unk0, 0x11);
+    PORT_ONLY(if (port_e884_calls != e884) { *port_range1(arg0) = 0x48; }) /* (f24, 50.0f: sRange1) */
     if ((p != NULL) && (p->unk68 <= p->unk6C)) {
         arg0->unk0->unk40->unk10 = arg0->unk0->unk58;
         arg0->unk0->unk40->unk14 = arg0->unk0->unk5C;
@@ -1691,8 +1721,9 @@ static void func_80283FCC(UnkStruct_80288040 *arg0) {
         func_80283F38(arg0);
         func_80283DF0(arg0, 2);
     }
+    PORT_ONLY(e884 = port_e884_calls;)
     func_80232DB4(arg0->unk0);
-    PORT_ONLY(*port_range1(arg0) = 0;) /* (what the update leaves in the task's stack: sRange1) */
+    PORT_ONLY(if (port_e884_calls != e884) { *port_range1(arg0) = 0; }) /* (f22, 0.0f: sRange1) */
 }
 
 static s32 func_80283F28(UnkStruct_80288040 *arg0) {

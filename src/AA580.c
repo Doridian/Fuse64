@@ -671,6 +671,12 @@ static void func_8029085C(UnkStruct_802909FC *ctx, f32 angle);
 
 #define func_802909FC_slope(c) ((c) == 3 || (c) == 4 || (c) == 5 || (c) == 6)
 
+#ifdef TARGET_PC
+/* whether func_802909FC's last call kept the position in save[], and its
+ * y (save[1], left in its caller's stack: 9CAB0.c's sRange1) */
+s32 port_909FC_saved;
+f32 port_909FC_y;
+#endif
 s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
     s32 i;
     UnkStruct_802909FC ctx;
@@ -709,6 +715,7 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
     f32 b;
     s32 c;
 
+    PORT_ONLY(port_909FC_saved = 0;)
     ctx.unk0 = obj;
     ctx.unk4 = obj->unk40->unk10;
     ctx.unk8 = obj->unk40->unk14;
@@ -884,6 +891,7 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
             save[0] = p->unk10;
             save[1] = p->unk14;
             save[2] = p->unk18;
+            PORT_ONLY(port_909FC_saved = 1; port_909FC_y = save[1];)
             p->unk10 = ctx.unk4;
             ctx.unk0->unk40->unk14 = ctx.unk8;
             ctx.unk0->unk40->unk18 = ctx.unkC;

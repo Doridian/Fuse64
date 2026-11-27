@@ -921,17 +921,20 @@ The results (i386, the seed pinned):
 | | census (295 pairs) | monkey @m1 | battle setup | 4908M's route from 56:16 |
 |---|---|---|---|---|
 | us | 282 the same (23 as far as the N64 goes; 116:28 and 126:30 since the heap, 126:18 and 126:19 since the .bss residue's model, below), 13 where both stop | all 257 the same (with the stack byte's last writer, 2026-11-27) | 20 the same (B released until 2500: each plays its stage) | the same, 144,601 frames |
-| eu | 280 the same (116:18 with them), the rest as us's (the battle stages rerun: eu's input was right) | 248 of 286 the same to the end, 23 credits' shots as far as the N64 goes, 13 where both stop, 126:18 and 126:19 (the same since the .bss residue's model) | 20 the same, every stage entered | the same, 146,210 frames |
-| jp | 280 the same (116:19 with them), 116:18 where both stop, the rest as us's (the battle stages rerun with the emulator's input below) | 248 of 286 the same to the end, 23 credits' shots as far as the N64 goes, 13 where both stop, 126:18 and 126:19 (the same since the .bss residue's model) | 20 the same, every stage entered | the same, 144,660 frames |
+| eu | 282 the same (116:18, 126:18 and 126:19 with them), the rest as us's (the battle stages rerun: eu's input was right) | 248 of 286 the same to the end, 23 credits' shots as far as the N64 goes, 13 where both stop, 126:18 and 126:19 (the same since the .bss residue's model) | 20 the same, every stage entered | the same, 146,210 frames |
+| jp | 282 the same (116:19, 126:18 and 126:19 with them), 116:18 where both stop, the rest as us's (the battle stages rerun with the emulator's input below) | 248 of 286 the same to the end, 23 credits' shots as far as the N64 goes, 13 where both stop, 126:18 and 126:19 (the same since the .bss residue's model) | 20 the same, every stage entered | the same, 144,660 frames |
 
-**On x86-64** (us, the census, 2026-11-27; the pools by field at the
-host's offsets: "The object pools"): the same as i386, 282 the same and
-the 13 where both stop (at i386's frame, with i386's first difference),
-and every port digest but 41:23-26's (the loops, cut by the timeout) is
-i386's byte for byte (the census
-against the emulator digests of the i386 run, port side only; a
-non-ASan build). Before, the 64-bit runs differed in four ways, none of
-them on i386:
+**On x86-64** (2026-11-27; the pools by field at the host's offsets:
+"The object pools"): every set run is i386's, result for result and
+every port digest byte for byte but the loops' (41:23-26 everywhere and
+jp's 116:18, cut by the timeout): us's census (282 the same, the 13
+where both stop at i386's frame with i386's first difference; again
+after the host arenas, c44b7cbb), monkey (257), battle setup (20) and
+extras (9), and eu's and jp's census (eu as us's, 282 and 13; jp 283
+`same` lines, 116:18 the one that loops on both). Port side only, against the
+emulator digests of the i386 runs, non-ASan builds, both hosts run at
+the same commit. Before, the 64-bit runs differed in five ways, none
+of them on i386:
 
 - two words that keep a pointer the game only writes were 32-bit, so
   the digest saw a cut pointer (the game didn't read it): 9CAB0.c's
@@ -949,7 +952,14 @@ them on i386:
 - the credits' shots 116:28 and 126:30 crashed at frames 1714 and 1839:
   gmalloc's 1 MiB arena, the N64's, held the host's bigger blocks and
   records, and AFBF0.c's func_802957C0 got NULL for its 0x25818 bytes.
-  Where pointers are 8 bytes the arena is 2 MiB (`PORT_SBRK_SIZE`).
+  Where pointers are 8 bytes the arena is 2 MiB (`PORT_SBRK_SIZE`);
+- us's battle setup 146:16, 148:16 and 149:16 (seed 1) crashed at frames
+  3710, 5122 and 1540: 8A7A0.c declares 9CAB0.c's func_802870A8
+  without a prototype and passes it the target's pointer, which its
+  `s32` parameter cut; func_80284B20 then gave the cut pointer (its
+  0x68) to func_802727D8. The parameter is `PORT_IP` now, as its
+  siblings func_8027A1F4's and func_80244F34's are (a call through an
+  unprototyped declaration is one ptrcast_scan.py can't see).
 
 us's extras: 21, 22 and 23 the same; 24 and 155 stop on both; 28:17
 (the ending and its credits) the same to its end (frame 68,659), the
@@ -2595,6 +2605,11 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   there). eu and jp ran the 77 under ASan and UBSan (x86-64) and a
   handful under qemu (mips); us all 77 on i386 under the sanitizers and
   under qemu (mips).
+  The room sweep ("Every room") on x86-64 is i386's in us's four sets
+  and eu's and jp's census; eu's and jp's monkey, battle setup and
+  extras, and the TAS route on any set, haven't run there yet.
+  Calls through a declaration without a prototype that pass a pointer
+  to an integer parameter (func_802870A8's) no static check sees.
   `ptrcast_scan.py`'s allow-list, m2c_port.py's "no known struct" list
   and gen_zerojump.py's narrow list are the static side ("Where pointers
   are 8 bytes"); a run that crashes or differs from i386 the dynamic one.

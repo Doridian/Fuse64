@@ -797,6 +797,14 @@ void func_802511EC(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
         D_800AEDF0[arg0].unk4 = -10000.0f;
         D_800AEDF0[arg0].unk8 = -10000.0f;
     } else {
+#ifdef TARGET_PC
+        /* Entry -1 (above, func_802443F4): the N64 writes the words
+         * 0x800AED28-0x800AED30, which nothing names; only
+         * func_802512F8 reads entry -1's, through its NULL object. */
+        if (arg0 == -1) {
+            return;
+        }
+#endif
         D_800AEDF0[arg0].unk0 = pos[0];
         D_800AEDF0[arg0].unk4 = pos[1];
         D_800AEDF0[arg0].unk8 = pos[2];
@@ -5130,6 +5138,15 @@ f32 func_8024441C(s32 arg0, s32 arg1) {
 PORT_IP(s32) func_802443F4(s32 arg0) {
     PORT_IP(s32) ret;
 
+#ifdef TARGET_PC
+    /* Entry -1 (D_802AC894 with no entry current: ovl_09_01's room script
+     * calls func_802512C0 from the handler, 20:16): on the N64 its unk28
+     * is the word 0x800AED50, in the bytes after D_800A7F30[100] that
+     * nothing names, 0 (the emulator's and i386's). */
+    if (arg0 == -1) {
+        return 0;
+    }
+#endif
     ret = (PORT_IP(s32)) D_800AEDF0[arg0].unk28;
     return ret;
 }

@@ -3177,7 +3177,7 @@ void func_80270EF0(u8 *arg0) {
     func_802313DC(arg0, 0x20000);
     PORT_FIELD(temp_v0, s16 *, 0x3C, Port_Ent88, unk3C[0]) = 0;
     PORT_FIELD(temp_v0, f32 *, 0x50, Port_Ent88, unk3C[20]) = 0.0f;
-    PORT_FIELD(temp_v0, PORT_IP(s32) *, 0x30, Port_Ent88, unk30) = (s32) PORT_FIELD(temp_v0, PORT_IP(s32) *, 0x1C, Port_Ent88, unk1C);
+    PORT_FIELD(temp_v0, PORT_IP(s32) *, 0x30, Port_Ent88, unk30) = (PORT_IP(s32)) PORT_FIELD(temp_v0, PORT_IP(s32) *, 0x1C, Port_Ent88, unk1C);
 }
 
 void func_80270C24(u8 *arg0, s16 arg1, s32 arg2) {

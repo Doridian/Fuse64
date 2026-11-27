@@ -6,7 +6,7 @@ Port_UnkStructA 0x80 20:void 24:void 3C:void 40:Port_UnkStructA_40 44:Port_UnkSt
 Port_UnkStructA_40 0x50 3C:void 40:void 44:void 48:Port_UnkStructA_40_48 4C:void  # an object's model: the pool D_800A0D00's (426E0.c's UnkObj, structs.h's UnkStructA_40)
 Port_UnkStructA_40_48 0x8 4:Port_UnkStructA_40_48_4  # structs.h's UnkStructA_40_48
 Port_UnkStructA_40_48_4 0x18 0:void C:void  # structs.h's UnkStructA_40_48_4: two of 426E0.c's UnkAnimSlot (an animation, its time and flags)
-Port_80288040 0x90 0:Port_UnkStructA 68:void  # 9CAB0.c's UnkStruct_80288040: a player's bomber
+Port_80288040 0x90 0:Port_UnkStructA 68:void 8C:void  # 9CAB0.c's UnkStruct_80288040: a player's bomber
 Port_800AEDF0 0xC8 28:Port_UnkStructA 2C:Port_UnkStructA 30:void 40:void 4C:void B0:void B4:void  # 5E3F0.c's UnkStruct_800AEDF0: D_800AEDF0[5], the players
 Port_800BCFE8 0x128 18:Port_UnkStructA 1C:Port_UnkStructA 98:Port_800BCFE8_98 9C:void  # 6BBE0.c's per-player state D_800BCFE8[4]
 Port_800BCFE8_98 0x30 24:void 28:void 2C:void  # what 6BBE0.c's D_800BCFE8[i] has at 0x98 (malloc'd)

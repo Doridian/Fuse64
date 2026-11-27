@@ -65,7 +65,7 @@ typedef struct {
     /* 0x80 */ s32 unk80;
     /* 0x84 */ s32 unk84;
     /* 0x88 */ s16 unk88;
-    /* 0x8C */ s32 unk8C;
+    /* 0x8C */ PORT_IP(s32) unk8C; /* its task (D_800BB340[i]), written only */
 } UnkStruct_80288040; /* size 0x90 */
 
 typedef struct {

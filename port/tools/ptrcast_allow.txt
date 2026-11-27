@@ -8,7 +8,8 @@
 #     sizes handed to libultra as pointers (80580), a task's number;
 #   shorten: differences of addresses (sizes, counts), numbers returned
 #     through an intptr_t (func_80294A48's states, the task arguments, the
-#     ids of PORT_V0 wrappers), a write-only word (9CAB0's unk8C), libaudio's
+#     ids of PORT_V0 wrappers), AFBF0's credits' list read below 0x1000
+#     (port_null_word's offset), libaudio's
 #     buffer arithmetic, gu.c's fixed point.
 main src/45170.c 1 1 1
 main src/46300.c 1 1 1
@@ -44,7 +45,7 @@ shorten src/6BBE0.c 1 1 1
 shorten src/80580.c 2 2 2
 shorten src/85A10.c 2 2 2
 shorten src/8A7A0.c 3 3 3
-shorten src/9CAB0.c 1 1 1
+shorten src/AFBF0.c 1 1 1
 shorten src/overlays/ovl_0B_06/1607E0.c 5 5 5
 shorten src/overlays/ovl_0C_01/16BB60.c 1 1 1
 shorten src/overlays/ovl_0C_02/1734E0.c 1 1 1

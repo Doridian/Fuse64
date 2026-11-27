@@ -65,7 +65,8 @@ struct Port_80288040 {
     /* 0x00 */ Port_UnkStructA *unk0;
     /* 0x04 */ u8 unk4[0x64];
     /* 0x68 */ void *unk68;
-    /* 0x6C */ u8 unk6C[0x24];
+    /* 0x6C */ u8 unk6C[0x20];
+    /* 0x8C */ void *unk8C;
 }; /* N64 size 0x90 */
 
 /* 5E3F0.c's UnkStruct_800AEDF0: D_800AEDF0[5], the players */

@@ -900,7 +900,7 @@ The results (i386, the seed pinned):
 | | census (295 pairs) | monkey @m1 | battle setup | 4908M's route from 56:16 |
 |---|---|---|---|---|
 | us | 278 the same (21 as far as the N64 goes), 13 where both stop, 126:18 and 126:19, 116:28 and 126:30 (the heap, below) | all 257 the same (with the stack byte's last writer, 2026-11-27) | 20 the same (B released until 2500: each plays its stage) | the same, 144,601 frames |
-| eu | 280 the same (116:18 with them), the rest as us's | not run | not run | the same, 146,210 frames |
+| eu | 280 the same (116:18 with them), the rest as us's (the battle stages rerun: eu's input was right) | 248 of 286 the same to the end, 23 credits' shots as far as the N64 goes, 13 where both stop, 126:18 and 126:19 | 20 the same, every stage entered | the same, 146,210 frames |
 | jp | 280 the same (116:19 with them), 116:18 where both stop, the rest as us's (the battle stages rerun with the emulator's input below) | 248 of 286 the same to the end, 23 credits' shots as far as the N64 goes, 13 where both stop, 126:18 and 126:19 | 20 the same, every stage entered | the same, 144,660 frames |
 
 us's extras: 21, 22 and 23 the same; 24 and 155 stop on both; 28:17
@@ -929,6 +929,15 @@ had played `port/tools/inputs/battle.jp.txt`, moved to the port's boot,
 on the emulator, which then never left the attract (the census's
 144-153:16 too): `rooms.py` gives the emulator `tools/inputs`', and the
 ten stages and the twenty setups are the same.
+
+eu's monkey and battle setup (2026-11-27, after the heap's fix and the
+battle input's): as jp's. The monkey's 286 give 248 the same to the
+end, the 23 credits' shots as far as the N64 goes, the 13 artefacts
+below (the port crashes on the NULL a few frames before the emulator
+hits a reserved opcode or stops) and the residue; the twenty setups
+are the same and enter every stage. eu never had a port copy of its
+battle input, so its census's 144-153:16 played the stages before
+too (rerun: the same).
 
 **Where both stop.** A warp can enter a room in a state play never
 gives it; then the N64 itself dies or hangs, and the port does the same
@@ -2210,7 +2219,6 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   warp on the emulator"), and jp's whole game along 4908M on BizHawk's
   core, every frame to the movie's end ("The TAS"); every room's entry
   and 4908M's route from a warp in us, eu and jp ("Every room"). Left:
-  eu's monkey and battle-setup runs (us's and jp's are the same);
   overlay .bss residue (126:18, 126:19 warped). Also left: the pools
   on 64-bit hosts (by field, with the host's struct offsets); 9CAB0.c's
   two unions.

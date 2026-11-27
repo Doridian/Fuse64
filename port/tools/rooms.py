@@ -238,7 +238,8 @@ def last_read(path):
         for line in f:
             if line[:1].isdigit():
                 p = line.split(None, 5)
-                last, lastvi = int(p[4]), int(p[1])
+                if len(p) >= 5:     # a crash can cut the last line
+                    last, lastvi = int(p[4]), int(p[1])
     return last, lastvi
 
 
@@ -302,7 +303,13 @@ def one(a, tok):
     try:
         if eep:
             shutil.copy(eep, os.path.join(tmp, "fuse64.%s.eep" % v))
-        env = dict(os.environ, PORT_SEED="0x1997", PORT_DIGEST=port, PORT_SCENE_LOG="1", PORT_NO_DRAW="1")
+        # a coverage build's profile, a scattered check build's report
+        # (docs/PORT.md, "Coverage", "The scattered layout"), as stages.py's
+        env = dict(os.environ, PORT_SEED="0x1997", PORT_DIGEST=port, PORT_SCENE_LOG="1", PORT_NO_DRAW="1",
+                   LLVM_PROFILE_FILE=os.path.join(a.out, "prof", "%s-%%p.profraw" % tag),
+                   PORT_SCATTER_OUT=os.path.join(a.out, "%s.scat" % tag),
+                   ASAN_OPTIONS="detect_leaks=0:detect_stack_use_after_return=0:halt_on_error=0",
+                   UBSAN_OPTIONS="print_stacktrace=1")
         env.pop("PORT_WARP", None)
         if warp:
             env["PORT_WARP"] = warp

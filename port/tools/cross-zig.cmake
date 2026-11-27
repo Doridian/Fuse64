@@ -29,5 +29,8 @@ foreach(lang C ASM)
     set(CMAKE_${lang}_COMPILER_TARGET ${PORT_ZIG_TARGET})
 endforeach()
 set(PORT_SDL OFF CACHE BOOL "a window and sound (SDL2)")
+# (and no OpenGL renderer: the host's libepoxy and its headers are not the
+# target's)
+set(PORT_GL OFF CACHE BOOL "the OpenGL renderer (--renderer gl): libepoxy and EGL")
 set(CMAKE_CROSSCOMPILING_EMULATOR ${PORT_QEMU} CACHE STRING "what runs the target's programs here")
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)

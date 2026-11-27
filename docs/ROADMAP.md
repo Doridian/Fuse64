@@ -340,9 +340,11 @@ docs/PORT.md), for accuracy and fidelity alike:
       keeps the fixed-address names inside the 8 MiB `port_rdram` laid
       out as RDRAM, and each asm data file is one packed struct with its
       labels inside; only the check build (`PORT_SCATTER`) separates
-      them. And the runs that find what depends on the layout cover each
-      stage's first room only, about 57% of the lines (docs/PORT.md,
-      "What's left").
+      them. The runs that find what depends on the layout now cover
+      every room's entry (us, seed 1, 2026-11-27: three findings fixed,
+      nothing left), 65.5% of the lines; seeds 2-3, eu and jp over every
+      room, and what each room's progress unlocks, are left
+      (docs/PORT.md, "What's left").
 - [ ] **The gameplay digest equal to the emulator's** in every scene of
       every version; uninitialised reads given what the N64 leaves there.
 - [x] **A whole-game run**: the TAS movies (docs/TAS.md) replayed on the

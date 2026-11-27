@@ -1020,6 +1020,11 @@ host-malloc block") all three are the same: 28:16 to the emulator's end,
 116:28 and 126:30 as far as the N64 goes (2363 and 2478, the credits'
 next scene).
 
+Where pointers are 8 bytes (x86-64) the same three ran out of the
+arena for another reason, gmalloc's table and the game's blocks with
+pointers being longer: the arena is 2 MiB there ("The scattered
+layout", "Every room").
+
 jp's monkey and battle setup (2026-11-27): the monkey's differences
 are the census's artefacts and the residue. Two credits' shots, 116:28
 and 126:30, ran out of gmalloc's arena with the monkey's input where
@@ -1187,6 +1192,19 @@ out of the 1 MiB heap at the credits' last picture, AFBF0.c's
 func_802957C0, since the 8-byte pointers' structures are larger;
 gmalloc's arena is 2 MiB on 64-bit hosts since, "Where pointers are 8
 bytes".)
+
+**Every room's entry** (us, 2026-11-27): `rooms.py run` gives the port
+a profile too (`OUT/prof`), so the census's 286 entries ("Every room",
+the emulator's digests reused) ran on a coverage build of fa07226b
+with test.py's four and stages.py's runs (`base` and `wide`, as above:
+56.3% of 142,553 lines). The census adds 13,045 lines: **65.5%**. By
+group, wide then with the census: the main code 74.9% to 78.7%, ovl_0C
+33.8% to 56.9%, ovl_0D 51.3% to 59.7%, ovl_0E 42.1% to 58.3%, ovl_0F
+49.5% to 72.8%, ovl_10 30.8% to 58.4%, ovl_12 37.3% to 59.2%, ovl_14
+59.7% to 63.0%, gen (ZeroJump's stubs) 58.7% to 71.5%; ovl_0A, 0B,
+13, 15 and 17 gain nothing (the census enters the stages' rooms). The
+census alone runs 58.0%. (stages.py's attract run went past its 600 s
+there, at 23,131 retraces.)
 
 ## How it works
 
@@ -1433,6 +1451,49 @@ the others ran to the end. jp after the split (the check build and i386
 ASan) and eu's seed 1 didn't run. i386 against x86-64
 (`stages.py cmp`): the same hashes, every retrace, in the stage runs the
 x86-64 build finished (us 24 whole and 13 in part, eu 10 and 6).
+
+**Every room** (us, 2026-11-27, check build seed 1): `rooms.py run` gives
+the port `PORT_SCATTER_OUT` (`OUT/<tag>.scat`), so the check build
+replays the census's 286 entries, the extras and the room monkey's 248
+(the emulator's digests reused; on x86-64 the digest's pools differ from
+the emulator's by layout, "What's left", so only the reports and where
+each run stops count). A check build plays a census entry in about ten
+seconds; all 286 took ten minutes at six to eight at a time. They found
+three things, each fixed under `TARGET_PC`:
+
+- **A cell past the layers** (58:19, Blue Resort): the room's script
+  fills a box on layer 6 of a map with six (func_8026DA2C, func_8026D620:
+  W 2, 708 and 1194 bytes past `D_800B15D8`'s 0x4948). On the N64 the
+  cells land in what follows, 99F40.c's `D_800B5F20` (its blocks of
+  cells); 87D80.c's `port_cell_past` writes the same field there by its
+  N64 offset (a word's halves big-endian; the block's pointer at 0x4 is
+  left alone). 58:19 on i386 is the same as the emulator, as before.
+- **The heap where pointers are 8 bytes**: 116:28 and 126:30 (the
+  credits' shots) crashed in the check build and in the plain x86-64
+  build alike, where i386 goes as far as the N64: malloc gave NULL for the
+  credits' last picture (AFBF0.c's func_802957C0, 0x25818 bytes), and so
+  did 28:16's credits (frame 38,244). gmalloc's table is 24 KB there, not
+  12, and every block that holds a pointer is longer: at that request
+  the sbrk arena's top was 0xDD000, i386's 0xD0000. 40300.c's arena is
+  `PORT_SBRK_SIZE`, 2 MiB where pointers are 8 bytes; all three then go
+  as far as the N64.
+- **ovl_0A_04's six objects** (28:16, into the attract after the
+  credits; ovl_0A_04 had never run): func_ovl0A_04_80043B68 writes six
+  pointers to `D_ovl0A_04_80046708`, the overlay's last `.bss` name,
+  declared `[2]`; nothing reads them. On the N64 the last four go past
+  the overlay's `.bss` into its slot; the port's went over the next
+  variable (ovl_0A_05's `D_ovl0A_05_80049968`). It is `[6]` under
+  `TARGET_PC`.
+
+With them the census, the extras and the monkey's 248 report nothing,
+and each run stops where it did on i386 (the crashes of "Where both
+stop" lose the digest's buffered lines, so they stop earlier in the
+digest), but for one warp artefact: **155:16** (the ending's room,
+whose file is in another bank) stops at the load on the N64 and on
+i386, and in the check build plays on to the end over a map read
+through NULL, ovl_16_01 driving 87D80.c's loader (func_8026FC08,
+func_8026D7D8, func_8026DC74) far past `D_800B15D8` and into most of the
+work area (325 places). It is the warp's, not the game's.
 
 ### Where pointers are 8 bytes
 
@@ -2467,8 +2528,14 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
     one from another keep the N64's order.
   - A walk that ends at a name placed before it runs once and shows
     nothing (hence several seeds).
-  - Only each stage's first room and fixed walks are covered, about 57%
-    of the lines (see "64-bit, the rest").
+  - Every room's entry (`rooms.py`'s census, extras and room monkey,
+    us, seed 1, 2026-11-27) reports nothing after the three fixes there;
+    with the census the runs cover 65.5% of the lines (from 56.3%:
+    "Coverage"). Left: the census on seeds 2 and 3 and on eu and jp;
+    the rest of each room is behind its progress (switches, doors, the
+    bosses' later phases), which a fixed walk doesn't reach; ovl_09,
+    0A_03, 0A_06, 0B_04, 0B_05 and ovl_16 (but for the 155:16 artefact)
+    still never run.
   - The default build itself: the fixed-address names are still aliases
     into the 8 MiB `port_rdram` laid out as RDRAM, and each asm data file
     one packed struct with its labels inside ("Memory"); only the check

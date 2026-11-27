@@ -2,7 +2,7 @@
 """Which of the ROM's bytes a built port carries (docs/PORT.md, "The ROM's data").
 
   rom_free_check.py BINARY [--rom ROM] [--version V] [--all] [--assets]
-                           [--min N] [--max N] [--list N] [--json OUT]
+                           [--objects DIR] [--min N] [--max N] [--list N] [--json OUT]
 
 Scans a built fuse64 (ELF, a Windows .exe or the .wasm) for runs of the
 ROM's bytes: the code image (the ROM below its first archive, every overlay
@@ -23,6 +23,11 @@ information too).  The report says how many bytes, by the binary's section
 and symbol and by where the ROM has them (its module and splat's
 subsegment).  --max N exits 1 when more than N bytes are found (the gate on
 a stripped build: port/tools/rom_strip.py).
+
+--objects DIR (a build directory) counts only the runs that are the build's
+own objects' data (*.o, *.obj under DIR), and lists the others apart: a
+library linked in (a sanitizer's runtime, a static libc) can have a table
+the game has too.
 
 The functions are rom_strip.py's too: it zeroes what this finds and keeps
 where the port takes it back from at startup.
@@ -142,6 +147,7 @@ class Binary:
         self.readonly = {}      # region name -> read-only at run time
         self.relocs = []        # (address, size)
         self.symbols = []       # (address, size, name), sorted
+        self.locals = []        # (address, the file's name): an ELF's local data symbols, sorted
         self.endian = "<"
         self.word = 4
         self.segments = None    # ELF: (vaddr, memsz, flags) of each PT_LOAD
@@ -163,6 +169,8 @@ class Binary:
         elif self.kind == "wasm":
             self._wasm_view()
         self.sym_addrs = [s[0] for s in self.symbols]
+        self.locals.sort()
+        self.local_addrs = [s[0] for s in self.locals]
 
     # What is scanned and stripped is the view: the file, or for a .wasm its
     # memory as the data segments make it (wasm-opt splits a segment where
@@ -261,6 +269,7 @@ class Binary:
             if s[1] != 2:       # SYMTAB
                 continue
             stab = secs[s[6]]
+            fname = None
             for i in range(s[5] // symsize):
                 f = struct.unpack_from(symfmt, d, s[4] + i * symsize)
                 if cls == 1:
@@ -269,6 +278,10 @@ class Binary:
                     nm, info, val, size = f[0], f[1], f[4], f[5]
                 if info & 0xF in (1, 2) and val:      # OBJECT, FUNC
                     self.symbols.append((val, size, name(stab, nm)))
+                if info & 0xF == 4:                   # FILE: the locals after it are its
+                    fname = name(stab, nm)
+                elif info & 0xF == 1 and info >> 4 == 0 and val and fname:
+                    self.locals.append((val, fname))
         self.symbols.sort()
 
     def _wasm(self):
@@ -400,6 +413,18 @@ class Binary:
             return None
         return r[3] + off - r[1]
 
+    def owner(self, off):
+        """The file of the nearest local data symbol at or before OFF in its
+        section (an ELF's symbol table), or None."""
+        a = self.address(off)
+        reg = self.region_of(off)
+        if a is None or reg is None or not self.locals:
+            return None
+        i = bisect.bisect_right(self.local_addrs, a) - 1
+        if i < 0 or self.locals[i][0] < reg[3]:
+            return None
+        return self.locals[i][1]
+
     def symbol(self, off):
         a = self.address(off)
         if a is None or not self.symbols:
@@ -498,6 +523,142 @@ def coverage(runs, size):
     return mask
 
 
+# ---- the build's own objects ------------------------------------------------
+#
+# A library linked in (a sanitizer's runtime, a static libc, the CRT) can
+# have a table the ROM has too by chance (AddressSanitizer's has
+# 0, 0x20, ... 0xE0 as 32-bit words, which main_code's data has): it isn't
+# the game's, and the runtime may read it before main, before the fill
+# (ASan's start hung on it).  With --objects, a run counts only where its
+# bytes are the build's own objects' data.
+
+def object_data(path):
+    """An object file's initialized data, concatenated: an ELF relocatable's
+    allocated PROGBITS sections that aren't code, a COFF object's
+    initialized data sections (not the discardable ones: debug), a wasm
+    object's data section; any other file whole."""
+    f = open(path, "rb").read()
+    out = []
+    if f[:4] == b"\x7fELF":
+        e = "<" if f[5] == 1 else ">"
+        if f[4] == 2:
+            shoff, = struct.unpack_from(e + "Q", f, 0x28)
+            shentsize, shnum = struct.unpack_from(e + "HH", f, 0x3A)
+            fmt, o_flags, o_off, o_size = e + "IIQQQQ", 8, 24, 32
+        else:
+            shoff, = struct.unpack_from(e + "I", f, 0x20)
+            shentsize, shnum = struct.unpack_from(e + "HH", f, 0x2E)
+            fmt, o_flags, o_off, o_size = e + "IIIIII", 8, 16, 20
+        for i in range(shnum):
+            h = shoff + i * shentsize
+            stype, = struct.unpack_from(e + "I", f, h + 4)
+            flags, = struct.unpack_from(e + ("Q" if f[4] == 2 else "I"), f, h + o_flags)
+            off, = struct.unpack_from(e + ("Q" if f[4] == 2 else "I"), f, h + o_off)
+            size, = struct.unpack_from(e + ("Q" if f[4] == 2 else "I"), f, h + o_size)
+            if stype == 1 and flags & 2 and not flags & 4:
+                out.append(f[off:off + size])
+        return out
+    if f[:4] == b"\0asm":
+        p = 8
+        while p < len(f):
+            sid = f[p]
+            p += 1
+            n = shift = 0
+            while True:
+                c = f[p]
+                p += 1
+                n |= (c & 0x7F) << shift
+                shift += 7
+                if not c & 0x80:
+                    break
+            if sid == 11:
+                out.append(f[p:p + n])
+            p += n
+        return out
+    machine, nsec = struct.unpack_from("<HH", f, 0)
+    if machine in (0x14C, 0x8664, 0xAA64, 0x1C4):
+        sec = 20 + struct.unpack_from("<H", f, 16)[0]
+    elif machine == 0 and nsec == 0xFFFF and len(f) >= 56:     # bigobj
+        nsec, = struct.unpack_from("<I", f, 44)
+        sec = 56
+    else:
+        return [f]
+    for i in range(nsec):
+        h = sec + 40 * i
+        size, off = struct.unpack_from("<II", f, h + 16)
+        chars, = struct.unpack_from("<I", f, h + 36)
+        if chars & 0x40 and not chars & 0x20 and not chars & 0x02000000 and off:
+            out.append(f[off:off + size])
+    return out
+
+
+def file_key(name):
+    """A source's name as an ELF's FILE symbol or an object's file name
+    gives it: its base name without .o or .obj."""
+    n = os.path.basename(name.replace("\\", "/"))
+    for x in (".o", ".obj"):
+        if n.endswith(x):
+            n = n[:-len(x)]
+    return n
+
+
+def build_objects(dirs):
+    """(the data of every object, *.o and *.obj, under DIRS as one bytes,
+    their sources' names)"""
+    parts, names = [], set()
+    for d in dirs:
+        for root, _, files in os.walk(d):
+            for n in sorted(files):
+                if n.endswith((".o", ".obj")):
+                    parts += object_data(os.path.join(root, n))
+                    names.add(file_key(n))
+    return b"\xA5\x5A\xC3\x3C".join(parts), names
+
+
+def split_ours(binary, view, runs, objects, window=16):
+    """The runs as (ours, theirs).  A run is theirs where the ELF's symbols
+    put it after a library's own data (the nearest local data symbol before
+    it is a file not among the objects': the library's table can be the
+    game's too, byte for byte).  Otherwise each word of a run is ours where
+    a window of the run's bytes around it (4-aligned, within the run) is in
+    the objects' data, so that a run over two objects' data is ours on
+    both sides."""
+    blob, names = objects
+    ours, theirs = [], []
+    for s, si, r, perms in runs:
+        n = 4 * len(perms)
+        o = binary.owner(s)
+        if o is not None and file_key(o) not in names:
+            theirs.append((s, si, r, perms))
+            continue
+        if view[s:s + n] in blob:
+            ours.append((s, si, r, perms))
+            continue
+        mine = bytearray(len(perms))
+        w = min(window, n)
+        for i in range(0, n - w + 1, 4):
+            if view[s + i:s + i + w] in blob:
+                mine[i // 4:(i + w) // 4] = b"\1" * (w // 4)
+        pieces = []
+        k = 0
+        while k < len(perms):
+            j = k
+            while j < len(perms) and mine[j] == mine[k]:
+                j += 1
+            pieces.append([k, j, mine[k]])
+            k = j
+        # a piece shorter than a run next to one of ours is ours too: the
+        # padding between two objects, a string's end where the linker
+        # merged strings
+        if any(p[2] for p in pieces):
+            for p in pieces:
+                if not p[2] and 4 * (p[1] - p[0]) < MIN_RUN:
+                    p[2] = 1
+        for k, j, m in pieces:
+            (ours if m else theirs).append((s + 4 * k, si, r + 4 * k, perms[k:j]))
+    return ours, theirs
+
+
 def load_sources(rom, assets=False):
     srcs = [("code image", code_image(rom))]
     if assets:
@@ -520,6 +681,8 @@ def main():
     ap.add_argument("--max", type=int, help="exit 1 if more than this many bytes are found")
     ap.add_argument("--list", type=int, default=20, help="the biggest N symbols and sources (default 20)")
     ap.add_argument("--json", help="every run, to this file")
+    ap.add_argument("--objects", action="append",
+                    help="count only runs that are these objects' data (a build directory: its *.o and *.obj)")
     ap.add_argument("-q", "--quiet", action="store_true")
     a = ap.parse_args()
     rom_path = a.rom or default_rom(a.version or "us")
@@ -533,6 +696,9 @@ def main():
     binary = Binary(a.binary, a.all)
     sources = load_sources(rom, a.assets)
     runs = find_runs(binary, sources, log, min_run, min_distinct)
+    theirs = []
+    if a.objects:
+        runs, theirs = split_ours(binary, binary.get_view(), runs, build_objects(a.objects))
     mask = coverage(runs, len(binary.get_view()))
     total = sum(mask)
     names = ImageNames(version)
@@ -555,6 +721,13 @@ def main():
     scanned = sum(r[2] for r in binary.regions)
     print("%s: %d bytes of the %s ROM's in %d runs (%d bytes scanned, %s)" % (
         a.binary, total, version, len(runs), scanned, binary.kind))
+    if theirs:
+        print("not the build's objects' (a library's, the same by chance; not counted):")
+        for s, si, r, perms in theirs:
+            print("  %8d  at 0x%X (%s), the ROM's %s" % (4 * len(perms), binary.address(s) or s,
+                                                       binary.symbol(s) or (binary.region_of(s) or ["?"])[0],
+                                                       names.name(r) if sources[si][0] == "code image"
+                                                       else sources[si][0]))
     if total:
         print("by section:")
         for k, v in sorted(by_region.items(), key=lambda x: -x[1]):

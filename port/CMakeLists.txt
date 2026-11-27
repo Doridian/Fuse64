@@ -514,6 +514,7 @@ if(PORT_ROM_FREE AND NOT APPLE)
     endif()
     add_custom_command(TARGET fuse64 POST_BUILD
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/rom_strip.py ${ROM_STRIP_FILE}
-            --image ${ROOT}/assets/code.bin --version ${PORT_VERSION} --max 0
+            --image ${ROOT}/assets/code.bin --version ${PORT_VERSION} --objects ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles
+            --max 0
         VERBATIM)
 endif()

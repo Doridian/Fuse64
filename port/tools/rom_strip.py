@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Take the ROM's data out of a built fuse64 (docs/PORT.md, "The ROM's data").
 
-  rom_strip.py BINARY (--image CODE.BIN | --rom ROM) [--version V] [--max N] [-q]
+  rom_strip.py BINARY (--image CODE.BIN | --rom ROM) [--version V] [--objects DIR]
+               [--max N] [-q]
 
 Finds every run of the ROM's code image in the binary's initialized data
 (rom_free_check.py's matching), zeroes those bytes in the file and writes
@@ -12,9 +13,12 @@ the code image from the player's ROM and puts them back.  BINARY is the ELF,
 the .exe or the .wasm; the CMake build runs it on fuse64 after every link
 (PORT_ROM_FREE).
 
-Left in place: a word the loader relocates, the table itself, and a run in
+Left in place: a word the loader relocates, the table itself, a run in
 read-only memory whose pages it can't open (code on the same page, or
-pages both read-only and writable).  Afterwards the binary is scanned again
+pages both read-only and writable), and with --objects (the build
+directory: CMake gives it) a run that isn't the build's own objects' data
+(rom_free_check.split_ours: a library's table the game happens to have too,
+which its runtime may read before main, before the fill).  Afterwards the binary is scanned again
 and what is left is reported; --max N fails if that is more than N bytes.
 A binary already stripped is left alone.  --version checks that the image
 is that version's (the extract can be another's than the build directory's).
@@ -60,6 +64,8 @@ def main():
     ap.add_argument("--image", help="the version's code image (assets/code.bin)")
     ap.add_argument("--rom", help="or the ROM to make it from")
     ap.add_argument("--max", type=int, help="fail if more than this many bytes are left")
+    ap.add_argument("--objects", action="append",
+                    help="take only the runs that are these objects' data (the build directory: its *.o, *.obj)")
     ap.add_argument("--version", choices=["us", "eu", "jp"],
                     help="the build's version: the image must be its ROM's")
     ap.add_argument("-q", "--quiet", action="store_true")
@@ -78,6 +84,8 @@ def main():
 
     b = rfc.Binary(a.binary)
     d = b.get_view()
+    objects = rfc.build_objects(a.objects) if a.objects else None
+    theirs = set()      # words of runs in a library's data (rom_free_check.split_ours)
     at = d.find(MAGIC)
     if at < 0 or d.find(MAGIC, at + 1) >= 0:
         sys.exit("%s: no table (port_romfill), or more than one" % a.binary)
@@ -112,6 +120,10 @@ def main():
     for npass in range(8):
         b.view = bytes(data)
         runs = rfc.find_runs(b, [("code image", image)])
+        if objects:
+            runs, th = rfc.split_ours(b, orig, runs, objects)
+            for o, _, _, ps in th:
+                theirs.update(range(o, o + 4 * len(ps), 4))
         out = []
         for o, r, ps in cover(runs, len(d)):
             reg = b.region_of(o)
@@ -184,10 +196,13 @@ def main():
     # what is left
     b2 = rfc.Binary(a.binary)
     left = rfc.find_runs(b2, [("code image", image)])
+    if objects:
+        left, _ = rfc.split_ours(b2, orig, left, objects)
     nleft = sum(rfc.coverage(left, len(b2.get_view())))
     say("%s: %d bytes of the ROM's taken out in %d runs (%d read-only), %d left; kept in place: %d bytes "
-        "relocated or the table's, %d on pages it can't open" % (
-            a.binary, 4 * nwords, len(final), sum(1 for x in final if x[4]), nleft, kept, kept_pages))
+        "relocated or the table's, %d on pages it can't open%s" % (
+            a.binary, 4 * nwords, len(final), sum(1 for x in final if x[4]), nleft, kept, kept_pages,
+            "; %d bytes a library's, not the objects' (left)" % (4 * len(theirs)) if objects else ""))
     if a.max is not None and nleft > a.max:
         sys.exit("%s: %d bytes of the ROM's left, more than %d (rom_free_check.py %s says where)" % (
             a.binary, nleft, a.max, a.binary))

@@ -1293,8 +1293,22 @@ leaves zeros the ROM has too, and a few words between two runs, the same
 data at another overlay's place, show up then), and fails the build
 (`--max 0`) if anything is left. Left in place: a word the loader
 relocates (an ELF's REL, RELA or RELR, a PE's base relocations), the
-table, and a run in read-only memory whose pages it couldn't open alone
-(code or writable data on the same 4 KiB page; none in these builds).
+table, a run in read-only memory whose pages it couldn't open alone
+(code or writable data on the same 4 KiB page; none in these builds), and
+a run that isn't the build's own objects' data (`--objects`, the build
+directory's `*.o` and `*.obj`, which CMake gives it): a library linked in
+can have a table the game has too, and its runtime may read it before
+main, before the fill. AddressSanitizer's runtime has 0, 0x20, ... 0xE0
+as 32-bit words, as 5E3F0's data has; stripped, ASan's start hung before
+main. A run counts as the objects' where its bytes are their data
+(`rom_free_check.split_ours`: each 16-byte window of it in their
+initialized sections, an end shorter than a run next to one that is
+counting too, the padding between two objects) and, in an ELF, where the
+nearest local data symbol before it is one of their files' (its `FILE`
+symbol): ASan's table is byte for byte the game's, but it follows the
+sanitizer's own symbols. `rom_free_check.py --objects DIR` counts the
+same way and lists the others apart; without it the ASan build has those
+32 bytes.
 
 **The fill.** `host_rom_fill` (romfill.c) runs in `load_rom`, before
 anything reads the game's data: it builds the code image from the

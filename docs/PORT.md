@@ -397,9 +397,21 @@ written as the entry it points into (`obj12`, `obj12+8`, `e0` for
 `D_800AEDF0[0]`), `-` for NULL, the number when it is small (an index
 kept in a pointer's place) and `*` otherwise. 9CAB0.c's two unions (the
 state's 0x50 and 0x58, a float or bytes by the enemy's type) are left
-out. The pools are written only where pointers are 4 bytes (i386 and the
-other 32-bit hosts, where the host's layout is the N64's); a 64-bit host
-writes the fields above. An unchanged entry costs a memcmp.
+out. An unchanged entry costs a memcmp.
+
+Where pointers are 8 bytes the pools are the host's structures, not the
+N64's bytes, and the digest still writes them in the N64's form:
+`port/tools/gen_digest_pools.py` writes `gen/digest_pools.c` from the
+types gen_regions.py and asm2c.py laid each array out by (their
+`_objects.json`, decls.json's layouts): each pool's host stride, the
+host offset of each N64 offset (`layouts.py`'s `host_off`), the N64
+offset of each host offset, and where a pointer begins. A spec's field is
+read at its host offset with its own width, a pointer as wide as the
+host's (a `PORT_IP` word too), and a pointer into an entry is written at
+the N64's offset (`obj12+44`); `e` (D_800AEDF0) has its map as well. A
+spec field the host doesn't have (inside a pointer) stops the run. On
+i386 the maps are absent and the output is what it was: so x86-64's
+digest is the emulator's and i386's, byte for byte ("Every room").
 
 #### The stages: the warp on the emulator
 
@@ -904,6 +916,33 @@ The results (i386, the seed pinned):
 | eu | 280 the same (116:18 with them), the rest as us's (the battle stages rerun: eu's input was right) | 248 of 286 the same to the end, 23 credits' shots as far as the N64 goes, 13 where both stop, 126:18 and 126:19 (the same since the .bss residue's model) | 20 the same, every stage entered | the same, 146,210 frames |
 | jp | 280 the same (116:19 with them), 116:18 where both stop, the rest as us's (the battle stages rerun with the emulator's input below) | 248 of 286 the same to the end, 23 credits' shots as far as the N64 goes, 13 where both stop, 126:18 and 126:19 (the same since the .bss residue's model) | 20 the same, every stage entered | the same, 144,660 frames |
 
+**On x86-64** (us, the census, 2026-11-27; the pools by field at the
+host's offsets: "The object pools"): the same as i386, 282 the same and
+the 13 where both stop (at i386's frame, with i386's first difference),
+and every port digest but 41:23-26's (the loops, cut by the timeout) is
+i386's byte for byte (the census
+against the emulator digests of the i386 run, port side only; a
+non-ASan build). Before, the 64-bit runs differed in four ways, none of
+them on i386:
+
+- two words that keep a pointer the game only writes were 32-bit, so
+  the digest saw a cut pointer (the game didn't read it): 9CAB0.c's
+  `unk14.unk8C`, an enemy's task (`tobj` 0xA0, 190 rooms), and the
+  copy of an Ent88's object into its 0x30 by 8A7A0.c's func_80270EF0
+  through `(s32)` (`ent` 0x30, 19 rooms). Both are pointer-wide now
+  (`PORT_IP`);
+- 5E3F0.c's func_8024BF04 tested an Ent88's flags at
+  `func_802703B4(...) + 0x64`, the N64's offset added to the pointer
+  the call returns (no `M2C_FIELD`, so m2c_port.py never saw it): on
+  the host that is another field, so a CPU player's `0x400` state
+  (D_800AEDF0's 0x68) and `0x20` (0x10) weren't cleared, and the
+  entities' 0x5C followed (40:24, 40:25, 120:20, from frames 1381, 1315
+  and 1362). It is `PORT_AT(..., Port_Ent88, unk3C[40])` now;
+- the credits' shots 116:28 and 126:30 crashed at frames 1714 and 1839:
+  gmalloc's 1 MiB arena, the N64's, held the host's bigger blocks and
+  records, and AFBF0.c's func_802957C0 got NULL for its 0x25818 bytes.
+  Where pointers are 8 bytes the arena is 2 MiB (`PORT_SBRK_SIZE`).
+
 us's extras: 21, 22 and 23 the same; 24 and 155 stop on both; 28:17
 (the ending and its credits) the same to its end (frame 68,659), the
 demos (29) to 18,154 and the attract to 28,607; 28:16 (the other
@@ -1383,7 +1422,10 @@ same build-port32 build-port64`; "The matrix").
   stride `PORT_HOST(0xC8, sizeof(Port_800AEDF0))`, a display list's byte
   area `PORT_GFX_BYTES(n)` (412F0's areas the models' lists are built in:
   the host's commands are 16 bytes), the audio heap twice its size
-  (`port_audio_heap`), an SDK object kept as bytes the host's size
+  (`port_audio_heap`), gmalloc's sbrk arena too (40300.c's limit
+  `PORT_SBRK_SIZE`, 2 MiB from 0x80300000 in `port_rdram`: with the
+  N64's 1 MiB the credits' shots 116:28 and 126:30 ran out of it, where
+  the N64 has room, "Every room"), an SDK object kept as bytes the host's size
   (`PORT_SIZEOF_OSIOMESG`, the OSScClient on 412F0's stack).
 - **What the ROM keeps narrow.** The models' display lists stay the
   ROM's 8-byte commands (port/src/native.c, `port_narrow_dl`); the one
@@ -2381,9 +2423,12 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   and 4908M's route from a warp in us, eu and jp, and the scenes
   outside the stages (`extra`: the menus, both endings and their
   credits, the attract) in all three ("Every room"), the overlay .bss
-  residue modelled (126:18, 126:19 warped). Left: the pools
-  on 64-bit hosts (by field, with the host's struct offsets); 9CAB0.c's
-  two unions.
+  residue modelled (126:18, 126:19 warped); on x86-64 us's census, the
+  pools by field at the host's offsets, as i386 ("Every room": three
+  64-bit fixes). Left: x86-64's census in eu and jp, and its monkey,
+  battle setup, extras and 4908M's route (only the census ran);
+  9CAB0.c's two unions (left out of the pools on every host: they
+  didn't show up).
 - **Audio** ("Audio"): checked against mupen64plus in us's menus, story
   and battle, eu's battle and jp's menus; port/libaudio against the
   original library by the oracle ("Audio"). Left: the sound effects'

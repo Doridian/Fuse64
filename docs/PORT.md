@@ -899,14 +899,24 @@ The results (i386, the seed pinned):
 
 | | census (295 pairs) | monkey @m1 | battle setup | 4908M's route from 56:16 |
 |---|---|---|---|---|
-| us | 280 the same (23 as far as the N64 goes), 13 where both stop, 126:18 and 126:19 | the other 256 the same before the stack byte's fix above, 123:16 since (rerun with it: 123:16, 123:17, 48:17, 56:16) | 20 the same (most left the setup with B) | the same, 144,601 frames |
+| us | 278 the same (21 as far as the N64 goes), 13 where both stop, 126:18 and 126:19, 116:28 and 126:30 (the heap, below) | all 257 the same (with the stack byte's last writer, 2026-11-27) | 20 the same (B released until 2500: each plays its stage) | the same, 144,601 frames |
 | eu | 280 the same (116:18 with them), the rest as us's | not run | not run | the same, 146,210 frames |
 | jp | 280 the same (116:19 with them), 116:18 where both stop, the rest as us's | not run | not run | the same, 144,660 frames |
 
-us's extras: 21, 22 and 23 the same; 24 and 155 stop on both. The two
-endings, the demos and the attract weren't rerun to the end after an
-emulator run was cut short. The Rainbow Palace boss's 126:18 and 126:19
+us's extras: 21, 22 and 23 the same; 24 and 155 stop on both; 28:17
+(the ending and its credits) the same to its end (frame 68,659), the
+demos (29) to 18,154 and the attract to 28,607; 28:16 differs (the
+heap, below). The Rainbow Palace boss's 126:18 and 126:19
 differ in all three versions (the .bss residue below).
+
+**The heap's 1 MiB** (us, 2026-11-27): since the asset cache's files
+are PORT_ASSET_PAD (0x200) bytes longer ("The scattered layout"), the port's
+game heap (40300.c's sbrk arena, 1 MiB as on the N64) runs out where the
+N64's doesn't: a malloc returns NULL and the port crashes writing a
+picture's header. In 28:16 at frame 48,957 (AFBF0.c's func_802957C0,
+the credits' last picture, 0x25818 bytes), and in the credits' shots
+116:28 (1742) and 126:30 (1839) warped to (9A5F0.c's func_80280814,
+6408 bytes), all three the same to the end with the pad 0. Not fixed.
 
 **Where both stop.** A warp can enter a room in a state play never
 gives it; then the N64 itself dies or hangs, and the port does the same
@@ -2181,7 +2191,7 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   warp on the emulator"), and jp's whole game along 4908M on BizHawk's
   core, every frame to the movie's end ("The TAS"); every room's entry
   and 4908M's route from a warp in us, eu and jp ("Every room"). Left:
-  us's monkey in 123 differs; eu's and jp's monkey and battle-setup
+  the heap's 1 MiB with PORT_ASSET_PAD (us 28:16, 116:28, 126:30); eu's and jp's monkey and battle-setup
   runs; overlay .bss residue (126:18, 126:19 warped). Also left: the pools
   on 64-bit hosts (by field, with the host's struct offsets); 9CAB0.c's
   two unions.

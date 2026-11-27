@@ -217,9 +217,9 @@ def one(a, tok):
     emu, port = os.path.join(a.out, tag + ".emu.txt"), os.path.join(a.out, tag + ".port.txt")
     battle = warp is not None and int(warp.split(":")[0]) in BATTLE
     if battle:
-        base = os.path.join(ROOT, "port/tools/inputs/battle.%s.txt" % v)
-        if not os.path.exists(base):
-            base = os.path.join(ROOT, "tools/inputs/battle.%s.txt" % v)
+        # the emulator's timing (the shift check's), not port/tools/inputs'
+        # (jp's moved to the port's boot, stages.py): the emulator plays it
+        base = os.path.join(ROOT, "tools/inputs/battle.%s.txt" % v)
     else:
         base = os.path.join(ROOT, "port/tools/inputs/warp.%s.txt" % v)
     eep = os.path.join(ROOT, "port/tools/inputs/story.%s.eep" % v) if warp and not battle else None

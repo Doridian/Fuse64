@@ -102,7 +102,9 @@ void port_asset_native(int id, void *p, int size);
    window the decoder frees, which the heap's next block can reuse */
 #define PORT_ASSET_PAD 0x200
 void port_asset_tail(int id, void *p, int size);
-void port_lzss_window(const void *w);
+/* (no const: in WebAssembly native.c goes through the reset section's
+   wrapper, which defines const away after this header is included) */
+void port_lzss_window(void *w);
 /* ... and the sound data 80580.c loads */
 void port_bank_native(void *p, int len);
 void port_sounds_native(void *p, int len, int count);

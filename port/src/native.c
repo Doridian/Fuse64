@@ -289,7 +289,7 @@ int port_narrow_dl(const void *p) {
  *   it; no other picture has a texel past its count. */
 static uint8_t lzss_window[0x400];
 
-void port_lzss_window(const void *w) {
+void port_lzss_window(void *w) {
     memcpy(lzss_window, w, sizeof lzss_window);
 }
 

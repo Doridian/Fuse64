@@ -2615,7 +2615,7 @@ void func_8024BF04(s32 arg0) {
 
     if (p->unk2C != 0) {
         if (func_80274F8C(M2C_FIELD(p, s16 *, 0x1A), obj->unk40->unk10, obj->unk40->unk14, obj->unk40->unk18, arg0) == 0) {
-            if (func_802712A8((s32 *)(func_802703B4(PORT_PTR(p->unk2C)) + 0x64), 0x80) != 0) {
+            if (func_802712A8((s32 *)PORT_AT(func_802703B4(PORT_PTR(p->unk2C)), 0x64, Port_Ent88, unk3C[40]), 0x80) != 0) {
                 func_80243D90(arg0, 0x400, 0);
                 func_80244354(arg0, 0x20, 0);
             }

@@ -55,7 +55,9 @@ build directory isn't `build/`, which `make clean` removes.
 `-DPORT_VERSION=eu` or `jp` builds another version, from that version's
 extract (CMake checks `.version`). Other options: `-DPORT_SDL=OFF`
 (headless only), `-DPORT_SANITIZE=address,undefined`,
-`-DPORT_HOST_MALLOC=ON` (the game's malloc the host's, for ASan; `PORT_HOST_MALLOC_EXACT=1` at run time: blocks of the size asked).
+`-DPORT_HOST_MALLOC=ON` (the game's malloc the host's, for ASan; `PORT_HOST_MALLOC_EXACT=1` at run time: blocks of the size asked),
+`-DPORT_ROM_FREE=OFF` (the ROM's data left in the executable: "The
+ROM's data").
 
 `fuse64 --help` lists the options: `--headless` (no window and no sound;
 a virtual clock), `--deterministic`, `--frames N`, `--screenshot PREFIX`
@@ -1226,6 +1228,113 @@ does; and four generated files:
   calls its target ("ZeroJump").
 - `regions.c` (gen_regions.py): the fixed addresses ("Memory").
 - `overlays.c` (gen_overlays.py): the overlays' table.
+
+After the link, `rom_strip.py` takes the ROM's data out of the executable
+("The ROM's data").
+
+### The ROM's data
+
+A published executable can't carry the ROM's bytes (docs/ROADMAP.md,
+phase 6, "Hosts and packages"). The code is ours (the game's C compiled
+by the host's compiler, no asm text: ZeroJump and boot.c are C), so what
+the ROM gives a build is its initialized data: the game's C initializers
+(`tools/data_c.py`'s, in `src/`), `asm_data.c` (asm2c.py's, main_code's
+data that is still asm and boot_code's VI modes), and the overlays' `.data`
+and `.rodata`. The archives (the pictures, the models, the sound) were
+never in it: the game reads them from the ROM at run time.
+
+**The check.** `port/tools/rom_free_check.py BINARY` (an ELF, a `.exe`
+or the `.wasm`) scans the binary's initialized data (an ELF's allocated
+PROGBITS sections that aren't code, a PE's initialized data sections, a
+`.wasm`'s memory as its data segments make it) for the ROM's code image
+(tools/layout.py's: the ROM below 0x120000, every overlay inflated;
+`--assets` adds the asset archive's members). A run is a stretch of 4-byte
+chunks each equal to the ROM's chunk at the same distance in one of the
+orders a host gives a word's fields (as it is, the word reversed, its
+halves reversed, one half reversed), so a table of floats, halfwords or
+mixed structures in the host's order counts as well as a string; it is
+at least 32 bytes and has a 32-byte stretch of 6 or more distinct byte
+values (zeros or 0xFF alone don't count; a run's own zeros do). It says
+how many bytes, by section, by the ROM's module and by symbol; `--json`
+lists every run with its symbol and the ROM's address and subsegment.
+
+Before (us, 2026-11-27, every byte of a run counted, zeros in it too):
+
+| build | bytes | where |
+|---|---|---|
+| Linux i386 | 75,096 in 2,126 runs | `fuse64rd` 24,268 (main_code's and boot_code's data: the RSP microcode's data `D_8029D320`/`D_8029E750` 8.8 K, the VI modes `port_asm_1AFB0_data` 3.4 K, the tables), the overlays' `fuse64d_*` 46.8 K, `.rodata` 4.0 K (the game's strings) |
+| Linux x86-64 | 67,219 in 1,890 runs | the same, shorter where a structure holds pointers |
+| WebAssembly (node) | 108,267 in 2,404 runs | the same; the zeros between the data segments count where a run spans them |
+| Linux i386, jp | 72,960 in 2,124 runs | as us's |
+
+By the ROM's module (i386): main_code 21.8 K, boot_code 3.4 K, the
+overlays the rest (ovl_0B_04 3.9 K the most).
+
+**The strip.** After every link, `port/tools/rom_strip.py` (CMake's
+`PORT_ROM_FREE`, on; not on macOS: no Mach-O reader yet) takes the
+runs out: it finds them as the check does, gives each byte to the
+longest run that has it, zeroes them in the file and writes where each
+run goes (its distance from the table), where in the code image it comes
+from and each word's order (a nibble) into `port_romfill`, a 96 KiB table
+in the executable's data (`port/host/romfill.c`, filled with 0xA5 so that
+wasm-opt keeps it, found by its magic), with an FNV-1a checksum of the
+bytes it took out. It scans again until nothing is found (a run taken out
+leaves zeros the ROM has too, and a few words between two runs, the same
+data at another overlay's place, show up then), and fails the build
+(`--max 0`) if anything is left. Left in place: a word the loader
+relocates (an ELF's REL, RELA or RELR, a PE's base relocations), the
+table, and a run in read-only memory whose pages it couldn't open alone
+(code or writable data on the same 4 KiB page; none in these builds).
+
+**The fill.** `host_rom_fill` (romfill.c) runs in `load_rom`, before
+anything reads the game's data: it builds the code image from the
+player's ROM as tools/layout.py does (the ROM below the first archive,
+then each overlay archive's members but the index, inflated by an LZSS
+decoder of its own), copies every run back in its words' orders (the
+read-only ones between an `mprotect`, or `VirtualProtect`, that opens
+their pages and one that closes them), and checks the checksum: another
+ROM, or one whose data differs, stops with a message naming the ROM it
+wants. An executable the strip hasn't run on (`PORT_ROM_FREE=OFF`) has
+an empty table and runs as before. The reset's copy of the data and the
+overlays' copies (port_reset_init, port_overlay_init) are taken after
+it.
+
+After (us, 2026-11-27):
+
+| build | taken out | left | kept in place |
+|---|---|---|---|
+| Linux i386 | 75,504 bytes, 321 runs (80 in `.rodata`) | 0 | 4 bytes (one relocated word) |
+| Linux x86-64 | 67,224 bytes, 806 runs | 0 | 20 bytes (relocated words) |
+| WebAssembly (node) | 108,108 bytes, 600 runs | 0 | 0 |
+| Linux i386, jp | 73,372 bytes, 320 runs | 0 | 0 |
+
+The test scenarios give the references with the stripped builds (i386
+the seven, x86-64 and jp `legal`, the `.wasm` `legal`'s 300 retraces
+under node). The strip also checks that the code image is the build's
+version's (`--version`).
+
+Not counted, and so left:
+
+- **Shorter runs.** At 16 bytes the check finds 7.7 K more on i386, most
+  of it zeros with a `1.0f` or two that match another overlay's data by
+  chance, and a few short strings of the game's (`"WM1 WG1 WAP WSH "`,
+  `"Layer Unit\n"`). A threshold that low would take out the port's own
+  data too, which is harmless (the fill gives back the same bytes) but
+  would put the bytes main reads before the fill (its own strings) at
+  risk.
+- **Doubles and 64-bit integers**: a host's order reverses all eight
+  bytes, so each 4-byte chunk is the ROM's neighbour; the game's data has
+  few, and none in a run long enough to show.
+- **What the code holds as constants**: a compiler may build a small
+  initializer in the code (an immediate), and the text isn't scanned
+  (`--all` scans the whole file, debug information included; not run on
+  these builds).
+- **Coincidences with the assets**: `--assets` finds one 32-byte run, a
+  texture load's commands (`E8000000 ... F0000000 073FC000`, the gbi
+  macros' bytes) that every model in bank 0x18 has too.
+- **macOS**: no Mach-O reader in the strip, so no strip there yet.
+- **Windows**: the strip reads a PE (sections, base relocations) and the
+  fill uses VirtualProtect, but no Windows build has run stripped yet.
 
 ### Memory
 
@@ -2544,7 +2653,10 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
     own.
 - **Packages** (an AppImage, the `.exe` with SDL, a macOS app; Blast
   Corps' "Packages") and a hosted page: after 64-bit, with SDL in the
-  Windows cross build.
+  Windows cross build. Their first step is done: the executable and the
+  `.wasm` carry none of the code image's runs of 32 bytes or more, and
+  fill them from the player's ROM ("The ROM's data"). Left there: a
+  Mach-O for macOS, a stripped Windows build run, the shorter runs.
 - **Renderer**: checked task by task against angrylion and the game's
   microcode ("Graphics": `gfx_ref.py`); the microcode runs on the port's
   RSP interpreter, so every task's RDP commands are the N64's, and with

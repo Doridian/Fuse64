@@ -500,3 +500,20 @@ if(PORT_SDL)
         message(STATUS "no SDL2: a headless build")
     endif()
 endif()
+# the ROM's data out of the executable (docs/PORT.md, "The ROM's data"):
+# after every link, rom_strip.py zeroes every run of the code image's bytes in
+# the game's initialized data and writes where they go into port_romfill
+# (host/romfill.c), which fills them from the player's ROM at startup
+# (ELF, PE and WebAssembly: not yet a Mach-O, so not on macOS)
+option(PORT_ROM_FREE "take the ROM's data out of the executable after the link (rom_strip.py)" ON)
+if(PORT_ROM_FREE AND NOT APPLE)
+    if(EMSCRIPTEN)
+        set(ROM_STRIP_FILE $<TARGET_FILE_DIR:fuse64>/fuse64.wasm)
+    else()
+        set(ROM_STRIP_FILE $<TARGET_FILE:fuse64>)
+    endif()
+    add_custom_command(TARGET fuse64 POST_BUILD
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/rom_strip.py ${ROM_STRIP_FILE}
+            --image ${ROOT}/assets/code.bin --version ${PORT_VERSION} --max 0
+        VERBATIM)
+endif()

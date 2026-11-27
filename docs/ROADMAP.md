@@ -381,7 +381,8 @@ docs/PORT.md), for accuracy and fidelity alike:
       resource packs.
 - [ ] **Hosts and packages**: every host in docs/PORT.md's "Status",
       a real Mac, packages, a hosted page; no binary published while it
-      carries the ROM's data.
+      carries the ROM's data (the executable and the `.wasm` take it from
+      the player's ROM at startup: docs/PORT.md, "The ROM's data").
 
 ## Phase 7 — WebAssembly
 

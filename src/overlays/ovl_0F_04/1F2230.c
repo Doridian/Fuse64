@@ -187,14 +187,6 @@ static void func_ovl0F_04_80045E80(UnkStructA **arg0);
  * stubs they leave.
  */
 
-/* the door func_ovl0F_04_80044F88 runs as a task: two models and what to
- * call once it is open */
-typedef struct {
-    /* 0x00 */ UnkStruct_ovl0F_01_80048264 unk0[2];
-    /* 0x58 */ void (*unk58)(void);
-    /* 0x5C */ void (*unk5C)(void);
-} UnkStruct_ovl0F_04_80048880; /* size 0x60 */
-
 /* a panel's tile and what it is set to */
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -332,7 +324,7 @@ void func_ovl0F_04_80046BFC(f32, f32, f32);
 s32 func_ovl0F_04_80046BC8(s32, void *);
 static void func_ovl0F_04_80043578(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_04_800487A8 *flags);
 static void func_ovl0F_04_800460CC(s32 n1, s32 n2);
-static void func_ovl0F_04_80046244(UnkStruct_ovl0F_04_80048880 *door);
+static void func_ovl0F_04_80046244(UnkStruct_ovl0F_02_800489F4 *door);
 static void func_ovl0F_04_8004623C(void);
 static void func_ovl0F_04_800460BC(void);
 static void func_ovl0F_04_800460B4(void);
@@ -472,7 +464,7 @@ UnkStruct_ovl0F_01_80048264 D_ovl0F_04_80048850 = {
     &D_ovl0F_04_80048A88[5], 0x225, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0,
 };
 UnkStructA *D_ovl0F_04_8004887C = NULL;
-UnkStruct_ovl0F_04_80048880 D_ovl0F_04_80048880 = {
+UnkStruct_ovl0F_02_800489F4 D_ovl0F_04_80048880 = {
     {
         { &D_ovl0F_04_8004887C, 0x25F, 0, 33.0f, 0.0f, 13.0f, 0.0f, 270.0f, 0.0f, 0, 0x402 },
         { &D_ovl0F_04_80048A88[6], 0x260, 0, 33.0f, 1.0f, 13.0f, 0.0f, 270.0f, 0.0f, 0, 0 },
@@ -583,7 +575,7 @@ static void func_ovl0F_04_800460B4(void) {
 
 
 /* case 2's: the door, closed or already open */
-static void func_ovl0F_04_80046244(UnkStruct_ovl0F_04_80048880 *door) {
+static void func_ovl0F_04_80046244(UnkStruct_ovl0F_02_800489F4 *door) {
     UnkStruct_ovl0F_01_80048264 *m1; /* the door's two entries held in locals (the */
     UnkStruct_ovl0F_01_80048264 *m0; /* frame's 8 bytes; which values: a guess, as 0F_02's) */
 
@@ -838,7 +830,7 @@ void func_ovl0F_04_800452A0(UnkStructA *obj) {
 }
 
 void func_ovl0F_04_80044F88(void) {
-    UnkStruct_ovl0F_04_80048880 *task;
+    UnkStruct_ovl0F_02_800489F4 *task;
     UnkStruct_ovl0F_01_80048264 *a;
     UnkStruct_ovl0F_01_80048264 *b;
     f32 pos[3];

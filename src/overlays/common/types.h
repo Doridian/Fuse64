@@ -516,4 +516,12 @@ typedef struct {
     /* 0x26 */ s16 unk26;
 } UnkStruct_ovl0C_01_8004A2A4;
 
+/* the door func_ovl0F_02_80045024 runs as a task: two models and what to
+ * call once it is open */
+typedef struct {
+    /* 0x00 */ UnkStruct_ovl0F_01_80048264 unk0[2];
+    /* 0x58 */ void (*unk58)(void);
+    /* 0x5C */ void (*unk5C)(void);
+} UnkStruct_ovl0F_02_800489F4; /* size 0x60 */
+
 #endif

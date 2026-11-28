@@ -83,14 +83,6 @@
  * statics IDO inlines everywhere are named for the empty stubs they leave.
  */
 
-/* the door func_ovl0F_03_80043F38 runs as a task: two models and what to
- * call once it is open */
-typedef struct {
-    /* 0x00 */ UnkStruct_ovl0F_01_80048264 unk0[2];
-    /* 0x58 */ void (*unk58)(void);
-    /* 0x5C */ void (*unk5C)(void);
-} UnkStruct_ovl0F_03_80046F0C; /* size 0x60 */
-
 /* A display list command (gbi.h's Gfx, as two words) */
 typedef struct {
     /* 0x00 */ PORT_UP(u32) w0;
@@ -224,7 +216,7 @@ static void func_ovl0F_03_80043018(void);
 static void func_ovl0F_03_8004393C(void);
 
 static void func_ovl0F_03_80043434(void);
-static void func_ovl0F_03_80044C7C(UnkStruct_ovl0F_03_80046F0C *);
+static void func_ovl0F_03_80044C7C(UnkStruct_ovl0F_02_800489F4 *);
 static void func_ovl0F_03_80043020(s32 count, UnkStruct_ovl0F_01_80048264 *p);
 static void func_ovl0F_03_80043274(s32 *p);
 static void func_ovl0F_03_8004343C(void);
@@ -260,7 +252,7 @@ extern u32 D_ovl0F_03_80046E1C[][3];
 extern u32 D_ovl0F_03_80046E40[][3];
 extern UnkStruct_ovl0F_01_80048264 D_ovl0F_03_80046E88;
 extern UnkStruct_ovl0F_01_80048264 D_ovl0F_03_80046EB4[2];
-extern UnkStruct_ovl0F_03_80046F0C D_ovl0F_03_80046F0C;
+extern UnkStruct_ovl0F_02_800489F4 D_ovl0F_03_80046F0C;
 extern s32 D_ovl0F_03_80046F6C[7];
 extern s32 D_ovl0F_03_80046F88[7];
 extern UnkStruct_ovl0F_01_80048508 D_ovl0F_03_80046FA4[2];
@@ -451,7 +443,7 @@ void func_ovl0F_03_80044258(s32 arg0, UnkStruct_ovl0F_03_Gfx **arg1) {
 }
 
 void func_ovl0F_03_80043F38(void) {
-    UnkStruct_ovl0F_03_80046F0C *task;
+    UnkStruct_ovl0F_02_800489F4 *task;
     UnkStruct_ovl0F_01_80048264 *a;
     UnkStruct_ovl0F_01_80048264 *b;
     f32 pos[3];
@@ -607,7 +599,7 @@ UnkStruct_ovl0F_01_80048264 D_ovl0F_03_80046EB4[2] = {
     { &D_ovl0F_03_80047090[1], 0x1B3, 0, 22.0f, 2.0f, 31.0f, 0.0f, 0.0f, 0.0f, 0, 0x404 },
     { &D_ovl0F_03_80047090[2], 0x262, 0, 22.0f, 5.0f, 7.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
 };
-UnkStruct_ovl0F_03_80046F0C D_ovl0F_03_80046F0C = {
+UnkStruct_ovl0F_02_800489F4 D_ovl0F_03_80046F0C = {
     {
         { &D_ovl0F_03_80047090[3], 0x25F, 0, 22.0f, 2.0f, 28.0f, 0.0f, 0.0f, 0.0f, 0, 0x401 },
         { &D_ovl0F_03_80047090[4], 0x260, 0, 22.0f, 3.0f, 28.0f, 0.0f, 0.0f, 0.0f, 0, 0 },

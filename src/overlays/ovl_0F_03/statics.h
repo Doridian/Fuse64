@@ -31,7 +31,7 @@ static void func_ovl0F_03_80043434(void) {
 }
 
 /* case 2's: the door, closed or already open */
-static void func_ovl0F_03_80044C7C(UnkStruct_ovl0F_03_80046F0C *door) {
+static void func_ovl0F_03_80044C7C(UnkStruct_ovl0F_02_800489F4 *door) {
     UnkStruct_ovl0F_01_80048264 *m1; /* the door's two entries held in locals (the */
     UnkStruct_ovl0F_01_80048264 *m0; /* frame's 8 bytes; which values: a guess, as 0F_02's) */
 

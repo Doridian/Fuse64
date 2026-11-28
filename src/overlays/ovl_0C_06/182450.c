@@ -32,41 +32,6 @@
  * and their switches are ovl_0C_06's own (as in ovl_0C_01 and ovl_0C_02).
  */
 
-/* a gate: its object, its position, the trigger object's position and the
- * arguments of its map changes (the task func_ovl0C_07_80044B48 takes one) */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ UnkStructA *unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ s32 unk2C;
-    /* 0x30 */ s32 unk30;
-    /* 0x34 */ s32 unk34;
-    /* 0x38 */ s32 unk38;
-    /* 0x3C */ s32 unk3C;
-    /* 0x40 */ s32 unk40;
-    /* 0x44 */ s32 unk44;
-    /* 0x48 */ s32 unk48;
-    /* 0x4C */ s32 unk4C;
-    /* 0x50 */ s32 unk50;
-    /* 0x54 */ s32 unk54;
-    /* 0x58 */ s32 unk58;
-    /* 0x5C */ s32 unk5C;
-    /* 0x60 */ s32 unk60;
-    /* 0x64 */ s32 unk64;
-    /* 0x68 */ s32 unk68;
-    /* 0x6C */ s32 unk6C;
-    /* 0x70 */ s32 unk70;
-    /* 0x74 */ s32 unk74;
-} UnkStruct_ovl0C_06_80048F10;
-
 /* an object, its position and the limits the movers check it against */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
@@ -258,8 +223,8 @@ void func_ovl0C_06_800431B8(void);
 void func_ovl0C_06_80043248(UnkStruct_ovl0C_06_8004914C *arg0, s32 arg1);
 void func_ovl0C_06_80043354(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_06_8004914C *arg1, UnkStruct_ovl0C_06_800490FC *arg2, s32 arg3);
 s32 func_ovl0C_06_80043544(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_06_8004914C *arg1, UnkStruct_ovl0C_06_800490FC *list, s32 arg3);
-void func_ovl0C_06_80043710(UnkStruct_ovl0C_06_80048F10 *arg0);
-void func_ovl0C_06_8004379C(UnkStruct_ovl0C_06_80048F10 *arg0);
+void func_ovl0C_06_80043710(UnkStruct_ovl0C_01_8004A104 *arg0);
+void func_ovl0C_06_8004379C(UnkStruct_ovl0C_01_8004A104 *arg0);
 void func_ovl0C_06_80043820(void);
 static void func_ovl0C_06_80043818(void);
 void func_ovl0C_06_80043868(void);
@@ -271,7 +236,7 @@ void func_ovl0C_06_80043A5C(void);
 void func_ovl0C_06_80043AB4(void);
 void func_ovl0C_06_80043AEC(void);
 void func_ovl0C_06_80043B3C(void);
-void func_ovl0C_06_80043D54(UnkStruct_ovl0C_06_80048F10 *arg0);
+void func_ovl0C_06_80043D54(UnkStruct_ovl0C_01_8004A104 *arg0);
 void func_ovl0C_06_80043DC0(void);
 void func_ovl0C_06_80043EC8(void);
 void func_ovl0C_06_80043F34(void);
@@ -279,8 +244,8 @@ void func_ovl0C_06_80043F6C(void);
 void func_ovl0C_06_80043FE0(void);
 void func_ovl0C_06_80044028(void);
 void func_ovl0C_06_800440B4(void);
-void func_ovl0C_06_80044164(UnkStruct_ovl0C_06_80048F10 *arg0);
-void func_ovl0C_06_80044228(UnkStruct_ovl0C_06_80048F10 *arg0);
+void func_ovl0C_06_80044164(UnkStruct_ovl0C_01_8004A104 *arg0);
+void func_ovl0C_06_80044228(UnkStruct_ovl0C_01_8004A104 *arg0);
 void func_ovl0C_06_80044264(void);
 void func_ovl0C_06_800442BC(UnkStruct_ovl0C_06_80048FD0 *arg0);
 void func_ovl0C_06_800442BC(UnkStruct_ovl0C_06_80048FD0 *arg0);
@@ -304,7 +269,7 @@ void func_ovl0C_06_80044B10(void);
 void func_ovl0C_06_80044B60(void);
 void func_ovl0C_06_80044BC8(void);
 void func_ovl0C_06_80044C0C(void);
-void func_ovl0C_06_80044C88(UnkStruct_ovl0C_06_80048F10 *arg0);
+void func_ovl0C_06_80044C88(UnkStruct_ovl0C_01_8004A104 *arg0);
 static void func_ovl0C_06_80044C80(void);
 void func_ovl0C_06_80044CE4(s32 arg0);
 void func_ovl0C_06_80044DA0(void);
@@ -395,7 +360,7 @@ u32 D_ovl0C_06_80048EEC[][3] = {
     { 1, 0x22, 0xE0 },
     { 2, 5, 0x34F },
 };
-UnkStruct_ovl0C_06_80048F10 D_ovl0C_06_80048F10[] = {
+UnkStruct_ovl0C_01_8004A104 D_ovl0C_06_80048F10[] = {
     { 0, NULL, 1550.0f, 0.0f, 200.0f, 0x80, 1550.0f, 0.0f, 250.0f, 0xF, 0, 1, 0x10, 1, 4, 0xF, 0, 1, 0x10, 1,
       0xE, 0, 3, 0x1C, 0x11, 0x11, 0, 3, 0x17, 0x11 },
 };
@@ -846,7 +811,7 @@ void func_ovl0C_06_80046160(void *arg0) {
 }
 
 void func_ovl0C_06_80045FC8(void) {
-    UnkStruct_ovl0C_06_80048F10 *rec;
+    UnkStruct_ovl0C_01_8004A104 *rec;
     UnkStructA_40 *p;
 
     rec = func_ovl0C_06_80048730();

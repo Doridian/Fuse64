@@ -69,16 +69,6 @@ typedef struct {
     /* 0x14 */ s32 unk14;
 } UnkStruct_ovl10_06_8004A0B0;
 
-/* What func_ovl10_06_8004A460 returns: a list. */
-typedef struct UnkStruct_ovl10_06_8004A460 {
-    /* 0x00 */ u8 unk0[4];
-    /* 0x04 */ struct UnkStruct_ovl10_06_8004A460 *unk4;
-    /* 0x08 */ PORT_RET(u8 unk8[0x14];, void *unk8; void *unkC; void *unk10; u8 unk14[0x8];)
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-} UnkStruct_ovl10_06_8004A460;
-
 void func_ovl10_06_80049258(const char *, ...);
 void func_ovl10_06_80049598(s32);
 void func_ovl10_06_800495B0(s32);
@@ -172,7 +162,7 @@ s32 func_ovl10_06_8004A370(s32);
 s32 *func_ovl10_06_8004A380(s32);
 void func_ovl10_06_8004A3E8(s32, s32, s32, f32);
 void func_ovl10_06_8004A450(u32 (*)[3]);
-UnkStruct_ovl10_06_8004A460 *func_ovl10_06_8004A460(void);
+UnkStruct_80090440 *func_ovl10_06_8004A460(void);
 void func_ovl10_06_8004A538(s32, f32, f32, f32, PORT_IP(s32));
 s32 func_ovl10_06_8004A540(s32, f32 *, s32);
 void func_ovl10_06_8004A548(s32);
@@ -408,7 +398,7 @@ UnkStruct_ovl10_06_8004B900 D_ovl10_06_8004B950;
 UnkStruct_ovl10_06_8004B900 D_ovl10_06_8004B960;
 UnkStruct_ovl10_06_8004B900 D_ovl10_06_8004B970;
 UnkStruct_ovl10_06_8004B900 D_ovl10_06_8004B980;
-UnkStruct_ovl10_06_8004A460 *D_ovl10_06_8004B990[2];
+UnkStruct_80090440 *D_ovl10_06_8004B990[2];
 s32 D_ovl10_06_8004B998[3]; /* M2C_UNK */
 UnkStructA * D_ovl10_06_8004B9A4;
 UnkStructA * D_ovl10_06_8004B9A8;
@@ -1745,7 +1735,7 @@ void func_ovl10_06_80044F8C(s32 arg0) {
 }
 
 void func_ovl10_06_80044EFC(void) {
-    UnkStruct_ovl10_06_8004A460 *p;
+    UnkStruct_80090440 *p;
     s32 n;
 
     for (n = 0; n < 2; n++) {

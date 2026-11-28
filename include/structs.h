@@ -231,6 +231,24 @@ typedef struct {
     /* 0x010 */ u8 unk10[0xA00];
 } UnkStruct_802B03C0; /* size 0xA10 */
 
+/* A node of the list at D_80090440: [0] its head, [1] its sentinel, [2..49] the pool (what func_8027ED80,
+ * ZeroJump 0x2302, returns) */
+typedef struct UnkStruct_80090440 {
+    /* 0x00 */ s16 unk0;
+    /* 0x02 */ s16 unk2;
+    /* 0x04 */ struct UnkStruct_80090440 *unk4;
+    /* 0x08 */ struct UnkStruct_80090440 *unk8;
+    /* 0x0C */ UnkStructA_40 *unkC;
+    /* 0x10 */ UnkStructA_40 *unk10;
+    /* 0x14 */ s16 unk14;
+    /* 0x16 */ s16 unk16;
+    /* 0x18 */ s16 unk18;
+    /* 0x1A */ s16 unk1A;
+    /* 0x1C */ f32 unk1C;
+    /* 0x20 */ f32 unk20;
+    /* 0x24 */ f32 unk24;
+} UnkStruct_80090440; /* size 0x28 */
+
 /*
  * A word's low half, as 93850 and 949A0 read UnkStruct_802AC610's unk4,
  * unk8 and unkC: the halfword at +2 on the N64; the port takes the whole

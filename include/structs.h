@@ -220,6 +220,17 @@ typedef struct {
     /* 0x04 */ PakFile files[16];
 } PakDir; /* size 0x1C4 */
 
+/* A picture of B11F0's (D_802B03C0[5], what func_80296BEC, ZeroJump 0x3106,
+ * returns): its pixels, their width and height, the model object that
+ * draws it. */
+typedef struct {
+    /* 0x000 */ void *unk0;
+    /* 0x004 */ s32 unk4;
+    /* 0x008 */ s32 unk8;
+    /* 0x00C */ UnkStructA_40 *unkC;
+    /* 0x010 */ u8 unk10[0xA00];
+} UnkStruct_802B03C0; /* size 0xA10 */
+
 /*
  * A word's low half, as 93850 and 949A0 read UnkStruct_802AC610's unk4,
  * unk8 and unkC: the halfword at +2 on the N64; the port takes the whole

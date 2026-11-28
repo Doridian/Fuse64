@@ -14,24 +14,6 @@
  * rather than taken from the register holding `zero`.
  */
 
-/* what ZeroJump 0x3100 returns */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-} UnkStruct_ovl0A_05_800494E8;
-
-/* what ZeroJump 0x3106 returns */
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[0xC];, void *unk0; u8 unk4[0x8];)
-    /* 0x0C */ UnkStructA_40 *unkC;
-} UnkStruct_ovl0A_05_80049518;
-
 void func_ovl0A_05_80047F30(const char *); /* 0x100 */
 void func_ovl0A_05_80048290(s32); /* 0xD00 */
 void func_ovl0A_05_80048370(s32, s32, s32); /* 0xF00 */
@@ -100,10 +82,10 @@ void func_ovl0A_05_80049220(s32, f32 *, s32); /* 0x2601 */
 void func_ovl0A_05_80049240(UnkStructA *); /* 0x2701 */
 void func_ovl0A_05_80049360(s32); /* 0x2B02 */
 s32 func_ovl0A_05_80049370(s32, f32, f32, f32); /* 0x2B04 */
-UnkStruct_ovl0A_05_800494E8 *func_ovl0A_05_800494E8(void); /* 0x3100 */
-void func_ovl0A_05_800494F0(UnkStruct_ovl0A_05_800494E8 *); /* 0x3101 */
+UnkStructA_40 *func_ovl0A_05_800494E8(void); /* 0x3100 */
+void func_ovl0A_05_800494F0(UnkStructA_40 *); /* 0x3101 */
 void func_ovl0A_05_80049508(void); /* 0x3104 */
-UnkStruct_ovl0A_05_80049518 *func_ovl0A_05_80049518(s32); /* 0x3106 */
+UnkStruct_802B03C0 *func_ovl0A_05_80049518(s32); /* 0x3106 */
 void func_ovl0A_05_80049530(void); /* 0x3109 */
 void func_ovl0A_05_80049538(void); /* 0x310A */
 void func_ovl0A_05_80049540(void); /* 0x310B */
@@ -125,13 +107,13 @@ UnkStruct_802B0260 *D_ovl0A_05_8004991C;
 s32 D_ovl0A_05_80049920;
 UnkStructA *D_ovl0A_05_80049924;
 UnkStruct_802B0260 *D_ovl0A_05_80049928;
-UnkStruct_ovl0A_05_80049518 *D_ovl0A_05_80049930[4];
+UnkStruct_802B03C0 *D_ovl0A_05_80049930[4];
 UnkStructA *D_ovl0A_05_80049940;
 UnkStructA *D_ovl0A_05_80049944;
 UnkStructA *D_ovl0A_05_80049948;
 UnkStructA *D_ovl0A_05_8004994C;
 UnkStructA *D_ovl0A_05_80049950[4];
-UnkStruct_ovl0A_05_800494E8 *D_ovl0A_05_80049960;
+UnkStructA_40 *D_ovl0A_05_80049960;
 UnkStructA *D_ovl0A_05_80049964;
 UnkStructA *D_ovl0A_05_80049968;
 Vec3f D_ovl0A_05_80049970;
@@ -485,7 +467,7 @@ void func_ovl0A_05_800474B0(void) {
 
 void func_ovl0A_05_800473A0(void) {
     s32 i;
-    UnkStruct_ovl0A_05_80049518 *slot;
+    UnkStruct_802B03C0 *slot;
 
     func_ovl0A_05_80048468(1);
     while (!func_ovl0A_05_80049050(0x400)) {
@@ -510,7 +492,7 @@ void func_ovl0A_05_800473A0(void) {
 void func_ovl0A_05_8004704C(void) {
     s32 pad[2]; /* fake: unused; the original frame has these slots */
     PORT_IP(s32) idx;
-    UnkStruct_ovl0A_05_80049518 *slot;
+    UnkStruct_802B03C0 *slot;
     f32 sx;
     f32 sy;
     f32 x0;

@@ -57,12 +57,6 @@ typedef struct {
     s32 unk8;
 } Trio_0D01;
 
-/* what ZeroJump 0x3106 returns (as in ovl_0A_05) */
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[0xC];, void *unk0; u8 unk4[0x8];)
-    /* 0x0C */ UnkStructA_40 *unkC;
-} Rec_0D01;
-
 void func_ovl0D_01_80046268(s32); /* 0xC00 */
 void func_ovl0D_01_80046278(s32 *); /* 0xC02 */
 void func_ovl0D_01_800462A8(s32, s32, s32, s32, s32, s32); /* 0xD05 */
@@ -163,7 +157,7 @@ void func_ovl0D_01_800474C0(void); /* 0x3001 */
 void func_ovl0D_01_800474F0(s32); /* 0x3103 */
 void func_ovl0D_01_800474F8(void); /* 0x3104 */
 s32 func_ovl0D_01_80047500(void); /* 0x3105 */
-Rec_0D01 *func_ovl0D_01_80047508(s32); /* 0x3106 */
+UnkStruct_802B03C0 *func_ovl0D_01_80047508(s32); /* 0x3106 */
 void func_ovl0D_01_80047518(s32); /* 0x3108 */
 void func_ovl0D_01_80047520(void); /* 0x3109 */
 void func_ovl0D_01_80047528(void); /* 0x310A */
@@ -712,7 +706,7 @@ void func_ovl0D_01_80044EC4(void) {
 }
 
 void func_ovl0D_01_80044E2C(void) {
-    Rec_0D01 *r;
+    UnkStruct_802B03C0 *r;
 
     if (D_ovl0D_01_80047B2C->unk0 & 4) {
         PORT_ONLY(if (func_ovl0D_01_80047508(0)->unkC != NULL)) func_ovl0D_01_80047508(0)->unkC->unkC |= 1; /* NULL: a demo left early (docs/PORT.md, "Reads through NULL") */

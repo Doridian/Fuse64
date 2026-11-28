@@ -78,22 +78,6 @@ typedef struct {
     /* 0x04 */ PORT_UP(u32) w1;
 } UnkStruct_80297564; /* size 0x8 */
 
-/* the game object func_8022A6C4 and func_8022A328 make */
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ u8 unk30[6];
-    /* 0x36 */ s16 unk36;
-} UnkStruct_80297858;
-
 /* a picture: its header, then 320x240 16-bit pixels */
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -108,14 +92,6 @@ typedef struct {
     /* 0x14 */ s32 unk14;
     /* 0x18 */ u16 unk18[320 * 240];
 } UnkStruct_80296D4C;
-
-typedef struct {
-    /* 0x000 */ void *unk0;
-    /* 0x004 */ s32 unk4;
-    /* 0x008 */ s32 unk8;
-    /* 0x00C */ UnkStruct_80297858 *unkC;
-    /* 0x010 */ u8 unk10[0xA00];
-} UnkStruct_802B03C0; /* size 0xA10 */
 
 extern void *D_1000000;
 extern PORT_RET(s32, void *) D_802AC5C0;
@@ -135,7 +111,7 @@ s32 func_802974D0(void);
 void func_802974E0(void);
 void func_8029750C(s32 arg0);
 void func_802977E4(void *arg0);
-UnkStruct_80297858 *func_80297804(void);
+UnkStructA_40 *func_80297804(void);
 void func_80297ADC(void);
 
 s32 D_802B03A0;
@@ -157,7 +133,7 @@ void *D_802A2CB0[] = {
     func_802972D0, func_80296A34, func_80296A24, func_80296A18,
 };
 
-void func_80297858(UnkStruct_80297858 *arg0, UnkStruct_80297564 **arg1);
+void func_80297858(UnkStructA_40 *arg0, UnkStruct_80297564 **arg1);
 void func_80297564(void *arg0, UnkStruct_80297564 **arg1);
 void func_80297114(void);
 void func_80297A34(void);
@@ -207,7 +183,7 @@ void func_80297A34(void) {
     func_80239430();
 }
 
-void func_80297858(UnkStruct_80297858 *arg0, UnkStruct_80297564 **arg1) {
+void func_80297858(UnkStructA_40 *arg0, UnkStruct_80297564 **arg1) {
     Gfx *gfx = (Gfx *) *arg1;
 
     { UnkStruct_80297564 *g = (UnkStruct_80297564 *) gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFDF6FB; }
@@ -219,8 +195,8 @@ void func_80297858(UnkStruct_80297858 *arg0, UnkStruct_80297564 **arg1) {
     *arg1 = (UnkStruct_80297564 *) gfx;
 }
 
-UnkStruct_80297858 *func_80297804(void) {
-    UnkStruct_80297858 *obj = func_8022A328(func_80297858, 0x3F, 1, 0, 0);
+UnkStructA_40 *func_80297804(void) {
+    UnkStructA_40 *obj = func_8022A328(func_80297858, 0x3F, 1, 0, 0);
 
     if (obj != NULL) {
         obj->unkC |= 0x410;
@@ -357,7 +333,7 @@ void func_80297240(UnkStruct_802B03C0 *arg0) {
 }
 
 s32 func_80296B3C(UnkStruct_802B03C0 *arg0);
-void func_80296D4C(u16 *arg0, UnkStruct_80296D4C *arg1, UnkStruct_80297858 **arg2);
+void func_80296D4C(u16 *arg0, UnkStruct_80296D4C *arg1, UnkStructA_40 **arg2);
 
 void func_80297114(void) {
     UnkStruct_802B03C0 *e;
@@ -380,7 +356,7 @@ void func_80297114(void) {
 
 void func_80296C10(u16 *arg0, s32 x, s32 y, s32 w, s32 h);
 
-void func_80296D4C(u16 *arg0, UnkStruct_80296D4C *arg1, UnkStruct_80297858 **arg2) {
+void func_80296D4C(u16 *arg0, UnkStruct_80296D4C *arg1, UnkStructA_40 **arg2) {
     f32 t1;
     f32 tx = 86.0f;
     f32 ty = 72.0f;
@@ -395,7 +371,7 @@ void func_80296D4C(u16 *arg0, UnkStruct_80296D4C *arg1, UnkStruct_80297858 **arg
     f32 dy;
     f32 dw;
     f32 dh;
-    UnkStruct_80297858 *obj;
+    UnkStructA_40 *obj;
     u16 *src;
     u16 *dst;
     s32 i;

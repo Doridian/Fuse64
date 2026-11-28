@@ -46,12 +46,15 @@ the speed limiter off) and start from a blank save, and with that they are
 exactly repeatable.  The original is still run twice, and what differs
 between those two runs is left out of the comparison (none so far).  Any
 other difference fails.  With the default pad (0x10) every checkpoint
-matches exactly, in us, eu and jp, but for eu's battle run since main_code's
-microcode became .text (2026-11-28: its text moves by the pad, not twice
-it): from frame 6000 on the frame counters are off (0x3E53 against
-0x3C8D) and what follows them; with a pad of 0x30 the same, with 0x20 every
-checkpoint matches, and us's run, the same microcode at the same address,
-matches with 0x10.  A bigger pad makes the overlays bigger, so
+matches exactly, in us, eu and jp.  That holds with the shifted main_code
+laid out as tools/ld_fix.py does (its once-loaded page as the original's);
+the check is that sensitive to timing: eu's battle run lost sync at frame
+4050 (a frame counter one ahead, another thread running at the checkpoint,
+then the matches' outcomes) with ROMs that differed from a passing one in
+nothing but the segment table's two main_code bytes, or in aspMain's data
+and the bss 0x30 lower, while the original against itself with only its
+reload 0x800 shorter, or its one-time load 0x800 longer, matches to
+18000; with a pad of 0x20 eu matched and jp's battle run didn't.  A bigger pad makes the overlays bigger, so
 the shifted ROM takes a little longer to DMA and inflate one; with 0x100
 some load ends a frame later, and from then on the game's frame counters
 are off (us: by one at frame 300, by 15 at 24000), and what follows them
@@ -78,7 +81,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PHYS = 0x80000000
-MARKER = re.compile(r"_(TEXT|DATA|RODATA|BSS)_(START|END|SIZE)$|_ROM_(START|END)$|_VRAM(_END)?$")
+MARKER = re.compile(r"_(TEXT|DATA|RODATA|BSS)_(START|END|SIZE)$|_ROM_(START|END)$|_VRAM(_END)?$|_PERSIST_START$")
 SEED = 0x1997
 
 

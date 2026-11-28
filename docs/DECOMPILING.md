@@ -1338,6 +1338,9 @@ all of it): the boot thread reloads main_code up to segment byte 2's
 (docs/LAYOUT.md, "Loaders"). That page boundary is the loader's, not an
 object's: `tools/rom.py` writes both bytes from main_code's size (all of
 it up to 0x7F800, the rest in byte 3), and the config no longer cuts it.
+Only a shifted build still starts its once-loaded part on a page
+(`tools/ld_fix.py`): the shift check's runs are that sensitive to the
+DMAs' timing (`tools/shift_check.py`).
 
 **The build date.** main_code's .rodata starts at 0x802A2D00 with
 `"SAT SEP  6 14:57:59 JST 1997"` (eu `"MON SEP  8 12:04:49 JST 1997"`, jp

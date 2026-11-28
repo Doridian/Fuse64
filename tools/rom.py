@@ -72,7 +72,13 @@ def write_sizes(rom, syms, banks):
     sizes[0] = max(sizes[0], units(syms["zerojump_ROM_END"]))
     main = syms["main_code_ROM_START"] >> 17
     size = syms["main_code_ROM_END"] - syms["main_code_ROM_START"]
-    if size > RELOAD_MAX:
+    if "main_code_PERSIST_START" in syms:
+        # a shifted build (tools/ld_fix.py): reloaded up to that page
+        reload = syms["main_code_PERSIST_START"] - syms["main_code_VRAM"]
+        assert reload % 0x800 == 0 and reload <= 0x80000, hex(reload)
+        sizes[main] = units(reload)
+        sizes[main + 1] = units(size - reload)
+    elif size > RELOAD_MAX:
         # us, eu: the byte's most, and the rest in the next segment's byte
         sizes[main] = units(RELOAD_MAX)
         sizes[main + 1] = units(size - RELOAD_MAX)

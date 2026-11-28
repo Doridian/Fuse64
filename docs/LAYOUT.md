@@ -349,7 +349,12 @@ In the config (`tools/layout.py`):
 would place every segment after the one before. Instead, the pads link
 nothing and the ROM position jumps to the next fixed start (with an
 ASSERT). `SHIFT=1` adds the
-pads that move everything after each module's entry.
+pads that move everything after each module's entry, the data's in
+main_code before its microcode's text (which moved with the data as asm
+data), and starts main_code's once-loaded part on a page, aspMain's data and
+the bss keeping their offsets in it (`main_code_PERSIST_START`, which
+`tools/rom.py` reloads up to): the shift check is that sensitive to timing
+(`tools/shift_check.py`).
 
 ## Compiler and library hints
 

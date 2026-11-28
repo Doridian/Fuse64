@@ -60,26 +60,6 @@
  * ovl_0D_04, 0D_05 and 0D_06 (src/ and nonmatching/) are its siblings.
  */
 
-/* a model placed on the stage (as in ovl_0D_04) */
-typedef struct {
-    /* 0x00 */ UnkStructA *obj;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ s16 unk12;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} Ent_0D02;
-
 typedef struct {
     s32 unk0;
     s32 unk4;
@@ -202,12 +182,12 @@ void func_ovl0D_02_8004596C(void);
 void func_ovl0D_02_80045F20(f32, f32, f32);
 
 static void func_ovl0D_02_800430A0(s32, s32 *, s32 *);
-static s32 func_ovl0D_02_80043114(Ent_0D02 *);
-static void func_ovl0D_02_8004311C(Ent_0D02 *);
-static void func_ovl0D_02_800434F8(Ent_0D02 *, s32);
+static s32 func_ovl0D_02_80043114(UnkStruct_ovl0C_01_8004A54C *);
+static void func_ovl0D_02_8004311C(UnkStruct_ovl0C_01_8004A54C *);
+static void func_ovl0D_02_800434F8(UnkStruct_ovl0C_01_8004A54C *, s32);
 static void func_ovl0D_02_80043500(void);
 static void func_ovl0D_02_80043508(void);
-static void func_ovl0D_02_80043858(Ent_0D02 *);
+static void func_ovl0D_02_80043858(UnkStruct_ovl0C_01_8004A54C *);
 static void func_ovl0D_02_800438D8(void);
 static void func_ovl0D_02_800438E0(void);
 static void func_ovl0D_02_800438E8(void);
@@ -217,11 +197,11 @@ static void func_ovl0D_02_80043A68(void);
 static void func_ovl0D_02_80043AB4(void);
 static void func_ovl0D_02_80043F94(s32);
 static void func_ovl0D_02_80044094(s32);
-static void func_ovl0D_02_8004409C(Ent_0D02 *);
+static void func_ovl0D_02_8004409C(UnkStruct_ovl0C_01_8004A54C *);
 static void func_ovl0D_02_8004421C(Vec3f *, Vec3f (*)[4], s32);
 static void func_ovl0D_02_80044224(void);
 static void func_ovl0D_02_8004422C(void);
-static void func_ovl0D_02_80044234(Ent_0D02 *);
+static void func_ovl0D_02_80044234(UnkStruct_ovl0C_01_8004A54C *);
 static void func_ovl0D_02_800442D8(void);
 static void func_ovl0D_02_80044444(void);
 static void func_ovl0D_02_8004444C(void);
@@ -231,8 +211,8 @@ static void func_ovl0D_02_80044464(void);
 static void func_ovl0D_02_8004446C(void);
 static void func_ovl0D_02_800444EC(void);
 static void func_ovl0D_02_800444F4(Trio_0D02 *, s32);
-static void func_ovl0D_02_8004595C(Ent_0D02 *, s32);
-static void func_ovl0D_02_80045964(Ent_0D02 *, s32 *);
+static void func_ovl0D_02_8004595C(UnkStruct_ovl0C_01_8004A54C *, s32);
+static void func_ovl0D_02_80045964(UnkStruct_ovl0C_01_8004A54C *, s32 *);
 static void func_ovl0D_02_80045F80(void);
 static void func_ovl0D_02_80045F88(void);
 static void func_ovl0D_02_80045F90(void);
@@ -276,29 +256,29 @@ u32 D_ovl0D_02_80047614[][3] = {
 /* two symbols (a fake, see the top): 80043010 addresses [1] apart */
 #ifdef TARGET_PC
 /* 8004445C walks both from 762C: one array on the host */
-Ent_0D02 D_ovl0D_02_8004762C[2] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0D_02_8004762C[2] = {
     { NULL, -1, 0x14F, 0, 0x400, 0x20, 0x400, 10.0f, 60.0f, 300.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x14D, 0, 0x400, 0x20, 0x400, 470.0f, -80.0f, 570.0f, 0.0f, 90.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
 #define D_ovl0D_02_80047664 (D_ovl0D_02_8004762C + 1)
 #else
-Ent_0D02 D_ovl0D_02_8004762C[1] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0D_02_8004762C[1] = {
     { NULL, -1, 0x14F, 0, 0x400, 0x20, 0x400, 10.0f, 60.0f, 300.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
-Ent_0D02 D_ovl0D_02_80047664[1] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0D_02_80047664[1] = {
     { NULL, -1, 0x14D, 0, 0x400, 0x20, 0x400, 470.0f, -80.0f, 570.0f, 0.0f, 90.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
 #endif
-Ent_0D02 D_ovl0D_02_8004769C[1] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0D_02_8004769C[1] = {
     { NULL, -1, 0x14B, 0, 0x400, 0x20, 0x400, 460.0f, 20.0f, 350.0f, 0.0f, 90.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
 /* the gate */
-Ent_0D02 D_ovl0D_02_800476D4[1] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0D_02_800476D4[1] = {
     { NULL, -1, 0x15D, -1, -1, -1, -1, 150.0f, 80.0f, 300.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
 /* the flag set once the gate is open */
 s32 D_ovl0D_02_8004770C[1] = { 0x401 };
-Ent_0D02 D_ovl0D_02_80047710[4] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0D_02_80047710[4] = {
     { NULL, -1, 0x161, -1, -1, -1, -1, 40.0f, 100.0f, 80.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x161, -1, -1, -1, -1, 100.0f, 100.0f, 20.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x161, -1, -1, -1, -1, 250.0f, 80.0f, 10.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
@@ -306,7 +286,7 @@ Ent_0D02 D_ovl0D_02_80047710[4] = {
 };
 /* the flags set once each of D_ovl0D_02_80047710 is done */
 s32 D_ovl0D_02_800477F0[4] = { 0x40A, 0x40B, 0x40C, 0x40D };
-Ent_0D02 D_ovl0D_02_80047800[2] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0D_02_80047800[2] = {
     { NULL, -1, 0x160, -1, -1, -1, -1, 350.0f, 60.0f, 230.0f, 0.0f, 180.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x160, -1, -1, -1, -1, 140.0f, 80.0f, 230.0f, 0.0f, 180.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
@@ -365,7 +345,7 @@ static void func_ovl0D_02_80045F80(void) {
 /* the task of each of D_ovl0D_02_80047710 (its index is the argument) */
 void func_ovl0D_02_8004596C(void) {
     PORT_IP(s32) idx;
-    Ent_0D02 *e;
+    UnkStruct_ovl0C_01_8004A54C *e;
     s32 flag;
     Vec3f pos;
     s32 grid[6];
@@ -392,22 +372,22 @@ void func_ovl0D_02_8004596C(void) {
     timer = 240 / n;
     func_ovl0D_02_80046350(pos.x, pos.y, pos.z, grid, 0);
     while (func_ovl0D_02_800470D0(flag) == 0) {
-        if (e->obj == NULL) {
+        if (e->unk0 == NULL) {
             break;
         }
-        e->obj->unk40->unk10 = pos.x;
-        e->obj->unk40->unk18 = pos.z;
+        e->unk0->unk40->unk10 = pos.x;
+        e->unk0->unk40->unk18 = pos.z;
         tgt.x = D_ovl0D_02_80047A00.x;
         tgt.y = pos.y;
         tgt.z = D_ovl0D_02_80047A00.z;
         func_ovl0D_02_80046C88(&pos.x, &tgt.x, &ang);
-        e->obj->unk40->unk20 = ang;
+        e->unk0->unk40->unk20 = ang;
         if (func_ovl0D_02_800470D0(0x424) != 0) {
             func_ovl0D_02_80045964(e, &timer);
         }
         if (idx == (cnt >> 2)) {
             cnt = 0;
-            r = func_ovl0D_02_80046CA8(e->obj, 0x40);
+            r = func_ovl0D_02_80046CA8(e->unk0, 0x40);
             if (r & 0x40) {
                 if ((r & 0x2000) || (r & 0x4000)) {
                     func_ovl0D_02_8004595C(e, flag);
@@ -415,7 +395,7 @@ void func_ovl0D_02_8004596C(void) {
                         func_ovl0D_02_80047318(15, pos.x, pos.y, pos.z);
                     }
                 } else {
-                    func_ovl0D_02_80044DBC(0x26, e->obj);
+                    func_ovl0D_02_80044DBC(0x26, e->unk0);
                 }
             }
         }
@@ -429,12 +409,12 @@ void func_ovl0D_02_8004596C(void) {
 #endif
 
 /* every few seconds, when the player is near, the model throws a bomb */
-static void func_ovl0D_02_80045964(Ent_0D02 *e, s32 *timer) {
+static void func_ovl0D_02_80045964(UnkStruct_ovl0C_01_8004A54C *e, s32 *timer) {
     UnkStructA_40 *p;
     s32 grid[7]; /* [7]: the frame (see the top) */
 
     if (*timer == 0) {
-        p = e->obj->unk40;
+        p = e->unk0->unk40;
         func_ovl0D_02_80046350(p->unk10, p->unk14, p->unk18, grid, 0);
         if (func_ovl0D_02_800464C0(grid[0] - 12, grid[2] - 12, grid[0] + 12, grid[2] + 12) != 0 &&
             func_ovl0D_02_800464C0(grid[0] - 2, grid[2] - 2, grid[0] + 2, grid[2] + 2) == 0) {
@@ -449,13 +429,13 @@ static void func_ovl0D_02_80045964(Ent_0D02 *e, s32 *timer) {
 }
 
 /* a model's hit: it fades out, scattering debris, and its tiles become solid */
-static void func_ovl0D_02_8004595C(Ent_0D02 *e, s32 flag) {
+static void func_ovl0D_02_8004595C(UnkStruct_ovl0C_01_8004A54C *e, s32 flag) {
     s32 i;
     s32 k;
     Vec3f v;
     UnkStructA *o;
 
-    o = e->obj;
+    o = e->unk0;
     k = 5;
     func_ovl0D_02_80046CF8(o, 0x80000);
     func_ovl0D_02_80044DBC(0x73, o);
@@ -489,7 +469,7 @@ void func_ovl0D_02_800455A0(void) {
     Vec3f tmp;
     Vec3f dir;
     Vec3f pos;
-    Ent_0D02 *e;
+    UnkStruct_ovl0C_01_8004A54C *e;
     UnkStructA *o;
     UnkStructA *o2;
     s32 n;
@@ -504,13 +484,13 @@ void func_ovl0D_02_800455A0(void) {
     o->unk40->unk30 = 1.5f;
     o->unk40->unk2C = 1.5f;
     o->unk40->unk28 = 1.5f;
-    dir.x = e->obj->unk40->unk20;
+    dir.x = e->unk0->unk40->unk20;
     dir.y = 60.0f;
     dir.z = 500.0f;
     func_ovl0D_02_80046C90(&dir.x, &pos.x);
-    pos.x += e->obj->unk40->unk10;
-    pos.y += e->obj->unk40->unk14;
-    pos.z += e->obj->unk40->unk18;
+    pos.x += e->unk0->unk40->unk10;
+    pos.y += e->unk0->unk40->unk14;
+    pos.z += e->unk0->unk40->unk18;
     o->unk40->unk10 = pos.x;
     o->unk40->unk14 = pos.y;
     o->unk40->unk18 = pos.z;
@@ -565,9 +545,9 @@ void func_ovl0D_02_80045274(void) {
         D_ovl0D_02_80047A3C->unk30 = 1;
         D_ovl0D_02_80047A3C->unk34 = 50.0f;
         D_ovl0D_02_80047A3C->unk38 = 50.0f;
-        D_ovl0D_02_80047A3C->unk40->unk10 = D_ovl0D_02_80047800[idx].obj->unk40->unk10 + -300.0f;
-        D_ovl0D_02_80047A3C->unk40->unk14 = D_ovl0D_02_80047800[idx].obj->unk40->unk14 + 200.0f;
-        D_ovl0D_02_80047A3C->unk40->unk18 = D_ovl0D_02_80047800[idx].obj->unk40->unk18 + 200.0f;
+        D_ovl0D_02_80047A3C->unk40->unk10 = D_ovl0D_02_80047800[idx].unk0->unk40->unk10 + -300.0f;
+        D_ovl0D_02_80047A3C->unk40->unk14 = D_ovl0D_02_80047800[idx].unk0->unk40->unk14 + 200.0f;
+        D_ovl0D_02_80047A3C->unk40->unk18 = D_ovl0D_02_80047800[idx].unk0->unk40->unk18 + 200.0f;
     } while (func_ovl0D_02_80046CA8(D_ovl0D_02_80047A3C, 0x40) == 0);
     func_ovl0D_02_800470C0(D_ovl0D_02_80047888[idx]);
     func_ovl0D_02_80043F94(idx);
@@ -848,11 +828,11 @@ static void func_ovl0D_02_80044464(void) {
 }
 
 static void func_ovl0D_02_8004445C(void) {
-    Ent_0D02 *p;
+    UnkStruct_ovl0C_01_8004A54C *p;
 
     for (p = D_ovl0D_02_8004762C; p < D_ovl0D_02_8004762C + 2; p++) {
         func_ovl0D_02_8004409C(p);
-        p->obj->unk40->unk36 = 0x80;
+        p->unk0->unk40->unk36 = 0x80;
     }
 }
 
@@ -861,7 +841,7 @@ static void func_ovl0D_02_80044454(void) {
 
     for (i = 0; i < 1; i++) {
         func_ovl0D_02_8004409C(&D_ovl0D_02_8004769C[i]);
-        D_ovl0D_02_8004769C[i].obj->unk40->unk36 = 0x80;
+        D_ovl0D_02_8004769C[i].unk0->unk40->unk36 = 0x80;
     }
 }
 
@@ -870,26 +850,26 @@ static void func_ovl0D_02_8004444C(void) {
 
     for (i = 0; i < 1; i++) {
         func_ovl0D_02_8004409C(&D_ovl0D_02_800476D4[i]);
-        func_ovl0D_02_80046CF8(D_ovl0D_02_800476D4[i].obj, 0x02000000);
-        func_ovl0D_02_80046D00(D_ovl0D_02_800476D4[i].obj, 0x80000);
+        func_ovl0D_02_80046CF8(D_ovl0D_02_800476D4[i].unk0, 0x02000000);
+        func_ovl0D_02_80046D00(D_ovl0D_02_800476D4[i].unk0, 0x80000);
     }
 }
 
 /* the gate: open already if its flag is set */
 static void func_ovl0D_02_80044444(void) {
     s32 i;
-    Ent_0D02 *e;
+    UnkStruct_ovl0C_01_8004A54C *e;
     UnkStructA *o;
 
     for (i = 0; i < 1; i++) {
         if (func_ovl0D_02_800470D0(D_ovl0D_02_8004770C[i]) != 0) {
             e = &D_ovl0D_02_800476D4[i];
-            o = e->obj;
+            o = e->unk0;
             /* fake: (see the top) */
 #define STATICS_PART 2
 #include "overlays/ovl_0D_02/statics.h"
 #undef STATICS_PART
-            func_ovl0D_02_80046D00(e->obj, 0x02000000);
+            func_ovl0D_02_80046D00(e->unk0, 0x02000000);
             func_ovl0D_02_8004311C(e);
         }
     }
@@ -962,12 +942,12 @@ static void func_ovl0D_02_800442D8(void) {
     for (i = 0; i < 4; i++) {
         if (func_ovl0D_02_800470D0(D_ovl0D_02_800477F0[i]) == 0) {
             func_ovl0D_02_8004409C(&D_ovl0D_02_80047710[i]);
-            func_ovl0D_02_80046CF8(D_ovl0D_02_80047710[i].obj, 0x02000000);
-            func_ovl0D_02_80046D00(D_ovl0D_02_80047710[i].obj, 0x80000);
-            func_ovl0D_02_80046CC8(D_ovl0D_02_80047710[i].obj, 0xC0);
-            D_ovl0D_02_80047710[i].obj->unk30 = 4;
-            D_ovl0D_02_80047710[i].obj->unk34 = 200.0f;
-            D_ovl0D_02_80047710[i].obj->unk38 = 300.0f;
+            func_ovl0D_02_80046CF8(D_ovl0D_02_80047710[i].unk0, 0x02000000);
+            func_ovl0D_02_80046D00(D_ovl0D_02_80047710[i].unk0, 0x80000);
+            func_ovl0D_02_80046CC8(D_ovl0D_02_80047710[i].unk0, 0xC0);
+            D_ovl0D_02_80047710[i].unk0->unk30 = 4;
+            D_ovl0D_02_80047710[i].unk0->unk34 = 200.0f;
+            D_ovl0D_02_80047710[i].unk0->unk38 = 300.0f;
             func_ovl0D_02_80046E48(func_ovl0D_02_8004596C, (void *) i, 0, 0, 0x110);
         } else {
             func_ovl0D_02_80044234(&D_ovl0D_02_80047710[i]);
@@ -975,7 +955,7 @@ static void func_ovl0D_02_800442D8(void) {
     }
 }
 
-static void func_ovl0D_02_80044234(Ent_0D02 *arg0) {
+static void func_ovl0D_02_80044234(UnkStruct_ovl0C_01_8004A54C *arg0) {
     s32 pos[6];
 
     func_ovl0D_02_80046350(arg0->unk14 * 10.0f, arg0->unk18 * 10.0f, arg0->unk1C * 10.0f, pos, 0);
@@ -983,26 +963,26 @@ static void func_ovl0D_02_80044234(Ent_0D02 *arg0) {
     func_ovl0D_02_80046338(pos[0], pos[1] + 1, pos[2], pos[0] + 3, pos[2] + 3, 0x10);
 }
 
-static void func_ovl0D_02_8004409C(Ent_0D02 *arg0) {
-    arg0->obj = func_ovl0D_02_80046D40(arg0->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
-    func_ovl0D_02_80046CF8(arg0->obj, 0x01080000);
-    func_ovl0D_02_80046D00(arg0->obj, 0x02000000);
+static void func_ovl0D_02_8004409C(UnkStruct_ovl0C_01_8004A54C *arg0) {
+    arg0->unk0 = func_ovl0D_02_80046D40(arg0->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
+    func_ovl0D_02_80046CF8(arg0->unk0, 0x01080000);
+    func_ovl0D_02_80046D00(arg0->unk0, 0x02000000);
     if (arg0->unkC != -1 && arg0->unkE != -1 && arg0->unk10 != -1 && arg0->unk12 != -1) {
-        arg0->unk4 = func_ovl0D_02_80046A40(arg0->obj->unk40, 0, arg0->unkC, arg0->unkE, arg0->unk10, arg0->unk12);
+        arg0->unk4 = func_ovl0D_02_80046A40(arg0->unk0->unk40, 0, arg0->unkC, arg0->unkE, arg0->unk10, arg0->unk12);
         if (arg0->unk4 == -1) {
             while (1) {
             }
         }
     }
-    arg0->obj->unk40->unk10 = arg0->unk14 * 10.0f;
-    arg0->obj->unk40->unk14 = arg0->unk18 * 10.0f;
-    arg0->obj->unk40->unk18 = arg0->unk1C * 10.0f;
-    arg0->obj->unk40->unk1C = arg0->unk20;
-    arg0->obj->unk40->unk20 = arg0->unk24;
-    arg0->obj->unk40->unk24 = arg0->unk28;
-    arg0->obj->unk40->unk28 = arg0->unk2C;
-    arg0->obj->unk40->unk2C = arg0->unk30;
-    arg0->obj->unk40->unk30 = arg0->unk34;
+    arg0->unk0->unk40->unk10 = arg0->unk14 * 10.0f;
+    arg0->unk0->unk40->unk14 = arg0->unk18 * 10.0f;
+    arg0->unk0->unk40->unk18 = arg0->unk1C * 10.0f;
+    arg0->unk0->unk40->unk1C = arg0->unk20;
+    arg0->unk0->unk40->unk20 = arg0->unk24;
+    arg0->unk0->unk40->unk24 = arg0->unk28;
+    arg0->unk0->unk40->unk28 = arg0->unk2C;
+    arg0->unk0->unk40->unk2C = arg0->unk30;
+    arg0->unk0->unk40->unk30 = arg0->unk34;
 }
 
 /* the tile under one of D_ovl0D_02_80047800 once it is done */
@@ -1012,7 +992,7 @@ static void func_ovl0D_02_80043F94(s32 idx) {
     UnkStructA_40 *p;
     s32 pos[3];
 
-    p = D_ovl0D_02_80047800[idx].obj->unk40;
+    p = D_ovl0D_02_80047800[idx].unk0->unk40;
     func_ovl0D_02_80046350(p->unk10 + -300.0f, p->unk14 + 200.0f, p->unk18 + 200.0f, grid, 0);
     grid[2] -= 1;
     type = func_ovl0D_02_80046368(grid[0], grid[1], grid[2]);
@@ -1150,7 +1130,7 @@ static void func_ovl0D_02_800438F8(void) {
     s32 i;
 
     for (i = 0; i < 2; i++) {
-        if (D_ovl0D_02_80047800[i].obj != NULL) {
+        if (D_ovl0D_02_80047800[i].unk0 != NULL) {
             func_ovl0D_02_80043858(&D_ovl0D_02_80047800[i]);
         }
     }
@@ -1160,7 +1140,7 @@ static void func_ovl0D_02_800438F0(void) {
     s32 i;
 
     for (i = 0; i < 4; i++) {
-        if (D_ovl0D_02_80047710[i].obj != NULL) {
+        if (D_ovl0D_02_80047710[i].unk0 != NULL) {
             func_ovl0D_02_80043858(&D_ovl0D_02_80047710[i]);
         }
     }
@@ -1170,7 +1150,7 @@ static void func_ovl0D_02_800438E8(void) {
     s32 i;
 
     for (i = 0; i < 1; i++) {
-        if (D_ovl0D_02_800476D4[i].obj != NULL) {
+        if (D_ovl0D_02_800476D4[i].unk0 != NULL) {
             func_ovl0D_02_80043858(&D_ovl0D_02_800476D4[i]);
         }
     }
@@ -1180,18 +1160,18 @@ static void func_ovl0D_02_800438E0(void) {
     s32 i;
 
     for (i = 0; i < 1; i++) {
-        if (D_ovl0D_02_8004769C[i].obj != NULL) {
+        if (D_ovl0D_02_8004769C[i].unk0 != NULL) {
             func_ovl0D_02_80043858(&D_ovl0D_02_8004769C[i]);
         }
     }
 }
 
-static void func_ovl0D_02_80043858(Ent_0D02 *arg0) {
-    func_ovl0D_02_80046D10(arg0->obj);
+static void func_ovl0D_02_80043858(UnkStruct_ovl0C_01_8004A54C *arg0) {
+    func_ovl0D_02_80046D10(arg0->unk0);
     if (arg0->unkC != 0xFFFF && arg0->unkE != 0xFFFF && arg0->unk10 != 0xFFFF && arg0->unk12 != 0xFFFF) {
         func_ovl0D_02_80046A48(arg0->unk4);
     }
-    arg0->obj = NULL;
+    arg0->unk0 = NULL;
     arg0->unk4 = -1;
 }
 
@@ -1216,55 +1196,55 @@ static void func_ovl0D_02_80043500(void) {
     func_ovl0D_02_800470C0(0x424);
 }
 
-static void func_ovl0D_02_800434F8(Ent_0D02 *e, s32 flag) {
+static void func_ovl0D_02_800434F8(UnkStruct_ovl0C_01_8004A54C *e, s32 flag) {
     Vec3f dir;
     Vec3f pos;
     s32 r;
 
-    if (!(e->obj->unk8 & 0x04000000)) {
+    if (!(e->unk0->unk8 & 0x04000000)) {
         D_ovl0D_02_80047A3C->unk30 = 1;
         D_ovl0D_02_80047A3C->unk34 = 75.0f;
         D_ovl0D_02_80047A3C->unk38 = 50.0f;
-        dir.x = e->obj->unk40->unk20 + 90.0f;
+        dir.x = e->unk0->unk40->unk20 + 90.0f;
         dir.y = 0.0f;
         dir.z = 100.0f;
         func_ovl0D_02_80046C90(&dir.x, &pos.x);
-        D_ovl0D_02_80047A3C->unk40->unk10 = e->obj->unk40->unk10 + pos.x;
-        D_ovl0D_02_80047A3C->unk40->unk14 = e->obj->unk40->unk14 + pos.y;
-        D_ovl0D_02_80047A3C->unk40->unk18 = e->obj->unk40->unk18 + pos.z;
+        D_ovl0D_02_80047A3C->unk40->unk10 = e->unk0->unk40->unk10 + pos.x;
+        D_ovl0D_02_80047A3C->unk40->unk14 = e->unk0->unk40->unk14 + pos.y;
+        D_ovl0D_02_80047A3C->unk40->unk18 = e->unk0->unk40->unk18 + pos.z;
         r = func_ovl0D_02_80046CA8(D_ovl0D_02_80047A3C, 0x40);
         if (r != 0) {
             if ((r & 0x6000) && func_ovl0D_02_800470D0(flag) == 0 &&
-                !(e->obj->unk8 & 0x04000000)) {
-                func_ovl0D_02_80046CF8(e->obj, 0x04000000);
-                func_ovl0D_02_80046D00(e->obj, 0x02000000);
+                !(e->unk0->unk8 & 0x04000000)) {
+                func_ovl0D_02_80046CF8(e->unk0, 0x04000000);
+                func_ovl0D_02_80046D00(e->unk0, 0x02000000);
                 func_ovl0D_02_800473F0(0x60, D_ovl0D_02_80047A3C->unk40->unk10, D_ovl0D_02_80047A3C->unk40->unk14, D_ovl0D_02_80047A3C->unk40->unk18);
             } else if (func_ovl0D_02_800470D0(flag) == 0) {
                 func_ovl0D_02_800473F0(0x26, D_ovl0D_02_80047A3C->unk40->unk10, D_ovl0D_02_80047A3C->unk40->unk14, D_ovl0D_02_80047A3C->unk40->unk18);
             }
         }
-    } else if ((e->obj->unk40->unkC & 0x40) && func_ovl0D_02_800470D0(flag) == 0) {
+    } else if ((e->unk0->unk40->unkC & 0x40) && func_ovl0D_02_800470D0(flag) == 0) {
         func_ovl0D_02_8004311C(e);
         func_ovl0D_02_800470C0(flag);
         func_ovl0D_02_800473D0(0x68);
     }
 }
 
-static s32 func_ovl0D_02_80043114(Ent_0D02 *e) {
-    if (e->obj->unk40->unk20 == 0.0f) {
+static s32 func_ovl0D_02_80043114(UnkStruct_ovl0C_01_8004A54C *e) {
+    if (e->unk0->unk40->unk20 == 0.0f) {
         return 0;
-    } else if (e->obj->unk40->unk20 == 90.0f) {
+    } else if (e->unk0->unk40->unk20 == 90.0f) {
         return 1;
-    } else if (e->obj->unk40->unk20 == 180.0f) {
+    } else if (e->unk0->unk40->unk20 == 180.0f) {
         return 2;
-    } else if (e->obj->unk40->unk20 == 270.0f || e->obj->unk40->unk20 == -90.0f) {
+    } else if (e->unk0->unk40->unk20 == 270.0f || e->unk0->unk40->unk20 == -90.0f) {
         return 3;
     }
     return -1;
 }
 
 /* the tiles under the gate: solid, and the frame around its opening */
-static void func_ovl0D_02_8004311C(Ent_0D02 *e) {
+static void func_ovl0D_02_8004311C(UnkStruct_ovl0C_01_8004A54C *e) {
     s32 grid[6];
     s32 x0;
     s32 y0;
@@ -1279,13 +1259,13 @@ static void func_ovl0D_02_8004311C(Ent_0D02 *e) {
     s32 len;
     UnkStructA_40 *p;
 
-    p = e->obj->unk40;
+    p = e->unk0->unk40;
     func_ovl0D_02_80046350(p->unk10, p->unk14, p->unk18, grid, 0);
     len = x1 + z1; /* fake: (see the top) */
     x0 = grid[0];
     y0 = grid[1];
     z0 = grid[2];
-    switch (e->obj->unk28) {
+    switch (e->unk0->unk28) {
         case 0x15C:
             len = 5;
             break;

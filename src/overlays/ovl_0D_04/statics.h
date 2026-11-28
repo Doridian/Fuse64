@@ -6,11 +6,11 @@
  */
 
 static void func_ovl0D_04_800446C0(void) {
-    Ent_0D04 *p;
+    UnkStruct_ovl0C_01_8004A54C *p;
 
     func_ovl0D_04_80046320(D_ovl0D_04_8004705C);
     for (p = D_ovl0D_04_80046C24; p < D_ovl0D_04_80046C24 + 3; p++) {
-        if (p->obj != NULL) {
+        if (p->unk0 != NULL) {
             func_ovl0D_04_80044644(p);
         }
     }
@@ -26,7 +26,7 @@ static void func_ovl0D_04_80044310(void) {
 }
 
 /* the tiles under a gate: solid, and the frame around its opening */
-static void func_ovl0D_04_80043F24(Ent_0D04 *e) {
+static void func_ovl0D_04_80043F24(UnkStruct_ovl0C_01_8004A54C *e) {
     s32 grid[6];
     s32 x0;
     s32 y0;
@@ -41,13 +41,13 @@ static void func_ovl0D_04_80043F24(Ent_0D04 *e) {
     s32 len;
     UnkStructA_40 *p;
 
-    p = e->obj->unk40;
+    p = e->unk0->unk40;
     func_ovl0D_04_80045960(p->unk10, p->unk14, p->unk18, grid, 0);
     len = x1 + z1; /* fake: (see the top; pass 12: the locals declared x1, z1 first or z0 last, x0..z0 set up after the len switch: no) */
     x0 = grid[0];
     y0 = grid[1];
     z0 = grid[2];
-    switch (e->obj->unk28) {
+    switch (e->unk0->unk28) {
         case 0x15C:
             len = 5;
             break;

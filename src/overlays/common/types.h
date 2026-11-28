@@ -20,7 +20,7 @@ typedef struct {
 
 /* a model placed in the stage at set-up: the object, its collision handle,
  * its model id, its collision box (unkC-unk12, -1 for none), and its
- * position (in tiles), angles and scale (0C_01..08, 0D_07, 0E_01..05/11..13,
+ * position (in tiles), angles and scale (0C_01..08, 0D_01..07, 0E_01..05/11..13,
  * 16_01, 17_01/06/07/08/10) */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;

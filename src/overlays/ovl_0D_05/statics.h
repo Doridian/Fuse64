@@ -13,11 +13,11 @@
  */
 
 static void func_ovl0D_05_800431F8(void) {
-    Ent05 *p;
+    UnkStruct_ovl0C_01_8004A54C *p;
 
     func_ovl0D_05_80045610(D_ovl0D_05_8004616C);
     for (p = D_ovl0D_05_80045F2C; p < D_ovl0D_05_80045F2C + 1; p++) {
-        if (p->obj != NULL) {
+        if (p->unk0 != NULL) {
             func_ovl0D_05_8004317C(p);
         }
     }

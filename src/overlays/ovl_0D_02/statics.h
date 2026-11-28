@@ -13,11 +13,11 @@
  */
 
 static void func_ovl0D_02_800438D8(void) {
-    Ent_0D02 *p;
+    UnkStruct_ovl0C_01_8004A54C *p;
 
     func_ovl0D_02_80046D10(D_ovl0D_02_80047A3C);
     for (p = D_ovl0D_02_8004762C; p < D_ovl0D_02_8004762C + 2; p++) {
-        if (p->obj != NULL) {
+        if (p->unk0 != NULL) {
             func_ovl0D_02_80043858(p);
         }
     }
@@ -119,14 +119,14 @@ void func_ovl0D_02_80043010(void) {
     f32 y;
 
     if (func_ovl0D_02_800470D0(0x407) != 0) {
-        func_ovl0D_02_80046D00(D_ovl0D_02_8004762C[0].obj, 0x01000000);
+        func_ovl0D_02_80046D00(D_ovl0D_02_8004762C[0].unk0, 0x01000000);
         y = -105.0f;
         PORT_HOST(D_ovl0D_02_8004762C[1], D_ovl0D_02_80047664[0]).unk18 = y;
-        D_ovl0D_02_80047664[0].obj->unk40->unk14 = y * 10.0f;
-        func_ovl0D_02_80046D00(D_ovl0D_02_8004769C[0].obj, 0x01000000);
+        D_ovl0D_02_80047664[0].unk0->unk40->unk14 = y * 10.0f;
+        func_ovl0D_02_80046D00(D_ovl0D_02_8004769C[0].unk0, 0x01000000);
     }
     if (func_ovl0D_02_800470D0(0x408) != 0) {
-        func_ovl0D_02_80046D00(D_ovl0D_02_80047664[0].obj, 0x01000000);
+        func_ovl0D_02_80046D00(D_ovl0D_02_80047664[0].unk0, 0x01000000);
     }
 }
 

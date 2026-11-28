@@ -26,27 +26,6 @@
  * (IDO -O3 emits a file's functions in reverse; docs/DECOMPILING.md).
  */
 
-/* a model placed on the stage: the object, its collision handle, its model
- * id, its collision box, and its position (in tiles), angles and scale */
-typedef struct {
-    /* 0x00 */ UnkStructA *obj;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ s16 unk12;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} Ent05;
-
 typedef struct {
     s32 unk0;
     s32 unk4;
@@ -149,8 +128,8 @@ static void func_ovl0D_05_80044888(void);
 static void func_ovl0D_05_80044880(void);
 static void func_ovl0D_05_80044878(void);
 static void func_ovl0D_05_80044870(void);
-static void func_ovl0D_05_80044288(Ent05 *, s32 *);
-static void func_ovl0D_05_80044280(Ent05 *, s32);
+static void func_ovl0D_05_80044288(UnkStruct_ovl0C_01_8004A54C *, s32 *);
+static void func_ovl0D_05_80044280(UnkStruct_ovl0C_01_8004A54C *, s32);
 static void func_ovl0D_05_80043788(void);
 static void func_ovl0D_05_80043780(Trio05 *, s32);
 static void func_ovl0D_05_80043760(void);
@@ -163,9 +142,9 @@ static void func_ovl0D_05_80043200(void);
 static void func_ovl0D_05_800431F8(void);
 static void func_ovl0D_05_800430C4(void);
 static void func_ovl0D_05_800430BC(void);
-static void func_ovl0D_05_8004317C(Ent05 *);
-static void func_ovl0D_05_8004352C(Ent05 *);
-static void func_ovl0D_05_800435D0(Ent05 *);
+static void func_ovl0D_05_8004317C(UnkStruct_ovl0C_01_8004A54C *);
+static void func_ovl0D_05_8004352C(UnkStruct_ovl0C_01_8004A54C *);
+static void func_ovl0D_05_800435D0(UnkStruct_ovl0C_01_8004A54C *);
 
 #define UNK_MACRO_ovl0D_05_800430CC() \
     D_ovl0D_05_8004614C = func_ovl0D_05_80044DD8(); func_ovl0D_05_80044DB8(&D_ovl0D_05_80046140); func_ovl0D_05_80044DE0(D_ovl0D_05_8004614C, &D_ovl0D_05_80046130)
@@ -195,14 +174,14 @@ u32 D_ovl0D_05_80045F14[][3] = {
     { 0, 4, 0 },
     { 4, 0x980000, 0x84 },
 };
-Ent05 D_ovl0D_05_80045F2C[1] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0D_05_80045F2C[1] = {
     { NULL, -1, 0x153, 0, 0x400, 0x20, 0x400, -300.0f, 60.0f, 60.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
-Ent05 D_ovl0D_05_80045F64[2] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0D_05_80045F64[2] = {
     { NULL, -1, 0x14B, 0, 0x400, 0x20, 0x400, 10.0f, 20.0f, 290.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x14B, -1, -1, -1, -1, 0.0f, 60.0f, 140.0f, 0.0f, 90.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
-Ent05 D_ovl0D_05_80045FD4[3] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0D_05_80045FD4[3] = {
     { NULL, -1, 0x161, -1, -1, -1, -1, 400.0f, 40.0f, 240.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x161, -1, -1, -1, -1, 230.0f, 80.0f, 190.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x161, -1, -1, -1, -1, 130.0f, 60.0f, 270.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
@@ -264,7 +243,7 @@ static void func_ovl0D_05_80044870(void) {
 /* the task of each of D_ovl0D_05_80045FD4 (its index is the argument) */
 void func_ovl0D_05_80044290(void) {
     PORT_IP(s32) idx;
-    Ent05 *e;
+    UnkStruct_ovl0C_01_8004A54C *e;
     s32 flag;
     Vec3f pos;
     s32 grid[6];
@@ -290,27 +269,27 @@ void func_ovl0D_05_80044290(void) {
     timer = 240 / (idx + 1);
     func_ovl0D_05_80044C50(pos.x, pos.y, pos.z, grid, 0);
     while (func_ovl0D_05_800459D0(flag) == 0) {
-        if (e->obj == NULL) {
+        if (e->unk0 == NULL) {
             break;
         }
-        e->obj->unk40->unk10 = pos.x;
-        e->obj->unk40->unk18 = pos.z;
+        e->unk0->unk40->unk10 = pos.x;
+        e->unk0->unk40->unk18 = pos.z;
         tgt.x = D_ovl0D_05_80046130.x;
         tgt.y = pos.y;
         tgt.z = D_ovl0D_05_80046130.z;
         func_ovl0D_05_80045588(&pos.x, &tgt.x, &ang);
-        e->obj->unk40->unk20 = ang;
+        e->unk0->unk40->unk20 = ang;
         if (func_ovl0D_05_800459D0(0x424) != 0) {
             func_ovl0D_05_80044288(e, &timer);
         }
         if (idx == (cnt >> 2)) {
             cnt = 0;
-            r = func_ovl0D_05_800455A8(e->obj, 0x40);
+            r = func_ovl0D_05_800455A8(e->unk0, 0x40);
             if (r & 0x40) {
                 if ((r & 0x2000) || (r & 0x4000)) {
                     func_ovl0D_05_80044280(e, flag);
                 } else {
-                    func_ovl0D_05_80043D94(0x26, e->obj);
+                    func_ovl0D_05_80043D94(0x26, e->unk0);
                 }
             }
         }
@@ -324,13 +303,13 @@ void func_ovl0D_05_80044290(void) {
 #endif
 
 /* a model's hit: it fades out, scattering debris, and its tiles become solid */
-static void func_ovl0D_05_80044280(Ent05 *e, s32 flag) {
+static void func_ovl0D_05_80044280(UnkStruct_ovl0C_01_8004A54C *e, s32 flag) {
     s32 i;
     s32 k;
     Vec3f v;
     UnkStructA *o;
 
-    o = e->obj;
+    o = e->unk0;
     k = 5;
     func_ovl0D_05_800455F8(o, 0x80000);
     func_ovl0D_05_80043D94(0x73, o);
@@ -360,13 +339,13 @@ static void func_ovl0D_05_80044280(Ent05 *e, s32 flag) {
 }
 
 /* every few seconds, when the player is near, the model throws a bomb */
-static void func_ovl0D_05_80044288(Ent05 *e, s32 *timer) {
+static void func_ovl0D_05_80044288(UnkStruct_ovl0C_01_8004A54C *e, s32 *timer) {
     UnkStructA_40 *p;
     s32 pad; /* fake: (see the top) */
     s32 grid[6];
 
     if (*timer == 0) {
-        p = e->obj->unk40;
+        p = e->unk0->unk40;
         func_ovl0D_05_80044C50(p->unk10, p->unk14, p->unk18, grid, 0);
         if (func_ovl0D_05_80044DC0(grid[0] - 12, grid[2] - 12, grid[0] + 12, grid[2] + 12) != 0 &&
             func_ovl0D_05_80044DC0(grid[0] - 2, grid[2] - 2, grid[0] + 2, grid[2] + 2) == 0) {
@@ -385,7 +364,7 @@ void func_ovl0D_05_80043EC4(void) {
     Vec3f tmp;
     Vec3f dir;
     Vec3f pos;
-    Ent05 *e;
+    UnkStruct_ovl0C_01_8004A54C *e;
     UnkStructA *o;
     UnkStructA *o2;
     s32 n;
@@ -400,13 +379,13 @@ void func_ovl0D_05_80043EC4(void) {
     o->unk40->unk30 = 1.5f;
     o->unk40->unk2C = 1.5f;
     o->unk40->unk28 = 1.5f;
-    dir.x = e->obj->unk40->unk20;
+    dir.x = e->unk0->unk40->unk20;
     dir.y = 60.0f;
     dir.z = 500.0f;
     func_ovl0D_05_80045590(&dir.x, &pos.x);
-    pos.x += e->obj->unk40->unk10;
-    pos.y += e->obj->unk40->unk14;
-    pos.z += e->obj->unk40->unk18;
+    pos.x += e->unk0->unk40->unk10;
+    pos.y += e->unk0->unk40->unk14;
+    pos.z += e->unk0->unk40->unk18;
     o->unk40->unk10 = pos.x;
     o->unk40->unk14 = pos.y;
     o->unk40->unk18 = pos.z;
@@ -479,7 +458,7 @@ void func_ovl0D_05_80043C78(UnkStructA *arg0) {
 
 /* The overlay's handler: the entry returns it to the loader. */
 void func_ovl0D_05_80043A94(s32 arg0) {
-    Ent05 *p;
+    UnkStruct_ovl0C_01_8004A54C *p;
     s32 i;
 
     switch (arg0) {
@@ -552,12 +531,12 @@ void func_ovl0D_05_80043790(void) {
     for (i = 0; i < 3; i++) {
         if (func_ovl0D_05_800459D0(D_ovl0D_05_8004607C[i]) == 0) {
             func_ovl0D_05_800435D0(&D_ovl0D_05_80045FD4[i]);
-            func_ovl0D_05_800455F8(D_ovl0D_05_80045FD4[i].obj, 0x02000000);
-            func_ovl0D_05_80045600(D_ovl0D_05_80045FD4[i].obj, 0x80000);
-            func_ovl0D_05_800455C8(D_ovl0D_05_80045FD4[i].obj, 0xC0);
-            D_ovl0D_05_80045FD4[i].obj->unk30 = 4;
-            D_ovl0D_05_80045FD4[i].obj->unk34 = 200.0f;
-            D_ovl0D_05_80045FD4[i].obj->unk38 = 300.0f;
+            func_ovl0D_05_800455F8(D_ovl0D_05_80045FD4[i].unk0, 0x02000000);
+            func_ovl0D_05_80045600(D_ovl0D_05_80045FD4[i].unk0, 0x80000);
+            func_ovl0D_05_800455C8(D_ovl0D_05_80045FD4[i].unk0, 0xC0);
+            D_ovl0D_05_80045FD4[i].unk0->unk30 = 4;
+            D_ovl0D_05_80045FD4[i].unk0->unk34 = 200.0f;
+            D_ovl0D_05_80045FD4[i].unk0->unk38 = 300.0f;
             func_ovl0D_05_80045748(func_ovl0D_05_80044290, (void *) i, 0, 0, 0x110);
         } else {
             func_ovl0D_05_8004352C(&D_ovl0D_05_80045FD4[i]);
@@ -571,11 +550,11 @@ void func_ovl0D_05_80043790(void) {
 #include "overlays/ovl_0D_05/statics.h"
 #undef STATICS_PART
 static void func_ovl0D_05_80043758(void) {
-    Ent05 *p;
+    UnkStruct_ovl0C_01_8004A54C *p;
 
     for (p = D_ovl0D_05_80045F2C; p < D_ovl0D_05_80045F2C + 1; p++) {
         func_ovl0D_05_800435D0(p);
-        p->obj->unk40->unk36 = 0x80;
+        p->unk0->unk40->unk36 = 0x80;
     }
 }
 
@@ -584,33 +563,33 @@ static void func_ovl0D_05_80043750(void) {
 
     for (i = 0; i < 2; i++) {
         func_ovl0D_05_800435D0(&D_ovl0D_05_80045F64[i]);
-        D_ovl0D_05_80045F64[i].obj->unk40->unk36 = 0x80;
+        D_ovl0D_05_80045F64[i].unk0->unk40->unk36 = 0x80;
     }
 }
 
-static void func_ovl0D_05_800435D0(Ent05 *arg0) {
-    arg0->obj = func_ovl0D_05_80045640(arg0->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
-    func_ovl0D_05_800455F8(arg0->obj, 0x01080000);
-    func_ovl0D_05_80045600(arg0->obj, 0x02000000);
+static void func_ovl0D_05_800435D0(UnkStruct_ovl0C_01_8004A54C *arg0) {
+    arg0->unk0 = func_ovl0D_05_80045640(arg0->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
+    func_ovl0D_05_800455F8(arg0->unk0, 0x01080000);
+    func_ovl0D_05_80045600(arg0->unk0, 0x02000000);
     if (arg0->unkC != -1 && arg0->unkE != -1 && arg0->unk10 != -1 && arg0->unk12 != -1) {
-        arg0->unk4 = func_ovl0D_05_80045340(arg0->obj->unk40, 0, arg0->unkC, arg0->unkE, arg0->unk10, arg0->unk12);
+        arg0->unk4 = func_ovl0D_05_80045340(arg0->unk0->unk40, 0, arg0->unkC, arg0->unkE, arg0->unk10, arg0->unk12);
         if (arg0->unk4 == -1) {
             while (1) {
             }
         }
     }
-    arg0->obj->unk40->unk10 = arg0->unk14 * 10.0f;
-    arg0->obj->unk40->unk14 = arg0->unk18 * 10.0f;
-    arg0->obj->unk40->unk18 = arg0->unk1C * 10.0f;
-    arg0->obj->unk40->unk1C = arg0->unk20;
-    arg0->obj->unk40->unk20 = arg0->unk24;
-    arg0->obj->unk40->unk24 = arg0->unk28;
-    arg0->obj->unk40->unk28 = arg0->unk2C;
-    arg0->obj->unk40->unk2C = arg0->unk30;
-    arg0->obj->unk40->unk30 = arg0->unk34;
+    arg0->unk0->unk40->unk10 = arg0->unk14 * 10.0f;
+    arg0->unk0->unk40->unk14 = arg0->unk18 * 10.0f;
+    arg0->unk0->unk40->unk18 = arg0->unk1C * 10.0f;
+    arg0->unk0->unk40->unk1C = arg0->unk20;
+    arg0->unk0->unk40->unk20 = arg0->unk24;
+    arg0->unk0->unk40->unk24 = arg0->unk28;
+    arg0->unk0->unk40->unk28 = arg0->unk2C;
+    arg0->unk0->unk40->unk2C = arg0->unk30;
+    arg0->unk0->unk40->unk30 = arg0->unk34;
 }
 
-static void func_ovl0D_05_8004352C(Ent05 *arg0) {
+static void func_ovl0D_05_8004352C(UnkStruct_ovl0C_01_8004A54C *arg0) {
     s32 pos[6];
 
     func_ovl0D_05_80044C50(arg0->unk14 * 10.0f, arg0->unk18 * 10.0f, arg0->unk1C * 10.0f, pos, 0);
@@ -691,7 +670,7 @@ static void func_ovl0D_05_80043208(void) {
     s32 i;
 
     for (i = 0; i < 3; i++) {
-        if (D_ovl0D_05_80045FD4[i].obj != NULL) {
+        if (D_ovl0D_05_80045FD4[i].unk0 != NULL) {
             func_ovl0D_05_8004317C(&D_ovl0D_05_80045FD4[i]);
         }
     }
@@ -701,18 +680,18 @@ static void func_ovl0D_05_80043200(void) {
     s32 i;
 
     for (i = 0; i < 2; i++) {
-        if (D_ovl0D_05_80045F64[i].obj != NULL) {
+        if (D_ovl0D_05_80045F64[i].unk0 != NULL) {
             func_ovl0D_05_8004317C(&D_ovl0D_05_80045F64[i]);
         }
     }
 }
 
-static void func_ovl0D_05_8004317C(Ent05 *arg0) {
-    func_ovl0D_05_80045610(arg0->obj);
+static void func_ovl0D_05_8004317C(UnkStruct_ovl0C_01_8004A54C *arg0) {
+    func_ovl0D_05_80045610(arg0->unk0);
     if (arg0->unkC != 0xFFFF && arg0->unkE != 0xFFFF && arg0->unk10 != 0xFFFF && arg0->unk12 != 0xFFFF) {
         func_ovl0D_05_80045348(arg0->unk4);
     }
-    arg0->obj = NULL;
+    arg0->unk0 = NULL;
     arg0->unk4 = -1;
 }
 
@@ -750,9 +729,9 @@ void func_ovl0D_05_80043018(void) {
 #include "overlays/ovl_0D_05/statics.h"
 #undef STATICS_PART
         func_ovl0D_05_80044CD0(j, 0, 0, D_ovl0D_05_80046170[0] - 1, D_ovl0D_05_80046170[2] - 1, 0, 0, 0);
-        func_ovl0D_05_80045600(D_ovl0D_05_80045F2C[0].obj, 0x01000000);
-        func_ovl0D_05_80045600(D_ovl0D_05_80045F64[0].obj, 0x01000000);
-        func_ovl0D_05_80045600(D_ovl0D_05_80045F64[1].obj, 0x01000000);
+        func_ovl0D_05_80045600(D_ovl0D_05_80045F2C[0].unk0, 0x01000000);
+        func_ovl0D_05_80045600(D_ovl0D_05_80045F64[0].unk0, 0x01000000);
+        func_ovl0D_05_80045600(D_ovl0D_05_80045F64[1].unk0, 0x01000000);
     }
 }
 

@@ -543,8 +543,11 @@ if(WIN32)
     target_link_options(fuse64 PRIVATE -Wl,--image-base=0x10000000 -static)
     if(NOT PORT_ZIG_TARGET)
         target_link_options(fuse64 PRIVATE -Wl,--no-insert-timestamp)
+        # clock_gettime and nanosleep are winpthreads' (zig's mingw has
+        # them in its own runtime), linked in as in DozerEncore
+        target_link_libraries(fuse64 PRIVATE -l:libwinpthread.a)
     endif()
-    target_link_libraries(fuse64 PRIVATE m)
+    target_link_libraries(fuse64 PRIVATE comdlg32 m)
 elseif(EMSCRIPTEN)
     # WebAssembly (emcmake cmake ...): headless under node.  The game's
     # threads and 530C0's tasks are emscripten's fibers (Asyncify).  The

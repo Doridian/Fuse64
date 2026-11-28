@@ -5,10 +5,9 @@
  * - func_ovl10_06_80049FB0 returns a value (declared s32): as void it
  *   put 80045888 (102), 80045CE4 (32 of its 38) and 80048110 (22) a
  *   register off.
- * - 80045CE4: its locals as pad[2], hit, i, flags, pad2[3] (the frame
- *   and hit's home); the four statements from the 8004B9A4 test to the
- *   first 8004ACB0 store on one source line (one .loc; the permuter's
- *   find).
+ * - 80045CE4: its locals as i, flags, hit; it calls 80045C90, which
+ *   calls 80045C64: both inlined, 16 bytes of frame (the 8004B9A4 test to
+ *   the first 8004ACB0 store was written out on one line, with a pad[2]).
  * - 80045458 (8): 8004ADB4[4] read into a local before the test.
  * - 800443DC (7): one variable for both angles (m2c had sp1C and a copy).
  * - 800442D4 (2): the comparisons on (f32) 8004B7E8 itself, no
@@ -887,7 +886,7 @@ void func_ovl10_06_80047B0C(void) {
 
 void func_ovl10_06_80047A50(void) {
     s32 i;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found; pass 12: the count, the object or 8004A640's result held: no) */
+    s32 pad; /* fake: unused, frame space the original has (no source for it found; pass 13: any local declared between i and pos fills it, e.g. one for 8004A640's result, which is only a held value; no inlined callee fits: a call costs 8 bytes) */
     Vec3f pos;
 
     while (TRUE) {
@@ -1407,10 +1406,9 @@ void func_ovl10_06_80045F9C(void) {
 }
 
 void func_ovl10_06_80045CE4(void) {
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found; pass 12: hit must stay at 76: a word less or a Vec3f no, held objects/flags/index no; 80045C90 called for its written-out copy is not inlined) */
-    s32 hit;
     s32 i;
     s32 flags;
+    s32 hit;
 
     i = D_ovl10_06_8004B290[D_ovl10_06_8004ACA8];
     hit = 0;
@@ -1441,9 +1439,7 @@ void func_ovl10_06_80045CE4(void) {
                 if (D_ovl10_06_8004B3AC & 4) {
                     D_ovl10_06_8004B3AC &= ~4;
                 }
-                /* one line (one .loc) for these four statements: as1 then schedules the
-                 * D_ovl10_06_8004B9A4 store before &D_ovl10_06_8004B3AC as the original */
-                if (D_ovl10_06_8004B9A4 != NULL) { func_ovl10_06_80049FB0(D_ovl10_06_8004B9A4); D_ovl10_06_8004B9A4 = NULL; } D_ovl10_06_8004B3AC = 0; func_ovl10_06_80045C64(func_ovl10_06_80047E10);
+                func_ovl10_06_80045C90();
                 func_ovl10_06_80045C64(func_ovl10_06_80047B0C);
             }
             D_ovl10_06_8004AFA4 = 2.1333334f;
@@ -1470,7 +1466,7 @@ void func_ovl10_06_80045C90(void) {
         D_ovl10_06_8004B9A4 = NULL;
     }
     D_ovl10_06_8004B3AC = 0;
-    D_ovl10_06_8004ACB0[func_ovl10_06_80045C20(func_ovl10_06_80047E10)] = NULL;
+    func_ovl10_06_80045C64(func_ovl10_06_80047E10);
 }
 
 /* ovl_10_13's 80046DAC */

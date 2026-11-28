@@ -670,7 +670,7 @@ void func_ovl10_10_8004486C(void) {
 void func_ovl10_10_80044664(void) {
     s32 r;
     s32 big;
-    s32 pad; /* fake: unused; the original's frame has the slot */
+    s32 pad; /* fake: unused; the original's frame has the slot (pass 13: a 4-byte declared local between big and ids, so any local fills it; a call would cost 8) */
     s32 ids[2] = { 0xC, 0x13 };
     Vec3f pos;
 
@@ -1028,7 +1028,7 @@ void func_ovl10_10_800431AC(void) {
     func_ovl10_10_80045E68(1);
     func_ovl10_10_800430C4(D_ovl10_10_80047374, D_ovl10_10_800474D0, D_ovl10_10_800474D4, off);
     func_ovl10_10_800467E8(0x78);
-    /* fake: (the permuter) a, and the test of D_ovl10_10_800473FC, on a's line */
+    /* fake: (the permuter) a, and the test of D_ovl10_10_800473FC, on a's line (pass 13: the frame word is an inlined call's too: a call of the empty global 80043010 instead of a, or locals a and b for both loads, give the frame, but the loads of the two globals stay a0 first with sw a1 in the jal's delay slot (6 words), whatever the order, chaining or lines; an inlined static (a, b) costs 16 bytes) */
     a = D_ovl10_10_800473F8; if (D_ovl10_10_800473FC && D_ovl10_10_800473FC && D_ovl10_10_800473FC) {}
     D_ovl10_10_800470C4 = a;
     D_ovl10_10_800470C8 = D_ovl10_10_800473FC;

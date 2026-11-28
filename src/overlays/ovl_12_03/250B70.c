@@ -10,19 +10,12 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_12_03's game object, IDO -O3: the functions are written last to first
  * (IDO -O3 emits a file's functions in reverse).
  */
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl12_03_80045EE0;
 
 /* an object and where it is made */
 typedef struct {
@@ -180,7 +173,7 @@ s32 D_ovl12_03_80045EC8;
 /* a position (func_ovl12_03_8004316C, func_ovl12_03_800444EC); the last
  * word unused */
 Vec3f D_ovl12_03_80045ED0;
-UnkStruct_ovl12_03_80045EE0 D_ovl12_03_80045EE0;
+UnkStruct_ovl0C_01_8004A9C8 D_ovl12_03_80045EE0;
 
 /* .data */
 /* passed to func_ovl12_03_800457A0: three 12-byte records */

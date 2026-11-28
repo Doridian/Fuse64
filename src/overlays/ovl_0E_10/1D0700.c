@@ -1,12 +1,5 @@
 #include "common.h"
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0E_10_800455A0;
+#include "overlays/common/types.h"
 
 void func_ovl0E_10_80043BFC(UnkStructA *);
 void func_ovl0E_10_80043CC0(UnkStructA *);
@@ -79,7 +72,7 @@ u8 D_ovl0E_10_80045580[0x4]; /* split for alignment */
 s32 D_ovl0E_10_80045584;
 s32 D_ovl0E_10_80045588;
 Vec3f D_ovl0E_10_80045590;
-UnkStruct_ovl0E_10_800455A0 D_ovl0E_10_800455A0;
+UnkStruct_ovl0C_01_8004A9C8 D_ovl0E_10_800455A0;
 UnkStructA *D_ovl0E_10_800455B4;
 u8 D_ovl0E_10_800455B8[0x8]; /* split for alignment */
 

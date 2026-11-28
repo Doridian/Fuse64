@@ -45,6 +45,7 @@
  * functions before it.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /* what D_ovl12_05_8004AC74 is compared with (80044534, 80045D3C): eu's
  * limits are 10000 and 6000 where us's and jp's are 8000 and 5000 */
@@ -91,14 +92,6 @@ typedef struct {
     /* 0x0A4 */ u8 unkA4[0x80];
     /* 0x124 */ s32 unk124;
 } UnkStruct_ovl12_05_8004A840;
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl12_05_8004AC30;
 
 void func_ovl12_05_800496C0(s32);
 void func_ovl12_05_800496D8(f32);
@@ -269,7 +262,7 @@ s32 D_ovl12_05_8004AC0C; s32 D_ovl12_05_8004AC10; /* unused */
 s32 D_ovl12_05_8004AC14;
 s32 D_ovl12_05_8004AC18; s32 D_ovl12_05_8004AC1C; /* unused */
 Vec3f D_ovl12_05_8004AC20;
-UnkStruct_ovl12_05_8004AC30 D_ovl12_05_8004AC30;
+UnkStruct_ovl0C_01_8004A9C8 D_ovl12_05_8004AC30;
 UnkStructA *D_ovl12_05_8004AC44;
 UnkStructA *D_ovl12_05_8004AC48;
 s32 D_ovl12_05_8004AC4C;

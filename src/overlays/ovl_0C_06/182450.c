@@ -23,6 +23,7 @@
  *   80045FC8 its v1 and 80046288 its registers.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0C_06's game object, IDO -O3: the functions are written last to first
@@ -30,15 +31,6 @@
  * the gate, the movers, the lift and the stage object; the crumbling blocks
  * and their switches are ovl_0C_06's own (as in ovl_0C_01 and ovl_0C_02).
  */
-
-/* the handler's state, set by func_ovl0C_07_80043CF0 */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0C_06_800493B0;
 
 /* a gate: its object, its position, the trigger object's position and the
  * arguments of its map changes (the task func_ovl0C_07_80044B48 takes one) */
@@ -410,7 +402,7 @@ s32 D_ovl0C_06_80049394;
 s32 D_ovl0C_06_80049398;
 Vec3f D_ovl0C_06_800493A0;
 UnkStructA *D_ovl0C_06_800493AC;
-UnkStruct_ovl0C_06_800493B0 D_ovl0C_06_800493B0;
+UnkStruct_ovl0C_01_8004A9C8 D_ovl0C_06_800493B0;
 UnkStructA *D_ovl0C_06_800493C4;
 UnkStructA *D_ovl0C_06_800493C8[2];
 

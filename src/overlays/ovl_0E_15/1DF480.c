@@ -25,20 +25,13 @@
  * static inlined into 80043180, as in ovl_12_06.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0E_15's game object, IDO -O3: the functions are written last to first
  * (IDO -O3 emits a file's functions in reverse).  The same skeleton as
  * ovl_0C_10's 194190 and ovl_12_06's 25D670.
  */
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0E_15_80046940;
 
 void func_ovl0E_15_80045508(s32);
 void func_ovl0E_15_80045520(s32);
@@ -162,7 +155,7 @@ s32 D_ovl0E_15_80046924;
 s32 D_ovl0E_15_80046928;
 Vec3f D_ovl0E_15_80046930;
 UnkStructA *D_ovl0E_15_8004693C; /* unused (func_ovl0E_15_80045164) */
-UnkStruct_ovl0E_15_80046940 D_ovl0E_15_80046940;
+UnkStruct_ovl0C_01_8004A9C8 D_ovl0E_15_80046940;
 s32 D_ovl0E_15_80046954;
 s32 D_ovl0E_15_80046958;
 s32 D_ovl0E_15_8004695C;

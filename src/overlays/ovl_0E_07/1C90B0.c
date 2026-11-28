@@ -1,4 +1,5 @@
 #include "common.h"
+#include "overlays/common/types.h"
 
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
@@ -6,14 +7,6 @@ typedef struct {
     /* 0x08 */ f32 unk8;
     /* 0x0C */ f32 unkC;
 } UnkStruct_ovl0E_07_80045300;
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0E_07_800453A0;
 
 void func_ovl0E_07_80043838(void);
 void func_ovl0E_07_80043988(void);
@@ -67,7 +60,7 @@ u8 D_ovl0E_07_80045380[4]; /* not referenced here */
 s32 D_ovl0E_07_80045384;
 s32 D_ovl0E_07_80045388;
 Vec3f D_ovl0E_07_80045390;
-UnkStruct_ovl0E_07_800453A0 D_ovl0E_07_800453A0;
+UnkStruct_ovl0C_01_8004A9C8 D_ovl0E_07_800453A0;
 UnkStructA *D_ovl0E_07_800453B4;
 u8 D_ovl0E_07_800453B8[8]; /* not referenced here */
 

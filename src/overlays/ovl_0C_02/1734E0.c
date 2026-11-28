@@ -28,15 +28,7 @@
  * - func_ovl0C_02_80049260 returns s32 (8004797C's v1, as in ovl_0C_07).
  */
 #include "common.h"
-
-/* the handler's state (ovl_0C_07's D_ovl0C_07_80047990) */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0C_02_8004A110;
+#include "overlays/common/types.h"
 
 /* a gate (ovl_0C_07's UnkStruct_ovl0C_07_80047590) */
 typedef struct {
@@ -425,7 +417,7 @@ s32 D_ovl0C_02_8004A0F4;
 s32 D_ovl0C_02_8004A0F8;
 Vec3f D_ovl0C_02_8004A100;
 UnkStructA *D_ovl0C_02_8004A10C;
-UnkStruct_ovl0C_02_8004A110 D_ovl0C_02_8004A110;
+UnkStruct_ovl0C_01_8004A9C8 D_ovl0C_02_8004A110;
 UnkStructA *D_ovl0C_02_8004A124;
 UnkStructA *D_ovl0C_02_8004A128[2];
 

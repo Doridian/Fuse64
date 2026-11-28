@@ -18,21 +18,13 @@
  *   which keeps it after the lw of obj->unk40.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0C_09's game object, IDO -O3: the functions are written last to first
  * (IDO -O3 emits a file's functions in reverse).  The same skeleton as
  * ovl_0C_04's 17CC20 (ovl_0C_06 and ovl_0C_07 share most of the rest).
  */
-
-/* the handler's state, set by func_ovl0C_09_80043730 */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0C_09_80047B28;
 
 /* an object and a position */
 typedef struct {
@@ -266,7 +258,7 @@ u8 D_ovl0C_09_80047B0C[0x4]; /* unused (func_ovl0C_09_80046144) */
 Vec3f D_ovl0C_09_80047B10;
 UnkStructA *D_ovl0C_09_80047B1C;
 s16 D_ovl0C_09_80047B20;
-UnkStruct_ovl0C_09_80047B28 D_ovl0C_09_80047B28;
+UnkStruct_ovl0C_01_8004A9C8 D_ovl0C_09_80047B28;
 UnkStructA *D_ovl0C_09_80047B3C;
 
 /* .data */

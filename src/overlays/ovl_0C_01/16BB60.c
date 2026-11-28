@@ -32,15 +32,7 @@
  * - 800459FC declares obj before pos.
  */
 #include "common.h"
-
-/* the handler's state (ovl_0C_07's D_ovl0C_07_80047990) */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0C_01_8004A9C8;
+#include "overlays/common/types.h"
 
 /* a gate (ovl_0C_07's UnkStruct_ovl0C_07_80047590) */
 typedef struct {

@@ -10,6 +10,7 @@
  * and 80043060, not an empty call at 800430A8's start.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0E_03's game object, IDO -O3: the functions are written last to first
@@ -17,14 +18,6 @@
  * code (src/overlays/ovl_0E_02), with ovl_0E_12's object that a flag
  * replaces (func_ovl0E_03_800430A8, 80043AB8; nonmatching/overlays/ovl_0E_12).
  */
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0E_03_80046C58;
 
 /* a model placed at set-up, with a collision box (unkC-unk12, -1 for none) */
 typedef struct {
@@ -231,7 +224,7 @@ s32 D_ovl0E_03_80046C34;
 s32 D_ovl0E_03_80046C38;
 Vec3f D_ovl0E_03_80046C40;
 UnkStruct_ovl0E_03_80046C50 D_ovl0E_03_80046C50[1];
-UnkStruct_ovl0E_03_80046C58 D_ovl0E_03_80046C58;
+UnkStruct_ovl0C_01_8004A9C8 D_ovl0E_03_80046C58;
 UnkStructA *D_ovl0E_03_80046C6C;
 
 /* .data */

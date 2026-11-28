@@ -14,21 +14,13 @@
  * ovl_0D_07's 80043424.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0C_07's game object, IDO -O3: the functions are written last to first
  * (IDO -O3 emits a file's functions in reverse).  ovl_0C_09's skeleton for
  * the camera, the lifts and the movers, ovl_0C_04's object setup.
  */
-
-/* the handler's state, set by func_ovl0C_07_80043CF0 */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0C_07_80047990;
 
 /* a gate: its object, its position, the trigger object's position and the
  * arguments of its map changes (the task func_ovl0C_07_80044B48 takes one) */
@@ -300,7 +292,7 @@ u8 D_ovl0C_07_80047970[0x4]; /* unused (func_ovl0C_07_80045EA4) */
 s32 D_ovl0C_07_80047974;
 s32 D_ovl0C_07_80047978;
 Vec3f D_ovl0C_07_80047980;
-UnkStruct_ovl0C_07_80047990 D_ovl0C_07_80047990;
+UnkStruct_ovl0C_01_8004A9C8 D_ovl0C_07_80047990;
 UnkStructA *D_ovl0C_07_800479A4;
 UnkStructA *D_ovl0C_07_800479A8[2];
 

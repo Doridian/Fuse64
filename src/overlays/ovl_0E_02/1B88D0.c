@@ -1,4 +1,5 @@
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0E_02's game object, IDO -O3: the functions are written last to first
@@ -6,14 +7,6 @@
  * code (nonmatching/overlays/ovl_0E_05) and ovl_17_10's (func_ovl0E_02_80044308
  * and what it calls, with one model pair where ovl_17_10 has three).
  */
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0E_02_800467A8;
 
 /* a model placed at set-up, with a collision box (unkC-unk12, -1 for none) */
 typedef struct {
@@ -202,7 +195,7 @@ s32 D_ovl0E_02_80046784;
 s32 D_ovl0E_02_80046788;
 Vec3f D_ovl0E_02_80046790;
 UnkStruct_ovl0E_02_800467A0 D_ovl0E_02_800467A0[1];
-UnkStruct_ovl0E_02_800467A8 D_ovl0E_02_800467A8;
+UnkStruct_ovl0C_01_8004A9C8 D_ovl0E_02_800467A8;
 
 /* .data */
 /* passed to func_ovl0E_02_80045F60: three 12-byte records */

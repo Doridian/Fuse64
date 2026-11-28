@@ -15,6 +15,7 @@
  *   ends the block, so `move a1,s4` stays in the call's delay slot.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0E_04's game object, IDO -O3: the functions are written last to first
@@ -22,14 +23,6 @@
  * code (src/overlays/ovl_0E_05/1C3B40.c) and ovl_0E_02's, with ovl_12_01's
  * camera set-up (func_ovl0E_04_8004399C).
  */
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0E_04_80046F40;
 
 /* an object placed at set-up, with a collision box (unkC-unk12, -1 for none) */
 typedef struct {
@@ -250,7 +243,7 @@ s32 D_ovl0E_04_80046F24;
 s32 D_ovl0E_04_80046F28;
 u8 D_ovl0E_04_80046F2C[0x4]; /* unused (func_ovl0E_04_800453F8) */
 Vec3f D_ovl0E_04_80046F30;
-UnkStruct_ovl0E_04_80046F40 D_ovl0E_04_80046F40;
+UnkStruct_ovl0C_01_8004A9C8 D_ovl0E_04_80046F40;
 UnkStructA *D_ovl0E_04_80046F54;
 
 /* .data */

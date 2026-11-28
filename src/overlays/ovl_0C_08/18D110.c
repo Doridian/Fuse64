@@ -8,14 +8,7 @@
  * original does (without it, s2, s1, s0).
  */
 #include "common.h"
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0C_08_800455E0;
+#include "overlays/common/types.h"
 
 /* an object placed in the stage (as ovl_17_01's) */
 typedef struct {
@@ -132,7 +125,7 @@ s32 D_ovl0C_08_800455C4;
 s32 D_ovl0C_08_800455C8;
 Vec3f D_ovl0C_08_800455D0;
 UnkStructA *D_ovl0C_08_800455DC;
-UnkStruct_ovl0C_08_800455E0 D_ovl0C_08_800455E0;
+UnkStruct_ovl0C_01_8004A9C8 D_ovl0C_08_800455E0;
 
 /* .data */
 /* passed to func_ovl0C_08_80045080: three 12-byte records */

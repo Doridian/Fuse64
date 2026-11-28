@@ -1,17 +1,10 @@
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_12_02's game object, IDO -O3: the functions are written last to first
  * (IDO -O3 emits a file's functions in reverse).
  */
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl12_02_800451B0;
 
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
@@ -106,7 +99,7 @@ u8 D_ovl12_02_80045190[0x4]; /* unused (func_ovl12_02_80043A68) */
 s32 D_ovl12_02_80045194;
 s32 D_ovl12_02_80045198;
 Vec3f D_ovl12_02_800451A0;
-UnkStruct_ovl12_02_800451B0 D_ovl12_02_800451B0;
+UnkStruct_ovl0C_01_8004A9C8 D_ovl12_02_800451B0;
 
 /* .data */
 /* passed to func_ovl12_02_80044C70: three 12-byte records */

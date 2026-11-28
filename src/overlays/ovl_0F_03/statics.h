@@ -66,7 +66,10 @@ static void func_ovl0F_03_8004326C(void) {
 }
 
 static void func_ovl0F_03_8004327C(void) {
-    s32 pad[10]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad[10]; /* fake: unused, frame space the original has (no source for it found; without
+                  * it everything above 0x9C moves down 40, the table loop's slots too; 0F_07's
+                  * twin of this static, 80043038, has none, and a call of the empty global
+                  * 80043010, which gave 0F_05/07/08/09 their 8 bytes, gives 8, not 40) */
     if (func_ovl0F_03_800468D0(0x404) != 0 && func_ovl0F_03_80045CC0(0x16, 7, 0x16, 7) != 0) {
         func_ovl0F_03_80045D10(1);
         func_ovl0F_03_80045C70(0);

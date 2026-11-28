@@ -91,14 +91,13 @@ void func_ovl0F_10_80044AD4(void) {
 }
 
 void func_ovl0F_10_800448A0(void) {
-    s32 pad[1]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 i;
     f32 x;
     f32 y;
     f32 z;
     f32 rx;
     f32 ry;
     f32 rz;
-    s32 i;
 
     x = 2898.7f;
     y = 3582.5f;
@@ -172,7 +171,11 @@ void func_ovl0F_10_80044074(UnkStructA *arg0) {
     f32 dist;
     f32 angle;
     f32 pos[3];
-    s32 pad[12]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad[12]; /* fake: unused, frame space the original has: 48 bytes between pos and
+                  * 80043F9C's locals, placed by nothing visible. Each inlined call takes its
+                  * own area (a 7th 8004405C call adds 8), and a call of the empty global
+                  * 80044FE8 in 8004405C gives exactly this frame (its six calls, 8 each), but
+                  * pulls 80044FE8's body in ahead of this function, wherever it is defined */
 
     bits = arg0->unk64 & 0x0FFFFFFF;
     flags = arg0->unk64 & 0xF0000000;

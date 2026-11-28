@@ -461,7 +461,7 @@ segments:
       - [0xBB1E0, .data, 86680]
       - [0xBB230, data]
       - [0xBB350, .data, 926A0]
-      - [0xBB360, data]
+      - [0xBB360, .data, 949A0]
       - [0xBB380, .data, 96540]
       - [0xBB3D0, .data, 97610]
       - [0xBB420, .data, 995C0]
@@ -542,7 +542,7 @@ segments:
       - {type: .bss, vram: 0x802AEE50, name: 86680}
       - {type: bss, vram: 0x802AEE60, name: bss_802AEE60}
       - {type: .bss, vram: 0x802AF0A0, name: 926A0}
-      - {type: bss, vram: 0x802AF0B0, name: bss_802AF0B0}
+      - {type: .bss, vram: 0x802AF0B0, name: 949A0}
       - {type: .bss, vram: 0x802AF1A0, name: 96540}
       - {type: .bss, vram: 0x802AF3B0, name: 97610}
       - {type: .bss, vram: 0x802AF420, name: 99F40}

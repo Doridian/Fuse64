@@ -195,10 +195,12 @@ main_code 93850 0 0x60 0
 main_code @us 93850 rodata=0x802A3EB0
 main_code @eu 93850 rodata=0x802A3EA0
 main_code @jp 93850 rodata=0x802A30E0
-main_code 949A0 0 0xB0 0
-main_code @us 949A0 rodata=0x802A3F10
-main_code @eu 949A0 rodata=0x802A3F00
-main_code @jp 949A0 rodata=0x802A3140
+# 949A0 defines the .data and .bss 93850 and it share (module 0x28's
+# table is 949A0's functions, and it is their main user)
+main_code 949A0 0x20 0xB0 0xF0
+main_code @us 949A0 data=0x802A1500 rodata=0x802A3F10 bss=0x802AFE80
+main_code @eu 949A0 data=0x802A1500 rodata=0x802A3F00 bss=0x802AFE70
+main_code @jp 949A0 data=0x802A0B60 rodata=0x802A3140 bss=0x802AF0B0
 main_code 96540 0x50 0x80 0x210
 main_code @us 96540 data=0x802A1520 rodata=0x802A3FC0 bss=0x802AFF70
 main_code @eu 96540 data=0x802A1520 rodata=0x802A3FB0 bss=0x802AFF60

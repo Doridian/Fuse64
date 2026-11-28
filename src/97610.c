@@ -93,7 +93,7 @@ extern UnkStruct_80090440 D_80090468;
 extern UnkStruct_800B15D8 D_800B15D8[];
 extern s32 D_802AC5D0;
 extern u8 *D_802AFE80;
-extern s32 D_802AFE84;
+extern u8 *D_802AFE84;
 /* .bss: the 4 bytes after D_802B0190 are IDO's, aligning D_802B01B8 to 8 */
 s32 D_802B0180;
 s32 D_802B0184;

@@ -4,6 +4,10 @@
  * read from file 0xDC (func_8027A640), the thread's setup
  * (func_8027A950), an item's creation (func_8027AA74) and the per-player
  * pickups. The C is written last function first, as -O3 emits it.
+ *
+ * Data: the file defines the .data (module 0x28's table) and the .bss that
+ * 93850 shares (93850 has none of its own); all three sections are placed
+ * in data_split.txt.
  */
 #include "common.h"
 #include "bonus.h"
@@ -60,11 +64,9 @@ UnkStruct_800BB4A8 *func_8027A1A0(UnkStruct_80279050_14 *arg0);
 #else
 extern UnkStruct_800BB4A8 *D_800BB4A8;
 #endif
-extern UnkStruct_802AFED0 D_802AFED0[PORT_SIZE(5)];
 extern UnkStruct_800AEDF0 D_800AEDF0[];
 extern UnkStruct_800BB4A8 D_800BB4A0[48];
 extern UnkStruct_800BB4A8 D_800BB4F8; /* [0] the list's head, [1] its sentinel, [2..47] the pool */
-extern s16 D_802AFF60[PORT_SIZE(7)];
 
 void func_80270B20(PORT_RET(s32, void *));
 void func_80270BA4(UnkStruct_80279050_14 *);
@@ -74,13 +76,6 @@ void func_80297D30(s32, void *);
 void func_8027AFB8(s16 arg0);
 
 extern UnkStruct_800BA8A0 D_800BA8A0[PORT_SIZE(5)];
-extern u8 D_802A1500[];
-extern u8 *D_802AFE80;
-extern u8 *D_802AFE84;
-extern s16 D_802AFE88[PORT_SIZE(10)][3];
-extern s16 D_802AFEC4;
-extern s32 D_802AFEC8;
-extern s32 D_802AFECC;
 
 void func_80279628(s16 arg0, s16 arg1);
 PORT_RET(s32, void *) func_802311E8(UnkStruct_80279050_14 *);
@@ -139,6 +134,23 @@ void func_8027BBC4(void);
 void func_8027BC74(void);
 s32 func_8027BCD8(void);
 void func_8027BCE8(void);
+
+/* .data: ZeroJump module 0x28's table (func_8027BCE8); its last two words
+   are zeros, taken here for the section's padding */
+void *D_802A1500[] = {
+    func_8027B828, func_8027B7C4, func_8027BCD8, func_8027BAE8, func_8027BA80, func_8027BC74,
+};
+
+/* .bss, all of 93850's and 949A0's (93850 uses D_802AFECC and D_802AFED0);
+   the 4 bytes after D_802AFED0 are IDO's, aligning D_802AFF60 to 8 */
+u8 *D_802AFE80;
+u8 *D_802AFE84;
+s16 D_802AFE88[10][3];
+s16 D_802AFEC4;
+s32 D_802AFEC8;
+s32 D_802AFECC;
+UnkStruct_802AFED0 D_802AFED0[5];
+s16 D_802AFF60[7];
 
 void func_8027BCE8(void) {
     func_80297D30(0x28, D_802A1500);

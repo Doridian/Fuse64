@@ -227,22 +227,6 @@ typedef s16 M2C_UNK16;
 typedef s32 M2C_UNK32;
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-} UnkModel;
-
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[0x40];, u8 unk0[0x20]; void *unk20; void *unk24; u8 unk28[0x14]; void *unk3C;)
-    /* 0x40 */ UnkModel *unk40;
-    /* 0x44 */ PORT_RET(u8 unk44[0x4C - 0x44];, void *unk44; u8 unk48[0x4];)
-    /* 0x4C */ f32 unk4C[3];
-    /* 0x58 */ u8 unk58[0x6C - 0x58];
-    /* 0x6C */ f32 unk6C;
-} UnkObj;
-
-typedef struct {
     /* 0x00 */ f32 unk0;
     /* 0x04 */ f32 unk4;
     /* 0x08 */ f32 unk8;
@@ -253,7 +237,7 @@ typedef struct {
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ s32 unk20;
     /* 0x24 */ s32 unk24;
-    /* 0x28 */ UnkObj *unk28;
+    /* 0x28 */ UnkStructA *unk28;
     /* 0x2C */ PORT_IP(s32) unk2C;
     /* 0x30 */ PORT_IP(s32) unk30;
     /* 0x34 */ s32 unk34;

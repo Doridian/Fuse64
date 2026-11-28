@@ -1,41 +1,13 @@
 #include "common.h"
+#include "model.h"
 
 /*
  * -O3. func_8022D1D0 alone: it builds a skeleton instance from a model's
- * chunk. The rest of the skeleton code is 45170 and 46300 (src/45170.c and
- * nonmatching/46300.c have the structures in full); only the fields used
- * here are named.
+ * chunk. The rest of the skeleton code is 45170 and 46300; the structures
+ * are include/model.h's.
  */
 
 void *malloc(u32);
-
-typedef struct {
-    /* 0x00 */ u32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-} UnkChunk; /* size 0xC */
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ u32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ UnkChunk unkC[1];
-} UnkModel;
-
-typedef struct UnkSkel UnkSkel;
-typedef struct UnkNode UnkNode;
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ Vec3f unk4;
-    /* 0x10 */ Vec3f unk10;
-    /* 0x1C */ Vec3f unk1C;
-    /* 0x28 */ UnkNode *unk28;
-    /* 0x2C */ void *unk2C;
-    /* 0x30 */ void *unk30;
-    /* 0x34 */ void *unk34;
-    /* 0x38 */ s32 *unk38;
-} UnkInst; /* size 0x3C */
 
 extern s32 D_802A54D0;
 

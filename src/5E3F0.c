@@ -115,45 +115,6 @@ typedef s32 M2C_UNK32;
 #define FLAG_CLEAR(x, f) (!((x) & (f)) ? 1 : 0)
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ u8 unk1C[4];
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ u8 unk24[4];
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-} UnkModel;
-
-typedef struct {
-#ifdef TARGET_PC
-    /* (the object's pointers, as wide as the host's: structs.h's UnkStructA) */
-    /* 0x00 */ u8 unk0[0x20];
-    /* 0x20 */ intptr_t unk20;
-    /* 0x24 */ intptr_t unk24;
-    /* 0x28 */ u8 unk28[0x3C - 0x28];
-    /* 0x3C */ void *unk3C;
-    /* 0x40 */ UnkModel *unk40;
-    /* 0x44 */ void *unk44;
-    /* 0x48 */ u8 unk48[4];
-#else
-    /* 0x00 */ u8 unk0[0x40];
-    /* 0x40 */ UnkModel *unk40;
-    /* 0x44 */ u8 unk44[0x4C - 0x44];
-#endif
-    /* 0x4C */ f32 unk4C[3];
-    /* 0x58 */ u8 unk58[0x6C - 0x58];
-    /* 0x6C */ f32 unk6C;
-#ifdef TARGET_PC
-    /* 0x70 */ u8 unk70[8];
-    /* 0x78 */ void *unk78;
-    /* 0x7C */ void *unk7C;
-#endif
-} UnkObj;
-
-typedef struct {
     /* 0x00 */ f32 unk0;
     /* 0x04 */ f32 unk4;
     /* 0x08 */ f32 unk8;
@@ -164,7 +125,7 @@ typedef struct {
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ s32 unk20;
     /* 0x24 */ s32 unk24;
-    /* 0x28 */ UnkObj *unk28;
+    /* 0x28 */ UnkStructA *unk28;
     /* 0x2C */ PORT_IP(s32) unk2C;
     /* 0x30 */ PORT_IP(s32) unk30;
     /* 0x34 */ s32 unk34;
@@ -263,7 +224,7 @@ typedef struct {
     /* 0x10 */ s32 unk10;
     /* 0x14 */ u8 unk14[8];
     /* 0x1C */ s32 unk1C;
-    /* 0x20 */ UnkObj *unk20;
+    /* 0x20 */ UnkStructA *unk20;
 #ifdef TARGET_PC
     /* 0x24 */ intptr_t unk24;
     /* 0x28 */ u8 unk28[0x3C - 0x28];
@@ -560,7 +521,7 @@ extern f32 D_802ACEC4;
 extern s32 D_802ACEC8[PORT_SIZE(5)][3];
 extern void * D_802ACF04;
 extern PadState D_802ACF08[PORT_SIZE(5)];
-extern UnkObj **D_802ACF58;
+extern UnkStructA **D_802ACF58;
 extern void * D_802ACF5C;
 extern s32 * D_802ACF60;
 extern f32 D_802ACF68[PORT_SIZE(5)][3];
@@ -598,7 +559,7 @@ void func_80244BE0(s32 arg0, s16 arg1);
 void func_80244C30(s32 arg0, s32 arg1);
 void func_80244E04(void *arg0);
 s32 func_80244F34(void *arg0, PORT_IP(s32) arg1);
-s32 func_80244FF8(UnkObj *arg0);
+s32 func_80244FF8(UnkStructA *arg0);
 void func_802450DC(s32 arg0);
 void func_8024512C(s32 arg0, s32 arg1);
 s32 func_80245150(s32 arg0);
@@ -643,7 +604,7 @@ void func_802479F0(s32 *arg0);
 void func_80247A54(s32 arg0, PORT_IP(s32) arg1, s32 arg2, s32 arg3);
 void func_80247C50(s32 arg0);
 void func_80247CD0(s32 arg0, s32 arg1);
-void func_80247D74(s32 arg0, f32 arg1, f32 arg2, s32 arg3, UnkObj *arg4);
+void func_80247D74(s32 arg0, f32 arg1, f32 arg2, s32 arg3, UnkStructA *arg4);
 void func_80247F90(s32 arg0);
 void func_80248148(s32 arg0, s32 arg1);
 void func_8024857C(s32 arg0);
@@ -652,7 +613,7 @@ void func_80248864(s32 arg0);
 void func_802488C0(s32 arg0);
 void func_8024891C(s32 arg0);
 void func_8024946C(s32 arg0, s32 arg1);
-void func_80249648(s32 arg0, UnkObj *arg1, s32 arg2);
+void func_80249648(s32 arg0, UnkStructA *arg1, s32 arg2);
 void func_802497D8(s32 arg0);
 void func_80249810(s32 arg0, PORT_IP(s32) arg1, s32 arg2);
 void func_802498D4(s32 arg0, f32 arg1);
@@ -686,7 +647,7 @@ void func_8024C1E8(s32 arg0);
 void func_8024C29C(s32 arg0);
 void func_8024C314(s32 arg0);
 void func_8024C334(s32 arg0, PORT_IP(s32) arg1, u16 arg2, f32 *arg3);
-PORT_IP(s32) func_8024C4EC(UnkObj *obj, s32 arg1);
+PORT_IP(s32) func_8024C4EC(UnkStructA *obj, s32 arg1);
 void func_8024C53C(s32 arg0, void *arg1);
 void func_8024C804(s32 arg0);
 void func_8024C884(s32 arg0, f32 arg1, s32 arg2);
@@ -763,16 +724,16 @@ s32 func_802513BC() {
 void func_80251368(s32 arg0) {
     void *temp_v0;
 
-    temp_v0 = PORT_FIELD(((UnkObj *)func_802443F4(arg0)), void **, 0x40, Port_UnkStructA, unk40);
+    temp_v0 = PORT_FIELD(((UnkStructA *)func_802443F4(arg0)), void **, 0x40, Port_UnkStructA, unk40);
     func_8026EF50(M2C_FIELD(temp_v0, f32 *, 0x10), M2C_FIELD(temp_v0, f32 *, 0x14), M2C_FIELD(temp_v0, f32 *, 0x18));
 }
 
 void func_802512F8() {
     s32 id;
-    UnkObj *obj;
+    UnkStructA *obj;
 
     id = func_80243DDC();
-    obj = (UnkObj *)func_802443F4(id);
+    obj = (UnkStructA *)func_802443F4(id);
     obj->unk40->unk10 = D_800AEDF0[id].unk0;
     obj->unk40->unk14 = D_800AEDF0[id].unk4;
     obj->unk40->unk18 = D_800AEDF0[id].unk8;
@@ -785,10 +746,10 @@ void func_802512C0(s32 arg0, s32 arg1, s32 arg2) {
 
 void func_802511EC(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     f32 pos[3];
-    UnkObj *obj;
+    UnkStructA *obj;
 
     func_8026E338(arg1, arg2, arg3, pos, 0);
-    obj = (UnkObj *)func_802443F4(arg0);
+    obj = (UnkStructA *)func_802443F4(arg0);
     if (obj != NULL) {
         obj->unk40->unk10 = pos[0];
         obj->unk40->unk14 = pos[1];
@@ -1110,7 +1071,7 @@ void func_8025068C(s32 arg0) {
 
 s32 func_80250398(s32 arg0) {
     s32 ret = 0;
-    UnkObj *obj = (UnkObj *)func_802443F4(arg0);
+    UnkStructA *obj = (UnkStructA *)func_802443F4(arg0);
     Unk8026DCAC c;
     s32 dx;
     s32 dz;
@@ -1157,16 +1118,16 @@ s32 func_80250398(s32 arg0) {
 void func_80250338(s32 arg0, void *arg1) {
     void *temp_v1;
 
-    temp_v1 = ((UnkObj *)func_802443F4(arg0));
+    temp_v1 = ((UnkStructA *)func_802443F4(arg0));
     M2C_FIELD(arg1, f32 *, 0) = (f32) M2C_FIELD(PORT_FIELD(temp_v1, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x10);
     M2C_FIELD(arg1, f32 *, 4) = (f32) M2C_FIELD(PORT_FIELD(temp_v1, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x14);
     M2C_FIELD(arg1, f32 *, 8) = (f32) M2C_FIELD(PORT_FIELD(temp_v1, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x18);
 }
 
 void func_802502BC(s32 arg0) {
-    UnkObj *obj;
+    UnkStructA *obj;
 
-    obj = (UnkObj *)func_802443F4(arg0);
+    obj = (UnkStructA *)func_802443F4(arg0);
     func_80243D90(arg0, 0x90, 1);
     D_800AEDF0[arg0].unk78 = 1200;
     func_80231408(obj, 0x40);
@@ -1174,9 +1135,9 @@ void func_802502BC(s32 arg0) {
 }
 
 void func_802500D4() {
-    UnkObj *o;
+    UnkStructA *o;
     s32 kind;
-    UnkObj *objs[4];
+    UnkStructA *objs[4];
     void * made;
     f32 dist = 50.0f; /* the spawn distance (its frame slot; a guess among held values) */
     Tbl4_5E3F0 tbl;
@@ -1184,7 +1145,7 @@ void func_802500D4() {
     Vec3f off;
     s32 i;
     s32 r;
-    UnkObj *obj;
+    UnkStructA *obj;
 
     tbl = *(Tbl4_5E3F0 *)D_802A0E08;
     for (i = 0; i < 4; i++) {
@@ -1202,7 +1163,7 @@ void func_802500D4() {
                 func_8022FEAC(pos, &off.x);
                 kind = tbl.v[r];
                 made = func_80231274(-1, kind, 0x60, NULL);
-                objs[i] = (UnkObj *)made;
+                objs[i] = (UnkStructA *)made;
                 objs[i]->unk40->unk10 = obj->unk40->unk10 + off.x;
                 objs[i]->unk40->unk14 = obj->unk40->unk14 + off.y;
                 objs[i]->unk40->unk18 = obj->unk40->unk18 + off.z;
@@ -1782,7 +1743,7 @@ void func_8024E088(s32 arg0) {
                 }
                 sp118 = (Obj88 *)func_8022F4AC((PORT_RET(s32, void *)) obj, 0x1E00, PORT_PTR(EN->unk4C));
                 if (sp118 != NULL) {
-                    func_80249648(arg0, (UnkObj *)sp118, sp118->unk8);
+                    func_80249648(arg0, (UnkStructA *)sp118, sp118->unk8);
                 }
                 func_8024891C(arg0);
                 sp74 = (Obj88 *)func_8022F4AC((PORT_RET(s32, void *)) obj, 0x10, PORT_PTR(EN->unk4C));
@@ -2231,7 +2192,7 @@ void func_8024D374(s32 arg0) {
 }
 
 void func_8024D20C(s32 arg0) {
-    UnkObj *obj;
+    UnkStructA *obj;
 
     if (func_80244BA4(arg0, 0x40)) {
         func_80244BE0(arg0, 1);
@@ -2243,7 +2204,7 @@ void func_8024D20C(s32 arg0) {
     } else {
         func_802444B8(arg0, 0x11);
     }
-    obj = (UnkObj *)func_802443F4(arg0);
+    obj = (UnkStructA *)func_802443F4(arg0);
     func_8028A81C(0xC, obj->unk40->unk10, obj->unk40->unk14 + 20.0f, obj->unk40->unk18, 0);
     if (M2C_FIELD(obj, s32 *, 8) & 0x01000000) {
         func_8026C660(0x1C);
@@ -2254,7 +2215,7 @@ void func_8024D20C(s32 arg0) {
 void func_8024D108(s32 arg0, s32 arg1) {
     UnkStruct_800AEDF0 *e = &D_800AEDF0[arg0];
     f32 len;
-    UnkObj *o = (UnkObj *)func_802443F4(arg0);
+    UnkStructA *o = (UnkStructA *)func_802443F4(arg0);
     s32 anim;
     f32 t;
 
@@ -2342,13 +2303,13 @@ void func_8024CC58(s32 arg0) {
 
     obj = (Obj88 *)func_802443F4(arg0);
     if (func_80243EB4(arg0, 0x2000)) {
-        UnkObj *o2;
+        UnkStructA *o2;
         i = D_800AEDF0[arg0].unkA4;
-        o2 = (UnkObj *)func_802443F4(i);
+        o2 = (UnkStructA *)func_802443F4(i);
         vec[2] = 70.0f;
         vec[1] = D_802ACE90[i];
         vec[0] = 180.0f;
-        func_8022FEAC(vec, o2->unk4C);
+        func_8022FEAC(vec, &o2->unk4C);
         D_802ACE90[i] -= 1.0f;
     }
     if (obj->unk40->unk48->unk4->unk4 == 2.0f && !(D_800AEDF0[arg0].unk38 & 0x80)) {
@@ -2456,7 +2417,7 @@ void func_8024C884(s32 arg0, f32 arg1, s32 arg2) {
 }
 
 void func_8024C804(s32 arg0) {
-    if (func_8024C4EC((UnkObj *)func_802443F4(arg0), 2) != D_800AEDF0[arg0].unk4C) {
+    if (func_8024C4EC((UnkStructA *)func_802443F4(arg0), 2) != D_800AEDF0[arg0].unk4C) {
         func_80244354(arg0, 0x200, 0);
         D_800AEDF0[arg0].unk4C = 0;
     }
@@ -2477,7 +2438,7 @@ void func_8024C53C(s32 arg0, void *arg1) {
             obj->unk40->unk14 += ((f32 *)arg1)[1];
             obj->unk40->unk18 += ((f32 *)arg1)[2];
         }
-        r = func_8024C4EC((UnkObj *)obj, 2);
+        r = func_8024C4EC((UnkStructA *)obj, 2);
         if (r != 0) {
             if ((D_802AC5D0 & 4) || arg0 == 0) {
                 func_802479F0(tbl.v);
@@ -2496,7 +2457,7 @@ void func_8024C53C(s32 arg0, void *arg1) {
         } else {
             func_802444B8(arg0, 0xC);
         }
-        r = func_8024C4EC((UnkObj *)obj, 2);
+        r = func_8024C4EC((UnkStructA *)obj, 2);
         if (r != 0) {
             func_80247928(arg0, r);
         } else {
@@ -2507,7 +2468,7 @@ void func_8024C53C(s32 arg0, void *arg1) {
     }
 }
 
-PORT_IP(s32) func_8024C4EC(UnkObj *obj, s32 arg1) {
+PORT_IP(s32) func_8024C4EC(UnkStructA *obj, s32 arg1) {
     PORT_IP(s32) r;
 
     M2C_FIELD(obj, s32 *, 0xC) &= ~0x1E00;
@@ -2526,7 +2487,7 @@ void func_8024C334(s32 arg0, PORT_IP(s32) arg1, u16 arg2, f32 *arg3) {
     t1 = func_80244BA4(arg0, 2);
     if (!t1) {
         func_80243D54(arg0); /* fake: unused call: its R2 store frees v0 for the flag (header); p10: getters for unk28 in place of obj/e->unk28, at each fake's place, no */
-        if (!((UnkObj *)obj)->unk40 && !((UnkObj *)obj)->unk40) {} /* fake: keeps unk28 loaded (t0); p10: no DEBUG_PRINT check of obj/obj->unk40 (single or `||`) anywhere in the branch */
+        if (!((UnkStructA *)obj)->unk40 && !((UnkStructA *)obj)->unk40) {} /* fake: keeps unk28 loaded (t0); p10: no DEBUG_PRINT check of obj/obj->unk40 (single or `||`) anywhere in the branch */
         if (!(e->unk38 & 0x1000)) {
             func_8024C314(arg0);
             e->unk38 |= 0x1000;
@@ -2556,7 +2517,7 @@ void func_8024C314(s32 arg0) {
 }
 
 void func_8024C29C(s32 arg0) {
-    UnkObj *o = (UnkObj *)func_802443F4(arg0);
+    UnkStructA *o = (UnkStructA *)func_802443F4(arg0);
 
     if (D_802AC918[arg0] > 0) {
         if (--D_802AC918[arg0] == 0) {
@@ -2578,7 +2539,7 @@ void func_8024C1E8(s32 arg0) {
 }
 
 void func_8024C0D8(s32 arg0) {
-    UnkObj *o = (UnkObj *)func_802443F4(arg0);
+    UnkStructA *o = (UnkStructA *)func_802443F4(arg0);
     f32 *p = &D_802ACA60[arg0];
     f32 t;
 
@@ -2601,7 +2562,7 @@ void func_8024C0D8(s32 arg0) {
 }
 
 void func_8024C04C(s32 arg0) {
-    UnkObj *o = (UnkObj *)func_802443F4(arg0); /* unused (its inlined load is the original's) */
+    UnkStructA *o = (UnkStructA *)func_802443F4(arg0); /* unused (its inlined load is the original's) */
 
     if (func_80270714((s16)arg0) == 0) {
         func_80244354(arg0, 0x8000, 0);
@@ -2612,14 +2573,14 @@ void func_8024C04C(s32 arg0) {
 }
 
 void func_8024BFE0(s32 arg0) {
-    if (PORT_FIELD(PORT_FIELD(PORT_FIELD(PORT_FIELD(((UnkObj *)func_802443F4(arg0)), void **, 0x40, Port_UnkStructA, unk40), void **, 0x48, Port_UnkStructA_40, unk48), void **, 4, Port_UnkStructA_40_48, unk4), s32 *, 8, Port_UnkStructA_40_48_4, unk4[4]) & 0x40) {
+    if (PORT_FIELD(PORT_FIELD(PORT_FIELD(PORT_FIELD(((UnkStructA *)func_802443F4(arg0)), void **, 0x40, Port_UnkStructA, unk40), void **, 0x48, Port_UnkStructA_40, unk48), void **, 4, Port_UnkStructA_40_48, unk4), s32 *, 8, Port_UnkStructA_40_48_4, unk4[4]) & 0x40) {
         func_80244354(arg0, 0x04000020, 0);
     }
 }
 
 void func_8024BF04(s32 arg0) {
     UnkStruct_800AEDF0 *p = &D_800AEDF0[arg0];
-    UnkObj *obj = (UnkObj *)func_802443F4(arg0);
+    UnkStructA *obj = (UnkStructA *)func_802443F4(arg0);
 
     if (p->unk2C != 0) {
         if (func_80274F8C(M2C_FIELD(p, s16 *, 0x1A), obj->unk40->unk10, obj->unk40->unk14, obj->unk40->unk18, arg0) == 0) {
@@ -2635,7 +2596,7 @@ void func_8024BF04(s32 arg0) {
 }
 
 void func_8024BD1C(s32 arg0) {
-    UnkObj *o = (UnkObj *)func_802443F4(arg0);
+    UnkStructA *o = (UnkStructA *)func_802443F4(arg0);
 
     if (D_800AEDF0[arg0].unk64 > 360.0f) {
         D_800AEDF0[arg0].unk64 -= 360.0f;
@@ -2667,7 +2628,7 @@ void func_8024BD1C(s32 arg0) {
 }
 
 void func_8024BC94(s32 arg0) {
-    if (PORT_FIELD(PORT_FIELD(PORT_FIELD(PORT_FIELD(((UnkObj *)func_802443F4(arg0)), void **, 0x40, Port_UnkStructA, unk40), void **, 0x48, Port_UnkStructA_40, unk48), void **, 4, Port_UnkStructA_40_48, unk4), s32 *, 8, Port_UnkStructA_40_48_4, unk4[4]) & 0x40) {
+    if (PORT_FIELD(PORT_FIELD(PORT_FIELD(PORT_FIELD(((UnkStructA *)func_802443F4(arg0)), void **, 0x40, Port_UnkStructA, unk40), void **, 0x48, Port_UnkStructA_40, unk48), void **, 4, Port_UnkStructA_40_48, unk4), s32 *, 8, Port_UnkStructA_40_48_4, unk4[4]) & 0x40) {
         func_80244354(arg0, 0x20, 0);
         func_80243D90(arg0, 0x10000, 0);
         func_802444B8(arg0, 0);
@@ -2683,7 +2644,7 @@ void func_8024BC20(s32 arg0) {
 }
 
 void func_8024BBA4(s32 arg0) {
-    if (PORT_FIELD(PORT_FIELD(PORT_FIELD(PORT_FIELD(((UnkObj *)func_802443F4(arg0)), void **, 0x40, Port_UnkStructA, unk40), void **, 0x48, Port_UnkStructA_40, unk48), void **, 4, Port_UnkStructA_40_48, unk4), s32 *, 8, Port_UnkStructA_40_48_4, unk4[4]) & 0x40) {
+    if (PORT_FIELD(PORT_FIELD(PORT_FIELD(PORT_FIELD(((UnkStructA *)func_802443F4(arg0)), void **, 0x40, Port_UnkStructA, unk40), void **, 0x48, Port_UnkStructA_40, unk48), void **, 4, Port_UnkStructA_40_48, unk4), s32 *, 8, Port_UnkStructA_40_48_4, unk4[4]) & 0x40) {
         func_80244354(arg0, 0x20, 0);
         func_80243D90(arg0, 0x200000, 0);
     }
@@ -2692,7 +2653,7 @@ void func_8024BBA4(s32 arg0) {
 void func_8024B444(s32 arg0, f32 *arg1) {
     s32 t1;
     s32 blocked;
-    UnkObj *o2;
+    UnkStructA *o2;
     f32 old;
     s32 t3;
     f32 dist;
@@ -2702,7 +2663,7 @@ void func_8024B444(s32 arg0, f32 *arg1) {
     f32 vec[3];
     s32 other;
     UnkStruct_800AEDF0 *e;
-    UnkObj *o;
+    UnkStructA *o;
     PORT_IP(s32) found;
     s32 i;
     s32 j;
@@ -2733,11 +2694,11 @@ void func_8024B444(s32 arg0, f32 *arg1) {
         }
         old = D_800AEDF0[other].unkC0;
         D_800AEDF0[other].unkC0 += D_800AEDF0[other].unkC4;
-        o2 = (UnkObj *)func_802443F4(other);
+        o2 = (UnkStructA *)func_802443F4(other);
         vec[2] = D_800AEDF0[other].unkC0;
         vec[1] = 60.0f;
         vec[0] = 180.0f;
-        out = o2->unk4C;
+        out = &o2->unk4C;
         func_8022FEAC(vec, out);
         func_80231434(o2);
     }
@@ -2780,7 +2741,7 @@ void func_8024B444(s32 arg0, f32 *arg1) {
             vec[2] = old;
             vec[1] = 60.0f;
             vec[0] = 180.0f;
-            func_8022FEAC(vec, o2->unk4C);
+            func_8022FEAC(vec, &o2->unk4C);
             func_80231434(o2);
         }
     }
@@ -2800,10 +2761,10 @@ void func_8024B444(s32 arg0, f32 *arg1) {
                     func_80243D90(arg0, 0x10, 0);
                 }
             } else if (func_80243EB4(arg0, 0x2000)) {
-                o2 = (UnkObj *) func_802443F4(e->unkA8); vec[2] = 100.0f;
+                o2 = (UnkStructA *) func_802443F4(e->unkA8); vec[2] = 100.0f;
                 vec[1] = 60.0f;
                 vec[0] = 180.0f;
-                func_8022FEAC(vec, o2->unk4C);
+                func_8022FEAC(vec, &o2->unk4C);
             }
         }
         if (e->unk6C < 0.0f) {
@@ -2814,10 +2775,10 @@ void func_8024B444(s32 arg0, f32 *arg1) {
                     func_80243D90(arg0, 0x10, 0);
                 }
             } else if (func_80243EB4(arg0, 0x2000)) {
-                o2 = (UnkObj *) func_802443F4(e->unkA8); vec[2] = 30.0f;
+                o2 = (UnkStructA *) func_802443F4(e->unkA8); vec[2] = 30.0f;
                 vec[1] = 60.0f;
                 vec[0] = 180.0f;
-                func_8022FEAC(vec, o2->unk4C);
+                func_8022FEAC(vec, &o2->unk4C);
             }
         }
         func_80243D90(arg0, 2, 0);
@@ -2826,12 +2787,12 @@ void func_8024B444(s32 arg0, f32 *arg1) {
 }
 
 void func_8024B1CC(s32 arg0) {
-    UnkObj *obj;
+    UnkStructA *obj;
     UnkStruct_800AEDF0 *p;
     s32 t;
 
     p = &D_800AEDF0[arg0];
-    obj = (UnkObj *)func_802443F4(arg0);
+    obj = (UnkStructA *)func_802443F4(arg0);
     t = --p->unk78;
     if (t == 0) {
         if (func_80243EB4(arg0, 4)) {
@@ -2876,10 +2837,10 @@ void func_8024B028(s32 arg0) {
     s32 r;
     s32 g;
     s32 b;
-    UnkModel *model;
+    UnkStructA_40 *model;
     f32 level;
     UnkStruct_800AEDF0 *e = &D_800AEDF0[arg0];
-    UnkObj *o = e->unk28;
+    UnkStructA *o = e->unk28;
 
     e->unk8C += e->unk88;
     switch (e->unk84) {
@@ -3117,7 +3078,7 @@ void func_8024A824(s32 arg0, s32 arg1, f32 arg2, s32 arg3, s32 arg4, s32 arg5, s
 
 void func_8024A6B4(s32 arg0, f32 arg1) {
     UnkStruct_800AEDF0 *e = &D_800AEDF0[arg0];
-    UnkObj *o = (UnkObj *)func_802443F4(arg0);
+    UnkStructA *o = (UnkStructA *)func_802443F4(arg0);
     f32 lo;
     f32 hi;
 
@@ -3322,10 +3283,10 @@ void func_80249E30(s32 arg0) {
 }
 
 void func_80249D74(s32 arg0) {
-    UnkObj *o;
+    UnkStructA *o;
 
     if (!func_80243EB4(arg0, 0x20000)) {
-        o = (UnkObj *)func_802443F4(arg0);
+        o = (UnkStructA *)func_802443F4(arg0);
         func_80243D90(arg0, 0x20000, 1);
         D_800AEDF0[arg0].unkB8 = 60;
         D_800AEDF0[arg0].unkB4 = (PORT_IP(s32))func_80231274(0x4E, 0x11200000, 0xD0, o);
@@ -3387,9 +3348,9 @@ void func_80249AD4(s32 arg0) {
 
 void func_80249A30(s32 arg0) {
     Unk8026DCAC ipos;
-    UnkObj *obj;
+    UnkStructA *obj;
 
-    obj = (UnkObj *)func_802443F4(arg0);
+    obj = (UnkStructA *)func_802443F4(arg0);
     func_8026DCAC(obj->unk40->unk10, obj->unk40->unk14, obj->unk40->unk18, &ipos, 2);
     if (func_8026E278(func_8026D7D8(ipos.i[0], ipos.i[1], ipos.i[2]))) {
         func_80244354(arg0, 0x10, 1);
@@ -3399,10 +3360,10 @@ void func_80249A30(s32 arg0) {
 }
 
 void func_802498D4(s32 arg0, f32 arg1) {
-    UnkObj *obj;
+    UnkStructA *obj;
     PORT_IP(s32) r;
 
-    obj = (UnkObj *)func_802443F4(arg0);
+    obj = (UnkStructA *)func_802443F4(arg0);
     r = PORT_INT(func_8022F4AC((PORT_RET(s32, void *)) obj, 2, PORT_PTR(D_800AEDF0[arg0].unk4C)));
     if (r != 0 && arg1 > 0.0f) {
         if (--D_802AC948[arg0] == 0) {
@@ -3437,12 +3398,12 @@ void func_802497D8(s32 arg0) {
     func_80244354(arg0, 1, 1);
 }
 
-void func_80249648(s32 arg0, UnkObj *arg1, s32 arg2) {
+void func_80249648(s32 arg0, UnkStructA *arg1, s32 arg2) {
     UnkStruct_800AEDF0 *p = &D_800AEDF0[arg0];
-    UnkObj *obj;
+    UnkStructA *obj;
 
     if (func_802452AC(arg0, 0x610400)) {
-        obj = (UnkObj *)func_802443F4(arg0);
+        obj = (UnkStructA *)func_802443F4(arg0);
         if (!(D_802A01B0 & 2) && (arg2 & 0x1E00) && PORT_FIELD(obj, PORT_IP(s32) *, 0x44, Port_UnkStructA, unk44) == 0) {
             if ((D_802AC5D0 & 4) || arg0 == 0) {
                 func_8026C660(0x196);
@@ -3465,10 +3426,10 @@ void func_80249648(s32 arg0, UnkObj *arg1, s32 arg2) {
 }
 
 void func_8024946C(s32 arg0, s32 arg1) {
-    UnkObj *o;
+    UnkStructA *o;
     f32 pos[3];
 
-    o = (UnkObj *)func_802443F4(arg0);
+    o = (UnkStructA *)func_802443F4(arg0);
     if (!func_80244BA4(arg0, 0x1000)) {
         switch (arg1) {
             case 0:
@@ -3698,10 +3659,10 @@ void func_8024878C(s32 arg0) {
 void func_8024857C(s32 arg0) {
     s32 t1;
     Cell5_5E3F0 c;
-    UnkObj *obj;
+    UnkStructA *obj;
     s32 r;
 
-    obj = (UnkObj *)func_802443F4(arg0);
+    obj = (UnkStructA *)func_802443F4(arg0);
     func_8026DCAC(obj->unk40->unk10, obj->unk40->unk14, obj->unk40->unk18, &c, 2);
     if (c.h == 0.0f) {
         r = func_8026D7D8(c.x, c.y, c.z) & 0xF;
@@ -3846,10 +3807,10 @@ void func_80248148(s32 arg0, s32 arg1) {
 
 void func_80247F90(s32 arg0) {
     Obj88 *other;
-    UnkObj *self;
+    UnkStructA *self;
     f32 vec[3];
 
-    self = (UnkObj *)func_802443F4(arg0);
+    self = (UnkStructA *)func_802443F4(arg0);
     other = (Obj88 *)func_802443F4(D_800AEDF0[arg0].unkA8);
     vec[2] = D_800AEDF0[arg0].unkC0 + 100.0f;
     vec[1] = 60.0f;
@@ -3876,14 +3837,14 @@ void func_80247F90(s32 arg0) {
     func_80244354(arg0, 0x21C0, 0);
 }
 
-void func_80247D74(s32 arg0, f32 arg1, f32 arg2, s32 arg3, UnkObj *arg4) {
-    UnkObj *obj;
+void func_80247D74(s32 arg0, f32 arg1, f32 arg2, s32 arg3, UnkStructA *arg4) {
+    UnkStructA *obj;
     f32 angle;
     f32 a[3];
     f32 b[3];
     Vec3f dir;
 
-    obj = (UnkObj *)func_802443F4(arg0);
+    obj = (UnkStructA *)func_802443F4(arg0);
     ((Obj88 *)obj)->unk68 = arg1;
     D_802ACA44 = arg2;
     D_802AC8C8 = arg3;
@@ -3916,12 +3877,12 @@ void func_80247D74(s32 arg0, f32 arg1, f32 arg2, s32 arg3, UnkObj *arg4) {
 }
 
 void func_80247CD0(s32 arg0, s32 arg1) {
-    UnkObj *o;
+    UnkStructA *o;
 
     D_802AC930[arg0] = arg1;
     func_80244354(arg0, 0x30020, 1);
     D_802AC918[arg0] = 0;
-    o = (UnkObj *)(func_802443F4(arg0));
+    o = (UnkStructA *)(func_802443F4(arg0));
     D_802ACA48[arg0] = o->unk40->unk20;
     D_802ACA60[arg0] = D_802ACA48[arg0];
     func_80231408(o, 0x40000);
@@ -3936,10 +3897,10 @@ void func_80247C50(s32 arg0) {
 void func_80247A54(s32 arg0, PORT_IP(s32) arg1, s32 arg2, s32 arg3) {
     Tbl3_5E3F0 tbl;
     s32 other;
-    UnkObj *obj;
+    UnkStructA *obj;
 
     tbl = *(Tbl3_5E3F0 *)D_802A0D88;
-    obj = (UnkObj *)func_802443F4(arg0);
+    obj = (UnkStructA *)func_802443F4(arg0);
     if (func_80244BA4(arg0, 0x200000)) {
         other = func_802441AC(PORT_FIELD(obj, void **, 0x44, Port_UnkStructA, unk44));
         func_80244BE0(other, 1);
@@ -3983,7 +3944,7 @@ void func_802479F0(s32 *arg0) {
 void func_8024796C(s32 arg0, s32 arg1) {
     void *sp1C;
 
-    sp1C = ((UnkObj *)func_802443F4(arg0));
+    sp1C = ((UnkStructA *)func_802443F4(arg0));
     func_80244354(arg0, 0x108, 0);
     func_80244354(arg0, 0x10000, 1);
     D_802AC918[arg0] = arg1;
@@ -4064,7 +4025,7 @@ void func_80246F00(s32 arg0, s32 arg1) {
     UnkStruct_800AEDF0 *e;
     s32 i;
     s32 r;
-    UnkObj *obj;
+    UnkStructA *obj;
 
     if (arg1 == 0 || !func_80243E18(1)) {
         switch (arg0) {
@@ -4150,7 +4111,7 @@ void func_80246F00(s32 arg0, s32 arg1) {
                             if (obj->unk40->unk14 != 20000.0f && !hit) {
                                 func_80231408(obj, flags | 0x80000);
                                 obj = *D_802ACF58;
-                                func_8022F808(obj, (f32 *)obj->unk58);
+                                func_8022F808(obj, (f32 *)&obj->unk58);
                                 if (!obj->unk40 && !obj->unk40) {} /* fake: obj crosses the call, so it takes s0 (p10: DEBUG_PRINT checks of obj, here or after the case; obj for *D_802ACF58 in the loop's calls: no) */
                                 func_8026C660(0x1EA);
                                 break;
@@ -4176,7 +4137,7 @@ void func_80246F00(s32 arg0, s32 arg1) {
                 (*D_802ACF58)->unk40->unk14 = func_8026E8B8();
                 func_802313DC(*D_802ACF58, 0x01000000);
                 obj = *D_802ACF58;
-                func_8022F808(obj, (f32 *)obj->unk58);
+                func_8022F808(obj, (f32 *)&obj->unk58);
                 if (!obj->unk40 && !obj->unk40) {} /* fake: likewise */
             }
             if (D_802ACF58 == NULL) {
@@ -4197,11 +4158,11 @@ void func_80246F00(s32 arg0, s32 arg1) {
 }
 
 void func_80246D74(s32 arg0) {
-    UnkObj *obj;
+    UnkStructA *obj;
     s32 id = arg0;
     UnkStruct_800AEDF0 *p = &D_800AEDF0[id];
 
-    obj = (UnkObj *)func_802443F4(id);
+    obj = (UnkStructA *)func_802443F4(id);
     if (func_80243EB4(id, 4)) {
         func_80270770(id, 1);
         p->unk2C = 0;
@@ -4226,7 +4187,7 @@ void func_80246D74(s32 arg0) {
 }
 
 void func_80246C3C(s32 arg0, s32 arg1, s32 arg2) {
-    UnkObj *obj = (UnkObj *)func_802443F4(arg0);
+    UnkStructA *obj = (UnkStructA *)func_802443F4(arg0);
 
     if (arg2 != 0) {
         func_80243D90(arg0, 0x100, 1);
@@ -4252,7 +4213,7 @@ void func_80246C3C(s32 arg0, s32 arg1, s32 arg2) {
 
 void func_8024694C(s32 arg0, s32 arg1, s32 arg2) {
     s32 other;
-    UnkObj *obj;
+    UnkStructA *obj;
 
     if (func_80243EB4(arg0, 0x2000)) {
         other = D_800AEDF0[arg0].unkA8;
@@ -4367,7 +4328,7 @@ void func_80246078() {
     f32 r[5];
     f32 pos[3];
     UnkStruct_800AEDF0 *p;
-    UnkObj *obj;
+    UnkStructA *obj;
     s32 i;
     s32 k;
     s32 m;
@@ -4378,7 +4339,7 @@ void func_80246078() {
     for (i = 0; i < 4; i++) {
         p = &D_800AEDF0[i];
         if ((p->unk24 == 1 || p->unk24 == 2) && p->unk14 != 0 && !func_80244BA4(i, 0x1000) && !func_80243EF0(i)) {
-            obj = (UnkObj *) func_802443F4(i);
+            obj = (UnkStructA *) func_802443F4(i);
             x[n] = obj->unk40->unk10;
             y[n] = obj->unk40->unk14;
             z[n] = obj->unk40->unk18;
@@ -4397,7 +4358,7 @@ void func_80246078() {
             do {
                 s32 j = func_80234248(n - 1);
                 if (used[j] == 0) {
-                    UnkObj *o = (UnkObj *) func_802443F4(i);
+                    UnkStructA *o = (UnkStructA *) func_802443F4(i);
                     o->unk40->unk10 = x[j];
                     o->unk40->unk14 = y[j];
                     o->unk40->unk18 = z[j];
@@ -4437,13 +4398,13 @@ void func_80246078() {
     m = 0;
     for (i = 0; i != 4; i++) {
         p = &D_800AEDF0[i];
-        obj = (UnkObj *) func_802443F4(i);
+        obj = (UnkStructA *) func_802443F4(i);
         if ((p->unk24 == 1 || p->unk24 == 2) && p->unk14 != 0 && !func_80244BA4(i, 0x1000) && !func_80243EF0(i)) {
             if (c[0] == 0) {
                 func_8022F808(obj, pos);
                 pos[1] += 50.0f;
                 func_8028A7CC(2, pos, 0);
-                func_8022F808(obj, (f32 *)PORT_AT(obj, 0x58, UnkObj, unk58));
+                func_8022F808(obj, (f32 *)PORT_AT(obj, 0x58, UnkStructA, unk58));
             } else {
                 obj->unk40->unk10 = x[m];
                 obj->unk40->unk14 = y[m];
@@ -4515,7 +4476,7 @@ void func_80245E2C(s32 arg0, s32 arg1) {
     if (v != -1.0f) {
         D_800AEDF0[arg0].unkC = v;
         if (arg0 != -1) {
-            M2C_FIELD(((UnkObj *)func_802443F4(arg0))->unk40, f32 *, 0x20) = v;
+            M2C_FIELD(((UnkStructA *)func_802443F4(arg0))->unk40, f32 *, 0x20) = v;
         }
     }
 }
@@ -4560,7 +4521,7 @@ void func_802459BC(s32 arg0) {
     s32 t1;
     s32 m;
     UnkStruct_800AEDF0 *p;
-    UnkObj *v;
+    UnkStructA *v;
     Obj88 *obj;
     s32 i;
 
@@ -4704,7 +4665,7 @@ void func_8024557C(s32 *arg0) {
 
 void func_802454F8(s32 arg0, s32 *arg1) {
     Unk8026DCAC out;
-    UnkModel *m = ((UnkObj *)func_802443F4(arg0))->unk40;
+    UnkStructA_40 *m = ((UnkStructA *)func_802443F4(arg0))->unk40;
 
     func_8026DCAC(m->unk10, m->unk14, m->unk18, &out, 2);
     arg1[0] = out.i[0];
@@ -4814,7 +4775,7 @@ void func_802450DC(s32 arg0) {
     func_80244354(id, 0x20, 0);
 }
 
-s32 func_80244FF8(UnkObj *arg0) {
+s32 func_80244FF8(UnkStructA *arg0) {
     s32 ret = 0;
     s32 id;
     s32 flag;
@@ -4878,14 +4839,14 @@ void func_80244E04(void *arg0) {
 }
 
 void func_80244C30(s32 arg0, s32 arg1) {
-    UnkObj *obj;
+    UnkStructA *obj;
     s32 t1;
     f32 vec[3];
     UnkStruct_800AEDF0 *p;
 
     p = &D_800AEDF0[arg0];
     if (p->unk2C != 0) {
-        obj = (UnkObj *)func_802443F4(arg0);
+        obj = (UnkStructA *)func_802443F4(arg0);
         func_80244BE0(arg0, arg1);
         p->unk2C = 0;
         func_80270BA4(obj);
@@ -4898,11 +4859,11 @@ void func_80244C30(s32 arg0, s32 arg1) {
             func_80244354(arg0, 0x20, 0);
         }
         if (func_80243EB4(arg0, 0x2000)) {
-            UnkObj *o2 = (UnkObj *)func_802443F4(p->unkA4);
+            UnkStructA *o2 = (UnkStructA *)func_802443F4(p->unkA4);
             vec[2] = 70.0f;
             vec[1] = 60.0f;
             vec[0] = 180.0f;
-            func_8022FEAC(vec, o2->unk4C);
+            func_8022FEAC(vec, &o2->unk4C);
         }
         func_80244354(arg0, 0x100, 0);
     }

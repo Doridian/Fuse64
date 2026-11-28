@@ -35,9 +35,9 @@ static void func_ovl0F_04_80046C70(void) {
  * is the parameter (its binding takes the call's line, after the body's
  * lines, which as1's schedule of the handler's block shows); panels keeps
  * the first for 80043480 */
-static void func_ovl0F_04_80043578(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_04_800487A8 *flags) {
+static void func_ovl0F_04_80043578(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_02_80048918 *flags) {
     s32 i;
-    UnkStruct_ovl0F_04_800487A8 *hidden; /* a guess: any held value fills this word (n - 1, a tile) */
+    UnkStruct_ovl0F_02_80048918 *hidden; /* a guess: any held value fills this word (n - 1, a tile) */
     UnkStruct_ovl0F_01_80048264 *panels;
 
     panels = p;

@@ -269,6 +269,13 @@ typedef struct UnkStruct_80225CC0 {
     /* 0x10 */ s32 unk10;
 } UnkStruct_80225CC0; /* size 0x14 */
 
+/* a page of the asset archive's cache (404C0's D_8014B008[256]), what
+ * func_8022638C fills in (926A0 reads its unk4 as a size) */
+typedef struct {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 unk4;
+} UnkStruct_8014B008; /* size 0x8 */
+
 /* A menu cursor position and the entries up, down, left and right of it
  * (995C0's func_8027F658). */
 typedef struct {

@@ -6,14 +6,6 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-/* the argument of func_ovl17_10_8004412C's tasks */
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ s16 unk2;
-    /* 0x04 */ s16 unk4;
-    /* 0x06 */ s16 unk6;
-} UnkStruct_ovl17_10_80046730; /* size 0x8 */
-
 /* a model moved by func_ovl17_10_80043754's task (D_ovl17_10_80046618) */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
@@ -24,14 +16,6 @@ typedef struct {
     /* 0x0C */ s16 unkC;
     /* 0x0E */ s16 unkE;
 } UnkStruct_ovl17_10_80046618; /* size 0x10 */
-
-/* a model moved by func_ovl17_10_800434CC's tasks (D_ovl17_10_80046628) */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s16 unk4;
-    /* 0x06 */ s16 unk6;
-    /* 0x08 */ s16 unk8;
-} UnkStruct_ovl17_10_80046628; /* size 0xC */
 
 void func_ovl17_10_80045198(s32);
 void func_ovl17_10_800451B0(s32);
@@ -78,7 +62,7 @@ s32 func_ovl17_10_80046290(s32, f32, f32, f32);
 
 void func_ovl17_10_80043010(void);
 void func_ovl17_10_80043034(void);
-void func_ovl17_10_80043990(UnkStruct_ovl17_10_80046730 *, s16, s16);
+void func_ovl17_10_80043990(UnkStruct_ovl0E_01_80046D20 *, s16, s16);
 void func_ovl17_10_80043D28(void);
 void func_ovl17_10_80043E14(void);
 void func_ovl17_10_80044048(f32, f32, f32, f32);
@@ -99,7 +83,7 @@ u8 D_ovl17_10_800466F0[0x24];
 s32 D_ovl17_10_80046714;
 s32 D_ovl17_10_80046718;
 Vec3f D_ovl17_10_80046720;
-UnkStruct_ovl17_10_80046730 D_ovl17_10_80046730[3];
+UnkStruct_ovl0E_01_80046D20 D_ovl17_10_80046730[3];
 UnkStruct_ovl17_01_80045858 D_ovl17_10_80046748[3];
 
 /* .data */
@@ -130,7 +114,7 @@ UnkStruct_ovl0C_01_8004A54C D_ovl17_10_80046570[3] = {
 UnkStruct_ovl17_10_80046618 D_ovl17_10_80046618[1] = {
     { NULL, 1000, -500, 500, 3500, 2500, 0 },
 };
-UnkStruct_ovl17_10_80046628 D_ovl17_10_80046628[5] = {
+UnkStruct_ovl17_07_80045680 D_ovl17_10_80046628[5] = {
     { NULL, 1200, -100, 400 },
     { NULL, 1000, -200, 500 },
     { NULL, 1000, -100, 200 },
@@ -402,7 +386,7 @@ void func_ovl17_10_80044048(f32 arg0, f32 arg1, f32 arg2, f32 arg3) {
 }
 
 void func_ovl17_10_8004412C(void) {
-    UnkStruct_ovl17_10_80046730 *arg;
+    UnkStruct_ovl0E_01_80046D20 *arg;
     UnkStruct_ovl0C_01_8004A54C *a;
     UnkStruct_ovl0C_01_8004A54C *b;
     f32 scale;
@@ -527,7 +511,7 @@ void func_ovl17_10_80043D28(void) {
     }
 }
 
-void func_ovl17_10_80043990(UnkStruct_ovl17_10_80046730 *arg0, s16 arg1, s16 arg2) {
+void func_ovl17_10_80043990(UnkStruct_ovl0E_01_80046D20 *arg0, s16 arg1, s16 arg2) {
     f32 xoff;
     s16 xs[3];
     s16 ys[3];
@@ -598,7 +582,7 @@ void func_ovl17_10_80043754(void) {
 }
 
 void func_ovl17_10_800434CC(void) {
-    UnkStruct_ovl17_10_80046628 *rec;
+    UnkStruct_ovl17_07_80045680 *rec;
     UnkStructA_40 *p;
     f32 speed;
     f32 a;

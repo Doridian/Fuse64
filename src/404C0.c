@@ -16,11 +16,6 @@
  */
 #include "common.h"
 
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-} UnkStruct_8014B008; /* size 0x8 */
-
 void func_80297ED0(s32, s32, uintptr_t);
 void func_80225E2C(s32);
 void func_802260A8(UnkStruct_80225CC0 *, u32);

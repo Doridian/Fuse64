@@ -9,14 +9,6 @@
  * (nonmatching/overlays/ovl_0E_05) as D_ovl0E_01_80046BB0.
  */
 
-/* the argument of func_ovl0E_01_80044B5C's task: unk2/unk4 a tile */
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ s16 unk2;
-    /* 0x04 */ s16 unk4;
-    /* 0x06 */ s16 unk6;
-} UnkStruct_ovl0E_01_80046D20; /* size 0x8 */
-
 void func_ovl0E_01_800456B8(s32);
 void func_ovl0E_01_800456D0(s32);
 f32 func_ovl0E_01_800456E0(void);

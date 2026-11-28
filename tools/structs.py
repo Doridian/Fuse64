@@ -56,8 +56,9 @@ ALLOW_B = {
     ("func_802391F0", "ret"): "the running task's argument (530C0.c: D_802AC344->unk10), whatever "
                               "each task was started with",
 }
-# (d) lists layouts at least this big with at least this many fields
-D_MIN_SIZE, D_MIN_FIELDS = 0x10, 3
+# (d) lists layouts at least this big with at least this many fields (any
+# structure of two fields or more: a one-field one is its field)
+D_MIN_SIZE, D_MIN_FIELDS = 0, 2
 # (d)s that are different things with one layout: names -> why (a group is allowed when
 # all its names are in one entry)
 ALLOW_D = [
@@ -68,6 +69,25 @@ ALLOW_D = [
      "four words: 7D840's RectI is a clipped rectangle (func_80264F98's), UnkStruct_802AD680 85A10's "
      "settings (its fields named flags, maxDMAs, maxBuffers, maxCmds), and 0A_06's a table of "
      "its .data"),
+    (("Anim_ovl0B_03", "UnkStruct_8022DBBC"),
+     "a model object and two words: 0B_03's Anim an animated piece of the background (its frames left and "
+     "step), UnkStruct_8022DBBC ZeroJump 0x183A's task argument (a sound and its count)"),
+    (("Gfx_80225840", "UnkStruct_802AD6A0_0"),
+     "two words: gfx.h's Gfx_80225840 a display list command (gbi.h's Gfx), 85A10's an audio command "
+     "(abi.h's Acmd)"),
+    (("MeshEntry", "Trio_0D01", "UnkStruct_ovl0F_02_80048918", "Vec3i"),
+     "three words: 47A80's MeshEntry a mesh entry (type, ..., display list), types.h's Trio_0D01 a 0D set-up "
+     "table's entry and UnkStruct_ovl0F_02_80048918 a 0F switch's state, AA580's Vec3i func_8028FD88's "
+     "result"),
+    (("Pair_ovl0B_03", "UnkStruct_8014B008", "UnkTexFrame"),
+     "two words: 0B_03's Pair a background animation step (frame, duration), structs.h's "
+     "UnkStruct_8014B008 an asset archive cache page, model.h's UnkTexFrame a texture animation's "
+     "(picture, duration)"),
+    (("UnkStruct_802A1630", "UnkStruct_ovl0F_02_80048614"),
+     "two halfwords: 9A5F0's a glyph's extent, 0F_02's a mover script's (frame, command)"),
+    (("UnkStruct_802B01B8", "UnkStruct_ovl0E_01_80046D20"),
+     "four halfwords: 97610's D_802B01B8[3] (unk0 an id func_8026CCBC takes), types.h's a 0E/17 "
+     "task's argument (a tile)"),
 ]
 
 

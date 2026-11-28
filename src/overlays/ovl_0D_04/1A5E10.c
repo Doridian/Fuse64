@@ -43,12 +43,6 @@
  * (IDO -O3 emits a file's functions in reverse; docs/DECOMPILING.md).
  */
 
-typedef struct {
-    s32 unk0;
-    s32 unk4;
-    s32 unk8;
-} Trio_0D04;
-
 void func_ovl0D_04_80045908(s32); /* 0xC00 */
 void func_ovl0D_04_80045918(s32 *); /* 0xC02 */
 void func_ovl0D_04_80045948(s32, s32, s32, s32, s32, s32); /* 0xD05 */
@@ -184,7 +178,7 @@ static void func_ovl0D_04_80044D50(void);
 static void func_ovl0D_04_80044D58(void);
 static void func_ovl0D_04_80044D60(void);
 static void func_ovl0D_04_80044D68(void);
-static void func_ovl0D_04_80044D88(Trio_0D04 *, s32);
+static void func_ovl0D_04_80044D88(Trio_0D01 *, s32);
 static void func_ovl0D_04_80044D90(void);
 static void func_ovl0D_04_800455A0(void);
 static void func_ovl0D_04_800455A8(void);
@@ -257,7 +251,7 @@ UnkStruct_ovl0C_01_8004A54C D_ovl0D_04_80046E98[1] = {
 UnkStruct_ovl0C_01_8004A54C D_ovl0D_04_80046ED0[1] = {
     { NULL, -1, 0x167, 0, 0x400, 0x20, 0x400, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
-Trio_0D04 D_ovl0D_04_80046F08[5] = {
+Trio_0D01 D_ovl0D_04_80046F08[5] = {
     { 0, 9, 0xE7 },
     { 1, 10, 0xE8 },
     { 2, 2, 0xE0 },
@@ -429,7 +423,7 @@ static void func_ovl0D_04_80044D90(void) {
     }
 }
 
-static void func_ovl0D_04_80044D88(Trio_0D04 *t, s32 count) {
+static void func_ovl0D_04_80044D88(Trio_0D01 *t, s32 count) {
     s32 i;
 
     for (i = 0; i < count; i++) {

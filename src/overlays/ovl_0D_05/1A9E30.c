@@ -26,12 +26,6 @@
  * (IDO -O3 emits a file's functions in reverse; docs/DECOMPILING.md).
  */
 
-typedef struct {
-    s32 unk0;
-    s32 unk4;
-    s32 unk8;
-} Trio05;
-
 void func_ovl0D_05_80044BF8(s32); /* 0xC00 */
 void func_ovl0D_05_80044C08(s32 *); /* 0xC02 */
 void func_ovl0D_05_80044C38(s32, s32, s32, s32, s32, s32); /* 0xD05 */
@@ -131,7 +125,7 @@ static void func_ovl0D_05_80044870(void);
 static void func_ovl0D_05_80044288(UnkStruct_ovl0C_01_8004A54C *, s32 *);
 static void func_ovl0D_05_80044280(UnkStruct_ovl0C_01_8004A54C *, s32);
 static void func_ovl0D_05_80043788(void);
-static void func_ovl0D_05_80043780(Trio05 *, s32);
+static void func_ovl0D_05_80043780(Trio_0D01 *, s32);
 static void func_ovl0D_05_80043760(void);
 static void func_ovl0D_05_80043758(void);
 static void func_ovl0D_05_80043750(void);
@@ -188,7 +182,7 @@ UnkStruct_ovl0C_01_8004A54C D_ovl0D_05_80045FD4[3] = {
 };
 /* the flags set once each of D_ovl0D_05_80045FD4 is done */
 s32 D_ovl0D_05_8004607C[3] = { 0x40F, 0x410, 0x411 };
-Trio05 D_ovl0D_05_80046088[5] = {
+Trio_0D01 D_ovl0D_05_80046088[5] = {
     { 0, 7, 0xE5 },
     { 1, 9, 0xE7 },
     { 2, 9, 0xE7 },

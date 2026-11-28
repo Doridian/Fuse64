@@ -118,7 +118,7 @@ static int port_cell_past(s32 layer, s32 cell, s32 slot, u16 v) {
 
 
 void free(void *);
-void func_8022638C(u32, void *);
+void func_8022638C(u32, UnkStruct_8014B008 *);
 void func_802297B8(PORT_RET(s32, void *), s32, s32, s32);
 s32 func_8022984C(void *, s32);
 f32 func_8022DF68(f32 *, f32 *);

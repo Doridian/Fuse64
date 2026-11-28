@@ -8,14 +8,6 @@
  * and what it calls, with one model pair where ovl_17_10 has three).
  */
 
-/* the argument of func_ovl0E_02_800444BC's task: unk2/unk4 a tile */
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ s16 unk2;
-    /* 0x04 */ s16 unk4;
-    /* 0x06 */ s16 unk6;
-} UnkStruct_ovl0E_02_800467A0; /* size 0x8 */
-
 void func_ovl0E_02_800450A8(s32);
 void func_ovl0E_02_800450C0(s32);
 f32 func_ovl0E_02_800450D0(void);
@@ -92,7 +84,7 @@ void func_ovl0E_02_800438F4(void);
 void func_ovl0E_02_8004392C(void);
 void func_ovl0E_02_80043A50(s32);
 void func_ovl0E_02_80043C08(void);
-void func_ovl0E_02_8004405C(UnkStruct_ovl0E_02_800467A0 *, s16, s16);
+void func_ovl0E_02_8004405C(UnkStruct_ovl0E_01_80046D20 *, s16, s16);
 void func_ovl0E_02_800442D4(void);
 void func_ovl0E_02_80044308(void);
 void func_ovl0E_02_800444BC(void);
@@ -135,7 +127,7 @@ u8 D_ovl0E_02_80046780[0x4]; /* unused (func_ovl0E_02_80044D50) */
 s32 D_ovl0E_02_80046784;
 s32 D_ovl0E_02_80046788;
 Vec3f D_ovl0E_02_80046790;
-UnkStruct_ovl0E_02_800467A0 D_ovl0E_02_800467A0[1];
+UnkStruct_ovl0E_01_80046D20 D_ovl0E_02_800467A0[1];
 UnkStruct_ovl0C_01_8004A9C8 D_ovl0E_02_800467A8;
 
 /* .data */
@@ -318,7 +310,7 @@ void func_ovl0E_02_80044780(void) {
 
 /* drops the model pair from 10000 at the tile its argument gives */
 void func_ovl0E_02_800444BC(void) {
-    UnkStruct_ovl0E_02_800467A0 *arg;
+    UnkStruct_ovl0E_01_80046D20 *arg;
     UnkStruct_ovl0C_01_8004A54C *a;
     UnkStruct_ovl0C_01_8004A54C *b;
 
@@ -405,7 +397,7 @@ void func_ovl0E_02_80044308(void) {
 /* picks a tile for each of arg0's entries around the one func_ovl0E_02_80045100
  * gives for func_ovl0E_02_80045290's position, retrying where
  * func_ovl0E_02_80045118 gives 0xF (at most 6 tries) */
-void func_ovl0E_02_8004405C(UnkStruct_ovl0E_02_800467A0 *arg0, s16 arg1, s16 arg2) {
+void func_ovl0E_02_8004405C(UnkStruct_ovl0E_01_80046D20 *arg0, s16 arg1, s16 arg2) {
     s16 i;
     s16 j;
     s16 tries;

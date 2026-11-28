@@ -187,21 +187,6 @@ static void func_ovl0F_04_80045E80(UnkStructA **arg0);
  * stubs they leave.
  */
 
-/* a panel's tile and what it is set to */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-} UnkStruct_ovl0F_04_800487A8; /* size 0xC */
-
-/* one step of a mover's route (D_ovl0F_04_800484BC) */
-typedef struct {
-    /* 0x00 */ u16 unk0;
-    /* 0x02 */ u8 unk2;
-    /* 0x03 */ u8 unk3;
-    /* 0x04 */ f32 unk4;
-} UnkStruct_ovl0F_04_800484BC; /* size 0x8 */
-
 #include "gfx.h"
 
 /* gbi.h's _SHIFTL */
@@ -312,7 +297,7 @@ static void func_ovl0F_04_80046D14(void);
 void func_ovl0F_04_80046C58(void);
 void func_ovl0F_04_80046BFC(f32, f32, f32);
 s32 func_ovl0F_04_80046BC8(s32, void *);
-static void func_ovl0F_04_80043578(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_04_800487A8 *flags);
+static void func_ovl0F_04_80043578(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_02_80048918 *flags);
 static void func_ovl0F_04_800460CC(s32 n1, s32 n2);
 static void func_ovl0F_04_80046244(UnkStruct_ovl0F_02_800489F4 *door);
 static void func_ovl0F_04_8004623C(void);
@@ -335,8 +320,8 @@ void func_ovl0F_04_80044084(void);
 void func_ovl0F_04_8004624C(s32 arg0);
 static void func_ovl0F_04_80043E04(s32 flag);
 static void func_ovl0F_04_80043BC8(s32 i);
-static void func_ovl0F_04_800439D4(UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_04_800487A8 *flags);
-static s32 func_ovl0F_04_80043398(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_04_800487A8 *flags);
+static void func_ovl0F_04_800439D4(UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_02_80048918 *flags);
+static s32 func_ovl0F_04_80043398(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_02_80048918 *flags);
 void func_ovl0F_04_800439DC(void);
 void func_ovl0F_04_8004394C(UnkStructA *obj);
 void func_ovl0F_04_800438F0(UnkStructA *obj);
@@ -393,7 +378,7 @@ u16 D_ovl0F_04_800484A4[][2] = {
     { 0, 0x62 }, { 0x1E, 0 }, { 0x5A, 1 }, { 0x96, 2 }, { 0x97, 0x63 }, { 0x1C3, 0x64 },
 };
 /* three routes of five steps */
-UnkStruct_ovl0F_04_800484BC D_ovl0F_04_800484BC[3][5] = {
+UnkStruct_ovl0F_01_8004815C D_ovl0F_04_800484BC[3][5] = {
     {
         { 0x32, 0x60, 1, 0.01f },
         { 0x32, 0x40, 2, 0.1f },
@@ -437,7 +422,7 @@ UnkStruct_ovl0F_01_80048264 D_ovl0F_04_800486CC[5] = {
     { &D_ovl0F_04_80048A88[3], 0x25B, 0, 24.0f, 4.0f, 20.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
     { &D_ovl0F_04_80048A88[4], 0x25B, 0, 23.0f, 4.0f, 22.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
 };
-UnkStruct_ovl0F_04_800487A8 D_ovl0F_04_800487A8[5] = {
+UnkStruct_ovl0F_02_80048918 D_ovl0F_04_800487A8[5] = {
     { 1, 0x1410, -1 }, { 1, 0x1410, -1 }, { 1, 0x1410, -1 }, { 1, 0x1410, -1 }, { 1, 0x1410, -1 },
 };
 /* passed to func_ovl0F_04_80048030: three 12-byte records */
@@ -587,7 +572,7 @@ static void func_ovl0F_04_80046244(UnkStruct_ovl0F_02_800489F4 *door) {
 
 /* case 0x52's: the panel the player stands on, if it is still up (its stub
  * is 80043398, among the handler's) */
-static s32 func_ovl0F_04_80043398(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_04_800487A8 *flags) {
+static s32 func_ovl0F_04_80043398(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_02_80048918 *flags) {
     s32 i;
     s32 none; /* -1 held for the return (a guess: any held value fills this word) */
 
@@ -1008,7 +993,7 @@ void func_ovl0F_04_80044084(void) {
     s32 i;
     UnkStruct_ovl0F_01_800481D4 *st; /* unused, as rec, step and player: with fewer, unk16's store addresses the symbol (2 words) */
     UnkStruct_ovl0F_01_80048264 *rec;
-    UnkStruct_ovl0F_04_800484BC *step;
+    UnkStruct_ovl0F_01_8004815C *step;
     UnkStructA *obj;
     UnkStructA *player;
     s32 hit;
@@ -1285,7 +1270,7 @@ static void func_ovl0F_04_80043BC8(s32 i) {
  * cleared (inlined into 800439DC just below, its lines before the caller's,
  * its stub just before it; the code was 800439DC's own, with the caller
  * renumbered by `#line`s), as ovl_0F_02's 8004393C */
-static void func_ovl0F_04_800439D4(UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_04_800487A8 *flags) {
+static void func_ovl0F_04_800439D4(UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_02_80048918 *flags) {
     if (p->unk1C == 0.0f) {
         func_ovl0F_04_800471B8((s32) p->unkC - 1, (s32) p->unk10,
                                (s32) p->unk14 - 1, (s32) p->unkC,

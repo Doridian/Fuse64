@@ -537,4 +537,50 @@ typedef struct {
     /* 0x40 */ void (*unk40)(UnkStructA_40 *, Gfx_80225840 **);
 } UnkStruct_ovl0B_01_80045E34; /* size 0x44 */
 
+/* a table entry the 0D overlays' set-up walks, three words handed to one
+ * function (0D_01..06) */
+typedef struct {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ s32 unk8;
+} Trio_0D01; /* size 0xC */
+
+/* a switch's or panel's state (0F_02, 0F_04) */
+typedef struct {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ s32 unk8;
+} UnkStruct_ovl0F_02_80048918; /* size 0xC */
+
+/* one step of a mover's route (0F_01, 0F_02, 0F_04) */
+typedef struct {
+    /* 0x00 */ u16 unk0; /* frames */
+    /* 0x02 */ u8 unk2;  /* heading */
+    /* 0x03 */ u8 unk3;  /* next step */
+    /* 0x04 */ f32 unk4; /* acceleration */
+} UnkStruct_ovl0F_01_8004815C; /* size 0x8 */
+
+/* the argument of a task: unk2/unk4 a tile (0E_01..03, 17_01/06/08/10) */
+typedef struct {
+    /* 0x00 */ s16 unk0;
+    /* 0x02 */ s16 unk2;
+    /* 0x04 */ s16 unk4;
+    /* 0x06 */ s16 unk6;
+} UnkStruct_ovl0E_01_80046D20; /* size 0x8 */
+
+/* the argument a task runs with (ZeroJump 0x1905, func_802391F0): an
+ * object list at 0x2C (0F_07, 0F_10) */
+typedef struct {
+    /* 0x00 */ u8 unk0[0x2C];
+    /* 0x2C */ UnkStructA **unk2C;
+} UnkStruct_ovl0F_07_80045390;
+
+/* a model a task turns or moves, and where it stands (17_07, 17_10) */
+typedef struct {
+    /* 0x00 */ UnkStructA *unk0;
+    /* 0x04 */ s16 unk4;
+    /* 0x06 */ s16 unk6;
+    /* 0x08 */ s16 unk8;
+} UnkStruct_ovl17_07_80045680; /* size 0xC */
+
 #endif

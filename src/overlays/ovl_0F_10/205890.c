@@ -59,12 +59,6 @@
  * everywhere are named for the empty stubs they leave.
  */
 
-/* the task func_ovl0F_10_80044B8C runs as: its argument at 0x2C */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x2C];
-    /* 0x2C */ UnkStructA **unk2C;
-} UnkStruct_ovl0F_10_80045F30;
-
 void func_ovl0F_10_800453B8(s32);
 void func_ovl0F_10_800453D0(s32);
 void func_ovl0F_10_80045418(f32, f32, f32, f32 *, s32);
@@ -169,7 +163,7 @@ static void func_ovl0F_10_80044054(UnkStructA *, s32, f32 *);
 static s32 func_ovl0F_10_80043FA4(UnkStructA *, f32 *);
 static s32 func_ovl0F_10_80043F9C(UnkStructA *);
 static void func_ovl0F_10_80043F94(s32 *, s32, f32);
-static void func_ovl0F_10_80044B7C(UnkStruct_ovl0F_10_80045F30 *, UnkStructA *);
+static void func_ovl0F_10_80044B7C(UnkStruct_ovl0F_07_80045390 *, UnkStructA *);
 static void func_ovl0F_10_80044B84(void);
 
 /* .bss */
@@ -314,7 +308,7 @@ void func_ovl0F_10_80044D3C(void) {
 }
 
 void func_ovl0F_10_80044B8C(void) {
-    UnkStruct_ovl0F_10_80045F30 *task;
+    UnkStruct_ovl0F_07_80045390 *task;
     UnkStructA *obj;
 
     task = func_ovl0F_10_80045F30();
@@ -324,7 +318,7 @@ void func_ovl0F_10_80044B8C(void) {
     func_ovl0F_10_80045F18();
 }
 
-static void func_ovl0F_10_80044B7C(UnkStruct_ovl0F_10_80045F30 *task, UnkStructA *obj) {
+static void func_ovl0F_10_80044B7C(UnkStruct_ovl0F_07_80045390 *task, UnkStructA *obj) {
     static s32 D_ovl0F_10_800466C4 = 0;
 
     while (D_ovl0F_10_800466C4 < 400) {

@@ -58,12 +58,6 @@
  * ovl_0D_04's object (src/overlays/ovl_0D_04) is its sibling.
  */
 
-typedef struct {
-    s32 unk0;
-    s32 unk4;
-    s32 unk8;
-} Trio_0D06;
-
 void func_ovl0D_06_80045D88(s32); /* 0xC00 */
 void func_ovl0D_06_80045D98(s32 *); /* 0xC02 */
 void func_ovl0D_06_80045DC8(s32, s32, s32, s32, s32, s32); /* 0xD05 */
@@ -199,7 +193,7 @@ static void func_ovl0D_06_80044398(s32, s32 *, s32 *);
 static s32 func_ovl0D_06_8004440C(UnkStruct_ovl0C_01_8004A54C *);
 static void func_ovl0D_06_80044414(UnkStruct_ovl0C_01_8004A54C *);
 static void func_ovl0D_06_80044E68(void);
-static void func_ovl0D_06_8004517C(Trio_0D06 *, s32);
+static void func_ovl0D_06_8004517C(Trio_0D01 *, s32);
 static void func_ovl0D_06_80045184(void);
 static void func_ovl0D_06_80044BE0(void);
 static void func_ovl0D_06_80044BE8(void);
@@ -284,7 +278,7 @@ UnkStruct_ovl0C_01_8004A54C D_ovl0D_06_80047444[1] = {
     { NULL, -1, 0x168, -1, -1, -1, -1, 230.0f, 40.0f, 180.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
 UnkStruct_802363BC D_ovl0D_06_8004747C = { 0, 1, 1 };
-Trio_0D06 D_ovl0D_06_800474C0[6] = {
+Trio_0D01 D_ovl0D_06_800474C0[6] = {
     { 0, 7, 0xE5 },
     { 1, 9, 0xE7 },
     { 2, 9, 0xE7 },
@@ -474,7 +468,7 @@ void func_ovl0D_06_8004518C(void) {
 #include "overlays/ovl_0D_06/statics.h"
 #undef STATICS_PART
 
-static void func_ovl0D_06_8004517C(Trio_0D06 *t, s32 count) {
+static void func_ovl0D_06_8004517C(Trio_0D01 *t, s32 count) {
     s32 i;
 
     for (i = 0; i < count; i++) {

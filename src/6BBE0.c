@@ -227,11 +227,6 @@ extern UnkStruct_800AEDF0 D_800AEDF0[5];
 extern UnkStruct_802ACF08 D_802ACF08[PORT_SIZE(5)];
 
 typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ u16 unk4;
-} Unk6BBE0_8; /* size 8 */
-
-typedef struct {
     /* 0x00 */ s32 x;
     /* 0x04 */ s32 y;
     /* 0x08 */ s32 z;
@@ -3587,11 +3582,11 @@ static void func_80254C90(f32 *arg0) {
 
     if (func_80251D30(arg0, 0, 0, 0x11) == 0) {
         for (i = 0; i < 16; i++) {
-            PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), Unk6BBE0_8 **, 0x2C, Port_800BCFE8_98, unk2C)[i].unk0 = 1;
-            PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), Unk6BBE0_8 **, 0x2C, Port_800BCFE8_98, unk2C)[i].unk4 = 0x8000;
+            PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), SeqB **, 0x2C, Port_800BCFE8_98, unk2C)[i].n = 1;
+            PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), SeqB **, 0x2C, Port_800BCFE8_98, unk2C)[i].v = 0x8000;
         }
-        PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), Unk6BBE0_8 **, 0x2C, Port_800BCFE8_98, unk2C)[i].unk0 = 1;
-        PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), Unk6BBE0_8 **, 0x2C, Port_800BCFE8_98, unk2C)[i].unk4 = 0x4000;
+        PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), SeqB **, 0x2C, Port_800BCFE8_98, unk2C)[i].n = 1;
+        PORT_FIELD(PORT_FIELD(arg0, void **, 0x98, Port_800BCFE8, unk98), SeqB **, 0x2C, Port_800BCFE8_98, unk2C)[i].v = 0x4000;
     }
 }
 

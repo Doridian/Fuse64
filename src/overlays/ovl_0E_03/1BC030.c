@@ -19,14 +19,6 @@
  * replaces (func_ovl0E_03_800430A8, 80043AB8; nonmatching/overlays/ovl_0E_12).
  */
 
-/* the argument of func_ovl0E_03_8004483C's task: unk2/unk4 a tile */
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ s16 unk2;
-    /* 0x04 */ s16 unk4;
-    /* 0x06 */ s16 unk6;
-} UnkStruct_ovl0E_03_80046C50; /* size 0x8 */
-
 void func_ovl0E_03_80045418(s32);
 void func_ovl0E_03_80045430(s32);
 f32 func_ovl0E_03_80045440(void);
@@ -114,7 +106,7 @@ void func_ovl0E_03_80043CD8(void);
 void func_ovl0E_03_80043D10(void);
 void func_ovl0E_03_80043E2C(s32);
 void func_ovl0E_03_80043F7C(void);
-void func_ovl0E_03_800443DC(UnkStruct_ovl0E_03_80046C50 *, s16, s16);
+void func_ovl0E_03_800443DC(UnkStruct_ovl0E_01_80046D20 *, s16, s16);
 void func_ovl0E_03_80044654(void);
 void func_ovl0E_03_80044688(void);
 void func_ovl0E_03_8004483C(void);
@@ -149,7 +141,7 @@ u8 D_ovl0E_03_80046C30[0x4]; /* unused (func_ovl0E_03_800450C8) */
 s32 D_ovl0E_03_80046C34;
 s32 D_ovl0E_03_80046C38;
 Vec3f D_ovl0E_03_80046C40;
-UnkStruct_ovl0E_03_80046C50 D_ovl0E_03_80046C50[1];
+UnkStruct_ovl0E_01_80046D20 D_ovl0E_03_80046C50[1];
 UnkStruct_ovl0C_01_8004A9C8 D_ovl0E_03_80046C58;
 UnkStructA *D_ovl0E_03_80046C6C;
 
@@ -342,7 +334,7 @@ void func_ovl0E_03_80044B00(void) {
 
 /* drops the model pair from 10000 at the tile its argument gives */
 void func_ovl0E_03_8004483C(void) {
-    UnkStruct_ovl0E_03_80046C50 *arg;
+    UnkStruct_ovl0E_01_80046D20 *arg;
     UnkStruct_ovl0C_01_8004A54C *a;
     UnkStruct_ovl0C_01_8004A54C *b;
 
@@ -429,7 +421,7 @@ void func_ovl0E_03_80044688(void) {
 /* picks a tile for each of arg0's entries around the one func_ovl0E_03_80045470
  * gives for func_ovl0E_03_80045600's position, retrying where
  * func_ovl0E_03_80045488 gives 0xF (at most 6 tries) */
-void func_ovl0E_03_800443DC(UnkStruct_ovl0E_03_80046C50 *arg0, s16 arg1, s16 arg2) {
+void func_ovl0E_03_800443DC(UnkStruct_ovl0E_01_80046D20 *arg0, s16 arg1, s16 arg2) {
     s16 i;
     s16 j;
     s16 tries;

@@ -34,16 +34,6 @@
 
 #include "overlays/common/types.h"
 
-/* The menu's items (func_ovl0B_05_80046180's table). */
-typedef struct {
-    /* 0x00 */ u16 unk0;
-    /* 0x02 */ u16 unk2;
-    /* 0x04 */ u8 unk4;
-    /* 0x05 */ u8 unk5;
-    /* 0x06 */ u8 unk6;
-    /* 0x07 */ u8 unk7;
-} UnkStruct_ovl0B_05_80046674;
-
 s32 func_ovl0B_05_80044F70(u8 *, const char *, s32); /* 0x0101 */
 void func_ovl0B_05_800452A8(s32); /* 0x0C00 */
 void func_ovl0B_05_800453A0(s32, s32, s32); /* 0x0F00 */
@@ -154,7 +144,7 @@ s32 D_ovl0B_05_80046660 = 0;
 s32 D_ovl0B_05_80046664 = 0;
 s32 D_ovl0B_05_80046668 = 0;
 u8 *D_ovl0B_05_8004666C[2] = { D_ovl0B_05_800465B4, D_ovl0B_05_800465BC };
-UnkStruct_ovl0B_05_80046674 D_ovl0B_05_80046674[5] = {
+UnkStruct_8027F0C4 D_ovl0B_05_80046674[5] = {
     { 0xA2, 0x4D, 0x00, 0x02, 0x00, 0x00 },
     { 0xA2, 0x67, 0x01, 0x03, 0x00, 0x00 },
     { 0xA2, 0x81, 0x02, 0x00, 0x03, 0x03 },

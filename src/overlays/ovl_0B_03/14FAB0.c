@@ -125,16 +125,6 @@ typedef struct {
     /* 0x4 */ s32 unk4;
 } Pair_ovl0B_03;
 
-/* A menu's cursor positions (the big task's local tables). */
-typedef struct {
-    /* 0x0 */ s16 unk0;
-    /* 0x2 */ s16 unk2;
-    /* 0x4 */ u8 unk4;
-    /* 0x5 */ u8 unk5;
-    /* 0x6 */ u8 unk6;
-    /* 0x7 */ u8 unk7;
-} MenuPos_ovl0B_03;
-
 /* An animated piece of the background: its object, the frames left and
  * the step in D_ovl0B_03_80049104. */
 typedef struct {
@@ -772,8 +762,8 @@ void func_ovl0B_03_8004386C(void) {
     s32 max;
     s32 h;
     s32 *p;
-    MenuPos_ovl0B_03 spCC[6] = { { 71, 87, 0, 2, 0, 0 }, { 71, 117, 1, 3, 0, 0 }, { 71, 147, 2, 4, 0, 0 }, { 71, 177, 3, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 } };
-    MenuPos_ovl0B_03 spA4[5] = { { 172, 78, 0, 2, 0, 0 }, { 172, 108, 1, 3, 0, 0 }, { 172, 138, 2, 4, 0, 0 }, { 172, 168, 3, 5, 0, 0 }, { 172, 198, 4, 0, 0, 0 } };
+    UnkStruct_8027F0C4 spCC[6] = { { 71, 87, 0, 2, 0, 0 }, { 71, 117, 1, 3, 0, 0 }, { 71, 147, 2, 4, 0, 0 }, { 71, 177, 3, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 } };
+    UnkStruct_8027F0C4 spA4[5] = { { 172, 78, 0, 2, 0, 0 }, { 172, 108, 1, 3, 0, 0 }, { 172, 138, 2, 4, 0, 0 }, { 172, 168, 3, 5, 0, 0 }, { 172, 198, 4, 0, 0, 0 } };
     s32 i;
     f32 t;
 #if !VERSION_JP

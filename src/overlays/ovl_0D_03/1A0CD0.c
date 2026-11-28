@@ -45,12 +45,6 @@
  * and 0D_06.
  */
 
-typedef struct {
-    s32 unk0;
-    s32 unk4;
-    s32 unk8;
-} Trio_0D03;
-
 void func_ovl0D_03_800469E8(s32); /* 0xC00 */
 void func_ovl0D_03_800469F8(s32 *); /* 0xC02 */
 void func_ovl0D_03_80046A28(s32, s32, s32, s32, s32, s32); /* 0xD05 */
@@ -197,7 +191,7 @@ static void func_ovl0D_03_80043C2C(void);
 static void func_ovl0D_03_80043C34(void);
 static void func_ovl0D_03_80043C3C(void);
 static void func_ovl0D_03_80043DDC(void);
-static void func_ovl0D_03_800441BC(Trio_0D03 *, s32);
+static void func_ovl0D_03_800441BC(Trio_0D01 *, s32);
 static void func_ovl0D_03_800441C4(s32);
 static void func_ovl0D_03_80044314(s32);
 static void func_ovl0D_03_8004431C(UnkStruct_ovl0C_01_8004A54C *);
@@ -291,7 +285,7 @@ Vec3f D_ovl0D_03_80047FCC[1] = {
 };
 /* the flag set once D_ovl0D_03_80047F94 is done */
 s32 D_ovl0D_03_80047FD8[1] = { 0x419 };
-Trio_0D03 D_ovl0D_03_80047FDC[5] = {
+Trio_0D01 D_ovl0D_03_80047FDC[5] = {
     { 0, 9, 0xE7 },
     { 1, 8, 0xE6 },
     { 2, 2, 0xE0 },

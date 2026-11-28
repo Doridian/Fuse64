@@ -26,7 +26,7 @@ static void func_ovl0D_05_800431F8(void) {
 static void func_ovl0D_05_80043788(void) {
 }
 
-static void func_ovl0D_05_80043780(Trio05 *t, s32 count) {
+static void func_ovl0D_05_80043780(Trio_0D01 *t, s32 count) {
     s32 i;
 
     for (i = 0; i < count; i++) {

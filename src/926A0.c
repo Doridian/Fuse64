@@ -18,7 +18,7 @@
 #include "player.h"
 
 void *malloc(s32);
-void func_8022638C(u32, void *);
+void func_8022638C(u32, UnkStruct_8014B008 *);
 void func_802297B8(void *, s32, s32, s32);
 PORT_RET(s32, void) func_8022984C(void *, s32);
 PORT_RET(void, s32) func_8022FC90(void *);
@@ -59,11 +59,6 @@ typedef struct {
     /* 0x46 */ s16 unk46;
 } Rec926; /* size 0x48 */
 
-typedef struct {
-    s32 unk0;
-    s32 unk4;
-} Info926;
-
 PORT_RET(s32, u8) func_8026DC74(s32 arg0);
 void func_8027404C(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5);
 s32 func_80277EA0(s16 arg0);
@@ -86,7 +81,7 @@ void func_80278FD8(u32 arg0, u8 **arg1);
 
 void func_80278FD8(u32 arg0, u8 **arg1) {
     struct UnkStruct_80225CC0 *file;
-    Info926 info;
+    UnkStruct_8014B008 info;
 
     func_8022638C(arg0, &info);
     *arg1 = malloc(info.unk4);

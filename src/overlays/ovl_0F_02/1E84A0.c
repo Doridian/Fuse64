@@ -94,14 +94,6 @@ static void func_ovl0F_02_80045F1C(UnkStructA **arg0);
  * IDO inlines everywhere are named for the empty stubs they leave.
  */
 
-/* a step of a mover's path */
-typedef struct {
-    /* 0x00 */ u16 unk0; /* frames */
-    /* 0x02 */ u8 unk2;  /* heading */
-    /* 0x03 */ u8 unk3;  /* next step */
-    /* 0x04 */ f32 unk4; /* acceleration */
-} UnkStruct_ovl0F_02_8004862C; /* size 0x8 */
-
 /* a command of the movers' script */
 typedef struct {
     /* 0x00 */ u16 unk0; /* frame */
@@ -121,13 +113,6 @@ typedef struct {
     /* 0x1C */ u8 unk1C[4];
     /* 0x20 */ void (*unk20)(s32, s32);
 } UnkStruct_ovl0F_02_80048F20; /* 0x24, but the original's .bss (0x240) ends at 0x20: unk20 is past it */
-
-/* a switch's state */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-} UnkStruct_ovl0F_02_80048918; /* size 0xC */
 
 #include "gfx.h"
 
@@ -329,7 +314,7 @@ u16 D_ovl0F_02_80048614[6][2] = {
     { 0, 0x62 }, { 0x1E, 0 }, { 0x78, 1 }, { 0xD2, 2 }, { 0xD3, 0x63 }, { 0x1FF, 0x64 },
 };
 /* the movers' paths: three of five steps */
-UnkStruct_ovl0F_02_8004862C D_ovl0F_02_8004862C[3][5] = {
+UnkStruct_ovl0F_01_8004815C D_ovl0F_02_8004862C[3][5] = {
     {
         { 0x32, 0x60, 1, 0.01f },
         { 0x32, 0x40, 2, 0.1f },
@@ -961,7 +946,7 @@ void func_ovl0F_02_80043FEC(void) {
     s32 i;
     UnkStruct_ovl0F_01_800481D4 *st; /* unused, as rec, step and player: with fewer, unk16's store addresses the symbol (2 words) */
     UnkStruct_ovl0F_01_80048264 *rec;
-    UnkStruct_ovl0F_02_8004862C *step;
+    UnkStruct_ovl0F_01_8004815C *step;
     UnkStructA *obj;
     UnkStructA *player;
     s32 hit;

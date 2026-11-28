@@ -23,12 +23,6 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-/* the task func_ovl0F_07_80044208 runs as: its argument at 0x2C */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x2C];
-    /* 0x2C */ UnkStructA **unk2C;
-} UnkStruct_ovl0F_07_80045390;
-
 void func_ovl0F_07_80044818(s32);
 void func_ovl0F_07_80044830(s32);
 void func_ovl0F_07_80044858(s32, s32, s32, s32, s32, s32);

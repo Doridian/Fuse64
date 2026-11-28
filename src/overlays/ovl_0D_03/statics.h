@@ -119,7 +119,7 @@ static void func_ovl0D_03_8004337C(UnkStruct_ovl0C_01_8004A54C *e) {
 #elif STATICS_PART == 1
     func_ovl0D_03_80044A3C();
 #elif STATICS_PART == 2
-static void func_ovl0D_03_800441BC(Trio_0D03 *t, s32 count) {
+static void func_ovl0D_03_800441BC(Trio_0D01 *t, s32 count) {
     s32 i;
 
     for (i = 0; i < count; i++) {

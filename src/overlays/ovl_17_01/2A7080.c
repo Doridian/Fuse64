@@ -6,14 +6,6 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-/* the argument of func_ovl17_01_8004398C's tasks */
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ s16 unk2;
-    /* 0x04 */ s16 unk4;
-    /* 0x06 */ s16 unk6;
-} UnkStruct_ovl17_01_80045840; /* size 0x8 */
-
 void func_ovl17_01_80044338(s32);
 void func_ovl17_01_80044350(s32);
 f32 func_ovl17_01_80044360(void);
@@ -51,7 +43,7 @@ s32 func_ovl17_01_80045430(s32, f32, f32, f32);
 
 void func_ovl17_01_80043010(void);
 void func_ovl17_01_80043034(void);
-void func_ovl17_01_800431D8(UnkStruct_ovl17_01_80045840 *, s16, s16);
+void func_ovl17_01_800431D8(UnkStruct_ovl0E_01_80046D20 *, s16, s16);
 void func_ovl17_01_80043570(void);
 void func_ovl17_01_8004365C(void);
 void func_ovl17_01_800438A8(f32, f32, f32, f32);
@@ -63,7 +55,7 @@ u8 D_ovl17_01_80045800[0x24];
 s32 D_ovl17_01_80045824;
 s32 D_ovl17_01_80045828;
 Vec3f D_ovl17_01_80045830;
-UnkStruct_ovl17_01_80045840 D_ovl17_01_80045840[3];
+UnkStruct_ovl0E_01_80046D20 D_ovl17_01_80045840[3];
 UnkStruct_ovl17_01_80045858 D_ovl17_01_80045858[3];
 
 /* .data */
@@ -179,7 +171,7 @@ void func_ovl17_01_80043CB4(void) {
 }
 
 void func_ovl17_01_8004398C(void) {
-    UnkStruct_ovl17_01_80045840 *arg;
+    UnkStruct_ovl0E_01_80046D20 *arg;
     UnkStruct_ovl0C_01_8004A54C *a;
     UnkStruct_ovl0C_01_8004A54C *b;
     f32 scale;
@@ -323,7 +315,7 @@ void func_ovl17_01_80043570(void) {
     }
 }
 
-void func_ovl17_01_800431D8(UnkStruct_ovl17_01_80045840 *arg0, s16 arg1, s16 arg2) {
+void func_ovl17_01_800431D8(UnkStruct_ovl0E_01_80046D20 *arg0, s16 arg1, s16 arg2) {
     f32 xoff;
     s16 xs[3];
     s16 ys[3];

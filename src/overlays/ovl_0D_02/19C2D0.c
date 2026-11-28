@@ -60,12 +60,6 @@
  * ovl_0D_04, 0D_05 and 0D_06 (src/ and nonmatching/) are its siblings.
  */
 
-typedef struct {
-    s32 unk0;
-    s32 unk4;
-    s32 unk8;
-} Trio_0D02;
-
 void func_ovl0D_02_800462F8(s32); /* 0xC00 */
 void func_ovl0D_02_80046308(s32 *); /* 0xC02 */
 void func_ovl0D_02_80046338(s32, s32, s32, s32, s32, s32); /* 0xD05 */
@@ -210,7 +204,7 @@ static void func_ovl0D_02_8004445C(void);
 static void func_ovl0D_02_80044464(void);
 static void func_ovl0D_02_8004446C(void);
 static void func_ovl0D_02_800444EC(void);
-static void func_ovl0D_02_800444F4(Trio_0D02 *, s32);
+static void func_ovl0D_02_800444F4(Trio_0D01 *, s32);
 static void func_ovl0D_02_8004595C(UnkStruct_ovl0C_01_8004A54C *, s32);
 static void func_ovl0D_02_80045964(UnkStruct_ovl0C_01_8004A54C *, s32 *);
 static void func_ovl0D_02_80045F80(void);
@@ -297,7 +291,7 @@ Vec3f D_ovl0D_02_80047870[2] = {
 };
 /* the flags set once each of D_ovl0D_02_80047800 is done */
 s32 D_ovl0D_02_80047888[2] = { 0x417, 0x418 };
-Trio_0D02 D_ovl0D_02_80047890[4] = {
+Trio_0D01 D_ovl0D_02_80047890[4] = {
     { 0, 7, 0xE5 },
     { 1, 2, 0xE0 },
     { 2, 8, 0xE6 },
@@ -809,7 +803,7 @@ void func_ovl0D_02_800444FC(void) {
     func_ovl0D_02_80046378();
 }
 
-static void func_ovl0D_02_800444F4(Trio_0D02 *t, s32 count) {
+static void func_ovl0D_02_800444F4(Trio_0D01 *t, s32 count) {
     s32 i;
 
     for (i = 0; i < count; i++) {

@@ -46,14 +46,6 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-/* the model D_ovl17_07_8004376C turns, and where it stands */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s16 unk4;
-    /* 0x06 */ s16 unk6;
-    /* 0x08 */ s16 unk8;
-} UnkStruct_ovl17_07_80045680; /* size 0xC */
-
 /* the argument of func_ovl17_07_80043C98's tasks: a model moving along x */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;

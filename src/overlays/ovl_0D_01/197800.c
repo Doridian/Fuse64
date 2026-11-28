@@ -51,12 +51,6 @@
  * ovl_0D_04 and ovl_0D_06 (src/overlays) are its siblings.
  */
 
-typedef struct {
-    s32 unk0;
-    s32 unk4;
-    s32 unk8;
-} Trio_0D01;
-
 void func_ovl0D_01_80046268(s32); /* 0xC00 */
 void func_ovl0D_01_80046278(s32 *); /* 0xC02 */
 void func_ovl0D_01_800462A8(s32, s32, s32, s32, s32, s32); /* 0xD05 */

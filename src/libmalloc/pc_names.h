@@ -16,9 +16,20 @@
 #define LIBMALLOC_PC_NAMES_H
 #ifdef TARGET_PC
 
+#ifdef PORT_GMALLOC
 #define malloc                   bm64_malloc
-#define free                     bm64_free
 #define realloc                  bm64_realloc
+#else
+/* The game's C declares `void *malloc(u32)` (or `s32`) and `void
+   *realloc(void *, u32)` itself, where gmalloc.c's take a size_t: through
+   such a declaration a 64-bit host passes the size in the low half of a
+   register whose high half the callee may read (port/tools/proto_check.py).
+   It calls these instead, which take the 32-bit size and widen it
+   (port/src/memory.c). */
+#define malloc                   bm64_malloc32
+#define realloc                  bm64_realloc32
+#endif
+#define free                     bm64_free
 #define calloc                   bm64_calloc
 #define cfree                    bm64_cfree
 #define valloc                   bm64_valloc

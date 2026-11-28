@@ -44,7 +44,7 @@ from collections import defaultdict
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WORK = os.path.join(ROOT, "build", "host_check")
 SHIM = os.path.join(WORK, "shim")
-MALLOC_FLAGS = ["-I", "src/libmalloc/include", "-I", "src/libmalloc", "-include", "src/libmalloc/pc_names.h",
+MALLOC_FLAGS = ["-DPORT_GMALLOC", "-I", "src/libmalloc/include", "-I", "src/libmalloc", "-include", "src/libmalloc/pc_names.h",
                 "-DHAVE_UNISTD_H", "-DSTDC_HEADERS", "-DPAGESIZE=0x1000", "-Dsbrk=func_80225B00",
                 "-Dmemmove=func_80225BB8", "-Dmemcpy=func_80225C44", "-Dmemset=func_80225C7C"]
 

@@ -240,7 +240,7 @@ endforeach()
 reset_wrap(MALLOC_SRC ${MALLOC_C})
 add_library(malloc_c OBJECT ${MALLOC_SRC})
 target_include_directories(malloc_c PRIVATE ${ROOT}/src/libmalloc/include ${ROOT}/src/libmalloc)
-target_compile_definitions(malloc_c PRIVATE TARGET_PC HAVE_UNISTD_H STDC_HEADERS PAGESIZE=0x1000
+target_compile_definitions(malloc_c PRIVATE TARGET_PC PORT_GMALLOC HAVE_UNISTD_H STDC_HEADERS PAGESIZE=0x1000
     sbrk=func_80225B00 memmove=func_80225BB8 memcpy=func_80225C44 memset=func_80225C7C)
 target_compile_options(malloc_c PRIVATE -std=gnu89 -O2 -g -fno-strict-aliasing -fwrapv -fno-builtin -w
     -fno-stack-protector "SHELL:-include ${ROOT}/src/libmalloc/pc_names.h" ${RESET_INCLUDE} ${SAN_FLAGS})

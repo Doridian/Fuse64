@@ -26,7 +26,7 @@ u32 func_80297C10(PORT_IP(s32) *);
 void func_80297C7C(PORT_IP(s32) *, s32);
 void func_80297D30(s32, void *);
 void func_80297D38(const char *, ...);
-s32 func_80297D90(s32, s32, s32);
+s32 func_80297D90(PORT_IP(s32), PORT_IP(s32), s32);
 
 void func_802388C0(void);
 void func_802388E8(UnkStruct_802AB200 *arg0, UnkStruct_802AB200 *arg1);
@@ -49,7 +49,7 @@ s32 func_80238FF4(s32 arg0);
 s32 func_8023903C(u32 arg0);
 void func_80239094(void);
 void func_802390B4(void);
-s32 func_802390F0(s32 arg0, s32 arg1, s32 arg2);
+s32 func_802390F0(PORT_IP(s32) arg0, PORT_IP(s32) arg1, s32 arg2);
 s32 func_802391A4(void);
 PORT_IP(s32) func_802391F0(void);
 s32 func_80239208(UnkStruct_802AB200 *arg0);
@@ -190,7 +190,7 @@ s32 func_802391A4(void) {
     return ret;
 }
 
-s32 func_802390F0(s32 arg0, s32 arg1, s32 arg2) {
+s32 func_802390F0(PORT_IP(s32) arg0, PORT_IP(s32) arg1, s32 arg2) {
     s32 ret;
 
     if (arg2 != 1) {

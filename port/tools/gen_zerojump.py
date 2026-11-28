@@ -39,6 +39,8 @@ TYPEDEFS = {"u8": "unsigned char", "s8": "signed char", "u16": "unsigned short",
             "size_t": "__SIZE_TYPE__", "__size_t": "__SIZE_TYPE__", "OSYieldResult": "unsigned int",
             "uintptr_t": "uintptr_t", "intptr_t": "intptr_t", "vs32": "int", "vu32": "unsigned int"}
 UNKNOWN = set()
+# the integers an argument register holds whole
+WORD_INTS = {"char", "signed char", "unsigned char", "short", "unsigned short", "int", "unsigned int", "_Bool"}
 # the targets the port's libultra defines with addresses as wide as a
 # pointer where libultra's own have a u32 (port/src/ultra.c)
 HOST_SIGS = {"osVirtualToPhysical": ("uintptr_t", ["void *"]),
@@ -62,6 +64,17 @@ def ctype(t):
         return TYPEDEFS[t]
     UNKNOWN.add(t)
     return "int"
+
+
+def fp_regs(params):
+    """the arguments o32 passes in $f12 and $f14: the first if it is a
+    float, the second if both are"""
+    out = set()
+    for i, p in enumerate(params[:2]):
+        if p not in ("float", "double"):
+            break
+        out.add(i)
+    return out
 
 
 def proto(ret, params):
@@ -200,8 +213,20 @@ def main():
             if tret in wide and sret in narrow:
                 NARROW.append("%s (-> %s) returns: %s" % (s, t, sorted({e[5] for e in funcs[s] if e[0] == "decl"})))
             cargs = []
+            sfp, tfp = fp_regs(sparams), fp_regs(tparams)
             for i, p in enumerate(tparams):
-                if i < len(sparams):
+                other = (sparams[i] if p == "float" else p) if i < len(sparams) else None
+                if i < len(sparams) and "float" in (p, sparams[i]) and p != sparams[i] and other in WORD_INTS \
+                        and i not in sfp and i not in tfp:
+                    # an integer the target reads as a float, or the reverse:
+                    # past the first argument that isn't a float both are in
+                    # $a1-$a3 or on the stack, so the N64 passes the bits
+                    cargs.append("port_zj_f32(a%d)" % i if p == "float" else "(%s)port_zj_bits(a%d)" % (p, i))
+                elif i < len(sparams):
+                    if "float" in (p, sparams[i]) and p != sparams[i]:
+                        # (in $f12/$f14 on one side, or a pointer: not the
+                        # same register on the N64)
+                        NARROW.append("%s (-> %s) arg %d: a float where the other side has %s" % (s, t, i, other))
                     cargs.append("(%s)%sa%d" % (p, "(uintptr_t)" if (p == "void *") != (sparams[i] == "void *") else "", i))
                 else:
                     cargs.append("(%s)0" % p)    # the N64 passed whatever $aN held

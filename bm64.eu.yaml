@@ -463,6 +463,7 @@ segments:
       - [0xBBD00, data]
       - [0xBBD20, .data, 96540]
       - [0xBBD70, data]
+      - [0xBBE10, .data, 99F40]
       - [0xBBE30, .data, 9A5F0]
       - [0xBC280, .data, 9BFD0]
       - [0xBC2B0, .data, 9CAB0]

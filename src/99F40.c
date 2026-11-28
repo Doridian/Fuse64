@@ -5,7 +5,15 @@ void func_8026D620(s32, s32, s32, s32);
 s32 func_8026D7D8(s32, s32, s32);
 
 extern UnkStruct_800B5F20 D_800B5F20[6];
-extern u8 D_802A1610[];
+void func_8027F84C(void (*arg0)(void));
+void func_8027F88C(void (*arg0)(PORT_IP(s32)), s32 arg1);
+void func_8027F9E4(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7);
+void func_8027FB18(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7);
+s32 func_8027FC78(s32 arg0);
+
+/* ZeroJump module 14's table (func_8027F7E0); its last three words are
+   zeros, taken here for the section's padding */
+void *D_802A1610[] = { func_8027FC78, func_8027FB18, func_8027F88C, func_8027F84C, func_8027F9E4 };
 s32 D_802B01F0;
 void (*D_802B01F8[7])(PORT_IP(s32));
 void (*D_802B0214)(void);

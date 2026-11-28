@@ -464,6 +464,7 @@ segments:
       - [0xBB360, data]
       - [0xBB380, .data, 96540]
       - [0xBB3D0, data]
+      - [0xBB470, .data, 99F40]
       - [0xBB490, .data, 9A5F0]
       - [0xBB4D0, .data, 9BFD0]
       - [0xBB500, .data, 9CAB0]

@@ -786,7 +786,7 @@ void func_ovl0D_02_800444FC(void) {
     func_ovl0D_02_800463E0(func_ovl0D_02_80044CA0);
     func_ovl0D_02_800444D4();
     D_ovl0D_02_80047A54 = func_ovl0D_02_80046448();
-    /* fake: (see the top): the call's delay slot stays empty */
+    /* fake: (see the top): the call's delay slot stays empty (pass 13: 80044474 is a call in the original, so defining it in statics.h gives no `.file`; the camera static 8004446C in statics.h: no) */
 #define STATICS_PART 1
 #include "overlays/ovl_0D_02/statics.h"
 #undef STATICS_PART

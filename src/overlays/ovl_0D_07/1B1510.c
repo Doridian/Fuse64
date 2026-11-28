@@ -600,7 +600,7 @@ static void func_ovl0D_07_80043028(void) {
  * which puts 80043010's stub (case 11 calls it last) with 80043030's three */
 void func_ovl0D_07_80043660(s32 arg0) {
     UnkStructA *o;
-    s32 pad[3]; /* fake: unused; a guess: the frame has three more words here */
+    s32 pad[3]; /* fake: unused; a guess: the frame has three more words here (pass 13: they sit between o and i, so locals, not an inlined call's slots; the empty statics 80043018/20/28 called here instead: the frame unchanged; a third parameter on 80043010: its slots go below; the two face-away blocks as one static: not inlined; f32 x, y, z for the 0x1704/0x2600 arguments: the schedule moves; a dead `task =` store of a 0x1900 result fills one word, a guess) */
     s32 i;
     s32 kind;
     UnkStructA *obj[2];

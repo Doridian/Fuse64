@@ -1311,7 +1311,7 @@ static void func_ovl0D_03_80043300(s32 axis, s32 *v, s32 *size) {
 /* the models' state from the flags already set */
 void func_ovl0D_03_8004305C(void) {
     s32 i;
-    s32 pad[5]; /* fake: the frame (an index per walk: registers move; pass 12: locals in the inlined statics 80043054 (x, z held; the three pictures as a loop) and 80043010 (the object's unk40, the height): no, the frame stays 64 or the code moves) */
+    s32 pad[5]; /* fake: the frame (an index per walk: registers move; pass 12: locals in the inlined statics 80043054 (x, z held; the three pictures as a loop) and 80043010 (the object's unk40, the height): no, the frame stays 64 or the code moves; pass 13: the end stubs 80046678.. as empty globals called twice in the 0x408 block (8 bytes each) and one word: the frame is right, but 80043010 then stays out of line, 19 words) */
 
     if (func_ovl0D_03_800477C0(0x407) != 0) {
         func_ovl0D_03_80043054();

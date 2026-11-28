@@ -23,22 +23,6 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-/* the five movers: each record is passed to its task */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ UnkStructA *unk4;
-    /* 0x08 */ s16 unk8;
-    /* 0x0A */ s16 unkA;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ s16 unk18;
-    /* 0x1A */ s16 unk1A;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-} UnkStruct_ovl0E_12_80045FEC;
-
 /* UnkStructA with the two words at 0x0C that func_ovl0E_12_800441D8 uses */
 typedef struct {
     /* 0x00 */ u8 unk0[0xC];
@@ -197,7 +181,7 @@ UnkStruct_ovl0C_01_8004A54C D_ovl0E_12_80045F94[1] = {
 UnkStruct_ovl0E_01_80046B70 D_ovl0E_12_80045FCC[1] = {
     { 0x416, 395.0f, 60.0f, 285.0f, 180.0f, 0x27, 4, 0x1C, 0x28, 0x1D, 1 },
 };
-UnkStruct_ovl0E_12_80045FEC D_ovl0E_12_80045FEC[5] = {
+UnkStruct_ovl0E_11_800463AC D_ovl0E_12_80045FEC[5] = {
     { -1, NULL, 0x1B6, 0x20, 0x30, 0.0f, -15.0f, 1, 0x78, 165.0f, 200.0f, 295.0f },
     { -1, NULL, 0x1B6, 0x20, 0x30, 0.0f, -15.0f, 1, 0x78, 185.0f, 200.0f, 295.0f },
     { -1, NULL, 0x1B6, 0x20, 0x30, 0.0f, -15.0f, 1, 0x78, 205.0f, 200.0f, 295.0f },
@@ -274,7 +258,7 @@ void func_ovl0E_12_800446BC(UnkStructA *arg0) {
 }
 
 void func_ovl0E_12_8004441C(void) {
-    UnkStruct_ovl0E_12_80045FEC *rec;
+    UnkStruct_ovl0E_11_800463AC *rec;
     UnkStructA *obj;
     s16 moving;
     f32 pos[3];
@@ -592,7 +576,7 @@ void func_ovl0E_12_80043624(void) {
 }
 
 void func_ovl0E_12_800435AC(void) {
-    UnkStruct_ovl0E_12_80045FEC *rec;
+    UnkStruct_ovl0E_11_800463AC *rec;
     s16 i;
 
     for (i = 0, rec = D_ovl0E_12_80045FEC; i < 5; i++, rec++) {
@@ -710,7 +694,7 @@ void func_ovl0E_12_80043084(void) {
 }
 
 void func_ovl0E_12_80043018(void) {
-    UnkStruct_ovl0E_12_80045FEC *rec;
+    UnkStruct_ovl0E_11_800463AC *rec;
     s16 i;
 
     for (i = 0, rec = D_ovl0E_12_80045FEC; i < 5; i++, rec++) {

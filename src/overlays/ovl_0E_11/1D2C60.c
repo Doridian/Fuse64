@@ -7,22 +7,6 @@
  * and ovl_0E_13's code.
  */
 
-/* the four movers: each record is passed to its task */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ UnkStructA *unk4;
-    /* 0x08 */ s16 unk8;
-    /* 0x0A */ s16 unkA;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ s16 unk18;
-    /* 0x1A */ s16 unk1A;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-} UnkStruct_ovl0E_11_800463AC;
-
 void func_ovl0E_11_80044F28(s32);
 void func_ovl0E_11_80044F40(s32);
 f32 func_ovl0E_11_80044F50(void);

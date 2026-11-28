@@ -951,7 +951,10 @@ void func_80276D68(Ent88 *arg0) {
                 arg0->unk84 = 0.008333334f;
             } else {
                 arg0->unk84 = 0.0033333334f;
-                if (f) {} /* fake: see the header */
+                if (f) {} /* fake: see the header. Tried (2026-11-28): two tests of unk64 & 0x20 with no f (no sign
+                           * extension), the getter/setters func_802712A8/func_8027036C, f reloaded once after the
+                           * if/else, f reused for the 0x80 test (2 words off: that load in v1); the permuter only finds
+                           * other dead uses of f that stretch its live range over this else */
             }
             f = arg0->unk64 & 0x20;
         } else {
@@ -1235,7 +1238,9 @@ void func_80276184(s16 *arg0, u8 *arg1) {
 }
 
 s32 func_80275DD8(Ent88 *arg0, Ent88 *arg1) {
-    s32 pad[14]; /* fake: frame-tuned */
+    s32 pad[14]; /* fake: frame-tuned. ABSF(ABSF(x0) - ABSF(x1)) gives the same branches (uopt turns
+                  * the difference's sign test into |x0| < |x1|) but no stack homes and no frame; the
+                  * three homes of |x1| (sp14, spC, sp4) and the 80-byte frame are still unexplained */
     f32 sp14;
     s32 p1;
     f32 spC;
@@ -1668,7 +1673,9 @@ void func_80275120(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5
     } else {
         *arg4 = sp28.i[1];
         arg0 = sp28.f[1];
-        if ((s32) arg0 * 0) { /* fake: a second use keeps the load a ugen temporary */
+        if ((s32) arg0 * 0) { /* fake: a second use keeps the load a ugen temporary. Tried: no variable (1 word:
+                               * the constant first), a local of its own, `!= 0`, a truth test, arg0 in the
+                               * division; the permuter only finds block boundaries (`if (1) {}` here works too) */
         }
         if (arg0 != 0.0f) {
             *arg4 += sp28.f[1] / (100.0f * (f32) (s32) func_8026DC74((s32) *arg4));
@@ -1941,7 +1948,9 @@ void func_802741D8(s16 arg0) {
                             base.y = 0.0f;
                         }
                         o->unk4C = base.x - slot->unk1C;
-                        if (slot) {} /* fake: the tail keeps slot in a0 */
+                        if (slot) {} /* fake: the tail keeps slot in a0 (SLOTS[arg0] spelled out
+                                      * in the tail, func_80271178 for the inlined unkC store: worse;
+                                      * 15 min of permuter: 8 words at best) */
                         o->unk50 = o->unk40->unk14 - obj->unk40->unk14;
                         o->unk54 = base.y - slot->unk24;
                         o->unk6C = 1.0f;
@@ -2219,7 +2228,9 @@ void func_80272FC0(UnkStructA *arg0, s16 arg1) {
         dz = 0.0f;
     }
     sl = &SLOTS[arg1];
-    if (sl) { /* fake: moves the slot pointer's spill to the original's place */
+    if (sl) { /* fake: moves the slot pointer's spill to the original's place (as1's order: without it the
+               * stores interleave). SLOTS[arg1] spelled out, sl set earlier: no; the permuter finds only
+               * block boundaries (`if (1) {` around the slot's updates) */
     }
     arg0->unk4C = dx - sl->unk1C;
     sl->unk1C -= sl->unk1C / sl->unk10;
@@ -2670,7 +2681,8 @@ void func_80271BB8(s16 arg0) {
         obj->unk54 = dz - SLOTS[arg0].unk24;
         obj->unk6C = 1.0f;
         obj->unk70 = 1.6333334f;
-        if (SLOTS[arg0].unk1C) { /* fake: keeps &SLOTS[arg0] in v0 through the tail */
+        if (SLOTS[arg0].unk1C) { /* fake: keeps &SLOTS[arg0] in v0 through the tail (a Slot30 pointer
+                                  * for the unk8/unk1C/unk24 accesses: worse) */
         }
     }
 }
@@ -2698,7 +2710,8 @@ void *func_802716F8(s16 arg0) {
     s32 t;
 
     func_802714C4();
-    if (1) {} /* fake: without it arg0 takes a third saved register */
+    if (1) {} /* fake: without it arg0 takes a third saved register (an early return for obj == NULL,
+               * func_802443F4 called first or after func_80271540: no) */
     pl = func_802443F4(arg0);
     obj = (UnkStructA *) func_80271540(arg0);
     if (obj != NULL) {
@@ -2919,7 +2932,7 @@ void func_80271010(u8 *arg0, s16 arg1) {
         dz = 0.0f;
     }
     sl = &SLOTS[arg1];
-    if (sl) { /* fake: as in func_80272FC0 */
+    if (sl) { /* fake: as in func_80272FC0 (SLOTS[arg1] spelled out, sl set before the calls: no) */
     }
     sl->unk10 = 0x14;
     sl->unk0 = arg1;
@@ -3146,7 +3159,9 @@ PORT_RET(void, s32) func_80270770(s16 arg0, s16 arg1) {
             speed = 10.0f;
     }
     c = malloc(sizeof(Ctl87));
-    goto next; /* fake: a block boundary, so speed is reloaded and saved again around func_802443F4 */
+    goto next; /* fake: a block boundary, so speed is reloaded and saved again around func_802443F4. An empty
+                * `if (c == NULL) {}` (a check whose body compiled to nothing?) matches as well; c->obj
+                * stored first, a break in default: no */
 next:
     o = func_802443F4(arg0);
     c->obj = obj;

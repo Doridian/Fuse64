@@ -22,7 +22,11 @@ It reports
       same size, or different);
   (c) a name defined in more than one place with different layouts (sizes
       or field offsets and types; the field names don't count).
---check exits non-zero on (a) or (c).  --json writes everything found.
+  (d) different names with the same layout (whatever uses them; only
+      layouts of D_MIN_SIZE bytes and D_MIN_FIELDS fields or more): a
+      list to look through, not a check.
+--check exits non-zero on (a), (b) not in ALLOW_B (each with its reason),
+or (c).  --json writes everything found.
 """
 import argparse
 import collections
@@ -39,6 +43,13 @@ CFLAGS = ["--target=i386-linux-gnu", "-malign-double", "-fsyntax-only", "-nostdi
           "-I", "include", "-I", "include/PR", "-I", "src", "-I", "include/ultralib",
           "-D_LANGUAGE_C", "-D_FINALROM", "-D_MIPS_SZLONG=32"]
 SKIP_DIRS = ("src/libultra/", "src/libmalloc/")
+# (b)s that are one symbol of different types for a reason: (symbol, role) -> why
+ALLOW_B = {
+    ("func_802391F0", "ret"): "the running task's argument (530C0.c: D_802AC344->unk10), whatever "
+                              "each task was started with",
+}
+# (d) lists layouts at least this big with at least this many fields
+D_MIN_SIZE, D_MIN_FIELDS = 0x10, 3
 
 
 def ours(path):
@@ -319,17 +330,28 @@ def main():
         sizes = {l[0] if l else None for l in lays.values()}
         rel = "same layout" if len(ss) == 1 else "same size" if len(sizes) == 1 else "different sizes"
         same_b.append((sym, role, rest, names, lays, rel))
+    # (d): different names with one layout, whatever uses them
+    by_sig = collections.defaultdict(list)
+    for n, ps in real.items():
+        if ps:
+            l = next(iter(ps.values()))
+            if (l[0] or 0) >= D_MIN_SIZE and len(l[2]) >= D_MIN_FIELDS:
+                by_sig[sig(l)].append(n)
+    same_d = sorted((sorted(ns), s) for s, ns in by_sig.items() if len(ns) > 1)
 
     print("%d files, %d names defined (%d in more than one place)" % (len(results), len(defs), len(dup_a)))
     print("\n(a) names defined in more than one place: %d" % len(dup_a))
     for n in sorted(dup_a, key=lambda n: (-len(dup_a[n]), n)):
         ps = dup_a[n]
         print("  %s (%d): %s" % (n, len(ps), " ".join(sorted(p for p in ps))))
-    print("\n(b) one symbol, different type names: %d (%d with the same layout)"
-          % (len(same_b), sum(1 for x in same_b if x[5] == "same layout")))
+    open_b = [x for x in same_b if (x[0], x[1]) not in ALLOW_B]
+    print("\n(b) one symbol, different type names: %d (%d with the same layout), %d allowed"
+          % (len(open_b), sum(1 for x in open_b if x[5] == "same layout"), len(same_b) - len(open_b)))
     for sym, role, rest, names, lays, rel in same_b:
         desc = ", ".join("%s%s" % (n, " [0x%X]" % lays[n][0] if lays[n] else "") for n in sorted(names))
-        print("  %s %s%s: %s (%s)" % (sym, role, (" " + rest) if rest else "", desc, rel))
+        why = ALLOW_B.get((sym, role))
+        print("  %s %s%s: %s (%s)%s" % (sym, role, (" " + rest) if rest else "", desc, rel,
+                                        " allowed: " + why if why else ""))
         if a.verbose:
             for n in sorted(names):
                 print("      %s: %s" % (n, " ".join(sorted(names[n]))))
@@ -337,17 +359,23 @@ def main():
     for n in sorted(conf_c):
         for s, ps in conf_c[n].items():
             print("  %s: size 0x%X, %d fields: %s" % (n, s[0] or 0, len(s[2]), " ".join(sorted(ps))))
+    print("\n(d) different names, one layout (0x%X bytes or more, %d fields or more): %d"
+          % (D_MIN_SIZE, D_MIN_FIELDS, len(same_d)))
+    for ns, sg in same_d:
+        print("  size 0x%X, %d fields: %s" % (sg[0] or 0, len(sg[2]), ", ".join(
+            "%s (%s)" % (n, " ".join(sorted(real[n]))) for n in ns)))
     if a.json:
         out = {"defs": {n: {p: (l if l[0] == "alias" else {"size": l[0], "align": l[1],
                                                              "fields": [list(f) for f in l[2]]})
                             for p, l in ps.items()} for n, ps in defs.items()},
                "a": sorted(dup_a), "c": sorted(conf_c),
                "b": [{"symbol": s, "role": r, "rest": x, "names": {n: sorted(f) for n, f in ns.items()},
-                      "relation": rel} for s, r, x, ns, _, rel in same_b]}
+                      "relation": rel, "allowed": ALLOW_B.get((s, r))} for s, r, x, ns, _, rel in same_b],
+               "d": [ns for ns, _ in same_d]}
         json.dump(out, open(a.json, "w"), indent=1, sort_keys=True)
     if bad:
         return 2
-    if a.check and (dup_a or conf_c):
+    if a.check and (dup_a or conf_c or open_b):
         return 1
     return 0
 

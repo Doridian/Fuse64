@@ -1,9 +1,10 @@
 #ifndef ENT_H
 #define ENT_H
 
-/* The entities of main_code's 87D80 and 8A7A0 (D_8008F438's Ent88, the objects they draw, their controllers) and the players they belong to (D_800AEDF0 seen as Player87). */
+/* The entities of main_code's 87D80 and 8A7A0 (D_8008F438's Ent88, the objects they draw, their controllers) (the players they belong to are player.h's). */
 
 #include "common.h"
+#include "player.h"
 
 typedef struct Node87 {
     /* 0x00 */ struct Node87 *next;
@@ -84,38 +85,5 @@ typedef struct Ent88 {
     /* 0x80 */ f32 unk80;
     /* 0x84 */ f32 unk84;
 } Ent88; /* size 0x88 */
-
-typedef struct {
-    /* 0x00 */ u8 pad0[0x18];
-    /* 0x18 */ s32 unk18;
-#ifdef TARGET_PC
-    /* the bomb count, which func_80277E1C stores as an s32 (Player8E) and
-       IDO's code reads the low half of: the word in the host's order */
-    /* 0x1C */ s32 unk1E;
-#else
-    /* 0x1C */ s16 unk1C;
-    /* 0x1E */ s16 unk1E;
-#endif
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ u8 pad24[4];
-#ifdef TARGET_PC
-    /* (D_800AEDF0's pointers as wide as the host's: 5E3F0.c's
-       UnkStruct_800AEDF0) */
-    /* 0x28 */ intptr_t unk28;
-    /* 0x2C */ intptr_t unk2C;
-    /* 0x30 */ intptr_t unk30;
-    /* 0x34 */ u8 pad34[0x40 - 0x34];
-    /* 0x40 */ intptr_t unk40;
-    /* 0x44 */ u8 pad44[0x4C - 0x44];
-    /* 0x4C */ intptr_t unk4C;
-    /* 0x50 */ u8 pad50[0xB0 - 0x50];
-    /* 0xB0 */ intptr_t unkB0;
-    /* 0xB4 */ intptr_t unkB4;
-    /* 0xB8 */ u8 padB8[0xC8 - 0xB8];
-#else
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ u8 pad2C[0xC8 - 0x2C];
-#endif
-} Player87; /* size 0xC8 */
 
 #endif

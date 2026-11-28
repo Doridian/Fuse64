@@ -147,6 +147,7 @@
  *   and only orders the address.
  */
 #include "common.h"
+#include "player.h"
 #include "m2c.h"
 #include "tex.h"
 
@@ -247,40 +248,7 @@ typedef struct {
     /* 0x48 */ UnkStruct_8023FD08_48 *unk48;
 } UnkStruct_8023FD08;
 
-/* A player (D_800AEDF0[4], 0xC8 bytes). */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x14];
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ u8 unk1C[4];
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ s32 unk24;
-#ifdef TARGET_PC
-    /* (D_800AEDF0's pointers as wide as the host's: 5E3F0.c's
-       UnkStruct_800AEDF0) */
-    /* 0x28 */ intptr_t unk28;
-    /* 0x2C */ intptr_t unk2C;
-    /* 0x30 */ intptr_t unk30;
-    /* 0x34 */ u8 pad34[0x40 - 0x34];
-    /* 0x40 */ intptr_t unk40;
-    /* 0x44 */ u8 pad44[0x4C - 0x44];
-    /* 0x4C */ intptr_t unk4C;
-    /* 0x50 */ u8 pad50[0x94 - 0x50];
-    /* 0x94 */ s32 unk94;
-    /* 0x98 */ s32 unk98;
-    /* 0x9C */ u8 pad9C[0xB0 - 0x9C];
-    /* 0xB0 */ intptr_t unkB0;
-    /* 0xB4 */ intptr_t unkB4;
-    /* 0xB8 */ u8 padB8[0xC8 - 0xB8];
-#else
-    /* 0x28 */ u8 unk28[0x94 - 0x28];
-    /* 0x94 */ s32 unk94;
-    /* 0x98 */ s32 unk98;
-    /* 0x9C */ u8 unk9C[0xC8 - 0x9C];
-#endif
-} Player54E40; /* size 0xC8 */
-
-#define PLAYERS ((Player54E40 *) D_800AEDF0)
+#define PLAYERS ((UnkStruct_800AEDF0 *) D_800AEDF0)
 
 /* A picture drawn by func_80242270: its entry and its rectangle. */
 typedef struct {
@@ -547,16 +515,15 @@ extern u8 D_800BCFE8[];
 #undef D_800AF06C
 #undef D_800AF0B0
 #undef D_800BD000
-#define PLAYER_S32_68(i) (*(s32 *) &PLAYERS[i].pad50[0x68 - 0x50])
 #define D_800AEE04 (PLAYERS[0].unk14)
 #define D_800AEE14 (PLAYERS[0].unk24)
-#define D_800AEE58 PLAYER_S32_68(0)
+#define D_800AEE58 (PLAYERS[0].unk68)
 #define D_800AEEDC (PLAYERS[1].unk24)
-#define D_800AEF20 PLAYER_S32_68(1)
+#define D_800AEF20 (PLAYERS[1].unk68)
 #define D_800AEFA4 (PLAYERS[2].unk24)
-#define D_800AEFE8 PLAYER_S32_68(2)
+#define D_800AEFE8 (PLAYERS[2].unk68)
 #define D_800AF06C (PLAYERS[3].unk24)
-#define D_800AF0B0 PLAYER_S32_68(3)
+#define D_800AF0B0 (PLAYERS[3].unk68)
 #define D_800BD000 ((u8 *) &((Port_800BCFE8 *) D_800BCFE8)[0].unk18)
 #endif
 
@@ -3158,7 +3125,7 @@ static s32 func_8023D0F8() {
     f32 yaw;
     s32 k;
     s32 skip;
-    Player54E40 *pl;
+    UnkStruct_800AEDF0 *pl;
     s32 flag;
 
     if ((D_802AC5D0 & 2) && (D_802AC610.unk14 != 0)) {

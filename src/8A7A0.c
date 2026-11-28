@@ -88,7 +88,7 @@
 #else
 #define ENT_HEAD (*(Ent88 **) &D_8008F44C)
 #endif
-#define PLAYERS ((Player87 *) D_800AEDF0)
+#define PLAYERS ((UnkStruct_800AEDF0 *) D_800AEDF0)
 #define ENTS ((Ent88 *) D_8008F438)
 #define OBJ_DD8 (*(UnkStructA **) &D_802AFDD8)
 #define VEC_E60 ((f32 *) D_802AFE60)
@@ -296,31 +296,6 @@ void func_80273F0C(void);
 void func_8027723C(void);
 
 typedef struct {
-    /* 0x00 */ u8 pad0[0x18];
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ s32 unk1C;
-    /* 0x20 */ s32 unk20;
-#ifdef TARGET_PC
-    /* 0x24 */ u8 pad24[4];
-    /* (D_800AEDF0's pointers as wide as the host's: 5E3F0.c's
-       UnkStruct_800AEDF0) */
-    /* 0x28 */ intptr_t unk28;
-    /* 0x2C */ intptr_t unk2C;
-    /* 0x30 */ intptr_t unk30;
-    /* 0x34 */ u8 pad34[0x40 - 0x34];
-    /* 0x40 */ intptr_t unk40;
-    /* 0x44 */ u8 pad44[0x4C - 0x44];
-    /* 0x4C */ intptr_t unk4C;
-    /* 0x50 */ u8 pad50[0xB0 - 0x50];
-    /* 0xB0 */ intptr_t unkB0;
-    /* 0xB4 */ intptr_t unkB4;
-    /* 0xB8 */ u8 padB8[0xC8 - 0xB8];
-#else
-    /* 0x24 */ u8 pad24[0xC8 - 0x24];
-#endif
-} Player8E; /* size 0xC8 */
-
-typedef struct {
     Node87 n;
     u8 pad[0x3C - 8];
 } Node3C;
@@ -333,7 +308,7 @@ typedef struct {
 #define IDS ((s16 (*)[9]) D_802AFC78)
 #define LIVE(e) ((e)->x != 1e7f)
 #define NODES D_802AFDE0
-#define PLAYERS8E ((Player8E *) D_800AEDF0)
+#define PLAYERS8E ((UnkStruct_800AEDF0 *) D_800AEDF0)
 
 void *func_80273F30(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4);
 void func_8027404C(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5);
@@ -418,7 +393,7 @@ void func_80273E2C(s16 arg0) {
 }
 
 s32 func_80273AD4(s16 arg0, f32 arg1, f32 arg2, f32 arg3) {
-    Player87 *pl;
+    UnkStruct_800AEDF0 *pl;
     Ent88 *e;
     f32 v[3];
     s32 pb[7];
@@ -436,7 +411,7 @@ s32 func_80273AD4(s16 arg0, f32 arg1, f32 arg2, f32 arg3) {
         return 0;
     }
     pl = &PLAYERS[arg0];
-    cnt = pl->unk1E;
+    cnt = ((s16 *) &pl->unk1C)[1]; /* unk1C's low half */
     e = ENT_HEAD;
     n = e->next;
     while (n != NULL) {
@@ -461,11 +436,11 @@ s32 func_80273AD4(s16 arg0, f32 arg1, f32 arg2, f32 arg3) {
     OBJ_DD8->unk30 = 1;
     OBJ_DD8->unk34 = 40.0f;
     OBJ_DD8->unk38 = 40.0f;
-    if (func_8022F4AC((PORT_RET(s32, void *)) OBJ_DD8, 0x10, PORT_PTR(pl->unk28)) != 0) {
+    if (func_8022F4AC((PORT_RET(s32, void *)) OBJ_DD8, 0x10, (PORT_RET(s32, void *)) pl->unk28) != 0) {
         return 0;
     }
     if (func_802909FC(OBJ_DD8, func_80277378) != 0) {
-        if (func_8022F4AC((PORT_RET(s32, void *)) OBJ_DD8, 0x10, PORT_PTR(pl->unk28)) != 0) {
+        if (func_8022F4AC((PORT_RET(s32, void *)) OBJ_DD8, 0x10, (PORT_RET(s32, void *)) pl->unk28) != 0) {
             return 0;
         }
         VEC_E60[0] = OBJ_DD8->unk40->unk10;

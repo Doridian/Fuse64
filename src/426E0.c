@@ -247,7 +247,7 @@ extern UnkScroll D_80098C68[6];
 extern f32 D_80098CF8[PORT_SIZE(0x200)][4][4]; /* the matrix stack, D_800A0CF8 deep */
 extern s32 D_800A0CF8;
 extern UnkStructA_40 D_800A0D00[0xA0];
-extern UnkStructA_40 D_800A3F00[];
+extern UnkStructA D_800A3F00[]; /* the pool after D_800A0D00, the end of it here */
 extern s32 D_8029F600;
 extern s32 D_8029F7E0;
 extern s32 D_8029F7E4;
@@ -334,7 +334,7 @@ static void func_8022A850(void) {
          * docs/PORT.md, "The scattered layout") */
     } while (i < 0xA0);
 #else
-    } while (&D_800A0D00[i] < D_800A3F00);
+    } while (&D_800A0D00[i] < (UnkStructA_40 *) D_800A3F00);
 #endif
     D_800A0D00[0].unk3C = NULL;
     D_800A0D00[1].unk3C = NULL;

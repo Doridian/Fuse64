@@ -5,7 +5,7 @@
  * own, placed in data_split.txt.
  *
  * All 14 match. Pass 2 retyped the records: D_8008E658 is Rec926[48]
- * (0x48 bytes), D_800AEDF0 Player926[] (0xC8); with plain struct C most
+ * (0x48 bytes), D_800AEDF0 UnkStruct_800AEDF0[] (0xC8); with plain struct C most
  * functions matched outright. func_80277FC4 then needed its locals in
  * the original's slot order (idx before alpha), flags set right after
  * unk3A in each case, `f *= ...` in place, r->unk14->unk40 re-read
@@ -15,6 +15,7 @@
  * with no second return ugen has no exit label to block the delay slot.
  */
 #include "common.h"
+#include "player.h"
 
 void *malloc(s32);
 void func_8022638C(u32, void *);
@@ -90,31 +91,6 @@ typedef struct {
 } Rec926; /* size 0x48 */
 
 typedef struct {
-    /* 0x00 */ u8 pad0[0x18];
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ u8 pad1C[4];
-    /* 0x20 */ s32 unk20;
-#ifdef TARGET_PC
-    /* 0x24 */ u8 pad24[4];
-    /* (D_800AEDF0's pointers as wide as the host's: 5E3F0.c's
-       UnkStruct_800AEDF0) */
-    /* 0x28 */ intptr_t unk28;
-    /* 0x2C */ intptr_t unk2C;
-    /* 0x30 */ intptr_t unk30;
-    /* 0x34 */ u8 pad34[0x40 - 0x34];
-    /* 0x40 */ intptr_t unk40;
-    /* 0x44 */ u8 pad44[0x4C - 0x44];
-    /* 0x4C */ intptr_t unk4C;
-    /* 0x50 */ u8 pad50[0xB0 - 0x50];
-    /* 0xB0 */ intptr_t unkB0;
-    /* 0xB4 */ intptr_t unkB4;
-    /* 0xB8 */ u8 padB8[0xC8 - 0xB8];
-#else
-    /* 0x24 */ u8 pad24[0xC8 - 0x24];
-#endif
-} Player926; /* size 0xC8 */
-
-typedef struct {
     s32 unk0;
     s32 unk4;
 } Info926;
@@ -137,7 +113,7 @@ void func_80278F68(void);
 void func_80278FD8(u32 arg0, u8 **arg1);
 
 #define RECS ((Rec926 *) &D_8008E658)
-#define PLAYERS ((Player926 *) D_800AEDF0)
+#define PLAYERS ((UnkStruct_800AEDF0 *) D_800AEDF0)
 
 void func_80278FD8(u32 arg0, u8 **arg1) {
     struct UnkStruct_80225CC0 *file;
@@ -181,7 +157,7 @@ void func_80278F00(s16 arg0) {
 
 void func_80278E84(s16 arg0, s16 arg1) {
     s32 max;
-    Player926 *p;
+    UnkStruct_800AEDF0 *p;
 
     p = &PLAYERS[arg0];
     p->unk20 += arg1;
@@ -196,7 +172,7 @@ void func_80278E84(s16 arg0, s16 arg1) {
 }
 
 void func_80278E28(s16 arg0, s16 arg1) {
-    Player926 *p;
+    UnkStruct_800AEDF0 *p;
 
     p = &PLAYERS[arg0];
     p->unk20 -= arg1;

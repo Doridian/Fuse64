@@ -11,6 +11,7 @@ typedef struct {
     /* 0x0C */ f32 f[3];
 } Unk8026DCAC;
 
+/* A row of cells (D_800B15D8's and D_800B5F20's). */
 typedef struct {
     /* 0x00 */ u8 unk0;
     /* 0x01 */ u8 unk1;
@@ -36,17 +37,11 @@ typedef struct {
 
 /* 99F40.c's blocks of cells, which follow D_800B15D8 on the N64 */
 typedef struct {
-    /* 0x00 */ u8 unk0;
-    /* 0x01 */ u8 unk1;
-    /* 0x02 */ u16 unk2[64];
-} UnkStruct_800B5F30; /* size 0x82 */
-
-typedef struct {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ u8 *unk4;
     /* 0x08 */ s32 unk8;
     /* 0x0C */ s32 unkC;
-    /* 0x10 */ UnkStruct_800B5F30 unk10[24];
+    /* 0x10 */ UnkCell_800B15D8 unk10[24];
 } UnkStruct_800B5F20; /* size 0xC40 */
 
 #endif

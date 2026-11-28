@@ -74,7 +74,7 @@ extern UnkStruct_800B5F20 D_800B5F20[6];
 static int port_cell_past(s32 layer, s32 cell, s32 slot, u16 v) {
     u32 off = layer * sizeof(UnkStruct_800B15D8) + 0x12 + cell * sizeof(UnkCell_800B15D8) + 2 + slot * 2;
     u32 r, i;
-    UnkStruct_800B5F30 *b;
+    UnkCell_800B15D8 *b;
     s32 *w;
 
     if (off < 0x4948) {
@@ -87,8 +87,8 @@ static int port_cell_past(s32 layer, s32 cell, s32 slot, u16 v) {
         return 1; /* (past D_800B5F20 too: no stage reaches it) */
     }
     if (r >= 0x10) {
-        b = &D_800B5F20[i].unk10[(r - 0x10) / sizeof(UnkStruct_800B5F30)];
-        r = (r - 0x10) % sizeof(UnkStruct_800B5F30);
+        b = &D_800B5F20[i].unk10[(r - 0x10) / sizeof(UnkCell_800B15D8)];
+        r = (r - 0x10) % sizeof(UnkCell_800B15D8);
         if (r == 0) {
             b->unk0 = v >> 8;
             b->unk1 = v;
@@ -113,7 +113,7 @@ static int port_cell_past(s32 layer, s32 cell, s32 slot, u16 v) {
 #else
 #define ENT_HEAD (*(Ent88 **) &D_8008F44C)
 #endif
-#define PLAYERS ((Player87 *) D_800AEDF0)
+#define PLAYERS ((UnkStruct_800AEDF0 *) D_800AEDF0)
 #define ENTS ((Ent88 *) D_8008F438)
 
 

@@ -121,21 +121,6 @@ typedef struct {
 } UnkStruct_ovl0A_06_80047540; /* size 0x1C */
 
 typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-} UnkStruct_ovl0A_06_80045168_Inner;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0x40];
-    /* 0x40 */ UnkStruct_ovl0A_06_80045168_Inner *unk40;
-} UnkStruct_ovl0A_06_80045168;
-
-typedef struct {
     f32 x, y, z;
 } Vec3f_ovl0A_06;
 
@@ -1654,9 +1639,9 @@ static s32 func_ovl0A_06_8004311C(void) {
             D_ovl0A_06_80047018 = 1;
             func_ovl0A_06_80043020(0, 1);
         } else if ((pressed & 0x8000) || (pressed & 0x1000)) {
-#line 1700 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1685 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             ret = 1;
-#line 1676 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1661 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             if (D_ovl0A_06_80047018 == 0) {
                 /* SE(1, 1) with `ret = 2` between its wait and its call */
                 switch (1) {
@@ -1673,9 +1658,9 @@ static s32 func_ovl0A_06_8004311C(void) {
                 SE(2, 2);
             }
         } else if (pressed & 0x4000) {
-#line 1700 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1685 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             ret = 1;
-#line 1695 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1680 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             SE(2, 2);
         }
         func_ovl0A_06_800465A0();

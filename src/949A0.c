@@ -6,139 +6,8 @@
  * pickups. The C is written last function first, as -O3 emits it.
  */
 #include "common.h"
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-} UnkStruct_80279050_10;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0x8];
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ PORT_RET(u8 unkC[0x24];, u8 unkC[0x14]; void *unk20; void *unk24; u8 unk28[0x8];)
-    /* 0x30 */ s32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ f32 unk38;
-    /* 0x3C */ PORT_RET(u8 unk3C[4];, void *unk3C;)
-    /* 0x40 */ UnkStruct_80279050_10 *unk40;
-    /* 0x44 */ PORT_RET(u8 unk44[0x14];, void *unk44; u8 unk48[0x10];)
-    /* 0x58 */ f32 unk58;
-    /* 0x5C */ f32 unk5C;
-    /* 0x60 */ f32 unk60;
-    /* 0x64 */ f32 unk64;
-    /* 0x68 */ f32 unk68;
-    /* 0x6C */ f32 unk6C;
-    /* 0x70 */ f32 unk70;
-} UnkStruct_80279050_14;
-
-/* A node of the list at D_800BB4A8; the last node is a sentinel */
-typedef struct UnkStruct_800BB4A8 {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ s16 unk2;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ struct UnkStruct_800BB4A8 *unk8;
-    /* 0x0C */ struct UnkStruct_800BB4A8 *unkC;
-    /* 0x10 */ UnkStruct_80279050_10 *unk10;
-    /* 0x14 */ UnkStruct_80279050_14 *unk14;
-    /* 0x18 */ PORT_IP(s32) unk18;
-    /* 0x1C */ s16 unk1C;
-    /* 0x1E */ s16 unk1E;
-    /* 0x20 */ s16 unk20;
-    /* 0x22 */ s16 unk22;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ s16 unk30;
-    /* 0x32 */ s16 unk32;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ f32 unk38;
-    /* 0x3C */ f32 unk3C;
-    /* 0x40 */ f32 unk40;
-    /* 0x44 */ f32 unk44;
-    /* 0x48 */ s16 unk48;
-    /* 0x4A */ u8 unk4A[6];
-    /* 0x50 */ f32 unk50;
-    /* 0x54 */ s32 unk54;
-} UnkStruct_800BB4A8;
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-} UnkStruct_802AFED0; /* size 0x1C */
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0x14];
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ s32 unk1C;
-    /* 0x20 */ s32 unk20;
-#ifdef TARGET_PC
-    /* 0x24 */ u8 unk24[4];
-    /* (D_800AEDF0's pointers as wide as the host's: 5E3F0.c's
-       UnkStruct_800AEDF0) */
-    /* 0x28 */ intptr_t unk28;
-    /* 0x2C */ intptr_t unk2C;
-    /* 0x30 */ intptr_t unk30;
-    /* 0x34 */ u8 unk34[0x40 - 0x34];
-    /* 0x40 */ intptr_t unk40;
-    /* 0x44 */ u8 unk44[0x4C - 0x44];
-    /* 0x4C */ intptr_t unk4C;
-    /* 0x50 */ u8 unk50[0xB0 - 0x50];
-    /* 0xB0 */ intptr_t unkB0;
-    /* 0xB4 */ intptr_t unkB4;
-    /* 0xB8 */ u8 unkB8[0xC8 - 0xB8];
-#else
-    /* 0x24 */ u8 unk24[0xA4];
-#endif
-} UnkStruct_800AEDF0; /* size 0xC8 */
-
-typedef struct {
-#ifdef TARGET_PC
-    /* 54E40 stores the words at 4, 8 and 0xC (D_802AC610's unk4..unkC) as
-       s32s, which IDO's code reads the low halves of: in the host's order
-       the word, which the s16 it is assigned to truncates */
-    /* 0x00 */ u8 unk0[0x4];
-    /* 0x04 */ s32 unk6;
-    /* 0x08 */ s32 unkA;
-    /* 0x0C */ s32 unkE;
-#else
-    /* 0x00 */ u8 unk0[0x6];
-    /* 0x06 */ s16 unk6;
-    /* 0x08 */ u8 unk8[0x2];
-    /* 0x0A */ s16 unkA;
-    /* 0x0C */ u8 unkC[0x2];
-    /* 0x0E */ s16 unkE;
-#endif
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ u8 unk14[0x4];
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ s32 unk1C;
-} UnkStruct_8023A840;
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ UnkStruct_80279050_14 *unk4;
-    /* 0x08 */ UnkStruct_80279050_14 *unk8;
-    /* 0x0C */ UnkStruct_80279050_14 *unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s16 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ s32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ f32 unk38;
-} UnkStruct_8027A264; /* size 0x3C */
+#include "bonus.h"
+#include "player.h"
 
 void func_8022FC90(UnkStruct_80279050_14 *);
 void func_802313DC(UnkStruct_80279050_14 *, s32);
@@ -196,16 +65,6 @@ extern UnkStruct_800AEDF0 D_800AEDF0[];
 extern UnkStruct_800BB4A8 D_800BB4A0[48];
 extern UnkStruct_800BB4A8 D_800BB4F8; /* [0] the list's head, [1] its sentinel, [2..47] the pool */
 extern s16 D_802AFF60[PORT_SIZE(7)];
-
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ s16 unk2;
-    /* 0x04 */ s16 unk4;
-    /* 0x06 */ s16 unk6;
-    /* 0x08 */ s16 unk8;
-    /* 0x0A */ s16 unkA;
-    /* 0x0C */ s16 unkC;
-} UnkStruct_800BA8A0; /* size 0xE */
 
 void func_80270B20(PORT_RET(s32, void *));
 void func_80270BA4(UnkStruct_80279050_14 *);
@@ -886,9 +745,9 @@ void func_8027A640(void) {
     }
     file = func_80226604(0xDC, 1);
     st = func_8023A840();
-    x = st->unk6;
-    y = st->unkA;
-    z = st->unkE;
+    x = S16_LO(st->unk4);
+    y = S16_LO(st->unk8);
+    z = S16_LO(st->unkC);
     mode = st->unk10;
     D_802AFE80 = malloc(func_802266DC(file));
     if (D_802AFE80 == NULL) {

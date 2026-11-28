@@ -29,55 +29,7 @@
  * for the three copies also matches).
  */
 #include "common.h"
-
-/* The object these functions are handed (the tables' argument). */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ u8 unk10[0xC];
-    /* 0x1C */ u8 unk1C;
-    /* 0x1D */ u8 unk1D;
-    /* 0x1E */ u8 unk1E;
-    /* 0x1F */ u8 unk1F;
-    /* 0x20 */ u8 unk20[4];
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ u8 unk28[4];
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ s32 unk30;
-    /* 0x34 */ u8 unk34[8];
-    /* 0x3C */ u8 unk3C;
-    /* 0x3D */ u8 unk3D;
-    /* 0x3E */ u8 unk3E[0xA];
-    /* 0x48 */ s32 unk48;
-    /* 0x4C */ s32 unk4C;
-    /* 0x50 */ union {
-        f32 f;
-        u8 b[4];
-    } unk50;
-    /* 0x54 */ f32 unk54;
-    /* 0x58 */ union {
-        f32 f;
-        u8 b[4];
-    } unk58;
-    /* 0x5C */ u8 unk5C;
-    /* 0x5D */ u8 unk5D;
-    /* 0x5E */ u16 unk5E;
-    /* 0x60 */ f32 unk60;
-    /* 0x64 */ f32 unk64;
-#ifdef TARGET_PC
-    /* 0x68 */ intptr_t unk68;  /* a pointer (54E40.c's M2C_FIELD(obj, u8 **, 0x68)) */
-    /* 0x6C */ u8 unk6C[2];
-#else
-    /* 0x68 */ u8 unk68[6];
-#endif
-    /* 0x6E */ s16 unk6E;
-    /* 0x70 */ u8 unk70[8];
-    /* 0x78 */ u8 unk78;
-    /* 0x79 */ u8 unk79[0xB];
-    /* 0x84 */ s32 unk84;
-} UnkStruct_80288040;
+#include "slots.h"
 
 /* A record of the table read from file 0x10B (func_802883B0). */
 typedef struct {
@@ -88,22 +40,12 @@ typedef struct {
 } UnkStruct_800BC9F0;
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ s32 unk10;
-} UnkStruct_8023A840;
-
-typedef struct {
     /* 0x0 */ s16 unk0;
     /* 0x2 */ u8 unk2[2];
 } UnkStruct_800BA8EA;
 
 extern UnkStruct_800BA8EA D_800BA8EA[];
 #ifdef TARGET_PC
-/* D_800BA8EA[i].unk0 is 9CAB0.c's D_800BA8E8[i].unk2 (its own name on the N64) */
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ s16 unk2;
-} UnkStruct_800BA8E8;
 extern UnkStruct_800BA8E8 D_800BA8E8[6];
 #endif
 extern UnkStruct_800BC9F0 D_800BC9F0[PORT_SIZE(16)];

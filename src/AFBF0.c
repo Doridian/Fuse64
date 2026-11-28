@@ -50,12 +50,6 @@ typedef struct {
     /* 0x04 */ UnkStruct_80281444 *unk4;
 } UnkStruct_802B0320; /* size 0x8 */
 
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ u8 unk4[0xC];
-    /* 0x10 */ s32 unk10;
-} UnkStruct_8023A840;
-
 void free(void *);
 void *malloc(u32);
 #ifdef TARGET_PC

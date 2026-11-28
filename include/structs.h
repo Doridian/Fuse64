@@ -146,6 +146,29 @@ typedef struct {
     /* 0x4C */ f32 unk4C;
 } UnkStructC;
 
+/* What func_8023A840 returns. */
+typedef struct {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ s32 unk8;
+    /* 0x0C */ s32 unkC;
+    /* 0x10 */ s32 unk10;
+    /* 0x14 */ u8 unk14[0x4];
+    /* 0x18 */ s32 unk18;
+    /* 0x1C */ s32 unk1C;
+} UnkStruct_8023A840;
+
+/*
+ * A word's low half, as 93850 and 949A0 read UnkStruct_8023A840's unk4,
+ * unk8 and unkC: the halfword at +2 on the N64; the port takes the whole
+ * word, its own order's (they are small counts).
+ */
+#ifdef TARGET_PC
+#define S16_LO(w) (w)
+#else
+#define S16_LO(w) (*(s16 *)((u8 *)&(w) + 2))
+#endif
+
 #ifdef TARGET_PC
 /* the game's objects as the port lays them out where another file's C
    reaches them by offset (port/include/port_types.h) */

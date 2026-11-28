@@ -53,11 +53,6 @@ typedef struct {
 } UnkStruct_802B01D0;
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ s32 unk10;
-} UnkStruct_8023A840;
-
-typedef struct {
     /* 0x00 */ u8 unk0[0x28];
     /* 0x28 */ s32 unk28;
     /* 0x2C */ s32 unk2C;

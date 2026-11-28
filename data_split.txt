@@ -64,7 +64,8 @@ ovl_0A_06 @jp 1412C0 sizes=0x620,0xE0,0x270
 
 # main_code: RSP code (0x2320 bytes, rspboot and microcode) comes first, as
 # asm data; the objects' .data start after it.  The .data/.rodata boundary
-# isn't shown yet: 40040 and 40300 have no .rodata.
+# isn't shown yet: none of the objects cut so far has .rodata (426E0, the
+# next, has: "SAT SEP  6..." at 0x802A2D00 needs an owner first).
 main_code @us data=0x8029F570
 main_code @eu data=0x8029F570
 main_code @jp data=0x8029EC50

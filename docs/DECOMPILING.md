@@ -1146,7 +1146,7 @@ Cut so far (the same in us, eu and jp):
 | module | objects | .data/.rodata boundary |
 |---|---|---|
 | ovl_09_01 | all: `ovl_09_01_entry`, `120010` (.data 0x30, .rodata 0x50: the handler's jump table, .bss 0x50) | 0x80044990 (the compiler's) |
-| main_code | `main_code_entry`, `40040` (.data 0x30: two tables), `40300` (.data 0x10: the bump pointer) after the RSP code at 0x8029D250-0x8029F570 | not shown yet: none of the three has .rodata |
+| main_code | `main_code_entry`, `40040` (.data 0x30: two tables), `40300` (.data 0x10: the bump pointer), `404C0` (.data 0x20, .bss 0x20), `40FB0` (.data 0x10, .bss 0x10), `412F0` (.data 0x200: the graphics tasks and display lists, .bss 0xA0), `41FD0` (.data 0x60, .bss 0x90) after the RSP code at 0x8029D250-0x8029F570 | not shown yet: none of them has .rodata |
 | boot_code | all of the game's C from the first object after the entry: `1050` (.data 0x10, .bss 0x400), `10D0` (.bss 0x80), `13F0` (.data 0x10), `14B0` (the scheduler: .data 0x20, .rodata 0x130: its assert strings and a jump table, .bss 0x70), `2350` (.data 0x3A0, jp 0x390: the jp table is an entry shorter; .bss 0x8470); the entry and 2630 are hasm and skipped | 0x8001B640 (jp 0x8001B620): 14B0's strings, after the libraries' .data |
 
 The sizes are the same in every version as long as the C is. Where a
@@ -1221,9 +1221,9 @@ jump table, no `static` or initialized globals. Check with
 and `.bss` must be empty. Their variables are `extern`, named
 `D_<us address>`, and defined by the asm blocks.
 
-The next candidates are the objects that extend a cut (main_code's
-`404C0`) and each overlay's first object after its entry, where nothing
-before it needs a size.
+The next candidate that extends a cut is main_code's `426E0` (placed
+already), which needs the .data/.rodata boundary: see "What's left of
+the data".
 
 **Objects placed on their own.** A library object after the game's code
 can't join the cut, so data_split.txt can place its sections where the
@@ -1244,9 +1244,9 @@ its own size; 80580: .data and .rodata, since a function's `static`
 counter puts its .data in the C; 5E3F0: .data and .rodata, its .bss
 staying asm; 9CAB0: .data and .rodata, its .bss
 outside main_code; 46300: all three, since
-func_8022C8B8's `static`s put its .bss in the C; 426E0: .rodata and
-.bss, since func_8022A328's and func_8022A6C4's `static`s do the same,
-its .data staying asm; 54E40: .rodata, .data (its strings, text items and
+func_8022C8B8's `static`s put its .bss in the C; 426E0: all three,
+since func_8022A328's and func_8022A6C4's `static`s do the same,
+its .data placed with them; 54E40: .rodata, .data (its strings, text items and
 tables; jp's strings make its .data 0xB20 against us's 0xBA0, eu's times
 differ) and part of its .bss, D_802AC7A0[10] and the two words after it,
 defined so as1 knows the array, the rest of its .bss staying asm; 48600: .rodata
@@ -1268,3 +1268,44 @@ splat, which leaves the section to the C: `tools/postsplit.py` defines it
 as `D_802AD684 = D_802AD680 + 0x4;` in module_syms_auto.txt, unless the C
 names it itself. The object's first variable must be named for the
 section's start (us's address).
+
+## What's left of the data
+
+Every function is C, and every overlay's and boot_code's data is in its
+objects (boot_code's libultra data too: docs/LIBULTRA.md, "Data"). What
+`asm/data` still holds (us addresses; eu's .data is the same, its .rodata
+from 5E3F0's and its .bss 0x10 lower; jp's lower by 0x920 and more past
+54E40, data_split.txt has each version's):
+
+| block | what | owner (text order, references) | why it is asm |
+|---|---|---|---|
+| zerojump `.rodata` 0x800420A0 | ZeroJump's two error strings | zerojump (handwritten, `hasm`) | not C: its code is asm and reads them at their mapped address (`D_A0`, `D_E2`); they would go with a source `.s` of zerojump |
+| main_code `.data` 0x8029D250-0x8029F570 | rspboot (0xD0), F3DEX's text (0x1430), aspMain's text (0xE20) | the SDK's microcode, linked before the game's `.data` | binary, not C (data_split.txt's `data=` starts the objects after it) |
+| main_code `.rodata` 0x802A4830-0x802A5000 | `__libm_qnan_f` (0x10), F3DEX's data (`D_802A4840`, 0x7C0) | libultra `libc/libm_vals` (no code), the microcode | libm_vals could be placed like vitbl.c; the microcode data is binary |
+| main_code_persist `.rodata` 0x802A5000-0x802A5300 | F3DEX's data's tail (`D_802A5000`), aspMain's data (`D_802A5040`, 0x2C0) | the microcode | binary |
+| main_code `.rodata` 0x802A2D00-0x802A2D20 | "SAT SEP  6 14:57:59 JST 1997", nothing refers to it | one of the objects before 426E0 (all without other .rodata) | which one owns it isn't known; until it is, the cut can't give the .data/.rodata boundary, which 426E0 (the next object, .rodata 0x10) needs to join it |
+| `.data` 0x8029FD40-0x8029FE30 | ZeroJump module 0x18's table and the rest | 48300 (48600 has none of its own known) | 48300's C defines none of it yet (placing it would do, as for 426E0) |
+| `.data` 0x802A0D50-0x802A0D60 | ZeroJump module 12's table | 5E090 | as above |
+| `.data` 0x802A1230-0x802A1250 | three words 40040 uses | 80420 (between 7D840 and 80580) | a label another object uses: 80420 must define it, 40040 keeps the extern |
+| `.data` 0x802A13D0-0x802A14F0 | module 20's table, 87730's and 87D80's tables | 87190, 87730, 87D80 (8A7A0 reads 87D80's) | not written yet; 87D80 is placed for its .rodata only |
+| `.data` 0x802A1500-0x802A1520 | a module table | 93850 (949A0 reads it) | not written yet |
+| `.data` 0x802A1570-0x802A1630 | tables | 97610, 995C0, 99F40 (module 14's) | not written yet; 995C0 is placed for its .rodata only |
+| `.data` 0x802A1A80-0x802A1AB0 | three words and module table | 9BFD0 | not written yet |
+| `.data` 0x802A1C00-0x802A1C40 | a module table and bytes | A4860 | not written yet |
+| `.bss` 0x802A5A60-0x802AC7A0 | 0x6D40 of state | 52270, 530C0, 53D70, 54BE0 (0x802AC5C0-0x802AC5D0, used by 40040, 426E0, 4E030 too) and 54E40's start | 52270 has no placement yet; 530C0 and 53D70 are placed for .data/.rodata only; 54E40 defines only D_802AC7A0's run |
+| `.bss` 0x802AC7D0-0x802ACFB0 | 54E40's rest, 5E090's word, 5E3F0's | 54E40, 5E090, 5E3F0 | 54E40's .bss is defined in part; 5E3F0's C keeps it extern (its .data and .rodata are placed) |
+| `.bss` 0x802AD0E0-0x802AD680 | `D_802AD0E0`, 80420's, the audio state | 80420, 80580 | not written yet; 80580 is placed for .data/.rodata |
+| `.bss` 0x802AFC30-0x802AFE70 | | 87190, 87730, 87D80 | not written yet |
+| `.bss` 0x802AFE80-0x802AFF70 | | 93850 (949A0) | not written yet |
+| `.bss` 0x802B0180-0x802B01F0 | | 97610 (995C0) | not written yet |
+| `.bss` 0x802B0230-0x802B0260 | | 9BFD0 | not written yet |
+
+Labels inside these that nothing names (`D_802AC402`, `D_802AFF62`, ...)
+are fields: the object's C covers them with its struct. What it takes:
+for each owner, `tools/data_c.py` on its run, the definitions in its
+file (in address order, `.bss` before the first function), and a
+`data=`/`bss=` placement (`tools/data_split.py <v> --place`), as 426E0
+and the overlays did; an object's run ends where the next owner's first
+label (or 16-byte padding) is. Once the date string has an owner, the
+cut can take main_code's objects in order instead. The microcode blocks
+stay asm (or become binary objects); they aren't the game's C.

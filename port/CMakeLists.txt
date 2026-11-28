@@ -135,7 +135,23 @@ endif()
 # in an order the seed shuffles too (lld's --shuffle-sections); with
 # PORT_SANITIZE=address each access to a place no variable has is reported
 set(PORT_SCATTER "" CACHE STRING "the scattered layout's seed (empty: the default layout)")
-set(SCATTER_ARG)
+# the default layout (docs/PORT.md, "The default layout"): each fixed-address
+# name and each asm data label an object of its own (port/tools/gen_regions.py,
+# asm2c.py); n64: the N64's, the names in port_rdram at their RDRAM offsets
+# and each asm data file one struct
+set(PORT_LAYOUT objects CACHE STRING "objects (each name its own object) or n64 (port_rdram laid out as RDRAM)")
+set_property(CACHE PORT_LAYOUT PROPERTY STRINGS objects n64)
+if(NOT PORT_LAYOUT MATCHES "^(objects|n64)$")
+    message(FATAL_ERROR "PORT_LAYOUT is objects or n64, not ${PORT_LAYOUT}")
+endif()
+set(SCATTER_ARG --layout ${PORT_LAYOUT})
+if(PORT_LAYOUT STREQUAL "n64")
+    if(NOT PORT_SCATTER STREQUAL "")
+        message(FATAL_ERROR "PORT_SCATTER is a layout of its own: not with PORT_LAYOUT=n64")
+    endif()
+    message(STATUS "the N64's layout (port_rdram)")
+    add_compile_definitions(PORT_LAYOUT_N64)
+endif()
 if(NOT PORT_SCATTER STREQUAL "")
     if(NOT PORT_SCATTER MATCHES "^[1-9][0-9]*$")
         message(FATAL_ERROR "PORT_SCATTER is a seed, a number from 1")
@@ -336,17 +352,22 @@ endif()
 # where pointers are 8 bytes, the asm data's labels and the fixed addresses
 # are laid out by the types the game's C declares them with (decls.py: the
 # declarations and the layouts, from this build's compile commands;
-# docs/PORT.md, "Where pointers are 8 bytes")
+# docs/PORT.md, "Where pointers are 8 bytes"); the default layout takes each
+# object's size from them where pointers are 4 bytes too (--sizes)
 set(DECLS_ARG)
 set(DECLS_DEP)
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+if(CMAKE_SIZEOF_VOID_P EQUAL 8 OR PORT_LAYOUT STREQUAL "objects")
     file(GLOB_RECURSE GAME_H ${ROOT}/include/*.h ${ROOT}/src/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
     add_custom_command(OUTPUT ${GEN}/decls.json
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/decls.py ${CMAKE_CURRENT_BINARY_DIR}
                 --version ${PORT_VERSION} -o ${GEN}/decls.json
         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/decls.py ${GAME_C} ${OVL_C} ${GAME_H}
                 ${CMAKE_CURRENT_SOURCE_DIR}/src/ultra.c ${CMAKE_BINARY_DIR}/compile_commands.json VERBATIM)
-    set(DECLS_ARG --decls ${GEN}/decls.json)
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(DECLS_ARG --decls ${GEN}/decls.json)
+    else()
+        set(DECLS_ARG --sizes ${GEN}/decls.json)
+    endif()
     set(DECLS_DEP ${GEN}/decls.json ${CMAKE_CURRENT_SOURCE_DIR}/tools/layouts.py)
 endif()
 add_custom_command(OUTPUT ${GEN}/asm_data.c ${GEN}/asm_data_fill.c

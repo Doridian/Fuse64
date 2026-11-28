@@ -140,10 +140,19 @@ def tus(build, version):
     cc = json.load(open(os.path.join(build, "compile_commands.json")))
     out = []
     for e in cc:
-        src = e["file"]
+        src = wrap = e["file"]
+        if "/gen/resetwrap/" in src or "/gen/ovlwrap/" in src:
+            # (WebAssembly: the file through its wrapper, CMakeLists.txt's
+            # reset_wrap or the overlays', which includes it)
+            src = re.search(r'#include "([^"]+)"', open(wrap).read()).group(1)
         if "/port/host/" in src or "/gen/" in src:
             continue
         argv = split_command(e["command"]) if "command" in e else list(e["arguments"])
+        if os.path.basename(argv[0]) in ("emcc", "emcc.py"):
+            # (emscripten: the layouts are the host clang's -m32 and -m64,
+            # as zig's below)
+            argv = ["clang"] + argv[1:]
+            argv = [a for a in argv if a != wrap] + [src]
         if os.path.basename(argv[0]).startswith("zig") and argv[1:2] == ["cc"]:
             # (a zig cross build: the layouts are the host clang's -m32 and
             # -m64, which a target's ILP32 and LP64 ones are for this C)

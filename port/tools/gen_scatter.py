@@ -4,11 +4,13 @@ fixed-address name and every asm data label in a place of its own.
 
   gen_scatter.py SEED REGIONS_objects.json ASM_objects.json [--decls DECLS.json] OUT.c
 
-The default build keeps what the N64 has at fixed addresses as one buffer
-laid out as RDRAM (gen/regions.c) and each asm data file as one struct
-(gen/asm_data.c), so that a name reached through its neighbour (past an
-end, before a start, an index past a too-small declaration, a range
-cleared from one name to another) still reaches what the N64 has there.
+The N64 layout (-DPORT_LAYOUT=n64) keeps what the N64 has at fixed
+addresses as one buffer laid out as RDRAM (gen/regions.c) and each asm
+data file as one struct (gen/asm_data.c), and the default layout gives
+each object the N64's room up to the next declared name, so that a name
+reached through its neighbour (past an end, before a start, an index past
+a too-small declaration, a range cleared from one name to another) still
+reaches what the N64 has there.
 This build takes that away: each object (a name with its declared size, or
 its room to the next name where no declaration has a size) goes in
 port_scatter_arena in an order SEED shuffles, with padding before it of 16
@@ -148,6 +150,21 @@ def main():
     c.append("    { 0, 0x%X, 0, 0, 0 }" % total)
     c.append("};")
     c.append("const unsigned port_scatter_nobjs = %d;" % len(order))
+    # the same as port/src/memory.c's objects (the default layout's table):
+    # each one's place, size, N64 address and offset in the N64 layout's
+    # port_rdram (the image), all of them in port_region_objs
+    c.append("typedef struct { uint8_t *p; uint32_t size, n64, img; } PortObj;")
+    c.append("const PortObj port_region_objs[] = {")
+    nobj = 0
+    for e in sorted(order, key=lambda e: e["off"]):
+        if e["size"]:
+            img = e["hoff"] if e["kind"] == "region" and e["base"] == "port_rdram" else 0xFFFFFFFF
+            c.append("    { port_scatter_arena + 0x%X, 0x%X, 0x%X, 0x%X }," % (e["off"], e["size"], e["n64"], img))
+            nobj += 1
+    c.append("};")
+    c.append("const unsigned port_region_nobjs = %d;" % nobj)
+    c.append("const PortObj port_asm_objs[1];")
+    c.append("const unsigned port_asm_nobjs = 0;")
     c += [
         "",
         "#ifdef PORT_SCATTER_CHECK",

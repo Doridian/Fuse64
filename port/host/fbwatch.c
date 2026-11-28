@@ -73,7 +73,7 @@ static void prot(const uint8_t *p, size_t n, int how) {
 }
 
 void host_fbw_image(const uint8_t *p, size_t n, int z) {
-    if (!host_fbw_on || p < port_rdram || p >= port_rdram + PORT_RDRAM_SIZE)
+    if (!host_fbw_on || port_image_off(p) < 0)
         return;
     for (int i = 0; i < nimg; i++)
         if (img[i].p == p) {
@@ -209,7 +209,7 @@ static void finish(void) {
     if (!f)
         return;
     for (int i = 0; i < nimg; i++)
-        fprintf(f, "img %d %06lX %lu %s\n", i, (unsigned long)(img[i].p - port_rdram), (unsigned long)img[i].n,
+        fprintf(f, "img %d %06lX %lu %s\n", i, (unsigned long)port_image_off(img[i].p), (unsigned long)img[i].n,
                 img[i].z ? "z" : "color");
     for (int i = 0; i < nrec; i++) {
         Rec *e = &rec[i];

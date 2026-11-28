@@ -520,11 +520,12 @@ u32 osViGetCurrentField(void) { return 0; }
 static void vi_regs(void) {
     uint32_t r[PORT_VI_NREGS] = { 0 };
     const uint8_t *fb = vi_cur_fb != NULL ? port_addr((uintptr_t)vi_cur_fb) : NULL;
+#ifdef PORT_LAYOUT_N64
     int in_ram = fb != NULL && fb >= port_rdram && fb < port_rdram + PORT_RDRAM_SIZE;
-#ifdef PORT_SCATTER_LAYOUT
-    /* (the scattered layout's framebuffers are objects of their own, which
-       the VI finds by their N64 addresses) */
-    in_ram = in_ram || fb != NULL;
+#else
+    /* (the framebuffers are objects of their own, which the VI finds by
+       their N64 addresses) */
+    int in_ram = fb != NULL;
 #endif
     if (vi_mode != NULL && in_ram) {
         OSViMode *m = vi_mode;

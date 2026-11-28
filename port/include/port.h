@@ -35,10 +35,38 @@ extern "C" {
 
 /* ---- memory ------------------------------------------------------------- */
 
-/* the N64's RDRAM, for what the game has at fixed addresses
-   (gen/regions.c: port/tools/gen_regions.py) */
+/* The N64's RDRAM: the size of the N64 layout's port_rdram (gen/regions.c:
+   port/tools/gen_regions.py), where the game's fixed-address names are at
+   their RDRAM offsets in that layout (-DPORT_LAYOUT=n64, PORT_LAYOUT_N64).
+   The default layout makes each name an object of its own (docs/PORT.md,
+   "The default layout"); each keeps its offset there, so that what is
+   made of RDRAM (the dumps, the renderer's and the audio's references)
+   stays the same: the "image". */
 #define PORT_RDRAM_SIZE 0x800000
+#ifdef PORT_LAYOUT_N64
 extern uint8_t port_rdram[];
+#endif
+/* an object of the default (or the scattered) layout: its place, size, N64
+   (KSEG0) address and offset in the image (PORT_OBJ_NO_IMG: none, an asm
+   data label) */
+typedef struct { uint8_t *p; uint32_t size, n64, img; } PortObj;
+#define PORT_OBJ_NO_IMG 0xFFFFFFFFu
+/* (port/src/memory.c, in every layout) p's offset in the image (-1: none);
+   the bytes from p to its object's end (0: none); the image's offset off
+   (NULL: no object), *room the bytes to the object's end; the whole image
+   (PORT_RDRAM_SIZE bytes, zeros where no object is); zeros from the
+   image's start to end (the soft reset: what IPL3 writes) */
+long port_image_off(const void *p);
+size_t port_image_room(const void *p);
+void *port_image_host(uint32_t off, size_t *room);
+void port_image_copy(uint8_t *dst);
+void port_image_zero(uint32_t end);
+/* f on each object's part in the image's [lo, hi) */
+void port_image_each(uint32_t lo, uint32_t hi, void (*f)(const void *p, size_t n));
+#ifndef PORT_LAYOUT_N64
+/* the object p is in (NULL: none) */
+const PortObj *port_obj_of(const void *p);
+#endif
 
 /* the width check's shadow (host/widthcheck.c, -DPORT_WIDTHCHECK=ON): what
    the host writes into the game's memory, as stores of `width` bytes

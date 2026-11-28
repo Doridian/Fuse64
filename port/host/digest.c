@@ -476,8 +476,8 @@ void port_digest_poll(void) {
     {
         /* PORT_DIGEST_DUMP=FRAME:FILE: the RDRAM buffer at each read of game
            frame FRAME (emu_digest.py's --dump: the asm data and the regions
-           are at their N64 offsets there, in the host's byte order) */
-        extern uint8_t port_rdram[];
+           are at their N64 offsets there, in the host's byte order: the
+           image, port_image_copy) */
         static int at = -2;
         static const char *path;
         if (at == -2) {
@@ -487,10 +487,14 @@ void port_digest_poll(void) {
         }
         if (at >= 0 && frame == (unsigned)at) {
             FILE *d = fopen(path, "wb");
-            if (d) {
-                fwrite(port_rdram, 1, 8 << 20, d);
-                fclose(d);
+            uint8_t *img = malloc(PORT_RDRAM_SIZE);
+            if (d && img) {
+                port_image_copy(img);
+                fwrite(img, 1, PORT_RDRAM_SIZE, d);
             }
+            if (d)
+                fclose(d);
+            free(img);
         }
     }
 }

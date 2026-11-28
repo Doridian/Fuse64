@@ -341,8 +341,8 @@ static void dump_slots(void) {
     for (uint32_t i = 0; i < NSLOTS; i++)
         if (slots[i].addr) {
             uintptr_t a = slots[i].addr;
-            if (a >= (uintptr_t)port_rdram && a < (uintptr_t)port_rdram + PORT_RDRAM_SIZE)
-                fprintf(f, "slot r%08lx %08x\n", (unsigned long)(a - (uintptr_t)port_rdram + 0x80000000u),
+            if (port_image_off((void *)a) >= 0)
+                fprintf(f, "slot r%08lx %08x\n", (unsigned long)port_image_off((void *)a) + 0x80000000ul,
                         slots[i].store);
             else if (a >= (uintptr_t)__executable_start && a < (uintptr_t)_end)
                 fprintf(f, "slot x%08x %08x\n", rel((void *)a), slots[i].store);
@@ -376,8 +376,8 @@ static void dump(void) {
                " store 0: the host's, 1: an initializer; the address an N64 one where it is in port_rdram)\n");
     for (unsigned i = 0; i < n; i++) {
         uintptr_t a = pairs[i].addr;
-        if (a >= (uintptr_t)port_rdram && a < (uintptr_t)port_rdram + PORT_RDRAM_SIZE)
-            a = a - (uintptr_t)port_rdram + 0x80000000u;
+        if (port_image_off((void *)a) >= 0)
+            a = (uintptr_t)port_image_off((void *)a) + 0x80000000u;
         fprintf(f, "%08x %08x %u %u %u %llu %08lx\n", pairs[i].load, pairs[i].store, pairs[i].lw, pairs[i].sw,
                 pairs[i].pos, (unsigned long long)pairs[i].count, (unsigned long)a);
     }

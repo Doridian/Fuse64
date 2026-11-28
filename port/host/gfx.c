@@ -87,7 +87,8 @@ static uintptr_t cmd_w1(const uint8_t *c, unsigned st) {
    of retraces FROM to TO (stderr, or FILE), one line each: its depth in
    the call stack, the two words, and what it loads (a vertex's numbers, a
    matrix's, a movemem's bytes, TMEM's checksum after a load).  Addresses
-   are written as where they are (an offset in port_rdram, or "host"),
+   are written as where they are (an offset in the image, port_rdram in the
+   N64 layout, or "host"),
    not as the run's pointers, so two builds' dumps compare with diff (a
    big-endian host against a little-endian one: "Byte order" in
    docs/PORT.md). */
@@ -117,9 +118,9 @@ static void dl_init(void) {
 }
 
 static void dl_where(const void *p) {
-    uintptr_t a = (uintptr_t)p;
-    if (a >= (uintptr_t)port_rdram && a < (uintptr_t)port_rdram + PORT_RDRAM_SIZE)
-        fprintf(dl_out, " @%06X", (unsigned)(a - (uintptr_t)port_rdram));
+    long off = port_image_off(p);
+    if (off >= 0)
+        fprintf(dl_out, " @%06X", (unsigned)off);
     else
         fprintf(dl_out, " @%s", p ? "host" : "null");
 }
@@ -259,12 +260,7 @@ static uint32_t xr_alloc(uint32_t n) {
 
 /* a host pointer the RDP reads or writes: its N64 address, or -1 when it is
    outside port_rdram (a blob, placed later) */
-static long xr_phys(const void *p) {
-    uintptr_t a = (uintptr_t)p;
-    if (a >= (uintptr_t)port_rdram && a < (uintptr_t)port_rdram + PORT_RDRAM_SIZE)
-        return (long)(a - (uintptr_t)port_rdram);
-    return -1;
-}
+static long xr_phys(const void *p) { return port_image_off(p); }
 
 static int xr_blob(const uint8_t *p) {
     for (int i = 0; i < xr.nblob; i++)
@@ -519,7 +515,7 @@ static void xr_begin(const void *dl) {
         xr.img = malloc(0x1000000);
     if (!xr.img)
         host_fatal("PORT_GFX_REF: no memory");
-    memcpy(xr.img, port_rdram, PORT_RDRAM_SIZE);
+    port_image_copy(xr.img);
     memset(xr.img + PORT_RDRAM_SIZE, 0, 0x1000000 - PORT_RDRAM_SIZE);
     xr.top = PORT_RDRAM_SIZE;
     xr.full = 0;
@@ -629,7 +625,11 @@ static void xr_end(void) {
     host_gfx_sync();
     char path[1100];
     snprintf(path, sizeof path, "%s/r%06u_t%u.out", xr_dir, host_vi_count, xr_task);
-    xr_write(path, port_rdram, PORT_RDRAM_SIZE, NULL, 0);
+    static uint8_t *out;
+    if (!out && !(out = malloc(PORT_RDRAM_SIZE)))
+        host_fatal("PORT_GFX_REF: no memory");
+    port_image_copy(out);
+    xr_write(path, out, PORT_RDRAM_SIZE, NULL, 0);
     if (xr_cmds)
         fclose(xr_cmds);
     xr_cmds = NULL;
@@ -658,8 +658,8 @@ static void cs_image(const uint8_t *p, int w, int siz, int z) {
     size_t n = (size_t)w * 240 * (siz == 0 ? 1 : cs_bytes(siz));
     if (siz == 0)
         n /= 2;
-    if (p >= port_rdram && p < port_rdram + PORT_RDRAM_SIZE && n > (size_t)(port_rdram + PORT_RDRAM_SIZE - p))
-        n = (size_t)(port_rdram + PORT_RDRAM_SIZE - p);
+    if (port_image_room(p) && n > port_image_room(p))
+        n = port_image_room(p);
     if (host_fbw_on)
         host_fbw_image(p, n, z);
     if (!host_census_on)
@@ -677,10 +677,7 @@ static void cs_image(const uint8_t *p, int w, int siz, int z) {
     }
 }
 
-static long cs_off(const void *p) {
-    const uint8_t *b = p;
-    return b >= port_rdram && b < port_rdram + PORT_RDRAM_SIZE ? (long)(b - port_rdram) : -1;
-}
+static long cs_off(const void *p) { return port_image_off(p); }
 
 static void cs_tile(const char *kind, int tile) {
     const GfxTile *t = &gs.tile[tile & 7];

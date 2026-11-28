@@ -335,7 +335,6 @@ static double last_yield;
    the regions) at retrace N (several: FILE.N each), to compare two hosts'
    or renderers' runs (a debugging aid; a GPU renderer's images synced
    first, as for anything that reads RDRAM) */
-extern uint8_t port_rdram[];
 static void dump_rdram(void) {
     static int init, many;
     static const char *list, *path;
@@ -358,10 +357,14 @@ static void dump_rdram(void) {
             snprintf(name, sizeof name, many ? "%s.%u" : "%s", path, host_vi_count);
             host_gfx_sync();
             FILE *f = fopen(name, "wb");
-            if (f) {
-                fwrite(port_rdram, 1, 8 << 20, f);
-                fclose(f);
+            uint8_t *img = malloc(PORT_RDRAM_SIZE);
+            if (f && img) {
+                port_image_copy(img);       /* (the N64 layout's RDRAM: the image) */
+                fwrite(img, 1, PORT_RDRAM_SIZE, f);
             }
+            if (f)
+                fclose(f);
+            free(img);
             /* (and its hidden bits, a byte a halfword: FILE.hb) */
             strncat(name, ".hb", sizeof name - strlen(name) - 1);
             f = fopen(name, "wb");

@@ -36,42 +36,23 @@ uint64_t host_gfx_tris(void) { return tris; }
    and gfx_ref.py's reference gets the port's, PORT_GFX_REF) */
 static uint8_t hidden[PORT_RDRAM_SIZE / 2];
 
-#ifdef PORT_SCATTER_LAYOUT
-/* the scattered layout's images (the framebuffers, the depth buffer) are
-   objects in its arena (docs/PORT.md, "The scattered layout"): their
-   hidden bits by their place there */
-typedef struct { const char *name; uint32_t off, size, n64, n64size; } PortScatterObj;
-extern const PortScatterObj port_scatter_objs[];
-extern const unsigned port_scatter_nobjs;
-extern uint8_t port_scatter_arena[];
-static uint8_t *hidden_sc;
-#endif
-
 const uint8_t *host_gfx_hidden(void) { return hidden; }
 
 static void bl_div_init(void);
 
 static void soft_init(void) {
     memset(hidden, HB_CLEAN, sizeof hidden);
-#ifdef PORT_SCATTER_LAYOUT
-    hidden_sc = malloc(port_scatter_objs[port_scatter_nobjs].off / 2 + 1);
-    if (hidden_sc == NULL)
-        host_fatal("host_gfx_init: no memory");
-    memset(hidden_sc, HB_CLEAN, port_scatter_objs[port_scatter_nobjs].off / 2 + 1);
-#endif
     bl_div_init();
 }
 
-/* the hidden bits of the halfword at p (outside RDRAM: a scratch byte) */
+/* the hidden bits of the halfword at p, by its place in the image (the
+   N64 layout's RDRAM: the framebuffers and the depth buffer are objects of
+   their own in the other layouts, docs/PORT.md "The default layout";
+   outside it, a scratch byte) */
 static uint8_t *hb_at(const uint8_t *p) {
     static uint8_t none;
-    uintptr_t off = (uintptr_t)p - (uintptr_t)port_rdram;
-#ifdef PORT_SCATTER_LAYOUT
-    uintptr_t soff = (uintptr_t)p - (uintptr_t)port_scatter_arena;
-    if (off >= PORT_RDRAM_SIZE && soff < port_scatter_objs[port_scatter_nobjs].off)
-        return &hidden_sc[soff >> 1];
-#endif
-    if (off >= PORT_RDRAM_SIZE) {
+    long off = port_image_off(p);
+    if (off < 0) {
         none = HB_CLEAN;
         return &none;
     }
@@ -310,7 +291,7 @@ static void trace_px(const uint8_t *p, const int *c) {
     host_log("trace %u: cimg %p old %02x%02x new %d %d %d cvg %d; om %08x %08x; tile %d fmt %d siz %d tmem %d "
              "line %d pal %d; timg %p (rdram %+ld); st %d %d (s10.5)\n", host_vi_count, (void *)gs.cimg, p[0], p[1],
              c[0], c[1], c[2], c[3], gs.om_h, gs.om_l, gs.tex_tile, t->fmt, t->siz, t->tmem, t->line, t->pal,
-             (void *)gs.timg, (long)(gs.timg - port_rdram), trace_s, trace_t);
+             (void *)gs.timg, port_image_off(gs.timg), trace_s, trace_t);
     if (host_verbose > 1) {
         for (int i = 0; i < 64; i++)
             host_log("%02x%s", gfx_tmem[(t->tmem * 8 + i) & 0xFFF], i % 32 == 31 ? "\n" : "");
@@ -452,13 +433,14 @@ static uint8_t *zptr(int x, int y) {
     if (!gs.zimg || x < 0 || y < 0)
         return NULL;
     size_t off = ((size_t)y * gs.cimg_w + x) * 2;
-#ifdef PORT_SCATTER_LAYOUT
-    /* (the scattered layout's depth buffer is in its arena) */
-    if (gs.zimg >= port_scatter_arena &&
-        gs.zimg + off + 2 <= port_scatter_arena + port_scatter_objs[port_scatter_nobjs].off)
-        return gs.zimg + off;
-#endif
-    if (gs.zimg < port_rdram || gs.zimg + off + 2 > port_rdram + PORT_RDRAM_SIZE)
+    /* (in the depth buffer's object: in the N64 layout, port_rdram) */
+    static const uint8_t *zimg;
+    static size_t zroom;
+    if (gs.zimg != zimg) {
+        zimg = gs.zimg;
+        zroom = port_image_room(zimg);
+    }
+    if (zroom < off + 2)
         return NULL;
     return gs.zimg + off;
 }

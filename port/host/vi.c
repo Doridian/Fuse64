@@ -109,9 +109,9 @@ static const Src *src(int line) {
     int n = col_s1 - col_s0 + 1 + 2 * SRC_PAD;
     for (int k = 0; k < n; k++) {
         uint32_t i = (at + (uint32_t)k) & (HALVES - 1);
-#ifdef PORT_SCATTER_LAYOUT
-        /* (the scattered layout's framebuffers are objects in its arena,
-           found by their N64 addresses; past them, black) */
+#ifndef PORT_LAYOUT_N64
+        /* (the framebuffers are objects of their own but in the N64
+           layout, found by their N64 addresses; past them, black) */
         const uint8_t *q = port_n64_host(0x80000000u + i * 2);
         uint16_t c = q ? port_be16(q) : 0;
         int h = q ? host_gfx_hb(q) : 0;
@@ -352,19 +352,16 @@ static void make(const uint32_t *r, uint32_t *out, int *w, int *h, uint32_t seed
         srcs[i].line = -1;
     /* what it reads (the lines around, the columns the filters reach) as the
        RDP left it (a GPU renderer's images: gfx_gl.c) */
-#ifdef PORT_SCATTER_LAYOUT
-    host_gfx_sync();
-#else
     {
         int64_t first = (int64_t)img_base + ((int64_t)(y_start >> 10) - 1) * img_w + col_s0 - SRC_PAD;
         int64_t last = (int64_t)img_base + ((int64_t)((y_start + (uint32_t)(vres - 1) * y_add) >> 10) + 2) * img_w +
                        col_s1 + SRC_PAD;
+        /* (each object there: in the N64 layout, port_rdram's range) */
         if (first >= 0 && first <= last && last < HALVES)
-            host_gfx_sync_range(port_rdram + (size_t)first * 2, (size_t)(last - first + 1) * 2);
+            port_image_each((uint32_t)first * 2, (uint32_t)(last + 1) * 2, host_gfx_sync_range);
         else
             host_gfx_sync();            /* (RDRAM wraps) */
     }
-#endif
 
     for (int y = 0; y < vres; y++) {
         uint32_t cy = y_start + (uint32_t)y * y_add;
@@ -608,7 +605,14 @@ void host_vi_frame(void) {
     fwrite("F64VIREF", 1, 8, f);
     for (int i = 0; i < PORT_VI_NREGS; i++)
         put32(f, r[i]);
-    fwrite(port_rdram, 1, PORT_RDRAM_SIZE, f);
+    {
+        uint8_t *img = malloc(PORT_RDRAM_SIZE);
+        if (!img)
+            host_fatal("PORT_VI_REF: no memory");
+        port_image_copy(img);
+        fwrite(img, 1, PORT_RDRAM_SIZE, f);
+        free(img);
+    }
     fwrite(host_gfx_hidden(), 1, PORT_RDRAM_SIZE / 2, f);
     fclose(f);
     snprintf(path, sizeof path, "%s/v%06u.out", dir, host_vi_count);

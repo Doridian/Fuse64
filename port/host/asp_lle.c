@@ -105,9 +105,9 @@ static void watch_exit(void) {
 }
 #endif
 
-static int is_rdram(const void *p) {
-    return (const uint8_t *)p >= port_rdram && (const uint8_t *)p < port_rdram + PORT_RDRAM_SIZE;
-}
+/* (the image: port_rdram in the N64 layout, the fixed-address names at
+   their offsets there in the others) */
+static int is_rdram(const void *p) { return port_image_off(p) >= 0; }
 
 /* a place in the window: n bytes, at the same offset in 16 as `align` */
 static uint32_t win_alloc(uint32_t n, uintptr_t align) {
@@ -136,8 +136,8 @@ static uint32_t map_region(uint8_t *host, uint32_t len) {
    `swap`) */
 static uint32_t dram_of(uintptr_t a, uint32_t n, int swap) {
     uint8_t *p = port_addr(a);
-    if (!swap && is_rdram(p) && is_rdram(p + n - 1))
-        return (uint32_t)(p - port_rdram);
+    if (!swap && is_rdram(p) && port_image_room(p) >= n)
+        return (uint32_t)port_image_off(p);
     if (!swap) {
         static int said;
         if (!said && host_verbose)
@@ -163,8 +163,9 @@ static void lle_dma(int write, uint32_t dram, uint8_t *mem, uint32_t len) {
         uint32_t d = dram + i, k;
         uint8_t *h = NULL;
         if (d < PORT_RDRAM_SIZE) {
-            k = PORT_RDRAM_SIZE - d;
-            h = port_rdram + d;
+            size_t room = 0;
+            h = port_image_host(d, &room);
+            k = (uint32_t)room;
         } else {
             k = 0;
             for (int r = 0; r < nreg; r++)
@@ -219,7 +220,7 @@ static void ref_begin(void) {
         ref_img = malloc(REF_SIZE);
         atexit(ref_exit);
     }
-    memcpy(ref_img, port_rdram, PORT_RDRAM_SIZE);
+    port_image_copy(ref_img);
     memset(ref_img + WIN_BASE, 0, WIN_SIZE);
     memcpy(ref_img + WIN_BASE, win, win_top);
     for (int r = 0; r < nreg; r++)
@@ -233,8 +234,12 @@ static void ref_end(uint32_t ncmd) {
         host_log("audio lle: cxd4 didn't end the task\n");
     ref_tasks++;
     uint32_t bad = 0, first = 0;
+    static uint8_t *cur;
+    if (!cur && !(cur = malloc(PORT_RDRAM_SIZE)))
+        host_fatal("audio lle: no memory");
+    port_image_copy(cur);
     for (uint32_t a = 0; a < PORT_RDRAM_SIZE; a++)
-        if (ref_img[a] != port_rdram[a]) {
+        if (ref_img[a] != cur[a]) {
             if (!bad)
                 first = a;
             bad++;

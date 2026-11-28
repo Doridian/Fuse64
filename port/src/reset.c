@@ -121,5 +121,5 @@ void port_reset_game(void) {
     memcpy(osAppNMIBuffer, keep, sizeof keep);
     for (i = 0; i < port_noverlays; i++)
         port_overlay_reset(i);
-    zero((char *)port_rdram, IPL3_END);
+    port_image_zero(IPL3_END);
 }

@@ -2,15 +2,17 @@
 """The data the game's C names that is still asm (docs/PORT.md, "The asm
 data as C"), as C for the port.
 
-  asm2c.py [--decls DECLS.json] [--scatter] [--snapshot DIR] OUT.c
+  asm2c.py [--decls DECLS.json | --sizes DECLS.json] [--layout objects|n64|scatter] [--snapshot DIR] OUT.c
 
 Reads the extracted asm/data/*.s (main_code's .data, .rodata and .bss that
 no C object defines yet, and boot_code's VI modes) and the code image
-(assets/code.bin, for the bytes), and writes one C file: each asm file is
-one variable, a packed struct of its labels in their order (the C indexes
-from one label into the next, so they stay together, at their N64
-offsets), and each label a global alias at its offset (module-level asm:
-`.set`).  Each datum is in host order at the width the asm's directive
+(assets/code.bin, for the bytes), and writes one C file.  Each asm file is
+laid out as a packed struct of its labels in their order, at their N64
+offsets; in the default layout (docs/PORT.md, "The default layout") each
+label the C declares, and that isn't inside the one before, is a struct of
+its own from its place there to the next one's (port_o_LABEL), the label
+an alias at its offset (module-level asm: `.set`); with --layout n64 each
+file is one variable, that struct, and each label an alias into it.  Each datum is in host order at the width the asm's directive
 gives it (`.word`, `.short`, `.byte`, a string), unless the label is in
 LAYOUTS below, which gives the widths the C reads it at.  A symbolic word
 is a pointer: to a function, to a label (`+ n`), or into the fixed-address
@@ -252,21 +254,44 @@ def main():
         i = args.index("--decls")
         decls = args[i + 1]
         del args[i:i + 2]
+    sizes = None
+    if "--sizes" in args:
+        # (decls.py's JSON where pointers are 4 bytes: only the labels'
+        # sizes, for the default layout)
+        i = args.index("--sizes")
+        sizes = os.path.abspath(args[i + 1])
+        del args[i:i + 2]
     snapdir = None
     if "--snapshot" in args:
         i = args.index("--snapshot")
         snapdir = os.path.abspath(args[i + 1])
         del args[i:i + 2]
-    scatter = "--scatter" in args
-    if scatter:
+    # the layout (gen_regions.py's): "objects", the default, each label an
+    # object of its own; "n64", each file one struct; "scatter", the
+    # structs as the startup image gen/scatter.c copies from
+    layout = "objects"
+    if "--scatter" in args:
         args.remove("--scatter")
+        layout = "scatter"
+    if "--layout" in args:
+        i = args.index("--layout")
+        layout = args[i + 1]
+        del args[i:i + 2]
+    if layout not in ("objects", "n64", "scatter"):
+        sys.exit("asm2c.py: --layout objects, n64 or scatter")
+    scatter = layout == "scatter"
     out = os.path.abspath(args[0])
     os.chdir(ROOT)
     lay = full = None
     if decls:
         full = json.load(open(decls))
         lay = layouts.Layouts(full)
+    if sizes:
+        full = json.load(open(sizes))
+    sizer = layouts.Layouts(full) if full else None
     psize = 8 if lay else 4
+    if layout == "objects" and full is None:
+        sys.exit("asm2c.py: the default layout needs decls.py's sizes (--decls or --sizes)")
     snap = None
     if snapdir:
         parsed, snap, izero = load_snapshot(os.path.join(snapdir, "asm_data.json"))
@@ -288,10 +313,12 @@ def main():
     externs, body, report = set(), [], []
     objs = []       # every label, for gen_scatter.py
     bases = {}      # each file's struct's size
+    objtab = []     # the default layout's objects, for port/src/memory.c (port_asm_objs)
+    labelplace = {}     # the default layout: label -> (its struct, its place in the file's, the pad)
 
     def ptr_init(a):
         sym, add = sym_value(a)
-        if sym in labelset or sym.startswith("D_8") and lay or sym in PHYS:
+        if sym in labelset or sym.startswith("D_8") and (lay or layout != "n64") or sym in PHYS:
             externs.add("extern uint8_t %s[];" % sym)
             return "(void *)(%s + 0x%X)" % (sym, add)
         if sym.startswith("func_") or not sym.startswith("D_"):
@@ -328,6 +355,8 @@ def main():
         start = labels[0][1]
         fields = {}       # host offset -> (decl, init)
         aliases = []
+        tops = []         # (label, host offset): the labels that are inside no other
+        inners = []       # (label, host offset, the label it is inside of)
         hpos = 0          # the host offset of the next label
         cover = None      # (label's host start, its N64 start, file, type, N64 end): names inside it
         for l, size in zip(labels, ends):
@@ -340,6 +369,7 @@ def main():
                     report.append("%s: inside %s at +0x%X, no host offset" % (name, cover[3], loff - cover[1]))
                     h = loff - cover[1]
                 aliases.append((name, cover[0] + h))
+                inners.append((name, cover[0] + h, cover[5]))
                 objs.append({"name": name, "n64": vram, "room": size, "base": base, "hoff": cover[0] + h,
                              "inside": cover[5], "size": None, "file": f})
                 continue
@@ -374,6 +404,7 @@ def main():
                 cover = (hpos,) + cover[1:]
             lh = hpos if lay else loff
             aliases.append((name, lh))
+            tops.append((name, lh, vram))
             if lay:
                 # (the object's size: its type's, else its declarations', else its room)
                 vs = [d for d in full["names"].get(name, []) if d["kind"] == "var" and d.get("s64")]
@@ -404,7 +435,7 @@ def main():
                     return
                 fields[lh + h] = (decl % ("f%x" % (lh + h)), init, width)
                 if fill:
-                    fills.append((base, lh + h, rom + r, fill, count))
+                    fills.append((base, lh + h, rom + r, fill, count, name, lh))
 
             lay_ = LAYOUTS.get(name)
             if lay_:
@@ -469,36 +500,55 @@ def main():
             last = labels[-1]
             total = (last[1] - start) + ends[-1]
         bases[base] = total
-        # the struct: fields at their offsets, zero padding between
         body.append("/* %s */" % f)
-        body.append("struct __attribute__((packed, aligned(16))) %s_t {" % base)
-        inits, pos = [], 0
-        for h in sorted(fields):
-            decl, init, width = fields[h]
-            if h < pos:
-                report.append("%s: overlapping fields at 0x%X" % (f, h))
+        if layout != "objects":
+            # the struct: fields at their offsets, zero padding between
+            emit_struct(body, base, fields, 0, total, 0, bss, report, f)
+            for n, off in ([] if scatter else aliases):
+                body.append("__asm__(\".globl \" PORT_ULP \"%s\\n.set \" PORT_ULP \"%s, \" PORT_ULP \"%s + 0x%X\\n\");"
+                            % (n, n, base, off))
+            body.append("")
+            continue
+        # the default layout (docs/PORT.md, "The default layout"): each
+        # label inside no other is a struct of its own, port_o_LABEL, from
+        # its place in the file's struct to the next one's (or the file's
+        # end), keeping its offset modulo 16 (a pad before it), the label an
+        # alias at that offset; a label inside another an alias inside it,
+        # and one at the same place as the next an alias of that one
+        where = {}      # label -> (its struct, its place in the file's struct, the pad)
+        # (a label the C doesn't declare, or inside the one before by that
+        # one's declared size, is inside it: the scattered layout's rule)
+        merged = []
+        for n, lh, vram in tops:
+            vs = [d for d in full["names"].get(n, []) if d["kind"] == "var"]
+            dsz = max([d["s%d" % (psize * 8)] for d in vs if d.get("s%d" % (psize * 8))], default=0)
+            if ":" in TYPES.get(n, ""):
+                dsz = max(dsz, sizer.size(*TYPES[n].split(":", 1), psize * 8) or 0)
+            if merged and (not vs and n not in SIZES or lh < merged[-1][1] + merged[-1][3]):
+                inners.append((n, lh, merged[-1][0]))
                 continue
-            if h > pos:
-                body.append("    uint8_t p%x[%d];" % (pos, h - pos))
-                inits.append("{0}")
-            body.append("    " + decl)
-            inits.append(init)
-            pos = h + width
-        if total > pos:
-            body.append("    uint8_t p%x[%d];" % (pos, total - pos))
-            inits.append("{0}")
-        if total == 0:
-            body.append("    uint8_t empty;")
-        body.append("};")
-        if bss or not fields:
-            body.append("struct %s_t %s;" % (base, base))
-        else:
-            body.append("struct %s_t %s = {" % (base, base))
-            body.extend("    %s," % x for x in inits)
-            body.append("};")
-        for n, off in ([] if scatter else aliases):
+            merged.append((n, lh, vram, dsz))
+        tops = [m[:3] for m in merged]
+        for i, (n, lh, vram) in enumerate(tops):
+            end = tops[i + 1][1] if i + 1 < len(tops) else total
+            if end == lh and i + 1 < len(tops):
+                inners.append((n, lh, tops[i + 1][0]))
+                continue
+            ph = lh % 16
+            sym = "port_o_" + n
+            where[n] = (sym, lh, ph)
+            emit_struct(body, sym, {h: v for h, v in fields.items() if lh <= h < end}, lh, end, ph, bss, report, f)
             body.append("__asm__(\".globl \" PORT_ULP \"%s\\n.set \" PORT_ULP \"%s, \" PORT_ULP \"%s + 0x%X\\n\");"
-                        % (n, n, base, off))
+                        % (n, n, sym, ph))
+            objtab.append("    { (uint8_t *)%s + 0x%X, 0x%X, 0x%X, 0xFFFFFFFF }, /* %s */" % (sym, ph, end - lh, vram, n))
+            labelplace[n] = (sym, lh, ph)
+        for n, off, cont in inners:
+            while cont not in where:
+                cont = next(c for x, o_, c in inners if x == cont)
+            sym, lh, ph = where[cont]
+            labelplace[n] = where[cont]
+            body.append("__asm__(\".globl \" PORT_ULP \"%s\\n.set \" PORT_ULP \"%s, \" PORT_ULP \"%s + 0x%X\\n\");"
+                        % (n, n, sym, ph + off - lh))
         body.append("")
     o.extend(sorted(externs))
     o.append("")
@@ -508,7 +558,8 @@ def main():
     os.replace(tmp, out)
     rep = out[:-2] + "_report.txt"
     open(rep, "w").write("".join(x + "\n" for x in report))
-    write_fill(out[:-2] + "_fill.c", fills, psize, image_size, img, snap)
+    write_fill(out[:-2] + "_fill.c", fills, psize, image_size, img, snap,
+               labelplace if layout == "objects" else None, objtab)
     if not snapdir:
         js = snapshot_json(parsed, img, izero)
         open(out[:-2] + "_snapshot.json", "w").write(json.dumps(js, separators=(",", ":")) + "\n")
@@ -516,12 +567,47 @@ def main():
         json.dump({"objects": objs, "bases": bases}, open(out[:-2] + "_objects.json", "w"), indent=0)
 
 
-def write_fill(path, fills, psize, image_size, img, snap):
+def emit_struct(body, sym, fields, lo, end, pad, bss, report, f):
+    """struct SYM_t and SYM: FIELDS (place in the file's struct -> (decl,
+    init, width)) from LO to END, after PAD bytes"""
+    body.append("struct __attribute__((packed, aligned(16))) %s_t {" % sym)
+    inits, pos = [], lo - pad
+    for h in sorted(fields):
+        decl, init, width = fields[h]
+        if h < pos:
+            report.append("%s: overlapping fields at 0x%X" % (f, h))
+            continue
+        if h > pos:
+            body.append("    uint8_t p%x[%d];" % (pos, h - pos))
+            inits.append("{0}")
+        body.append("    " + decl)
+        inits.append(init)
+        pos = h + width
+    if end > pos:
+        body.append("    uint8_t p%x[%d];" % (pos, end - pos))
+        inits.append("{0}")
+    if end - lo + pad == 0:
+        body.append("    uint8_t empty;")
+    body.append("};")
+    if bss or not fields:
+        body.append("struct %s_t %s;" % (sym, sym))
+    else:
+        body.append("struct %s_t %s = {" % (sym, sym))
+        body.extend("    %s," % x for x in inits)
+        body.append("};")
+
+
+def write_fill(path, fills, psize, image_size, img, snap, labelplace=None, objtab=()):
     """port_asmfill: the asm data's runs of the ROM's bytes, merged where
     one goes on in the same kind, and the FNV-1a of the image's bytes they
-    read (the snapshot's, without the image)"""
+    read (the snapshot's, without the image).  In the default layout
+    (LABELPLACE) each run goes to its label's own struct, and OBJTAB is the
+    table of those (port_asm_objs); the runs and the sum are the same."""
     ents = []
-    for base, h, src, kind, count in sorted(fills, key=lambda x: (x[0], x[1])):
+    for base, h, src, kind, count, label, lh in sorted(fills, key=lambda x: (x[0], x[1])):
+        if labelplace is not None:
+            sym, lh_, pad = labelplace[label]
+            base, h = sym, h - lh_ + pad
         sw = FILL_KINDS[kind][1]
         hw = psize if kind == "W" else sw
         if ents:
@@ -541,7 +627,17 @@ def write_fill(path, fills, psize, image_size, img, snap):
          "   (docs/PORT.md, \"The ROM's data\"; port/host/romfill.c copies them). */",
          "#include <stdint.h>", "",
          "struct PortAsmFill { uint8_t *dst; uint32_t src, count, kind; };"]
-    o += ["extern uint8_t %s[];" % b for b in sorted({e[0] for e in ents})]
+    syms = {e[0] for e in ents}
+    for t in objtab:
+        syms.add(re.match(r"\s*\{ \(uint8_t \*\)(\w+)", t).group(1))
+    o += ["extern uint8_t %s[];" % b for b in sorted(syms)]
+    if labelplace is not None:
+        # (the default layout's objects: port/src/memory.c)
+        o.append("typedef struct { uint8_t *p; uint32_t size, n64, img; } PortObj;")
+        o.append("const PortObj port_asm_objs[] = {")
+        o += list(objtab)
+        o.append("};")
+        o.append("const unsigned port_asm_nobjs = %d;" % len(objtab))
     o.append("const struct PortAsmFill port_asmfill[] = {")
     o += ["    {%s + 0x%X, 0x%X, %d, %d}," % (base, h, src, count, FILL_KINDS[kind][0])
           for base, h, src, kind, count in ents]

@@ -316,8 +316,9 @@ static uint8_t *state_of(uintptr_t w1) { return state_override ? state_override 
    place in RDRAM, as asp_lle.c's */
 static uint32_t dram_addr(uintptr_t w1) {
     uint8_t *p = ram(w1);
-    if (p >= port_rdram && p < port_rdram + PORT_RDRAM_SIZE)
-        return (uint32_t)(p - port_rdram);
+    long off = port_image_off(p);
+    if (off >= 0)
+        return (uint32_t)off;
     return (uint32_t)w1 & 0xFFFFFF;
 }
 

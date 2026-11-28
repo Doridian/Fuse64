@@ -445,7 +445,7 @@ static void attach(Img *c, Img *z) {
 /* the z image (as the color image: 320 wide, in RDRAM)?  NULL if not */
 static uint8_t *z_image(void) {
     uint8_t *z = gs.zimg;
-    if (!z || z < port_rdram || z + TW * TH * 2 > port_rdram + PORT_RDRAM_SIZE)
+    if (!z || port_image_room(z) < TW * TH * 2)
         return NULL;
     return z;
 }
@@ -462,8 +462,8 @@ static void soft_turn(void) {
 /* is the color image the GPU's? (else the software back end draws) */
 static int target(void) {
     uint8_t *img = gs.cimg;
-    if (!img || gs.cimg_siz != 2 || gs.cimg_fmt != 0 || gs.cimg_w != TW || img == gs.zimg || img < port_rdram ||
-        img + TW * TH * 2 > port_rdram + PORT_RDRAM_SIZE) {
+    if (!img || gs.cimg_siz != 2 || gs.cimg_fmt != 0 || gs.cimg_w != TW || img == gs.zimg ||
+        port_image_room(img) < TW * TH * 2) {
         soft_turn();
         return 0;
     }
@@ -2108,7 +2108,7 @@ static void vi_init(void) {
 
 /* the halfword i of RDRAM (N64 offsets / 2) in the host's memory */
 static uint8_t *vi_host(int64_t i) {
-#ifdef PORT_SCATTER_LAYOUT
+#ifndef PORT_LAYOUT_N64
     return port_n64_host(0x80000000u + (uint32_t)i * 2);
 #else
     return port_rdram + i * 2;

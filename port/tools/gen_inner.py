@@ -33,7 +33,7 @@ EXCLUDE = {
 def names(path):
     out = []
     for line in open(path):
-        m = re.search(r'\.set " PORT_ULP "(D_[0-9A-Za-z_]+), " PORT_ULP "(port_rdram|port_asm_|port_scatter_arena)',
+        m = re.search(r'\.set " PORT_ULP "(D_[0-9A-Za-z_]+), " PORT_ULP "(port_rdram|port_asm_|port_o_|port_scatter_arena)',
                       line)
         if m:
             out.append(m.group(1))

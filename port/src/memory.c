@@ -12,6 +12,7 @@
  */
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include "port.h"
 
 #if defined(__linux__) && !defined(__EMSCRIPTEN__)
@@ -33,8 +34,10 @@ int port_hostmalloc_owns(const void *p);
 
 int port_is_game_memory(const void *p) {
     uintptr_t a = (uintptr_t)p;
+#ifdef PORT_LAYOUT_N64
     if (a >= (uintptr_t)port_rdram && a < (uintptr_t)port_rdram + PORT_RDRAM_SIZE)
         return 1;
+#endif
 #ifdef PORT_HOST_MALLOC
     /* (the game's blocks, the host's: host/hostmalloc.c) */
     if (port_hostmalloc_owns(p))
@@ -64,20 +67,44 @@ uintptr_t port_unproxy(uintptr_t a) {
     return a;
 }
 
+/* the place of the N64 layout's RDRAM offset off that the game reached by
+   a number (port_addr) */
+static void *numeric(uint32_t off) {
+#ifdef PORT_LAYOUT_N64
+    return port_rdram + off;
+#else
+    /* (where no object is, a page of zeros that nothing else has, as the
+       N64 layout's port_rdram has zeros there: 412F0.c's func_80227678
+       gives a number before the first frame, 0x10000, which the game
+       makes a segment's base; nothing reads it) */
+    static uint8_t nowhere[0x40000] __attribute__((aligned(16)));
+    static uint32_t said = 0xFFFFFFFFu;
+    void *p = port_image_host(off, NULL);
+    if (p != NULL)
+        return p;
+    if (host_verbose && said != off)
+        host_log("port_addr: the N64's address 0x%08X is in no fixed-address name\n", 0x80000000u + off);
+    said = off;
+    return nowhere + (off & 0x1FFFF);
+#endif
+}
+
 void *port_addr(uintptr_t a) {
     a = port_unproxy(a);
     /* (the program is linked above 8 MiB, so no pointer of its own looks
        physical: CMakeLists.txt's image base) */
+#ifdef PORT_LAYOUT_N64
     if (a >= (uintptr_t)port_rdram && a < (uintptr_t)port_rdram + PORT_RDRAM_SIZE)
         return (void *)a;
+#endif
     if (a < PORT_RDRAM_SIZE)
-        return port_rdram + a;
+        return numeric((uint32_t)a);
     if (port_is_game_memory((void *)a))
         return (void *)a;
     if ((uint32_t)a >= 0x80000000u && (uint32_t)a < 0x80000000u + PORT_RDRAM_SIZE && a == (uint32_t)a)
-        return port_rdram + ((uint32_t)a - 0x80000000u);
+        return numeric((uint32_t)a - 0x80000000u);
     if ((uint32_t)a >= 0xA0000000u && (uint32_t)a < 0xA0000000u + PORT_RDRAM_SIZE && a == (uint32_t)a)
-        return port_rdram + ((uint32_t)a - 0xA0000000u);
+        return numeric((uint32_t)a - 0xA0000000u);
 #if UINTPTR_MAX == 0xFFFFFFFFu
     if (port_is_game_memory((void *)(a + 0x80000000u)))
         return (void *)(a + 0x80000000u);
@@ -95,59 +122,233 @@ void *port_addr(uintptr_t a) {
     return (void *)a;
 }
 
-#ifdef PORT_SCATTER_LAYOUT
-/* gen/scatter.c's objects in its arena, by offset (and its end) */
-typedef struct { const char *name; uint32_t off, size, n64, n64size; } PortScatterObj;
-extern const PortScatterObj port_scatter_objs[];
-extern const unsigned port_scatter_nobjs;
-extern uint8_t port_scatter_arena[];
-#endif
+#ifndef PORT_LAYOUT_N64
+/* The default layout's objects (docs/PORT.md, "The default layout"): each
+   fixed-address name (gen/regions.c's port_region_objs) and each asm data
+   label (gen/asm_data_fill.c's port_asm_objs) an object of its own, or in
+   the scattered layout each one's place in its arena (gen/scatter.c, all
+   of them in port_region_objs).  Each has its N64 (KSEG0) address and,
+   for a fixed-address name, its offset in the N64 layout's port_rdram
+   (the "image": what the RDRAM dumps and the renderer's and the audio's
+   references are made of, so that they stay the same files). */
+extern const PortObj port_region_objs[], port_asm_objs[];
+extern const unsigned port_region_nobjs, port_asm_nobjs;
 
-/* The N64's (KSEG0) address of p, a place in a name the N64 has at a fixed
-   address: port_rdram's offset, or in the scattered layout the object's own
-   N64 address.  For what the N64 leaves of such a pointer where the game
-   reads it back (9CAB0.c's stack byte). */
-uint32_t port_n64_address(const void *p) {
+static const PortObj **by_p, **by_n64, **by_img;
+static unsigned n_obj, n_img;
+
+static int cmp_p(const void *a, const void *b) {
+    uintptr_t x = (uintptr_t)(*(const PortObj *const *)a)->p, y = (uintptr_t)(*(const PortObj *const *)b)->p;
+    return x < y ? -1 : x > y;
+}
+static int cmp_n64(const void *a, const void *b) {
+    uint32_t x = (*(const PortObj *const *)a)->n64, y = (*(const PortObj *const *)b)->n64;
+    return x < y ? -1 : x > y;
+}
+static int cmp_img(const void *a, const void *b) {
+    uint32_t x = (*(const PortObj *const *)a)->img, y = (*(const PortObj *const *)b)->img;
+    return x < y ? -1 : x > y;
+}
+
+/* (the host's malloc, not the game's heap, which pc_names.h's malloc is:
+   the index is the host's own) */
+#undef malloc
+void *malloc(size_t n);
+
+static void obj_init(void) {
+    unsigned i;
+    if (by_p)
+        return;
+    n_obj = port_region_nobjs + port_asm_nobjs;
+    by_p = malloc(sizeof *by_p * n_obj * 3);
+    if (!by_p)
+        host_fatal("no memory for the objects' index");
+    by_n64 = by_p + n_obj;
+    by_img = by_n64 + n_obj;
+    for (i = 0; i < n_obj; i++) {
+        const PortObj *o = i < port_region_nobjs ? &port_region_objs[i] : &port_asm_objs[i - port_region_nobjs];
+        by_p[i] = by_n64[i] = o;
+        if (o->img != PORT_OBJ_NO_IMG)
+            by_img[n_img++] = o;
+    }
+    qsort(by_p, n_obj, sizeof *by_p, cmp_p);
+    qsort(by_n64, n_obj, sizeof *by_n64, cmp_n64);
+    qsort(by_img, n_img, sizeof *by_img, cmp_img);
+}
+
+/* the object p is in (NULL: none) */
+const PortObj *port_obj_of(const void *p) {
+    static const PortObj *last, *prev;     /* (the renderer's color and depth images) */
+    const PortObj *o;
     uintptr_t a = (uintptr_t)p;
-    if (a >= (uintptr_t)port_rdram && a < (uintptr_t)port_rdram + PORT_RDRAM_SIZE)
-        return 0x80000000u + (uint32_t)(a - (uintptr_t)port_rdram);
-#ifdef PORT_SCATTER_LAYOUT
-    uintptr_t ar = (uintptr_t)port_scatter_arena;
-    if (a >= ar && a < ar + port_scatter_objs[port_scatter_nobjs].off) {
-        uint32_t off = (uint32_t)(a - ar);
-        unsigned l = 0, h = port_scatter_nobjs;
-        while (l < h) {     /* the first object starting after off */
+    unsigned l = 0, h;
+    if (last && a - (uintptr_t)last->p < last->size)
+        return last;
+    if (prev && a - (uintptr_t)prev->p < prev->size) {
+        o = prev;
+        prev = last;
+        return last = o;
+    }
+    obj_init();
+    h = n_obj;
+    while (l < h) {     /* the first object starting after p */
+        unsigned m = (l + h) / 2;
+        if ((uintptr_t)by_p[m]->p <= a)
+            l = m + 1;
+        else
+            h = m;
+    }
+    if (l && a - (uintptr_t)by_p[l - 1]->p < by_p[l - 1]->size) {
+        prev = last;
+        return last = by_p[l - 1];
+    }
+    return NULL;
+}
+
+/* the object with the N64 (KSEG0) address a (NULL: none) */
+static const PortObj *obj_n64(uint32_t a) {
+    static const PortObj *last;
+    unsigned l = 0, h;
+    if (last && a - last->n64 < last->size)
+        return last;
+    obj_init();
+    h = n_obj;
+    while (l < h) {
+        unsigned m = (l + h) / 2;
+        if (by_n64[m]->n64 <= a)
+            l = m + 1;
+        else
+            h = m;
+    }
+    if (l && a - by_n64[l - 1]->n64 < by_n64[l - 1]->size)
+        return last = by_n64[l - 1];
+    return NULL;
+}
+
+long port_image_off(const void *p) {
+    const PortObj *o = port_obj_of(p);
+    if (!o || o->img == PORT_OBJ_NO_IMG)
+        return -1;
+    return (long)(o->img + (uint32_t)((const uint8_t *)p - o->p));
+}
+
+size_t port_image_room(const void *p) {
+    const PortObj *o = port_obj_of(p);
+    if (!o || o->img == PORT_OBJ_NO_IMG)
+        return 0;
+    return o->size - (size_t)((const uint8_t *)p - o->p);
+}
+
+void *port_image_host(uint32_t off, size_t *room) {
+    static const PortObj *last;
+    const PortObj *o = last;
+    if (!o || off - o->img >= o->size) {
+        unsigned l = 0, h;
+        obj_init();
+        h = n_img;
+        while (l < h) {
             unsigned m = (l + h) / 2;
-            if (port_scatter_objs[m].off <= off)
+            if (by_img[m]->img <= off)
                 l = m + 1;
             else
                 h = m;
         }
-        if (l && off < port_scatter_objs[l - 1].off + port_scatter_objs[l - 1].size)
-            return port_scatter_objs[l - 1].n64 + (off - port_scatter_objs[l - 1].off);
+        if (!l || off - by_img[l - 1]->img >= by_img[l - 1]->size)
+            return NULL;
+        last = o = by_img[l - 1];
     }
+    if (room)
+        *room = o->size - (off - o->img);
+    return o->p + (off - o->img);
+}
+
+void port_image_copy(uint8_t *dst) {
+    unsigned i;
+    obj_init();
+    memset(dst, 0, PORT_RDRAM_SIZE);
+    for (i = 0; i < n_img; i++)
+        memcpy(dst + by_img[i]->img, by_img[i]->p, by_img[i]->size);
+}
+
+void port_image_each(uint32_t lo, uint32_t hi, void (*f)(const void *p, size_t n)) {
+    unsigned i;
+    obj_init();
+    for (i = 0; i < n_img; i++) {
+        uint32_t a = by_img[i]->img, b = a + by_img[i]->size;
+        if (b <= lo || a >= hi)
+            continue;
+        a = a > lo ? a : lo;
+        b = b < hi ? b : hi;
+        f(by_img[i]->p + (a - by_img[i]->img), b - a);
+    }
+}
+
+void port_image_zero(uint32_t end) {
+    unsigned i;
+    obj_init();
+    for (i = 0; i < n_img && by_img[i]->img < end; i++) {
+        uint32_t n = end - by_img[i]->img;
+        memset(by_img[i]->p, 0, n < by_img[i]->size ? n : by_img[i]->size);
+    }
+}
+#else
+long port_image_off(const void *p) {
+    uintptr_t a = (uintptr_t)p;
+    if (a >= (uintptr_t)port_rdram && a < (uintptr_t)port_rdram + PORT_RDRAM_SIZE)
+        return (long)(a - (uintptr_t)port_rdram);
+    return -1;
+}
+
+size_t port_image_room(const void *p) {
+    long off = port_image_off(p);
+    return off < 0 ? 0 : PORT_RDRAM_SIZE - (size_t)off;
+}
+
+void *port_image_host(uint32_t off, size_t *room) {
+    if (off >= PORT_RDRAM_SIZE)
+        return NULL;
+    if (room)
+        *room = PORT_RDRAM_SIZE - off;
+    return port_rdram + off;
+}
+
+void port_image_copy(uint8_t *dst) { memcpy(dst, port_rdram, PORT_RDRAM_SIZE); }
+
+void port_image_each(uint32_t lo, uint32_t hi, void (*f)(const void *p, size_t n)) {
+    if (hi > PORT_RDRAM_SIZE)
+        hi = PORT_RDRAM_SIZE;
+    if (lo < hi)
+        f(port_rdram + lo, hi - lo);
+}
+
+void port_image_zero(uint32_t end) { memset(port_rdram, 0, end); }
+#endif
+
+/* The N64's (KSEG0) address of p, a place in a name the N64 has at a fixed
+   address: port_rdram's offset in the N64 layout, else the object's own
+   N64 address.  For what the N64 leaves of such a pointer where the game
+   reads it back (9CAB0.c's stack byte), and the VI's origin. */
+uint32_t port_n64_address(const void *p) {
+#ifdef PORT_LAYOUT_N64
+    uintptr_t a = (uintptr_t)p;
+    if (a >= (uintptr_t)port_rdram && a < (uintptr_t)port_rdram + PORT_RDRAM_SIZE)
+        return 0x80000000u + (uint32_t)(a - (uintptr_t)port_rdram);
+#else
+    const PortObj *o = port_obj_of(p);
+    if (o)
+        return o->n64 + (uint32_t)((const uint8_t *)p - o->p);
 #endif
     host_fatal("port_n64_address: %p is no fixed-address name's", p);
 }
 
-/* The other way: the host's place of the N64's (KSEG0) address a, NULL in
-   the scattered layout where no object has it (the VI's image) */
+/* The other way: the host's place of the N64's (KSEG0) address a, NULL
+   where no object has it (the VI's image past the framebuffers) */
 void *port_n64_host(uint32_t a) {
-#ifdef PORT_SCATTER_LAYOUT
-    static unsigned last;
-    const PortScatterObj *o = &port_scatter_objs[last];
-    if (a - o->n64 < o->size)
-        return port_scatter_arena + o->off + (a - o->n64);
-    for (unsigned i = 0; i < port_scatter_nobjs; i++) {
-        o = &port_scatter_objs[i];
-        if (a - o->n64 < o->size) {
-            last = i;
-            return port_scatter_arena + o->off + (a - o->n64);
-        }
-    }
-    return NULL;
-#else
+#ifdef PORT_LAYOUT_N64
     return port_rdram + ((a - 0x80000000u) & (PORT_RDRAM_SIZE - 1));
+#else
+    const PortObj *o = obj_n64(a);
+    return o ? o->p + (a - o->n64) : NULL;
 #endif
 }
 

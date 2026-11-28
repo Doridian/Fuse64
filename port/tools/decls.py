@@ -92,6 +92,24 @@ def libc32():
         return LIBC32_DIR[0]
 
 
+def split_command(cmd):
+    """A compile_commands.json "command" as argv. On Windows it's a Windows
+    command line (backslashes in paths), which shlex's POSIX rules would eat."""
+    if os.name != "nt":
+        return shlex.split(cmd)
+    import ctypes
+    from ctypes import wintypes
+    f = ctypes.windll.shell32.CommandLineToArgvW
+    f.argtypes = [wintypes.LPCWSTR, ctypes.POINTER(ctypes.c_int)]
+    f.restype = ctypes.POINTER(wintypes.LPWSTR)
+    n = ctypes.c_int()
+    p = f(cmd, ctypes.byref(n))
+    try:
+        return [p[i] for i in range(n.value)]
+    finally:
+        ctypes.windll.kernel32.LocalFree(p)
+
+
 def tus(build, version):
     cc = json.load(open(os.path.join(build, "compile_commands.json")))
     out = []
@@ -99,7 +117,7 @@ def tus(build, version):
         src = e["file"]
         if "/port/host/" in src or "/gen/" in src:
             continue
-        argv = shlex.split(e["command"]) if "command" in e else list(e["arguments"])
+        argv = split_command(e["command"]) if "command" in e else list(e["arguments"])
         if os.path.basename(argv[0]).startswith("zig") and argv[1:2] == ["cc"]:
             # (a zig cross build: the layouts are the host clang's -m32 and
             # -m64, which a target's ILP32 and LP64 ones are for this C)

@@ -102,8 +102,9 @@ jobs:
           release=
           case "$GITHUB_REF" in refs/tags/v*) release=$GITHUB_REF_NAME ;; esac
           # PORT_STATIC (the default here): SDL2 and libepoxy linked in
+          # MSYS2's python, not the runner's own (which CMake would find first)
           cmake -S port -B build/port -G Ninja -DPORT_SNAPSHOT=ON "-DPORT_RELEASE=$release" \
-              -DCMAKE_C_COMPILER=clang
+              -DCMAKE_C_COMPILER=clang "-DPython3_EXECUTABLE=$(cygpath -m "$(command -v python3)")"
           cmake --build build/port
 
       - name: Package

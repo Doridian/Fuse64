@@ -42,19 +42,35 @@ void guLookAt(UnkStruct_802A53D8 *, f32, f32, f32, f32, f32, f32, f32, f32, f32)
 void guMtxL2F(void *, UnkStruct_802A53D8 *);
 
 extern UnkStruct_800BD5B0 D_800BD5B0[4];
-extern s32 D_8029F7E0;
-extern s32 D_8029F7E4;
-extern s32 D_8029F7E8;
-extern s32 D_8029F7EC;
-extern s32 D_8029F7F0;
-extern s32 D_8029F7F4;
-extern UnkStruct_8029F7F8 D_8029F7F8;
-extern u8 D_8029F820[];
 extern s32 D_802A5368;
 extern UnkStruct_802A538C *D_802A538C;
-extern u16 D_802A53D0;
-extern UnkStruct_802A53D8 D_802A53D8;
-extern u8 D_802A5418[];
+
+void func_80227C50(f32 fovy, f32 aspect, f32 near, f32 far, f32 scale);
+void func_80227BAC(s8 x, s8 y, s8 z);
+void func_80227BE8(u8 r, u8 g, u8 b);
+void func_80227870(void);
+void func_80227834(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
+
+s32 D_8029F7E0 = 0;
+s32 D_8029F7E4 = 900;
+s32 D_8029F7E8 = 1000;
+s32 D_8029F7EC = 0xFF;
+s32 D_8029F7F0 = 0xFF;
+s32 D_8029F7F4 = 0xFF;
+/* the lights: ambient 0x50, light 0 0x32 and light 1 0xC8 from (0, 0x72,
+   0x37), as func_80227C18 sets them again */
+UnkStruct_8029F7F8 D_8029F7F8 = {
+    { 0x50, 0x50, 0x50 }, 0, { 0x50, 0x50, 0x50 }, 0,
+    { { { 0x32, 0x32, 0x32 }, 0, { 0x32, 0x32, 0x32 }, 0, { 0, 0x72, 0x37 }, 0, { 0 } },
+      { { 0xC8, 0xC8, 0xC8 }, 0, { 0xC8, 0xC8, 0xC8 }, 0, { 0, 0x72, 0x37 }, 0, { 0 } } },
+};
+/* ZeroJump module 0x21's table (func_802277D0); its .data's last three
+   words are zeros, taken here for the section's padding */
+void *D_8029F820[] = { func_80227C50, func_80227BAC, func_80227BE8, func_80227870, func_80227834 };
+
+u16 D_802A53D0;
+UnkStruct_802A53D8 D_802A53D8;
+f32 D_802A5418[4][4];
 
 UnkStruct_800BD5B0 *func_80227E38(void) {
     s32 i;

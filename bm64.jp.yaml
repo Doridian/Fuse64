@@ -439,7 +439,8 @@ segments:
       - [0xB9490, .data, 404C0]
       - [0xB94B0, .data, 40FB0]
       - [0xB94C0, .data, 412F0]
-      - [0xB96C0, data]
+      - [0xB96C0, .data, 41FD0]
+      - [0xB9720, data]
       - [0xB9760, .data, 45170]
       - [0xB9770, .data, 46300]
       - [0xB97A0, .data, 47A80]
@@ -520,7 +521,7 @@ segments:
       - {type: .bss, vram: 0x802A4530, name: 404C0}
       - {type: .bss, vram: 0x802A4550, name: 40FB0}
       - {type: .bss, vram: 0x802A4560, name: 412F0}
-      - {type: bss, vram: 0x802A4600}
+      - {type: .bss, vram: 0x802A4600, name: 41FD0}
       - {type: .bss, vram: 0x802A4690, name: 426E0}
       - {type: .bss, vram: 0x802A46D0, name: 45170}
       - {type: .bss, vram: 0x802A4700, name: 46300}
@@ -528,7 +529,7 @@ segments:
       - {type: .bss, vram: 0x802A4790, name: 48600}
       - {type: .bss, vram: 0x802A4C60, name: 4E030}
       - {type: .bss, vram: 0x802A4C80, name: 4ED50}
-      - {type: bss, vram: 0x802A4C90, name: bss_802A4C90}
+      - {type: bss, vram: 0x802A4C90}
       - {type: .bss, vram: 0x802AB9D0, name: 54E40}
       - {type: bss, vram: 0x802ABA00, name: bss_802ABA00}
       - {type: .bss, vram: 0x802AC1E0, name: 6BBE0}

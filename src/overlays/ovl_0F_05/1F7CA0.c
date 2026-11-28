@@ -387,8 +387,10 @@ static void func_ovl0F_05_8004409C() {
 
 /* The overlay's handler: the entry returns it to the loader. */
 void func_ovl0F_05_800430BC(s32 arg0) {
-    s32 pad[2]; /* fake: unused; the original's frame is 8 bytes bigger */
-
+    /* the empty global: inlined, its call gives this frame the original's
+     * 8 extra bytes and leaves no stub (an empty static would); where the
+     * call was is placed by those bytes */
+    func_ovl0F_05_80043010();
     switch (arg0) {
         case 2:
             D_ovl0F_05_8004655C = func_ovl0F_05_80044F58();

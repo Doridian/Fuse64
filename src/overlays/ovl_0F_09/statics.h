@@ -99,8 +99,10 @@ static void func_ovl0F_09_8004342C(void) {
 }
 
 static void func_ovl0F_09_80043424(void) {
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
-
+    /* the empty global: inlined, its call gives this frame the original's
+     * 8 extra bytes and leaves no stub (an empty static would); where the
+     * call was is placed by those bytes */
+    func_ovl0F_09_80043010();
     D_ovl0F_09_80045F68 = 0;
     func_ovl0F_09_800430BC();
 }

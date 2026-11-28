@@ -15,6 +15,7 @@
  * `lui a2` (2 words).
  */
 #include "common.h"
+#include "404C0.h"
 
 void func_80297ED0(s32, s32, uintptr_t);
 void func_80225E2C(s32);
@@ -40,17 +41,13 @@ s32 D_802A5308;
 s32 D_802A530C;
 s32 D_802A5310;
 
-u32 func_80225CC0(UnkStruct_80225CC0 *arg0);
 s32 func_80225CCC(UnkStruct_80225CC0 *arg0, s32 arg1, s32 arg2);
 void func_80225D9C(void);
 void func_80225DDC(void);
 void func_80225EBC(u32 arg0, UnkStruct_8014B008 *arg1);
-s32 func_80225FB8(void *arg0, s32 arg1, s32 arg2, UnkStruct_80225CC0 *arg3);
 void func_80226074(void *arg0, void *arg1, s32 arg2);
 s32 func_8022616C(u8 *arg0, s32 arg1, s32 arg2, UnkStruct_80225CC0 *arg3);
-s32 func_80226304(UnkStruct_80225CC0 *arg0);
 void func_80226368(UnkStruct_80225CC0 *arg0);
-void func_8022638C(u32 arg0, UnkStruct_8014B008 *arg1);
 u32 func_80226460(void);
 UnkStruct_80225CC0 *func_8022657C(void);
 UnkStruct_80225CC0 *func_80226604(u32 arg0, s32 arg1);

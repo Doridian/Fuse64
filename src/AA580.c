@@ -192,6 +192,9 @@
  */
 #include "common.h"
 #include "grid.h"
+#include "4E030.h"
+#include "87D80.h"
+#include "AA580.h"
 
 typedef struct {
     /* 0x0 */ s32 unk0;
@@ -228,16 +231,12 @@ typedef struct {
 extern UnkStruct_800B15D8 D_800B15D8[];
 
 void func_80230914(UnkStructA *);
-f32 func_80234408(f32);
-f32 func_80234434(f32);
 void func_80239094(void);
 s32 func_8026D7D8(s32, s32, s32);
 void func_8026DCAC(f32, f32, f32, Unk8026DCAC *, s32);
-void func_8026E338(f32, f32, f32, f32 *, s32);
 void func_8026E6E4(UnkStructA_40 *, f32 *, f32 *);
 f32 func_8026E938(void *);
 f32 func_8026EAF8(UnkStructA *);
-s32 func_8026EE18(f32);
 void func_80297D38(const char *, ...);
 
 s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32));

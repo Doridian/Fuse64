@@ -1,4 +1,5 @@
 #include "common.h"
+#include "B6680.h"
 
 /*
  * RDP render mode and colour combiner set-up from strings, and 4x4 float
@@ -23,11 +24,6 @@ void func_8029C3A0(f32 m[4][4], f32 angle);
 void func_8029C494(f32 m[4][4], f32 angle);
 void func_8029C590(f32 m[4][4], f32 r[3][3]);
 void func_8029C680(f32 m[4][4], f32 x, f32 y, f32 z);
-void func_8029C7A8(f32 m[4][4], f32 x, f32 y, f32 z);
-void func_8029C8D0(f32 m[4][4], f32 x, f32 y, f32 z);
-void func_8029CA00(f32 m[4][4], f32 x, f32 y, f32 z);
-void func_8029CA80(f32 m[4][4], f32 x, f32 y, f32 z);
-f32 func_8029CB40(f32 x);
 
 f32 func_8029CB40(f32 x) {
     s32 sign;

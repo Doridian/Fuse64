@@ -30,6 +30,11 @@
  */
 #include "common.h"
 #include "slots.h"
+#include "54E40.h"
+#include "5E3F0.h"
+#include "87D80.h"
+#include "9CAB0.h"
+#include "A2840.h"
 
 /* A record of the table read from file 0x10B (func_802883B0). */
 typedef struct {
@@ -58,17 +63,10 @@ void func_80231408(UnkStructA *, s32);
 s32 func_80232D18(UnkStructA *, s32);
 void func_80232DB4(UnkStructA *);
 PORT_RET(void, s32) func_8023903C(s32);
-UnkStruct_802AC610 *func_8023A840(void);
-s32 func_80243DDC(void);
 void func_80250338(s32, Vec3f *);
 PORT_RET(void, s32) func_8026C51C(s32, f32, f32, f32);
 f32 func_8026E938(UnkStructA_40 *);
-s32 func_8026EE18(f32);
 void func_80282430(UnkStruct_80288040 *, s32, s32);
-void func_80282454(UnkStruct_80288040 *);
-void func_8028301C(UnkStruct_80288040 *, s32, f32, f32, f32);
-f32 func_8028322C(UnkStruct_80288040 *);
-void func_80283B04(UnkStruct_80288040 *, Vec3f *);
 UnkStruct_80288040 *func_802867E4(s32, f32, f32, f32);
 PORT_RET(void, s32) func_8028E8A4(s32, f32, f32, f32, s32);
 void func_80291944(UnkStructA *, s32, f32);

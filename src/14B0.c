@@ -37,8 +37,7 @@
 #include "common.h"
 #include "ultralib/ultra64.h"
 #include "ultralib/PR/sched.h"
-
-void func_800018A8(char *expr, char *file, s32 line);
+#include "2350.h"
 
 #ifdef TARGET_PC
 /* (the expression's text is the ROM's, and the port's copy of the C has

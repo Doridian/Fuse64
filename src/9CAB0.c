@@ -22,6 +22,15 @@
  */
 #include "common.h"
 #include "slots.h"
+#include "4E030.h"
+#include "530C0.h"
+#include "54E40.h"
+#include "5E3F0.h"
+#include "87D80.h"
+#include "9CAB0.h"
+#include "A1EA0.h"
+#include "A2840.h"
+#include "A4CE0.h"
 
 extern UnkStruct_800BA8E8 D_800BA8E8[6];
 extern UnkStruct_800BA900 D_800BA900[16];
@@ -30,7 +39,6 @@ extern s32 D_800BB480;
 extern UnkStruct_80288040 *D_800BB484;
 
 PORT_RET(void, s32) func_80225CCC(void *, s32, s32);
-void func_802276FC(s32);
 f32 func_80229D3C(void *, s32);
 void func_80229E38(void *, s32, s32);
 PORT_RET(s32, void *) func_8022F4AC(UnkStructA *, s32, UnkStructA *);
@@ -43,27 +51,16 @@ void func_802313DC(void *, s32);
 void func_80231408(void *, s32);
 s32 func_80232D18(void *, s32);
 void func_80232DB4(void *);
-int func_802336E4(f32);
-s32 func_80234248(s32);
-f32 func_80234434(f32);
-s32 func_80234768(void);
-void func_80234858(f32 *, f32 *, f32 *);
-void func_802348B4(f32 *, f32 *, f32 *);
 s32 func_80238A10(void *, void *, PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_80238EA8(s32);
 void func_80239094(void);
 UnkStruct_800BB340 *func_802391F0(void);
-void func_80239430(void);
-UnkStruct_802AC610 *func_8023A840(void);
-s32 func_80243DDC(void);
 UnkStructA *func_802443F4(s32);
 void func_80250338(s32, Vec3f *);
 f64 func_8025E63C(void);
-f32 func_80263DC8(f32, f32);
 s32 func_8026C51C(s32, f32, f32, f32);
 s32 func_8026D7D8(s32, s32, s32);
 void func_8026DCAC(f32, f32, f32, void *, s32);
-s32 func_8026EE18(f32);
 PORT_RET(s32, void *) func_802700EC(UnkStructA *, UnkStructA *, s32, f32);
 void func_80270BA4(void *);
 void func_80270C24(UnkStructA *, s32, s32);
@@ -74,8 +71,6 @@ void func_8027F820(UnkStructA *);
 void func_8027F858(UnkStructA *, s32);
 void func_8028805C(void *);
 void func_802881A0(void *);
-void func_802883B0(void);
-s32 func_8028A4E0(s32);
 s32 func_8028A81C(s32, f32, f32, f32, UnkStructA *);
 s32 func_802909FC(UnkStructA *, void *);
 void func_80291944(void *, s32, f32);
@@ -90,30 +85,25 @@ extern UnkStruct_802B0260 D_802B0260[2];
 extern UnkStruct_802B0300 *D_802B0300[2];
 extern UnkStruct_802B0308 *D_802B0308[2];
 
-void func_802822B0(s32 arg0);
 static void func_802822BC(UnkStruct_800BB340 *arg0);
 static void func_802822D8();
 static void func_802822E0(UnkStruct_800BB340 *arg0);
 static void func_80282340(UnkStruct_800BA900 *arg0);
 static void func_80282428();
 void func_80282430();
-void func_80282454(UnkStruct_80288040 *arg0);
 static s32 func_802824B4(UnkStruct_80288040 *arg0);
 static s32 func_80282524(UnkStruct_80288040 *arg1);
 static void func_80282588();
 static void func_80282598(UnkStruct_800BB340 *arg0, s32 arg1);
 static void func_80282714(UnkStruct_80288040 *arg0);
 void func_8028275C(f32 arg0, f32 arg1, f32 arg2);
-void func_80282934(void);
 void func_80282978(Vec3f *arg0);
 static s32 func_802829AC(Vec3f *arg1, s32 arg0);
 static void func_80282AD0();
 static s32 func_80282AF0(UnkStruct_800BB340 *arg0, s32 arg1);
 static void func_80282F44(UnkStruct_800BB340 *arg0, s32 arg1);
-void func_8028301C(UnkStruct_80288040 *arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4);
 static void func_8028304C(UnkStruct_80288040 *arg0, s32 arg1);
 static void func_802831A8(UnkStruct_80288040 *arg0);
-f32 func_8028322C(UnkStruct_80288040 *arg0);
 static u8 func_80283314(UnkStruct_80288040 *arg2, s32 arg0, s32 arg1);
 static void func_802836F0(UnkStruct_80288040 *arg0, s32 arg1);
 static s32 func_80283794(UnkStruct_80288040 *arg0, u8 arg1);
@@ -183,7 +173,6 @@ static s8 *port_range1(UnkStruct_80288040 *a) {
     return &none;
 }
 #endif
-void func_80283B04(UnkStruct_80288040 *arg0, Vec3f *arg1);
 static void func_80283CF0(UnkStruct_80288040 *arg0);
 static s32 func_80283D9C(UnkStruct_80288040 *arg0);
 static void func_80283DF0(UnkStruct_80288040 *arg1, s32 arg0);
@@ -204,13 +193,9 @@ void func_802863B0(Vec3f *arg0);
 static s32 func_802863E0();
 static void func_80286400(s32 arg4, s32 arg0, s32 arg5, f32 arg1, f32 arg2, f32 arg3);
 UnkStruct_80288040 *func_802867E4(s32 arg0, f32 arg1, f32 arg2, f32 arg3);
-s32 func_80286CA8(s32 arg0, f32 arg1, f32 arg2, f32 arg3);
-void func_80286E60(void);
-void func_80286EF0(void);
 static void func_80286EFC();
 void func_80286F04(void);
 void func_80286F70(void);
-void func_80286F98(void);
 void func_80287008(s32 arg0, s32 arg1, s32 arg2);
 static UnkStruct_80288040 *func_80287024(UnkStructA *arg0);
 s32 func_802870A8(UnkStructA *arg0, PORT_IP(s32) arg1);
@@ -220,16 +205,6 @@ s32 func_802871D0(UnkStruct_80288040 *arg0);
 s32 func_802872E0(s32 arg0, f32 arg1, f32 arg2, f32 arg3);
 void func_80287440(UnkStructA *arg0);
 s32 func_802875B0(UnkStructA *arg0);
-s32 func_80287680(void);
-void func_802876A0(void);
-void func_802876C8(UnkStruct_802B0260 *arg0);
-void func_8028773C(UnkStruct_802B0260 *arg0);
-void func_8028785C(void);
-void func_802878BC(UnkStruct_802B0260 *arg0, s32 arg1);
-void func_802878E0(UnkStruct_802B0260 *arg0, s32 arg1);
-void func_80287904(void);
-UnkStruct_802B0260 *func_80287DC0(s32 arg0);
-void func_80287FD4(void);
 static void func_80282338();
 static void func_80282590();
 static s32 func_802829A4();
@@ -1007,7 +982,7 @@ static s32 func_8028556C(s32 arg0) {
     func_8028555C();
     func_80285554();
     p = D_800BB484;
-#line 900 /* fake: numbering for as1 order (the load before the 0x2000 test); p9: p from a getter static defined after this function (as one of the three stubs) gets the order but colours p->unk24 into a1, not v1 (21 words); the global read directly, a getter of the flags word: worse */
+#line 875 /* fake: numbering for as1 order (the load before the 0x2000 test); p9: p from a getter static defined after this function (as one of the three stubs) gets the order but colours p->unk24 into a1, not v1 (21 words); the global read directly, a getter of the flags word: worse */
     if ((arg0 & 0x2000) ||
         (!(p->unk24 & 0x20) && ((arg0 & 0xF) == 0xF)) ||
         (!(p->unk24 & 0x10) && (arg0 & 0x60)) ||

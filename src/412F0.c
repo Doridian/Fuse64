@@ -1,6 +1,9 @@
 #include "common.h"
 #include "ultralib/ultra64.h"
 #include "gfx.h"
+#include "412F0.h"
+#include "426E0.h"
+#include "52270.h"
 
 /* gbi.h's _SHIFTL: func_80226E84's texture rectangles match only with its
  * u32 casts (the shifted value, not the masked one, is shared between the
@@ -34,13 +37,9 @@ typedef struct {
     /* 0x58 */ u8 unk58[0x10];
 } UnkStruct_8029F608; /* size 0x68 */
 
-void func_8022997C(void);
-void func_80237A70(OSMesgQueue *, void *);
 void func_80237A90(UnkStruct_8029F608 *);
-void func_80237AE4(void *, OSMesgQueue *);
 PORT_RET(void, s32) func_80237D4C(s32);
 PORT_RET(void, s32) func_80237E18(s32, s32);
-void func_80237F44(OSMesgQueue *);
 s32 func_80238564(void (*)(void *), PORT_RET(s32, void *), s32, PORT_RET(s32, void *));
 PORT_RET(void, s32) func_802383A4(s32);
 void func_80297D80(OSMesgQueue *, void *, s32);
@@ -58,11 +57,6 @@ extern u8 D_8029D320[PORT_SIZE(0x1430)];
 /* F3DEX.NoN 1.21's data, the 0x800 bytes the task gives the RSP (src/ucode/gspF3DEX_NoN_fifo.s) */
 extern u8 D_802A4840[PORT_SIZE(0x800)];
 extern s32 D_802A5800;
-
-void func_802276FC(s32 arg0);
-void func_802276E0(s32 r, s32 g, s32 b);
-void func_802276D4(s32 arg0);
-void func_802276C8(s32 arg0);
 
 /* This object's .data (0x8029F5E0-0x8029F7E0) */
 s32 D_8029F5E0 = 0;

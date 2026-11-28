@@ -1,4 +1,5 @@
 #include "common.h"
+#include "40300.h"
 
 extern u8 D_80300000[PORT_SIZE(0x100000)]; /* the sbrk arena (func_80225B00's limit) */
 extern s32 __malloc_initialized;

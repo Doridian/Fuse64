@@ -1,4 +1,5 @@
 #include "common.h"
+#include "78CA0.h"
 
 /*
  * A subtractive random number generator (Knuth's, as in Numerical Recipes'
@@ -17,7 +18,6 @@ s32 D_802ACFE4;
 s32 D_802ACFE8[56];
 
 static void func_8025E4A0(void);
-s32 func_8025E5EC(void);
 
 void func_8025E6A4(s32 mj) {
     s32 mk, i, ii;

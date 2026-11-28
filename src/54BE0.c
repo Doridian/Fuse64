@@ -1,36 +1,36 @@
 #include "common.h"
+#include "40FB0.h"
+#include "412F0.h"
+#include "41FD0.h"
+#include "54BE0.h"
+#include "54E40.h"
+#include "5E090.h"
+#include "5E3F0.h"
+#include "87190.h"
+#include "87730.h"
+#include "87D80.h"
+#include "8A7A0.h"
+#include "926A0.h"
+#include "949A0.h"
+#include "97610.h"
+#include "995C0.h"
+#include "99F40.h"
+#include "9A5F0.h"
+#include "9CAB0.h"
+#include "A1EA0.h"
+#include "A4860.h"
+#include "A4CE0.h"
+#include "A8DE0.h"
+#include "AA580.h"
+#include "AD5B0.h"
+#include "AFBF0.h"
+#include "B11F0.h"
 
-void func_8022691C(s32);
-void func_80227708(s32, s32, s32, s32);
-s32 func_8022773C(void);
-void func_80227C50(f32, f32, f32, f32, f32);
 void func_80227C9C(PORT_RET(s32, void *), s32);
 void func_80227CD0(PORT_RET(s32, void *), f32, f32, f32, f32, f32, f32, f32, f32, f32);
 void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
 PORT_RET(s32, void *) func_80227E38(void);
 PORT_RET(s32, u16) func_80239FF8(s32);
-void func_8023A68C(void);
-void func_80243890(void);
-void func_80243BF0(void);
-void func_8026C990(void);
-void func_8026CF30(void);
-void func_8026D580(void);
-void func_80277B54(void);
-void func_80278F68(void);
-void func_8027BCE8(void);
-void func_8027ED1C(void);
-void func_8027F6B4(void);
-void func_8027F7E0(void);
-void func_802815EC(void);
-void func_80286F98(void);
-void func_80287FD4(void);
-void func_8028A154(void);
-void func_8028A8A4(void);
-void func_8028E9E0(void);
-void func_802921C4(void);
-void func_802953B0(void);
-void func_802966E4(void);
-void func_802969F0(void);
 
 /* .bss: the two views (func_80227E38's) and their ids (func_8022773C's) */
 PORT_RET(s32, void *) D_802AC5C0;

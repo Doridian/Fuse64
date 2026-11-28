@@ -1,4 +1,5 @@
 #include "common.h"
+#include "404C0.h"
 
 /* Hudson's LZSS decoder (docs/COMPRESSION.md) for a file opened with
  * func_80226604: a 0x400-byte ring buffer filled from 0x3BE, flag bits
@@ -7,7 +8,6 @@
 
 void *malloc(s32);
 void free(void *);
-s32 func_80226304(struct UnkStruct_80225CC0 *file);
 
 s32 D_802A1D90 = 0;
 u8 *D_802B0310;

@@ -25,6 +25,7 @@
  */
 #include "common.h"
 #include "ultralib/PR/os_pfs.h"
+#include "96540.h"
 
 /* The libultra Pfs calls go through ZeroJump module 0x16's table
  * (boot_code's D_8001A314: osPfsInit, ReFormat, Checker, AllocateFile,

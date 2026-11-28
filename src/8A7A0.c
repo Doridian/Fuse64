@@ -81,6 +81,14 @@
 #include "m2c.h"
 #include "grid.h"
 #include "ent.h"
+#include "48600.h"
+#include "4DE50.h"
+#include "4E030.h"
+#include "5E3F0.h"
+#include "87D80.h"
+#include "8A7A0.h"
+#include "926A0.h"
+#include "A4CE0.h"
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 #define M2C_BITWISE(type, expr) ((type)(expr))
@@ -100,10 +108,6 @@
 
 
 void free(void *);
-void func_8022638C(u32, void *);
-void func_802297B8(PORT_RET(s32, void *), s32, s32, s32);
-s32 func_8022984C(void *, s32);
-f32 func_8022DF68(f32 *, f32 *);
 s32 func_8022E884(PORT_RET(s32, void *), PORT_RET(s32, void *));
 PORT_RET(s32, void *) func_8022F4AC(PORT_RET(s32, void *), s32, PORT_RET(s32, void *));
 PORT_RET(void, s32) func_8022FC90(void *);
@@ -115,52 +119,30 @@ void * func_80231274(s32, s32, s32, void *);
 void func_802313DC(void *, s32);
 void func_80231408(void *, s32);
 void func_80231434(void *);
-void func_80232A34(u8 *arg0, s32 arg1);
 PORT_RET(s32, void) func_80232AA8(PORT_RET(s32, void *));
 PORT_RET(s32, void) func_80232AC8(PORT_RET(s32, void *), PORT_RET(s32, void *));
 s32 func_80232D18(void *, s32);
-void func_80232DB4(void *);
-int func_8023369C(f32, f32, f32);
-int func_802336E4(f32);
-s32 func_80234248(s32);
-f32 func_80234408(f32);
-f32 func_80234434(f32);
 s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_80238EA8(s32);
 void func_80239094(void);
 s32 *func_802391F0(void);
-UnkStruct_802AC610 *func_8023A840(void);
-void func_802438BC(s32 *);
-void func_802441F4(void *, s32, s32 *, f32 *);
-PORT_IP(s32) func_802442A8(s32);
 void * func_802443F4(s32);
-void func_80244C30(s32, s32);
-void func_80244E04(void *);
-s32 func_80244F34(void *, PORT_IP(s32));
 s32 func_80244FF8(void *);
-void func_802511EC(s32, s32, s32, s32);
 s32 func_8026C51C(s32, f32, f32, f32);
 s32 func_8026C660(s32);
 void * func_8027A1A0(void *);
 s32 func_8027A1F4(void *, PORT_IP(s32));
 void func_8027B440(void *);
 s32 func_8027B5A8(void *);
-s16 func_8027DF40(s32);
-s16 func_8027DF9C(void);
-s32 func_8027E8EC(s16, s16, s16, s16);
 void func_8027F820();
 void func_8027F858(PORT_IP(s32), s32);
-s32 func_80286CA8(s32, f32, f32, f32);
 s32 func_802870A8();
 PORT_RET(s32, void) func_80287440(UnkStructA *arg0);
 s32 func_802875B0();
-s32 func_8028A4E0(s32);
 s32 func_8028A81C(s32, f32, f32, f32, PORT_IP(s32));
 s32 func_802909FC(void *, void *);
 s32 func_80277378(s32 arg0);
 void func_80291944(void *, s32, f32);
-void func_80297D38(const char *, ...);
-f32 func_8029CB40(f32);
 void * malloc(s32);
 
 extern s32 D_8008E658;
@@ -200,49 +182,10 @@ extern f32 D_802AFC68;
 extern void *D_802AFC6C;
 extern s16 D_802AFE70;
 
-void func_8026D580(void);
-void func_8026D5B4(s32 arg0);
-s32 func_8026D5C0(s32 arg0, s32 arg1, s32 arg2);
-s32 func_8026D5F8(s32 arg0, s32 arg1, s32 arg2);
-void func_8026D620(s32 arg0, s32 arg1, s32 arg2, u16 arg3);
-void func_8026D6C0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 u16 func_8026D7D8(s32 arg0, s32 arg1, s32 arg2);
-void func_8026D92C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7);
-void func_8026DA1C(u8 *arg0, s32 arg1, s32 arg2, s32 arg3);
-void func_8026DA2C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
-void func_8026DB88(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);
 u8 func_8026DC74(s32 arg0);
 void func_8026DCAC(f32 arg0, f32 arg1, f32 arg2, void *arg3, s32 arg4);
-void func_8026DF74(f32 arg0, f32 arg1, f32 arg2);
-void func_8026DFB8(f32 arg0, f32 arg1, f32 arg2, f32 *arg3);
-s32 func_8026E278(s32 arg0);
-f32 func_8026E2B0(s32 arg0);
-void func_8026E338(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, s32 arg4);
-f32 func_8026E3AC(f32 arg0, f32 arg1, f32 arg2);
-s32 func_8026E5CC(s32 arg0);
-s32 func_8026E608(s32 arg0, s32 arg1);
-void func_8026E6E4(u8 *arg0, f32 *arg1, f32 *arg2);
-f32 func_8026E8B8(void);
-s32 func_8026E8C8(void);
-s32 func_8026E8E0(PORT_IP(s32) arg0);
 f32 func_8026E938(u8 *arg0);
-f32 func_8026EAF8(u8 *arg0);
-void func_8026ECC0(void);
-void func_8026ECE8(f32 arg0);
-void func_8026ECF4(void);
-void func_8026EE08(s32 arg0);
-void func_8026EE10(s32 arg0);
-s32 func_8026EE18(f32 arg0);
-void func_8026EEF0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
-u16 func_8026EF50(f32 arg0, f32 arg1, f32 arg2);
-u16 func_8026EFD0(s32 arg0, s32 arg1, s32 arg2);
-void func_8026F02C(void);
-s32 func_8026F068(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void func_8026F5E8(s32 arg0, s32 arg1, s32 arg2);
-void func_8026F8B0(void);
-void func_8026FC08(s32 arg0);
-void func_8026FF64(s32 arg0);
-void func_8026FF94(s32 arg0);
 s32 func_8026FFA0(s16 arg0);
 void func_80270080(PORT_IP(s32) *arg0);
 void *func_802700EC(u8 *arg0, u8 *arg1, s32 arg2, f32 arg3);
@@ -253,12 +196,10 @@ void func_8027036C(s16 *arg0, s16 arg1);
 s32 func_80270384(u8 *arg0);
 s16 *func_802703B4(u8 *arg0);
 s32 func_80270438(u8 *arg0, s32 *arg1);
-s32 func_802704F8(f32 arg0);
 PORT_IP(s32) func_80270714(s16 arg0);
 PORT_RET(void, s32) func_80270770(s16 arg0, s16 arg1);
 void func_80270A80(PORT_IP(s32) *arg0);
 void func_80270B20(u8 *arg0);
-s16 func_80270B4C(PORT_IP(s32) arg0);
 void func_80270BA4(u8 *arg0);
 void func_80270C24(u8 *arg0, s16 arg1, s32 arg2);
 void func_80270EF0(u8 *arg0);
@@ -272,11 +213,9 @@ void func_802712C4(s16 *arg0);
 s32 func_8027130C(u8 *arg0);
 void func_80271448(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5);
 void func_802714C4(void);
-PORT_IP(s32) func_80271540(s16 arg0);
 void *func_802716F8(s16 arg0);
 void func_80271BB8(s16 arg0);
 void func_80271F74(PORT_IP(s32) *arg0);
-s32 func_80272024(s16 arg0);
 void func_802720C8(u8 *arg0);
 s32 func_802721D4(UnkStructA *arg0, PORT_IP(s32) arg1, Ctl87 *arg2);
 s16 func_8027241C(s16 arg0);
@@ -288,7 +227,6 @@ void *func_80273370(PORT_IP(s32) arg0);
 void func_802733C8(u8 *arg0);
 void func_802733F8(s16 *arg0);
 void func_80273414(s16 *arg0);
-void func_802734BC(u8 *arg0);
 void func_80273544(u8 *arg0);
 s32 func_8027356C(s16 arg0);
 s16 func_802735CC(void);
@@ -315,10 +253,8 @@ typedef struct {
 #define PLAYERS8E ((UnkStruct_800AEDF0 *) D_800AEDF0)
 
 void *func_80273F30(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4);
-void func_8027404C(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5);
 void func_802740AC(s16 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4);
 void func_802741D8(s16 arg0);
-s32 func_80274994(s16 arg0);
 s16 func_80274F64(s16 arg0);
 PORT_RET(void, PORT_IP(s32)) func_80274F8C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4);
 void func_80274FD4(Ent88 *arg0);
@@ -343,25 +279,16 @@ void func_8027750C(s16 arg0);
 void func_802775D8(f32 *arg0);
 void func_80277774(void);
 void func_802777D0(void);
-void func_8027783C(void);
 void func_80277984(s16 *arg0, s16 arg1);
 void *func_8027799C(s16 arg0);
 void func_802779C4(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5);
 void func_80277A28(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5);
 void func_80277AA0(s16 arg0, s16 arg1);
 void func_80277AF8(s16 arg0, s16 arg1);
-void func_80277B54(void);
-s16 func_80277CC0(u8 *arg0);
-void *func_80277CE0(void);
-s32 func_80277CEC(s32 arg0);
-void func_80277D20(s16 arg0, s16 arg1);
 void func_80277D60(s16 arg0, s16 arg1);
 void func_80277DA8(s16 arg0, s16 arg1);
-void func_80277DF4(s16 arg0);
-void func_80277E1C(void);
 void *func_80277FC4(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4, f32 arg5, f32 arg6, f32 arg7, s16 arg8, PORT_RET(s32, void *) arg9);
 void func_80278D54(s32 *arg0);
-void func_80278DBC(void);
 
 /* .bss (0x802AFC70-802AFE70), before the first function and in address
  * order, as IDO lays it out (the order it numbers them). IDO puts an

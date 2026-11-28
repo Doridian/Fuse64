@@ -1,11 +1,17 @@
 #include "common.h"
+#include "4DE50.h"
+#include "4E030.h"
+#include "530C0.h"
+#include "54E40.h"
+#include "5E3F0.h"
+#include "78CA0.h"
+#include "A4860.h"
 
 /* -O3 (the Makefile's O3_C_FILES), so written last function first: IDO
  * 5.3 -O3 emits a file's functions in reverse, a callee from the file
  * (func_80233C30) just before its first caller.  Its wrappers of 4DE50's
  * compares call them with a `jal`: 4DE50 is another file. */
 
-s32 func_8025E5EC(void);
 s32 func_8025E63C();
 void func_80227BAC(s32, s32, s32);
 f32 func_80229D3C(UnkStructA_40 *, s32);
@@ -21,15 +27,11 @@ PORT_RET(void, s32) func_80238A10(void (*)(), PORT_IP(s32), PORT_RET(s32, void *
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 PORT_IP(s32) func_802391F0(void);
-void func_80239430(void);
-UnkStruct_802AC610 *func_8023A840(void);
-s32 func_80243DDC(void);
 void func_80250338(s32, f32 *);
 PORT_RET(void, s32) func_8026C630(s32, f32 *);
 PORT_RET(void, s32) func_8026C660(s32);
 PORT_RET(void, s32) func_8027B7C4(s32, f32, f32, f32);
 PORT_RET(void, s32) func_8027BA80(s32, f32, f32, f32, s32, s32);
-s32 func_8028A36C(s32);
 PORT_RET(void, s32) func_8028A7CC(s32, f32 *, PORT_IP(s32));
 PORT_RET(void, s32) func_8028A81C(s32, f32, f32, f32, PORT_IP(s32));
 void func_80297D00(s32);
@@ -37,29 +39,17 @@ void func_80297D20(void);
 f32 fcos(f32);
 f32 sinf(f32);
 
-s32 func_80233650(f32, f32);
-s32 func_8023369C(f32, f32, f32);
-s32 func_802336E4(f32);
-s32 func_8023372C(f32, f32);
-s32 func_80233768(f32);
-s32 func_802337B0(f32, f32);
-s32 func_802337EC(f32);
-
 void func_80233830(void);
 void func_802339A0(void);
 void func_80233A04(void);
 void func_80233A74(void);
 UnkStructA_40 *func_80233C30(void);
-void func_80233C80(f32 *arg0);
 void func_80233D7C(void);
 void func_80233DEC(void);
 void func_80233E3C(void);
 void func_802341F0(s32 arg0);
 void func_80234210(void);
-s32 func_80234248(s32 arg0);
 void func_802342D4(f32 arg0, f32 arg1);
-f32 func_80234408(f32 arg0);
-f32 func_80234434(f32 arg0);
 s32 func_80234460(f32 arg0);
 s32 func_80234480(f32 arg0, f32 arg1);
 s32 func_802344A0(f32 arg0);

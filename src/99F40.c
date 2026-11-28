@@ -1,7 +1,8 @@
 #include "common.h"
 #include "grid.h"
+#include "87D80.h"
+#include "99F40.h"
 
-void func_8026D620(s32, s32, s32, s32);
 s32 func_8026D7D8(s32, s32, s32);
 
 extern UnkStruct_800B5F20 D_800B5F20[6];

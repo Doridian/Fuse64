@@ -6,12 +6,12 @@
  * different register.
  */
 #include "common.h"
+#include "13F0.h"
 
 extern u8 D_80024820[];
 void func_80000698(void *dst, u32 size, u32 rom);
 void func_80001A30(PORT_IP(s32) id, void **table);
 void func_800007F0(s32 seg, void *dst);
-void func_8000083C(s32 seg, void *entry, void *arg);
 
 /* .data: ZeroJump module 3, the segment loader */
 void *D_80019F90[] = { func_800007F0, func_8000083C };

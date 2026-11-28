@@ -1,5 +1,12 @@
 #include "common.h"
 #include "grid.h"
+#include "4E030.h"
+#include "4ED50.h"
+#include "54E40.h"
+#include "87D80.h"
+#include "8A7A0.h"
+#include "949A0.h"
+#include "97610.h"
 
 typedef struct {
     /* 0x00 */ s16 unk0;
@@ -24,25 +31,14 @@ UnkStructA *func_80231274(s32, s32, s32, PORT_IP(s32));
 void func_802313DC(UnkStructA *, s32);
 void func_80231408(UnkStructA *, s32);
 s32 func_80232D18(UnkStructA *, s32);
-s32 func_80234248(s32);
-s32 func_80234768(void);
-void func_802348B4(f32 *, f32 *, f32 *);
-void func_80234900(f32 *, f32 *, f32 *);
 s32 func_80238A10(void (*)(void), PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_80238EA8(s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 UnkStruct_8023A834 *func_8023A834(void);
-UnkStruct_802AC610 *func_8023A840(void);
 PORT_RET(void, s32) func_8026C660(s32);
 s32 func_8026D7D8(s32, s32, s32);
 PORT_RET(s32, u8) func_8026DC74(s32);
-void func_8026EEF0(s32, s32, s32, s32, s32);
-s32 func_8026F068(s32, s32, s32, s32);
-void func_8027404C(f32, f32, f32, f32 *, f32 *, f32 *);
-void func_8027A640(void);
-s32 func_8027B828(s16, s16, s16, s16);
-s32 func_8027B8D4(s16, s16, s16, s16);
 /* A4CE0's func_8028A7CC returns nothing, but here it was called as an
  * int function (undeclared, most likely): with void, func_8027DFAC's first
  * loop counts in v0 instead of v1. */
@@ -91,17 +87,12 @@ void func_8027D7A4(UnkStruct_80090440 *arg0, UnkStruct_80090440 *arg1);
 void func_8027D7DC(void);
 void func_8027D894(void);
 void func_8027DD94(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4, s16 arg5);
-s16 func_8027DF40(s32 arg0);
-s16 func_8027DF9C(void);
 s16 func_8027E5F8(s32 arg0);
 void func_8027E654(UnkStruct_80090440 *arg0);
 UnkStruct_80090440 *func_8027E67C(void);
 void func_8027E6C4(void);
-s32 func_8027E8EC(s16 arg0, s16 arg1, s16 arg2, s16 arg3);
 void func_8027EB1C(UnkStruct_802B01B8 *arg0);
 void func_8027EB5C(UnkStruct_802B0190 *arg0);
-void func_8027EBCC(void);
-void func_8027ED1C(void);
 UnkStruct_80090440 *func_8027ED80(void);
 void func_8027ED90(s16 arg0, s16 arg1, s16 arg2);
 

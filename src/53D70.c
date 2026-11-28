@@ -1,5 +1,8 @@
 #include "common.h"
 #include "ultralib/ultra64.h"
+#include "4DE50.h"
+#include "53D70.h"
+#include "96540.h"
 
 /* A controller's input, one per frame in a ring of 16 per controller. */
 typedef struct {
@@ -34,7 +37,6 @@ typedef struct {
 
 void func_80239094(void);
 void func_8022FF58(f32 *, f32 *, f32 *);
-s32 func_8023372C(f32, f32);
 void func_80297D80(void *, void *, s32);
 void func_80297D88(s32, void *, PORT_IP(s32));
 s32 func_80297D90(void *, void *, s32);
@@ -44,7 +46,6 @@ void func_80298040(UnkStruct_802AC410 *);
 void func_80298048(void *, UnkStruct_802AC400 *);
 void func_80298050(void *);
 void func_80298060(UnkStruct_802AC400 *);
-void func_8027BD40(void);
 void func_8027CDA4(void *);
 
 s32 func_8023957C(s32 arg0, s32 arg1);
@@ -56,7 +57,6 @@ s32 func_80239AB0(u8 arg0, u16 arg1, u16 arg2);
 s32 func_80239B08(UnkStruct_80239B08 *arg0, UnkStruct_802AC428 *arg1, s32 *arg2);
 s32 func_80239CC8(UnkStruct_80239B08 *arg0, s32 arg1);
 s32 func_8023A0E4(s32 arg0);
-void func_8023A104(void);
 void func_8023A258(UnkStruct_802AC428 *arg0);
 void func_8023A26C(void);
 static void func_8023A310(void);

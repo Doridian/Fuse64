@@ -1,4 +1,5 @@
 #include "common.h"
+#include "995C0.h"
 
 typedef struct {
     /* 0x00 */ UnkStructA_40 *unk0;
@@ -34,8 +35,6 @@ void func_8027F64C(s32 arg0);
 void func_8027F63C(u8 arg0);
 void func_8027F5A8(u16 arg0, u16 arg1, u16 arg2);
 void func_8027F498(UnkStruct_8027F0C4 *arg0);
-void func_8027F428(void);
-void func_8027F400(void);
 UnkStructA_40 *func_8027EFC8(void);
 PORT_RET(void, s32) func_8027EFA8(void);
 

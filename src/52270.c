@@ -1,5 +1,6 @@
 #include "common.h"
 #include "ultralib/ultra64.h"
+#include "52270.h"
 
 /* -O3 (the Makefile's O3_C_FILES), so written last function first.  Eight
  * threads, each with its queue and stack (D_802A5A60), and a thread

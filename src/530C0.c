@@ -1,4 +1,5 @@
 #include "common.h"
+#include "530C0.h"
 
 /* A thread of the game's cooperative scheduler: setjmp/longjmp
  * (func_80297C10/func_80297C7C) switch between them. */
@@ -39,12 +40,8 @@ s32 func_80238B9C(PORT_IP(s32) arg0, PORT_IP(s32) arg1, u8 *arg2, s32 arg3, u16 
 s32 func_80238BDC(void);
 UnkStruct_802AB200 *func_80238C08(u16 arg0);
 s32 func_80238C68(u16 arg0);
-s32 func_80238CF8(s32 arg0, s32 arg1);
 s32 func_80238D98(u16 arg0, u32 arg1);
-s32 func_80238DFC(s32 arg0, s32 arg1, u32 arg2);
 s32 func_80238EA8(s32 arg0);
-s32 func_80238F40(s32 arg0, s32 arg1);
-s32 func_80238FDC(void);
 s32 func_80238FF4(s32 arg0);
 s32 func_8023903C(u32 arg0);
 void func_80239094(void);
@@ -53,7 +50,6 @@ s32 func_802390F0(PORT_IP(s32) arg0, PORT_IP(s32) arg1, s32 arg2);
 s32 func_802391A4(void);
 PORT_IP(s32) func_802391F0(void);
 s32 func_80239208(UnkStruct_802AB200 *arg0);
-void func_80239430(void);
 
 #ifdef TARGET_PC
 /* the tasks as coroutines with host stacks: setjmp and longjmp are the

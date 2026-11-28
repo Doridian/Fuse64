@@ -17,6 +17,7 @@
  */
 #include "common.h"
 #include "model.h"
+#include "45170.h"
 
 void *malloc(u32);
 void free(void *);
@@ -32,12 +33,9 @@ void func_8022A970(UnkChan *arg0, s32 arg1);
 void func_8022AA50(UnkSkel *arg0);
 void func_8022AAD4(UnkKey *arg0, s32 arg1);
 void func_8022AB48(UnkSkel *arg0);
-void func_8022ABCC(UnkSkel *arg0);
 void func_8022AC2C(UnkSkel *arg0, UnkInst *arg1);
 void func_8022AD98(UnkSkel *arg0, UnkInst *arg1);
 void func_8022AED0(UnkSkel *arg0, UnkInst *arg1);
-void func_8022AEDC(UnkSkel *arg0, UnkInst *arg1);
-UnkSkel *func_8022AF1C(UnkModel *arg0);
 
 UnkSkel *func_8022AF1C(UnkModel *arg0) {
     static s32 D_802A54B0;

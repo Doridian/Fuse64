@@ -1,4 +1,5 @@
 #include "common.h"
+#include "87190.h"
 
 typedef struct {
     /* 0x00 */ s32 unk0;

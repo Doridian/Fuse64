@@ -6,6 +6,7 @@
  */
 #include "common.h"
 #include "ultralib/ultra64.h"
+#include "1050.h"
 
 extern u8 zerojump_ROM_START[];
 extern u8 zerojump_ROM_END[];

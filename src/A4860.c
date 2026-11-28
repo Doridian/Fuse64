@@ -7,8 +7,27 @@ typedef struct {
 
 extern UnkStruct_8008E570 D_8008E570;
 extern u8 D_8008E640[8];
-extern u8 D_802A1C00[];
-extern u8 D_802A1C2C[9];
+s32 *func_8028A060(PORT_IP(s32) arg0);
+void func_8028A0B4(void);
+void func_8028A0E4(void);
+s32 func_8028A1DC(s32 arg0);
+void func_8028A24C(s32 arg0);
+void func_8028A2B0(s32 arg0);
+s32 func_8028A318(s32 arg0);
+s32 func_8028A36C(s32 arg0);
+void func_8028A3D0(s32 arg0);
+void func_8028A428(s32 arg0);
+s32 func_8028A484(s32 arg0);
+
+/* .data: ZeroJump module 30's table (func_8028A08C) and the nine bytes
+   func_8028A154 copies to D_8008E570 + 0x48 (the rest is the section's
+   padding) */
+void *D_802A1C00[] = {
+    func_8028A0E4, func_8028A0B4, func_8028A3D0, func_8028A428,
+    func_8028A36C, func_8028A484, func_8028A24C, func_8028A2B0,
+    func_8028A1DC, func_8028A318, func_8028A060,
+};
+u8 D_802A1C2C[9] = { 0x9F, 0x5F, 0x9B, 0xF9, 0x7E, 0x5F, 0x00, 0x00, 0x00 };
 
 s32 *func_8028A060(PORT_IP(s32) arg0) {
     if (arg0 < 0 || arg0 >= 45) {

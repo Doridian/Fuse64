@@ -469,7 +469,7 @@ segments:
       - [0xBB500, .data, 9CAB0]
       - [0xBB5A0, .data, A1EA0]
       - [0xBB5C0, .data, A2840]
-      - [0xBB650, data]
+      - [0xBB650, .data, A4860]
       - [0xBB690, .data, A4CE0]
       - [0xBB750, .data, A8DE0]
       - [0xBB7B0, .data, AA580]

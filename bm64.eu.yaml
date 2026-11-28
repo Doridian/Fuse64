@@ -468,7 +468,7 @@ segments:
       - [0xBC2B0, .data, 9CAB0]
       - [0xBC350, .data, A1EA0]
       - [0xBC370, .data, A2840]
-      - [0xBC400, data]
+      - [0xBC400, .data, A4860]
       - [0xBC440, .data, A4CE0]
       - [0xBC500, .data, A8DE0]
       - [0xBC560, .data, AA580]

@@ -237,6 +237,11 @@ main_code A2840 0x90 0x90 0
 main_code @us A2840 data=0x802A1B70 rodata=0x802A4350
 main_code @eu A2840 data=0x802A1B70 rodata=0x802A4340
 main_code @jp A2840 data=0x802A0DC0 rodata=0x802A3580
+# A4860: .data module 30's table and nine bytes
+main_code A4860 0x40 0 0
+main_code @us A4860 data=0x802A1C00
+main_code @eu A4860 data=0x802A1C00
+main_code @jp A4860 data=0x802A0E50
 main_code A4CE0 0xC0 0x150 0
 main_code @us A4CE0 data=0x802A1C40 rodata=0x802A43E0
 main_code @eu A4CE0 data=0x802A1C40 rodata=0x802A43D0

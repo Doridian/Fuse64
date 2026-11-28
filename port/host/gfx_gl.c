@@ -62,6 +62,10 @@
 #include "gfx.h"
 #include "host.h"
 
+/* epoxy's gl.h brings windows.h on Windows, whose DrawState is a macro
+ * (DrawStateA) */
+#undef DrawState
+
 #define TW 320
 #define TH 240
 

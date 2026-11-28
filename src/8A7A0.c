@@ -263,8 +263,6 @@ void func_80277AA0(s16 arg0, s16 arg1);
 void func_80277AF8(s16 arg0, s16 arg1);
 void func_80277D60(s16 arg0, s16 arg1);
 void func_80277DA8(s16 arg0, s16 arg1);
-void *func_80277FC4(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4, f32 arg5, f32 arg6, f32 arg7, s16 arg8, PORT_RET(s32, void *) arg9);
-void func_80278D54(s32 *arg0);
 
 /* .bss (0x802AFC70-802AFE70), before the first function and in address
  * order, as IDO lays it out (the order it numbers them). IDO puts an
@@ -1489,9 +1487,9 @@ void func_802757E0(s16 *arg0) {
     if (((Ent88 *) arg0)->unk10 & 0x100) {
         k = 9;
     }
-    ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 0, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[0]);
-    ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 5, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[1]);
-    ((Ent88 *) arg0)->unk24[2] = func_80277FC4(id, 6, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[2]);
+    ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 0, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_IP(s32) *) &((Ent88 *) arg0)->unk24[0]);
+    ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 5, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_IP(s32) *) &((Ent88 *) arg0)->unk24[1]);
+    ((Ent88 *) arg0)->unk24[2] = func_80277FC4(id, 6, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_IP(s32) *) &((Ent88 *) arg0)->unk24[2]);
 }
 
 void func_802756DC(s16 *arg0) {
@@ -1507,8 +1505,8 @@ void func_802756DC(s16 *arg0) {
     if (((Ent88 *) arg0)->unk10 & 0x100) {
         k = 9;
     }
-    ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 3, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[0]);
-    ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 0, ((Ent88 *) arg0)->unk10, 8, 40, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[1]);
+    ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 3, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_IP(s32) *) &((Ent88 *) arg0)->unk24[0]);
+    ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 0, ((Ent88 *) arg0)->unk10, 8, 40, x, y, z, k, (PORT_IP(s32) *) &((Ent88 *) arg0)->unk24[1]);
 }
 
 void func_80275590(s16 *arg0) {
@@ -1524,9 +1522,9 @@ void func_80275590(s16 *arg0) {
     if (((Ent88 *) arg0)->unk10 & 0x100) {
         k = 9;
     }
-    ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 3, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[0]);
-    ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 5, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[1]);
-    ((Ent88 *) arg0)->unk24[2] = func_80277FC4(id, 0, ((Ent88 *) arg0)->unk10, 8, 40, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[2]);
+    ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 3, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_IP(s32) *) &((Ent88 *) arg0)->unk24[0]);
+    ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 5, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_IP(s32) *) &((Ent88 *) arg0)->unk24[1]);
+    ((Ent88 *) arg0)->unk24[2] = func_80277FC4(id, 0, ((Ent88 *) arg0)->unk10, 8, 40, x, y, z, k, (PORT_IP(s32) *) &((Ent88 *) arg0)->unk24[2]);
 }
 
 void func_802752BC(s16 *arg0) {
@@ -1543,19 +1541,19 @@ void func_802752BC(s16 *arg0) {
         k = 6;
     }
     if (k == 3) {
-        ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 0, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[0]);
+        ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 0, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_IP(s32) *) &((Ent88 *) arg0)->unk24[0]);
         ((Ent88 *) arg0)->unk24[1] = NULL;
         ((Ent88 *) arg0)->unk24[2] = NULL;
     }
     if (k == 4) {
-        ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 1, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[0]);
-        ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 7, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[1]);
-        ((Ent88 *) arg0)->unk24[2] = func_80277FC4(id, 8, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[2]);
+        ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 1, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_IP(s32) *) &((Ent88 *) arg0)->unk24[0]);
+        ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 7, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_IP(s32) *) &((Ent88 *) arg0)->unk24[1]);
+        ((Ent88 *) arg0)->unk24[2] = func_80277FC4(id, 8, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_IP(s32) *) &((Ent88 *) arg0)->unk24[2]);
     }
     if (k >= 5) {
-        ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 2, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[0]);
-        ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 7, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[1]);
-        ((Ent88 *) arg0)->unk24[2] = func_80277FC4(id, 4, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_RET(s32, void *)) &((Ent88 *) arg0)->unk24[2]);
+        ((Ent88 *) arg0)->unk24[0] = func_80277FC4(id, 2, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_IP(s32) *) &((Ent88 *) arg0)->unk24[0]);
+        ((Ent88 *) arg0)->unk24[1] = func_80277FC4(id, 7, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_IP(s32) *) &((Ent88 *) arg0)->unk24[1]);
+        ((Ent88 *) arg0)->unk24[2] = func_80277FC4(id, 4, ((Ent88 *) arg0)->unk10, 0, 20, x, y, z, k, (PORT_IP(s32) *) &((Ent88 *) arg0)->unk24[2]);
     }
 }
 

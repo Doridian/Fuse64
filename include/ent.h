@@ -44,6 +44,34 @@ typedef struct Ctl87 {
     /* 0x38 */ f32 unk38;
 } Ctl87;
 
+/* 926A0's records, D_8008E658[48]: what func_80277FC4 hands out (an
+ * Ent88's unk24[]) */
+typedef struct Rec926 {
+    /* 0x00 */ s16 unk0;
+    /* 0x02 */ u8 pad2[6];
+    /* 0x08 */ PORT_IP(s32) *unk8; /* the caller's slot that holds this record */
+    /* 0x0C */ s16 unkC;
+    /* 0x0E */ u16 unkE;
+    /* 0x10 */ s16 unk10;
+    /* 0x12 */ u8 pad12[2];
+    /* 0x14 */ UnkStructA *unk14;
+    /* 0x18 */ UnkStructA_40 *unk18;
+    /* 0x1C */ f32 unk1C;
+    /* 0x20 */ f32 unk20;
+    /* 0x24 */ f32 unk24;
+    /* 0x28 */ f32 unk28;
+    /* 0x2C */ f32 unk2C;
+    /* 0x30 */ f32 unk30;
+    /* 0x34 */ u8 pad34[2];
+    /* 0x36 */ s16 unk36;
+    /* 0x38 */ s16 unk38;
+    /* 0x3A */ s16 unk3A;
+    /* 0x3C */ f32 unk3C;
+    /* 0x40 */ f32 unk40;
+    /* 0x44 */ s16 unk44;
+    /* 0x46 */ s16 unk46;
+} Rec926; /* size 0x48 */
+
 typedef struct Ent88 {
     /* 0x00 */ s16 unk0;
     /* 0x02 */ u8 pad2[2];

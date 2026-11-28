@@ -6,15 +6,15 @@
  * original takes $v1.
  *
  * How it came to match:
- * - The handler's frame (0xA0, locals 11 words above obj0 and 7 below
- *   angle): case 11 is a static, func_ovl12_06_800430C8, inlined into the
- *   handler with its own locals.  An inlined static's block of the frame
- *   lies below the slots of the statics inlined before it and above those
- *   inlined after it; `pad0` and `pad1` place it.  Its stub is the one at
- *   800430C8 (inlined statics come out after their callees, in reverse
- *   call order), so func_ovl12_06_800430D0's wait loop is written inline.
- * - Case 2: D_ovl12_06_80045FBC stored in the delay slot of the second
- *   call: a `#line` giving that call an earlier line than the store.
+ * - The handler's frame (0xA0): case 11 is a static,
+ *   func_ovl12_06_800430C8, inlined into the handler with its own locals.
+ *   An inlined static's block of the frame lies below the slots of the
+ *   statics inlined before it and above those inlined after it; its locals'
+ *   order and `pad` place it.  Its stub is the one at 800430C8 (inlined
+ *   statics come out after their callees, in reverse call order), so
+ *   func_ovl12_06_800430D0's wait loop is written inline.
+ * - Case 2: D_ovl12_06_80045FBC is stored in the delay slot of the static's
+ *   first call because the handler stores it, not the static.
  * - func_ovl12_06_800439D4: the a/b/c loop counts in k and its inner loop
  *   in i (40 in $s0, the count in $s3).
  *
@@ -370,11 +370,10 @@ void func_ovl12_06_800439D4(void) {
     func_ovl12_06_800456F8();
 }
 
-/* The handler's cases 2, 16/26/27, 17 and 4: statics inlined into it, each
- * leaving its `jr ra; nop` stub just before it. */
+/* The handler's cases 2 (after its first store, which the handler makes, as
+ * ovl_12_05's case 2 before calling 80045B00), 16/26/27, 17 and 4: statics
+ * inlined into it, each leaving its `jr ra; nop` stub just before it. */
 static void func_ovl12_06_80043144(void) {
-    D_ovl12_06_80045FBC = func_ovl12_06_80044C98();
-#line 374 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     func_ovl12_06_80044B98(0x236);
     func_ovl12_06_80044BB0(0x241);
     func_ovl12_06_80044D48();
@@ -442,17 +441,17 @@ void func_ovl12_06_800430D0(void) {
 }
 
 /* Case 11: a static inlined into the handler; its stub is the one at
- * 800430C8.  The pads give its block of the handler's frame the original's
- * place (11 words above obj0, 7 below angle, frame 0xA0). */
+ * 800430C8.  Its locals give its block of the handler's frame the
+ * original's place (frame 0xA0); angle is a vector, as func_8022FF58
+ * (ZeroJump 0x1803) writes three floats through it. */
 static void func_ovl12_06_800430C8(void) {
-    s32 pad0[1]; /* fake: unused, frame space the original has (no source for it found) */
+    UnkStructA *obj1;
     UnkStructA *obj0;
     Vec3f pos;
     Vec3f target;
-    UnkStructA *obj1;
+    Vec3f angle;
     s32 i;
-    PORT_RET(f32 angle;, f32 port_angle[3];) /* (func_8022FF58 writes three floats through &angle: on the N64 into the frame's next words) */
-    s32 pad1[3]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad[2]; /* fake: unused, frame space the original has below i (no source for it found: hoisted dx/dz steps change the code; with obj1 declared after angle, as m2c had it, a word above obj0 is needed too) */
 
     func_ovl12_06_80044D88(1);
     func_ovl12_06_80045440(0x1F);
@@ -473,14 +472,14 @@ static void func_ovl12_06_800430C8(void) {
         target.x = 2350.0f;
         target.y = 0.0f;
         target.z = 1550.0f;
-        func_ovl12_06_80045528(&pos.x, &target.x, PORT_RET(&angle, port_angle));
-        target.x = func_ovl12_06_80045890(PORT_RET(angle, port_angle[0])) * 800.0f + pos.x;
+        func_ovl12_06_80045528(&pos.x, &target.x, &angle.x);
+        target.x = func_ovl12_06_80045890(angle.x) * 800.0f + pos.x;
         target.y = pos.y;
-        target.z = func_ovl12_06_80045898(PORT_RET(angle, port_angle[0])) * 800.0f + pos.z;
+        target.z = func_ovl12_06_80045898(angle.x) * 800.0f + pos.z;
         pos.x = obj1->unk40->unk10;
         pos.y = obj1->unk40->unk14;
         pos.z = obj1->unk40->unk18;
-        func_ovl12_06_80045528(&pos.x, &target.x, PORT_RET(&angle, port_angle));
+        func_ovl12_06_80045528(&pos.x, &target.x, &angle.x);
         func_ovl12_06_80045540(&pos.x, &target.x);
         obj1->unk68 = 51.0f;
         obj1->unk40->unk14 = 0.1f;
@@ -539,6 +538,7 @@ static void func_ovl12_06_800430C8(void) {
 void func_ovl12_06_80043164(s32 arg0) {
     switch (arg0) {
         case 2:
+            D_ovl12_06_80045FBC = func_ovl12_06_80044C98();
             func_ovl12_06_80043144();
             break;
         case 16:
@@ -569,8 +569,7 @@ void func_ovl12_06_80043164(s32 arg0) {
 static f32 func_ovl12_06_80043068(UnkStructA_40 *from, UnkStructA_40 *to) {
     Vec3f a;
     Vec3f b;
-    f32 pad[2]; /* fake: unused; the original's frame is 8 bytes bigger */
-    PORT_RET(f32 angle;, f32 port_angle[3];) /* (func_8022FF58 writes three floats through &angle: on the N64 into the frame's next words) */
+    Vec3f angle;
 
     a.x = from->unk10;
     a.y = from->unk14;
@@ -578,8 +577,8 @@ static f32 func_ovl12_06_80043068(UnkStructA_40 *from, UnkStructA_40 *to) {
     b.x = to->unk10;
     b.y = to->unk14;
     b.z = to->unk18;
-    func_ovl12_06_80045528(&a.x, &b.x, PORT_RET(&angle, port_angle));
-    return PORT_RET(angle, port_angle[0]);
+    func_ovl12_06_80045528(&a.x, &b.x, &angle.x);
+    return angle.x;
 }
 
 void func_ovl12_06_80043010(void) {

@@ -99,7 +99,10 @@ files use. A type only one file uses may stay in that file. Moving a
 definition out of a file with `#line` fakes (9CAB0, AD5B0, some
 overlays) shifts its lines: lower every `#line N` below by the lines
 removed above it, or as1's order changes (the whole file must shift
-alike).
+alike). The same goes for lines added to a header such a file includes
+before its `#line`: 0A_01, 0A_06, 0B_06 and 0F_01 include gfx.h, and 16
+more lines there changed their code (41FD0's viewport went in 41FD0.h
+instead), so a type for gfx.h is checked against the overlays' objects too.
 
 ```
 tools/structs.py             # the definitions, the duplicates
@@ -146,7 +149,7 @@ too. A position where two or more structure types meet fails `--check`
 unless it is in `ALLOW_E` with the reason: the task's argument and
 7D840's `Gfx` for 426E0's `Gfx_80225840`. The other differences (an `s32` for a `u32` or a pointer, a `void *` for a
 structure's pointer, a `void` return for an `s32`, fewer parameters:
-309 in us, from about 400 before "Prototypes", below) are counted and listed with `-v`, and
+281 in us, from about 400 before "Prototypes", below) are counted and listed with `-v`, and
 `--check` fails when there are more than `E_OTHER_MAX` (per version);
 several are what a match or the port needs (PORT_RET, a halfword
 argument), and proto_check.py checks the ones that matter where pointers
@@ -264,20 +267,34 @@ it can't take the definition's:
   definition's the caller narrows the value itself, and the code changes;
 - a `void` definition whose callers read its value (`$v0`: func_80239094,
   func_8022979C, 48600's func_80231274, ...);
-- a definition whose parameter is m2c's placeholder (`u8 *`, `f32 *`:
-  48600's and 8A7A0's objects) where callers pass a structure or hold the
-  object in an integer, or the reverse (func_8022F4AC's and
-  func_8022F550's `UnkStructA *` that m2c callers keep in an `s32`):
-  where every caller compiles the same, the definition takes the structure
-  (48600's func_80230914, func_802311E8, func_802312AC, func_802313B0,
-  func_802313DC, func_80231408, func_80232DB4 and func_80230CB4's parent
-  take an `UnkStructA *`; the m2c callers that hold the object in a `u8 *`
-  cast it at the call), the rest is still to do;
-- a type local to the defining file (41FD0's `UnkStruct_800BD5B0`, 85A10's,
-  926A0's `Rec926`), a definition or a declaration under `#if`
-  (func_802268F4's TARGET_PC parameter), and the fakes that need a
-  declaration of their own (1050's `s64 func_80000698`, 7D840's
-  func_8026437C with gbi.h's `Gfx`).
+- a definition whose parameter is m2c's placeholder (`u8 *`, `f32 *`)
+  where callers pass a structure or hold the object in an integer, or the
+  reverse: where every caller compiles the same, the definition takes the
+  structure and the callers that hold the object in a `u8 *` or an `s32`
+  cast it at the call (48600's object functions and func_80230CB4's and
+  func_802311E8's returns, 8A7A0's func_802700EC, func_80270080 (a
+  `Ctl87`), func_80270BA4, func_802733C8 and func_802703B4 (an `Ent88`),
+  87D80's func_8026E6E4, func_8026E938 and func_8026EAF8, 5E3F0's
+  func_802443F4). A vector is an `f32 *` (what most callers pass): a
+  caller's `Vec3f` passes `&v.x`;
+- a declaration in 54E40 or AA580 (a fakes pass works there) that differs
+  from the definition: both files include most headers, so the header
+  can't take the definition's type either, and the other callers keep a
+  declaration of their own with the definition's types (func_80232D18,
+  func_8022F550, func_802443F4, func_8026E938, func_8022A328: 54E40's
+  `void *`; func_8023A834, defined in 54E40 as `s32 *`, which 5E3F0 and
+  6BBE0 declare as returning `UnkStruct_8023A834 *`);
+- a definition or a declaration under `#if` (func_802268F4's TARGET_PC
+  parameter), and the fakes that need a declaration of their own (1050's
+  `s64 func_80000698`, 7D840's func_8026437C with gbi.h's `Gfx`).
+
+A function pointer parameter has a typedef where its users share it:
+gfx.h's `UnkCb_8026D4B0` (a model object's draw callback, which its unk3C
+holds in place of a model when unkC has 2: func_8026D4B0 takes one, and
+func_8022A328's callers cast theirs to the `UnkModel *` it takes) and
+AA580.h's `UnkCb_802909FC` (what func_802909FC calls with a tile's
+attributes). structs.py reads such a typedef as the type it names, and
+port/tools/gen_zerojump.py has them in its TYPEDEFS (a pointer).
 
 `tools/structs.py -v` lists them ((e)'s "other" differences, with the
 overlays' ZeroJump stubs, which are still declared in each overlay and

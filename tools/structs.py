@@ -110,7 +110,7 @@ ALLOW_E = {
 # function whose callers read $v0, 48600's and 8A7A0's m2c objects (u8 *,
 # f32 *) that their callers hold as structures or integers, and the task's
 # argument (func_802391F0).
-E_OTHER_MAX = {"us": 309, "eu": 309, "jp": 306}
+E_OTHER_MAX = {"us": 281, "eu": 281, "jp": 278}
 
 
 def allowed_d(names):

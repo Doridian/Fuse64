@@ -146,9 +146,15 @@ too. A position where two or more structure types meet fails `--check`
 unless it is in `ALLOW_E` with the reason: the task's argument and
 7D840's `Gfx` for 426E0's `Gfx_80225840`. The other differences (an `s32` for a `u32` or a pointer, a `void *` for a
 structure's pointer, a `void` return for an `s32`, fewer parameters:
-279 in us, from about 400 before "Prototypes", below) are counted and listed with `-v`, and
-`--check` fails when there are more than `E_OTHER_MAX` (per version);
-several are what a match or the port needs (PORT_RET, a halfword
+279 in us, from about 400 before "Prototypes", below) are listed with `-v`,
+and each is a line of `tools/structs_allow_e.txt` (function, role, a
+reason class such as `narrow-int`, `void-read-v0`, `m2c-placeholder`,
+`vec3f-f32` or `callback`, the versions it differs in). `--check` fails
+on a difference the file doesn't have for the version, and on a line of
+the version's that no longer differs (resolved: remove it).
+`tools/structs.py --update-allow --version <v>` rewrites the file for one
+version (run it for us, eu and jp): a new line gets a guessed class, and a
+line keeps the class it has, which can be bettered by hand; several are what a match or the port needs (PORT_RET, a halfword
 argument), and proto_check.py checks the ones that matter where pointers
 are 8 bytes.
 

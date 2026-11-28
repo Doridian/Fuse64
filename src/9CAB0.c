@@ -506,10 +506,10 @@ void func_80286E60(void) {
 }
 
 s32 func_80286CA8(s32 arg0, f32 arg1, f32 arg2, f32 arg3) {
-    s32 pad[2]; /* fake: 8 bytes of frame above t. func_802863E8's were its
-                 * second parameter; here the same code is written out, and
-                 * calling func_802863E8 (any parameters) un-inlines it from
-                 * func_802867E4; a block-local task, swapped declarations: no */
+    s32 pad[2]; /* fake: 8 bytes of frame above t (func_802863E8's (kind, fn) as in func_802867E4; calling it un-inlines it, smaller bodies too; main1: */
+                 /* a second copy (static, kind/fn/t/task) called here or from func_802867E4 matches all code, but its stub lands before this */
+                 /* function, where the ROM has none (any definition place); with `slot = func_802867CC(..); return slot;` one more local */
+                 /* of any kind fills it (s32 kind = 1 too): a guess; kind as func_802867CC's parameter: no frame */
     s32 t;
     UnkStruct_800BB340 *task;
 
@@ -1714,7 +1714,7 @@ static void func_8028378C() {
 static s32 func_80283794(UnkStruct_80288040 *arg0, u8 arg1) {
     s32 pos[3];
     s32 t1;
-    s32 pad[6]; /* fake: frame-tuned; p9: the direction switch and the cell position as the stubs func_80283784/8028378C (inlined, with parameters): no frame of their own here, and a register differs */
+    s32 pad[6]; /* fake: frame-tuned; p9: the direction switch and the cell position as the stubs func_80283784/8028378C (inlined, with parameters): no frame of their own here, and a register differs (main1: 8028378C(arg0, pos) then 80283784(arg1, pos), t1 and the pad kept: all but arg0/arg1 in s0/s1 swapped and one move; the dead read between them doesn't fix it, the other call order is worse) */
     s8 range[2];
     s8 gx;
     s8 gz;
@@ -2119,7 +2119,7 @@ static void func_80285F8C(void) {
     Vec3f pos2;
     s32 padB[2]; /* fake: frame-tuned; p9: case 1's and case 3's locals as block locals (every order tried): the slots run on, the frame stays 24 short, so these five words are locals not in this code */
     UnkStruct_80288040 *a;
-    s32 pad[3]; /* fake: frame-tuned */
+    s32 pad[3]; /* fake: frame-tuned (main1: case 1's far test as func_80285F84(a) returning far, with pos and far its locals, called there in place of the empty call at the top: both pads go and every instruction matches, but the stub moves before func_80285658's (a static is emitted ahead of the statics of the calls before it, so it must be the first call); case 1 before case 0 reorders every static) */
     Vec3f pos;
     UnkStruct_80288040 *a2;
     s32 far;

@@ -252,7 +252,7 @@ void func_ovl0C_06_800445CC(void) {
 
 
 /* the wall the blocks stand in front of, and the blocks' tiles */
-void func_ovl0C_06_80044494(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_06_8004914C *arg1, s32 arg2) {
+void func_ovl0C_06_80044494(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_01_8004A2A4 *arg1, s32 arg2) {
     UnkStructA *obj;
     union { s32 i; u32 u; } fl;
 
@@ -536,7 +536,7 @@ void func_ovl0C_06_80043710(UnkStruct_ovl0C_01_8004A104 *arg0) {
 
 /* bombs on the switches: a switch hit turns, and once none is left the
  * blocks crumble */
-s32 func_ovl0C_06_80043544(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_06_8004914C *arg1, UnkStruct_ovl0C_01_8004A22C *list, s32 arg3) {
+s32 func_ovl0C_06_80043544(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_01_8004A2A4 *arg1, UnkStruct_ovl0C_01_8004A22C *list, s32 arg3) {
     UnkStructA_40 *pos;
     s32 hit;
     s32 left;
@@ -580,10 +580,10 @@ s32 func_ovl0C_06_80043544(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_06
 }
 
 /* the blocks crumble (a cut scene) */
-void func_ovl0C_06_80043354(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_06_8004914C *arg1, UnkStruct_ovl0C_01_8004A22C *arg2, s32 arg3) {
+void func_ovl0C_06_80043354(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_01_8004A2A4 *arg1, UnkStruct_ovl0C_01_8004A22C *arg2, s32 arg3) {
     s32 sparks;
     s32 task;
-    UnkStruct_ovl0C_06_8004914C *p;
+    UnkStruct_ovl0C_01_8004A2A4 *p;
 
     func_ovl0C_06_80047E68();
     func_ovl0C_06_80047DA8(1);
@@ -614,7 +614,7 @@ void func_ovl0C_06_80043354(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_0
 }
 
 /* the blocks' objects, and their tiles made solid */
-void func_ovl0C_06_80043248(UnkStruct_ovl0C_06_8004914C *arg0, s32 arg1) {
+void func_ovl0C_06_80043248(UnkStruct_ovl0C_01_8004A2A4 *arg0, s32 arg1) {
     UnkStructA *obj;
     union { s32 i; u32 u; } fl;
 

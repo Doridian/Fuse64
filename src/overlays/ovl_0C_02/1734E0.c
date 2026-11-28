@@ -43,25 +43,6 @@ typedef struct {
 } UnkStruct_ovl0C_02_80049B60;
 
 
-/* a list of these ends at the one whose unk2 is 0; unk20 points into
- * another list */
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ s16 unk2;
-    /* 0x04 */ UnkStructA *unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ s16 unk18;
-    /* 0x1A */ s16 unk1A;
-    /* 0x1C */ s16 unk1C;
-    /* 0x1E */ s16 unk1E;
-    /* 0x20 */ UnkStruct_ovl0C_01_8004A22C *unk20;
-    /* 0x24 */ s16 unk24;
-    /* 0x26 */ s16 unk26;
-} UnkStruct_ovl0C_02_80049C24;
-
 /* what the ZeroJump stub 0x3106 returns */
 typedef struct {
     /* 0x00 */ u8 unk0[0xC];
@@ -181,9 +162,9 @@ s32 func_ovl0C_02_800430D0(UnkStructA *arg0, UnkStructA *arg1);
 s32 func_ovl0C_02_800431D4(void);
 void func_ovl0C_02_80043250(void);
 void func_ovl0C_02_80043338(void);
-void func_ovl0C_02_80043544(UnkStruct_ovl0C_02_80049C24 *arg0, s32 arg1);
-void func_ovl0C_02_80043650(UnkStructA **arg0, UnkStruct_ovl0C_02_80049C24 *arg1, UnkStruct_ovl0C_01_8004A22C *arg2, s32 arg3);
-s32 func_ovl0C_02_80043840(UnkStructA **arg0, UnkStruct_ovl0C_02_80049C24 *arg1, UnkStruct_ovl0C_01_8004A22C *arg2, s32 arg3);
+void func_ovl0C_02_80043544(UnkStruct_ovl0C_01_8004A2A4 *arg0, s32 arg1);
+void func_ovl0C_02_80043650(UnkStructA **arg0, UnkStruct_ovl0C_01_8004A2A4 *arg1, UnkStruct_ovl0C_01_8004A22C *arg2, s32 arg3);
+s32 func_ovl0C_02_80043840(UnkStructA **arg0, UnkStruct_ovl0C_01_8004A2A4 *arg1, UnkStruct_ovl0C_01_8004A22C *arg2, s32 arg3);
 void func_ovl0C_02_80043A0C(UnkStruct_ovl0C_01_8004A104 *arg0);
 static void func_ovl0C_02_80043B14(void) {
 }
@@ -216,7 +197,7 @@ void func_ovl0C_02_80044810(void);
 void func_ovl0C_02_80044868(void);
 void func_ovl0C_02_800448CC(void);
 void func_ovl0C_02_80044914(UnkStruct_ovl0C_01_8004A22C *arg0, s32 arg1);
-void func_ovl0C_02_80044A68(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_02_80049C24 *arg1, s32 arg2);
+void func_ovl0C_02_80044A68(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_01_8004A2A4 *arg1, s32 arg2);
 void func_ovl0C_02_80044B58(f32);
 void func_ovl0C_02_80044BA0(void);
 void func_ovl0C_02_80044CD0(void);
@@ -374,7 +355,7 @@ UnkStruct_ovl0C_01_8004A22C D_ovl0C_02_80049B84[] = {
     { 2, 3, NULL, 4450.0f, 400.0f, 2450.0f, 650.0f, 0x2C, 3, 0x18, 2, 0, 0, 0x409 },
     { 3, 0, NULL, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0, 0, 0, 0, 0, 0 },
 };
-UnkStruct_ovl0C_02_80049C24 D_ovl0C_02_80049C24[] = {
+UnkStruct_ovl0C_01_8004A2A4 D_ovl0C_02_80049C24[] = {
     { 0, 1, NULL, 4450.0f, 900.0f, 1350.0f, 900.0f, 0x2B, 5, 0xB, 4, NULL, 0, 0 },
     { 1, 2, NULL, 4450.0f, 900.0f, 1650.0f, 900.0f, 0x2B, 5, 0xE, 4, &D_ovl0C_02_80049B84[0], 0, 0 },
     { 2, 3, NULL, 4450.0f, 900.0f, 1950.0f, 900.0f, 0x2B, 5, 0x11, 4, &D_ovl0C_02_80049B84[1], 0, 0 },
@@ -388,7 +369,7 @@ UnkStruct_ovl0C_01_8004A22C D_ovl0C_02_80049D3C[] = {
     { 1, 2, NULL, 3750.0f, 400.0f, 1650.0f, 650.0f, 0x25, 3, 0x10, 2, 0, 0, 0x40B },
     { 2, 0, NULL, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0, 0, 0, 0, 0, 0 },
 };
-UnkStruct_ovl0C_02_80049C24 D_ovl0C_02_80049DB4[] = {
+UnkStruct_ovl0C_01_8004A2A4 D_ovl0C_02_80049DB4[] = {
     { 0, 1, NULL, 3750.0f, 900.0f, 550.0f, 900.0f, 0x24, 5, 3, 4, NULL, 0, 0 },
     { 1, 2, NULL, 3750.0f, 900.0f, 850.0f, 900.0f, 0x24, 5, 6, 4, NULL, 0, 0 },
     { 2, 3, NULL, 3750.0f, 900.0f, 1150.0f, 900.0f, 0x24, 5, 9, 4, &D_ovl0C_02_80049D3C[0], 0, 0 },
@@ -521,7 +502,7 @@ void func_ovl0C_02_80047B20(void) {
     s16 temp_a2;
     s16 temp_a2_2;
     s16 var_s0;
-    UnkStruct_ovl0C_02_80049C24 *temp_v0;
+    UnkStruct_ovl0C_01_8004A2A4 *temp_v0;
 
     temp_v0 = func_ovl0C_02_80049240();
     temp_s1 = temp_v0->unk4;
@@ -1026,7 +1007,7 @@ void func_ovl0C_02_80046720(void) {
 
 void func_ovl0C_02_8004661C(void) {
     s32 var_s0;
-    UnkStruct_ovl0C_02_80049C24 *temp_s0;
+    UnkStruct_ovl0C_01_8004A2A4 *temp_s0;
 
     temp_s0 = func_ovl0C_02_80049240();
     func_ovl0C_02_80048830(0);
@@ -1566,7 +1547,7 @@ void func_ovl0C_02_80044BA0(void) {
 
 
 
-void func_ovl0C_02_80044A68(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_02_80049C24 *arg1, s32 arg2) {
+void func_ovl0C_02_80044A68(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_01_8004A2A4 *arg1, s32 arg2) {
     UnkStructA *obj;
     union { s32 i; u32 u; } fl;
 
@@ -1916,7 +1897,7 @@ void func_ovl0C_02_80043A0C(UnkStruct_ovl0C_01_8004A104 *arg0) {
 
 /* bombs on the switches: a switch hit turns, and once none is left the
  * blocks crumble */
-s32 func_ovl0C_02_80043840(UnkStructA **arg0, UnkStruct_ovl0C_02_80049C24 *arg1, UnkStruct_ovl0C_01_8004A22C *list, s32 arg3) {
+s32 func_ovl0C_02_80043840(UnkStructA **arg0, UnkStruct_ovl0C_01_8004A2A4 *arg1, UnkStruct_ovl0C_01_8004A22C *list, s32 arg3) {
     UnkStructA_40 *pos;
     s32 hit;
     s32 left;
@@ -1960,10 +1941,10 @@ s32 func_ovl0C_02_80043840(UnkStructA **arg0, UnkStruct_ovl0C_02_80049C24 *arg1,
 }
 
 /* the blocks crumble (a cut scene) */
-void func_ovl0C_02_80043650(UnkStructA **arg0, UnkStruct_ovl0C_02_80049C24 *arg1, UnkStruct_ovl0C_01_8004A22C *arg2, s32 arg3) {
+void func_ovl0C_02_80043650(UnkStructA **arg0, UnkStruct_ovl0C_01_8004A2A4 *arg1, UnkStruct_ovl0C_01_8004A22C *arg2, s32 arg3) {
     s32 sparks;
     s32 task;
-    UnkStruct_ovl0C_02_80049C24 *p;
+    UnkStruct_ovl0C_01_8004A2A4 *p;
 
     func_ovl0C_02_80048978();
     func_ovl0C_02_800488B8(1);
@@ -1993,7 +1974,7 @@ void func_ovl0C_02_80043650(UnkStructA **arg0, UnkStruct_ovl0C_02_80049C24 *arg1
     }
 }
 
-void func_ovl0C_02_80043544(UnkStruct_ovl0C_02_80049C24 *arg0, s32 arg1) {
+void func_ovl0C_02_80043544(UnkStruct_ovl0C_01_8004A2A4 *arg0, s32 arg1) {
     UnkStructA *obj;
     union { s32 i; u32 u; } fl;
 

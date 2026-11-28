@@ -497,4 +497,23 @@ typedef struct {
     /* 0x24 */ s32 unk24;
 } UnkStruct_ovl17_04_80044D84;
 
+/* a list of these ends at the one whose unk2 is 0; unk20 points into
+ * another list */
+typedef struct {
+    /* 0x00 */ s16 unk0;
+    /* 0x02 */ s16 unk2;
+    /* 0x04 */ UnkStructA *unk4;
+    /* 0x08 */ f32 unk8;
+    /* 0x0C */ f32 unkC;
+    /* 0x10 */ f32 unk10;
+    /* 0x14 */ f32 unk14;
+    /* 0x18 */ s16 unk18;
+    /* 0x1A */ s16 unk1A;
+    /* 0x1C */ s16 unk1C;
+    /* 0x1E */ s16 unk1E;
+    /* 0x20 */ UnkStruct_ovl0C_01_8004A22C *unk20;
+    /* 0x24 */ s16 unk24;
+    /* 0x26 */ s16 unk26;
+} UnkStruct_ovl0C_01_8004A2A4;
+
 #endif

@@ -1,17 +1,5 @@
 #include "common.h"
 
-/* The object func_8022A6C4 makes for a text slot. */
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ u8 unk20[0x14];
-    /* 0x34 */ s16 unk34;
-} UnkStruct_80280A74;
-
 /* The image header func_80280814 writes at the start of a slot's buffer. */
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -37,7 +25,7 @@ typedef struct {
 
 /* A text slot, 27 of them. */
 typedef struct {
-    /* 0x00 */ UnkStruct_80280A74 *unk0;
+    /* 0x00 */ UnkStructA_40 *unk0;
     /* 0x04 */ UnkStruct_80280814 *unk4;
     /* 0x08 */ u8 unk8;
     /* 0x0A */ u16 unkA;
@@ -83,7 +71,7 @@ PORT_RET(void, s32) func_802811F0(u8 *arg0, u16 arg1, u16 arg2, f32 arg3, f32 ar
 void func_8028124C(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 static void func_80281270(u8 *, u8 *);
 s32 func_80281278(u8 *arg0, u16 arg1, u16 arg2, f32 arg3, f32 arg4, u8 arg5);
-UnkStruct_80280A74 *func_80281444(s32 arg0);
+UnkStructA_40 *func_80281444(s32 arg0);
 void func_80281464(s32 arg0, f32 arg1, f32 arg2);
 void func_802814D8(s32 arg0, u16 arg1, u16 arg2);
 void func_8028155C(void);
@@ -198,7 +186,7 @@ void func_80281464(s32 arg0, f32 arg1, f32 arg2) {
     }
 }
 
-UnkStruct_80280A74 *func_80281444(s32 arg0) {
+UnkStructA_40 *func_80281444(s32 arg0) {
     return D_800BCAF0[arg0].unk0;
 }
 

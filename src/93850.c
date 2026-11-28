@@ -211,7 +211,7 @@ void func_80279F10(UnkStruct_800BB4A8 *arg0) {
 }
 
 s32 func_80279DC8(UnkStruct_800BB4A8 *arg0, f32 arg1) {
-    UnkStruct_80279050_10 *pos;
+    UnkStructA_40 *pos;
     s32 ret;
 
     if (arg0->unk50 != 0.0f || func_802712A8(&arg0->unk54, 2)) {

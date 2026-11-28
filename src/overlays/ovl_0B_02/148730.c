@@ -952,11 +952,11 @@ void func_ovl0B_02_80046014(void) {
     UnkStructA_40 *obj;
 
     obj = func_ovl0B_02_800491A0();
-    while (obj->unk48->unk4->unk4 < func_ovl0B_02_80048D68(obj, 0)) {
+    while (obj->unk48->unk4[0].unk4 < func_ovl0B_02_80048D68(obj, 0)) {
         func_ovl0B_02_800491C0();
-        obj->unk48->unk4->unk4 += 2.0f;
+        obj->unk48->unk4[0].unk4 += 2.0f;
     }
-    obj->unk48->unk4->unk4 = func_ovl0B_02_80048D68(obj, 0) - 0.01f;
+    obj->unk48->unk4[0].unk4 = func_ovl0B_02_80048D68(obj, 0) - 0.01f;
     func_ovl0B_02_80049188();
 }
 
@@ -964,11 +964,11 @@ void func_ovl0B_02_80045F58(void) {
     UnkStructA_40 *obj;
 
     obj = func_ovl0B_02_800491A0();
-    while (obj->unk48->unk4->unk4 > 2.0f) {
+    while (obj->unk48->unk4[0].unk4 > 2.0f) {
         func_ovl0B_02_800491C0();
-        obj->unk48->unk4->unk4 -= 2.0f;
+        obj->unk48->unk4[0].unk4 -= 2.0f;
     }
-    obj->unk48->unk4->unk4 = 0.0f;
+    obj->unk48->unk4[0].unk4 = 0.0f;
     func_ovl0B_02_80049188();
 }
 
@@ -1505,7 +1505,7 @@ static void func_ovl0B_02_80043FC4(void) {
     pieces = g->unk0;
     func_ovl0B_02_80043FBC(pieces, n);
     if (D_ovl0B_02_8004A3D4 == 2 && D_ovl0B_02_8004A3D8 > 0) {
-        pieces[4].unk10->unk48->unk4->unk4 = func_ovl0B_02_80048D68(pieces[4].unk10, 0) - 0.01f;
+        pieces[4].unk10->unk48->unk4[0].unk4 = func_ovl0B_02_80048D68(pieces[4].unk10, 0) - 0.01f;
     }
     if (D_ovl0B_02_8004A3D8 != 0) {
         for (j = 0; j < D_ovl0B_02_8004A3D8; j++) {

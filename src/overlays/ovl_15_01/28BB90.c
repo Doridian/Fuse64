@@ -1350,7 +1350,7 @@ void func_ovl15_01_80049ADC(void) {
     func_ovl15_01_8004D570();
     func_ovl15_01_80043010(0x12C, obj);
     while (!(src->unk40->unkC & 0x40)) {
-        t = src->unk40->unk48->unk4->unk4 / d;
+        t = src->unk40->unk48->unk4[0].unk4 / d;
         obj->unk50 = 100.0f * t;
         obj->unk54 = 50.0f * t;
         func_ovl15_01_8004D570();
@@ -3177,7 +3177,7 @@ void func_ovl15_01_8004391C(void) {
         func_ovl15_01_8004D548(30);
         func_ovl15_01_8004D100(D_ovl15_01_8004DFEC->unk40, 0, 0);
         func_ovl15_01_8004D3E0(D_ovl15_01_8004DFEC, 0x0C000000);
-        D_ovl15_01_8004DFEC->unk40->unk48->unk4->unk4 = 0.0f;
+        D_ovl15_01_8004DFEC->unk40->unk48->unk4[0].unk4 = 0.0f;
         func_ovl15_01_8004DAB0(0x138);
         func_ovl15_01_8004D3D8(D_ovl15_01_8004DFEC, 0x04000000);
         func_ovl15_01_8004362C(D_ovl15_01_8004DFEC);
@@ -3252,7 +3252,7 @@ void func_ovl15_01_8004391C(void) {
         func_ovl15_01_8004D880(0);
         func_ovl15_01_8004D100(D_ovl15_01_8004DFEC->unk40, 1, 0);
         func_ovl15_01_8004D3E0(D_ovl15_01_8004DFEC, 0x0C000000);
-        D_ovl15_01_8004DFEC->unk40->unk48->unk4->unk4 = 0.0f;
+        D_ovl15_01_8004DFEC->unk40->unk48->unk4[0].unk4 = 0.0f;
         func_ovl15_01_8004D3D8(D_ovl15_01_8004DFEC, 0x04000000);
         func_ovl15_01_8004DAB0(0x13C);
         func_ovl15_01_8004362C(D_ovl15_01_8004DFEC);

@@ -906,9 +906,9 @@ void func_ovl10_07_800462DC(void) {
                 D_ovl10_07_8004A2CC = 5.0f;
                 D_ovl10_07_8004A2D0 = 20.0f;
                 func_ovl10_07_80048D50(D_ovl10_07_8004A2B0->unk40, 0x10, 0);
-                D_ovl10_07_8004A2B0->unk40->unk48->unk4->unk8 |= 0x20;
-                D_ovl10_07_8004A2B0->unk40->unk48->unk4->unk8 |= 0x40;
-                D_ovl10_07_8004A2B0->unk40->unk48->unk4->unk4 =
+                D_ovl10_07_8004A2B0->unk40->unk48->unk4[0].unk8 |= 0x20;
+                D_ovl10_07_8004A2B0->unk40->unk48->unk4[0].unk8 |= 0x40;
+                D_ovl10_07_8004A2B0->unk40->unk48->unk4[0].unk4 =
                     func_ovl10_07_80048D68(D_ovl10_07_8004A2B0->unk40, 0) - 0.1f;
                 D_ovl10_07_8004A2B0->unk68 = 41.0f;
                 pos.x = 0.0f;
@@ -923,7 +923,7 @@ void func_ovl10_07_800462DC(void) {
                 D_ovl10_07_8004A2B0->unk40->unk1C = 0.0f;
                 func_ovl10_07_80048D50(D_ovl10_07_8004A2B0->unk40, 0x11, 0);
                 func_ovl10_07_80049028(D_ovl10_07_8004A2B0, 0x0C000000);
-                D_ovl10_07_8004A2B0->unk40->unk48->unk4->unk8 = 0;
+                D_ovl10_07_8004A2B0->unk40->unk48->unk4[0].unk8 = 0;
                 func_ovl10_07_80048D80(D_ovl10_07_8004A2B0->unk40, 4, 0xC);
                 func_ovl10_07_80048D80(D_ovl10_07_8004A2B0->unk40, 5, 0xD);
                 func_ovl10_07_80045D5C(180);
@@ -1002,9 +1002,9 @@ void func_ovl10_07_80045E2C(void) {
         func_ovl10_07_80048D38(D_ovl10_07_8004A2B0->unk40, 0x4A, i, i);
     }
     func_ovl10_07_80048D50(D_ovl10_07_8004A2B0->unk40, 0x14, 0);
-    D_ovl10_07_8004A2B0->unk40->unk48->unk4->unk8 |= 0x20;
-    D_ovl10_07_8004A2B0->unk40->unk48->unk4->unk8 |= 0x40;
-    D_ovl10_07_8004A2B0->unk40->unk48->unk4->unk4 = func_ovl10_07_80048D68(D_ovl10_07_8004A2B0->unk40, 0) - 0.1f;
+    D_ovl10_07_8004A2B0->unk40->unk48->unk4[0].unk8 |= 0x20;
+    D_ovl10_07_8004A2B0->unk40->unk48->unk4[0].unk8 |= 0x40;
+    D_ovl10_07_8004A2B0->unk40->unk48->unk4[0].unk4 = func_ovl10_07_80048D68(D_ovl10_07_8004A2B0->unk40, 0) - 0.1f;
     D_ovl10_07_8004A2B0->unk40->unk14 = 4000.0f;
     func_ovl10_07_80049060(D_ovl10_07_8004A2B0);
 }

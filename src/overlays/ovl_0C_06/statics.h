@@ -93,7 +93,7 @@ void func_ovl0C_06_80044CE4(s32 arg0) {
 
 void func_ovl0C_06_80044C88(UnkStruct_ovl0C_06_80048F10 *arg0) {
     func_ovl0C_06_80044C80();
-    arg0->unk4->unk40->unk48->unk4->unk4 = func_ovl0C_06_800482F8(arg0->unk4->unk40, 0) - 0.0001f;
+    arg0->unk4->unk40->unk48->unk4[0].unk4 = func_ovl0C_06_800482F8(arg0->unk4->unk40, 0) - 0.0001f;
     func_ovl0C_06_80043710(arg0);
 }
 
@@ -317,7 +317,7 @@ void func_ovl0C_06_80044264(void) {
 }
 
 void func_ovl0C_06_80044228(UnkStruct_ovl0C_06_80048F10 *arg0) {
-    arg0->unk4->unk40->unk48->unk4->unk4 = 0.0f;
+    arg0->unk4->unk40->unk48->unk4[0].unk4 = 0.0f;
     func_ovl0C_06_80044164(arg0);
 }
 

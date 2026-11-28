@@ -670,12 +670,12 @@ void func_ovl0C_01_80048068(void) {
         if (D_ovl0C_01_8004A9E0[rec->unk0]->unk10 & 0x40) {
             func_ovl0C_01_80049B80(0x429);
             func_ovl0C_01_80049E90(0x53);
-            p->unk48->unk4->unk4 = func_ovl0C_01_800494F8(p, 0) - 0.01f;
-            while (p->unk48->unk4->unk4 > 1.0f) {
+            p->unk48->unk4[0].unk4 = func_ovl0C_01_800494F8(p, 0) - 0.01f;
+            while (p->unk48->unk4[0].unk4 > 1.0f) {
                 func_ovl0C_01_80049950();
-                p->unk48->unk4->unk4 -= 1.0f;
+                p->unk48->unk4[0].unk4 -= 1.0f;
             }
-            p->unk48->unk4->unk4 = 0.0f;
+            p->unk48->unk4[0].unk4 = 0.0f;
             func_ovl0C_01_80045A78(rec);
             func_ovl0C_01_80049918();
         }
@@ -1265,7 +1265,7 @@ void func_ovl0C_01_80046684(s32 arg0) {
 }
 
 void func_ovl0C_01_80046628(UnkStruct_ovl0C_01_8004A104 *arg0) {
-    arg0->unk4->unk40->unk48->unk4->unk4 = func_ovl0C_01_800494F8(arg0->unk4->unk40, 0) - 0.0001f;
+    arg0->unk4->unk40->unk48->unk4[0].unk4 = func_ovl0C_01_800494F8(arg0->unk4->unk40, 0) - 0.0001f;
     func_ovl0C_01_80044C34(arg0);
 }
 
@@ -1481,7 +1481,7 @@ void func_ovl0C_01_80045B78(void) {
 }
 
 void func_ovl0C_01_80045B3C(UnkStruct_ovl0C_01_8004A104 *arg0) {
-    arg0->unk4->unk40->unk48->unk4->unk4 = 0.0f;
+    arg0->unk4->unk40->unk48->unk4[0].unk4 = 0.0f;
     func_ovl0C_01_80045A78(arg0);
 }
 
@@ -1746,18 +1746,18 @@ void func_ovl0C_01_80044D3C(void) {
     p = obj->unk40;
     p->unkC |= 0x40;
     func_ovl0C_01_800494E0(p, 0x16, 0);
-    p->unk48->unk4->unk4 = func_ovl0C_01_800494F8(p, 0) - 0.01f;
+    p->unk48->unk4[0].unk4 = func_ovl0C_01_800494F8(p, 0) - 0.01f;
     snd.unk0 = p;
     snd.unk4 = 0x213;
     snd.unk8 = 60;
     func_ovl0C_01_80049900(&snd);
     func_ovl0C_01_800443A4(&p->unk10, 500.0f, &p->unk14, 600.0f, 30);
     func_ovl0C_01_80049EB0(0x211, p->unk10, p->unk14, p->unk18);
-    while (p->unk48->unk4->unk4 > 1.0f) {
+    while (p->unk48->unk4[0].unk4 > 1.0f) {
         func_ovl0C_01_80049950();
-        p->unk48->unk4->unk4 -= 1.0f;
+        p->unk48->unk4[0].unk4 -= 1.0f;
     }
-    p->unk48->unk4->unk4 = 0.0f;
+    p->unk48->unk4[0].unk4 = 0.0f;
     while (p->unk14 > 300.0f) {
         func_ovl0C_01_80049950();
         p->unk14 -= 20.0f;
@@ -1771,18 +1771,18 @@ void func_ovl0C_01_80044D3C(void) {
     p->unk14 = 700.0f;
     func_ovl0C_01_80049EB0(0x211, p->unk10, p->unk14, p->unk18);
     end = func_ovl0C_01_800494F8(p, 0) - 0.01f;
-    while (p->unk48->unk4->unk4 < end) {
+    while (p->unk48->unk4[0].unk4 < end) {
         func_ovl0C_01_80049950();
-        p->unk48->unk4->unk4 += 1.0f;
+        p->unk48->unk4[0].unk4 += 1.0f;
     }
-    p->unk48->unk4->unk4 = end;
+    p->unk48->unk4[0].unk4 = end;
     func_ovl0C_01_80049950();
     snd.unk0 = p;
     snd.unk4 = 0x20F;
     snd.unk8 = 0x44;
     func_ovl0C_01_80049900(&snd);
     func_ovl0C_01_80043248(&p->unk10, -800.0f, 30);
-    p->unk48->unk4->unk4 = 0.0f;
+    p->unk48->unk4[0].unk4 = 0.0f;
     obj->unk40->unk10 = 2700.0f;
     obj->unk40->unk14 = 200.0f;
     obj->unk40->unk18 = 1500.0f;
@@ -1948,11 +1948,11 @@ void func_ovl0C_01_800444DC(void) {
         func_ovl0C_01_800494E0(p, 0x16, 0);
         func_ovl0C_01_80049EB0(0x211, p->unk10, p->unk14, p->unk18);
         end = func_ovl0C_01_800494F8(p, 0) - 0.01f;
-        while (p->unk48->unk4->unk4 < end) {
+        while (p->unk48->unk4[0].unk4 < end) {
             func_ovl0C_01_80049950();
-            p->unk48->unk4->unk4 += 1.0f;
+            p->unk48->unk4[0].unk4 += 1.0f;
         }
-        p->unk48->unk4->unk4 = end;
+        p->unk48->unk4[0].unk4 = end;
         func_ovl0C_01_80049950();
         snd.unk0 = p;
         snd.unk4 = 0x20F;
@@ -2014,11 +2014,11 @@ void func_ovl0C_01_800441D4(void) {
         func_ovl0C_01_800494E0(p, 0x16, 0);
         func_ovl0C_01_80049EB0(0x211, p->unk10, p->unk14, p->unk18);
         end = func_ovl0C_01_800494F8(p, 0) - 0.01f;
-        while (p->unk48->unk4->unk4 < end) {
+        while (p->unk48->unk4[0].unk4 < end) {
             func_ovl0C_01_80049950();
-            p->unk48->unk4->unk4 += 1.0f;
+            p->unk48->unk4[0].unk4 += 1.0f;
         }
-        p->unk48->unk4->unk4 = end;
+        p->unk48->unk4[0].unk4 = end;
         func_ovl0C_01_80049950();
         snd.unk0 = p;
         snd.unk4 = 0x20F;
@@ -2152,11 +2152,11 @@ void func_ovl0C_01_800439C0(void) {
     func_ovl0C_01_800494E0(p, 0x16, 0);
     func_ovl0C_01_80049EB0(0x211, p->unk10, p->unk14, p->unk18);
     end = func_ovl0C_01_800494F8(p, 0) - 0.01f;
-    while (p->unk48->unk4->unk4 < end) {
+    while (p->unk48->unk4[0].unk4 < end) {
         func_ovl0C_01_80049950();
-        p->unk48->unk4->unk4 += 1.0f;
+        p->unk48->unk4[0].unk4 += 1.0f;
     }
-    p->unk48->unk4->unk4 = end;
+    p->unk48->unk4[0].unk4 = end;
     func_ovl0C_01_80049950();
     snd.unk0 = p;
     snd.unk4 = 0x20F;
@@ -2225,12 +2225,12 @@ void func_ovl0C_01_800436A0(void) {
     func_ovl0C_01_800497B8(obj, 0x01000000);
     func_ovl0C_01_800435C4(&p->unk10, 1600.0f, 30);
     func_ovl0C_01_800494E0(p, 0x16, 0);
-    p->unk48->unk4->unk4 = func_ovl0C_01_800494F8(p, 0) - 0.01f;
-    while (p->unk48->unk4->unk4 > 1.0f) {
+    p->unk48->unk4[0].unk4 = func_ovl0C_01_800494F8(p, 0) - 0.01f;
+    while (p->unk48->unk4[0].unk4 > 1.0f) {
         func_ovl0C_01_80049950();
-        p->unk48->unk4->unk4 -= 1.0f;
+        p->unk48->unk4[0].unk4 -= 1.0f;
     }
-    p->unk48->unk4->unk4 = 0.0f;
+    p->unk48->unk4[0].unk4 = 0.0f;
     while (p->unk14 > 200.0f) {
         func_ovl0C_01_80049950();
         p->unk14 -= 20.0f;
@@ -2281,12 +2281,12 @@ void func_ovl0C_01_8004333C(void) {
     func_ovl0C_01_800497B8(obj, 0x01000000);
     func_ovl0C_01_80043248(&p->unk10, 3300.0f, 30);
     func_ovl0C_01_800494E0(p, 0x16, 0);
-    p->unk48->unk4->unk4 = func_ovl0C_01_800494F8(p, 0) - 0.01f;
-    while (p->unk48->unk4->unk4 > 1.0f) {
+    p->unk48->unk4[0].unk4 = func_ovl0C_01_800494F8(p, 0) - 0.01f;
+    while (p->unk48->unk4[0].unk4 > 1.0f) {
         func_ovl0C_01_80049950();
-        p->unk48->unk4->unk4 -= 1.0f;
+        p->unk48->unk4[0].unk4 -= 1.0f;
     }
-    p->unk48->unk4->unk4 = 0.0f;
+    p->unk48->unk4[0].unk4 = 0.0f;
     while (p->unk14 > 300.0f) {
         func_ovl0C_01_80049950();
         p->unk14 -= 20.0f;

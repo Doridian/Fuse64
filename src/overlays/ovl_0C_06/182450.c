@@ -893,12 +893,12 @@ void func_ovl0C_06_80045FC8(void) {
         if (D_ovl0C_06_800493C8[rec->unk0]->unk10 & 0x40) {
             func_ovl0C_06_80048980(0x429);
             func_ovl0C_06_80048C90(0x53);
-            p->unk48->unk4->unk4 = func_ovl0C_06_800482F8(p, 0) - 0.01f;
-            while (p->unk48->unk4->unk4 > 1.0f) {
+            p->unk48->unk4[0].unk4 = func_ovl0C_06_800482F8(p, 0) - 0.01f;
+            while (p->unk48->unk4[0].unk4 > 1.0f) {
                 func_ovl0C_06_80048750();
-                p->unk48->unk4->unk4 -= 1.0f;
+                p->unk48->unk4[0].unk4 -= 1.0f;
             }
-            p->unk48->unk4->unk4 = 0.0f;
+            p->unk48->unk4[0].unk4 = 0.0f;
             func_ovl0C_06_80044164(rec);
             func_ovl0C_06_80048718();
         }

@@ -259,15 +259,15 @@ void func_ovl12_06_800439D4(void) {
     }
     func_ovl12_06_800452C0(obj->unk40, 0x21, 0);
     func_ovl12_06_800452C0(obj->unk40, -1, 1);
-    obj->unk40->unk48->unk4->unk8 |= 0x20;
-    obj->unk40->unk48->unk4->unk8 &= ~0x40;
+    obj->unk40->unk48->unk4[0].unk8 |= 0x20;
+    obj->unk40->unk48->unk4[0].unk8 &= ~0x40;
     func_ovl12_06_80045708(17);
     func_ovl12_06_80045C70(0x239);
     func_ovl12_06_80045708(16);
     func_ovl12_06_80045C70(0x239);
     func_ovl12_06_80045708(16);
     func_ovl12_06_80045C70(0x239);
-    while (!(obj->unk40->unk48->unk4->unk8 & 0x40)) {
+    while (!(obj->unk40->unk48->unk4[0].unk8 & 0x40)) {
         func_ovl12_06_80045730();
     }
     if (D_ovl12_06_80045FBC == 0x1A) {
@@ -277,16 +277,16 @@ void func_ovl12_06_800439D4(void) {
         func_ovl12_06_800456F8();
     } else if (D_ovl12_06_80045FBC == 0x1B) {
         func_ovl12_06_80044E28(1, 1);
-        obj->unk40->unk48->unk4->unk8 |= 0x40;
+        obj->unk40->unk48->unk4[0].unk8 |= 0x40;
         k = 0;
-        obj->unk40->unk48->unk4->unk14 |= 0x40;
+        obj->unk40->unk48->unk4[1].unk8 |= 0x40;
         obj->unk68 = 0.0f;
         obj->unk6C = 0.0f;
         obj->unk70 = 0.0f;
         for (i = 0; i < 6; i++) {
             for (angle = 0.0f; angle < func_ovl12_06_800452D8(obj->unk40, 0); angle += 4.0f) {
-                obj->unk40->unk48->unk4->unk4 = angle;
-                obj->unk40->unk48->unk4->unk10 = angle;
+                obj->unk40->unk48->unk4[0].unk4 = angle;
+                obj->unk40->unk48->unk4[1].unk4 = angle;
                 obj->unk40->unk1C = func_ovl12_06_80045898(k) * 25.0f;
                 ANGLE_ADD(k, 10);
                 func_ovl12_06_80045730();
@@ -334,8 +334,8 @@ void func_ovl12_06_800439D4(void) {
     func_ovl12_06_80045760(0x70, 0x70);
     func_ovl12_06_800452C0(obj->unk40, 0x16, 0);
     func_ovl12_06_800452C0(obj->unk40, -1, 1);
-    obj->unk40->unk48->unk4->unk8 |= 0x20;
-    obj->unk40->unk48->unk4->unk8 &= ~0x40;
+    obj->unk40->unk48->unk4[0].unk8 |= 0x20;
+    obj->unk40->unk48->unk4[0].unk8 &= ~0x40;
     for (i = 0; i < 7; i++) {
         func_ovl12_06_800453F8(angle, func_ovl12_06_80045890(angle) * 20.0f + 20.0f, 32768.0f);
         ANGLE_ADD(angle, 2.25f);
@@ -345,7 +345,7 @@ void func_ovl12_06_800439D4(void) {
     obj->unk70 = 1.6333334f;
     for (i = 0; i < 30; i++) {
         if (i == 5) {
-            obj->unk40->unk48->unk4->unk8 |= 0x40;
+            obj->unk40->unk48->unk4[0].unk8 |= 0x40;
         }
         obj->unk40->unk10 -= 8.333333f;
         obj->unk40->unk18 += 20; /* an int: 20.0f shares the $f22 of the camera's 20.0f */
@@ -517,8 +517,8 @@ static void func_ovl12_06_800430C8(void) {
     obj1->unk40->unkC |= 0x4000;
     func_ovl12_06_800452C0(obj1->unk40, 0x1C, 0);
     func_ovl12_06_800452C0(obj1->unk40, -1, 1);
-    obj1->unk40->unk48->unk4->unk8 |= 0x20;
-    while (!(obj1->unk40->unk48->unk4->unk8 & 0x40)) {
+    obj1->unk40->unk48->unk4[0].unk8 |= 0x20;
+    while (!(obj1->unk40->unk48->unk4[0].unk8 & 0x40)) {
         func_ovl12_06_80045730();
     }
     func_ovl12_06_80045C70(0x20F);

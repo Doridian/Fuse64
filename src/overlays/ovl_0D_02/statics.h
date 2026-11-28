@@ -35,7 +35,7 @@ static void func_ovl0D_02_800444EC(void) {
 #elif STATICS_PART == 1
     func_ovl0D_02_80044474();
 #elif STATICS_PART == 2
-            o->unk40->unk48->unk4->unk4 = func_ovl0D_02_80046A38(o->unk40, 0) - 0.001f;
+            o->unk40->unk48->unk4[0].unk4 = func_ovl0D_02_80046A38(o->unk40, 0) - 0.001f;
 #elif STATICS_PART == 3
             x0 = grid[0] - 1;
             x1 = x0 + 4;

@@ -661,7 +661,7 @@ void func_ovl0E_01_8004420C(void) {
         func_ovl0E_01_80043EB4(&D_ovl0E_01_80046BB0[i]);
         func_ovl0E_01_800460B8(D_ovl0E_01_80046BB0[i].unk0, 0x02000000);
         func_ovl0E_01_800460C0(D_ovl0E_01_80046BB0[i].unk0, 0x80000);
-        if (D_ovl0E_01_80046BB0[i].unk0->unk40->unk48->unk4->unk4 != 0.0f) {
+        if (D_ovl0E_01_80046BB0[i].unk0->unk40->unk48->unk4[0].unk4 != 0.0f) {
             while (TRUE) {
             }
         }
@@ -800,7 +800,7 @@ void func_ovl0E_01_80043B90(void) {
 #include "overlays/common/angle.h"
 
 void func_ovl0E_01_800439D4(UnkStruct_ovl0E_01_80046B00 *arg0) {
-    arg0->unk0->unk40->unk48->unk4->unk4 = func_ovl0E_01_80045DF8(arg0->unk0->unk40, 0) - 0.001f;
+    arg0->unk0->unk40->unk48->unk4[0].unk4 = func_ovl0E_01_80045DF8(arg0->unk0->unk40, 0) - 0.001f;
 }
 
 void func_ovl0E_01_800439AC(void) {
@@ -869,7 +869,7 @@ static void func_ovl0E_01_80043724(void) {
 void func_ovl0E_01_800435B0(void) {
     s32 flags;
 
-    if (D_ovl0E_01_80046BB0[0].unk0->unk40->unk48->unk4->unk4 == 0.0f) {
+    if (D_ovl0E_01_80046BB0[0].unk0->unk40->unk48->unk4[0].unk4 == 0.0f) {
         D_ovl0E_01_80046D3C->unk30 = 1;
         D_ovl0E_01_80046D3C->unk34 = 50.0f;
         D_ovl0E_01_80046D3C->unk38 = 50.0f;

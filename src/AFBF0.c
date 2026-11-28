@@ -1,22 +1,6 @@
 #include "common.h"
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ u8 unk30[4];
-    /* 0x34 */ s16 unk34;
-    /* 0x36 */ s16 unk36;
-} UnkStruct_80281444;
-
-typedef struct {
     /* 0x00 */ u32 unk0;
     /* 0x04 */ s32 unk4;
     /* 0x08 */ u8 unk8;
@@ -47,7 +31,7 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ s32 unk0;
-    /* 0x04 */ UnkStruct_80281444 *unk4;
+    /* 0x04 */ UnkStructA_40 *unk4;
 } UnkStruct_802B0320; /* size 0x8 */
 
 void free(void *);
@@ -65,7 +49,7 @@ void func_802276E0(s32, s32, s32);
 void func_802276FC(s32);
 void func_80227870(void);
 void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
-void func_8022946C(UnkStruct_80281444 *, s32);
+void func_8022946C(UnkStructA_40 *, s32);
 s32 func_80238A10(void *, PORT_IP(s32), void *, s32, u16);
 s32 func_8023903C(u32);
 void func_80239094(void);
@@ -81,7 +65,7 @@ void func_80277E1C(void);
 PORT_RET(void, s32) func_80280DB4(s32);
 s32 func_802810A0(TextArg, u16, u16, f32, f32, u8);
 s32 func_80281278(TextArg, u16, u16, f32, f32, u8);
-UnkStruct_80281444 *func_80281444(s32);
+UnkStructA_40 *func_80281444(s32);
 void func_80281900(s32, s32, s32, s32);
 void func_80281A40(void);
 void func_80282144(s32, s32, s32, f32);
@@ -90,11 +74,11 @@ void func_8028A0E4(void);
 void func_8028A3D0(s32);
 void func_8028A428(s32);
 
-void func_802953F0(s32 *arg0, UnkStruct_80281444 **arg1);
+void func_802953F0(s32 *arg0, UnkStructA_40 **arg1);
 void func_8029547C(TextArg arg0, u16 arg1, u16 arg2, u8 arg3, s32 arg4, f32 arg5, f32 arg6, s32 *arg7,
-                   UnkStruct_80281444 **arg8);
-void func_802957C0(void **arg0, UnkStruct_80281444 **arg1);
-void func_80295758(TextArg arg0, u16 arg1, u16 arg2, u8 arg3, s32 arg4, s32 *arg5, UnkStruct_80281444 **arg6);
+                   UnkStructA_40 **arg8);
+void func_802957C0(void **arg0, UnkStructA_40 **arg1);
+void func_80295758(TextArg arg0, u16 arg1, u16 arg2, u8 arg3, s32 arg4, s32 *arg5, UnkStructA_40 **arg6);
 void func_80295F5C(void);
 void func_80295FDC(UnkStruct_802A25B0 *arg0, UnkStruct_802B0320 *arg1, u16 arg2, u16 arg3);
 void func_8029608C(u16 arg0, u16 arg1);
@@ -1409,7 +1393,7 @@ void func_802967A4(void) {
 
 void func_8029670C(void) {
     UnkStruct_802957C0 *buf;
-    UnkStruct_80281444 *obj;
+    UnkStructA_40 *obj;
 
     func_802957C0((void **) &buf, &obj);
     func_80238A10(func_802964A0, 0, NULL, 0, 0x150);
@@ -1492,13 +1476,13 @@ void func_80295F5C(void) {
 
 void func_80295B80(void) {
     UnkStruct_8023A840 *sp94 = func_8023A840();
-    UnkStruct_80281444 *obj;
+    UnkStructA_40 *obj;
     u8 sp80[14] = { 0x29, 0x4B, 0x3E, 0x4C, 0x3E, 0x47, 0x4D, 0x3E, 0x3D, 0x0F, 0x1B, 0x52, 0x00, 0x00 };
     s32 sp7C;
-    UnkStruct_80281444 *sp78;
+    UnkStructA_40 *sp78;
     f32 w;
     void *sp70;
-    UnkStruct_80281444 *sp6C;
+    UnkStructA_40 *sp6C;
     s32 i;
 
     func_8023AA78(1);
@@ -1549,13 +1533,13 @@ void func_80295B80(void) {
     func_8023AE6C(0x20, 0x10, 2);
 }
 
-void func_802957C0(void **arg0, UnkStruct_80281444 **arg1) {
+void func_802957C0(void **arg0, UnkStructA_40 **arg1) {
     void *raw;
     UnkStruct_802957C0 *buf;
     u16 *src;
     u16 *dst;
     s32 i;
-    UnkStruct_80281444 *obj;
+    UnkStructA_40 *obj;
     f32 t1;
     f32 x = 8.0f;
     f32 y = 6.0f;
@@ -1624,11 +1608,11 @@ void func_802957C0(void **arg0, UnkStruct_80281444 **arg1) {
     *arg1 = obj;
 }
 
-void func_80295758(TextArg arg0, u16 arg1, u16 arg2, u8 arg3, s32 arg4, s32 *arg5, UnkStruct_80281444 **arg6) {
+void func_80295758(TextArg arg0, u16 arg1, u16 arg2, u8 arg3, s32 arg4, s32 *arg5, UnkStructA_40 **arg6) {
     func_8029547C(arg0, arg1, arg2, arg3, arg4, 1.0f, 1.0f, arg5, arg6);
 }
 
-void func_8029547C(TextArg arg0, u16 arg1, u16 arg2, u8 arg3, s32 arg4, f32 arg5, f32 arg6, s32 *arg7, UnkStruct_80281444 **arg8) {
+void func_8029547C(TextArg arg0, u16 arg1, u16 arg2, u8 arg3, s32 arg4, f32 arg5, f32 arg6, s32 *arg7, UnkStructA_40 **arg8) {
     u16 r;
     s32 i;
 
@@ -1659,10 +1643,10 @@ void func_8029547C(TextArg arg0, u16 arg1, u16 arg2, u8 arg3, s32 arg4, f32 arg5
     }
 }
 
-void func_802953F0(s32 *arg0, UnkStruct_80281444 **arg1) {
+void func_802953F0(s32 *arg0, UnkStructA_40 **arg1) {
     s32 i;
     s32 id = *arg0;
-    UnkStruct_80281444 *obj = *arg1;
+    UnkStructA_40 *obj = *arg1;
 
     for (i = 255; i != -1; i -= 4) {
         obj->unk36 = i;

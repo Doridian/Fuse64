@@ -103,7 +103,7 @@
  *     deletes them again (dead register computations), but they make T
  *     and n live into the loop: n is loaded into fs3 before it and stored
  *     after it. The rotation in the 0x20000 case is read from memory each
- *     time (obj->unk44->unk40->rot[1]), and its second wrap is written
+ *     time (obj->unk44->unk40->unk20), and its second wrap is written
  *     out (sp80[1] - 90.0f each time), so neither inserts a variable
  *     (one would be live into the loop and loaded before it).
  *   - case 2 computes a, b and c before the three stores, and case 1's
@@ -130,6 +130,10 @@
  * right, and func_80230914's add.s with a store of y back to o->unk6C
  * before o->unk6C += o->unk70 (both permuter finds). In func_802320A8,
  * pos = sp110 + spC8 is written spC8 + sp110.
+ * In func_80231434 the parent's place is read as an array,
+ * `(&arg0->unk44->unk40->unk10)[1]` (this file had its own type for the
+ * model object, with f32 pos[3]): as UnkStructA_40's unk14 the adds of
+ * the first five cases take other registers.
  */
 #include "common.h"
 #include "m2c.h"
@@ -147,17 +151,6 @@ typedef struct {
     f32 r;
     f32 h;
 } Ball;
-
-/* A collision shape's placement. */
-typedef struct {
-    /* 0x00 */ u8 pad0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 pos[3];
-    /* 0x1C */ f32 rot[3];
-    /* 0x28 */ f32 scale[3];
-    /* 0x34 */ s16 unk34;
-    /* 0x36 */ s16 unk36;
-} Shape;
 
 /* Probably the whole of structs.h's UnkStructA, but this file stores
  * 0x7FFFFFFF in 0x18 and 0x1C, which UnkStructA has as floats. */
@@ -187,7 +180,7 @@ typedef struct UnkStructA80 {
     /* 0x34 */ f32 unk34;
     /* 0x38 */ f32 unk38;
     /* 0x3C */ Step3C *unk3C;
-    /* 0x40 */ Shape *unk40;
+    /* 0x40 */ UnkStructA_40 *unk40;
     /* 0x44 */ struct UnkStructA80 *unk44;
     /* 0x48 */ s32 unk48;
     /* 0x4C */ f32 unk4C[3];
@@ -514,9 +507,9 @@ static void func_80232FF0(UnkStructA80 *arg0) {
             break;
         }
         func_8022FF58(a, b, c);
-        e[0] = arg0->unk40->pos[0];
-        e[1] = arg0->unk40->pos[1];
-        e[2] = arg0->unk40->pos[2];
+        e[0] = arg0->unk40->unk10;
+        e[1] = arg0->unk40->unk14;
+        e[2] = arg0->unk40->unk18;
         func_8022FF58(b, e, d);
         c[2] *= 0.7;
         if (c[2] <= d[2]) {
@@ -531,9 +524,9 @@ static void func_80232FF0(UnkStructA80 *arg0) {
         b[1] = D_802A5808[1];
         b[2] = D_802A5808[2];
         c[2] = D_802A5814;
-        e[0] = arg0->unk40->pos[0];
-        e[1] = arg0->unk40->pos[1];
-        e[2] = arg0->unk40->pos[2];
+        e[0] = arg0->unk40->unk10;
+        e[1] = arg0->unk40->unk14;
+        e[2] = arg0->unk40->unk18;
         func_8022FF58(b, e, d);
         if (c[2] <= d[2]) {
             arg0->unk40->unkC |= 1;
@@ -583,10 +576,10 @@ void func_80232FF8(UnkStructA80 *arg0, s32 *arg1) {
             arg0->unk40->unkC &= ~0x80;
         }
         if (arg0->unk8 & 0xF) {
-            arg0->unk58[0] = arg0->unk40->pos[0];
-            arg0->unk58[1] = arg0->unk40->pos[1];
-            arg0->unk58[2] = arg0->unk40->pos[2];
-            f = (arg0->unk40->pos[1] <= func_8026E8B8()) ? 1 : 0;
+            arg0->unk58[0] = arg0->unk40->unk10;
+            arg0->unk58[1] = arg0->unk40->unk14;
+            arg0->unk58[2] = arg0->unk40->unk18;
+            f = (arg0->unk40->unk14 <= func_8026E8B8()) ? 1 : 0;
             if (f) {
                 arg0->unk14 |= 0x40000000;
             } else {
@@ -841,24 +834,24 @@ void func_802320A8() {
         spB0[1] = spD4[1] - spB0[1];
         switch (obj->unk3C->flags & 0xFFFF) {
         case 1:
-            a = (spBC[0] - obj->unk40->pos[0]) * func_80234434(spB0[1]) * obj->unk3C->unkC;
-            b = (spBC[1] - obj->unk40->pos[1]) * func_80234434(spB0[1]) * obj->unk3C->unkC;
-            c = (spBC[2] - obj->unk40->pos[2]) * func_80234434(spB0[1]) * obj->unk3C->unkC;
-            d = ((obj->unk40->pos[0] - obj->unk58[0]) * obj->unk3C->unk10) * func_80234408(spB0[1]);
-            e = ((obj->unk40->pos[1] - obj->unk58[1]) * obj->unk3C->unk10) * func_80234408(spB0[1]);
-            f = ((obj->unk40->pos[2] - obj->unk58[2]) * obj->unk3C->unk10) * func_80234408(spB0[1]);
-            sp128[0] = obj->unk40->pos[0] + d + a;
-            sp128[1] = obj->unk40->pos[1] + e + b - h;
-            sp128[2] = obj->unk40->pos[2] + f + c;
+            a = (spBC[0] - obj->unk40->unk10) * func_80234434(spB0[1]) * obj->unk3C->unkC;
+            b = (spBC[1] - obj->unk40->unk14) * func_80234434(spB0[1]) * obj->unk3C->unkC;
+            c = (spBC[2] - obj->unk40->unk18) * func_80234434(spB0[1]) * obj->unk3C->unkC;
+            d = ((obj->unk40->unk10 - obj->unk58[0]) * obj->unk3C->unk10) * func_80234408(spB0[1]);
+            e = ((obj->unk40->unk14 - obj->unk58[1]) * obj->unk3C->unk10) * func_80234408(spB0[1]);
+            f = ((obj->unk40->unk18 - obj->unk58[2]) * obj->unk3C->unk10) * func_80234408(spB0[1]);
+            sp128[0] = obj->unk40->unk10 + d + a;
+            sp128[1] = obj->unk40->unk14 + e + b - h;
+            sp128[2] = obj->unk40->unk18 + f + c;
             break;
         case 2:
             y = obj->unk3C->unkC;
-            a = (spBC[0] - obj->unk40->pos[0]) * y;
-            b = (spBC[1] - obj->unk40->pos[1]) * y;
-            c = (spBC[2] - obj->unk40->pos[2]) * y;
-            sp128[0] = obj->unk40->pos[0] + a;
-            sp128[1] = obj->unk40->pos[1] + b - h;
-            sp128[2] = obj->unk40->pos[2] + c;
+            a = (spBC[0] - obj->unk40->unk10) * y;
+            b = (spBC[1] - obj->unk40->unk14) * y;
+            c = (spBC[2] - obj->unk40->unk18) * y;
+            sp128[0] = obj->unk40->unk10 + a;
+            sp128[1] = obj->unk40->unk14 + b - h;
+            sp128[2] = obj->unk40->unk18 + c;
             break;
         default:
             for (;;) { }
@@ -891,31 +884,31 @@ void func_802320A8() {
                 obj->unk4C[1] = n;
             }
             obj->unk4C[2] = spF8[2];
-            obj->unk40->pos[0] = spC8[0] + sp110[0];
-            obj->unk40->pos[1] = spC8[1] + sp110[1];
+            obj->unk40->unk10 = spC8[0] + sp110[0];
+            obj->unk40->unk14 = spC8[1] + sp110[1];
             if (obj->unk3C->flags & 0x100000) {
                 y = func_8026E938(obj->unk40);
                 if (y != 20000.0f && spC8[1] + sp110[1] <= y) {
-                    obj->unk40->pos[1] = y;
+                    obj->unk40->unk14 = y;
                 }
             }
-            obj->unk40->pos[2] = spC8[2] + sp110[2];
+            obj->unk40->unk18 = spC8[2] + sp110[2];
         }
         switch (obj->unk3C->flags & 0xF0000) {
         default:
-            obj->unk40->rot[1] = obj->unk44->unk40->rot[1];
+            obj->unk40->unk20 = obj->unk44->unk40->unk20;
             break;
         case 0x10000:
-            obj->unk40->rot[1] = spD4[0];
-            obj->unk40->rot[0] = spD4[1] * -1.0f + 90;
-            obj->unk40->rot[2] = obj->unk44->unk40->rot[2];
+            obj->unk40->unk20 = spD4[0];
+            obj->unk40->unk1C = spD4[1] * -1.0f + 90;
+            obj->unk40->unk24 = obj->unk44->unk40->unk24;
             break;
         case 0x20000:
             sp80[0] = spD4[0];
             sp80[1] = spD4[1];
             sp80[2] = spD4[2];
-            obj->unk40->rot[1] = obj->unk44->unk40->rot[1];
-            x = ((obj->unk44->unk40->rot[1] >= 0.0f && obj->unk44->unk40->rot[1] <= 180.0f) ? obj->unk44->unk40->rot[1] : (360.0f - obj->unk44->unk40->rot[1]) * -1.0f) - (n = ((sp80[0] >= 0.0f && sp80[0] <= 180.0f) ? sp80[0] : (360.0f - sp80[0]) * -1.0f), n);
+            obj->unk40->unk20 = obj->unk44->unk40->unk20;
+            x = ((obj->unk44->unk40->unk20 >= 0.0f && obj->unk44->unk40->unk20 <= 180.0f) ? obj->unk44->unk40->unk20 : (360.0f - obj->unk44->unk40->unk20) * -1.0f) - (n = ((sp80[0] >= 0.0f && sp80[0] <= 180.0f) ? sp80[0] : (360.0f - sp80[0]) * -1.0f), n);
             if (x >= 360.0f) {
                 sp80[0] = x - 360.0f;
             } else {
@@ -942,18 +935,18 @@ void func_802320A8() {
             sp134[2] += sp110[2];
             func_8022FF58(sp110, sp134, sp80);
             if (func_8023369C(sp80[0], 0.0f, 90.0f)) {
-                obj->unk40->rot[0] = sp80[1] * -1.0f;
+                obj->unk40->unk1C = sp80[1] * -1.0f;
             } else {
-                obj->unk40->rot[0] = sp80[1];
+                obj->unk40->unk1C = sp80[1];
             }
             break;
         case 0x30000:
             func_8022F808((f32 *) obj, sp134);
             func_8022FF58(sp134, sp110, sp80);
-            obj->unk40->rot[1] = sp80[0];
+            obj->unk40->unk20 = sp80[0];
             c = sp80[1] - 180.0f;
             n = (c >= 360.0f) ? c - 360.0f : ((sp80[1] < 180.0f) ? c + 360.0f : c);
-            obj->unk40->rot[0] = n * -1.0f;
+            obj->unk40->unk1C = n * -1.0f;
             break;
         }
         func_80239094();
@@ -1067,9 +1060,9 @@ void func_80231434(UnkStructA80 *arg0) {
 
     switch (arg0->unk8 & 0xF00000) {
     case 0x200000:
-        arg0->unk40->pos[0] = arg0->unk4C[0] + arg0->unk44->unk40->pos[0];
-        arg0->unk40->pos[1] = arg0->unk4C[1] + arg0->unk44->unk40->pos[1];
-        arg0->unk40->pos[2] = arg0->unk4C[2] + arg0->unk44->unk40->pos[2];
+        arg0->unk40->unk10 = arg0->unk4C[0] + (&arg0->unk44->unk40->unk10)[0];
+        arg0->unk40->unk14 = arg0->unk4C[1] + (&arg0->unk44->unk40->unk10)[1];
+        arg0->unk40->unk18 = arg0->unk4C[2] + (&arg0->unk44->unk40->unk10)[2];
         break;
     case 0x300000:
         x = arg0->unk4C[0];
@@ -1095,9 +1088,9 @@ void func_80231434(UnkStructA80 *arg0) {
             arg0->unk4C[1] = w;
         }
         func_8022FEAC(arg0->unk4C, v);
-        arg0->unk40->pos[0] = v[0] + arg0->unk44->unk40->pos[0];
-        arg0->unk40->pos[1] = v[1] + arg0->unk44->unk40->pos[1];
-        arg0->unk40->pos[2] = v[2] + arg0->unk44->unk40->pos[2];
+        arg0->unk40->unk10 = v[0] + (&arg0->unk44->unk40->unk10)[0];
+        arg0->unk40->unk14 = v[1] + (&arg0->unk44->unk40->unk10)[1];
+        arg0->unk40->unk18 = v[2] + (&arg0->unk44->unk40->unk10)[2];
         x = arg0->unk4C[1] + 90.0f;
         if (x >= 360.0f) {
             arg0->unk4C[1] = x - 360.0f;
@@ -1111,98 +1104,98 @@ void func_80231434(UnkStructA80 *arg0) {
         }
         break;
     case 0x400000:
-        arg0->unk40->scale[0] = arg0->unk44->unk40->scale[0];
-        arg0->unk40->scale[1] = arg0->unk44->unk40->scale[1];
-        arg0->unk40->scale[2] = arg0->unk44->unk40->scale[2];
+        arg0->unk40->unk28 = arg0->unk44->unk40->unk28;
+        arg0->unk40->unk2C = arg0->unk44->unk40->unk2C;
+        arg0->unk40->unk30 = arg0->unk44->unk40->unk30;
     case 0x600000:
-        arg0->unk40->rot[1] = arg0->unk44->unk40->rot[1];
-        arg0->unk40->rot[0] = arg0->unk44->unk40->rot[0];
-        arg0->unk40->rot[2] = arg0->unk44->unk40->rot[2];
+        arg0->unk40->unk20 = arg0->unk44->unk40->unk20;
+        arg0->unk40->unk1C = arg0->unk44->unk40->unk1C;
+        arg0->unk40->unk24 = arg0->unk44->unk40->unk24;
     case 0x700000:
         guMtxIdentF(m);
         v[2] = 0.0f; v[1] = 0.0f; v[0] = 0.0f;
-        func_8029C8D0(m, arg0->unk44->unk40->rot[0], arg0->unk44->unk40->rot[1], arg0->unk44->unk40->rot[2]);
+        func_8029C8D0(m, arg0->unk44->unk40->unk1C, arg0->unk44->unk40->unk20, arg0->unk44->unk40->unk24);
         func_8029CA80(m, arg0->unk4C[0], arg0->unk4C[1], arg0->unk4C[2]);
         func_8022E3D4(m, v);
-        arg0->unk40->pos[0] = v[0] + arg0->unk44->unk40->pos[0];
-        arg0->unk40->pos[1] = v[1] + arg0->unk44->unk40->pos[1];
-        arg0->unk40->pos[2] = v[2] + arg0->unk44->unk40->pos[2];
+        arg0->unk40->unk10 = v[0] + (&arg0->unk44->unk40->unk10)[0];
+        arg0->unk40->unk14 = v[1] + (&arg0->unk44->unk40->unk10)[1];
+        arg0->unk40->unk18 = v[2] + (&arg0->unk44->unk40->unk10)[2];
         break;
     case 0x500000:
-        arg0->unk40->scale[0] = arg0->unk44->unk40->scale[0];
-        arg0->unk40->scale[1] = arg0->unk44->unk40->scale[1];
-        arg0->unk40->scale[2] = arg0->unk44->unk40->scale[2];
-        arg0->unk40->rot[0] = arg0->unk44->unk40->rot[0];
-        arg0->unk40->rot[1] = arg0->unk44->unk40->rot[1];
-        arg0->unk40->rot[2] = arg0->unk44->unk40->rot[2];
+        arg0->unk40->unk28 = arg0->unk44->unk40->unk28;
+        arg0->unk40->unk2C = arg0->unk44->unk40->unk2C;
+        arg0->unk40->unk30 = arg0->unk44->unk40->unk30;
+        arg0->unk40->unk1C = arg0->unk44->unk40->unk1C;
+        arg0->unk40->unk20 = arg0->unk44->unk40->unk20;
+        arg0->unk40->unk24 = arg0->unk44->unk40->unk24;
         func_8022FEAC(arg0->unk4C, rot);
         guMtxIdentF(m);
         v[2] = 0.0f; v[1] = 0.0f; v[0] = 0.0f;
-        func_8029C8D0(m, arg0->unk44->unk40->rot[0], arg0->unk44->unk40->rot[1], arg0->unk44->unk40->rot[2]);
+        func_8029C8D0(m, arg0->unk44->unk40->unk1C, arg0->unk44->unk40->unk20, arg0->unk44->unk40->unk24);
         func_8029CA80(m, rot[0], rot[1], rot[2]);
         func_8022E3D4(m, v);
-        arg0->unk40->pos[0] = v[0] + arg0->unk44->unk40->pos[0];
-        arg0->unk40->pos[1] = v[1] + arg0->unk44->unk40->pos[1];
-        arg0->unk40->pos[2] = v[2] + arg0->unk44->unk40->pos[2];
+        arg0->unk40->unk10 = v[0] + (&arg0->unk44->unk40->unk10)[0];
+        arg0->unk40->unk14 = v[1] + (&arg0->unk44->unk40->unk10)[1];
+        arg0->unk40->unk18 = v[2] + (&arg0->unk44->unk40->unk10)[2];
         break;
     case 0x800000:
     case 0x900000:
-        arg0->unk40->scale[0] = arg0->unk44->unk40->scale[0];
-        arg0->unk40->scale[1] = arg0->unk44->unk40->scale[1];
-        arg0->unk40->scale[2] = arg0->unk44->unk40->scale[2];
+        arg0->unk40->unk28 = arg0->unk44->unk40->unk28;
+        arg0->unk40->unk2C = arg0->unk44->unk40->unk2C;
+        arg0->unk40->unk30 = arg0->unk44->unk40->unk30;
         func_8022FEAC(arg0->unk4C, rot);
         guMtxIdentF(m);
         v[2] = 0.0f; v[1] = 0.0f; v[0] = 0.0f;
-        func_8029C8D0(m, arg0->unk44->unk40->rot[0], arg0->unk44->unk40->rot[1], arg0->unk44->unk40->rot[2]);
+        func_8029C8D0(m, arg0->unk44->unk40->unk1C, arg0->unk44->unk40->unk20, arg0->unk44->unk40->unk24);
         func_8029CA80(m, rot[0], rot[1], rot[2]);
         func_8022E3D4(m, v);
-        arg0->unk40->pos[0] = v[0] + arg0->unk44->unk40->pos[0];
-        arg0->unk40->pos[1] = v[1] + arg0->unk44->unk40->pos[1];
-        arg0->unk40->pos[2] = v[2] + arg0->unk44->unk40->pos[2];
-        D_802A5780[0] = arg0->unk44->unk40->pos[0];
-        D_802A5780[1] = arg0->unk44->unk40->pos[1];
-        D_802A5780[2] = arg0->unk44->unk40->pos[2];
-        D_802A5790[0] = arg0->unk40->pos[0];
-        D_802A5790[1] = arg0->unk40->pos[1];
-        D_802A5790[2] = arg0->unk40->pos[2];
+        arg0->unk40->unk10 = v[0] + (&arg0->unk44->unk40->unk10)[0];
+        arg0->unk40->unk14 = v[1] + (&arg0->unk44->unk40->unk10)[1];
+        arg0->unk40->unk18 = v[2] + (&arg0->unk44->unk40->unk10)[2];
+        D_802A5780[0] = arg0->unk44->unk40->unk10;
+        D_802A5780[1] = arg0->unk44->unk40->unk14;
+        D_802A5780[2] = arg0->unk44->unk40->unk18;
+        D_802A5790[0] = arg0->unk40->unk10;
+        D_802A5790[1] = arg0->unk40->unk14;
+        D_802A5790[2] = arg0->unk40->unk18;
         if ((arg0->unk8 & 0xF00000) != 0x900000) {
             func_8022FF58(D_802A5780, D_802A5790, ang);
         } else {
             func_8022FF58(D_802A5790, D_802A5780, ang);
         }
-        arg0->unk40->rot[0] = ang[1] * -1.0f + 90.0f;
-        arg0->unk40->rot[1] = ang[0];
+        arg0->unk40->unk1C = ang[1] * -1.0f + 90.0f;
+        arg0->unk40->unk20 = ang[0];
         break;
     case 0x100000:
         if (!(arg0->unk44->unk8 & 0x01000000) || ((arg0->unk44->unk8 & 0x02000000) && !(arg0->unk44->unk8 & 0x20000000))) {
             arg0->unk40->unkC |= 1;
             break;
         }
-        arg0->unk40->pos[0] = arg0->unk44->unk40->pos[0];
-        arg0->unk40->pos[2] = arg0->unk44->unk40->pos[2];
-        arg0->unk40->pos[1] = func_8026E938(arg0->unk44->unk40);
+        arg0->unk40->unk10 = arg0->unk44->unk40->unk10;
+        arg0->unk40->unk18 = arg0->unk44->unk40->unk18;
+        arg0->unk40->unk14 = func_8026E938(arg0->unk44->unk40);
         func_8026E6E4(arg0->unk44->unk40, sp3C, &sp38);
-        arg0->unk40->rot[0] = sp3C[0];
-        arg0->unk40->rot[1] = sp38;
-        if (arg0->unk40->pos[1] <= arg0->unk44->unk40->pos[1]) {
-            x = arg0->unk44->unk40->pos[1] - arg0->unk40->pos[1];
+        arg0->unk40->unk1C = sp3C[0];
+        arg0->unk40->unk20 = sp38;
+        if (arg0->unk40->unk14 <= arg0->unk44->unk40->unk14) {
+            x = arg0->unk44->unk40->unk14 - arg0->unk40->unk14;
             x -= 2000.0f;
             x *= -1.0f;
             x /= 2000.0f;
             if (x <= 0.3f) {
                 x = 0.3f;
             }
-            arg0->unk40->scale[0] = x;
-            arg0->unk40->scale[2] = x;
-            arg0->unk40->scale[0] *= arg0->unk4C[0];
-            arg0->unk40->scale[1] *= arg0->unk4C[1];
-            arg0->unk40->scale[2] *= arg0->unk4C[2];
-            arg0->unk40->pos[1] += D_800A7F00;
+            arg0->unk40->unk28 = x;
+            arg0->unk40->unk30 = x;
+            arg0->unk40->unk28 *= arg0->unk4C[0];
+            arg0->unk40->unk2C *= arg0->unk4C[1];
+            arg0->unk40->unk30 *= arg0->unk4C[2];
+            arg0->unk40->unk14 += D_800A7F00;
             arg0->unk40->unk36 = D_800A7F04;
         } else {
-            arg0->unk40->scale[0] = 1.0f;
-            arg0->unk40->scale[2] = 1.0f;
-            arg0->unk40->pos[1] = 20000.0f;
+            arg0->unk40->unk28 = 1.0f;
+            arg0->unk40->unk30 = 1.0f;
+            arg0->unk40->unk14 = 20000.0f;
         }
         break;
     }
@@ -1362,7 +1355,7 @@ PORT_ONLY(return (intptr_t)port_v0;) }
 
 void *func_80230CB4(s32 arg0, s32 arg1, s32 arg2, s32 arg3, u8 *arg4) {
     UnkStructA80 *obj;
-    Shape *shape;
+    UnkStructA_40 *shape;
     UnkStructA80 *p;
     s32 *list;
     u8 *res;
@@ -1478,14 +1471,14 @@ void func_80230AA0(UnkStructA80 *arg0, PORT_IP(s32) arg1, PORT_IP(s32) arg2, POR
     f32 y;
 
     y = func_8026E938(arg0->unk40);
-    if (y != 20000.0f && arg0->unk40->pos[1] - arg0->unk6C + arg0->unk68 <= y) {
+    if (y != 20000.0f && arg0->unk40->unk14 - arg0->unk6C + arg0->unk68 <= y) {
         arg0->unk6C = 0.0f;
         arg0->unk68 = 0.0f;
-        arg0->unk40->pos[1] = y;
+        arg0->unk40->unk14 = y;
         return;
     }
-    arg0->unk40->pos[1] += arg0->unk68;
-    arg0->unk40->pos[1] -= arg0->unk6C;
+    arg0->unk40->unk14 += arg0->unk68;
+    arg0->unk40->unk14 -= arg0->unk6C;
     if (arg0->unk6C <= arg0->unk74) {
         arg0->unk6C += arg0->unk70;
     } else {
@@ -1499,13 +1492,13 @@ void func_80230914(u8 *arg0) {
     f32 y;
 
     y = func_8026E938(o->unk40);
-    if (y != 20000.0f && o->unk40->pos[1] - o->unk6C + o->unk68 <= y) {
+    if (y != 20000.0f && o->unk40->unk14 - o->unk6C + o->unk68 <= y) {
         o->unk6C = 0.0f;
         o->unk68 = 0.0f;
-        o->unk40->pos[1] = y;
+        o->unk40->unk14 = y;
     } else {
-        o->unk40->pos[1] += o->unk68;
-        o->unk40->pos[1] -= o->unk6C;
+        o->unk40->unk14 += o->unk68;
+        o->unk40->unk14 -= o->unk6C;
         y = o->unk6C;
         if (y <= o->unk74) {
             o->unk6C = y;
@@ -1520,12 +1513,12 @@ void func_80230914(u8 *arg0) {
         h = o->unk38;
     }
     y = func_8022FB00((u8 *) o);
-    if (y < o->unk40->pos[1] || y < o->unk40->pos[1] + h) {
+    if (y < o->unk40->unk14 || y < o->unk40->unk14 + h) {
         if (o->unk68 != 0.0f) {
             o->unk6C = 0.0f;
         }
         o->unk68 = 0.0f;
-        o->unk40->pos[1] = y - h;
+        o->unk40->unk14 = y - h;
     }
 }
 
@@ -1723,10 +1716,10 @@ f32 func_8022FB00(u8 *arg0) {
     f32 sum;
     s32 i;
     s32 t;
-    Shape *obj;
+    UnkStructA_40 *obj;
 
     obj = ((UnkStructA80 *) arg0)->unk40;
-    func_8026DCAC(obj->pos[0], obj->pos[1], obj->pos[2], &sp50, 2);
+    func_8026DCAC(obj->unk10, obj->unk14, obj->unk18, &sp50, 2);
     sum = 0.0f;
     for (i = 0; i <= sp50.i[1]; i++) {
         sum += (s32) func_8026DC74(i) * 100.0f;
@@ -1877,19 +1870,19 @@ static s32 func_8022F3F8(s32 arg0, f32 *arg1, f32 *arg2, s32 arg3) {
 static void func_8022E0AC(UnkStructA80 *arg0, f32 *arg1) {
     f32 r;
 
-    r = arg0->unk40->scale[0];
-    if (r < arg0->unk40->scale[2]) {
-        r = arg0->unk40->scale[2];
+    r = arg0->unk40->unk28;
+    if (r < arg0->unk40->unk30) {
+        r = arg0->unk40->unk30;
     }
-    arg1[0] = arg0->unk40->pos[0];
-    arg1[1] = arg0->unk40->pos[1];
-    arg1[2] = arg0->unk40->pos[2];
-    arg1[5] = arg0->unk40->rot[0];
-    arg1[6] = arg0->unk40->rot[1];
-    arg1[7] = arg0->unk40->rot[2];
+    arg1[0] = arg0->unk40->unk10;
+    arg1[1] = arg0->unk40->unk14;
+    arg1[2] = arg0->unk40->unk18;
+    arg1[5] = arg0->unk40->unk1C;
+    arg1[6] = arg0->unk40->unk20;
+    arg1[7] = arg0->unk40->unk24;
     arg1[3] = arg0->unk34 * r;
     /* fake: (*arg0).unk38 rather than arg0->unk38 only flips the mul.s operand order. */
-    arg1[4] = arg0->unk40->scale[1] * (*arg0).unk38;
+    arg1[4] = arg0->unk40->unk2C * (*arg0).unk38;
 }
 
 static s32 func_8022DFBC(f32 *a, f32 *b) {
@@ -2199,18 +2192,18 @@ static void func_8022E26C(UnkStructA80 *arg0, f32 *arg1) {
     if (arg0->unk30 & 0x20) {
         h = r = 1.0f;
     } else {
-        r = arg0->unk40->scale[0];
-        if (r < arg0->unk40->scale[1]) {
-            r = arg0->unk40->scale[1];
+        r = arg0->unk40->unk28;
+        if (r < arg0->unk40->unk2C) {
+            r = arg0->unk40->unk2C;
         }
-        if (r < arg0->unk40->scale[2]) {
-            r = arg0->unk40->scale[2];
+        if (r < arg0->unk40->unk30) {
+            r = arg0->unk40->unk30;
         }
-        h = arg0->unk40->scale[1];
+        h = arg0->unk40->unk2C;
     }
-    arg1[0] = arg0->unk40->pos[0];
-    arg1[1] = arg0->unk40->pos[1] + arg0->unk38 * h;
-    arg1[2] = arg0->unk40->pos[2];
+    arg1[0] = arg0->unk40->unk10;
+    arg1[1] = arg0->unk40->unk14 + arg0->unk38 * h;
+    arg1[2] = arg0->unk40->unk18;
     arg1[3] = arg0->unk34 * r;
 }
 

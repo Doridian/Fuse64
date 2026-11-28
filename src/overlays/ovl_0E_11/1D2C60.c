@@ -728,7 +728,7 @@ static void func_ovl0E_11_80043320(void) {
 
 void func_ovl0E_11_8004326C(void) {
     if (func_ovl0E_11_80045D00(0x40D) == 0) {
-        if (D_ovl0E_11_80046374[0].unk0->unk40->unk48->unk4->unk4 != 0.0f &&
+        if (D_ovl0E_11_80046374[0].unk0->unk40->unk48->unk4[0].unk4 != 0.0f &&
             (D_ovl0E_11_80046374[0].unk0->unk40->unkC & 0x40)) {
             func_ovl0E_11_80045CF0(0x40D);
             func_ovl0E_11_80043230();

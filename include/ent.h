@@ -11,19 +11,6 @@ typedef struct Node87 {
 } Node87;
 
 typedef struct {
-    /* 0x00 */ u8 pad0[0x10];
-    /* 0x10 */ f32 x;
-    /* 0x14 */ f32 y;
-    /* 0x18 */ f32 z;
-    /* 0x1C */ u8 pad1C[4];
-    /* 0x20 */ f32 rot;
-    /* 0x24 */ u8 pad24[4];
-    /* 0x28 */ f32 sx;
-    /* 0x2C */ f32 sy;
-    /* 0x30 */ f32 sz;
-} Sub8E; /* the object's transform */
-
-typedef struct {
     /* 0x00 */ u8 pad0[8];
     /* 0x08 */ s32 unk8;
     /* 0x0C */ s32 unkC;
@@ -33,7 +20,7 @@ typedef struct {
     /* 0x34 */ f32 unk34;
     /* 0x38 */ f32 unk38;
     /* 0x3C */ PORT_RET(u8 pad3C[4];, void *unk3C;)
-    /* 0x40 */ Sub8E *unk40;
+    /* 0x40 */ UnkStructA_40 *unk40;
     /* 0x44 */ PORT_RET(u8 pad44[0x4C - 0x44];, void *unk44; u8 unk48[0x4];)
     /* 0x4C */ f32 unk4C;
     /* 0x50 */ f32 unk50;
@@ -92,7 +79,7 @@ typedef struct Ent88 {
     /* 0x14 */ struct Ent88 *next;
     /* 0x18 */ struct Ent88 *prev;
     /* 0x1C */ Obj8E *obj;
-    /* 0x20 */ Sub8E *xf;
+    /* 0x20 */ UnkStructA_40 *xf;
     /* 0x24 */ void *unk24[3];
     /* 0x30 */ Obj8E *unk30;
     /* 0x34 */ Obj8E *unk34;

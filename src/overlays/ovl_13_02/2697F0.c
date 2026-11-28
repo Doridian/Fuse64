@@ -575,7 +575,7 @@ void func_ovl13_02_80048FBC(s32 arg0) {
     k = 0;
     for (i = 0; i < arg0; i++) {
         D_ovl13_02_8004DEF4 = 0.0f;
-        D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 = 0.0f;
+        D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 = 0.0f;
         func_ovl13_02_8004CBF8(D_ovl13_02_8004DE3C, 0x04000000);
         p = (f32 *) ((Vec3f *) D_ovl13_02_8004DF18 + k);
         dx = (p[0] - M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 0)) / D_ovl13_02_8004DEF0;
@@ -768,7 +768,7 @@ void func_ovl13_02_8004B690(void) {
     func_ovl13_02_8004CB28(&D_ovl13_02_8004DD48);
     func_ovl13_02_8004CB38(&D_ovl13_02_8004DD58);
     func_ovl13_02_8004362C(0);
-    D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 = 0.0f;
+    D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 = 0.0f;
     func_ovl13_02_8004CBF8(D_ovl13_02_8004DE3C, 0x04000000);
     D_ovl13_02_8004DEF8 = 1.0f;
     D_ovl13_02_8004DEFC = 0.0f;
@@ -877,7 +877,7 @@ void func_ovl13_02_8004B360(UnkStructA *arg0) {
 void func_ovl13_02_8004B298(UnkStructA *arg0) {
     func_ovl13_02_80043098(0x1E, arg0);
     func_ovl13_02_8004CC00(arg0, 0x04000000);
-    arg0->unk40->unk48->unk4->unk4 = 0.0f;
+    arg0->unk40->unk48->unk4[0].unk4 = 0.0f;
     arg0->unk40->unk28 *= 3.5f;
     arg0->unk40->unk30 *= 3.5f;
     arg0->unk40->unk2C *= 0.1f;
@@ -983,9 +983,9 @@ loop_3:
     D_ovl13_02_8004DD00->unk40->unk14 = M2C_FIELD(&D_ovl13_02_8004DD30, f32 *, 4);
     D_ovl13_02_8004DD00->unk40->unk18 = M2C_FIELD(&D_ovl13_02_8004DD10, f32 *, 8) + M2C_FIELD(&D_ovl13_02_8004DD30, f32 *, 8);
     D_ovl13_02_8004DD00->unk40->unk1C = M2C_FIELD(&D_ovl13_02_8004DD20, f32 *, 4);
-    D_ovl13_02_8004DCFC->unk40->unk48->unk4->unk4 += D_ovl13_02_8004DD3C;
-    if (temp_fs0 < D_ovl13_02_8004DCFC->unk40->unk48->unk4->unk4) {
-        D_ovl13_02_8004DCFC->unk40->unk48->unk4->unk4 -= temp_fs0;
+    D_ovl13_02_8004DCFC->unk40->unk48->unk4[0].unk4 += D_ovl13_02_8004DD3C;
+    if (temp_fs0 < D_ovl13_02_8004DCFC->unk40->unk48->unk4[0].unk4) {
+        D_ovl13_02_8004DCFC->unk40->unk48->unk4[0].unk4 -= temp_fs0;
     }
     func_ovl13_02_8004CD90();
     goto loop_3;
@@ -1524,7 +1524,7 @@ void func_ovl13_02_800489C0(s32 arg0) {
     if (arg0 > 0) {
         do {
             D_ovl13_02_8004DEF4 = 0.0f;
-            D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 = 0.0f;
+            D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 = 0.0f;
             func_ovl13_02_8004CBF8(D_ovl13_02_8004DE3C, 0x04000000);
             if (!(D_ovl13_02_8004DE3C->unk40->unkC & 0x40)) {
 loop_5:
@@ -1808,14 +1808,14 @@ void func_ovl13_02_80047C60(s32 arg0) {
         step = 12.0f;
     func_ovl13_02_80043098(0xDE, D_ovl13_02_8004DE3C);
     for (j = 0; j < arg0; j++) {
-        D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 = 0.0f;
+        D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 = 0.0f;
         func_ovl13_02_8004CC00(D_ovl13_02_8004DE3C, 0x08000000);
         ry = M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4);
         func_ovl13_02_8004CD68(5);
         for (i = 0; i < 30; i++) {
-            D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 += da;
-            if (D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 > D_ovl13_02_8004DEF0) {
-                D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 -= D_ovl13_02_8004DEF0;
+            D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 += da;
+            if (D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 > D_ovl13_02_8004DEF0) {
+                D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 -= D_ovl13_02_8004DEF0;
             }
             M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) = ((M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) - step) >= 360.0f) ? (M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) - step) - 360.0f : (M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) < step) ? (M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) - step) + 360.0f : (M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) - step);
             func_ovl13_02_8004CD90();
@@ -1838,9 +1838,9 @@ void func_ovl13_02_8004799C(void) {
     tgt = 70.0f;
     step = 6.0f;
     while (D_ovl13_02_8004DEE4 != 0.0f) {
-        D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 += da;
-        if (D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 > D_ovl13_02_8004DEF0) {
-            D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 -= D_ovl13_02_8004DEF0;
+        D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 += da;
+        if (D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 > D_ovl13_02_8004DEF0) {
+            D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 -= D_ovl13_02_8004DEF0;
         }
         if (!(M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) <= tgt + step && tgt - step <= M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4))) {
                 M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) = ((M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) - step) >= 360.0f) ? (M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) - step) - 360.0f : (M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) < step) ? (M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) - step) + 360.0f : (M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) - step);
@@ -1939,7 +1939,7 @@ void func_ovl13_02_80046E10(s32 arg0) {
         }
         func_ovl13_02_800430CC((f32 *) &D_ovl13_02_8004DC90, 0xA, 0);
         func_ovl13_02_8004CBF8(D_ovl13_02_8004DE3C, 0x04000000);
-        D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 = 0.0f;
+        D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 = 0.0f;
         D_ovl13_02_8004DEF4 = 0.0f;
         ang = M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4);
         save = D_ovl13_02_8004DE50[0]->unk50;
@@ -1966,7 +1966,7 @@ void func_ovl13_02_80046E10(s32 arg0) {
         }
         func_ovl13_02_8004D2D0(0xDE);
         while (!(D_ovl13_02_8004DE3C->unk40->unkC & 0x40)) {
-            M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) = ang - func_ovl13_02_8004CEF0((D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 / D_ovl13_02_8004DEF0) * 180.0f) * 45.0f;
+            M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) = ang - func_ovl13_02_8004CEF0((D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 / D_ovl13_02_8004DEF0) * 180.0f) * 45.0f;
             found = func_ovl13_02_800461E0();
             if (found != 0) {
                 func_ovl13_02_8004CFC8(0x41D);
@@ -2232,7 +2232,7 @@ void func_ovl13_02_80046B34(s32 arg0) {
     func_ovl13_02_8004D2D0(0xDD);
     func_ovl13_02_8004CBF8(D_ovl13_02_8004DE3C, 0x04000000);
     while (!(D_ovl13_02_8004DE3C->unk40->unkC & 0x40)) {
-        k = 1.0f - (D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 / D_ovl13_02_8004DEF0);
+        k = 1.0f - (D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 / D_ovl13_02_8004DEF0);
         k *= 30.0f;
         D_ovl13_02_8004DED8 = func_ovl13_02_8004CEF0(a) * k + rx;
         a = W360(a + da);
@@ -2275,7 +2275,7 @@ void func_ovl13_02_800467D8(s32 arg0) {
     func_ovl13_02_80043098(0xE3, D_ovl13_02_8004DE3C);
     func_ovl13_02_8004D2D0(0xDD);
     while (!(D_ovl13_02_8004DE3C->unk40->unkC & 0x40)) {
-        k = 1.0f - (D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 / D_ovl13_02_8004DEF0);
+        k = 1.0f - (D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 / D_ovl13_02_8004DEF0);
         k *= 1.5f;
         D_ovl13_02_8004DE3C->unk40->unk28 = func_ovl13_02_8004CEF0(a) * k + scale;
         a = W360(a + da);
@@ -2325,7 +2325,7 @@ void func_ovl13_02_8004640C(void) {
     a = 0.0f;
     r = 0.0f;
     while (!(D_ovl13_02_8004DE3C->unk40->unkC & 0x40)) {
-        rad = 1.0f - D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 / D_ovl13_02_8004DEF0;
+        rad = 1.0f - D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 / D_ovl13_02_8004DEF0;
         rad *= amp;
         M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 4) += -10.0f;
         M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4) = ry + r;
@@ -2761,9 +2761,9 @@ void func_ovl13_02_80044F0C(f32 *arg0, s32 arg1, f32 arg2) {
         M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 0) += dx;
         M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 4) += dy;
         M2C_FIELD(&D_ovl13_02_8004DEC8, f32 *, 8) += dz;
-        D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 += d;
-        if (D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 > D_ovl13_02_8004DEF0) {
-            D_ovl13_02_8004DE3C->unk40->unk48->unk4->unk4 -= D_ovl13_02_8004DEF0;
+        D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 += d;
+        if (D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 > D_ovl13_02_8004DEF0) {
+            D_ovl13_02_8004DE3C->unk40->unk48->unk4[0].unk4 -= D_ovl13_02_8004DEF0;
         }
         func_ovl13_02_8004CD90();
     }

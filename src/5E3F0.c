@@ -138,32 +138,6 @@ extern Port_800AED78 D_800AED78[];
 #endif
 
 typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;)
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ PORT_RET(u8 unkC[4];, void *unkC;)
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ s32 unk14;
-} Sub88b;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[4];
-    /* 0x04 */ Sub88b *unk4;
-} Sub88a;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ u8 unk1C[4];
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ PORT_RET(u8 unk24[0x48 - 0x24];, u8 unk24[0x18]; void *unk3C; void *unk40; void *unk44;)
-    /* 0x48 */ Sub88a *unk48;
-} Mdl88;
-
-typedef struct {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ s32 unk8;
     /* 0x0C */ u8 unkC[4];
@@ -178,7 +152,7 @@ typedef struct {
 #else
     /* 0x24 */ u8 unk24[0x40 - 0x24];
 #endif
-    /* 0x40 */ Mdl88 *unk40;
+    /* 0x40 */ UnkStructA_40 *unk40;
     /* 0x44 */ void *unk44;
     /* 0x48 */ u8 unk48[4];
     /* 0x4C */ f32 unk4C[3];
@@ -1339,8 +1313,8 @@ void func_8024E088(s32 arg0) {
                 spD4 = sp58.unk0;
                 sp120 = sp58.unk4;
                 if ((D_802AC968[arg0] & 1) == 1 && D_802AC97C == 0) {
-                    obj->unk40->unk48->unk4->unk4 = 0.0f;
-                    obj->unk40->unk48->unk4->unk10 = 0.0f;
+                    obj->unk40->unk48->unk4[0].unk4 = 0.0f;
+                    obj->unk40->unk48->unk4[1].unk4 = 0.0f;
                     obj->unk40->unk14 += sp58.unkC;
                 }
             }
@@ -2203,21 +2177,21 @@ void func_8024CEB8(s32 arg0) {
     switch (v) {
     case 1:
     case 13:
-        v = obj->unk40->unk48->unk4->unk10;
+        v = obj->unk40->unk48->unk4[1].unk4;
         if (v == 12.0f || v == 36.0f) {
             hit = 1;
         }
         break;
     case 2:
     case 14:
-        v = obj->unk40->unk48->unk4->unk10;
+        v = obj->unk40->unk48->unk4[1].unk4;
         if (v == 0.0f || v == 20.0f) {
             hit = 1;
         }
         break;
     case 3:
     case 15:
-        v = obj->unk40->unk48->unk4->unk10;
+        v = obj->unk40->unk48->unk4[1].unk4;
         if (v == 0.0f || v == 16.0f) {
             hit = 1;
         }
@@ -2255,7 +2229,7 @@ void func_8024CC58(s32 arg0) {
         func_8022FEAC(vec, &o2->unk4C);
         D_802ACE90[i] -= 1.0f;
     }
-    if (obj->unk40->unk48->unk4->unk4 == 2.0f && !(D_800AEDF0[arg0].unk38 & 0x80)) {
+    if (obj->unk40->unk48->unk4[0].unk4 == 2.0f && !(D_800AEDF0[arg0].unk38 & 0x80)) {
         if (D_800AEDF0[arg0].unk3C == 0) {
             r = func_80271540((s16)arg0);
             if (r != 0) {
@@ -2276,7 +2250,7 @@ void func_8024CC58(s32 arg0) {
         }
         D_800AEDF0[arg0].unk38 |= 0x80;
     }
-    if ((obj->unk40->unk48->unk4->unk8 & 0x40) && func_80277CEC(arg0)) {
+    if ((obj->unk40->unk48->unk4[0].unk8 & 0x40) && func_80277CEC(arg0)) {
         func_80244354(arg0, 0xA0, 0);
         func_80244354(arg0, 0x8000, 1);
         func_802444B8(arg0, 0xC);
@@ -2299,7 +2273,7 @@ void func_8024C884(s32 arg0, f32 arg1, s32 arg2) {
         D_800AEDF0[arg0].unkAC++;
     }
     obj = (Obj88 *)func_802443F4(arg0);
-    if (obj->unk40->unk48->unk4->unk4 == 12.0f && !(D_800AEDF0[arg0].unk38 & 0x40)) {
+    if (obj->unk40->unk48->unk4[0].unk4 == 12.0f && !(D_800AEDF0[arg0].unk38 & 0x40)) {
         t1 = func_80244BA4(arg0, 0x80000);
         if (t1) {
             switch (D_800AEDF0[arg0].unk80) {
@@ -2344,8 +2318,8 @@ void func_8024C884(s32 arg0, f32 arg1, s32 arg2) {
         }
         D_800AEDF0[arg0].unk38 |= 0x40;
     }
-    if ((obj->unk40->unk48->unk4->unk8 & 0x40) ||
-        (obj->unk40->unk48->unk4->unk4 < 12.0f && D_800AEDF0[arg0].unk2C == 0)) {
+    if ((obj->unk40->unk48->unk4[0].unk8 & 0x40) ||
+        (obj->unk40->unk48->unk4[0].unk4 < 12.0f && D_800AEDF0[arg0].unk2C == 0)) {
         func_80244354(arg0, 0x60, 0);
         func_802444B8(arg0, 0);
         t2 = func_80243EB4(arg0, 0x2000);
@@ -2374,7 +2348,7 @@ void func_8024C53C(s32 arg0, void *arg1) {
 
     tbl = *(Tbl5_5E3F0 *)D_802A0DB4;
     obj = (Obj88 *)func_802443F4(arg0);
-    if (obj->unk40->unk48->unk4->unk4 == 11.0f && !(D_800AEDF0[arg0].unk38 & 0x100)) {
+    if (obj->unk40->unk48->unk4[0].unk4 == 11.0f && !(D_800AEDF0[arg0].unk38 & 0x100)) {
         func_8022F808(obj, pos);
         if (D_800AEDF0[arg0].unkBC == 1) {
             obj->unk40->unk10 += ((f32 *)arg1)[0];
@@ -2393,7 +2367,7 @@ void func_8024C53C(s32 arg0, void *arg1) {
         func_80232BA0(pos, obj);
         D_800AEDF0[arg0].unk38 |= 0x100;
     }
-    if (obj->unk40->unk48->unk4->unk8 & 0x40) {
+    if (obj->unk40->unk48->unk4[0].unk8 & 0x40) {
         func_80244354(arg0, 0x100, 0);
         if (!func_80244BA4(arg0, 0x8000)) {
             func_802444B8(arg0, 0);
@@ -2471,7 +2445,7 @@ void func_8024C29C(s32 arg0) {
 }
 
 void func_8024C1E8(s32 arg0) {
-    if (((Obj88 *)func_802443F4(arg0))->unk40->unk48->unk4->unk8 & 0x40) {
+    if (((Obj88 *)func_802443F4(arg0))->unk40->unk48->unk4[0].unk8 & 0x40) {
         func_80244354(arg0, 0x2020, 0);
         if (!func_80244BA4(arg0, 0x8000)) {
             func_802444B8(arg0, 0);
@@ -4969,43 +4943,43 @@ void func_802444B8(s32 arg0, s32 arg1) {
     obj->unk40->unkC |= 0x4000;
     switch (mode) {
     case 0:
-        obj->unk40->unk48->unk4->unk8 |= 0x20;
-        obj->unk40->unk48->unk4->unk8 &= ~0x40;
-        obj->unk40->unk48->unk4->unk14 &= ~0x20;
-        obj->unk40->unk48->unk4->unk14 &= ~0x40;
+        obj->unk40->unk48->unk4[0].unk8 |= 0x20;
+        obj->unk40->unk48->unk4[0].unk8 &= ~0x40;
+        obj->unk40->unk48->unk4[1].unk8 &= ~0x20;
+        obj->unk40->unk48->unk4[1].unk8 &= ~0x40;
         break;
     case 2:
-        obj->unk40->unk48->unk4->unk8 |= 0x20;
-        obj->unk40->unk48->unk4->unk8 &= ~0x40;
-        obj->unk40->unk48->unk4->unk14 &= ~0x20;
-        obj->unk40->unk48->unk4->unk14 &= ~0x40;
+        obj->unk40->unk48->unk4[0].unk8 |= 0x20;
+        obj->unk40->unk48->unk4[0].unk8 &= ~0x40;
+        obj->unk40->unk48->unk4[1].unk8 &= ~0x20;
+        obj->unk40->unk48->unk4[1].unk8 &= ~0x40;
         break;
     case 3:
-        obj->unk40->unk48->unk4->unk8 &= ~0x20;
-        obj->unk40->unk48->unk4->unk8 &= ~0x40;
-        obj->unk40->unk48->unk4->unk14 &= ~0x20;
-        obj->unk40->unk48->unk4->unk14 &= ~0x40;
+        obj->unk40->unk48->unk4[0].unk8 &= ~0x20;
+        obj->unk40->unk48->unk4[0].unk8 &= ~0x40;
+        obj->unk40->unk48->unk4[1].unk8 &= ~0x20;
+        obj->unk40->unk48->unk4[1].unk8 &= ~0x40;
         break;
     case 4:
-        obj->unk40->unk48->unk4->unk8 |= 0x20;
-        obj->unk40->unk48->unk4->unk8 |= 0x40;
-        obj->unk40->unk48->unk4->unk14 |= 0x20;
-        obj->unk40->unk48->unk4->unk14 |= 0x40;
+        obj->unk40->unk48->unk4[0].unk8 |= 0x20;
+        obj->unk40->unk48->unk4[0].unk8 |= 0x40;
+        obj->unk40->unk48->unk4[1].unk8 |= 0x20;
+        obj->unk40->unk48->unk4[1].unk8 |= 0x40;
         break;
     case 5:
-        obj->unk40->unk48->unk4->unk8 &= ~0x20;
-        obj->unk40->unk48->unk4->unk8 &= ~0x40;
-        obj->unk40->unk48->unk4->unk4 = func_8024441C(arg0, arg1);
-        obj->unk40->unk48->unk4->unk14 &= ~0x20;
-        obj->unk40->unk48->unk4->unk14 &= ~0x40;
-        obj->unk40->unk48->unk4->unk10 = obj->unk40->unk48->unk4->unk4;
+        obj->unk40->unk48->unk4[0].unk8 &= ~0x20;
+        obj->unk40->unk48->unk4[0].unk8 &= ~0x40;
+        obj->unk40->unk48->unk4[0].unk4 = func_8024441C(arg0, arg1);
+        obj->unk40->unk48->unk4[1].unk8 &= ~0x20;
+        obj->unk40->unk48->unk4[1].unk8 &= ~0x40;
+        obj->unk40->unk48->unk4[1].unk4 = obj->unk40->unk48->unk4[0].unk4;
         break;
     case 6:
-        obj->unk40->unk48->unk4->unk8 |= 0x20;
-        obj->unk40->unk48->unk4->unk8 |= 0x40;
-        obj->unk40->unk48->unk4->unk14 &= ~0x20;
-        obj->unk40->unk48->unk4->unk14 &= ~0x40;
-        obj->unk40->unk48->unk4->unk10 = func_8024441C(arg0, arg1);
+        obj->unk40->unk48->unk4[0].unk8 |= 0x20;
+        obj->unk40->unk48->unk4[0].unk8 |= 0x40;
+        obj->unk40->unk48->unk4[1].unk8 &= ~0x20;
+        obj->unk40->unk48->unk4[1].unk8 &= ~0x40;
+        obj->unk40->unk48->unk4[1].unk4 = func_8024441C(arg0, arg1);
         break;
     }
 }

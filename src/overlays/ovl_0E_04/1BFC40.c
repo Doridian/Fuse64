@@ -909,7 +909,7 @@ void func_ovl0E_04_80043624(void) {
 #include "overlays/common/angle.h"
 
 void func_ovl0E_04_80043468(UnkStruct_ovl0E_04_80046D70 *arg0) {
-    arg0->unk0->unk40->unk48->unk4->unk4 = func_ovl0E_04_80045E88(arg0->unk0->unk40, 0) - 1.0f;
+    arg0->unk0->unk40->unk48->unk4[0].unk4 = func_ovl0E_04_80045E88(arg0->unk0->unk40, 0) - 1.0f;
 }
 
 void func_ovl0E_04_80043408(void) {

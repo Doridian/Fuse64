@@ -321,9 +321,9 @@ void func_ovl10_02_80043D3C(UnkStructA *arg0) {
     }
     func_ovl10_02_80045010(arg0->unk40, 0x13, 0);
     func_ovl10_02_800452F0(arg0, 0x0C000000);
-    arg0->unk40->unk48->unk4->unk8 |= 0x20;
-    arg0->unk40->unk48->unk4->unk8 |= 0x40;
-    arg0->unk40->unk48->unk4->unk4 = func_ovl10_02_80045028(arg0->unk40, 0) - 0.1f;
+    arg0->unk40->unk48->unk4[0].unk8 |= 0x20;
+    arg0->unk40->unk48->unk4[0].unk8 |= 0x40;
+    arg0->unk40->unk48->unk4[0].unk4 = func_ovl10_02_80045028(arg0->unk40, 0) - 0.1f;
     arg0->unk6C = 0.0f;
     arg0->unk70 = 0.0f;
     func_ovl10_02_80045458(0x50);

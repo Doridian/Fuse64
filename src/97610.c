@@ -1,23 +1,14 @@
 #include "common.h"
 #include "grid.h"
 
-typedef struct {
-    /* 0x00 */ u8 unk0[0x8];
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-} UnkStruct_8027CE10_C;
-
 /* A node of the list at D_80090440: [0] its head, [1] its sentinel, [2..49] the pool */
 typedef struct UnkStruct_80090440 {
     /* 0x00 */ s16 unk0;
     /* 0x02 */ s16 unk2;
     /* 0x04 */ struct UnkStruct_80090440 *unk4;
     /* 0x08 */ struct UnkStruct_80090440 *unk8;
-    /* 0x0C */ UnkStruct_8027CE10_C *unkC;
-    /* 0x10 */ UnkStruct_8027CE10_C *unk10;
+    /* 0x0C */ UnkStructA_40 *unkC;
+    /* 0x10 */ UnkStructA_40 *unk10;
     /* 0x14 */ s16 unk14;
     /* 0x16 */ s16 unk16;
     /* 0x18 */ s16 unk18;
@@ -49,10 +40,10 @@ typedef struct {
     /* 0x34 */ f32 unk34;
     /* 0x38 */ f32 unk38;
     /* 0x3C */ PORT_IP(s32) unk3C;
-    /* 0x40 */ UnkStruct_8027CE10_C *unk40;
+    /* 0x40 */ UnkStructA_40 *unk40;
 } UnkStruct_802B01D0;
 
-void func_8022946C(UnkStruct_8027CE10_C *, s32);
+void func_8022946C(UnkStructA_40 *, s32);
 PORT_RET(void, s32) func_8022FC90(UnkStruct_802B01D0 *);
 void func_8022FF58(f32 *, f32 *, f32 *);
 UnkStruct_802B01D0 *func_80231274(s32, s32, s32, PORT_IP(s32));

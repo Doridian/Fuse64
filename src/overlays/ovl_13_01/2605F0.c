@@ -1331,7 +1331,7 @@ void func_ovl13_01_80047CB4(void *arg0) {
     f32 angle;
 
     if (func_ovl13_01_8004BA10(0x413) != 0) {
-        angle = D_ovl13_01_8004C338->unk40->unk48->unk4->unk4;
+        angle = D_ovl13_01_8004C338->unk40->unk48->unk4[0].unk4;
         if (M2C_FIELD(arg0, f32 *, 4) >= 0.0f) {
             if (M2C_FIELD(arg0, f32 *, 4) > 67.5f) {
                 if (angle <= 45.0f && angle + 2.0f > 45.0f) {
@@ -1359,7 +1359,7 @@ void func_ovl13_01_80047CB4(void *arg0) {
             }
             angle += 1.0f;
         }
-        D_ovl13_01_8004C338->unk40->unk48->unk4->unk4 = func_ovl13_01_80045C60(angle, func_ovl13_01_8004B378(D_ovl13_01_8004C338->unk40, 0));
+        D_ovl13_01_8004C338->unk40->unk48->unk4[0].unk4 = func_ovl13_01_80045C60(angle, func_ovl13_01_8004B378(D_ovl13_01_8004C338->unk40, 0));
     }
 }
 
@@ -1573,7 +1573,7 @@ void func_ovl13_01_80047144(void) {
     f32 t;
 
     temp_a0 = D_ovl13_01_8004C338->unk40;
-    sp18 = temp_a0->unk48->unk4->unk4;
+    sp18 = temp_a0->unk48->unk4[0].unk4;
     t = 1.0f - (sp18 / func_ovl13_01_8004B378(temp_a0, 0));
     D_ovl13_01_8004C358->unk50 = D_ovl13_01_8004C35C->unk50 = func_ovl13_01_8004B930(360.0f * t) * 300.0f;
 }
@@ -1964,7 +1964,7 @@ void func_ovl13_01_80045C9C(void) {
 
     if (func_ovl13_01_8004BA10(0x416) != 0) {
         temp_a0 = D_ovl13_01_8004C338->unk40;
-        sp18 = temp_a0->unk48->unk4->unk4;
+        sp18 = temp_a0->unk48->unk4[0].unk4;
         len = func_ovl13_01_8004B378(temp_a0, 0);
         t = func_ovl13_01_80045C60(sp18 - 13.0f, len) / len;
         D_ovl13_01_8004C338->unk40->unk14 = (func_ovl13_01_8004B930(360.0f * t) * 100.0f) + D_ovl13_01_8004C388.y;
@@ -2478,7 +2478,7 @@ void func_ovl13_01_8004400C(f32 arg0) {
     s32 i;
 
     len = func_ovl13_01_80043F88(D_ovl13_01_8004C3B4);
-    D_ovl13_01_8004C338->unk40->unk48->unk4->unk4 = D_ovl13_01_8004C3B8;
+    D_ovl13_01_8004C338->unk40->unk48->unk4[0].unk4 = D_ovl13_01_8004C3B8;
     if (D_ovl13_01_8004C3B8 <= arg0) {
         d = arg0 - D_ovl13_01_8004C3B8;
     } else {
@@ -2487,13 +2487,13 @@ void func_ovl13_01_8004400C(f32 arg0) {
     d /= 30.0f;
     for (i = 0; i < 30; i++) {
         func_ovl13_01_8004B7D0();
-        D_ovl13_01_8004C338->unk40->unk48->unk4->unk4 += d;
+        D_ovl13_01_8004C338->unk40->unk48->unk4[0].unk4 += d;
     }
-    D_ovl13_01_8004C338->unk40->unk48->unk4->unk4 = arg0;
+    D_ovl13_01_8004C338->unk40->unk48->unk4[0].unk4 = arg0;
 }
 
 f32 func_ovl13_01_80043F88(s32 arg0) {
-    D_ovl13_01_8004C3B8 = D_ovl13_01_8004C338->unk40->unk48->unk4->unk4;
+    D_ovl13_01_8004C3B8 = D_ovl13_01_8004C338->unk40->unk48->unk4[0].unk4;
     func_ovl13_01_8004B360(D_ovl13_01_8004C338->unk40, arg0, 0);
     func_ovl13_01_8004B640(D_ovl13_01_8004C338, 0x0C000000);
     D_ovl13_01_8004C3B4 = arg0;

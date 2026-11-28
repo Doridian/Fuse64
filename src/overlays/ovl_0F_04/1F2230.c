@@ -1109,7 +1109,7 @@ void func_ovl0F_04_80044084(void) {
         if (D_ovl0F_04_80048C90.unkC != 0) {
             obj = *D_ovl0F_04_80048C90.unk4;
             if (obj != NULL && obj->unk40->unk48 != NULL) {
-                obj->unk40->unk48->unk4->unk4 = D_ovl0F_04_80048C90.unk8;
+                obj->unk40->unk48->unk4[0].unk4 = D_ovl0F_04_80048C90.unk8;
                 if (D_ovl0F_04_80048C90.unkC == 1) {
                     D_ovl0F_04_80048C90.unk8 += 1.0f;
                     if (func_ovl0F_04_800478B8((*D_ovl0F_04_80048C90.unk4)->unk40, 0) <= D_ovl0F_04_80048C90.unk8) {

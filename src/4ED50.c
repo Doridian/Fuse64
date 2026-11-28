@@ -84,24 +84,15 @@ s32 func_80233650(f32, f32);
 s32 func_802336E4(f32);
 s32 func_80233768(f32);
 typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ u8 unk1C[4];
-    /* 0x20 */ f32 unk20;
-} UnkStruct_80234DD4;
-
-typedef struct {
     /* 0x00 */ PORT_RET(u8 unk0[0x40];, u8 unk0[0x20]; void *unk20; void *unk24; u8 unk28[0x14]; void *unk3C;)
-    /* 0x40 */ UnkStruct_80234DD4 *unk40;
+    /* 0x40 */ UnkStructA_40 *unk40;
 } UnkStruct_802443F4;
 
 UnkStruct_802443F4 *func_802443F4(s32);
 void func_80234778(f32, f32, f32);
 void func_80234858(f32 *, f32 *, f32 *);
 f32 func_80234D24(f32, f32, f32);
-s32 func_80234DD4(f32, f32, f32, UnkStruct_80234DD4 *);
+s32 func_80234DD4(f32, f32, f32, UnkStructA_40 *);
 void func_802350F8(s32);
 f32 D_802A5A50;
 f32 D_802A5A54;
@@ -239,7 +230,7 @@ void func_80237478(f32 *arg0, f32 *arg1) {
     *arg1 = WRAP360((sp24.y - 90.0f) * -1.0f);
 }
 
-void func_8023733C(UnkStruct_80234DD4 *arg0, f32 *arg1, f32 *arg2) {
+void func_8023733C(UnkStructA_40 *arg0, f32 *arg1, f32 *arg2) {
     Vec3f sp34;
     Vec3f sp28;
 
@@ -1096,7 +1087,7 @@ void func_80234F6C(s32 arg0) {
     }
 }
 
-s32 func_80234DD4(f32 arg0, f32 arg1, f32 arg2, UnkStruct_80234DD4 *arg3) {
+s32 func_80234DD4(f32 arg0, f32 arg1, f32 arg2, UnkStructA_40 *arg3) {
     Vec3f sp8C;
     Vec3f sp80;
     Unk8026DCAC sp68;

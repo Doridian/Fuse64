@@ -94,7 +94,7 @@ typedef struct {
 } UnkChanSet; /* size 0x10 */
 
 /* What func_8022AF1C reads a model into. */
-typedef struct {
+typedef struct UnkSkel {
     /* 0x00 */ s32 unk0[3];
     /* 0x0C */ s32 unkC[3];
     /* 0x18 */ s32 unk18;
@@ -121,7 +121,7 @@ typedef struct UnkNode {
 } UnkNode; /* size 0x3C */
 
 /* An instance (func_8022D1D0). */
-typedef struct {
+typedef struct UnkInst {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ Vec3f unk4;
     /* 0x10 */ Vec3f unk10;
@@ -158,7 +158,7 @@ typedef struct {
 } UnkTrack; /* size 0x28 */
 
 /* A playing animation (func_8022C8B8). */
-typedef struct {
+typedef struct UnkAnim {
     /* 0x00 */ UnkInst *unk0;
     /* 0x04 */ f32 unk4;
     /* 0x08 */ f32 unk8;

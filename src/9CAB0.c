@@ -2465,7 +2465,7 @@ static s32 func_802824B4(UnkStruct_80288040 *arg0) {
 
 void func_80282454(UnkStruct_80288040 *arg0) {
     func_80229E38(arg0->unk0->unk40, 0, 0);
-    arg0->unk0->unk40->unk48->unk4->unk4 = 0.0f;
+    arg0->unk0->unk40->unk48->unk4[0].unk4 = 0.0f;
     func_80282430(arg0, 0xF, 0);
 }
 

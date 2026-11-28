@@ -769,12 +769,12 @@ f32 func_8026EAF8(u8 *arg0) {
     f32 r;
     f32 h;
 
-    fx = ((Obj8E *) arg0)->unk40->x;
-    fz = ((Obj8E *) arg0)->unk40->z;
-    ax = ((Obj8E *) arg0)->unk40->x + 50.0f;
-    fy = ((Obj8E *) arg0)->unk40->y;
-    ay = ((Obj8E *) arg0)->unk40->y + 50.0f;
-    az = ((Obj8E *) arg0)->unk40->z + 50.0f;
+    fx = ((Obj8E *) arg0)->unk40->unk10;
+    fz = ((Obj8E *) arg0)->unk40->unk18;
+    ax = ((Obj8E *) arg0)->unk40->unk10 + 50.0f;
+    fy = ((Obj8E *) arg0)->unk40->unk14;
+    ay = ((Obj8E *) arg0)->unk40->unk14 + 50.0f;
+    az = ((Obj8E *) arg0)->unk40->unk18 + 50.0f;
     func_8026DCAC(fx, fy, fz, pos.i, 2);
     attr = func_8026D7D8(pos.i[0], pos.i[1], pos.i[2]);
     if (attr & 0x60) {
@@ -795,7 +795,7 @@ f32 func_8026EAF8(u8 *arg0) {
             DEBUG_PRINT(("D_800B15D8 == NULL\n"));
         }
         if (pos.i[1] >= D_800B15D8->unk0) {
-            r = ((Obj8E *) arg0)->unk40->y;
+            r = ((Obj8E *) arg0)->unk40->unk14;
         } else {
             h = func_8026E2B0(pos.i[1]);
             if (func_8026E278(attr) != 0) {
@@ -807,7 +807,7 @@ f32 func_8026EAF8(u8 *arg0) {
     } else if (func_8026E278(a) != 0) {
         r = func_8026E3AC(ax, ay, az);
     } else {
-        r = ((Obj8E *) arg0)->unk40->y;
+        r = ((Obj8E *) arg0)->unk40->unk14;
     }
     return r;
 }

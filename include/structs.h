@@ -13,9 +13,27 @@ typedef struct {
     f32 x, y, z;
 } Vec3f;
 
-/* The structure at UnkStructA's 0x40. */
+/* An object's animation slot: the animation playing, its time and flags
+ * (main_code's 426E0 keeps an array of them per model object). */
 typedef struct {
-    /* 0x00 */ u8 unk0[8];
+    /* 0x00 */ struct UnkAnim *unk0;
+    /* 0x04 */ f32 unk4;
+    /* 0x08 */ s32 unk8;
+} UnkStructA_40_48_4; /* size 0xC */
+
+/* The structure at UnkStructA_40's 0x48: its animation slots. */
+typedef struct UnkStructA_40_48 {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ UnkStructA_40_48_4 *unk4;
+} UnkStructA_40_48;
+
+/* The structure at UnkStructA's 0x40: a model object, of the pool
+ * D_800A0D00 (0xA0 of them, linked by priority; main_code's 426E0).  Also
+ * what func_8022A6C4 makes for a text slot (9A5F0, AFBF0). unk10-unk30 are
+ * its place, rotation and scale (48600's collision shapes). */
+typedef struct UnkStructA_40 {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 unk4;
     /* 0x08 */ s32 unk8;
     /* 0x0C */ s32 unkC;
     /* 0x10 */ f32 unk10;
@@ -27,37 +45,15 @@ typedef struct {
     /* 0x28 */ f32 unk28;
     /* 0x2C */ f32 unk2C;
     /* 0x30 */ f32 unk30;
-    /* 0x34 */ u8 unk34[2];
+    /* 0x34 */ s16 unk34;
     /* 0x36 */ s16 unk36;
-#ifdef TARGET_PC
-    /* 426E0.c's UnkObj (the pool D_800A0D00's object) has pointers here */
     /* 0x38 */ s32 unk38;
     /* 0x3C */ void *unk3C;
-    /* 0x40 */ void *unk40;
-    /* 0x44 */ void *unk44;
-#else
-    /* 0x38 */ u8 unk38[0x10];
-#endif
-    /* 0x48 */ struct UnkStructA_40_48 *unk48;
-#ifdef TARGET_PC
-    /* 0x4C */ void *unk4C;
-#endif
-} UnkStructA_40;
-
-/* The structure at UnkStructA_40's 0x48, and the one at its 0x4. */
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;)
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ PORT_RET(u8 unkC[4];, void *unkC;)
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ s32 unk14;
-} UnkStructA_40_48_4;
-
-typedef struct UnkStructA_40_48 {
-    /* 0x00 */ u8 unk0[4];
-    /* 0x04 */ UnkStructA_40_48_4 *unk4;
-} UnkStructA_40_48;
+    /* 0x40 */ struct UnkSkel *unk40;
+    /* 0x44 */ struct UnkInst *unk44;
+    /* 0x48 */ UnkStructA_40_48 *unk48;
+    /* 0x4C */ struct UnkTexSlots *unk4C;
+} UnkStructA_40; /* size 0x50 */
 
 /* What the overlays' tasks and callbacks get, and what the main_code
  * function behind the overlays' ZeroJump stub at 0x80044A20 (ovl_0E_06)

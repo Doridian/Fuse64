@@ -1418,5 +1418,5 @@ static void func_ovl0D_03_80043054(void) {
 
 /* an open gate: its door at the top */
 static void func_ovl0D_03_80043010(Obj_0D03 *o) {
-    o->unk40->unk48->unk4->unk4 = func_ovl0D_03_80047128(o->unk40, 0) - 0.001f;
+    o->unk40->unk48->unk4[0].unk4 = func_ovl0D_03_80047128(o->unk40, 0) - 0.001f;
 }

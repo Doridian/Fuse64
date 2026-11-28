@@ -3163,7 +3163,7 @@ static void func_ovl0B_06_80043040(Rect_ovl0B_06 *rect, Spr_ovl0B_06 *spr, f32 d
     func_ovl0B_06_80043020();
     func_ovl0B_06_80043018();
     rect->unk0 = func_ovl0B_06_80048838(spr->unk8, spr->unk10);
-    PORT_HOST(*(s32 *) rect->unk0->unk38, rect->unk0->unk38) = spr->unkC;
+    rect->unk0->unk38 = spr->unkC;
     rect->unk0->unk28 = spr->unk0;
     rect->unk0->unk2C = spr->unk4;
     rect->unk0->unk10 = rect->unk4;

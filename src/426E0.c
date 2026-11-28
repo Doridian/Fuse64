@@ -23,7 +23,7 @@
  *
  * Levers that worked here:
  * - An object's index from its pointer is ((u32)p - (u32)D_800A0D00) /
- *   sizeof(UnkObj) into an s32: li at,80; divu with no break check.
+ *   sizeof(UnkStructA_40) into an s32: li at,80; divu with no break check.
  *   Pointer subtraction gives a signed div with checks, and a u32 index
  *   shares the 80 with the multiply.
  * - `for (i = 0; i != N; i++)` gives the bne end test with no guard; a
@@ -137,18 +137,6 @@ void *malloc(u32);
 void free(void *);
 void *realloc(void *, u32);
 
-/* An object's animation slots (unk48). */
-typedef struct {
-    /* 0x00 */ UnkAnim *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ s32 unk8;
-} UnkAnimSlot; /* size 0xC */
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ UnkAnimSlot *unk4;
-} UnkAnimSlots;
-
 /* An object's texture slots (unk4C). */
 typedef struct {
     /* 0x00 */ void *unk0;
@@ -167,36 +155,11 @@ typedef struct {
     /* 0x0C */ UnkTexFrame *unkC;
 } UnkTexAnim; /* size 0x10 */
 
-typedef struct {
+typedef struct UnkTexSlots {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ UnkTexSlot *unk4;
     /* 0x08 */ UnkTexAnim *unk8;
 } UnkTexSlots;
-
-/* An object of the pool D_800A0D00 (0xA0 of them, linked by priority). */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ s16 unk34;
-    /* 0x36 */ s16 unk36;
-    /* 0x38 */ s32 unk38;
-    /* 0x3C */ void *unk3C;
-    /* 0x40 */ UnkSkel *unk40;
-    /* 0x44 */ UnkInst *unk44;
-    /* 0x48 */ UnkAnimSlots *unk48;
-    /* 0x4C */ UnkTexSlots *unk4C;
-} UnkObj; /* size 0x50 */
 
 #define _SHIFTL(v, s, w) ((u32)(((u32)(v) & ((0x01 << (w)) - 1)) << (s)))
 #define gW(pkt, a, b)                \
@@ -215,7 +178,7 @@ typedef struct {
 /* The texture owners (D_80098C18, 5 of them). */
 typedef struct {
     /* 0x00 */ s32 unk0;
-    /* 0x04 */ UnkObj *unk4;
+    /* 0x04 */ UnkStructA_40 *unk4;
     /* 0x08 */ void **unk8;
     /* 0x0C */ s32 *unkC;
 } UnkTexOwner; /* size 0x10 */
@@ -231,7 +194,7 @@ typedef struct {
 
 /* The texture scrolls (D_80098C68, 6 of them). */
 typedef struct {
-    /* 0x00 */ UnkObj *unk0;
+    /* 0x00 */ UnkStructA_40 *unk0;
     /* 0x04 */ UnkVtx *unk4;
     /* 0x08 */ s32 unk8;
     /* 0x0C */ s16 unkC;
@@ -291,8 +254,8 @@ extern UnkTexOwner D_80098C18[5];
 extern UnkScroll D_80098C68[6];
 extern f32 D_80098CF8[PORT_SIZE(0x200)][4][4]; /* the matrix stack, D_800A0CF8 deep */
 extern s32 D_800A0CF8;
-extern UnkObj D_800A0D00[0xA0];
-extern UnkObj D_800A3F00[];
+extern UnkStructA_40 D_800A0D00[0xA0];
+extern UnkStructA_40 D_800A3F00[];
 extern s32 D_8029F600;
 extern s32 D_8029F7E0;
 extern s32 D_8029F7E4;
@@ -322,37 +285,37 @@ void func_80227F88(void);
 void func_80227FE8(s32 arg0, s32 arg1, s32 arg2);
 void func_80228008(s32 arg0, s32 arg1, s32 arg2);
 static s32 func_802280EC(void);
-s32 func_802280F4(UnkObj *arg0, s32 arg1);
-static void func_8022827C(UnkObj *arg0);
-static void func_802284F0(UnkObj *arg0, Gfx_80225840 **arg1);
-static s32 func_802284F8(UnkObj *arg0, Gfx_80225840 **arg1);
-static void func_80228500(UnkObj *arg0, Gfx_80225840 **arg1);
-static s32 func_802289B8(UnkObj *arg0);
-void func_802289C0(UnkObj *arg0, Gfx_80225840 **arg1);
+s32 func_802280F4(UnkStructA_40 *arg0, s32 arg1);
+static void func_8022827C(UnkStructA_40 *arg0);
+static void func_802284F0(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static s32 func_802284F8(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static void func_80228500(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static s32 func_802289B8(UnkStructA_40 *arg0);
+void func_802289C0(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 void func_802290CC(void);
 void func_80229280(s32 arg0);
 void func_8022928C(f32 arg0[4][4], f32 arg1[4][4]);
 void func_80229448(s32 arg0, s32 arg1, s32 arg2);
-void func_8022946C(UnkObj *arg0, s32 arg1);
-void func_80229560(UnkObj *arg0);
-void func_802295F4(UnkObj *arg0, s32 *arg1, s32 arg2);
-void func_80229640(UnkObj *arg0, s32 arg1);
-void func_8022979C(UnkObj *arg0, s32 arg1, s32 arg2);
-void func_802297B8(UnkObj *arg0, s32 arg1, s32 arg2, s32 arg3);
-void func_8022984C(UnkObj *arg0, s32 arg1);
+void func_8022946C(UnkStructA_40 *arg0, s32 arg1);
+void func_80229560(UnkStructA_40 *arg0);
+void func_802295F4(UnkStructA_40 *arg0, s32 *arg1, s32 arg2);
+void func_80229640(UnkStructA_40 *arg0, s32 arg1);
+void func_8022979C(UnkStructA_40 *arg0, s32 arg1, s32 arg2);
+void func_802297B8(UnkStructA_40 *arg0, s32 arg1, s32 arg2, s32 arg3);
+void func_8022984C(UnkStructA_40 *arg0, s32 arg1);
 void func_8022997C(void);
 void func_80229BB4(void);
 void func_80229BF4(s32 arg0);
-u32 func_80229C10(UnkObj *arg0, PORT_IP(s32) arg1, UnkVtx **arg2);
-s32 func_80229C90(UnkObj *arg0, s32 arg1, s16 arg2, s16 arg3, s16 arg4, s16 arg5);
-f32 func_80229D3C(UnkObj *arg0, s32 arg1);
-void func_80229D68(UnkObj *arg0);
-void func_80229E38(UnkObj *arg0, s32 arg1, s32 arg2);
-void func_80229F74(UnkObj *arg0, s32 arg1);
-s32 func_8022A0D8(UnkObj *arg0, s32 arg1);
-void func_8022A19C(UnkObj *arg0, s32 arg1);
+u32 func_80229C10(UnkStructA_40 *arg0, PORT_IP(s32) arg1, UnkVtx **arg2);
+s32 func_80229C90(UnkStructA_40 *arg0, s32 arg1, s16 arg2, s16 arg3, s16 arg4, s16 arg5);
+f32 func_80229D3C(UnkStructA_40 *arg0, s32 arg1);
+void func_80229D68(UnkStructA_40 *arg0);
+void func_80229E38(UnkStructA_40 *arg0, s32 arg1, s32 arg2);
+void func_80229F74(UnkStructA_40 *arg0, s32 arg1);
+s32 func_8022A0D8(UnkStructA_40 *arg0, s32 arg1);
+void func_8022A19C(UnkStructA_40 *arg0, s32 arg1);
 void func_8022A1E8(void *arg0);
-UnkObj *func_8022A328(UnkModel *arg0, s32 arg1, s32 arg2, u32 arg3, s32 arg4);
+UnkStructA_40 *func_8022A328(UnkModel *arg0, s32 arg1, s32 arg2, u32 arg3, s32 arg4);
 void *func_8022A6C4(void *arg0, s32 arg1);
 static void func_8022A850(void);
 void func_8022A858(void);
@@ -406,7 +369,7 @@ void func_8022A858(void) {
     }
 }
 
-UnkObj *func_8022A328(UnkModel *arg0, s32 arg1, s32 arg2, u32 arg3, s32 arg4) {
+UnkStructA_40 *func_8022A328(UnkModel *arg0, s32 arg1, s32 arg2, u32 arg3, s32 arg4) {
     static s32 D_802A5474;
     static s32 D_802A5478;
     UnkSkel *skel;
@@ -535,11 +498,11 @@ void *func_8022A6C4(void *arg0, s32 arg1) {
 
 void func_8022A1E8(void *arg0) {
     s32 idx;
-    UnkObj *p;
+    UnkStructA_40 *p;
     s32 i;
     s32 prev;
 
-    idx = ((PORT_UP(u32))arg0 - (PORT_UP(u32))D_800A0D00) / sizeof(UnkObj);
+    idx = ((PORT_UP(u32))arg0 - (PORT_UP(u32))D_800A0D00) / sizeof(UnkStructA_40);
     p = &D_800A0D00[idx];
     if (p->unkC & 8) {
         func_80229D68(arg0);
@@ -566,15 +529,15 @@ void func_8022A1E8(void *arg0) {
     D_802A5460--;
 }
 
-void func_8022A19C(UnkObj *arg0, s32 arg1) {
+void func_8022A19C(UnkStructA_40 *arg0, s32 arg1) {
     if (arg0->unkC & 8) {
         func_80229D68(arg0);
     }
     arg0->unk38 = arg1;
 }
 
-s32 func_8022A0D8(UnkObj *arg0, s32 arg1) {
-    UnkAnimSlots *t;
+s32 func_8022A0D8(UnkStructA_40 *arg0, s32 arg1) {
+    UnkStructA_40_48 *t;
 
     if (arg0->unk48 == NULL) {
         func_80229F74(arg0, 1);
@@ -582,23 +545,23 @@ s32 func_8022A0D8(UnkObj *arg0, s32 arg1) {
     } else {
         t = arg0->unk48;
         t->unk0++;
-        t->unk4 = realloc(t->unk4, arg0->unk48->unk0 * sizeof(UnkAnimSlot));
+        t->unk4 = realloc(t->unk4, arg0->unk48->unk0 * sizeof(UnkStructA_40_48_4));
         t->unk4[t->unk0 - 1].unk0 = NULL;
         func_80229E38(arg0, arg1, arg0->unk48->unk0 - 1);
     }
     return arg0->unk48->unk0 - 1;
 }
 
-void func_80229F74(UnkObj *arg0, s32 arg1) {
-    UnkAnimSlots *t;
+void func_80229F74(UnkStructA_40 *arg0, s32 arg1) {
+    UnkStructA_40_48 *t;
     s32 i;
 
     if (arg0->unk48 != NULL) {
         func_80229D68(arg0);
     }
-    t = malloc(sizeof(UnkAnimSlots));
+    t = malloc(sizeof(UnkStructA_40_48));
     t->unk0 = arg1;
-    t->unk4 = malloc(arg1 * sizeof(UnkAnimSlot));
+    t->unk4 = malloc(arg1 * sizeof(UnkStructA_40_48_4));
     for (i = 0; i < arg1; i++) {
         t->unk4[i].unk0 = NULL;
     }
@@ -611,8 +574,8 @@ void func_80229F74(UnkObj *arg0, s32 arg1) {
     arg0->unk48 = t;
 }
 
-void func_80229E38(UnkObj *arg0, s32 arg1, s32 arg2) {
-    UnkAnimSlots *t;
+void func_80229E38(UnkStructA_40 *arg0, s32 arg1, s32 arg2) {
+    UnkStructA_40_48 *t;
     s32 i;
 
     t = arg0->unk48;
@@ -637,8 +600,8 @@ void func_80229E38(UnkObj *arg0, s32 arg1, s32 arg2) {
     }
 }
 
-void func_80229D68(UnkObj *arg0) {
-    UnkAnimSlots *t;
+void func_80229D68(UnkStructA_40 *arg0) {
+    UnkStructA_40_48 *t;
     s32 i;
 
     t = arg0->unk48;
@@ -657,11 +620,11 @@ void func_80229D68(UnkObj *arg0) {
     arg0->unk48 = NULL;
 }
 
-f32 func_80229D3C(UnkObj *arg0, s32 arg1) {
+f32 func_80229D3C(UnkStructA_40 *arg0, s32 arg1) {
     return arg0->unk48->unk4[arg1].unk0->unk8;
 }
 
-s32 func_80229C90(UnkObj *arg0, s32 arg1, s16 arg2, s16 arg3, s16 arg4, s16 arg5) {
+s32 func_80229C90(UnkStructA_40 *arg0, s32 arg1, s16 arg2, s16 arg3, s16 arg4, s16 arg5) {
     s32 i;
 
     for (i = 0; i < 6; i++) {
@@ -684,7 +647,7 @@ s32 func_80229C90(UnkObj *arg0, s32 arg1, s16 arg2, s16 arg3, s16 arg4, s16 arg5
 int port_narrow_dl(const void *p);
 #endif
 
-u32 func_80229C10(UnkObj *arg0, PORT_IP(s32) arg1, UnkVtx **arg2) {
+u32 func_80229C10(UnkStructA_40 *arg0, PORT_IP(s32) arg1, UnkVtx **arg2) {
     UnkModel *model;
     UnkChunk *chunks;
     Gfx_80225840 *dl;
@@ -800,7 +763,7 @@ void func_8022997C(void) {
 #endif
 }
 
-void func_8022984C(UnkObj *arg0, s32 arg1) {
+void func_8022984C(UnkStructA_40 *arg0, s32 arg1) {
     UnkTexSlots *t;
     s32 i;
 
@@ -815,7 +778,7 @@ void func_8022984C(UnkObj *arg0, s32 arg1) {
     arg0->unk4C = t;
 }
 
-void func_802297B8(UnkObj *arg0, s32 arg1, s32 arg2, s32 arg3) {
+void func_802297B8(UnkStructA_40 *arg0, s32 arg1, s32 arg2, s32 arg3) {
     UnkTexSlots *t;
 
     t = arg0->unk4C;
@@ -826,14 +789,14 @@ void func_802297B8(UnkObj *arg0, s32 arg1, s32 arg2, s32 arg3) {
     t->unk4[arg2].unk4 = arg3;
 }
 
-void func_8022979C(UnkObj *arg0, s32 arg1, s32 arg2) {
+void func_8022979C(UnkStructA_40 *arg0, s32 arg1, s32 arg2) {
     UnkTexSlots *t;
 
     t = arg0->unk4C;
     t->unk4[arg1].unk4 = arg2;
 }
 
-void func_80229640(UnkObj *arg0, s32 arg1) {
+void func_80229640(UnkStructA_40 *arg0, s32 arg1) {
     UnkTexSlots *t;
     s32 i;
 
@@ -846,7 +809,7 @@ void func_80229640(UnkObj *arg0, s32 arg1) {
     }
 }
 
-void func_802295F4(UnkObj *arg0, s32 *arg1, s32 arg2) {
+void func_802295F4(UnkStructA_40 *arg0, s32 *arg1, s32 arg2) {
     UnkTexSlots *t;
 
     t = arg0->unk4C;
@@ -856,7 +819,7 @@ void func_802295F4(UnkObj *arg0, s32 *arg1, s32 arg2) {
     t->unk8[arg2].unk8 = 0;
 }
 
-void func_80229560(UnkObj *arg0) {
+void func_80229560(UnkStructA_40 *arg0) {
     UnkTexSlots *t;
     s32 i;
 
@@ -869,13 +832,13 @@ void func_80229560(UnkObj *arg0) {
     arg0->unk4C = NULL;
 }
 
-void func_8022946C(UnkObj *arg0, s32 arg1) {
+void func_8022946C(UnkStructA_40 *arg0, s32 arg1) {
     s32 idx;
     s32 i;
-    UnkObj *p;
+    UnkStructA_40 *p;
     s32 prev;
 
-    idx = ((PORT_UP(u32))arg0 - (PORT_UP(u32))D_800A0D00) / sizeof(UnkObj);
+    idx = ((PORT_UP(u32))arg0 - (PORT_UP(u32))D_800A0D00) / sizeof(UnkStructA_40);
     i = D_800A0D00[idx].unk0;
     p = &D_800A0D00[idx];
     prev = p->unk4;
@@ -953,7 +916,7 @@ s32 D_802A5490;
 void func_802290CC(void) {
     s32 i;
     Gfx_80225840 *dls[4];
-    UnkObj *obj;
+    UnkStructA_40 *obj;
 
     D_802A5470 = -1;
     D_8029F848 = 0;
@@ -985,7 +948,7 @@ void func_802290CC(void) {
 }
 
 
-static void func_80228500(UnkObj *arg0, Gfx_80225840 **arg1) {
+static void func_80228500(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     Gfx_80225840 *gfx;
 
     gfx = *arg1;
@@ -1053,7 +1016,7 @@ static void func_80228500(UnkObj *arg0, Gfx_80225840 **arg1) {
     *arg1 = gfx;
 }
 
-static s32 func_802284F8(UnkObj *arg0, Gfx_80225840 **arg1) {
+static s32 func_802284F8(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     Gfx_80225840 *gfx;
     f32 mf[4][4];
     s32 pushed;
@@ -1094,7 +1057,7 @@ static s32 func_802284F8(UnkObj *arg0, Gfx_80225840 **arg1) {
     return pushed;
 }
 
-static void func_802284F0(UnkObj *arg0, Gfx_80225840 **arg1) {
+static void func_802284F0(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     Gfx_80225840 *gfx;
     s32 i;
     Gfx_80225840 *g;
@@ -1148,7 +1111,7 @@ static void func_802284F0(UnkObj *arg0, Gfx_80225840 **arg1) {
     *arg1 = gfx;
 }
 
-static void func_8022827C(UnkObj *arg0) {
+static void func_8022827C(UnkStructA_40 *arg0) {
     s32 n;
     s32 run;
     s32 i;
@@ -1192,11 +1155,11 @@ static void func_8022827C(UnkObj *arg0) {
     D_8029F854++;
 }
 
-void func_802289C0(UnkObj *arg0, Gfx_80225840 **arg1) {
+void func_802289C0(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     Gfx_80225840 *gfx;
     UnkInst *t1;
     s32 pushed;
-    void (*fn)(UnkObj *, Gfx_80225840 **);
+    void (*fn)(UnkStructA_40 *, Gfx_80225840 **);
 
     if (arg0->unkC & 1) {
         return;
@@ -1215,7 +1178,7 @@ void func_802289C0(UnkObj *arg0, Gfx_80225840 **arg1) {
     }
     if (arg0->unkC & 2) {
         D_802A5470 = -1;
-        fn = (void (*)(UnkObj *, Gfx_80225840 **))arg0->unk3C;
+        fn = (void (*)(UnkStructA_40 *, Gfx_80225840 **))arg0->unk3C;
         fn(arg0, &gfx);
     } else if ((arg0->unkC & 4) && (arg0->unkC & 8)) {
         if (D_8029F84C == 0 || (arg0->unkC & 0x100)) {
@@ -1249,7 +1212,7 @@ void func_802289C0(UnkObj *arg0, Gfx_80225840 **arg1) {
     *arg1 = gfx;
 }
 
-static s32 func_802289B8(UnkObj *arg0) {
+static s32 func_802289B8(UnkStructA_40 *arg0) {
     s32 i;
 
     for (i = 0; i < 5; i++) {
@@ -1271,7 +1234,7 @@ static s32 func_802280EC(void) {
     return -1;
 }
 
-s32 func_802280F4(UnkObj *arg0, s32 arg1) {
+s32 func_802280F4(UnkStructA_40 *arg0, s32 arg1) {
     s32 slot;
     s32 i;
 

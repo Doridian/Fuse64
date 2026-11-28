@@ -2810,8 +2810,8 @@ static void func_ovl0B_04_800436C0(void) {
     func_ovl0B_04_80047E20(D_ovl0B_04_8004A164, b, 1);
     D_ovl0B_04_8004A164->unkC |= 0x20;
     D_ovl0B_04_8004A164->unkC &= ~0x40;
-    D_ovl0B_04_8004A164->unk48->unk4->unk4 = 0.0f;
-    D_ovl0B_04_8004A164->unk48->unk4->unk10 = 0.0f;
+    D_ovl0B_04_8004A164->unk48->unk4[0].unk4 = 0.0f;
+    D_ovl0B_04_8004A164->unk48->unk4[1].unk4 = 0.0f;
 }
 
 void func_ovl0B_04_800436C8(void) {

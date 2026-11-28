@@ -536,7 +536,7 @@ void func_ovl12_01_80043FF4(void) {
         func_ovl12_01_80045938(obj, 0x01000000);
         p->unk0 = obj;
         if (func_ovl12_01_80045D10(0x409)) {
-            p->unk0->unk40->unk48->unk4->unk4 = func_ovl12_01_80045678(p->unk0->unk40, 0) - 0.001f;
+            p->unk0->unk40->unk48->unk4[0].unk4 = func_ovl12_01_80045678(p->unk0->unk40, 0) - 0.001f;
             func_ovl12_01_80043324(p);
             func_ovl12_01_800432A0(p);
         }

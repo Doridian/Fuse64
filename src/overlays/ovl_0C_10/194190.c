@@ -403,7 +403,7 @@ void func_ovl0C_10_80043F70(void) {
     func_ovl0C_10_80045DB8(func_ovl0C_10_800448C0, NULL, 0, 0, 0x130);
     p->unkC |= 0x40;
     func_ovl0C_10_80045990(p, 0x16, 0);
-    p->unk48->unk4->unk4 = func_ovl0C_10_800459A8(p, 0) - 0.01f;
+    p->unk48->unk4[0].unk4 = func_ovl0C_10_800459A8(p, 0) - 0.01f;
     snd.unk0 = p;
     snd.unk4 = 0x20D;
     snd.unk8 = 0xFA;
@@ -450,9 +450,9 @@ void func_ovl0C_10_80043F70(void) {
         p->unk20 = 0.0f;
     }
     for (i = 0; i < 50; i++) {
-        p->unk48->unk4->unk4 -= func_ovl0C_10_800459A8(p, 0) / 50.0f;
-        if (p->unk48->unk4->unk4 < 0.0f) {
-            p->unk48->unk4->unk4 = 0.0f;
+        p->unk48->unk4[0].unk4 -= func_ovl0C_10_800459A8(p, 0) / 50.0f;
+        if (p->unk48->unk4[0].unk4 < 0.0f) {
+            p->unk48->unk4[0].unk4 = 0.0f;
         }
         p->unk10 += dx;
         p->unk14 += dy;

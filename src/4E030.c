@@ -6,39 +6,11 @@
  * compares call them with a `jal`: 4DE50 is another file. */
 
 typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (426E0.c's UnkAnimSlot: its animation) */
-    /* 0x04 */ f32 unk4;
-} UnkStruct_80233E3C_4;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[4];
-    /* 0x04 */ UnkStruct_80233E3C_4 *unk4;
-} UnkStruct_80233E3C_48;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ u8 unk24[4];
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ s16 unk34;
-    /* 0x36 */ s16 unk36;
-    /* 0x38 */ PORT_RET(u8 unk38[0x10];, u8 unk38[0x4]; void *unk3C; void *unk40; void *unk44;)
-    /* 0x48 */ UnkStruct_80233E3C_48 *unk48;
-} UnkStruct_80233C30;
-
-typedef struct {
     /* 0x00 */ u8 unk0[0xC];
     /* 0x0C */ s32 unkC;
     /* 0x10 */ s32 unk10;
     /* 0x14 */ PORT_RET(u8 unk14[0x2C];, u8 unk14[0xC]; void *unk20; void *unk24; u8 unk28[0x14]; void *unk3C;)
-    /* 0x40 */ UnkStruct_80233C30 *unk40;
+    /* 0x40 */ UnkStructA_40 *unk40;
     /* 0x44 */ PORT_RET(u8 unk44[8];, void *unk44; u8 unk48[0x4];)
     /* 0x4C */ f32 unk4C;
     /* 0x50 */ f32 unk50;
@@ -48,8 +20,8 @@ typedef struct {
 s32 func_8025E5EC(void);
 s32 func_8025E63C();
 void func_80227BAC(s32, s32, s32);
-f32 func_80229D3C(UnkStruct_80233C30 *, s32);
-void func_80229E38(UnkStruct_80233C30 *, s32, s32);
+f32 func_80229D3C(UnkStructA_40 *, s32);
+void func_80229E38(UnkStructA_40 *, s32, s32);
 void func_8022F808(UnkStruct_80231274 *, f32 *);
 PORT_RET(void, s32) func_8022FC90(UnkStruct_80231274 *);
 void func_8022FEAC(f32 *, f32 *);
@@ -89,7 +61,7 @@ void func_80233830(void);
 void func_802339A0(void);
 void func_80233A04(void);
 void func_80233A74(void);
-UnkStruct_80233C30 *func_80233C30(void);
+UnkStructA_40 *func_80233C30(void);
 void func_80233C80(f32 *arg0);
 void func_80233D7C(void);
 void func_80233DEC(void);
@@ -110,7 +82,7 @@ s32 func_80234528(f32 arg0, f32 arg1);
 
 /* The object's .bss: IDO puts the array 8-aligned, past a 4-byte gap */
 s32 D_802A5A30;
-UnkStruct_80233C30 *D_802A5A38[4];
+UnkStructA_40 *D_802A5A38[4];
 void *D_802A5A48;
 extern s32 D_802AC5CC;
 
@@ -316,8 +288,8 @@ void func_80233C80(f32 *arg0) {
     }
 }
 
-UnkStruct_80233C30 *func_80233C30(void) {
-    UnkStruct_80233C30 *obj = func_8022A6C4(D_802A5A48, 0x40);
+UnkStructA_40 *func_80233C30(void) {
+    UnkStructA_40 *obj = func_8022A6C4(D_802A5A48, 0x40);
 
     obj->unkC |= 0x80;
     obj->unk36 = 0xFF;
@@ -327,7 +299,7 @@ UnkStruct_80233C30 *func_80233C30(void) {
 
 /* obj before id: id's slot is the second */
 void func_80233A74(void) {
-    UnkStruct_80233C30 *obj;
+    UnkStructA_40 *obj;
     PORT_IP(s32) id;
     s32 i;
     f32 speed;

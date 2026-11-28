@@ -387,10 +387,10 @@ void func_ovl0E_15_800444C4(void) {
     func_ovl0E_15_80046078(60);
     func_ovl0E_15_80045C30(obj1->unk40, 0x20, 0);
     func_ovl0E_15_80045C30(obj1->unk40, -1, 1);
-    obj1->unk40->unk48->unk4->unk8 |= 0x20;
-    obj1->unk40->unk48->unk4->unk8 &= ~0x40;
+    obj1->unk40->unk48->unk4[0].unk8 |= 0x20;
+    obj1->unk40->unk48->unk4[0].unk8 &= ~0x40;
     if (D_ovl0E_15_80046954 == 0x1A) {
-        while (!(obj1->unk40->unk48->unk4->unk8 & 0x40)) {
+        while (!(obj1->unk40->unk48->unk4[0].unk8 & 0x40)) {
             func_ovl0E_15_800460A0();
         }
         func_ovl0E_15_80046078(30);
@@ -402,14 +402,14 @@ void func_ovl0E_15_800444C4(void) {
     func_ovl0E_15_800460D0(0x70, 0x70);
     func_ovl0E_15_80045C30(obj1->unk40, 0x16, 0);
     func_ovl0E_15_80045C30(obj1->unk40, -1, 1);
-    obj1->unk40->unk48->unk4->unk8 |= 0x20;
-    obj1->unk40->unk48->unk4->unk8 &= ~0x40;
+    obj1->unk40->unk48->unk4[0].unk8 |= 0x20;
+    obj1->unk40->unk48->unk4[0].unk8 &= ~0x40;
     func_ovl0E_15_80046078(7);
     obj1->unk68 = 20.0f;
     obj1->unk70 = 1.6333334f;
     for (j = 0; j < 30; j++) {
         if (j == 5) {
-            obj1->unk40->unk48->unk4->unk8 |= 0x40;
+            obj1->unk40->unk48->unk4[0].unk8 |= 0x40;
         }
         p = obj1->unk40;
         p->unk18 += 5.0f;
@@ -768,8 +768,8 @@ static void func_ovl0E_15_80043068(void) {
     obj1->unk40->unkC |= 0x4000;
     func_ovl0E_15_80045C30(obj1->unk40, 7, 0);
     func_ovl0E_15_80045C30(obj1->unk40, -1, 1);
-    obj1->unk40->unk48->unk4->unk8 |= 0x20;
-    obj1->unk40->unk48->unk4->unk8 &= ~0x40;
+    obj1->unk40->unk48->unk4[0].unk8 |= 0x20;
+    obj1->unk40->unk48->unk4[0].unk8 &= ~0x40;
     func_ovl0E_15_80046078(30);
     func_ovl0E_15_80046058(func_ovl0E_15_80044290, obj1, 0, 0, 0x130);
     func_ovl0E_15_80046078(30);

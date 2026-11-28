@@ -513,7 +513,7 @@ void func_ovl12_03_80043844(void) {
             func_ovl12_03_80045480();
         }
     } else {
-        D_ovl12_03_80045E24[0].unk0->unk40->unk48->unk4->unk4 =
+        D_ovl12_03_80045E24[0].unk0->unk40->unk48->unk4[0].unk4 =
             func_ovl12_03_80045028(D_ovl12_03_80045E24[0].unk0->unk40, 0) - 1.0f;
     }
 }

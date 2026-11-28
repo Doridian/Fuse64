@@ -1362,13 +1362,13 @@ static void func_ovl12_05_80044534(void) {
     obj->unk40->unk20 = 0.0f;
     func_ovl12_05_8004A0E0(obj);
     func_ovl12_05_80049DD0(obj->unk40, 0x19, 0);
-    obj->unk40->unk48->unk4->unk4 = 11.9f;
+    obj->unk40->unk48->unk4[0].unk4 = 11.9f;
     func_ovl12_05_8004A218(0xA);
     func_ovl12_05_8004A218(0x3C);
     func_ovl12_05_8004A780(0x25C);
     func_ovl12_05_80049DD0(sp1->unk40, 0x17, 0);
     func_ovl12_05_80049DD0(sp1->unk40, -1, 1);
-    sp1->unk40->unk48->unk4->unk8 |= 0x20;
+    sp1->unk40->unk48->unk4[0].unk8 |= 0x20;
     sp80.x = sp1->unk40->unk10 + 10.0f;
     sp80.y = sp1->unk40->unk14 + 50.0f;
     sp80.z = sp1->unk40->unk18 + 55.0f;
@@ -1875,13 +1875,13 @@ static void func_ovl12_05_80043018(void) {
         sp1->unk40->unk20 = 0.0f;
         func_ovl12_05_80049DD0(sp1->unk40, 0xD, 0);
         func_ovl12_05_80049DD0(sp1->unk40, -1, 1);
-        sp1->unk40->unk48->unk4->unk8 |= 0x20;
-        sp1->unk40->unk48->unk4->unk8 |= 0x40;
+        sp1->unk40->unk48->unk4[0].unk8 |= 0x20;
+        sp1->unk40->unk48->unk4[0].unk8 |= 0x40;
         func_ovl12_05_8004A780(0x2E6);
         for (i = 0; i < 120; i++) {
             sp1->unk40->unk14 -= 3.3333333f;
             if (i == 96) {
-                sp1->unk40->unk48->unk4->unk8 &= ~0x40;
+                sp1->unk40->unk48->unk4[0].unk8 &= ~0x40;
             }
             func_ovl12_05_8004A240();
         }
@@ -1889,17 +1889,17 @@ static void func_ovl12_05_80043018(void) {
         func_ovl12_05_8004A780(0x2B2);
         func_ovl12_05_8004A780(0x1C);
         func_ovl12_05_8004A648(0xD, sp1->unk40->unk10, sp1->unk40->unk14, sp1->unk40->unk18, 0);
-        while (!(sp1->unk40->unk48->unk4->unk8 & 0x40)) {
+        while (!(sp1->unk40->unk48->unk4[0].unk8 & 0x40)) {
             func_ovl12_05_8004A240();
         }
         func_ovl12_05_8004A218(0x1E);
         func_ovl12_05_80049938(0, 0);
         func_ovl12_05_80049DD0(sp1->unk40, 0x16, 0);
-        sp1->unk40->unk48->unk4->unk8 |= 0x20;
-        sp1->unk40->unk48->unk4->unk8 &= ~0x40;
+        sp1->unk40->unk48->unk4[0].unk8 |= 0x20;
+        sp1->unk40->unk48->unk4[0].unk8 &= ~0x40;
         for (i = 0; i < 60; i++) {
             if (i == 5) {
-                sp1->unk40->unk48->unk4->unk8 |= 0x40;
+                sp1->unk40->unk48->unk4[0].unk8 |= 0x40;
             }
             sp1->unk40->unk14 += 4.1666665f;
             if (i >= 8) {

@@ -690,7 +690,7 @@ void func_ovl0C_09_80044BA4(void) {
     snd.unk4 = 0x213;
     snd.unk8 = 60;
     func_ovl0C_09_80047020(&snd);
-    p->unk48->unk4->unk4 = func_ovl0C_09_80046C18(p, 0) - 0.01f;
+    p->unk48->unk4[0].unk4 = func_ovl0C_09_80046C18(p, 0) - 0.01f;
     hit = FALSE; while (obj->unk40->unk18 > 800.0f) {
         if (obj->unk40->unk18 < 1500.0f && hit == FALSE) {
             func_ovl0C_09_800475B0(0x168);

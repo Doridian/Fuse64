@@ -427,7 +427,7 @@ void func_8027B440(UnkStruct_80279050_14 *arg0) {
 
 void func_8027B39C(s16 arg0, s16 arg1) {
     UnkStruct_80279050_14 *obj;
-    UnkStruct_80279050_10 *pos;
+    UnkStructA_40 *pos;
     UnkStruct_800BB4A8 *node;
 
     obj = func_802443F4(arg1);
@@ -562,7 +562,7 @@ s16 func_8027AF70(void) {
 UnkStruct_800BB4A8 *func_8027AA74(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg4, s32 arg5, s32 arg6) {
     s16 model;
     UnkStruct_800BB4A8 *node;
-    UnkStruct_80279050_10 *pos;
+    UnkStructA_40 *pos;
     s32 item;
     s32 r;
     f32 dx;

@@ -15,5 +15,5 @@ void func_ovl14_01_80043250(s32 arg0) {
 #elif STATICS_PART == 2
 /* 800437B8's frame store (in place; what the original's file held here is
  * not known) */
-        temp_s0->unk40->unk48->unk4->unk4 = func_ovl14_01_8004C5D8(temp_s0->unk40, 0) - 0.001f;
+        temp_s0->unk40->unk48->unk4[0].unk4 = func_ovl14_01_8004C5D8(temp_s0->unk40, 0) - 0.001f;
 #endif

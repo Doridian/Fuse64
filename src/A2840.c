@@ -793,7 +793,7 @@ void func_802881A0(UnkStruct_80288040 *arg0) {
                 if (arg0->unk3C != 5) {
                     func_80282430(arg0, 15, 2);
                     func_80229E38(arg0->unk0->unk40, 2, 0);
-                    arg0->unk0->unk40->unk48->unk4->unk4 = 0.0f;
+                    arg0->unk0->unk40->unk48->unk4[0].unk4 = 0.0f;
                 }
                 D_802A1BB0[arg0->unk3C](arg0);
             }

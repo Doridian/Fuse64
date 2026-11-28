@@ -301,4 +301,15 @@ typedef struct {
     /* 0x1C */ f32 unk1C;
 } UnkStruct_ovl0E_09_80045DCC;
 
+/* a mover's path: ten points */
+typedef struct {
+    /* 0x00 */ f32 unk0;
+    /* 0x04 */ f32 unk4;
+    /* 0x08 */ f32 unk8;
+    /* 0x0C */ f32 unkC;
+    /* 0x10 */ f32 unk10;
+    /* 0x14 */ s16 unk14;
+    /* 0x16 */ s16 unk16;
+} UnkStruct_ovl0E_09_80045E0C;
+
 #endif

@@ -29,17 +29,6 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-/* a mover's path: fifteen points */
-typedef struct {
-    /* 0x00 */ f32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ s16 unk14;
-    /* 0x16 */ s16 unk16;
-} UnkStruct_ovl0E_13_80046B5C;
-
 /* a switch: its flag and where it is */
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -278,7 +267,7 @@ UnkStruct_ovl0E_09_80045DCC D_ovl0E_13_80046A3C[9] = {
     { 7, -1, NULL, 0, 0, 0, 550.0f, 2000.0f, 2449.0f },
     { 8, -1, NULL, 0, 0, 0, 550.0f, 2000.0f, 2449.0f },
 };
-UnkStruct_ovl0E_13_80046B5C D_ovl0E_13_80046B5C[15] = {
+UnkStruct_ovl0E_09_80045E0C D_ovl0E_13_80046B5C[15] = {
     { 0.0f, -10.0f, 180.0f, 550.0f, 1200.0f, 0, 2 },
     { 7.071068f, -7.071068f, 135.0f, 1000.0f, 750.0f, 1, 2 },
     { 10.0f, 0.0f, 90.0f, 4200.0f, 750.0f, 1, 0 },

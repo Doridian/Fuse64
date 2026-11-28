@@ -6,17 +6,6 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-/* a mover's path: ten points */
-typedef struct {
-    /* 0x00 */ f32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ s16 unk14;
-    /* 0x16 */ s16 unk16;
-} UnkStruct_ovl0E_09_80045E0C;
-
 /* what func_ovl0E_09_80045D28 returns */
 typedef struct {
     /* 0x00 */ PORT_RET(u8 unk0[0xC];, void *unk0; u8 unk4[0x8];)

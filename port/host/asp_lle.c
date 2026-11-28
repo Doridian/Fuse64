@@ -271,127 +271,118 @@ enum {
 };
 
 #ifdef PORT_ASP_DIAG
-/* (a debugging build: each command's output against aspmain.c's on the
-   same DMEM: the microcode stops at its dispatch, 0x0E4, before each
-   command; aspmain.c runs the command on a copy of DMEM from there, with
-   the state the microcode keeps (ADPCM, RESAMPLE, POLEF: the same values
-   in its layout) given as aspmain.c's, the envelope mixer's its own;
-   PORT_ASP_DIAG_OWN=1: every state aspmain.c's own) */
-void host_asp_hle_one(uint8_t *dm, uintptr_t w0, uintptr_t w1, uint8_t *state, const uint8_t *ucode_data);
-static struct {
-    uintptr_t key;
-    uint8_t st[96];
-} shadow[8192];
-static int diag_own = -1;
+/* (a debugging build: each command against aspmain.c's: the microcode
+   stops at its dispatch, 0x0E4, before each command; aspmain.c runs the
+   command from the same DMEM, vector registers, accumulators and flags,
+   and a copy of the state block the command keeps in RDRAM, as they were
+   there; then DMEM (all but the command list at 0x380-0x4BF, which the
+   microcode refills after a chunk's last command, before it stops again),
+   the registers and the state block are compared with the microcode's
+   after it.  The table at the exit.) */
+void host_asp_hle_one(uint8_t *dm, uintptr_t w0, uintptr_t w1, uint8_t *state, uint16_t v[32][8], uint16_t a[3][8],
+                      uint16_t fl[4]);
 static const char *op_name[16] = {
     "SPNOOP", "ADPCM", "CLEARBUFF", "ENVMIXER", "LOADBUFF", "RESAMPLE", "SAVEBUFF", "SEGMENT",
     "SETBUFF", "SETVOL", "DMEMMOVE", "LOADADPCM", "MIXER", "INTERLEAVE", "POLEF", "SETLOOP",
 };
 static struct {
-    uint64_t n, bad, samples, diff, lleonly;
+    uint64_t n, bad, dmem_cmds, dmem_bytes, state_cmds, state_bytes, reg_cmds;
     int max;
-    uint64_t hist[8];
 } dg[16][2];
 static int dg_shown;
 
-static uint8_t *shadow_of(uintptr_t k) {
-    uint32_t h = (uint32_t)(k * 2654435761u) & 8191;
-    for (int i = 0; i < 8192; i++, h = (h + 1) & 8191) {
-        if (shadow[h].key == k)
-            return shadow[h].st;
-        if (!shadow[h].key) {
-            shadow[h].key = k;
-            memset(shadow[h].st, 0, sizeof shadow[h].st);
-            return shadow[h].st;
-        }
-    }
-    host_fatal("audio lle: the shadows are full\n");
-}
-
 static void diag_exit(void) {
+    uint64_t n = 0, bad = 0;
     fprintf(stderr, "audio lle against aspmain.c, by command (init: the F_INIT flag):\n"
-                    "  command   init    count  differ  samples-out  samples-differ   max  |d| 1/2/3-4/5-8/9-16/17-64/65-256/more  (LLE-only halves)\n");
+                    "  command   init    count  differ  DMEM:cmds   bytes  max|d|  state:cmds   bytes  regs:cmds\n");
     for (int op = 0; op < 16; op++)
         for (int in = 0; in < 2; in++) {
             if (!dg[op][in].n)
                 continue;
-            fprintf(stderr, "  %-10s %d %8llu %7llu %12llu %14llu %5d ", op_name[op], in,
+            n += dg[op][in].n;
+            bad += dg[op][in].bad;
+            fprintf(stderr, "  %-10s %d %8llu %7llu %10llu %7llu %7d %11llu %7llu %10llu\n", op_name[op], in,
                     (unsigned long long)dg[op][in].n, (unsigned long long)dg[op][in].bad,
-                    (unsigned long long)dg[op][in].samples, (unsigned long long)dg[op][in].diff, dg[op][in].max);
-            for (int b = 0; b < 8; b++)
-                fprintf(stderr, "%s%llu", b ? "/" : " ", (unsigned long long)dg[op][in].hist[b]);
-            fprintf(stderr, "  (%llu)\n", (unsigned long long)dg[op][in].lleonly);
+                    (unsigned long long)dg[op][in].dmem_cmds, (unsigned long long)dg[op][in].dmem_bytes,
+                    dg[op][in].max, (unsigned long long)dg[op][in].state_cmds,
+                    (unsigned long long)dg[op][in].state_bytes, (unsigned long long)dg[op][in].reg_cmds);
         }
+    fprintf(stderr, "audio lle against aspmain.c: %llu commands, %llu differ\n", (unsigned long long)n,
+            (unsigned long long)bad);
 }
 
-static void diag_cmd(uintptr_t w0a, uintptr_t w1a, const uint8_t *pre, const uint8_t *post, const uint8_t *lle,
-                     const uint8_t *data) {
-    static uint8_t hle[4096];
+static void diag_cmd(uintptr_t w0a, uintptr_t w1a, const uint8_t *pre, const uint8_t *st_pre, uint16_t v_pre[32][8],
+                     uint16_t a_pre[3][8], uint16_t f_pre[4]) {
+    static uint8_t hle[4096], st[96];
+    static uint16_t v[32][8], a[3][8], f[4], lv[32][8], la[3][8], lf[4];
     uint32_t w0 = (uint32_t)w0a;
     int op = w0 >> 24, flags = (w0 >> 16) & 0xFF;
-    int stateful = op == A_ADPCM || op == A_RESAMPLE || op == A_ENVMIXER || op == A_POLEF;
-    int init = stateful && (flags & 1);
-    uint8_t *st = NULL;
-    if (stateful) {
-        st = shadow_of(w1a);
-        /* (lle: the microcode's state before the command, big-endian) */
-        int16_t v[16];
-        if (!diag_own && !init && op != A_ENVMIXER) {
-            for (int i = 0; i < 16; i++)
-                v[i] = (int16_t)(lle[2 * i] << 8 | lle[2 * i + 1]);
-            memcpy(st, v, op == A_ADPCM ? 32 : op == A_RESAMPLE ? 10 : 8);
-        }
-    }
+    int st_len = op == A_ADPCM || op == A_RESAMPLE ? 32 : op == A_POLEF ? 8 : op == A_ENVMIXER ? 80 : 0;
+    int init = st_len && (flags & 1);
     memcpy(hle, pre, sizeof hle);
-    host_asp_hle_one(hle, w0a, w1a, st, data);
-    if (op == A_SAVEBUFF || op == A_SPNOOP || op == A_SEGMENT || op == A_SETBUFF || op == A_SETVOL ||
-        op == A_LOADADPCM || op == A_SETLOOP)
+    memcpy(st, st_pre, sizeof st);
+    memcpy(v, v_pre, sizeof v);
+    memcpy(a, a_pre, sizeof a);
+    memcpy(f, f_pre, sizeof f);
+    host_asp_hle_one(hle, w0a, w1a, st, v, a, f);
+    /* (SEGMENT and SETLOOP: the microcode keeps the address in DMEM,
+       aspmain.c a pointer) */
+    if (op == A_SEGMENT || op == A_SETLOOP || op > A_SETLOOP)
         return;
-    uint64_t out = 0, diff = 0, lleonly = 0;
+    rsp_vstate(lv, la, lf);
+    uint64_t dbytes = 0, sbytes = 0;
     int mx = 0, first = -1;
-    for (int a = 0; a < 4096; a += 2) {
-        int hc = hle[a] != pre[a] || hle[a + 1] != pre[a + 1];
-        int lc = post[a] != pre[a] || post[a + 1] != pre[a + 1];
-        if (!hc) {
-            lleonly += lc && (post[a] != hle[a] || post[a + 1] != hle[a + 1]);
-            continue;
-        }
-        out++;
-        int d = (int16_t)(post[a] << 8 | post[a + 1]) - (int16_t)(hle[a] << 8 | hle[a + 1]);
-        if (d) {
-            int ad = d < 0 ? -d : d;
-            diff++;
+    for (int i = 0; i < 4096; i++)
+        if (hle[i] != rsp_dmem[i] && (i < 0x380 || i >= 0x4C0)) {
+            dbytes++;
             if (first < 0)
-                first = a;
-            if (ad > mx)
-                mx = ad;
-            int b = ad <= 1 ? 0 : ad <= 2 ? 1 : ad <= 4 ? 2 : ad <= 8 ? 3 : ad <= 16 ? 4 : ad <= 64 ? 5 : ad <= 256 ? 6 : 7;
-            dg[op][init].hist[b]++;
+                first = i;
+            int h = i & ~1;
+            int d = (int16_t)(rsp_dmem[h] << 8 | rsp_dmem[h + 1]) - (int16_t)(hle[h] << 8 | hle[h + 1]);
+            if (d < 0)
+                d = -d;
+            if (d > mx)
+                mx = d;
         }
-    }
+    const uint8_t *st_post = st_len ? port_addr(w1a) : NULL;
+    for (int i = 0; i < st_len; i++)
+        sbytes += st[i] != st_post[i];
+    int regs = memcmp(v, lv, sizeof v) || memcmp(a, la, sizeof a) || memcmp(f, lf, 3 * sizeof f[0]);
     dg[op][init].n++;
-    dg[op][init].samples += out;
-    dg[op][init].diff += diff;
-    dg[op][init].lleonly += lleonly;
-    if (diff)
+    if (dbytes || sbytes || regs)
         dg[op][init].bad++;
+    dg[op][init].dmem_cmds += dbytes != 0;
+    dg[op][init].dmem_bytes += dbytes;
+    dg[op][init].state_cmds += sbytes != 0;
+    dg[op][init].state_bytes += sbytes;
+    dg[op][init].reg_cmds += regs;
     if (mx > dg[op][init].max)
         dg[op][init].max = mx;
-    if (diff && dg_shown < 40) {
+    if ((dbytes || sbytes || regs) && dg_shown < 40) {
         dg_shown++;
-        host_log("audio diag: %u: %s %08X %08X: %llu of %llu samples differ, first at DMEM %03X: microcode %d, aspmain.c %d\n",
-                 host_vi_count, op_name[op], w0, (uint32_t)w1a, (unsigned long long)diff, (unsigned long long)out,
-                 first, (int16_t)(post[first] << 8 | post[first + 1]), (int16_t)(hle[first] << 8 | hle[first + 1]));
+        host_log("audio diag: %u: %s %08X %08X: %llu DMEM bytes differ (first %03X: microcode %02X, aspmain.c %02X), "
+                 "%llu of the state's, registers %s\n",
+                 host_vi_count, op_name[op], w0, (uint32_t)w1a, (unsigned long long)dbytes, first & 0xFFF,
+                 first < 0 ? 0 : rsp_dmem[first], first < 0 ? 0 : hle[first], (unsigned long long)sbytes,
+                 regs ? "differ" : "the same");
+        if (regs)
+            for (int r = 0; r < 32; r++)
+                if (memcmp(v[r], lv[r], sizeof v[r]))
+                    host_log("audio diag:   v%d: microcode %04X %04X %04X %04X %04X %04X %04X %04X, aspmain.c %04X %04X "
+                             "%04X %04X %04X %04X %04X %04X\n",
+                             r, lv[r][0], lv[r][1], lv[r][2], lv[r][3], lv[r][4], lv[r][5], lv[r][6], lv[r][7], v[r][0],
+                             v[r][1], v[r][2], v[r][3], v[r][4], v[r][5], v[r][6], v[r][7]);
     }
 }
 
 /* the task a command at a time (the microcode's dispatch at 0x0E4) */
-static int diag_run(const HostGfx *cmd, uint32_t n, const uint8_t *data) {
+static int diag_run(const HostGfx *cmd, uint32_t n) {
     static uint8_t pre[4096], st_pre[96];
+    static uint16_t v[32][8], a[3][8], f[4];
     static const uint32_t stop[] = { 0x0E4 };
-    if (diag_own < 0) {
-        const char *e = getenv("PORT_ASP_DIAG_OWN");
-        diag_own = e && atoi(e) != 0;
+    static int said;
+    if (!said) {
+        said = 1;
         atexit(diag_exit);
     }
     long total = 0;
@@ -404,12 +395,14 @@ static int diag_run(const HostGfx *cmd, uint32_t n, const uint8_t *data) {
             return rsp_run(0x0E4, NULL, 0, 50000000L);
         }
         memcpy(pre, rsp_dmem, sizeof pre);
-        if (w0 >> 24 == A_ADPCM || w0 >> 24 == A_RESAMPLE || w0 >> 24 == A_POLEF)
-            memcpy(st_pre, port_addr(cmd[k].w1), 32);
+        rsp_vstate(v, a, f);
+        int op = w0 >> 24;
+        if (op == A_ADPCM || op == A_RESAMPLE || op == A_POLEF || op == A_ENVMIXER)
+            memcpy(st_pre, port_addr(cmd[k].w1), op == A_ENVMIXER ? 80 : 32);
         rsp_run(0x0E4, NULL, 0, 1);
         pc = rsp_run(0x0E8, stop, 1, 50000000L);
         total += rsp_ran + 1;
-        diag_cmd(cmd[k].w0, cmd[k].w1, pre, rsp_dmem, st_pre, data);
+        diag_cmd(cmd[k].w0, cmd[k].w1, pre, st_pre, v, a, f);
     }
     rsp_ran = total;
     return pc;
@@ -490,10 +483,16 @@ void host_asp_lle_task(const void *cmdp, uint32_t data_size, const void *bootp, 
     }
     /* the task, as osSpTaskLoad leaves it at the top of DMEM */
 #ifdef PORT_RSP_WATCH
-    /* (PORT_AUDIO_LLE_GFXDMEM=1: log what the graphics task left at F90) */
-    if (getenv("PORT_AUDIO_LLE_GFXDMEM"))
-        host_log("audio lle: %u: DMEM F90 before the task %08X %08X\n", host_vi_count, port_be32(rsp_dmem + 0xF90),
-                 port_be32(rsp_dmem + 0xF94));
+    /* (PORT_AUDIO_LLE_GFXDMEM=1: log what the graphics task left at F90,
+       and whether a graphics task wrote any of F90-F97 since the last
+       audio task) */
+    if (getenv("PORT_AUDIO_LLE_GFXDMEM")) {
+        int w = 0;
+        for (int i = 0xF90; i < 0xF98; i++)
+            w |= rsp_watch_written[i];
+        host_log("audio lle: %u: DMEM F90 before the task %08X %08X%s\n", host_vi_count, port_be32(rsp_dmem + 0xF90),
+                 port_be32(rsp_dmem + 0xF94), w ? ", written by a graphics task" : "");
+    }
 #endif
     rsp_reset();
     memcpy(rsp_dmem, asp_dmem, sizeof rsp_dmem);
@@ -524,7 +523,7 @@ void host_asp_lle_task(const void *cmdp, uint32_t data_size, const void *bootp, 
     ref_begin();
 #endif
 #ifdef PORT_ASP_DIAG
-    int pc = diag_run(cmd, n, data);
+    int pc = diag_run(cmd, n);
 #else
     int pc = rsp_run(0x000, NULL, 0, 50000000L);
 #endif
@@ -534,6 +533,9 @@ void host_asp_lle_task(const void *cmdp, uint32_t data_size, const void *bootp, 
     ref_end(n);
 #endif
     memcpy(asp_dmem, rsp_dmem, sizeof asp_dmem);
+#ifdef PORT_RSP_WATCH
+    rsp_watch_clear();      /* (for PORT_AUDIO_LLE_GFXDMEM: what the graphics tasks write) */
+#endif
     if (lle_stats) {
         st_tasks++;
         st_cmds += n;

@@ -26,7 +26,7 @@
   "digest_pools": "f279ec64161363edf34b3874a5eabd0826b230bb",
   "eeprom": "5b7b5f53592bb3c8023106383a3cafadab913b1b",
   "frames": "2a2a38a683d8714dc15a4b83517de379cba15402",
-  "wav": "b32fae68f597626f254bd5b8d9bf4f254f23061c"
+  "wav": "20373496c7c565dd729932fed10e97590b59c01c"
  },
  "eu/legal": {
   "checkpoints": {
@@ -55,7 +55,7 @@
   "digest_pools": "cf580f5bc1ea359130b88251f47be1c04ef8045c",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
   "frames": "25ccec4597da3902bb210a3a620076090f19efdb",
-  "wav": "b05f8b43a417a86565f77d1863165fa4a4f76388"
+  "wav": "91c823fee8d2476b7defd415a5775b2d4958f42d"
  },
  "eu/story": {
   "checkpoints": {
@@ -104,7 +104,7 @@
   "digest_pools": "1fd71e8ce41cb62d3da4075486797c9e57babd58",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
   "frames": "8b2a47b9b6ceaba7d7be2139c3a172268e2a1b27",
-  "wav": "db465f4f1c79c868301d80c0d61fada4e3480625"
+  "wav": "375e4ac3fbdb12d1140d6d2b67827f68a619482e"
  },
  "eu/warp-battle": {
   "checkpoints": {
@@ -133,7 +133,7 @@
   "digest_pools": "5371c68d2ec8ade31f0cba3579a1fdbbd9c0d74a",
   "eeprom": "5b7b5f53592bb3c8023106383a3cafadab913b1b",
   "frames": "a517659a4f5202c12ebeee48754e6cf770cbc0da",
-  "wav": "2a908adac39783d276824fe02848573ded5bb82f"
+  "wav": "dd43b00fdc7d3f3d2d7e133d3594042855abe19c"
  },
  "eu/warp-boss": {
   "checkpoints": {
@@ -158,7 +158,7 @@
   "digest_pools": "4ef418959aa40c72caf56236277da01352ebc934",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
   "frames": "dedb20169a2e7fcde4008b2e03154ff3a20736d4",
-  "wav": "ad99180b47c1618a45363f5eab24410be2618fd2"
+  "wav": "a1348925320377e9e28dd5ad11887ee81e225e6a"
  },
  "eu/warp-stage": {
   "checkpoints": {
@@ -183,7 +183,7 @@
   "digest_pools": "073e895604558906c9df1c2a6febb966f99e5743",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
   "frames": "0e2df485dfc3fa3f2357b3ebbe835d51933ddcd4",
-  "wav": "41d78ca646bcdffb4a480b6eb8c29f6623ef9700"
+  "wav": "95056eec00b72ae4573cbca6559c2f1d2ebafdf4"
  },
  "jp/battle": {
   "checkpoints": {
@@ -212,7 +212,7 @@
   "digest_pools": "5ddadd497ce49a955d5e52b098ca444ff7107845",
   "eeprom": "6b4c522172e36bd7b31f29fea72f78fda46059a6",
   "frames": "b8cda4300cbdb9d8553c3b8ecd870000a5a4dec8",
-  "wav": "bcf6749bccdb883c09d5323585dd8173fc3403f2"
+  "wav": "6e31f7f2363ac14d9e8dd41ffcd9efc07e1ef6c0"
  },
  "jp/legal": {
   "checkpoints": {
@@ -241,7 +241,7 @@
   "digest_pools": "48c6ffdba654919d986c637602999d5ffd8bb705",
   "eeprom": "2e939a4b4c54e88a202a0ddda9310a089445e547",
   "frames": "b4c65c91d48ecee45826fe575ca9b1a06645676c",
-  "wav": "cdb8afde4093f108f1c0620e23f517b3d3d3728a"
+  "wav": "529ac9dd0066473aacbaab01f197736fa84b876e"
  },
  "jp/story": {
   "checkpoints": {
@@ -290,7 +290,7 @@
   "digest_pools": "95f550e61cbc37cf38c0b0dddf7c149adea6b1c5",
   "eeprom": "2e939a4b4c54e88a202a0ddda9310a089445e547",
   "frames": "5b52a6ca83dd2e8496ea31aff07fd2c6b137c712",
-  "wav": "5146e77ef561b57a57e348b3ce6d156a9b3f976e"
+  "wav": "98b860a2003417f2e937db7cbf954ac4ed7e715a"
  },
  "jp/tas-2053M": {
   "digest": "c94a4c420db12391a0d91ea4c12ef8b28df1813d",
@@ -334,7 +334,7 @@
   "digest_pools": "db36209c80b244066364c71d027b257b262d6d2c",
   "eeprom": "6b4c522172e36bd7b31f29fea72f78fda46059a6",
   "frames": "b20be30f1a5705bd32db07528f1b69e4b92b5f07",
-  "wav": "cb1fc1b26c9eff0b2e8f1d70c762806e550b17c8"
+  "wav": "f46b956e1d41defb5cd4e5f1cdf4a6d006391baa"
  },
  "jp/warp-boss": {
   "checkpoints": {
@@ -359,7 +359,7 @@
   "digest_pools": "2d831d6bc9042aae1147f04e1135489d2a0ef366",
   "eeprom": "2e939a4b4c54e88a202a0ddda9310a089445e547",
   "frames": "5ba51c81eb9147971c863c29a16e4672b6d15739",
-  "wav": "2489c0179f53d17c77035a8612f64168f37d02ad"
+  "wav": "2fb70e2fca987c88ed1a5176af2949107f720a30"
  },
  "jp/warp-stage": {
   "checkpoints": {
@@ -384,7 +384,7 @@
   "digest_pools": "7bfde4971ef7f7f6b6c01023dfbcbfa98e848cbb",
   "eeprom": "2e939a4b4c54e88a202a0ddda9310a089445e547",
   "frames": "c1602271861d0aa289ea48fbf4c1f4961fa45388",
-  "wav": "63c0ee0ac18595fdb51b9720814400f7583302c3"
+  "wav": "f28bbdf6c9eea1deecaad1727c81860f6adc464d"
  },
  "us/battle": {
   "checkpoints": {
@@ -413,7 +413,7 @@
   "digest_pools": "b6da58587cee4803874c0a877980a0346b7e22e5",
   "eeprom": "5b7b5f53592bb3c8023106383a3cafadab913b1b",
   "frames": "69b2d43c9fd5d07dc92e51ca5e58cb423c24071e",
-  "wav": "65eb130e730364631506cc3e8764a0afb64ace6a"
+  "wav": "e58c65381433e8b65cf4ad24db3b19ddc021f3ea"
  },
  "us/legal": {
   "checkpoints": {
@@ -442,7 +442,7 @@
   "digest_pools": "1f2521d6ce8b8f1f1bc821e6689fa29b7802119b",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
   "frames": "38fccc0ab533fb84a0c3a2f3a3e24538ac33ab53",
-  "wav": "588b4f188b06ee1c3ee54d04552d89c2ae202e07"
+  "wav": "e407e6c5ec060c800b31b1a0dd19dea8aca41cc2"
  },
  "us/story": {
   "checkpoints": {
@@ -491,7 +491,7 @@
   "digest_pools": "aee82b310726ee1d1815e7d22a128bc70af4e19f",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
   "frames": "dcec72ad5479a565eb541ca844a16e14e24eb680",
-  "wav": "8db435c8a497e7eec7229ea596316b4c98dac581"
+  "wav": "9287d05ca311458f35a1d53baaa3dfc865ecd3e7"
  },
  "us/warp-battle": {
   "checkpoints": {
@@ -520,7 +520,7 @@
   "digest_pools": "bd63d38c00121185beabe8b6e92abe82207f590d",
   "eeprom": "5b7b5f53592bb3c8023106383a3cafadab913b1b",
   "frames": "2197888ad249a5694ec876f33f3bba8e03b6d0e7",
-  "wav": "ea31f9fb3e12ad1ee86de485cc047a8ccec67bd4"
+  "wav": "bd795c9de293950b1f655a13fc66554a27772d09"
  },
  "us/warp-boss": {
   "checkpoints": {
@@ -545,7 +545,7 @@
   "digest_pools": "150e7eb9d00398904a16f4ba952a2907637b8f88",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
   "frames": "42dd3242af77d78dba98d7f7e78c2f6781fdf405",
-  "wav": "ffa394c007c599f8841b1a8b40d40e4ae98ce41c"
+  "wav": "9a2a25072215b9162a3d1db2ba54d4fbbe25ec28"
  },
  "us/warp-stage": {
   "checkpoints": {
@@ -570,6 +570,6 @@
   "digest_pools": "1e8617b7f06dd5c4ae1cae7a2c02694b6ab98259",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
   "frames": "cacc6da8bf023f52be9c11a9f8cc141a282a5654",
-  "wav": "28ae8d8cdb1820175714ef77954e19776c67be0c"
+  "wav": "6e8e62b677a738d108576922e147584ca332ca87"
  }
 }

@@ -189,6 +189,22 @@
  *   compiled-out debug print (DEBUG_PRINT; the condition is a guess, any
  *   test of the field matches). hitXZ's test stays marked: it is known 0 there,
  *   so no check would test it.
+ * Fakes pass 8 (no code change):
+ * - func_80290490 is an empty static called by func_80290498 (its stub
+ *   comes just before it; the call is the 8 bytes of frame). Its
+ *   parameter was no lever: (void), K&R, and the call at the top or at
+ *   the end all match, so it is a plain call, no longer marked.
+ * - func_80290874, 9087C's third inlined static, is (void) and empty
+ *   too (the K&R spelling was no lever either). Whether it held one of
+ *   9087C's statements is a guess, as for 54E40's inlined statics (a z
+ *   distance taking (ctx, obj) matches too), so it is no longer marked.
+ * - Marked now (they were unmarked): the two `* 1`s (p5), `res = 0` after
+ *   `r = res` (p7) and 1944's bare `;` (p3).
+ * - Tried: the quadrant into another existing local in place of
+ *   `i ^ 0` (dx: 17 words, the value in a3; every other local changes
+ *   func_8028FD88's own colouring, ~1400); a bounds test of the cell
+ *   (unk10/14/18 against 0 and 64) around a DEBUG_PRINT in place of
+ *   FFA8's unk10 * unk10 test (10 words at best: ctx and b swap s2/s3).
  */
 #include "common.h"
 #include "grid.h"
@@ -219,15 +235,6 @@ typedef struct {
     /* 0x2C */ f32 unk2C;
     /* 0x30 */ s32 (*unk30)(s32);
 } UnkStruct_802909FC;
-
-/* What func_8026E938 reads (UnkStructA_40's shape), 0x50 bytes. */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ u8 unk1C[0x34];
-} UnkStruct_80290498;
 
 extern UnkStruct_800B15D8 D_800B15D8[];
 
@@ -495,19 +502,19 @@ static s32 func_8028FFA8(s32 code, UnkStruct_802909FC *ctx, Vec3i *dir, s32 code
     return res;
 }
 
-static void func_80290490(s32 c) { /* fake: an empty static called once for its stub (header, p2) */
+static void func_80290490(void) {
 }
 
 static s32 func_80290498(UnkStruct_802909FC *ctx, s32 dx, s32 dy, s32 dz, s32 code) {
     volatile struct { s32 a, b, c, d; } sv; /* fake: a volatile struct reproduces the caller-saved spill of t (header, p4) */
     f32 pos[3];
-    UnkStruct_80290498 tmp;
+    UnkStructA_40 tmp; /* the model object func_8026E938 reads */
     s32 t;
     s32 slope;
     s32 res;
     f32 h;
 
-    func_80290490(code);
+    func_80290490();
     t = func_8026D7D8(ctx->unk10 + dx, ctx->unk14 + dy, ctx->unk18 + dz);
     slope = 0;
     res = 0;
@@ -615,7 +622,7 @@ static void func_8029086C(UnkStruct_802909FC *ctx) {
     ctx->unk2C = ctx->unk0->unk58 - ctx->unk0->unk40->unk10;
 }
 
-static void func_80290874() { /* fake: an empty K&R stub for the third stub inlined into 9087C (header, p3/p4, pass 7) */
+static void func_80290874(void) {
 }
 
 static void func_8029087C(UnkStruct_802909FC *ctx) {
@@ -928,6 +935,7 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
         func_8026E6E4(ctx.unk0->unk40, &a, &b);
         if (a != 0.0f) {
             if ((b == 90.0f && dirA.unk0 == -1 && dirB.unk0 == -1) ||
+                /* fake: the two `* 1`s flip the bne to v0,t6 with 1 in v0 (header, p5) */
                 (b == 270.0f && (dirA.unk0 * 1) == 1 && dirB.unk0 == 1) ||
                 (b == 0.0f && dirA.unk8 == -1 && dirB.unk8 == -1) ||
                 (b == 180.0f && (dirA.unk8 * 1) == 1 && dirB.unk8 == 1)) {
@@ -938,7 +946,7 @@ s32 func_802909FC(UnkStructA *obj, s32 (*cb)(s32)) {
         }
     }
     r = res;
-    res = 0;
+    res = 0; /* fake: a dead kill of res loads it into v0 before the stores (header, p7) */
     obj->unk40->unk10 = ctx.unk4;
     obj->unk40->unk14 = ctx.unk8;
     obj->unk40->unk18 = ctx.unkC;
@@ -1026,7 +1034,7 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
                     obj->unk40->unk14 = y0;
                 }
             }
-            ;
+            ; /* fake: an empty statement's join block, where sdir is reloaded (header, p3; a compiled-out DEBUG_PRINT would be the same) */
         }
         if ((sdir == 90.0f || sdir == 270.0f) &&
             (dir == 0 || dir == 0x20 || dir == 0xE0 || dir == 0x80 || dir == 0x60 || dir == 0xA0)) {

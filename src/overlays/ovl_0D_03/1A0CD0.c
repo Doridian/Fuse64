@@ -435,7 +435,7 @@ void func_ovl0D_03_80045EF0(void) {
 /* every few seconds, when the player is near, the model throws a bomb */
 static void func_ovl0D_03_80045EE8(UnkStruct_ovl0C_01_8004A54C *e, s32 *timer) {
     UnkStructA_40 *p;
-    s32 grid[7];
+    s32 grid[7]; /* fake: [7] (not [6]) only fills the frame (see the top) */
 
     if (*timer == 0) {
         p = e->unk0->unk40;

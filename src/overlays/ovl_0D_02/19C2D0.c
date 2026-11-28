@@ -354,7 +354,7 @@ void func_ovl0D_02_8004596C(void) {
     f32 ang;
 #endif
     Vec3f tgt;
-    s32 n; /* idx + 1 held (the frame's word here; which value: a guess, any held one fits) */
+    s32 n; /* fake: idx + 1 held (the frame's word here; which value: a guess, any held one fits) */
     s32 timer;
 
     idx = (PORT_IP(s32)) func_ovl0D_02_80046E70();
@@ -407,7 +407,7 @@ void func_ovl0D_02_8004596C(void) {
 /* every few seconds, when the player is near, the model throws a bomb */
 static void func_ovl0D_02_80045964(UnkStruct_ovl0C_01_8004A54C *e, s32 *timer) {
     UnkStructA_40 *p;
-    s32 grid[7]; /* [7]: the frame (see the top) */
+    s32 grid[7]; /* fake: [7] (not [6]) only fills the frame (see the top) */
 
     if (*timer == 0) {
         p = e->unk0->unk40;

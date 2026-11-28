@@ -36,6 +36,7 @@
  *   puts 1600.0f in $f16 (as the original), and both its 1600s are floats.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0D_04's stage object, IDO -O3: the functions are written last to first
@@ -110,10 +111,6 @@ typedef struct {
     s32 unk4;
     s32 unk8;
 } Trio_0D04;
-
-typedef struct {
-    f32 x, y, z, w;
-} Vec4f_0D04;
 
 void func_ovl0D_04_80045908(s32); /* 0xC00 */
 void func_ovl0D_04_80045918(s32 *); /* 0xC02 */
@@ -261,7 +258,7 @@ static void func_ovl0D_04_800455B8(void);
     D_ovl0D_04_8004703C = func_ovl0D_04_80045AE8(); func_ovl0D_04_80045AC8(&D_ovl0D_04_80047030); func_ovl0D_04_80045AF0(D_ovl0D_04_8004703C, &D_ovl0D_04_80047020)
 
 /* .bss */
-Vec4f_0D04 D_ovl0D_04_80047020;
+Vec4f_0D01 D_ovl0D_04_80047020;
 Vec3f D_ovl0D_04_80047030;
 s32 D_ovl0D_04_8004703C;
 u8 D_ovl0D_04_80047040[0x4]; /* unused (func_ovl0D_04_800455B8) */

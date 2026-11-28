@@ -11,6 +11,15 @@ typedef struct {
     PORT_UP(u32) w1;
 } Gfx_80225840;
 
+/* gbi.h's Vtx_t, a vertex (0A_01's D_ovl0A_01_80048730, 0A_06's
+ * D_ovl0A_06_80047028) */
+typedef struct {
+    /* 0x00 */ s16 ob[3];
+    /* 0x06 */ u16 flag;
+    /* 0x08 */ s16 tc[2];
+    /* 0x0C */ u8 cn[4];
+} Vtx_ovl0A_01;
+
 /* gbi.h's Mtx (8-aligned, as D_802A53D8's place after a u16 shows) */
 typedef union {
     /* 0x00 */ s32 m[16];

@@ -36,6 +36,7 @@
  *   (a fake) so it keeps its word and 80048164..8004816C their addresses.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0D_03's stage object, IDO -O3: the functions are written last to first
@@ -92,10 +93,6 @@ typedef struct {
     s32 unk4;
     s32 unk8;
 } Trio_0D03;
-
-typedef struct {
-    f32 x, y, z, w;
-} Vec4f_0D03;
 
 /* passed to func_ovl0D_03_80047260 (as in ovl_0D_06) */
 typedef struct {
@@ -284,7 +281,7 @@ static void func_ovl0D_03_80046698(void);
     D_ovl0D_03_8004815C = func_ovl0D_03_80046BC8(); func_ovl0D_03_80046BA8(&D_ovl0D_03_80048150); func_ovl0D_03_80046BD0(D_ovl0D_03_8004815C, &D_ovl0D_03_80048140)
 
 /* .bss */
-Vec4f_0D03 D_ovl0D_03_80048140;
+Vec4f_0D01 D_ovl0D_03_80048140;
 Vec3f D_ovl0D_03_80048150;
 s32 D_ovl0D_03_8004815C;
 u8 D_ovl0D_03_80048160[0x4]; /* unused (func_ovl0D_03_80046698) */

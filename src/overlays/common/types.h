@@ -537,4 +537,10 @@ typedef struct {
     /* 0x10 */ UnkStructA_40 *unk10;
 } UnkStruct_ovl0B_02_80049A50;
 
+/* four floats, one in each 0D overlay's .bss (D_ovl0D_01_80047AD0 and its
+ * copies; 0D_01..06) */
+typedef struct {
+    f32 x, y, z, w;
+} Vec4f_0D01;
+
 #endif

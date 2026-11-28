@@ -52,6 +52,7 @@
  * - 80045964: grid[7] (not [6]) puts the timer static's grid at sp+168.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0D_02's stage object, IDO -O3: the functions are written last to first
@@ -107,10 +108,6 @@ typedef struct {
     s32 unk4;
     s32 unk8;
 } Trio_0D02;
-
-typedef struct {
-    f32 x, y, z, w;
-} Vec4f_0D02;
 
 void func_ovl0D_02_800462F8(s32); /* 0xC00 */
 void func_ovl0D_02_80046308(s32 *); /* 0xC02 */
@@ -270,7 +267,7 @@ static void func_ovl0D_02_80045FA8(void);
     D_ovl0D_02_80047A1C = func_ovl0D_02_800464D8(); func_ovl0D_02_800464B8(&D_ovl0D_02_80047A10); func_ovl0D_02_800464E0(D_ovl0D_02_80047A1C, &D_ovl0D_02_80047A00)
 
 /* .bss */
-Vec4f_0D02 D_ovl0D_02_80047A00;
+Vec4f_0D01 D_ovl0D_02_80047A00;
 Vec3f D_ovl0D_02_80047A10;
 s32 D_ovl0D_02_80047A1C;
 u8 D_ovl0D_02_80047A20[0x4]; /* unused (func_ovl0D_02_80045FA8) */

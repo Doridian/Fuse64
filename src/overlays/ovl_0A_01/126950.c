@@ -196,7 +196,7 @@ u8 D_ovl0A_01_80048D28[8];
 static void func_ovl0A_01_80046F10(s32 arg0, Gfx_80225840 **arg1);
 
 /* .data */
-typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } Vtx_ovl0A_01; /* (a Vtx: halves and bytes) */ Vtx_ovl0A_01 D_ovl0A_01_80048730[4] = {
+Vtx_ovl0A_01 D_ovl0A_01_80048730[4] = {
     { { -170, 250, 0 }, 0, { 0, 0 }, { 0x00, 0x00, 0x00, 0xFF } },
     { { -50, 0, 0 }, 0, { 0, 0 }, { 0x00, 0x00, 0x00, 0xFF } },
     { { 170, 250, 0 }, 0, { 0, 0 }, { 0x00, 0x00, 0x00, 0xFF } },

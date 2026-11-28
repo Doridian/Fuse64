@@ -50,6 +50,7 @@
  *   `.file` there gave the original).
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0D_06's stage object, IDO -O3: the functions are written last to first
@@ -124,10 +125,6 @@ typedef struct {
     s32 unk4;
     s32 unk8;
 } Trio_0D06;
-
-typedef struct {
-    f32 x, y, z, w;
-} Vec4f_0D06;
 
 /* passed to func_ovl0D_06_80046600 */
 typedef struct {
@@ -297,7 +294,7 @@ static void func_ovl0D_06_8004513C(void);
     D_ovl0D_06_800475CC = func_ovl0D_06_80045F68(); func_ovl0D_06_80045F48(&D_ovl0D_06_800475C0); func_ovl0D_06_80045F70(D_ovl0D_06_800475CC, &D_ovl0D_06_800475B0)
 
 /* .bss */
-Vec4f_0D06 D_ovl0D_06_800475B0;
+Vec4f_0D01 D_ovl0D_06_800475B0;
 Vec3f D_ovl0D_06_800475C0;
 s32 D_ovl0D_06_800475CC;
 s32 D_ovl0D_06_800475D0;

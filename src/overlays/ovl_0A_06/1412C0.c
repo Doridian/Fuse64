@@ -66,6 +66,7 @@
  * longer), which the scheduling above depends on.
  */
 #include "common.h"
+#include "gfx.h"
 
 /* what ZeroJump 0x1500 and 0x1510 return, and 0x2508 */
 typedef struct {
@@ -447,7 +448,7 @@ s32 D_ovl0A_06_80047024 = 9;
 #if VERSION_JP
 s32 D_ovl0A_06_80046E3C_jp = 0; /* not referenced */
 #endif
-typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } Vtx_ovl0A_06; /* (a Vtx: halves and bytes) */ Vtx_ovl0A_06 D_ovl0A_06_80047028[4] = {
+Vtx_ovl0A_01 D_ovl0A_06_80047028[4] = {
     { { 0, 0, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0xFF } }, { { 0, 0, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0xFF } }, { { 0, 0, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0xFF } }, { { 0, 0, 0 }, 0, { 0, 0 }, { 0, 0, 0, 0xFF } },
 };
 u8 D_ovl0A_06_80047068[4][0x20] = {
@@ -1639,9 +1640,9 @@ static s32 func_ovl0A_06_8004311C(void) {
             D_ovl0A_06_80047018 = 1;
             func_ovl0A_06_80043020(0, 1);
         } else if ((pressed & 0x8000) || (pressed & 0x1000)) {
-#line 1685 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1686 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             ret = 1;
-#line 1661 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1662 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             if (D_ovl0A_06_80047018 == 0) {
                 /* SE(1, 1) with `ret = 2` between its wait and its call */
                 switch (1) {
@@ -1658,9 +1659,9 @@ static s32 func_ovl0A_06_8004311C(void) {
                 SE(2, 2);
             }
         } else if (pressed & 0x4000) {
-#line 1685 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1686 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             ret = 1;
-#line 1680 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1681 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             SE(2, 2);
         }
         func_ovl0A_06_800465A0();

@@ -43,6 +43,7 @@
  *   it (a fake), so it keeps its word.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0D_01's stage object, IDO -O3: the functions are written last to first
@@ -119,10 +120,6 @@ typedef struct {
     s32 unk4;
     s32 unk8;
 } Trio_0D01;
-
-typedef struct {
-    f32 x, y, z, w;
-} Vec4f_0D01;
 
 /* passed to func_ovl0D_01_80046AE0 */
 typedef struct {

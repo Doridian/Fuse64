@@ -19,6 +19,7 @@
  *   so grid sits at sp+168 as in the original.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0D_05's stage object, IDO -O3: the functions are written last to first
@@ -71,10 +72,6 @@ typedef struct {
     s32 unk4;
     s32 unk8;
 } Trio05;
-
-typedef struct {
-    f32 x, y, z, w;
-} Vec4f05;
 
 void func_ovl0D_05_80044BF8(s32); /* 0xC00 */
 void func_ovl0D_05_80044C08(s32 *); /* 0xC02 */
@@ -194,7 +191,7 @@ static void func_ovl0D_05_800435D0(Ent05 *);
     D_ovl0D_05_8004614C = func_ovl0D_05_80044DD8(); func_ovl0D_05_80044DB8(&D_ovl0D_05_80046140); func_ovl0D_05_80044DE0(D_ovl0D_05_8004614C, &D_ovl0D_05_80046130)
 
 /* .bss */
-Vec4f05 D_ovl0D_05_80046130;
+Vec4f_0D01 D_ovl0D_05_80046130;
 Vec3f D_ovl0D_05_80046140;
 s32 D_ovl0D_05_8004614C;
 u8 D_ovl0D_05_80046150[0x4]; /* unused (func_ovl0D_05_800448A8) */

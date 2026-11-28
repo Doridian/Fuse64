@@ -962,10 +962,11 @@ port/tools/rooms.py run BUILD OUT -v V [-j N] [--set census,monkey,battle,extra,
   both endings and their credits (28:16 and 28:17, 70,000 retraces),
   the attract's demos (29), the menus 21-23, and the boot with no input
   (the attract loop, 30,000 retraces).
-- **`ovl`** (us only): the overlays no other set loads (below, "The
+- **`ovl`**: the overlays no other set loads (below, "The
   overlays off the stages"): 20:16 warped to; the title's Options and
   Custom from the power-on by the menus (`menu:options`, `menu:custom`,
-  the pads in rooms.py's ROUTES, the emulator's timing), alone and with
+  the pads rooms.py's `routes(v)` gives, by the emulator's retraces: eu
+  at us's, jp 180 sooner), alone and with
   random input after them (@m1, @m2); 37:16 and 38:16 warped to, with
   the walk and @m1; and the boot with START held (`menu:pak`).
 
@@ -992,8 +993,11 @@ calls), against the i386 results of the tables above: every result
 line and every port digest i386's, byte for byte, the loops (41:23-26)
 too; the only lines that moved are i386's own since those runs (126:18
 and 126:19 the same since the .bss residue's model, and 155:16, below),
-so no fix was needed. Before, the 64-bit runs differed in five ways, none
-of them on i386:
+so no fix was needed. The `ovl` set (us, eu and jp, 2026-11-27, against
+the i386 runs' emulator digests) is i386's, every result and port digest,
+after one fix: jp's name entry read two arrays as one (f5b0ad9f, "The
+overlays off the stages"). Before, the 64-bit runs differed in five ways,
+none of them on i386:
 
 - two words that keep a pointer the game only writes were 32-bit, so
   the digest saw a cut pointer (the game didn't read it): 9CAB0.c's
@@ -1043,7 +1047,7 @@ what lands past D_800B5F20. 24:16 still stops on both.
 The Rainbow Palace boss's 126:18 and 126:19 differed in all three
 versions until the port modelled the .bss residue (below): now the same.
 
-**The overlays off the stages** (us, 2026-11-27). The scene table at
+**The overlays off the stages** (us, 2026-11-27; eu and jp below). The scene table at
 ROM 0x30800 gives each scene its bank and the bank's index its overlay
 (40FB0.c's func_8022691C): bank 0x09 has 20-23 (ovl_09_01-04; 24 has
 no entry), 0x0A 25, 26, 28, 29, 27, 36 (ovl_0A_01-06 in that order),
@@ -1087,6 +1091,29 @@ coverage's runs never loaded:
   last bosses' rooms (`--request`, 136, 140, 141) it runs 35 frames and
   reads its file through NULL (404C0.c's func_8022616C), on the N64 as
   on the port (`extra`'s 155:16, where both stop).
+
+eu's and jp's `ovl` (2026-11-27). On the emulator eu's boot and title
+come at us's retraces (27:16 from 421, 32:17 from 541, 38:16 and 31:17
+from 963, 37:16 from 1317), so eu plays us's pads; jp's title comes 180
+retraces sooner (27:16 from 224, 32:17 from 361), and its routes are
+us's with the title's taps ending at 480 and the rest 180 sooner (38:16
+and 31:17 from 783, 37:16 from 1137). START held at the boot takes
+both to ovl_0A_06 (32:16 at 412; with no input the boot goes to 27:16).
+All twelve targets are the same on i386 in both: 20:16 to frame 5,785
+(jp 5,719), `menu:pak` to the emulator's end (2,724, jp 2,633, through
+the attract), Options and Custom alone, @m1 and @m2, and 37:16 and 38:16
+warped, alone and @m1, to their ends (2937e38c's table holds eu's and
+jp's pages too). The routes' targets used to rewrite one route file at
+once, and eu's `menu:options@m1` once read it cut and played the
+attract; each writes it whole now. On x86-64 jp's name entry crashed
+(37:16 warped at frame 874, `menu:custom` at 1194, in 9A5F0.c's
+func_80280A74 on a NULL string): jp writes the page's texts with one
+func_ovl0B_04_80043A24 of six from D_ovl0B_04_800493A8, its one Item and
+the first five of D_ovl0B_04_800493BC, adjacent in the ROM; i386 happened
+to place the two arrays together, x86-64 (an Item 0x18 bytes) didn't.
+Under `TARGET_PC` they are one `Item[14]` (f5b0ad9f), and every target
+is then the same on both hosts, in us, eu and jp, every port digest
+i386's byte for byte.
 
 **The heap's 1 MiB** (us, 2026-11-27): while the asset cache's blocks
 were PORT_ASSET_PAD (0x200) bytes longer in gmalloc's arena too, the
@@ -2760,7 +2787,7 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   handful under qemu (mips); us all 77 on i386 under the sanitizers and
   under qemu (mips).
   The room sweep ("Every room") on x86-64 is i386's in every set of
-  us, eu and jp but `ovl` (us) and `tas` (4908M's route from 56:16,
+  us, eu and jp (`ovl` after f5b0ad9f) but `tas` (4908M's route from 56:16,
   in no version: its emulator digest wasn't kept); 4908M's whole movie
   on jp (test.py's `tas`) is the same there ("The TAS").
   `proto_check.py` sees the calls through a declaration that isn't the
@@ -2795,8 +2822,9 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   `rooms.py`'s `extra` and `ovl` now, all the same as the emulator or
   where both stop ("Every room", "The overlays off the stages"); left
   there: ovl_0A_06's menu with a Controller Pak (the port has none),
-  ovl_0B_05's locked entries (a save with them open), and the `ovl`
-  set in eu and jp (its menu routes have us's timing).
+  ovl_0B_05's locked entries (a save with them open). The `ovl` set
+  runs in us, eu and jp (jp's routes 180 retraces sooner), all the same
+  on i386 and x86-64.
 - **The N64's layout** (docs/ROADMAP.md, phase 6, unticked): the
   scattered check builds ("The scattered layout") report nothing in
   test.py's scenarios, the 78 stage runs or the monkey's runs: us with

@@ -76,12 +76,12 @@ PORT_IP(s32) func_8022F698(PORT_IP(s32) arg0, f32 *arg1, f32 *arg2, f32 **arg3, 
 void func_8022DE6C(void);
 void func_8022DE00(void);
 
-extern Rect40 *D_800A7F08[8];
+extern UnkStructA_40 *D_800A7F08[8];
 
 void func_8022DB00(void);
 static void func_8022DB28(void);
-void func_8022DBBC(PORT_IP(s32) arg0);
-static void func_8022DBF4(Rect40 **arg0, f32 arg1, f32 arg2, s32 *arg3, s32 arg4);
+void func_8022DBBC(UnkStruct_8022DBBC *arg0);
+static void func_8022DBF4(UnkStructA_40 **arg0, f32 arg1, f32 arg2, s32 *arg3, s32 arg4);
 static void func_8022DD6C(void);
 void func_8022DDB4(PORT_IP(s32) arg0);
 
@@ -116,8 +116,8 @@ static void func_8022DD6C() {
     func_80239430();
 }
 
-static void func_8022DBF4(Rect40 **arg0, f32 arg1, f32 arg2, s32 *arg3, s32 arg4) {
-    Rect40 *r;
+static void func_8022DBF4(UnkStructA_40 **arg0, f32 arg1, f32 arg2, s32 *arg3, s32 arg4) {
+    UnkStructA_40 *r;
     s32 cur;
     s32 tgt;
     s32 n;
@@ -147,46 +147,32 @@ static void func_8022DBF4(Rect40 **arg0, f32 arg1, f32 arg2, s32 *arg3, s32 arg4
             cur--;
         }
         f = cur;
-        r->x0 = arg1 - f;
-        r->y0 = arg2 - f;
-        r->x1 = f + arg1;
-        r->y1 = f + arg2;
+        r->unk10 = arg1 - f;
+        r->unk14 = arg2 - f;
+        r->unk18 = f + arg1;
+        r->unk1C = f + arg2;
         func_8023903C(2);
     }
 }
 
-void func_8022DBBC(PORT_IP(s32) arg0) {
-    func_80238A10(func_8022DB28, arg0, 0, 0, 0x150);
+void func_8022DBBC(UnkStruct_8022DBBC *arg0) {
+    func_80238A10(func_8022DB28, (PORT_IP(s32)) arg0, 0, 0, 0x150);
 }
 
 static void func_8022DB28() {
-    s32 *args;
-    Rect40 *r;
+    UnkStruct_8022DBBC *args;
+    UnkStructA_40 *r;
     s32 id;
     s32 n;
     s32 i;
 
-#ifdef TARGET_PC
-    {
-        /* the overlays' { object, sound, count } (a pointer, then words) */
-        struct {
-            Rect40 *r;
-            s32 id;
-            s32 n;
-        } *a = (void *) func_802391F0();
-        r = a->r;
-        id = a->id;
-        n = a->n;
-    }
-#else
-    args = (s32 *) func_802391F0();
-    r = (Rect40 *) args[0];
-    id = args[1];
-    n = args[2];
-#endif
-    id = func_8026C51C(id, r->x0, r->y0, r->x1);
+    args = (UnkStruct_8022DBBC *) func_802391F0();
+    r = args->unk0;
+    id = args->unk4;
+    n = args->unk8;
+    id = func_8026C51C(id, r->unk10, r->unk14, r->unk18);
     for (i = 0; i < n; i++) {
-        func_8026C454(id, r->x0, r->y0, r->x1);
+        func_8026C454(id, r->unk10, r->unk14, r->unk18);
         func_80239094();
     }
     func_80239430();

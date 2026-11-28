@@ -107,7 +107,7 @@ UnkStructA *func_ovl0C_01_80049800(s32, s32, f32, f32, f32);
 void func_ovl0C_01_80049838(UnkStructA *);
 UnkStructA *func_ovl0C_01_80049848(UnkStructA *, s32);
 PORT_IP(s32) func_ovl0C_01_800498D8(UnkStructA *, s32, UnkStructA *);
-void func_ovl0C_01_80049900(void *);
+void func_ovl0C_01_80049900(UnkStruct_8022DBBC *);
 s32 func_ovl0C_01_80049908(void (*)(void), void *, PORT_IP(s32), s32, s32);
 void func_ovl0C_01_80049910(s32);
 void func_ovl0C_01_80049918(void);
@@ -1555,17 +1555,11 @@ s32 func_ovl0C_01_800450B0(void) {
     return 1;
 }
 
-typedef struct {
-    UnkStructA_40 *unk0;
-    s32 unk4;
-    s32 unk8;
-} Snd_ovl0C_01;
-
 void func_ovl0C_01_80044D3C(void) {
     f32 end;
     UnkStructA *obj;
     UnkStructA_40 *p;
-    Snd_ovl0C_01 snd;
+    UnkStruct_8022DBBC snd;
 
     func_ovl0C_01_80049000(1);
     obj = D_ovl0C_01_8004A5B4[0].unk0;
@@ -1758,7 +1752,7 @@ void func_ovl0C_01_800444DC(void) {
     s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     UnkStructA *obj;
     s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
-    Snd_ovl0C_01 snd;
+    UnkStruct_8022DBBC snd;
     UnkStructA_40 *p;
     f32 end;
 
@@ -1826,7 +1820,7 @@ void func_ovl0C_01_800441D4(void) {
     f32 end;
     UnkStructA *obj;
     UnkStructA_40 *p;
-    Snd_ovl0C_01 snd;
+    UnkStruct_8022DBBC snd;
 
     func_ovl0C_01_80049000(1);
     if (D_ovl0C_01_8004A9C0 == 4) {
@@ -1963,7 +1957,7 @@ void func_ovl0C_01_800439C0(void) {
     s32 pad; /* fake: unused, frame space the original has (no source for it found) */
     UnkStructA *obj;
     s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
-    Snd_ovl0C_01 snd;
+    UnkStruct_8022DBBC snd;
     UnkStructA_40 *p;
     f32 end;
 

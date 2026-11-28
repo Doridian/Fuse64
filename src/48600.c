@@ -186,7 +186,7 @@ f32 sqrtf(f32);
 extern UnkStructA D_800A3F00[];
 extern f32 D_800A7F00;
 extern s32 D_800A7F04;
-extern Rect40 *D_800A7F08[8];
+extern UnkStructA_40 *D_800A7F08[8];
 extern void *D_800A7F28;
 
 /* The .bss: func_80230604's statics, then these in address order (the
@@ -2318,10 +2318,10 @@ void func_8022DE6C() {
         D_800A7F28 = func_8026CE28(0x34E);
         for (i = 0; i < 8; i++) {
             D_800A7F08[i] = func_8022A6C4(D_800A7F28, 0x40);
-            D_800A7F08[i]->x0 = 291.0f;
-            D_800A7F08[i]->y0 = 56.0f;
-            D_800A7F08[i]->x1 = 291.0f;
-            D_800A7F08[i]->y1 = 56.0f;
+            D_800A7F08[i]->unk10 = 291.0f;
+            D_800A7F08[i]->unk14 = 56.0f;
+            D_800A7F08[i]->unk18 = 291.0f;
+            D_800A7F08[i]->unk1C = 56.0f;
             D_800A7F08[i]->unk20 = 0.0f;
             D_800A7F08[i]->unk24 = 0.0f;
         }

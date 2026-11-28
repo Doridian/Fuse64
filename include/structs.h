@@ -280,16 +280,13 @@ typedef struct {
     /* 0x07 */ u8 unk7;
 } UnkStruct_8027F0C4; /* size 0x8 */
 
-/* A screen rectangle (0x40 bytes from func_8022A6C4). */
+/* what func_8022DBBC (48300, ZeroJump 0x183A) is given, the task's
+   argument: a model object and a sound and its count */
 typedef struct {
-    /* 0x00 */ u8 pad0[0x10];
-    /* 0x10 */ f32 x0;
-    /* 0x14 */ f32 y0;
-    /* 0x18 */ f32 x1;
-    /* 0x1C */ f32 y1;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-} Rect40;
+    /* 0x00 */ UnkStructA_40 *unk0;
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ s32 unk8;
+} UnkStruct_8022DBBC;
 
 /* An effect: a task (D_802A1C40[kind]) drawing one model (16 of them, D_800BC528). */
 typedef struct {

@@ -268,7 +268,7 @@ PORT_IP(s32) func_ovl14_02_8004F728(UnkStructA *, s32, UnkStructA *); /* 0x1835 
 void func_ovl14_02_8004F738(s32 *); /* 0x1837 */
 void func_ovl14_02_8004F740(void); /* 0x1838 */
 void func_ovl14_02_8004F748(void); /* 0x1839 */
-void func_ovl14_02_8004F750(void *); /* 0x183A */
+void func_ovl14_02_8004F750(UnkStruct_8022DBBC *); /* 0x183A */
 s32 func_ovl14_02_8004F758(void (*)(), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl14_02_8004F768(void); /* 0x1902 */
 void func_ovl14_02_8004F778(s32); /* 0x1904 */
@@ -1024,11 +1024,7 @@ void func_ovl14_02_8004CDE0(void) {
     f32 b;
     PORT_IP(s32) n;
     s32 k;
-    struct {
-        UnkStructA_40 *p;
-        s32 a;
-        s32 b;
-    } info;
+    UnkStruct_8022DBBC info;
     s32 i;
     s32 bi;
 
@@ -1110,9 +1106,9 @@ void func_ovl14_02_8004CDE0(void) {
         target[1] = D_ovl14_02_8004FF14[bi].y;
         target[2] = D_ovl14_02_8004FF14[bi].z;
         func_ovl14_02_8004F6D8(obj2, pos);
-        info.p = obj2->unk40;
-        info.a = 0x20F;
-        info.b = 0x44;
+        info.unk0 = obj2->unk40;
+        info.unk4 = 0x20F;
+        info.unk8 = 0x44;
         func_ovl14_02_8004F750(&info);
         func_ovl14_02_8004F598((Vec3f *) pos, (Vec3f *) target, (Vec3f *) ang);
         if (ang[0] >= 0.0f && ang[0] <= 180.0f) {

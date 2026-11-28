@@ -32,13 +32,6 @@
  * ovl_0C_04's 17CC20 and ovl_12_06's 25D670.
  */
 
-/* what func_ovl0C_10_80045DB0 is given: an object's 0x40 and two numbers */
-typedef struct {
-    /* 0x00 */ UnkStructA_40 *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-} UnkStruct_ovl0C_10_80045DB0;
-
 /* func_ovl0C_10_800448C0's camera moves: a frame count, from, to */
 typedef struct {
     /* 0x00 */ f32 unk0;
@@ -85,7 +78,7 @@ void func_ovl0C_10_80045C80(UnkStructA *);
 UnkStructA *func_ovl0C_10_80045C90(s32, s32, s32, PORT_IP(s32));
 void func_ovl0C_10_80045CA0(UnkStructA *);
 void func_ovl0C_10_80045CE8(UnkStructA *);
-void func_ovl0C_10_80045DB0(UnkStruct_ovl0C_10_80045DB0 *);
+void func_ovl0C_10_80045DB0(UnkStruct_8022DBBC *);
 s32 func_ovl0C_10_80045DB8(void (*)(void), void *, PORT_IP(s32), s32, s32);
 void func_ovl0C_10_80045DC0(s32);
 void func_ovl0C_10_80045DC8(void);
@@ -380,7 +373,7 @@ void func_ovl0C_10_80043F70(void) {
     f32 dy;
     f32 dz;
     s32 i;
-    UnkStruct_ovl0C_10_80045DB0 snd;
+    UnkStruct_8022DBBC snd;
 
     flag = func_ovl0C_10_80045DE0();
     obj = func_ovl0C_10_80045C90(0x328, 0x01000000, 0xC0, 0);
@@ -681,7 +674,7 @@ static void func_ovl0C_10_80043070(void) {
     s32 flag;
     s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
     s32 task;
-    UnkStruct_ovl0C_10_80045DB0 snd;
+    UnkStruct_8022DBBC snd;
 
     func_ovl0C_10_80045458(1);
     func_ovl0C_10_80045B10(0x1F);

@@ -26,13 +26,6 @@
  * ovl_0C_04's 17CC20 (ovl_0C_06 and ovl_0C_07 share most of the rest).
  */
 
-/* what func_ovl0C_09_80047020 is given: an object's 0x40 and two numbers */
-typedef struct {
-    /* 0x00 */ UnkStructA_40 *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-} UnkStruct_ovl0C_09_80047020;
-
 void func_ovl0C_09_800464D8(s32);
 void func_ovl0C_09_800464F0(s32);
 void func_ovl0C_09_80046518(s32, s32, s32, s32, s32, s32);
@@ -77,7 +70,7 @@ UnkStructA *func_ovl0C_09_80046F10(UnkStructA *);
 UnkStructA *func_ovl0C_09_80046F20(s32, s32, f32, f32, f32);
 void func_ovl0C_09_80046F58(UnkStructA *);
 void func_ovl0C_09_80046FE8(UnkStructA *);
-void func_ovl0C_09_80047020(UnkStruct_ovl0C_09_80047020 *);
+void func_ovl0C_09_80047020(UnkStruct_8022DBBC *);
 s32 func_ovl0C_09_80047028(void (*)(void), void *, PORT_IP(s32), s32, s32);
 void func_ovl0C_09_80047038(void);
 void func_ovl0C_09_80047048(s32);
@@ -602,7 +595,7 @@ void func_ovl0C_09_80044BA4(void) {
     UnkStructA *obj;
     UnkStructA_40 *p;
     s32 hit;
-    UnkStruct_ovl0C_09_80047020 snd;
+    UnkStruct_8022DBBC snd;
 
     obj = D_ovl0C_09_80047818.unk0;
     p = obj->unk40;

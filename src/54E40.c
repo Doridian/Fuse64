@@ -39,7 +39,11 @@
  * nor the prototypes count (reversing the prototype block changes
  * nothing), and no target takes its own address in the ROM; without
  * them the run follows the real spawn calls' order (func_8023FC00 first,
- * func_80241180 last).
+ * func_80241180 last). Moving the spawners (the statics, and the
+ * address-taken globals, emitted in the indirect caller's turn) cannot
+ * give it either: func_802434F8's only spawn is in func_8023DB0C, which
+ * would have to come before func_8023C374's spawn of func_80241550, but
+ * func_8023C374 must be above func_8023DB0C for its tree's order.
  * - The empty functions are called: func_80242268 (a global) by
  *   func_80242270 and the static func_8023CC4C by func_8023CC54, which
  *   emits each just before its caller (they were dead calls; where in

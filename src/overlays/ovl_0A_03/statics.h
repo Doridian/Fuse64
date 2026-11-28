@@ -6,7 +6,7 @@
  */
 
 /* Waits for the object's animation to end; IDO passes obj in s0. */
-static void func_ovl0A_03_80043010(Obj03 *obj) {
+static void func_ovl0A_03_80043010(UnkStructA *obj) {
     while (!(obj->unk40->unkC & 0x40)) {
         func_ovl0A_03_80047F90();
     }

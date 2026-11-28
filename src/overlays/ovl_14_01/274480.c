@@ -140,7 +140,7 @@ void func_ovl14_01_8004BEA8(s32 *); /* 0xC02 */
 void func_ovl14_01_8004BEB0(s32); /* 0xD00 */ /* also: void (s32, UnkStructA_40 **) x1 */
 f32 func_ovl14_01_8004BEC0(void); /* 0xD02 */
 s32 func_ovl14_01_8004BF00(s32); /* 0xD0A */
-void func_ovl14_01_8004BF80(void (*)(UnkStructA *)); /* 0xE03 */ /* also: void (void (*)(Obj_0D02 *)) x1; void (void (*)(Obj_0D04 *)) x1; void (void (*)(Obj_0D06 *)) x1 */
+void func_ovl14_01_8004BF80(void (*)(UnkStructA *)); /* 0xE03 */ /* also: void (void (*)(UnkStructA *)) x1; void (void (*)(UnkStructA *)) x1; void (void (*)(UnkStructA *)) x1 */
 void func_ovl14_01_8004BFB8(void); /* 0xF05 */
 void func_ovl14_01_8004BFD0(void (*)(UnkStructA *)); /* 0xF08 */
 s32 *func_ovl14_01_8004BFE8(void); /* 0xF0B */ /* also: s32 * (void) x3; Save_ovl0B_02 *(void) x1; UnkStruct_ovl0B_05_80046820 *(void) x1 */
@@ -153,7 +153,7 @@ void func_ovl14_01_8004C080(s32, void *); /* 0x1007 */
 void func_ovl14_01_8004C088(s32); /* 0x1008 */
 void func_ovl14_01_8004C0A0(const char *); /* 0x100B */
 void func_ovl14_01_8004C0A8(void); /* 0x100C */
-UnkStructA * func_ovl14_01_8004C0D8(s32); /* 0x1012 */ /* also: Obj02 * (s32) x1; Obj03 * (s32) x1; UnkStruct_ovl0A_05_80048CA0 *(s32) x1 */
+UnkStructA * func_ovl14_01_8004C0D8(s32); /* 0x1012 */ /* also: Obj02 * (s32) x1; Obj03 * (s32) x1; UnkStructA *(s32) x1 */
 void func_ovl14_01_8004C138(s32); /* 0x101E */
 void func_ovl14_01_8004C5A0(UnkStructA_40 *, s32); /* 0x1505 */ /* also: void (Obj *, s32) x1; void (UnkStructA_40 *, s32) x1; void (UnkStructA_40 *, s32) x1 */
 void func_ovl14_01_8004C5A8(UnkStructA_40 *, s32, s32, s32); /* 0x1506 */ /* also: void (Obj *, s32, s32, s32) x1; void (UnkStructA_40 *, s32, s32, s32) x1; void (UnkStructA_40 *, s32, s32, s32) x1 */
@@ -171,20 +171,20 @@ void func_ovl14_01_8004C798(f32, f32, f32, f32); /* 0x171C */
 void func_ovl14_01_8004C7F0(f32 *); /* 0x1727 */
 void func_ovl14_01_8004C828(Vec3f *, Vec3f *, Vec3f *); /* 0x1803 */
 void func_ovl14_01_8004C830(Vec3f *, Vec3f *); /* 0x1804 */
-s32 func_ovl14_01_8004C848(UnkStructA *, s32); /* 0x1807 */ /* also: s32 (Obj_0D02 *, s32) x1; s32 (Obj_0D04 *, s32) x1; s32 (Obj_0D06 *, s32) x1 */
+s32 func_ovl14_01_8004C848(UnkStructA *, s32); /* 0x1807 */ /* also: s32 (UnkStructA *, s32) x1; s32 (UnkStructA *, s32) x1; s32 (UnkStructA *, s32) x1 */
 s32 func_ovl14_01_8004C860(PORT_IP(s32), PORT_IP(s32)); /* 0x180A */
-void func_ovl14_01_8004C868(UnkStructA *, s32); /* 0x180B */ /* also: void (Obj_0D02 *, s32) x1; void (Obj05 *, s32) x1; void (Obj_0D03 *, s32) x1 */
+void func_ovl14_01_8004C868(UnkStructA *, s32); /* 0x180B */ /* also: void (UnkStructA *, s32) x1; void (UnkStructA *, s32) x1; void (UnkStructA *, s32) x1 */
 void func_ovl14_01_8004C880(UnkStructA *, UnkStructA *, Step3C *, s32); /* 0x180E */ /* also: void (UnkStructA *, UnkStructA *, Step3C *, s32) x1 */
 void func_ovl14_01_8004C890(s32); /* 0x1810 */
-void func_ovl14_01_8004C898(UnkStructA *, s32); /* 0x1811 */ /* also: void (Obj02 *, s32) x1; void (Obj03 *, s32) x1; void (UnkStruct_ovl0A_05_80048CA0 *, s32) x1 */
-void func_ovl14_01_8004C8A0(UnkStructA *, s32); /* 0x1812 */ /* also: void (Obj02 *, s32) x1; void (Obj03 *, s32) x1; void (UnkStruct_ovl0A_05_80048CA0 *, s32) x1 */
-s32 func_ovl14_01_8004C8B0(UnkStructA *); /* 0x1814 */ /* also: void (Obj02 *) x1; void (Obj03 *) x1; void (UnkStruct_ovl0A_05_80048CA0 *) x1 */
-UnkStructA *func_ovl14_01_8004C8C0(s32, s32, s32, UnkStructA *); /* 0x1816 */ /* also: Obj02 * (s32, s32, s32, Obj02 *) x1; Obj03 * (s32, s32, s32, Obj03 *) x1; UnkStruct_ovl0A_05_80048CA0 *(s32, s32, s32, UnkStruct_ovl0A_05_80048CA0 *) x1 */
-UnkStructA *func_ovl14_01_8004C8D0(UnkStructA *); /* 0x1818 */ /* also: void (Obj02 *) x1; void (Obj03 *) x1; Obj_0D02 *(Obj_0D02 *) x1 */
+void func_ovl14_01_8004C898(UnkStructA *, s32); /* 0x1811 */ /* also: void (Obj02 *, s32) x1; void (Obj03 *, s32) x1; void (UnkStructA *, s32) x1 */
+void func_ovl14_01_8004C8A0(UnkStructA *, s32); /* 0x1812 */ /* also: void (Obj02 *, s32) x1; void (Obj03 *, s32) x1; void (UnkStructA *, s32) x1 */
+s32 func_ovl14_01_8004C8B0(UnkStructA *); /* 0x1814 */ /* also: void (Obj02 *) x1; void (Obj03 *) x1; void (UnkStructA *) x1 */
+UnkStructA *func_ovl14_01_8004C8C0(s32, s32, s32, UnkStructA *); /* 0x1816 */ /* also: Obj02 * (s32, s32, s32, Obj02 *) x1; Obj03 * (s32, s32, s32, Obj03 *) x1; UnkStructA *(s32, s32, s32, UnkStructA *) x1 */
+UnkStructA *func_ovl14_01_8004C8D0(UnkStructA *); /* 0x1818 */ /* also: void (Obj02 *) x1; void (Obj03 *) x1; UnkStructA *(UnkStructA *) x1 */
 UnkStructA *func_ovl14_01_8004C8F0(s32, s32, UnkStructA *); /* 0x181C */
-void func_ovl14_01_8004C918(UnkStructA *); /* 0x1821 */ /* also: void (Obj02 *) x1; void (Obj_0D02 *) x1; void (Obj_0D03 *) x1 */
+void func_ovl14_01_8004C918(UnkStructA *); /* 0x1821 */ /* also: void (Obj02 *) x1; void (UnkStructA *) x1; void (UnkStructA *) x1 */
 UnkStructA *func_ovl14_01_8004C920(UnkStructA *, s32); /* 0x1822 */
-void func_ovl14_01_8004C968(UnkStructA *, f32 *); /* 0x182B */ /* also: void (Obj02 *, f32 *) x1; void (Obj03 *, f32 *) x1; void (UnkStruct_ovl0A_05_80048CA0 *, f32 *) x1 */
+void func_ovl14_01_8004C968(UnkStructA *, f32 *); /* 0x182B */ /* also: void (Obj02 *, f32 *) x1; void (Obj03 *, f32 *) x1; void (UnkStructA *, f32 *) x1 */
 void func_ovl14_01_8004C9A8(UnkStructA *); /* 0x1833 */
 void func_ovl14_01_8004C9C8(s32 *); /* 0x1837 */
 void func_ovl14_01_8004C9D0(void); /* 0x1838 */
@@ -192,7 +192,7 @@ void func_ovl14_01_8004C9D8(void); /* 0x1839 */
 s32 func_ovl14_01_8004C9E8(void (*)(), void *, PORT_IP(s32), s32, s32); /* 0x1900 */ /* also: void (void (*)(void), void *, s32, s32, s32) x6; s32 (void (*)(void), void *, s32, s32, s32) x4; s32 (void (*)(), void *, void *, s32, s32) x1 */
 void func_ovl14_01_8004C9F8(void); /* 0x1902 */
 void func_ovl14_01_8004CA08(s32); /* 0x1904 */ /* also: s32 (s32) x1 */
-void *func_ovl14_01_8004CA10(void); /* 0x1905 */ /* also: Obj02 * (void) x1; Obj03 * (void) x1; UnkStruct_ovl0A_05_80048CA0 *(void) x1 */
+void *func_ovl14_01_8004CA10(void); /* 0x1905 */ /* also: Obj02 * (void) x1; Obj03 * (void) x1; UnkStructA *(void) x1 */
 s32 func_ovl14_01_8004CA30(void); /* 0x1909 */ /* also: void (void) x8 */
 f32 func_ovl14_01_8004CB90(f32); /* 0x1D00 */
 f32 func_ovl14_01_8004CB98(f32); /* 0x1D01 */
@@ -212,8 +212,8 @@ void func_ovl14_01_8004CCE8(s32, s32, s32, f32); /* 0x2004 */
 void func_ovl14_01_8004CD30(s32); /* 0x2200 */
 void func_ovl14_01_8004CD40(s32); /* 0x2202 */
 void func_ovl14_01_8004CD48(s32); /* 0x2203 */
-void func_ovl14_01_8004CE40(s32, f32 *, s32); /* 0x2601 */ /* also: s32 (s32, f32 *, s32) x3; void (s32, f32 *, Obj_0D02 *) x1; void (s32, f32 *, Obj_0D03 *) x1 */
-void func_ovl14_01_8004CE60(void *); /* 0x2701 */ /* also: void (UnkStruct_ovl0A_05_80048CA0 *) x1 */
+void func_ovl14_01_8004CE40(s32, f32 *, s32); /* 0x2601 */ /* also: s32 (s32, f32 *, s32) x3; void (s32, f32 *, UnkStructA *) x1; void (s32, f32 *, UnkStructA *) x1 */
+void func_ovl14_01_8004CE60(void *); /* 0x2701 */ /* also: void (UnkStructA *) x1 */
 s32 func_ovl14_01_8004CF70(s32); /* 0x2B00 */ /* also: s32 (s32) x6 */
 void func_ovl14_01_8004CF80(PORT_IP(s32)); /* 0x2B02 */
 void func_ovl14_01_8004CF88(void); /* 0x2B03 */

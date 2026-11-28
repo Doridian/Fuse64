@@ -5,6 +5,6 @@
  * unknown; several overlays' copies of these statics are the same code.
  */
 
-static void func_ovl0A_02_80043068(Obj02 *obj) {
+static void func_ovl0A_02_80043068(UnkStructA *obj) {
     obj->unk40->unk48->unk4[0].unk4 = func_ovl0A_02_80047738(obj->unk40, 0) - 0.001f;
 }

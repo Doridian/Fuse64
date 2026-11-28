@@ -5,7 +5,7 @@
  * scheduling blocks, as the original's do.
  */
 #ifndef STATICS_PART
-static void func_ovl0A_04_800432F0(Obj04 *obj) {
+static void func_ovl0A_04_800432F0(UnkStructA *obj) {
     while (!(obj->unk40->unkC & 0x40)) {
         func_ovl0A_04_80045EA0();
     }

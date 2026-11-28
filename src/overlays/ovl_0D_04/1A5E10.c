@@ -43,24 +43,10 @@
  * (IDO -O3 emits a file's functions in reverse; docs/DECOMPILING.md).
  */
 
-typedef struct {
-    /* 0x00 */ u8 unk0[8];
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ PORT_RET(u8 unk10[0x18];, u8 unk10[0x10]; void *unk20; void *unk24;)
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ u8 unk2C[4];
-    /* 0x30 */ s32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ f32 unk38;
-    /* 0x3C */ PORT_RET(u8 unk3C[4];, void *unk3C;)
-    /* 0x40 */ UnkStructA_40 *unk40;
-} Obj_0D04;
-
 /* a model placed on the stage: the object, its collision handle, its model
  * id, its collision box, and its position (in tiles), angles and scale */
 typedef struct {
-    /* 0x00 */ Obj_0D04 *obj;
+    /* 0x00 */ UnkStructA *obj;
     /* 0x04 */ s32 unk4;
     /* 0x08 */ s32 unk8;
     /* 0x0C */ s16 unkC;
@@ -94,7 +80,7 @@ void func_ovl0D_04_80045988(void); /* 0xD0D */
 void func_ovl0D_04_800459D0(s32); /* 0xD16 */
 s32 func_ovl0D_04_800459D8(s32); /* 0xE00 */
 void func_ovl0D_04_800459E0(s32, s32, s32, s32, s32, s32, s32, s32); /* 0xE01 */
-void func_ovl0D_04_800459F0(void (*)(Obj_0D04 *)); /* 0xE03 */
+void func_ovl0D_04_800459F0(void (*)(UnkStructA *)); /* 0xE03 */
 void func_ovl0D_04_80045A00(s32, s32, s32); /* 0xF00 */
 s32 func_ovl0D_04_80045A08(void); /* 0xF01 */
 void func_ovl0D_04_80045A50(s32); /* 0xF0A */
@@ -134,12 +120,12 @@ void func_ovl0D_04_80046268(void); /* 0x1728 */
 void func_ovl0D_04_80046270(void); /* 0x1729 */
 void func_ovl0D_04_80046278(f32, f32); /* 0x172A */
 void func_ovl0D_04_800462A0(f32 *, f32 *); /* 0x1804 */
-s32 func_ovl0D_04_800462B8(Obj_0D04 *, s32); /* 0x1807 */
-void func_ovl0D_04_80046308(Obj_0D04 *, s32); /* 0x1811 */
-void func_ovl0D_04_80046310(Obj_0D04 *, s32); /* 0x1812 */
-void func_ovl0D_04_80046320(Obj_0D04 *); /* 0x1814 */
-Obj_0D04 *func_ovl0D_04_80046330(s32, s32, s32, PORT_IP(s32)); /* 0x1816 */
-Obj_0D04 *func_ovl0D_04_80046350(s32, s32, f32, f32, f32); /* 0x181A */
+s32 func_ovl0D_04_800462B8(UnkStructA *, s32); /* 0x1807 */
+void func_ovl0D_04_80046308(UnkStructA *, s32); /* 0x1811 */
+void func_ovl0D_04_80046310(UnkStructA *, s32); /* 0x1812 */
+void func_ovl0D_04_80046320(UnkStructA *); /* 0x1814 */
+UnkStructA *func_ovl0D_04_80046330(s32, s32, s32, PORT_IP(s32)); /* 0x1816 */
+UnkStructA *func_ovl0D_04_80046350(s32, s32, f32, f32, f32); /* 0x181A */
 void func_ovl0D_04_80046458(void (*)(void), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0D_04_80046468(void); /* 0x1902 */
 void func_ovl0D_04_80046478(s32); /* 0x1904 */
@@ -188,15 +174,15 @@ void func_ovl0D_04_80044D10(void);
 void func_ovl0D_04_80044D70(void);
 void func_ovl0D_04_80044D98(void);
 void func_ovl0D_04_80045160(s32);
-void func_ovl0D_04_800452F8(Obj_0D04 *);
-void func_ovl0D_04_8004533C(Obj_0D04 *, s32, s32, f32, f32);
+void func_ovl0D_04_800452F8(UnkStructA *);
+void func_ovl0D_04_8004533C(UnkStructA *, s32, s32, f32, f32);
 s32 func_ovl0D_04_80045414(s32, void *);
 void func_ovl0D_04_80045448(void);
 void func_ovl0D_04_80045544(f32, f32, f32);
 
 static void func_ovl0D_04_80043010(Ent_0D04 *);
 static void func_ovl0D_04_800433F0(Ent_0D04 *);
-static void func_ovl0D_04_800436BC(Obj_0D04 *);
+static void func_ovl0D_04_800436BC(UnkStructA *);
 static void func_ovl0D_04_80043EA8(s32, s32 *, s32 *);
 static s32 func_ovl0D_04_80043F1C(Ent_0D04 *);
 static void func_ovl0D_04_80043F24(Ent_0D04 *);
@@ -237,7 +223,7 @@ u8 D_ovl0D_04_80047040[0x4]; /* unused (func_ovl0D_04_800455B8) */
 s32 D_ovl0D_04_80047044;
 s32 D_ovl0D_04_80047048;
 Vec3f D_ovl0D_04_80047050;
-Obj_0D04 *D_ovl0D_04_8004705C;
+UnkStructA *D_ovl0D_04_8004705C;
 s32 D_ovl0D_04_80047060;
 s32 D_ovl0D_04_80047064;
 s32 D_ovl0D_04_80047068[3];
@@ -333,8 +319,8 @@ static void func_ovl0D_04_800455A0(void) {
 #include "overlays/common/core.h"
 
 void func_ovl0D_04_80045448(void) {
-    Obj_0D04 *self;
-    Obj_0D04 *o;
+    UnkStructA *self;
+    UnkStructA *o;
     s32 i;
     s32 n;
 
@@ -353,14 +339,14 @@ void func_ovl0D_04_80045448(void) {
     func_ovl0D_04_80046468();
 }
 
-void func_ovl0D_04_8004533C(Obj_0D04 *arg0, s32 arg1, s32 arg2, f32 arg3, f32 arg4) {
+void func_ovl0D_04_8004533C(UnkStructA *arg0, s32 arg1, s32 arg2, f32 arg3, f32 arg4) {
     arg0->unk40->unk28 = func_ovl0D_04_80046600((f32) arg1 / (f32) arg2 * 90.0f) * arg3;
     arg0->unk40->unk2C = func_ovl0D_04_80046600((f32) arg1 / (f32) arg2 * 180.0f) * arg4;
     arg0->unk40->unk36 = (s32) ((1.0f - (f32) arg1 / (f32) arg2) * 63.0f) + 0x80;
 }
 
 /* the callback func_ovl0D_04_80044D98 registers */
-void func_ovl0D_04_800452F8(Obj_0D04 *arg0) {
+void func_ovl0D_04_800452F8(UnkStructA *arg0) {
     func_ovl0D_04_80046310(arg0, 0x01000000);
     func_ovl0D_04_80046458(func_ovl0D_04_80045448, arg0, 0, 0, 0x150);
 }
@@ -923,7 +909,7 @@ void func_ovl0D_04_80043700(void) {
     }
 }
 
-static void func_ovl0D_04_800436BC(Obj_0D04 *o) {
+static void func_ovl0D_04_800436BC(UnkStructA *o) {
     o->unk40->unk48->unk4->unk4 = func_ovl0D_04_80046048(o->unk40, 0) - 0.001f;
 }
 

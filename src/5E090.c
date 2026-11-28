@@ -1,12 +1,5 @@
 #include "common.h"
-
-typedef struct {
-    /* 0x00 */ u8 unk0;
-    /* 0x01 */ u8 unk1[0xD];
-    /* 0x0E */ u8 unkE;
-    /* 0x0F */ u8 unkF;
-    /* 0x10 */ u8 unk10[0xC24];
-} UnkStruct_800B15D8; /* size 0xC34 */
+#include "grid.h"
 
 typedef struct {
     /* 0x00 */ u8 unk0[0xC];

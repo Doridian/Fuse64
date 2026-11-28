@@ -1,4 +1,5 @@
 #include "common.h"
+#include "grid.h"
 
 typedef struct {
     /* 0x00 */ u8 unk0[0x8];
@@ -50,17 +51,6 @@ typedef struct {
     /* 0x3C */ PORT_IP(s32) unk3C;
     /* 0x40 */ UnkStruct_8027CE10_C *unk40;
 } UnkStruct_802B01D0;
-
-typedef struct {
-    /* 0x00 */ u8 unk0;
-    /* 0x01 */ u8 unk1;
-    /* 0x02 */ u8 unk2;
-    /* 0x03 */ u8 unk3;
-    /* 0x04 */ u8 unk4[0xA];
-    /* 0x0E */ u8 unkE;
-    /* 0x0F */ u8 unkF;
-    /* 0x10 */ u8 unk10[0xC24];
-} UnkStruct_800B15D8; /* size 0xC34 */
 
 typedef struct {
     /* 0x00 */ u8 unk0[0x10];

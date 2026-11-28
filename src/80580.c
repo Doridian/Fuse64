@@ -53,13 +53,10 @@
  * one-variable condition matches; `== 0` is a guess).
  */
 #include "common.h"
+#include "m2c.h"
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 #define M2C_BITWISE(type, expr) ((type)(expr))
-typedef s32 M2C_UNK;
-typedef s8 M2C_UNK8;
-typedef s16 M2C_UNK16;
-typedef s32 M2C_UNK32;
 
 /* libultra's ALBankFile/ALBank/ALInstrument (libaudio.h), as the code reads them. */
 typedef struct SndInst {

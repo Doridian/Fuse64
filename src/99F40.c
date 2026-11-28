@@ -1,19 +1,5 @@
 #include "common.h"
-
-/* An 8x8 block of a map's cells */
-typedef struct {
-    /* 0x00 */ u8 unk0;
-    /* 0x01 */ u8 unk1;
-    /* 0x02 */ u16 unk2[64];
-} UnkStruct_800B5F30; /* size 0x82 */
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ u8 *unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ UnkStruct_800B5F30 unk10[24];
-} UnkStruct_800B5F20; /* size 0xC40 */
+#include "grid.h"
 
 void func_8026D620(s32, s32, s32, s32);
 s32 func_8026D7D8(s32, s32, s32);

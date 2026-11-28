@@ -25,23 +25,11 @@
  *   gives y - 1 its late slot.
  */
 #include "common.h"
+#include "tex.h"
 #define F3DEX_GBI
 #define _SHIFTL(v, s, w) ((unsigned int) (((unsigned int)(v) & ((0x01 << (w)) - 1)) << (s)))
 #define _SHIFTR(v, s, w) ((unsigned int)(((unsigned int)(v) >> (s)) & ((0x01 << (w)) - 1)))
 #include "ultralib/PR/gbi.h"
-
-/* One entry of a texture file's table (12 bytes, after a 12-byte header). */
-typedef struct {
-    /* 0x00 */ s32 type;
-    /* 0x04 */ u16 width;
-    /* 0x06 */ u16 height;
-    /* 0x08 */ s32 offset;
-} TexEntry; /* size 0xC */
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ TexEntry entries[1];
-} TexFile;
 
 #define ROUND(x) ((x) >= 0.0 ? (x) + 0.5f : (x) - 0.5f)
 #define TC(x) ((u16) ((s32) ROUND(x) << 6))

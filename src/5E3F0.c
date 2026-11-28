@@ -104,13 +104,11 @@
  * IDO would make these uninitialised globals common.
  */
 #include "common.h"
+#include "m2c.h"
+#include "grid.h"
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 #define M2C_BITWISE(type, expr) ((type)(expr))
-typedef s32 M2C_UNK;
-typedef s8 M2C_UNK8;
-typedef s16 M2C_UNK16;
-typedef s32 M2C_UNK32;
 #define FLAG_SET(x, f) ((((x) & (f)) == (f)) ? 1 : 0)
 #define FLAG_CLEAR(x, f) (!((x) & (f)) ? 1 : 0)
 
@@ -306,12 +304,6 @@ typedef struct {
     /* 0x08 */ f32 unk8;
     /* 0x0C */ f32 unkC;
 } Res58;
-
-/* func_8026DCAC's result: the grid cell and the position within it */
-typedef struct {
-    /* 0x00 */ s32 i[3];
-    /* 0x0C */ f32 f[3];
-} Unk8026DCAC;
 
 typedef struct {
     /* 0x00 */ f32 unk0;

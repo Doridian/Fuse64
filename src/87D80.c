@@ -44,46 +44,12 @@
  * taken). func_8026DCAC's `h = layer - 1` temporary was stale.
  */
 #include "common.h"
+#include "m2c.h"
+#include "grid.h"
+#include "ent.h"
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 #define M2C_BITWISE(type, expr) ((type)(expr))
-typedef s32 M2C_UNK;
-typedef s8 M2C_UNK8;
-typedef s16 M2C_UNK16;
-typedef s32 M2C_UNK32;
-
-typedef struct {
-    /* 0x00 */ s32 i[3];
-    /* 0x0C */ f32 f[3];
-} Unk8026DCAC;
-
-typedef struct Node87 {
-    /* 0x00 */ struct Node87 *next;
-    /* 0x04 */ s32 unk4;
-} Node87;
-
-typedef struct {
-    /* 0x00 */ u8 unk0;
-    /* 0x01 */ u8 unk1;
-    /* 0x02 */ u16 unk2[64];
-} UnkCell_800B15D8; /* size 0x82 */
-
-typedef struct {
-    /* 0x00 */ u8 unk0;
-    /* 0x01 */ u8 unk1;
-    /* 0x02 */ u8 unk2;
-    /* 0x03 */ u8 unk3;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s8 unkC;
-    /* 0x0D */ u8 unkD;
-    /* 0x0E */ u8 unkE;
-    /* 0x0F */ u8 unkF;
-    /* 0x10 */ u8 unk10;
-    /* 0x11 */ u8 unk11;
-    /* 0x12 */ UnkCell_800B15D8 unk12[23];
-    /* 0xBC0 */ u8 unkBC0[0x74];
-} UnkStruct_800B15D8; /* size 0xC34 */
 
 #ifdef TARGET_PC
 /* a layer's cell: a layer has as many as its stage gives (unk4 * unk8),
@@ -96,21 +62,6 @@ typedef struct {
 #endif
 
 #ifdef TARGET_PC
-/* 99F40.c's blocks of cells, which follow D_800B15D8 on the N64 */
-typedef struct {
-    /* 0x00 */ u8 unk0;
-    /* 0x01 */ u8 unk1;
-    /* 0x02 */ u16 unk2[64];
-} UnkStruct_800B5F30; /* size 0x82 */
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ u8 *unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ UnkStruct_800B5F30 unk10[24];
-} UnkStruct_800B5F20; /* size 0xC40 */
-
 extern UnkStruct_800B5F20 D_800B5F20[6];
 
 /* A cell past D_800B15D8's 0x4948 bytes: Blue Resort's 58:19 fills a box
@@ -155,147 +106,8 @@ static int port_cell_past(s32 layer, s32 cell, s32 slot, u16 v) {
 }
 #endif
 
-typedef struct {
-    /* 0x00 */ u8 pad0[0x10];
-    /* 0x10 */ f32 x;
-    /* 0x14 */ f32 y;
-    /* 0x18 */ f32 z;
-    /* 0x1C */ u8 pad1C[4];
-    /* 0x20 */ f32 rot;
-    /* 0x24 */ u8 pad24[4];
-    /* 0x28 */ f32 sx;
-    /* 0x2C */ f32 sy;
-    /* 0x30 */ f32 sz;
-} Sub8E; /* the object's transform */
-
-typedef struct {
-    /* 0x00 */ u8 pad0[8];
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ PORT_RET(u8 pad14[0x30 - 0x14];, u8 pad14[0xC]; void *unk20; void *unk24; u8 unk28[0x8];)
-    /* 0x30 */ s32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ f32 unk38;
-    /* 0x3C */ PORT_RET(u8 pad3C[4];, void *unk3C;)
-    /* 0x40 */ Sub8E *unk40;
-    /* 0x44 */ PORT_RET(u8 pad44[0x4C - 0x44];, void *unk44; u8 unk48[0x4];)
-    /* 0x4C */ f32 unk4C;
-    /* 0x50 */ f32 unk50;
-    /* 0x54 */ f32 unk54;
-    /* 0x58 */ f32 unk58;
-    /* 0x5C */ f32 unk5C;
-    /* 0x60 */ f32 unk60;
-    /* 0x64 */ u8 pad64[4];
-    /* 0x68 */ f32 unk68;
-    /* 0x6C */ f32 unk6C;
-    /* 0x70 */ f32 unk70;
-} Obj8E;
-
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ u8 pad2[6];
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ PORT_IP(s32) unkC; /* an object */
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ u8 pad12[0x1C - 0x12];
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-} Slot30; /* size 0x30 */
-
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 pad0[4];, void *unk0;)
-    /* 0x04 */ Obj8E *obj;
-    /* 0x08 */ Obj8E *unk8;
-    /* 0x0C */ Obj8E *unkC;
-    /* 0x10 */ s32 flags;
-    /* 0x14 */ s16 unk14;
-    /* 0x16 */ s16 unk16;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ s32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ f32 unk38;
-} Ctl87;
-
 #define SLOTS ((Slot30 *) D_802AFCE8)
 #define ABSF(x) ((x) < 0.0f ? -(x) : (x))
-
-typedef struct Ent88 {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ u8 pad2[2];
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ u8 pad12[2];
-    /* 0x14 */ struct Ent88 *next;
-    /* 0x18 */ struct Ent88 *prev;
-    /* 0x1C */ Obj8E *obj;
-    /* 0x20 */ Sub8E *xf;
-    /* 0x24 */ void *unk24[3];
-    /* 0x30 */ Obj8E *unk30;
-    /* 0x34 */ Obj8E *unk34;
-    /* 0x38 */ void *unk38;
-    /* 0x3C */ s16 unk3C;
-    /* 0x3E */ u8 pad3E[2];
-    /* 0x40 */ f32 x;
-    /* 0x44 */ f32 y;
-    /* 0x48 */ f32 z;
-    /* 0x4C */ f32 unk4C;
-    /* 0x50 */ f32 unk50;
-    /* 0x54 */ f32 unk54;
-    /* 0x58 */ u8 pad58[4];
-    /* 0x5C */ s16 unk5C;
-    /* 0x5E */ s16 unk5E;
-    /* 0x60 */ s16 unk60;
-    /* 0x62 */ s16 unk62;
-    /* 0x64 */ s16 unk64;
-    /* 0x66 */ s16 unk66;
-    /* 0x68 */ s16 unk68;
-    /* 0x6A */ u8 pad6A[0x74 - 0x6A];
-    /* 0x74 */ s16 unk74;
-    /* 0x76 */ u8 pad76[2];
-    /* 0x78 */ f32 unk78;
-    /* 0x7C */ f32 unk7C;
-    /* 0x80 */ f32 unk80;
-    /* 0x84 */ f32 unk84;
-} Ent88; /* size 0x88 */
-
-typedef struct {
-    /* 0x00 */ u8 pad0[0x18];
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ s16 unk1C;
-    /* 0x1E */ s16 unk1E;
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ u8 pad24[4];
-#ifdef TARGET_PC
-    /* (D_800AEDF0's pointers as wide as the host's: 5E3F0.c's
-       UnkStruct_800AEDF0) */
-    /* 0x28 */ intptr_t unk28;
-    /* 0x2C */ intptr_t unk2C;
-    /* 0x30 */ intptr_t unk30;
-    /* 0x34 */ u8 pad34[0x40 - 0x34];
-    /* 0x40 */ intptr_t unk40;
-    /* 0x44 */ u8 pad44[0x4C - 0x44];
-    /* 0x4C */ intptr_t unk4C;
-    /* 0x50 */ u8 pad50[0xB0 - 0x50];
-    /* 0xB0 */ intptr_t unkB0;
-    /* 0xB4 */ intptr_t unkB4;
-    /* 0xB8 */ u8 padB8[0xC8 - 0xB8];
-#else
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ u8 pad2C[0xC8 - 0x2C];
-#endif
-} Player87; /* size 0xC8 */
 
 #ifdef TARGET_PC
 #define ENT_HEAD (ENTS[0].next) /* D_8008F44C, its own name on the N64 */

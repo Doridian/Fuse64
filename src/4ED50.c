@@ -1,4 +1,5 @@
 #include "common.h"
+#include "grid.h"
 
 typedef struct {
     /* 0x0 */ f32 x;
@@ -122,14 +123,7 @@ s32 D_802A0038 = 0;
 extern f32 D_8008F430;
 #define ABS(x) ((x) < 0.0f ? -(x) : (x))
 
-typedef struct {
-    /* 0x0 */ s32 unk0;
-    /* 0x4 */ s32 unk4;
-    /* 0x8 */ s32 unk8;
-    /* 0xC */ u8 unkC[0xC];
-} UnkStruct_8026DCAC; /* size 0x18 */
-
-void func_8026DCAC(f32, f32, f32, UnkStruct_8026DCAC *, s32);
+void func_8026DCAC(f32, f32, f32, Unk8026DCAC *, s32);
 s32 func_8026EE18(f32);
 s32 func_8026D7D8(s32, s32, s32);
 void func_802358D0(void *, s32, s16);
@@ -1109,7 +1103,7 @@ void func_80234F6C(s32 arg0) {
 s32 func_80234DD4(f32 arg0, f32 arg1, f32 arg2, UnkStruct_80234DD4 *arg3) {
     Vec3f_8008E648 sp8C;
     Vec3f_8008E648 sp80;
-    UnkStruct_8026DCAC sp68;
+    Unk8026DCAC sp68;
     s32 ret;
 
     sp80.x = arg0;
@@ -1122,13 +1116,13 @@ s32 func_80234DD4(f32 arg0, f32 arg1, f32 arg2, UnkStruct_80234DD4 *arg3) {
         sp8C.y += arg3->unk14;
         sp8C.z += arg3->unk18 + 50.0f;
         func_8026DCAC(sp8C.x, sp8C.y, sp8C.z, &sp68, 0);
-        if (sp68.unk4) { // fake (permuter): an empty test that changes IDO's
+        if (sp68.i[1]) { // fake (permuter): an empty test that changes IDO's
         }                // float register priorities (arg2 in $f22)
-        sp68.unk4 = func_8026EE18(sp8C.y);
-        if (sp68.unk4 >= func_8026EE18(5000.0f)) {
+        sp68.i[1] = func_8026EE18(sp8C.y);
+        if (sp68.i[1] >= func_8026EE18(5000.0f)) {
             break;
         }
-        ret = func_8026D7D8(sp68.unk0, sp68.unk4, sp68.unk8);
+        ret = func_8026D7D8(sp68.i[0], sp68.i[1], sp68.i[2]);
         if ((ret & 0xF) == 0xF || ret == 0x2010) {
             break;
         }

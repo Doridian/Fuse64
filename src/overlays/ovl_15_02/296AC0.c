@@ -146,12 +146,12 @@
  * or more (scratch/bsscheck.sh: every symbol at its address, .bss 0x230).
  */
 #include "common.h"
+#include "m2c.h"
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 
 #define W360(v) (((v) >= 360.0f) ? (v) - 360.0f : ((v) < 0.0f) ? (v) + 360.0f : (v))
 
-typedef s32 M2C_UNK;
 #define M2C_BITWISE(t, e) ((t) (e))
 typedef struct {
     /* 0x0 */ UnkStructA *a;

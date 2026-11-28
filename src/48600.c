@@ -132,13 +132,11 @@
  * pos = sp110 + spC8 is written spC8 + sp110.
  */
 #include "common.h"
+#include "m2c.h"
+#include "grid.h"
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 #define M2C_BITWISE(type, expr) ((type)(expr))
-typedef s32 M2C_UNK;
-typedef s8 M2C_UNK8;
-typedef s16 M2C_UNK16;
-typedef s32 M2C_UNK32;
 
 /* A test cylinder in func_8022E884's cases 12 and 20 (centre, radius,
  * height). */
@@ -239,11 +237,6 @@ s32 func_8026D7D8(s32, s32, s32);
 u8 func_8026DC74(s32);
 void func_8026DCAC(f32, f32, f32, void *, s32);
 
-/* func_8026DCAC's result: the grid cell and the position within it */
-typedef struct {
-    /* 0x00 */ s32 i[3];
-    /* 0x0C */ f32 f[3];
-} Unk8026DCAC;
 void func_8026E6E4(void *, f32 *, f32 *);
 f32 func_8026E8B8(void);
 f32 func_8026E938(void *);

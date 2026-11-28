@@ -211,6 +211,7 @@
  * jp lacks one height test in func_802553D4 (VERSION_JP); eu is us.
  */
 #include "common.h"
+#include "m2c.h"
 
 typedef struct { s32 n; f32 f4; s32 unk8; f32 fC; } SeqA; /* 0x10 */
 typedef struct { s32 n; u16 v; } SeqB; /* 0x8 */
@@ -221,10 +222,6 @@ typedef struct { f32 f0; f32 f4; f32 f8; u16 vC; u16 vE; } SeqOut;
 #define FDIFF(a, b) ((a) < (b) ? -((a) - (b)) : ((a) - (b)))
 #define W360(a) ((a) >= 360.0f ? (a) - 360.0f : ((a) < 0.0f ? (a) + 360.0f : (a)))
 #define M2C_BITWISE(type, expr) ((type)(expr))
-typedef s32 M2C_UNK;
-typedef s8 M2C_UNK8;
-typedef s16 M2C_UNK16;
-typedef s32 M2C_UNK32;
 
 typedef struct {
     /* 0x00 */ f32 unk0;

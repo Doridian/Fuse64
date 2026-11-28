@@ -150,13 +150,11 @@
  *   and only orders the address.
  */
 #include "common.h"
+#include "m2c.h"
+#include "tex.h"
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 #define M2C_BITWISE(type, expr) ((type)(expr))
-typedef s32 M2C_UNK;
-typedef s8 M2C_UNK8;
-typedef s16 M2C_UNK16;
-typedef s32 M2C_UNK32;
 
 #define F3DEX_GBI
 #define _SHIFTL(v, s, w) ((unsigned int) (((unsigned int)(v) & ((0x01 << (w)) - 1)) << (s)))
@@ -286,19 +284,6 @@ typedef struct {
 } Player54E40; /* size 0xC8 */
 
 #define PLAYERS ((Player54E40 *) D_800AEDF0)
-
-/* One entry of a texture file's table (12 bytes, after a 12-byte header). */
-typedef struct {
-    /* 0x00 */ s32 type;
-    /* 0x04 */ u16 width;
-    /* 0x06 */ u16 height;
-    /* 0x08 */ s32 offset;
-} TexEntry; /* size 0xC */
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ TexEntry entries[1];
-} TexFile;
 
 /* A picture drawn by func_80242270: its entry and its rectangle. */
 typedef struct {

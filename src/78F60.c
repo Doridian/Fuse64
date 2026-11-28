@@ -27,6 +27,7 @@
  *   `if (!(tileH - i)) {}`, which the others made unnecessary.)
  */
 #include "common.h"
+#include "tex.h"
 #define F3DEX_GBI
 #define _SHIFTL(v, s, w) ((unsigned int) (((unsigned int)(v) & ((0x01 << (w)) - 1)) << (s)))
 #define _SHIFTR(v, s, w) ((unsigned int)(((unsigned int)(v) >> (s)) & ((0x01 << (w)) - 1)))
@@ -37,18 +38,6 @@
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif
 #include "ultralib/PR/gbi.h"
-
-typedef struct {
-    /* 0x00 */ s32 type;
-    /* 0x04 */ u16 width;
-    /* 0x06 */ u16 height;
-    /* 0x08 */ s32 offset;
-} TexEntry; /* size 0xC */
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ TexEntry entries[1];
-} TexFile;
 
 /* Rounding to nearest: to an int in each arm, or a float/double to convert later. */
 #define RNDI(x) ((x) >= 0.0f ? (s32) ((x) + 0.5f) : (s32) ((x) - 0.5f))

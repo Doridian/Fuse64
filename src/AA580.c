@@ -191,6 +191,7 @@
  *   so no check would test it.
  */
 #include "common.h"
+#include "grid.h"
 
 typedef struct {
     /* 0x0 */ s32 unk0;
@@ -224,18 +225,6 @@ typedef struct {
     /* 0x1C */ u8 unk1C[0x34];
 } UnkStruct_80290498;
 
-typedef struct {
-    /* 0x0 */ s32 unk0;
-    /* 0x4 */ s32 unk4;
-    /* 0x8 */ s32 unk8;
-    /* 0xC */ u8 unkC[0xC];
-} UnkStruct_8026DCAC; /* size 0x18 */
-
-typedef struct {
-    /* 0x00 */ u8 unk0;
-    /* 0x01 */ u8 unk1[0xC33];
-} UnkStruct_800B15D8; /* size 0xC34 */
-
 extern UnkStruct_800B15D8 D_800B15D8[];
 
 void func_80230914(UnkStructA *);
@@ -243,7 +232,7 @@ f32 func_80234408(f32);
 f32 func_80234434(f32);
 void func_80239094(void);
 s32 func_8026D7D8(s32, s32, s32);
-void func_8026DCAC(f32, f32, f32, UnkStruct_8026DCAC *, s32);
+void func_8026DCAC(f32, f32, f32, Unk8026DCAC *, s32);
 void func_8026E338(f32, f32, f32, f32 *, s32);
 void func_8026E6E4(UnkStructA_40 *, f32 *, f32 *);
 f32 func_8026E938(void *);
@@ -996,11 +985,11 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
     f32 e;
     f32 h;
     f32 sinA;
-    UnkStruct_8026DCAC cell;
-    UnkStruct_8026DCAC prevCell;
+    Unk8026DCAC cell;
+    Unk8026DCAC prevCell;
     f32 sinB;
-    UnkStruct_8026DCAC prevCell2;
-    UnkStruct_8026DCAC cell2;
+    Unk8026DCAC prevCell2;
+    Unk8026DCAC cell2;
     f32 g;
 
     y0 = obj->unk40->unk14;
@@ -1083,10 +1072,10 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
         } else if (angle == 0.0f && c != 0.0f) {
             func_8026DCAC(obj->unk40->unk10, obj->unk40->unk14, obj->unk40->unk18, &cell, 2);
             func_8026DCAC(obj->unk58, obj->unk5C, obj->unk60, &prevCell, 2);
-            if ((e == 0.0f && (cell.unk8 - 1 == prevCell.unk8 || dir == 0x80)) ||
-                (e == 90.0f && (cell.unk0 - 1 == prevCell.unk0 || dir == 0x40)) ||
-                (e == 180.0f && (cell.unk8 + 1 == prevCell.unk8 || dir == 0)) ||
-                (e == 270.0f && (cell.unk0 + 1 == prevCell.unk0 || dir == 0xC0))) {
+            if ((e == 0.0f && (cell.i[2] - 1 == prevCell.i[2] || dir == 0x80)) ||
+                (e == 90.0f && (cell.i[0] - 1 == prevCell.i[0] || dir == 0x40)) ||
+                (e == 180.0f && (cell.i[2] + 1 == prevCell.i[2] || dir == 0)) ||
+                (e == 270.0f && (cell.i[0] + 1 == prevCell.i[0] || dir == 0xC0))) {
                 obj->unk40->unk14 = func_8026EAF8(obj);
                 h = func_8026E938(obj->unk40);
                 if (h != 20000.0f && obj->unk40->unk14 <= h + 100.0f) {
@@ -1098,7 +1087,7 @@ void func_80291944(UnkStructA *obj, s32 dir, f32 speed) {
         g = func_8026EAF8(obj);
         func_8026DCAC(obj->unk40->unk10, obj->unk40->unk14, obj->unk40->unk18, &cell2, 2);
         func_8026DCAC(obj->unk58, obj->unk5C, obj->unk60, &prevCell2, 2);
-        if (prevCell2.unk0 != cell2.unk0 || prevCell2.unk8 != cell2.unk8) {
+        if (prevCell2.i[0] != cell2.i[0] || prevCell2.i[2] != cell2.i[2]) {
             if (obj->unk40->unk14 < g) {
                 obj->unk40->unk14 = g;
             }

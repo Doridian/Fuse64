@@ -525,7 +525,7 @@ static void func_8028B670(UnkStruct_800BC528 *e, s32 kind, s32 mode, f32 scale, 
     s32 step;
     f32 t;
     s32 dir;
-    f32 speed = 1.5f;
+    f32 speed = 1.5f; /* fake: the speed held in a local fills its frame slot (a guess among held values: header) */
 
     step = 1;
     t = 0.0f;

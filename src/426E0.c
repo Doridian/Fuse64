@@ -35,7 +35,11 @@
  *   statics (model, chunks, index, found index, an unused one), which
  *   uopt keeps in registers and stores back where a region ends; the
  *   kind stays a local. `kind | 0` as the call argument keeps kind out
- *   of a2 (the chunk count takes it), and a test of arg0 first (a
+ *   of a2 (the chunk count takes it; the fake; passing D_8029F850, just
+ *   stored, or `D_8029F850 = kind` as the argument, is forwarded the same
+ *   way but keeps the global's address in v0 for its store, 1 word more;
+ *   kind as s8/s16/u32/static, a result local, the store after the call,
+ *   or a local chunk count don't do it), and a test of arg0 first (a
  *   compiled-out debug check, see below) gives arg0's copy t0 before kind.
  * - func_8022946C: `i = D_800A0D00[idx].unk0` before `p = ...` (i first
  *   seen first takes v1). func_8022997C: `s = D_80098C68; do {` on one
@@ -63,8 +67,13 @@
  *   and `count + 1` stored back), and tests the threshold directly (slt
  *   at). `anim->unk4 == anim->unk0 - 1` keeps the two unk4 + 1 apart.
  *   The unkC & 2 call goes through a function-pointer local loaded after
- *   the D_802A5470 store (jalr v0, not t9). An `s32 pad[2]` in
- *   func_802284F8 gives the 0x160 frame and puts that obj's home at 0xB0.
+ *   the D_802A5470 store (jalr v0, not t9). func_802284F8 has one
+ *   word of locals more than its code needs (the 0x160 frame, that obj's
+ *   home at 0xB0): any one local of its own fills it (an unused `s32 pad`
+ *   anywhere after mf, or the `flags` copy of unkC it has now; one word,
+ *   not the two the old pad took), while an unused local in the other
+ *   inlined statics or the caller takes no space or the wrong one. Which
+ *   local it was is a guess.
  *   func_802289B8 is defined after func_802289C0: IDO -O3 emits the
  *   procedures in its own order (the stub stays before the caller), but
  *   an inlined static keeps its definition's .loc lines, and as1 orders
@@ -111,16 +120,25 @@
  *   So `i = 0;` is a statement of its own, before `if (!arg0) {}` (which
  *   ends that block) and an init-less `for (; i != 2; i++)`, all on one
  *   line: on separate lines `move t1,zero` is scheduled first (as1 orders
- *   by .loc line; the original's comes after the li of 2). w is arg1
+ *   by .loc line; the original's comes after the li of 2).
+ *   Tried (fakes pass 3): the three on separate lines (4 words,
+ *   schedule only), `for (i = 0; ...)` with the test before it (26), the
+ *   test first (30), `i = 0` before `first` (10-12); the test's braces
+ *   holding a DEBUG_PRINT is the same code as `{}`. w is arg1
  *   again (after the loop), which gives it a1.
  * - func_80229448: the empty loop survives only as `i * 4 !=
  *   16` (a plain `i < 4` is deleted, the multiply is what uopt
  *   strength-reduces after its dead-loop pass). A local counter takes
  *   v0 in the entry block and pushes the IV to v1; a third parameter as
  *   the counter can't use v0/v1 there (uopt forbids them to a parameter
- *   in the entry block), so the IV gets v0 and 16 v1. The 16 assigned
- *   to a local inside the test (`!= (n = 16)`) gives bne the original's
- *   operand order (IV first).
+ *   in the entry block), so the IV gets v0 and 16 v1. The original's
+ *   entry stores a0's and a1's homes but not a2's, as IDO does for unused
+ *   parameters: a2 is assigned, so the counter is arg2 (not a fake). The
+ *   16 assigned to a local inside the test (`!= (n = 16)`) gives bne the
+ *   original's operand order (IV first): the fake. `i * 4 != 16`, `16 !=
+ *   i * 4`, `!(... == 16)`, `* sizeof(s32)`, u32 casts, while and
+ *   do-while all give bne v1,v0; `n = 16` before the loop or in the for
+ *   init, `- 16`, `^ 16`, `< 16` and pointer forms are worse.
  * - Fakes pass 7: the empty tests of func_8022A328 (arg1, c),
  *   func_8022A6C4 (arg0) and func_80229C10 (arg1, arg2, chunks) are
  *   argument and pointer checks around compiled-out debug prints
@@ -800,7 +818,7 @@ void func_8022946C(UnkStructA_40 *arg0, s32 arg1) {
 void func_80229448(s32 arg0, s32 arg1, s32 arg2) {
     s32 n;
 
-    for (arg2 = 0; arg2 * 4 != (n = 16); arg2++) { /* fake: arg2 as the counter and `(n = 16)` for the registers and bne order (header) */
+    for (arg2 = 0; arg2 * 4 != (n = 16); arg2++) { /* fake: `(n = 16)` for the bne order (header) */
     }
 }
 
@@ -963,7 +981,7 @@ static s32 func_802284F8(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     f32 rx;
     f32 ry;
     f32 rz;
-    s32 pad[2]; /* fake: frame-tuned: the 0x160 frame, obj home at 0xB0 (header) */
+    s32 flags; /* fake: a guess at the frame's one extra word (header) */
 
     pushed = 0;
     gfx = *arg1;
@@ -973,10 +991,11 @@ static s32 func_802284F8(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     D_802A5368++;
     func_8029CA80(mf, arg0->unk10, arg0->unk14, arg0->unk18);
     rx = arg0->unk1C;
-    ry = ((arg0->unkC & 0x2000) ? D_802A5468 : 0) + arg0->unk20;
+    flags = arg0->unkC;
+    ry = ((flags & 0x2000) ? D_802A5468 : 0) + arg0->unk20;
     rz = arg0->unk24;
     if (rx != 0.0f || ry != 0.0f || rz != 0.0f) {
-        if (arg0->unkC & 0x10000) {
+        if (flags & 0x10000) {
             func_8029C7A8(mf, rx, ry, rz);
         } else {
             func_8029C8D0(mf, rx, ry, rz);

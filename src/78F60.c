@@ -100,7 +100,7 @@ static void func_8025EC44(Gfx **gfxp, s32 x0, s32 y0, s32 x1, s32 y1, s32 mode, 
     s32 tileW;
     s32 tileH;
     s32 k;
-    s32 l;
+    s32 l; /* fake: a guess among held values (the slot is real; l as the y offset is a guess: header) */
     s32 flags;
     f32 scaleX;
     f32 scaleY;
@@ -114,7 +114,7 @@ static void func_8025EC44(Gfx **gfxp, s32 x0, s32 y0, s32 x1, s32 y1, s32 mode, 
     s32 yl;
     s32 xh;
     s32 yh;
-    s32 lrs;
+    s32 lrs; /* fake: a guess among held values (lrs/lrt held before the LoadTile call fill the slots: header) */
     s32 lrt;
 
     gfx = *gfxp;

@@ -338,4 +338,16 @@ typedef struct {
     /* 0x20 */ s32 unk20;
 } UnkStruct_ovl0F_01_80048130;
 
+/* a mover (D_ovl0F_01_800481D4): direction, speed, acceleration, route */
+typedef struct {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ f32 unk4;
+    /* 0x08 */ f32 unk8;
+    /* 0x0C */ s32 unkC;
+    /* 0x10 */ u8 unk10;
+    /* 0x11 */ u8 unk11;
+    /* 0x12 */ u16 unk12;
+    /* 0x14 */ s32 unk14;
+} UnkStruct_ovl0F_01_800481D4; /* size 0x18 */
+
 #endif

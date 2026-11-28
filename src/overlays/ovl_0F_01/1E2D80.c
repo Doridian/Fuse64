@@ -139,18 +139,6 @@ typedef struct {
     /* 0x04 */ f32 unk4;
 } UnkStruct_ovl0F_01_8004815C; /* size 0x8 */
 
-/* a mover (D_ovl0F_01_800481D4): direction, speed, acceleration, route */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ u8 unk10;
-    /* 0x11 */ u8 unk11;
-    /* 0x12 */ u16 unk12;
-    /* 0x14 */ s32 unk14;
-} UnkStruct_ovl0F_01_800481D4; /* size 0x18 */
-
 /* the movers' script (D_ovl0F_01_80048938) */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
@@ -1233,7 +1221,7 @@ void func_ovl0F_01_80043B0C(void) {
     func_ovl0F_01_80047760(50.0f, 50.0f, 50.0f);
     func_ovl0F_01_80047750(20);
     D_ovl0F_01_80048420 = 2;
-#line 1222 /* fake: renumbers the lines (as1 orders a block partly by .loc line); the loop as one of the list-only stubs (80043AEC, i its local) orders it, but its area is 16 bytes: x/sv 8/16 off */
+#line 1210 /* fake: renumbers the lines (as1 orders a block partly by .loc line); the loop as one of the list-only stubs (80043AEC, i its local) orders it, but its area is 16 bytes: x/sv 8/16 off */
     for (i = 0; i < 3; i++) {
         D_ovl0F_01_80048738[i]->unkC = 0;
         func_ovl0F_01_80047840(D_ovl0F_01_80048738[i], 0x01000030);

@@ -117,18 +117,6 @@ typedef struct {
     /* 0x5C */ void (*unk5C)(void);
 } UnkStruct_ovl0F_02_800489F4; /* size 0x60 */
 
-/* a mover's state */
-typedef struct {
-    /* 0x00 */ s32 unk0; /* heading, 0x00-0xE0 */
-    /* 0x04 */ f32 unk4; /* speed */
-    /* 0x08 */ f32 unk8; /* acceleration */
-    /* 0x0C */ s32 unkC; /* frames on this step */
-    /* 0x10 */ u8 unk10; /* path */
-    /* 0x11 */ u8 unk11; /* 0 gone, 1 moving, 2 hit */
-    /* 0x12 */ u16 unk12; /* step */
-    /* 0x14 */ s32 unk14;
-} UnkStruct_ovl0F_02_800486A4; /* size 0x18 */
-
 /* a step of a mover's path */
 typedef struct {
     /* 0x00 */ u16 unk0; /* frames */
@@ -418,7 +406,7 @@ UnkStruct_ovl0F_02_8004862C D_ovl0F_02_8004862C[3][5] = {
     },
 };
 /* the movers' state */
-UnkStruct_ovl0F_02_800486A4 D_ovl0F_02_800486A4[6] = {
+UnkStruct_ovl0F_01_800481D4 D_ovl0F_02_800486A4[6] = {
     { 0x40, 1.0f, 0.0f, 0, 0, 0, 0, 1 },
     { 0x40, 1.0f, 0.0f, 0, 0, 0, 0, 1 },
     { 0x40, 1.0f, 0.0f, 0, 0, 0, 0, 1 },
@@ -887,7 +875,7 @@ static void func_ovl0F_02_80044D18(s32 idx) {
 
 /* the script's command: a mover (re)starts; with flag 0 it stays stopped */
 void func_ovl0F_02_80044D20(s32 idx, s32 flag) {
-    UnkStruct_ovl0F_02_800486A4 *m;
+    UnkStruct_ovl0F_01_800481D4 *m;
     UnkStructA *obj;
 
     if (idx < 0) { /* a compiled-out debug check, as 0F_04's (the condition is a guess: any test of idx matches) */
@@ -1024,7 +1012,7 @@ void func_ovl0F_02_80044824(UnkStructA *arg0) {
 void func_ovl0F_02_80043FEC(void) {
     s32 active;
     s32 i;
-    UnkStruct_ovl0F_02_800486A4 *st; /* unused, as rec, step and player: with fewer, unk16's store addresses the symbol (2 words) */
+    UnkStruct_ovl0F_01_800481D4 *st; /* unused, as rec, step and player: with fewer, unk16's store addresses the symbol (2 words) */
     UnkStruct_ovl0F_02_80048734 *rec;
     UnkStruct_ovl0F_02_8004862C *step;
     UnkStructA *obj;

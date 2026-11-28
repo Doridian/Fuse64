@@ -236,7 +236,7 @@ void func_ovl0E_09_800444F0(UnkStructA *arg0) {
 
 void func_ovl0E_09_80043F8C(void) {
     s16 moving;
-    f32 h; /* a guess: any float held here fills the slot (1200.0f, 4.0f too) */
+    f32 h; /* fake: a held value filling the frame word between moving and rec (which is a guess: any float held here fills it, 1200.0f, 4.0f too) */
     UnkStruct_ovl0E_09_80045DCC *rec;
     UnkStructA *obj;
     s16 doneX;

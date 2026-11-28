@@ -317,7 +317,9 @@ void func_ovl0E_05_8004433C(void) {
 
 void func_ovl0E_05_80043EDC(void) {
     UnkStructA_40 *p;
-    /* a guess: two held floats fill these slots (any two do) */
+    /* fake: lim and h are held values filling the two frame words between p and rec (which
+     * values is a guess: any two do; an inlined call's block lies below the caller's locals:
+     * as in ovl_0E_02, two inlined empty calls give the size but move a and b) */
     f32 lim;
     f32 h;
     UnkStruct_ovl0E_02_8004648C *rec;

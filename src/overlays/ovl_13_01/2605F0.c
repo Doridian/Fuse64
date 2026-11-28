@@ -1745,7 +1745,7 @@ void func_ovl13_01_80046800(void) {
 void func_ovl13_01_800465FC(f32 *arg0, f32 *arg1) {
     f32 d;
     f32 lim;
-    f32 hi; /* the clamp's upper limit held (a guess: any held value fills the slot) */
+    f32 hi; /* fake: the clamp's upper limit held (a guess: any held value fills the slot) */
     Vec3f sp38;
     Vec3f sp2C;
 
@@ -2000,7 +2000,7 @@ void func_ovl13_01_800455D0(s32 arg0) {
     Vec3f sp6C;
     Vec3f sp60;
     Vec3f sp54;
-    f32 frames; /* the approach's length held (a guess: any held value fills the slot, 800.0f too) */
+    f32 frames; /* fake: the approach's length held (a guess: any held value fills the slot, 800.0f too) */
     f32 sp4C;
     f32 speed;
     s32 i;
@@ -2211,7 +2211,7 @@ void func_ovl13_01_800446FC(void) {
     f32 z;
     f32 step;
     Vec3f sp84;
-    f32 k; /* the approach speed's factor held (a guess: any held value fills the slot) */
+    f32 k; /* fake: the approach speed's factor held (a guess: any held value fills the slot) */
     f32 sp7C;
     s32 i;
     s32 n;

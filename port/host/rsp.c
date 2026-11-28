@@ -22,6 +22,7 @@ uint8_t rsp_dmem[4096];
 uint8_t rsp_imem[4096];
 uint32_t rsp_r[32];
 rsp_dma_fn rsp_dma;
+long rsp_ran;
 void (*rsp_trace)(uint32_t pc, uint32_t insn);
 
 static uint16_t vr[32][8];
@@ -36,8 +37,24 @@ static uint32_t cop0[16];
 
 /* ---- memory ---------------------------------------------------------------------------- */
 
+#ifdef PORT_RSP_WATCH
+/* (a debugging build: which DMEM bytes a run reads before anything wrote
+   them since rsp_watch_clear: what a task takes from the last one) */
+uint8_t rsp_watch_written[4096];
+uint32_t rsp_watch_stale[4096];
+uint16_t rsp_watch_pc[4096];          /* the first instruction that did */
+static uint32_t watch_pc;
+void rsp_watch_clear(void) { memset(rsp_watch_written, 0, sizeof rsp_watch_written); }
+static inline uint8_t dm8(uint32_t a) {
+    if (!rsp_watch_written[a & 0xFFF] && !rsp_watch_stale[a & 0xFFF]++)
+        rsp_watch_pc[a & 0xFFF] = (uint16_t)(watch_pc | 0x1000);
+    return rsp_dmem[a & 0xFFF];
+}
+static inline void dw8(uint32_t a, uint8_t v) { rsp_dmem[a & 0xFFF] = v; rsp_watch_written[a & 0xFFF] = 1; }
+#else
 static inline uint8_t dm8(uint32_t a) { return rsp_dmem[a & 0xFFF]; }
 static inline void dw8(uint32_t a, uint8_t v) { rsp_dmem[a & 0xFFF] = v; }
+#endif
 
 static inline uint32_t dm32(uint32_t a) {
     return (uint32_t)dm8(a) << 24 | (uint32_t)dm8(a + 1) << 16 | (uint32_t)dm8(a + 2) << 8 | dm8(a + 3);
@@ -568,6 +585,10 @@ static void dma(int write) {
             uint32_t k = 0x1000 - off < n ? 0x1000 - off : n;
             if (rsp_dma)
                 rsp_dma(write, d, m + off, k);
+#ifdef PORT_RSP_WATCH
+            if (!write && m == rsp_dmem)
+                memset(rsp_watch_written + off, 1, k);
+#endif
             d += k;
             n -= k;
             off = 0;
@@ -632,12 +653,17 @@ int rsp_run(uint32_t pc, const uint32_t *stops, int nstops, long limit) {
     pc &= 0xFFC;
     for (long n = 0; n < limit; n++) {
         for (int k = 0; k < nstops; k++)
-            if (pc == (stops[k] & 0xFFC))
+            if (pc == (stops[k] & 0xFFC)) {
+                rsp_ran = n;
                 return (int)pc;
+            }
         const uint8_t *ip = rsp_imem + pc;
         uint32_t w = (uint32_t)ip[0] << 24 | (uint32_t)ip[1] << 16 | (uint32_t)ip[2] << 8 | ip[3];
         if (rsp_trace)
             rsp_trace(pc, w);
+#ifdef PORT_RSP_WATCH
+        watch_pc = pc;
+#endif
         uint32_t nnpc = (npc + 4) & 0xFFC;
         int rs = (w >> 21) & 31, rt = (w >> 16) & 31, rd = (w >> 11) & 31;
         int32_t imm = (int16_t)w;
@@ -660,6 +686,7 @@ int rsp_run(uint32_t pc, const uint32_t *stops, int nstops, long limit) {
                 break;
             }
             case 0x0D:
+                rsp_ran = n + 1;
                 return -1;
             case 0x20: case 0x21: R[rd] = R[rs] + R[rt]; break;
             case 0x22: case 0x23: R[rd] = R[rs] - R[rt]; break;
@@ -747,5 +774,6 @@ int rsp_run(uint32_t pc, const uint32_t *stops, int nstops, long limit) {
         pc = npc;
         npc = nnpc;
     }
+    rsp_ran = limit;
     return -2;
 }

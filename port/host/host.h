@@ -88,6 +88,11 @@ void port_alloc_reset(void);            /* port/src/memory.c: port_alloc's arena
 void host_vi_reset(void);               /* vi.c */
 void host_ai_reset(void);               /* audio.c */
 void host_asp_reset(void);              /* aspmain.c */
+/* asp_lle.c: --audio lle, the audio microcode on the RSP interpreter */
+extern int host_audio_lle;
+void host_asp_lle_reset(void);
+void host_asp_lle_task(const void *cmd, uint32_t data_size, const void *boot, uint32_t boot_size, const void *text,
+                       const void *data);
 void host_gfx_reset(uint32_t clean);    /* gfx.c: the hidden bits below clean too */
 void host_input_reset(void);            /* input.c: --replay's next part */
 int host_replay_seed(unsigned *seed);   /* input.c: --replay's part's `# seed N` */

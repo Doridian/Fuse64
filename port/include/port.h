@@ -162,7 +162,10 @@ void host_gfx_sync_range(const void *p, size_t n);     /* n bytes at p */
    the size of its matrix stack in RDRAM */
 void host_gfx_ucode(const void *boot, uint32_t boot_size, const void *text, uint32_t text_size, const void *data,
                     uint32_t data_size, uint32_t dram_stack_size);
-void host_audio_task(const void *data_ptr, uint32_t data_size, const void *ucode_data);
+/* an audio task: its command list, and the microcode (rspboot, aspMain's
+   text and data) */
+void host_audio_task(const void *data_ptr, uint32_t data_size, const void *boot, uint32_t boot_size, const void *text,
+                     const void *ucode_data);
 /* the VI's registers (VI_STATUS_REG to VI_Y_SCALE_REG, in their order)
    as libultra last wrote them (__osViSwapContext), the origin RDRAM's
    physical address; port/host/vi.c makes the picture from them.  fb is

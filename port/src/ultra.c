@@ -583,7 +583,8 @@ void osSpTaskStartGo(OSTask *t) {
     } else {
         if (t->t.type == M_AUDTASK)
             host_audio_task(port_addr((uintptr_t)t->t.data_ptr), t->t.data_size,
-                            port_addr((uintptr_t)t->t.ucode_data));
+                            port_addr((uintptr_t)t->t.ucode_boot), t->t.ucode_boot_size,
+                            port_addr((uintptr_t)t->t.ucode), port_addr((uintptr_t)t->t.ucode_data));
         host_raise(OS_EVENT_SP);
     }
 }

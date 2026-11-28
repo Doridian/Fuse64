@@ -1,5 +1,6 @@
 /* The RSP: an interpreter of its scalar and vector units, which runs the
-   game's graphics microcode (port/host/rsp.c, docs/PORT.md "Graphics"). */
+   game's graphics microcode (port/host/rsp.c, docs/PORT.md "Graphics")
+   and, with --audio lle, its audio microcode (asp_lle.c, "Audio"). */
 #ifndef RSP_H
 #define RSP_H
 
@@ -22,6 +23,8 @@ void rsp_reset(void);
 /* runs from `pc` until it reaches one of `stops` (or a BREAK, or `limit`
    instructions); returns the pc it stopped at (-1: BREAK, -2: the limit) */
 int rsp_run(uint32_t pc, const uint32_t *stops, int nstops, long limit);
+/* the instructions the last rsp_run ran */
+extern long rsp_ran;
 
 /* the divide unit's result for an input, without touching the
    interpreter's state: the reciprocal (sqrt 0) or the inverse square root

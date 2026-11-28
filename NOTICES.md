@@ -149,12 +149,13 @@ dither filters, the divot filter, the scaling, the gamma) follows its VI
 ## mupen64plus-rsp-cxd4
 
 `port/host/rsp.c`, the port's RSP interpreter (it runs the game's
-graphics microcode), is the project's own, but its vector unit's
+graphics microcode, and with `--audio lle` its audio microcode), is the project's own, but its vector unit's
 arithmetic (the accumulator's clamps, VCL/VCH/VCR, the divide unit and its
 ROM, LTV/STV) follows cxd4's interpreter
 (https://github.com/mupen64plus/mupen64plus-rsp-cxd4), which its author,
 Iconoclast, dedicated to the public domain under CC0 1.0. The port is
-checked against it (port/tools/gfx_ref), which isn't part of the port.
+checked against it (port/tools/gfx_ref and port/tools/asp_ref), which
+aren't part of the port.
 
 ## SDL2
 

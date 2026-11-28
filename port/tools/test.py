@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """The port's deterministic headless tests (docs/PORT.md, "Testing").
 
-  test.py run BUILD [--scenario NAME ...] [--qemu ARCH] [--renderer R] [--save]
+  test.py run BUILD [--scenario NAME ...] [--qemu ARCH] [--renderer R] [--audio A] [--keep DIR] [--save]
   test.py same BUILD_A BUILD_B [--scenario NAME ...] [--renderer R]
   test.py tas BUILD [--movie 4908M ...] [--emu DIGEST] [--save]
 
@@ -19,7 +19,9 @@ compares them with port/tools/test_refs.json (--save writes them), `same`
 compares two builds' runs with each other (a big-endian build under qemu
 against the native one, say).  --renderer runs the build with another
 renderer (its --renderer; the references are soft's, which hle-sw gives
-the same: docs/PORT.md, "The HLE front end").
+the same: docs/PORT.md, "The HLE front end"), --audio with another audio
+path (its --audio; the references are hle's: docs/PORT.md, "Audio"), and
+--keep DIR keeps each run's sound as DIR/<version>-<scenario>.wav.
 
 `tas` replays a TAS movie's run in mupen64plus on a jp build (docs/PORT.md,
 "The TAS"): the emulator's gameplay digest along the movie
@@ -74,6 +76,10 @@ def cache_value(build, key):
     return None
 
 
+AUDIO = None    # --audio
+KEEP = None     # --keep
+
+
 def run(build, name, qemu=None, timeout=7200, renderer=None):
     ver = cache_value(build, "PORT_VERSION") or "us"
     frames, script = SCENARIOS[name][:2]
@@ -99,6 +105,8 @@ def run(build, name, qemu=None, timeout=7200, renderer=None):
                                         "--save-dir", tmp, "--wav", wav]
         if renderer:
             cmd += ["--renderer", renderer]
+        if AUDIO:
+            cmd += ["--audio", AUDIO]
         if script:
             script = script.format(v=ver)
             # the port's own timing of a script, where the N64's doesn't fit
@@ -119,6 +127,9 @@ def run(build, name, qemu=None, timeout=7200, renderer=None):
             "wav": hashlib.sha1(open(wav, "rb").read()).hexdigest() if os.path.exists(wav) else None,
         }
         out.update(digest_hashes(os.path.join(tmp, "digest.txt")))
+        if KEEP and os.path.exists(wav):
+            os.makedirs(KEEP, exist_ok=True)
+            shutil.copy(wav, os.path.join(KEEP, "%s-%s.wav" % (ver, name)))
         eep = os.path.join(tmp, "fuse64.%s.eep" % ver)
         out["eeprom"] = hashlib.sha1(open(eep, "rb").read()).hexdigest() if os.path.exists(eep) else None
         return ver, out
@@ -246,10 +257,14 @@ def main():
     ap.add_argument("--qemu", help="the emulator to run the (first) build under")
     ap.add_argument("--save", action="store_true", help="run, tas: write the results as the references")
     ap.add_argument("--renderer", help="run, same: the builds' --renderer (soft's references)")
+    ap.add_argument("--audio", help="run, same: the builds' --audio (hle's references)")
+    ap.add_argument("--keep", help="run: keep each run's sound as KEEP/<version>-<scenario>.wav")
     ap.add_argument("--movie", action="append", help="tas: the movies (default 4908M)")
     ap.add_argument("--emu", help="tas: the emulator's digest of the (one) movie")
     ap.add_argument("--draw", action="store_true", help="tas: draw every picture (PORT_NO_DRAW off)")
     a = ap.parse_args()
+    global AUDIO, KEEP
+    AUDIO, KEEP = a.audio, a.keep
     names = a.scenario or DEFAULT
     refs = json.load(open(REFS)) if os.path.exists(REFS) else {}
     fails = 0

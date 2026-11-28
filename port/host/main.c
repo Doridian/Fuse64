@@ -306,6 +306,8 @@ static void usage(const char *argv0) {
             "  --renderer NAME     the renderer: soft (the game's microcode on the RSP, the RDP in software:\n"
             "                      exact, the default), hle-sw (the microcode's commands in C, the same RDP),\n"
             "                      gl (hle-sw's commands drawn by OpenGL, offscreen: docs/PORT.md, \"The OpenGL renderer\")\n"
+            "  --audio NAME        the audio microcode: hle (in C, the default) or lle (the game's own on the\n"
+            "                      RSP interpreter: docs/PORT.md, \"Audio\"; also PORT_AUDIO_LLE=1)\n"
             "  -v                  more log\n",
             argv0, ROM_DEFAULT);
     exit(2);
@@ -414,6 +416,15 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--renderer") && i + 1 < argc) {
             if (!host_gfx_renderer(argv[++i])) {
                 fprintf(stderr, "fuse64: --renderer %s: no such renderer (there are soft, hle-sw and, in a build with OpenGL, gl)\n", argv[i]);
+                exit(2);
+            }
+        }
+        else if (!strcmp(a, "--audio") && i + 1 < argc) {
+            const char *n = argv[++i];
+            if (!strcmp(n, "hle") || !strcmp(n, "lle"))
+                host_audio_lle = n[0] == 'l';
+            else {
+                fprintf(stderr, "fuse64: --audio %s: no such audio path (there are hle and lle)\n", n);
                 exit(2);
             }
         }

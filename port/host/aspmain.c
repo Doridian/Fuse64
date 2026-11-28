@@ -344,137 +344,165 @@ static void polef(int flags, int16_t gain, uintptr_t state) {
 
 /* ---- the task ----------------------------------------------------------------- */
 
+/* one command (its two words) */
+static void run_cmd(uintptr_t w0a, uintptr_t w1a) {
+    uint32_t w0 = (uint32_t)w0a, w1 = (uint32_t)w1a;
+    int op = w0 >> 24, flags = (w0 >> 16) & 0xFF;
+    switch (op) {
+    case A_SPNOOP:
+        break;
+    case A_ADPCM:
+        adpcm(flags, w1a);
+        break;
+    case A_CLEARBUFF: {
+        uint32_t d = DMEM_BASE + (w0 & 0xFFFF), n = ((w1 & 0xFFFF) + 15) & ~15u;
+        if (flat(d, n))
+            memset(dmem + (d & 0xFFF), 0, n);
+        else
+            for (uint32_t i = 0; i < n; i++)
+                dmem[(d + i) & 0xFFF] = 0;
+        break;
+    }
+    case A_ENVMIXER:
+        envmixer(flags, w1a);
+        break;
+    case A_LOADBUFF: {
+        const uint8_t *src = ram(w1a & ~(uintptr_t)7);
+        uint32_t d = (DMEM_BASE + in_) & ~7u, n = (count_ + 7) & ~7u;
+        if (flat(d, n))
+            memcpy(dmem + (d & 0xFFF), src, n);
+        else
+            for (uint32_t i = 0; i < n; i++)
+                dmem[(d + i) & 0xFFF] = src[i];
+        break;
+    }
+    case A_RESAMPLE:
+        resample(flags, w0 & 0xFFFF, w1a);
+        break;
+    case A_SAVEBUFF: {
+        uint8_t *dst = ram(w1a & ~(uintptr_t)7);
+        uint32_t s = (DMEM_BASE + out_) & ~7u, n = (count_ + 7) & ~7u;
+        if (flat(s, n))
+            memcpy(dst, dmem + (s & 0xFFF), n);
+        else
+            for (uint32_t i = 0; i < n; i++)
+                dst[i] = dmem[(s + i) & 0xFFF];
+        break;
+    }
+    case A_SEGMENT:
+        segments[(w1 >> 24) & 0xF] = w1a;      /* (a host pointer) */
+        break;
+    case A_SETBUFF:
+        if (flags & F_AUX) {
+            dry_right = w0 & 0xFFFF;
+            wet_left = w1 >> 16;
+            wet_right = w1 & 0xFFFF;
+        } else {
+            in_ = w0 & 0xFFFF;
+            out_ = w1 >> 16;
+            count_ = w1 & 0xFFFF;
+        }
+        break;
+    case A_SETVOL:
+        if (flags & F_AUX) {
+            dry = (int16_t)w0;
+            wet = (int16_t)w1;
+        } else {
+            int c = (flags & F_LEFT) ? 0 : 1;
+            if (flags & F_VOL)
+                vol[c] = (int16_t)w0;
+            else {
+                target[c] = (int16_t)w0;
+                rate[c] = (int32_t)w1;
+            }
+        }
+        break;
+    case A_DMEMMOVE: {
+        uint32_t s = DMEM_BASE + (w0 & 0xFFFF), d = DMEM_BASE + (w1 >> 16);
+        dmem_copy(d, s, ((w1 & 0xFFFF) + 3) & ~3u);
+        break;
+    }
+    case A_LOADADPCM: {
+        const uint8_t *src = ram(w1a);
+        uint32_t n = (w0 & 0xFFFFFF) / 2;
+        for (uint32_t i = 0; i < n && i < 256; i++)
+            table[i] = ram16(src, (int)i);
+        break;
+    }
+    case A_MIXER: {
+        int16_t gain = (int16_t)w0;
+        uint32_t s = DMEM_BASE + (w1 >> 16), d = DMEM_BASE + (w1 & 0xFFFF);
+        int n = ((count_ + 31) & ~31) / 2, i = 0;
+        if (flat(s, 2 * n) && flat(d, 2 * n)) {
+            uint8_t *ps = dmem + (s & 0xFFF), *pd = dmem + (d & 0xFFF);
+            for (; i < n; i++)
+                be16_st(pd + 2 * i, clamp16(be16_ld(pd + 2 * i) + ((be16_ld(ps + 2 * i) * gain) >> 15)));
+        }
+        for (; i < n; i++)
+            st(d + 2 * i, clamp16(ld(d + 2 * i) + ((ld(s + 2 * i) * gain) >> 15)));
+        break;
+    }
+    case A_INTERLEAVE: {
+        uint32_t l = DMEM_BASE + (w1 >> 16), r = DMEM_BASE + (w1 & 0xFFFF);
+        uint32_t d = DMEM_BASE + out_;
+        /* the output overlaps nothing it still has to read: libaudio
+           interleaves AL_MAIN_L/R_OUT into offset 0 */
+        for (int i = 0; i < count_ / 2; i++) {
+            int16_t a = ld(l + 2 * i), b = ld(r + 2 * i);
+            st(d + 4 * i, a);
+            st(d + 4 * i + 2, b);
+        }
+        break;
+    }
+    case A_POLEF:
+        polef(flags, (int16_t)w0, w1a);
+        break;
+    case A_SETLOOP:
+        loop_addr = w1a;
+        break;
+    default:
+        if (host_verbose)
+            host_log("audio: unknown command %08X %08X\n", w0, w1);
+        break;
+    }
+}
+
 static void audio_task(const HostGfx *cmd, uint32_t data_size, const uint8_t *ucode_data) {
     resample_lut = ucode_data + 0xC0;
     for (int k = 0; k < 64 * 4; k++)
         taps[k / 4][k % 4] = (int16_t)port_be16(resample_lut + 2 * k);
     for (uint32_t off = 0; off + sizeof(HostGfx) <= data_size; off += sizeof(HostGfx)) {
         uintptr_t w0a = cmd[off / sizeof(HostGfx)].w0, w1a = cmd[off / sizeof(HostGfx)].w1;
-        uint32_t w0 = (uint32_t)w0a, w1 = (uint32_t)w1a;
-        int op = w0 >> 24, flags = (w0 >> 16) & 0xFF;
+        int op = (uint32_t)w0a >> 24;
         if (acmd_strict && ((uint64_t)w0a >> 32 || op > A_SETLOOP))
             host_fatal("audio (PORT_GFX_STRICT): command %016llX %016llX at offset %X of the list at %p: %s\n",
                        (unsigned long long)w0a, (unsigned long long)w1a, off, (const void *)cmd,
                        op > A_SETLOOP ? "an unknown opcode" : "w0 has bits above its 32");
-        switch (op) {
-        case A_SPNOOP:
-            break;
-        case A_ADPCM:
-            adpcm(flags, w1a);
-            break;
-        case A_CLEARBUFF: {
-            uint32_t d = DMEM_BASE + (w0 & 0xFFFF), n = ((w1 & 0xFFFF) + 15) & ~15u;
-            if (flat(d, n))
-                memset(dmem + (d & 0xFFF), 0, n);
-            else
-                for (uint32_t i = 0; i < n; i++)
-                    dmem[(d + i) & 0xFFF] = 0;
-            break;
-        }
-        case A_ENVMIXER:
-            envmixer(flags, w1a);
-            break;
-        case A_LOADBUFF: {
-            const uint8_t *src = ram(w1a & ~(uintptr_t)7);
-            uint32_t d = (DMEM_BASE + in_) & ~7u, n = (count_ + 7) & ~7u;
-            if (flat(d, n))
-                memcpy(dmem + (d & 0xFFF), src, n);
-            else
-                for (uint32_t i = 0; i < n; i++)
-                    dmem[(d + i) & 0xFFF] = src[i];
-            break;
-        }
-        case A_RESAMPLE:
-            resample(flags, w0 & 0xFFFF, w1a);
-            break;
-        case A_SAVEBUFF: {
-            uint8_t *dst = ram(w1a & ~(uintptr_t)7);
-            uint32_t s = (DMEM_BASE + out_) & ~7u, n = (count_ + 7) & ~7u;
-            if (flat(s, n))
-                memcpy(dst, dmem + (s & 0xFFF), n);
-            else
-                for (uint32_t i = 0; i < n; i++)
-                    dst[i] = dmem[(s + i) & 0xFFF];
-            break;
-        }
-        case A_SEGMENT:
-            segments[(w1 >> 24) & 0xF] = w1a;      /* (a host pointer) */
-            break;
-        case A_SETBUFF:
-            if (flags & F_AUX) {
-                dry_right = w0 & 0xFFFF;
-                wet_left = w1 >> 16;
-                wet_right = w1 & 0xFFFF;
-            } else {
-                in_ = w0 & 0xFFFF;
-                out_ = w1 >> 16;
-                count_ = w1 & 0xFFFF;
-            }
-            break;
-        case A_SETVOL:
-            if (flags & F_AUX) {
-                dry = (int16_t)w0;
-                wet = (int16_t)w1;
-            } else {
-                int c = (flags & F_LEFT) ? 0 : 1;
-                if (flags & F_VOL)
-                    vol[c] = (int16_t)w0;
-                else {
-                    target[c] = (int16_t)w0;
-                    rate[c] = (int32_t)w1;
-                }
-            }
-            break;
-        case A_DMEMMOVE: {
-            uint32_t s = DMEM_BASE + (w0 & 0xFFFF), d = DMEM_BASE + (w1 >> 16);
-            dmem_copy(d, s, ((w1 & 0xFFFF) + 3) & ~3u);
-            break;
-        }
-        case A_LOADADPCM: {
-            const uint8_t *src = ram(w1a);
-            uint32_t n = (w0 & 0xFFFFFF) / 2;
-            for (uint32_t i = 0; i < n && i < 256; i++)
-                table[i] = ram16(src, (int)i);
-            break;
-        }
-        case A_MIXER: {
-            int16_t gain = (int16_t)w0;
-            uint32_t s = DMEM_BASE + (w1 >> 16), d = DMEM_BASE + (w1 & 0xFFFF);
-            int n = ((count_ + 31) & ~31) / 2, i = 0;
-            if (flat(s, 2 * n) && flat(d, 2 * n)) {
-                uint8_t *ps = dmem + (s & 0xFFF), *pd = dmem + (d & 0xFFF);
-                for (; i < n; i++)
-                    be16_st(pd + 2 * i, clamp16(be16_ld(pd + 2 * i) + ((be16_ld(ps + 2 * i) * gain) >> 15)));
-            }
-            for (; i < n; i++)
-                st(d + 2 * i, clamp16(ld(d + 2 * i) + ((ld(s + 2 * i) * gain) >> 15)));
-            break;
-        }
-        case A_INTERLEAVE: {
-            uint32_t l = DMEM_BASE + (w1 >> 16), r = DMEM_BASE + (w1 & 0xFFFF);
-            uint32_t d = DMEM_BASE + out_;
-            /* the output overlaps nothing it still has to read: libaudio
-               interleaves AL_MAIN_L/R_OUT into offset 0 */
-            for (int i = 0; i < count_ / 2; i++) {
-                int16_t a = ld(l + 2 * i), b = ld(r + 2 * i);
-                st(d + 4 * i, a);
-                st(d + 4 * i + 2, b);
-            }
-            break;
-        }
-        case A_POLEF:
-            polef(flags, (int16_t)w0, w1a);
-            break;
-        case A_SETLOOP:
-            loop_addr = w1a;
-            break;
-        default:
-            if (host_verbose)
-                host_log("audio: unknown command %08X %08X\n", w0, w1);
-            break;
-        }
+        run_cmd(w0a, w1a);
     }
 }
+
+#ifdef PORT_ASP_DIAG
+/* (asp_lle.c's comparison with the microcode, a command at a time: the
+   command on the DMEM `dm`, in and out, with the state block a command
+   keeps in RDRAM at `state`, in this file's layout, instead of the
+   game's; a SAVEBUFF writes nothing) */
+void host_asp_hle_one(uint8_t *dm, uintptr_t w0, uintptr_t w1, uint8_t *state, const uint8_t *ucode_data) {
+    if (resample_lut != ucode_data + 0xC0) {
+        resample_lut = ucode_data + 0xC0;
+        for (int k = 0; k < 64 * 4; k++)
+            taps[k / 4][k % 4] = (int16_t)port_be16(resample_lut + 2 * k);
+    }
+    int op = (uint32_t)w0 >> 24;
+    if (op == A_SAVEBUFF)
+        return;
+    if (op == A_ADPCM || op == A_RESAMPLE || op == A_ENVMIXER || op == A_POLEF)
+        w1 = (uintptr_t)state;
+    memcpy(dmem, dm, sizeof dmem);
+    run_cmd(w0, w1);
+    memcpy(dm, dmem, sizeof dmem);
+}
+#endif
 
 /* the NMI (main.c): the audio microcode's DMEM and what it keeps between
    commands as at the power-on */
@@ -489,15 +517,25 @@ void host_asp_reset(void) {
     memset(target, 0, sizeof target);
     dry = wet = 0;
     memset(rate, 0, sizeof rate);
+    host_asp_lle_reset();
 }
 
 /* (the pointers the N64 side's: a KSEG1 one is KSEG0's memory) */
-void host_audio_task(const void *data_ptr, uint32_t data_size, const void *ucode_data) {
+void host_audio_task(const void *data_ptr, uint32_t data_size, const void *boot, uint32_t boot_size, const void *text,
+                     const void *ucode_data) {
     static int init;
     if (!init) {
         init = 1;
         const char *e = getenv("PORT_GFX_STRICT");
         acmd_strict = e && atoi(e) != 0;
+        if (host_audio_lle < 0) {
+            e = getenv("PORT_AUDIO_LLE");
+            host_audio_lle = e && atoi(e) != 0;
+        }
     }
-    audio_task(data_ptr, data_size, ucode_data);
+    /* (--audio lle: the game's microcode on the RSP interpreter, asp_lle.c) */
+    if (host_audio_lle > 0)
+        host_asp_lle_task(data_ptr, data_size, boot, boot_size, text, ucode_data);
+    else
+        audio_task(data_ptr, data_size, ucode_data);
 }

@@ -151,7 +151,6 @@ extern s16 D_802AFE70;
 s32 func_8026D5C0(s32 arg0, s32 arg1, s32 arg2);
 s32 func_8026D5F8(s32 arg0, s32 arg1, s32 arg2);
 void func_8026D6C0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
-s32 func_8026D7D8(s32 arg0, s32 arg1, s32 arg2);
 void func_8026D92C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7);
 void func_8026DA1C(u8 *arg0, s32 arg1, s32 arg2, s32 arg3);
 void func_8026DA2C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);

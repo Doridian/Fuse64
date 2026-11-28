@@ -7,6 +7,8 @@
 #include "common.h"
 #include "ent.h"
 
+s32 func_8026FFA0(s16 arg0);
+s16 *func_802703B4(u8 *arg0);
 s32 func_802704F8(f32 arg0);
 void func_80270B20(u8 *arg0);
 s16 func_80270B4C(PORT_IP(s32) arg0);

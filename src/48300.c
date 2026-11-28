@@ -17,7 +17,6 @@ s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 PORT_IP(s32) func_802391F0(void);
-s32 func_8026C51C(s32, f32, f32, f32);
 
 /* 48600's, for ZeroJump module 0x18's table */
 void func_8022FF58(f32 *arg0, f32 *arg1, f32 *arg2);
@@ -28,7 +27,6 @@ void func_80232AC8(u8 *arg0, u8 *arg1);
 void func_80231408(u8 *arg0, s32 arg1);
 void func_802313DC(u8 *arg0, s32 arg1);
 s32 func_8022FC90(UnkStructA *arg0);
-void *func_80230CB4(s32 arg0, s32 arg1, s32 arg2, s32 arg3, u8 *arg4);
 PORT_RET(void, PORT_IP(s32)) func_80231274(s32 arg0, s32 arg1, s32 arg2, PORT_IP(s32) arg3);
 void *func_802311E8(u8 *arg0);
 PORT_RET(void, PORT_IP(s32)) func_80230E6C(s32 arg0, PORT_IP(s32) arg1);
@@ -39,7 +37,6 @@ void func_80232BA0(u8 *arg0, u8 *arg1);
 PORT_RET(void, PORT_IP(s32)) func_8022FA88(f32 *arg0, s32 arg1, f32 *arg2);
 void func_80232DB4(f32 *arg0);
 UnkStructA *func_8022F550(UnkStructA *arg0, s32 arg1);
-UnkStructA *func_8022F4AC(UnkStructA *arg0, s32 arg1, UnkStructA *arg2);
 PORT_IP(s32) func_8022F698(PORT_IP(s32) arg0, f32 *arg1, f32 *arg2, UnkStructA **arg3, s32 arg4);
 
 extern UnkStructA_40 *D_800A7F08[8];

@@ -1,5 +1,6 @@
 #include "common.h"
 #include "9A5F0.h"
+#include "404C0.h"
 
 /* The image header func_80280814 writes at the start of a slot's buffer. */
 typedef struct {
@@ -45,7 +46,6 @@ typedef struct {
 
 void *malloc(u32);
 void free(void *);
-PORT_RET(void, s32) func_80225CCC(struct UnkStruct_80225CC0 *file, s32 offset, s32 whence);
 
 void func_8027FDF0(s32 arg0);
 void func_80280028(u8 *src, u8 *dst, u16 col, u16 row, u16 width, u16 height, s32 draw);

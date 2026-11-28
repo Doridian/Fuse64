@@ -41,7 +41,6 @@ s32 func_80238BDC(void);
 UnkStruct_802AB200 *func_80238C08(u16 arg0);
 s32 func_80238C68(u16 arg0);
 s32 func_80238D98(u16 arg0, u32 arg1);
-s32 func_80238EA8(s32 arg0);
 s32 func_80238FF4(s32 arg0);
 s32 func_8023903C(u32 arg0);
 void func_80239094(void);

@@ -36,6 +36,8 @@
 #include "9CAB0.h"
 #include "A2840.h"
 #include "426E0.h"
+#include "86680.h"
+#include "A8DE0.h"
 
 /* A record of the table read from file 0x10B (func_802883B0). */
 typedef struct {
@@ -63,11 +65,9 @@ void func_80231408(UnkStructA *, s32);
 s32 func_80232D18(UnkStructA *, s32);
 void func_80232DB4(UnkStructA *);
 PORT_RET(void, s32) func_8023903C(s32);
-PORT_RET(void, s32) func_8026C51C(s32, f32, f32, f32);
 f32 func_8026E938(UnkStructA_40 *);
 void func_80282430(UnkStruct_80288040 *, s32, s32);
 UnkStruct_80288040 *func_802867E4(s32, f32, f32, f32);
-PORT_RET(void, s32) func_8028E8A4(s32, f32, f32, f32, s32);
 void func_80291944(UnkStructA *, s32, f32);
 
 s32 func_802884BC(UnkStruct_80288040 *);

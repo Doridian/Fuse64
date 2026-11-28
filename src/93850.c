@@ -27,13 +27,13 @@
 #include "93850.h"
 #include "A4860.h"
 #include "949A0.h"
+#include "86680.h"
 
 PORT_RET(void, s32) func_8022FC90(UnkStructA *);
 void func_802313DC(UnkStructA *, s32);
 void func_80231408(UnkStructA *, s32);
 UnkStructA *func_802308B8(UnkStructA *, s32);
 void func_80239094(void);
-PORT_RET(void, s32) func_8026C660(s32);
 void func_80270354(s32 *, s32);
 PORT_RET(s32, void) func_8027036C(s32 *, s32);
 PORT_RET(s32, s16) func_802712A8(s32 *, s32);

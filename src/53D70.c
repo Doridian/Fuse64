@@ -50,7 +50,6 @@ void func_80298060(UnkStruct_802AC400 *);
 s32 func_8023957C(s32 arg0, s32 arg1);
 s8 func_802395A8(s32 arg0, s32 arg1);
 s8 func_80239714(s32 arg0, s32 arg1);
-u16 func_802399AC(s32 arg0);
 s32 func_80239A94(s32 arg0);
 s32 func_80239AB0(u8 arg0, u16 arg1, u16 arg2);
 s32 func_80239B08(UnkStruct_80239B08 *arg0, UnkStruct_802AC428 *arg1, s32 *arg2);

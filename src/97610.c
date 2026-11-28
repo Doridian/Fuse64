@@ -8,6 +8,8 @@
 #include "949A0.h"
 #include "97610.h"
 #include "426E0.h"
+#include "530C0.h"
+#include "86680.h"
 
 typedef struct {
     /* 0x00 */ s16 unk0;
@@ -32,12 +34,9 @@ void func_802313DC(UnkStructA *, s32);
 void func_80231408(UnkStructA *, s32);
 s32 func_80232D18(UnkStructA *, s32);
 s32 func_80238A10(void (*)(void), PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
-PORT_RET(void, s32) func_80238EA8(s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 UnkStruct_8023A834 *func_8023A834(void);
-PORT_RET(void, s32) func_8026C660(s32);
-s32 func_8026D7D8(s32, s32, s32);
 PORT_RET(s32, u8) func_8026DC74(s32);
 /* A4CE0's func_8028A7CC returns nothing, but here it was called as an
  * int function (undeclared, most likely): with void, func_8027DFAC's first

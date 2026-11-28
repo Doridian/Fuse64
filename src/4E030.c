@@ -7,13 +7,13 @@
 #include "78CA0.h"
 #include "A4860.h"
 #include "426E0.h"
+#include "86680.h"
 
 /* -O3 (the Makefile's O3_C_FILES), so written last function first: IDO
  * 5.3 -O3 emits a file's functions in reverse, a callee from the file
  * (func_80233C30) just before its first caller.  Its wrappers of 4DE50's
  * compares call them with a `jal`: 4DE50 is another file. */
 
-s32 func_8025E63C();
 void func_80227BAC(s32, s32, s32);
 void func_8022F808(UnkStructA *, f32 *);
 PORT_RET(void, s32) func_8022FC90(UnkStructA *);
@@ -27,7 +27,6 @@ PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 PORT_IP(s32) func_802391F0(void);
 PORT_RET(void, s32) func_8026C630(s32, f32 *);
-PORT_RET(void, s32) func_8026C660(s32);
 PORT_RET(void, s32) func_8027B7C4(s32, f32, f32, f32);
 PORT_RET(void, s32) func_8027BA80(s32, f32, f32, f32, s32, s32);
 PORT_RET(void, s32) func_8028A7CC(s32, f32 *, PORT_IP(s32));

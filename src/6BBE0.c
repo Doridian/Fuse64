@@ -227,6 +227,9 @@
 #include "87D80.h"
 #include "A4CE0.h"
 #include "ACA00.h"
+#include "78CA0.h"
+#include "8A7A0.h"
+#include "949A0.h"
 
 typedef struct { s32 n; f32 f4; s32 unk8; f32 fC; } SeqA; /* 0x10 */
 typedef struct { s32 n; u16 v; } SeqB; /* 0x8 */
@@ -253,7 +256,6 @@ PORT_RET(s32, void) func_8022979C(PORT_RET(s32, void *), s32, s32);
 PORT_RET(s32, void) func_8022984C(void *, s32);
 s32 func_80229C90(PORT_RET(s32, void *), s32, s32, s32, s32, s32);
 PORT_RET(s32, void) func_80229F74(void *, s32);
-PORT_RET(s32, void *) func_8022F4AC(PORT_RET(s32, void *), s32, PORT_RET(s32, void *));
 PORT_RET(s32, void *) func_8022F550(PORT_RET(s32, void *), s32);
 PORT_IP(s32) func_8022F698(void *, PORT_RET(s32, void *), f32 *, void *, s32);
 void func_8022F808(void *, f32 *);
@@ -274,16 +276,10 @@ void func_80239094(void);
 s32 *func_802391F0(void);
 void * func_8023A834(void);
 void * func_802443F4(s32);
-f64 func_8025E63C(void);
-s32 func_8026C51C(s32, f32, f32, f32);
-s32 func_8026C660(s32);
-s32 func_8026D7D8(s32, s32, s32);
 f32 func_8026E938(void *);
-PORT_RET(s32, void *) func_802703B4(PORT_RET(s32, void *));
 PORT_IP(s32) func_80270770(s16, s16);
 PORT_RET(s32, void) func_80271F74(PORT_RET(s32, void *));
 PORT_RET(f32, void) func_80277484(void);
-void * func_8027A1A0(void *);
 void func_8027F820();
 void func_8027F858(PORT_IP(s32), s32);
 s32 func_8028A81C(s32, f32, f32, f32, PORT_IP(s32));

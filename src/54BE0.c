@@ -25,12 +25,12 @@
 #include "AD5B0.h"
 #include "AFBF0.h"
 #include "B11F0.h"
+#include "53D70.h"
 
 void func_80227C9C(PORT_RET(s32, void *), s32);
 void func_80227CD0(PORT_RET(s32, void *), f32, f32, f32, f32, f32, f32, f32, f32, f32);
 void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
 PORT_RET(s32, void *) func_80227E38(void);
-PORT_RET(s32, u16) func_80239FF8(s32);
 
 /* .bss: the two views (func_80227E38's) and their ids (func_8022773C's) */
 PORT_RET(s32, void *) D_802AC5C0;

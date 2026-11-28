@@ -232,7 +232,6 @@ extern UnkStruct_800B15D8 D_800B15D8[];
 
 void func_80230914(UnkStructA *);
 void func_80239094(void);
-s32 func_8026D7D8(s32, s32, s32);
 void func_8026E6E4(UnkStructA_40 *, f32 *, f32 *);
 f32 func_8026E938(void *);
 f32 func_8026EAF8(UnkStructA *);

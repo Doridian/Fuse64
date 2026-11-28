@@ -3,6 +3,8 @@
 #include "54E40.h"
 #include "87190.h"
 #include "87730.h"
+#include "53D70.h"
+#include "86680.h"
 
 typedef struct {
     /* 0x00 */ u8 unk0[0xC];
@@ -27,8 +29,6 @@ typedef struct {
 void *func_8022A328(void *, s32, s32, s32, s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
-PORT_RET(s32, u16) func_802399AC(s32);
-PORT_RET(void, s32) func_8026C660(s32);
 void func_8026D2C4(UnkStructA_40 *, Gfx_80225840 **);
 
 extern u8 D_1000000[];

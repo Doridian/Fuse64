@@ -6,6 +6,7 @@
 #include "530C0.h"
 #include "5E3F0.h"
 #include "87D80.h"
+#include "53D70.h"
 
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -79,9 +80,7 @@ s32 D_802A0038 = 0;
 extern f32 D_8008F430;
 #define ABS(x) ((x) < 0.0f ? -(x) : (x))
 
-s32 func_8026D7D8(s32, s32, s32);
 void func_802358D0(UnkStruct_802363BC *, s32, s16);
-PORT_RET(s32, u16) func_802399AC(s32);
 extern UnkStructA *D_8009004C;
 void func_80234578(Vec3f *, Vec3f *, Vec3f *);
 void func_8023494C(f32 *);

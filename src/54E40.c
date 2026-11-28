@@ -186,6 +186,8 @@
 #include "A4CE0.h"
 #include "ACA00.h"
 #include "AD5B0.h"
+#include "53D70.h"
+#include "78CA0.h"
 
 /* gSPTextureRectangle with the y terms before the x terms in both words
  * (the order the original evaluates them in). */
@@ -250,17 +252,10 @@ void func_80231408(void *, s32);
 s32 func_80232D18(void *, s32);
 s32 func_80234DD4(f32, f32, f32, void *);
 s32 func_80238A10(void *, PORT_UP(u32), PORT_RET(s32, void *), s32, s32);
-PORT_RET(void, s32) func_80238EA8(s32);
 s32 func_8023903C(s32);
 PORT_RET(s32, void) func_80239094(void);
 PORT_IP(s32) func_802391F0(void);
-PORT_RET(s32, u16) func_802399AC(s32);
-PORT_RET(s32, u16) func_80239FF8(s32);
-u8 func_8023A038(s32);
 void * func_802443F4(s32);
-f64 func_8025E63C(void);
-s32 func_8026C660(s32);
-s32 func_8026D7D8(s32, s32, s32);
 f32 func_8026E938(void *);
 PORT_RET(s32, s32) func_80270770(s16, s16);
 void func_80277484(void);

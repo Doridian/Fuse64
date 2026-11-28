@@ -52,16 +52,15 @@
 #include "530C0.h"
 #include "A4CE0.h"
 #include "426E0.h"
+#include "48600.h"
 
 PORT_RET(s32, void) func_8022979C(UnkStructA_40 *, s32, s32);
 PORT_RET(s32, void) func_8022984C(UnkStructA_40 *, s32);
 PORT_RET(void, s32) func_8022FC90(UnkStructA *);
-UnkStructA *func_80230CB4(s32, s32, s32, s32, PORT_RET(s32, void *));
 UnkStructA *func_80230E6C(s32, PORT_IP(s32));
 void func_80231408(UnkStructA *, s32);
 void func_80232DB4(UnkStructA *);
 s32 func_80238A10(void *, void *, PORT_RET(s32, void *), s32, s32);
-PORT_RET(void, s32) func_80238EA8(s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 void *func_802391F0(void);

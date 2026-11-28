@@ -19,6 +19,8 @@
 #include "93850.h"
 #include "949A0.h"
 #include "A4860.h"
+#include "530C0.h"
+#include "86680.h"
 
 void func_802313DC(UnkStructA *, s32);
 void func_80231408(UnkStructA *, s32);
@@ -27,15 +29,12 @@ void func_8027036C(s32 *, s32);
 PORT_RET(s32, s16) func_802712A8(s32 *, s32);
 void *malloc(s32);
 void free(void *);
-s16 func_8026FFA0(s16);
 void func_80270080(UnkStruct_8027A264 *);
 void func_80277DA8(s16, s32);
 UnkStructA *func_802443F4(s32);
 UnkStruct_800BB4A8 *func_8027AA74(s16, f32, f32, f32, s32, s32, s32);
 void func_8027A950(void);
 PORT_RET(void, s32) func_8028A81C(s32, f32, f32, f32, PORT_IP(s32));
-
-UnkStruct_800BB4A8 *func_8027A1A0(UnkStructA *arg0);
 
 #ifdef TARGET_PC
 /* the list's head is D_800BB4A0[0]'s link (its own name on the N64) */
@@ -49,7 +48,6 @@ extern UnkStruct_800BB4A8 D_800BB4A0[48];
 extern UnkStruct_800BB4A8 D_800BB4F8; /* [0] the list's head, [1] its sentinel, [2..47] the pool */
 
 void func_80270BA4(UnkStructA *);
-PORT_RET(void, s32) func_80238EA8(s32);
 void func_80297D30(s32, void *);
 void func_8027AFB8(s16 arg0);
 
@@ -58,7 +56,6 @@ extern UnkStruct_800BA8A0 D_800BA8A0[PORT_SIZE(5)];
 PORT_RET(s32, void *) func_802311E8(UnkStructA *);
 UnkStructA *func_80231274(s32, s32, s32, void *);
 s32 func_80238A10(void (*)(void), PORT_IP(s32), void *, s32, s32);
-PORT_RET(void, s32) func_8026C51C(s32, f32, f32, f32);
 void func_8027A264(UnkStruct_800BB4A8 *arg0, s16 arg1);
 s16 func_8027A4E8(s16 arg0);
 s16 func_8027A574(s16 arg0);

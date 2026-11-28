@@ -33,6 +33,10 @@
 #include "A4CE0.h"
 #include "426E0.h"
 #include "8A7A0.h"
+#include "404C0.h"
+#include "48600.h"
+#include "78CA0.h"
+#include "86680.h"
 
 extern UnkStruct_800BA8E8 D_800BA8E8[6];
 extern UnkStruct_800BA900 D_800BA900[16];
@@ -40,25 +44,18 @@ extern UnkStruct_800BB340 D_800BB340[16];
 extern s32 D_800BB480;
 extern UnkStruct_80288040 *D_800BB484;
 
-PORT_RET(void, s32) func_80225CCC(void *, s32, s32);
-PORT_RET(s32, void *) func_8022F4AC(UnkStructA *, s32, UnkStructA *);
 UnkStructA *func_8022F550(UnkStructA *, s32);
 PORT_RET(void, s32) func_8022FC90(void *);
 void func_80230914(void *);
-UnkStructA *func_80230CB4(s32, s32, s32, s32, void *);
 PORT_RET(s32, void *) func_802311E8(void *);
 void func_802313DC(void *, s32);
 void func_80231408(void *, s32);
 s32 func_80232D18(void *, s32);
 void func_80232DB4(void *);
 s32 func_80238A10(void *, void *, PORT_RET(s32, void *), s32, s32);
-PORT_RET(void, s32) func_80238EA8(s32);
 void func_80239094(void);
 UnkStruct_800BB340 *func_802391F0(void);
 UnkStructA *func_802443F4(s32);
-f64 func_8025E63C(void);
-s32 func_8026C51C(s32, f32, f32, f32);
-s32 func_8026D7D8(s32, s32, s32);
 PORT_RET(s32, void *) func_802700EC(UnkStructA *, UnkStructA *, s32, f32);
 void func_80270BA4(void *);
 void func_80270C24(UnkStructA *, s32, s32);
@@ -975,7 +972,7 @@ static s32 func_8028556C(s32 arg0) {
     func_8028555C();
     func_80285554();
     p = D_800BB484;
-#line 868 /* fake: numbering for as1 order (the load before the 0x2000 test); p9: p from a getter static defined after this function (as one of the three stubs) gets the order but colours p->unk24 into a1, not v1 (21 words); the global read directly, a getter of the flags word: worse */
+#line 865 /* fake: numbering for as1 order (the load before the 0x2000 test); p9: p from a getter static defined after this function (as one of the three stubs) gets the order but colours p->unk24 into a1, not v1 (21 words); the global read directly, a getter of the flags word: worse */
     if ((arg0 & 0x2000) ||
         (!(p->unk24 & 0x20) && ((arg0 & 0xF) == 0xF)) ||
         (!(p->unk24 & 0x10) && (arg0 & 0x60)) ||

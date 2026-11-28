@@ -16,6 +16,8 @@
 #include "54E40.h"
 #include "7D840.h"
 #include "A1EA0.h"
+#include "404C0.h"
+#include "530C0.h"
 
 extern UnkStruct_800BA8E8 D_800BA8E8[6];
 extern UnkStruct_800BA900 D_800BA900[16];
@@ -23,9 +25,7 @@ extern UnkStruct_800BB340 D_800BB340[16];
 extern s32 D_800BB480;
 extern UnkStruct_80288040 *D_800BB484;
 
-void func_80225CCC(void *, s32, s32);
 s32 func_80238A10(void *, void *, PORT_RET(s32, void *), s32, s32);
-PORT_RET(void, s32) func_80238EA8(s32);
 void func_80239094(void);
 f32 sinf(f32);
 

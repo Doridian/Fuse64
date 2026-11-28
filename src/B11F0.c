@@ -50,6 +50,7 @@
 #include "A4860.h"
 #include "B11F0.h"
 #include "426E0.h"
+#include "53D70.h"
 
 PORT_RET(void, s32) func_8023903C(s32);
 s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
@@ -59,8 +60,6 @@ void *func_8022A328(void *, s32, s32, s32, s32);
 void free(void *);
 void *malloc(s32);
 void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
-PORT_RET(void, s32) func_80238EA8(s32);
-PORT_RET(s32, u16) func_80239FF8(s32);
 void func_80261CD0(void *, void *, s32, PORT_RET(s32, void *), s32, s32, s32, s32, s32, s32, s32);
 
 /* a picture: its header, then 320x240 16-bit pixels */

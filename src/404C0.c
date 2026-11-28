@@ -41,7 +41,6 @@ s32 D_802A5308;
 s32 D_802A530C;
 s32 D_802A5310;
 
-s32 func_80225CCC(UnkStruct_80225CC0 *arg0, s32 arg1, s32 arg2);
 void func_80225D9C(void);
 void func_80225DDC(void);
 void func_80225EBC(u32 arg0, UnkStruct_8014B008 *arg1);

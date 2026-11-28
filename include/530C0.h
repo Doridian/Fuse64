@@ -8,6 +8,7 @@
 
 s32 func_80238CF8(s32 arg0, s32 arg1);
 s32 func_80238DFC(s32 arg0, s32 arg1, u32 arg2);
+s32 func_80238EA8(s32 arg0);
 s32 func_80238F40(s32 arg0, s32 arg1);
 s32 func_80238FDC(void);
 void func_802392F8(void);

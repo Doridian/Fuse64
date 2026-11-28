@@ -17,6 +17,9 @@
 #include "common.h"
 #include "A8DE0.h"
 #include "426E0.h"
+#include "530C0.h"
+#include "78CA0.h"
+#include "86680.h"
 
 PORT_RET(void, s32) func_8022FC90(UnkStructA *);
 UnkStructA *func_80230E6C(s32, PORT_IP(s32));
@@ -25,10 +28,7 @@ UnkStructA *func_80231274(s32, s32, s32, UnkStructA *);
 void func_80231408(UnkStructA *, s32);
 void func_80232DB4(UnkStructA *);
 s32 func_80238A10(void *, void *, PORT_RET(s32, void *), s32, s32);
-PORT_RET(void, s32) func_80238EA8(s32);
 void func_80239094(void);
-f64 func_8025E63C(void);
-s32 func_8026C51C(s32, f32, f32, f32);
 s32 func_8026C630(s32, f32 *);
 f32 func_8026E938(UnkStructA_40 *);
 void func_80297D30(s32, void *);
@@ -48,7 +48,6 @@ static void func_8028E614(void);
 static void func_8028E6BC();
 static s32 func_8028E6C4(void);
 s32 func_8028E6CC(s32 kind, f32 *pos, s32 dir);
-s32 func_8028E8A4(s32 kind, f32 x, f32 y, f32 z, s32 dir);
 void func_8028E8E0(void);
 void func_8028E97C(void);
 void func_8028E9B8(void);

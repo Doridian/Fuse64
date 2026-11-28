@@ -80,7 +80,6 @@ s32 func_80294CA0(s32 i);
 void func_8029414C(u8 *buf);
 s32 func_802934E8(u8 *buf);
 void func_802930F8(u8 *buf, s32 kind);
-s32 func_80294E54(void);
 s32 func_802952CC(u8 *buf);
 s32 func_8029522C(s32 slot, u8 *buf);
 PORT_IP(s32) func_80294A48(s32 slot, u32 kind);
@@ -420,7 +419,7 @@ void func_8029414C(u8 *buf) {
     *p++ = func_80293FE4(0xB);
     *p++ = func_80293EAC(chk, 6);
     chk += 7;
-#line 392 /* fake: numbering for as1 order (header; tried i and k initialised at their declarations, i = 0, k = 0 order, the loop as an inlined static defined above: it leaves a stub) */
+#line 391 /* fake: numbering for as1 order (header; tried i and k initialised at their declarations, i = 0, k = 0 order, the loop as an inlined static defined above: it leaves a stub) */
     for (k = 0, i = 0; i < 6; i++, k += 4) {
         j = k + 0x15;
         do {} while (0); /* fake: splits the block, so j + 1 isn't folded to k + 0x16 (tried j as the induction variable, k from 0x15, j = i * 4 + 0x15, j += 2 between the calls: none; `if (1) {}` around the calls matches too) */

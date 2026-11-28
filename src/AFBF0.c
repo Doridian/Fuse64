@@ -11,6 +11,7 @@
 #include "A4860.h"
 #include "AFBF0.h"
 #include "426E0.h"
+#include "53D70.h"
 
 typedef struct {
     /* 0x00 */ u32 unk0;
@@ -57,7 +58,6 @@ void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
 s32 func_80238A10(void *, PORT_IP(s32), void *, s32, u16);
 s32 func_8023903C(u32);
 void func_80239094(void);
-PORT_RET(s32, u16) func_802399AC(s32);
 PORT_RET(void, s32) func_80280DB4(s32);
 
 void func_802953F0(s32 *arg0, UnkStructA_40 **arg1);

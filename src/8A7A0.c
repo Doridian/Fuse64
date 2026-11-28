@@ -91,6 +91,8 @@
 #include "A4CE0.h"
 #include "949A0.h"
 #include "9CAB0.h"
+#include "530C0.h"
+#include "86680.h"
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 #define M2C_BITWISE(type, expr) ((type)(expr))
@@ -110,7 +112,6 @@
 
 
 void free(void *);
-PORT_RET(s32, void *) func_8022F4AC(PORT_RET(s32, void *), s32, PORT_RET(s32, void *));
 PORT_RET(void, s32) func_8022FC90(void *);
 void func_8022FF58(f32 *, f32 *, f32 *);
 void * func_802308B8(void *, s32);
@@ -123,13 +124,9 @@ PORT_RET(s32, void) func_80232AA8(PORT_RET(s32, void *));
 PORT_RET(s32, void) func_80232AC8(PORT_RET(s32, void *), PORT_RET(s32, void *));
 s32 func_80232D18(void *, s32);
 s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
-PORT_RET(void, s32) func_80238EA8(s32);
 void func_80239094(void);
 s32 *func_802391F0(void);
 void * func_802443F4(s32);
-s32 func_8026C51C(s32, f32, f32, f32);
-s32 func_8026C660(s32);
-void * func_8027A1A0(void *);
 s32 func_8027A1F4(void *, PORT_IP(s32));
 void func_8027F820();
 void func_8027F858(PORT_IP(s32), s32);
@@ -177,10 +174,8 @@ extern f32 D_802AFC68;
 extern void *D_802AFC6C;
 extern s16 D_802AFE70;
 
-u16 func_8026D7D8(s32 arg0, s32 arg1, s32 arg2);
 u8 func_8026DC74(s32 arg0);
 f32 func_8026E938(u8 *arg0);
-s32 func_8026FFA0(s16 arg0);
 void func_80270080(PORT_IP(s32) *arg0);
 void *func_802700EC(u8 *arg0, u8 *arg1, s32 arg2, f32 arg3);
 s32 func_802702BC(s16 arg0);
@@ -188,7 +183,6 @@ void func_802702EC(s16 arg0);
 void func_80270354(s16 *arg0, s16 arg1);
 void func_8027036C(s16 *arg0, s16 arg1);
 s32 func_80270384(u8 *arg0);
-s16 *func_802703B4(u8 *arg0);
 s32 func_80270438(u8 *arg0, s32 *arg1);
 PORT_IP(s32) func_80270714(s16 arg0);
 PORT_RET(void, s32) func_80270770(s16 arg0, s16 arg1);

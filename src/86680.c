@@ -14,18 +14,13 @@ typedef struct {
 
 void func_8022FEAC(Vec3f *, Vec3f *);
 void func_8022FF58(Vec3f *, Vec3f *, Vec3f *);
-PORT_RET(s32, u8) func_80266CD4(s16);
-PORT_RET(s32, s16) func_8026724C(s16);
-PORT_RET(s32, s16) func_802675F4(s16, s16, f32);
 void func_80267654(s32, f32, f32, f32, f32);
-PORT_RET(void, s32) func_80268F94(s16);
 PORT_RET(s32, s16) func_8026A754(s32, s32, void *, void *, s32);
 f32 sqrtf(f32);
 
 static void func_8026C0A8(Vec3f *pos, f32 *angle, f32 *dist);
 static s32 func_8026C494(s32 id);
 static void func_8026C774(void);
-s32 func_8026C51C(s32 arg0, f32 x, f32 y, f32 z);
 void func_8026BFD0(s32 arg0, s8 arg1);
 
 extern s32 D_800BD770[PORT_SIZE(1)];
@@ -40,7 +35,6 @@ s32 D_802AFC20;
 s32 D_802AFC24;
 f32 D_802AFC28;
 
-s32 func_8026C660(s32 arg0);
 s32 func_8026C630(s32 arg0, Vec3f *arg1);
 void func_8026C40C(s32 arg0, Vec3f *arg1);
 

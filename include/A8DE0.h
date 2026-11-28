@@ -6,6 +6,7 @@
 
 #include "common.h"
 
+s32 func_8028E8A4(s32 kind, f32 x, f32 y, f32 z, s32 dir);
 void func_8028E9E0(void);
 
 #endif

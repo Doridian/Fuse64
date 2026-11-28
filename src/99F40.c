@@ -3,8 +3,6 @@
 #include "87D80.h"
 #include "99F40.h"
 
-s32 func_8026D7D8(s32, s32, s32);
-
 extern UnkStruct_800B5F20 D_800B5F20[6];
 void func_8027F84C(void (*arg0)(void));
 void func_8027F88C(void (*arg0)(PORT_IP(s32)), s32 arg1);

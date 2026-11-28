@@ -6,10 +6,6 @@
  * CORE_FUNC_D needed an `if (1)` fake to keep arg1 out of its stack home.
  */
 
-typedef struct {
-    f32 x, y, z;
-} Vec3f_ovl09_03_80044A80;
-
 void func_ovl09_03_80043338(const char *);
 void func_ovl09_03_80043678(s32);
 void func_ovl09_03_80043690(s32);
@@ -31,7 +27,7 @@ void func_ovl09_03_800441E8(s32);
 u8 D_ovl09_03_80044A50[0x24]; /* unused (func_ovl09_03_800432CC) */
 s32 D_ovl09_03_80044A74;
 s32 D_ovl09_03_80044A78;
-Vec3f_ovl09_03_80044A80 D_ovl09_03_80044A80;
+Vec3f D_ovl09_03_80044A80;
 f32 D_ovl09_03_80044A8C;
 f32 D_ovl09_03_80044A90;
 

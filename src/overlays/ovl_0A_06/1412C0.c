@@ -104,10 +104,6 @@ typedef struct {
     /* 0x10 */ u8 unk10[0xC];
 } UnkStruct_ovl0A_06_80047540; /* size 0x1C */
 
-typedef struct {
-    f32 x, y, z;
-} Vec3f_ovl0A_06;
-
 s32 func_ovl0A_06_800456D0(u8 *, const char *, s32); /* 0x101 */
 void func_ovl0A_06_80045B00(s32, s32, s32); /* 0xF00 */
 u16 func_ovl0A_06_80045B18(void); /* 0xF03 */
@@ -186,13 +182,13 @@ static void func_ovl0A_06_8004568C(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1)
 static void func_ovl0A_06_80043018(s32 id, s32 wait);
 
 /* .bss */
-Vec3f_ovl0A_06 D_ovl0A_06_800474F0;
-Vec3f_ovl0A_06 D_ovl0A_06_80047500;
+Vec3f D_ovl0A_06_800474F0;
+Vec3f D_ovl0A_06_80047500;
 s32 D_ovl0A_06_8004750C;
 u8 D_ovl0A_06_80047510[4];
 s32 D_ovl0A_06_80047514;
 s32 D_ovl0A_06_80047518;
-Vec3f_ovl0A_06 D_ovl0A_06_80047520;
+Vec3f D_ovl0A_06_80047520;
 UnkStructA_40 *D_ovl0A_06_8004752C;
 UnkStructA_40 *D_ovl0A_06_80047530;
 UnkStructA_40 *D_ovl0A_06_80047534;
@@ -1623,9 +1619,9 @@ static s32 func_ovl0A_06_8004311C(void) {
             D_ovl0A_06_80047018 = 1;
             func_ovl0A_06_80043020(0, 1);
         } else if ((pressed & 0x8000) || (pressed & 0x1000)) {
-#line 1669 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1665 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             ret = 1;
-#line 1645 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1641 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             if (D_ovl0A_06_80047018 == 0) {
                 /* SE(1, 1) with `ret = 2` between its wait and its call */
                 switch (1) {
@@ -1642,9 +1638,9 @@ static s32 func_ovl0A_06_8004311C(void) {
                 SE(2, 2);
             }
         } else if (pressed & 0x4000) {
-#line 1669 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1665 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             ret = 1;
-#line 1664 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1660 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             SE(2, 2);
         }
         func_ovl0A_06_800465A0();

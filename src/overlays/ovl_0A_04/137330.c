@@ -15,10 +15,6 @@
  * These replace the last two `if (!obj && !obj && !obj) {}` fakes.
  */
 
-typedef struct {
-    f32 x, y, z;
-} Vec3f_ovl0A_04_800466F0;
-
 
 void func_ovl0A_04_80045308(s32);
 void func_ovl0A_04_80045320(s32);
@@ -85,7 +81,7 @@ void func_ovl0A_04_800448FC(void);
 u8 D_ovl0A_04_800466C0[0x24]; /* not referenced here */
 s32 D_ovl0A_04_800466E4;
 s32 D_ovl0A_04_800466E8;
-Vec3f_ovl0A_04_800466F0 D_ovl0A_04_800466F0;
+Vec3f D_ovl0A_04_800466F0;
 UnkStruct_802B0260 *D_ovl0A_04_800466FC;
 s32 D_ovl0A_04_80046700;
 s32 D_ovl0A_04_80046704;
@@ -753,8 +749,8 @@ void func_ovl0A_04_80043300(void) {
     f32 dx;
     f32 dy;
     f32 dz;
-    Vec3f_ovl0A_04_800466F0 a;
-    Vec3f_ovl0A_04_800466F0 b;
+    Vec3f a;
+    Vec3f b;
     s32 i;
 
     func_ovl0A_04_800432F8(0x400);

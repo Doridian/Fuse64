@@ -32,10 +32,6 @@ typedef struct {
     /* 0x0C */ UnkStructA_40 *unkC;
 } UnkStruct_ovl0A_05_80049518;
 
-typedef struct {
-    f32 x, y, z;
-} Vec3f_ovl0A_05;
-
 void func_ovl0A_05_80047F30(const char *); /* 0x100 */
 void func_ovl0A_05_80048290(s32); /* 0xD00 */
 void func_ovl0A_05_80048370(s32, s32, s32); /* 0xF00 */
@@ -83,7 +79,7 @@ void func_ovl0A_05_80048C90(UnkStructA *); /* 0x1814 */
 UnkStructA *func_ovl0A_05_80048CA0(s32, s32, s32, UnkStructA *); /* 0x1816 */
 void func_ovl0A_05_80048D48(UnkStructA *, f32 *); /* 0x182B */
 void func_ovl0A_05_80048D50(UnkStructA *, UnkStructA *); /* 0x182C */
-UnkStructA *func_ovl0A_05_80048D80(s32, Vec3f_ovl0A_05 *, Vec3f_ovl0A_05 *); /* 0x1832 */
+UnkStructA *func_ovl0A_05_80048D80(s32, Vec3f *, Vec3f *); /* 0x1832 */
 s32 func_ovl0A_05_80048DC8(void (*)(), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
 void func_ovl0A_05_80048DD8(void); /* 0x1902 */
 void func_ovl0A_05_80048DE8(s32); /* 0x1904 */
@@ -114,13 +110,13 @@ void func_ovl0A_05_80049540(void); /* 0x310B */
 void func_ovl0A_05_80049548(void); /* 0x310C */
 
 /* .bss */
-Vec3f_ovl0A_05 D_ovl0A_05_800498D0;
-Vec3f_ovl0A_05 D_ovl0A_05_800498E0;
+Vec3f D_ovl0A_05_800498D0;
+Vec3f D_ovl0A_05_800498E0;
 s32 D_ovl0A_05_800498EC;
 u8 D_ovl0A_05_800498F0[4];
 s32 D_ovl0A_05_800498F4;
 s32 D_ovl0A_05_800498F8;
-Vec3f_ovl0A_05 D_ovl0A_05_80049900;
+Vec3f D_ovl0A_05_80049900;
 UnkStructA_40 *D_ovl0A_05_8004990C;
 UnkStructA_40 *D_ovl0A_05_80049910;
 UnkStructA_40 *D_ovl0A_05_80049914;
@@ -138,10 +134,10 @@ UnkStructA *D_ovl0A_05_80049950[4];
 UnkStruct_ovl0A_05_800494E8 *D_ovl0A_05_80049960;
 UnkStructA *D_ovl0A_05_80049964;
 UnkStructA *D_ovl0A_05_80049968;
-Vec3f_ovl0A_05 D_ovl0A_05_80049970;
+Vec3f D_ovl0A_05_80049970;
 
 /* .data */
-Vec3f_ovl0A_05 D_ovl0A_05_80049570 = { 5000.0f, 5000.0f, 5000.0f };
+Vec3f D_ovl0A_05_80049570 = { 5000.0f, 5000.0f, 5000.0f };
 f32 D_ovl0A_05_8004957C[4] = { 1.0f, -1.0f, 1.0f, -1.0f };
 f32 D_ovl0A_05_8004958C[4] = { 1.0f, -1.0f, -1.0f, 1.0f };
 f32 D_ovl0A_05_8004959C[4][6] = {
@@ -419,7 +415,7 @@ void func_ovl0A_05_80047608(void) {
     UnkStructA *obj;
     s32 played;
     s32 i;
-    Vec3f_ovl0A_05 scale;
+    Vec3f scale;
     f32 pos[3];
     f32 dst[3];
     f32 dx;
@@ -858,7 +854,7 @@ void func_ovl0A_05_800460C8(void) {
 }
 
 void func_ovl0A_05_80045EF0(void) {
-    Vec3f_ovl0A_05 pos;
+    Vec3f pos;
 
     func_ovl0A_05_80048468(1);
     while (!func_ovl0A_05_80049050(0x400)) {
@@ -1107,7 +1103,7 @@ void func_ovl0A_05_80045310(void) {
 }
 
 void func_ovl0A_05_800450B4(void) {
-    Vec3f_ovl0A_05 pos;
+    Vec3f pos;
 
     func_ovl0A_05_80048468(1);
     while (!func_ovl0A_05_80049050(0x400)) {

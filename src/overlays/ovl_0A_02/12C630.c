@@ -14,10 +14,6 @@
  */
 
 
-typedef struct {
-    f32 x, y, z;
-} Vec3f_ovl0A_02;
-
 void func_ovl0A_02_80046CB0(const char *); /* 0x100 */
 void func_ovl0A_02_80046FF8(s32); /* 0xC00 */
 void func_ovl0A_02_80047010(s32); /* 0xD00 */
@@ -100,7 +96,7 @@ void func_ovl0A_02_800482C0(void); /* 0x310B */
 u8 D_ovl0A_02_80048500[0x24];
 s32 D_ovl0A_02_80048524;
 s32 D_ovl0A_02_80048528;
-Vec3f_ovl0A_02 D_ovl0A_02_80048530;
+Vec3f D_ovl0A_02_80048530;
 UnkStruct_802B0260 *D_ovl0A_02_8004853C;
 s32 D_ovl0A_02_80048540;
 s32 D_ovl0A_02_80048544;
@@ -147,7 +143,7 @@ f32 D_ovl0A_02_80048374[6][3] = {
     { 2450.0f, 800.0f, 1600.0f },
     { 2450.0f, 800.0f, 1200.0f },
 };
-Vec3f_ovl0A_02 D_ovl0A_02_800483BC = { 0.0f, 0.0f, 0.0f };
+Vec3f D_ovl0A_02_800483BC = { 0.0f, 0.0f, 0.0f };
 f32 D_ovl0A_02_800483C8[2][3] = {
     { 2550.0f, 600.0f, 1500.0f },
     { 2950.0f, 600.0f, 1300.0f },
@@ -623,7 +619,7 @@ static void func_ovl0A_02_80045958(s32 (*tbl)[3], s32 n) {
 
 void func_ovl0A_02_800456D0(void) {
     s32 i;
-    Vec3f_ovl0A_02 pos;
+    Vec3f pos;
 
     pos = D_ovl0A_02_800483BC;
     func_ovl0A_02_800480E0(1);

@@ -16,10 +16,6 @@
  */
 
 
-typedef struct {
-    f32 x, y, z;
-} Vec3f_ovl0A_03;
-
 void func_ovl0A_03_800470B0(const char *); /* 0x100 */
 void func_ovl0A_03_800473F8(s32); /* 0xC00 */
 void func_ovl0A_03_80047410(s32); /* 0xD00 */
@@ -104,7 +100,7 @@ void func_ovl0A_03_80048658(s32); /* 0x3002 */
 u8 D_ovl0A_03_80048800[0x24];
 s32 D_ovl0A_03_80048824;
 s32 D_ovl0A_03_80048828;
-Vec3f_ovl0A_03 D_ovl0A_03_80048830;
+Vec3f D_ovl0A_03_80048830;
 UnkStruct_802B0260 *D_ovl0A_03_8004883C;
 s32 D_ovl0A_03_80048840;
 s32 D_ovl0A_03_80048844;
@@ -687,7 +683,7 @@ void func_ovl0A_03_800455B8(void) {
 }
 
 void func_ovl0A_03_8004543C(UnkStructA *obj, s32 *count) {
-    static Vec3f_ovl0A_03 D_ovl0A_03_80048888;
+    static Vec3f D_ovl0A_03_80048888;
 
     if (++*count >= 13) {
         D_ovl0A_03_80048888.x = func_ovl0A_03_80048100() * 50.0;
@@ -796,7 +792,7 @@ void func_ovl0A_03_80045020(void) {
 }
 
 void func_ovl0A_03_80044E80(UnkStructA *obj, s32 *count) {
-    static Vec3f_ovl0A_03 D_ovl0A_03_80048898;
+    static Vec3f D_ovl0A_03_80048898;
 
     if (++*count >= 9) {
         if (D_ovl0A_03_800486F0) {

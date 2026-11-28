@@ -29,10 +29,6 @@
  */
 #include "common.h"
 
-typedef struct {
-    f32 x, y, z;
-} Vec3f_ovl0B_05_800466F0;
-
 
 typedef struct {
     PORT_UP(u32) w0;
@@ -133,7 +129,7 @@ s32 func_ovl0B_05_800464E8(s32); /* 0x2F0F */
 u8 D_ovl0B_05_800467C0[0x24]; /* not referenced here */
 s32 D_ovl0B_05_800467E4;
 s32 D_ovl0B_05_800467E8;
-Vec3f_ovl0B_05_800466F0 D_ovl0B_05_800467F0;
+Vec3f D_ovl0B_05_800467F0;
 UnkStruct_802B0260 *D_ovl0B_05_800467FC;
 s32 D_ovl0B_05_80046800;
 s32 D_ovl0B_05_80046804;

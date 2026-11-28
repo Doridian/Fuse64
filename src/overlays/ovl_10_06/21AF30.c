@@ -56,12 +56,6 @@ typedef struct {
     /* 0x0C */ s32 unkC;
 } UnkStruct_ovl10_06_8004B900;
 
-/* What func_ovl10_06_8004A0B0 returns. */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x14];
-    /* 0x14 */ s32 unk14;
-} UnkStruct_ovl10_06_8004A0B0;
-
 void func_ovl10_06_80049258(const char *, ...);
 void func_ovl10_06_80049598(s32);
 void func_ovl10_06_800495B0(s32);
@@ -134,7 +128,7 @@ UnkStructA *func_ovl10_06_80049FD0(UnkStructA *);
 void *func_ovl10_06_80049FF0(s32, s32, UnkStructA *);
 void func_ovl10_06_8004A018(UnkStructA *);
 void func_ovl10_06_8004A068(UnkStructA *, Vec3f *);
-UnkStruct_ovl10_06_8004A0B0 *func_ovl10_06_8004A0B0(UnkStructA *, s32);
+UnkStructA *func_ovl10_06_8004A0B0(UnkStructA *, s32);
 s32 func_ovl10_06_8004A0C0(s32, Vec3f *, Vec3f *, UnkStructA **, s32);
 void func_ovl10_06_8004A0E0(UnkStruct_8022DBBC *);
 s32 func_ovl10_06_8004A0E8(void (*)(void), void *, PORT_IP(s32), s32, s32);
@@ -676,7 +670,7 @@ void func_ovl10_06_80048110(void) {
     Vec3f d;
     Vec3f pos;
     Vec3f ang;
-    UnkStruct_ovl10_06_8004A0B0 *p;
+    UnkStructA *p;
     f32 x;
     f32 z;
 

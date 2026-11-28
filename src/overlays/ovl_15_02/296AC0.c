@@ -219,7 +219,7 @@ void func_ovl15_02_80050688(UnkStructA *, f32 *); /* 0x182B */ /* also: void (Ob
 void func_ovl15_02_80050690(UnkStructA *, UnkStructA *); /* 0x182C */ /* also: void (Obj02 *, Obj02 *) x1; void (Obj03 *, Obj03 *) x1; void (UnkStructA *, UnkStructA *) x1 */
 void func_ovl15_02_800506C8(UnkStructA *); /* 0x1833 */
 PORT_IP(s32) func_ovl15_02_800506D0(UnkStructA *, s32); /* 0x1834 */
-UnkStructA *func_ovl15_02_800506E0(PORT_IP(s32), PORT_IP(s32), Vec3f *, Vec3f *, s32); /* 0x1836 */
+PORT_IP(s32) func_ovl15_02_800506E0(PORT_IP(s32), PORT_IP(s32), Vec3f *, UnkStructA **, s32); /* 0x1836 */
 void func_ovl15_02_800506E8(s32 *); /* 0x1837 */
 void func_ovl15_02_800506F0(void); /* 0x1838 */
 void func_ovl15_02_800506F8(void); /* 0x1839 */
@@ -1443,7 +1443,7 @@ void func_ovl15_02_8004D818() {
                 for (i = 0; i < 8; i++) {
                     objs[i] = NULL;
                 }
-                n = (PORT_IP(s32)) func_ovl15_02_800506E0(0x42, (PORT_IP(s32)) p, &size, (Vec3f *) objs, 8);
+                n = func_ovl15_02_800506E0(0x42, (PORT_IP(s32)) p, &size, objs, 8);
                 if (n != 0) {
                     ok = 1;
                     for (i = 0; i < n && ok != 0; i++) {

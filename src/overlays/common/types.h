@@ -403,14 +403,6 @@ typedef struct {
     /* 0x20 */ void (*unk20)(s32, s32);
 } UnkStruct_ovl0F_01_80048938; /* size 0x24 */
 
-/* what func_ovl10_01_80046830 and its copies return (10_01..05) */
-typedef struct {
-    /* 0x00 */ u8 unk0[8];
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ u8 unkC[4];
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl10_01_80046830;
-
 /* what func_ovl10_13_8004A770 and func_ovl12_05_8004A840 return: a player */
 typedef struct {
     /* 0x000 */ s32 unk0;

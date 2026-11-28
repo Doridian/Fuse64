@@ -70,9 +70,9 @@ void func_8022FA10(f32 *arg0, s32 arg1, f32 *arg2);
 void func_8022F998(f32 *arg0, s32 arg1, f32 *arg2);
 PORT_IP(s32) func_8022F77C(s32 arg0, PORT_IP(s32) arg1, PORT_IP(s32) arg2);
 void func_80232DB4(f32 *arg0);
-f32 *func_8022F550(f32 *arg0, s32 arg1);
-f32 *func_8022F4AC(f32 *arg0, s32 arg1, f32 *arg2);
-PORT_IP(s32) func_8022F698(PORT_IP(s32) arg0, f32 *arg1, f32 *arg2, f32 **arg3, s32 arg4);
+UnkStructA *func_8022F550(UnkStructA *arg0, s32 arg1);
+UnkStructA *func_8022F4AC(UnkStructA *arg0, s32 arg1, UnkStructA *arg2);
+PORT_IP(s32) func_8022F698(PORT_IP(s32) arg0, f32 *arg1, f32 *arg2, UnkStructA **arg3, s32 arg4);
 void func_8022DE6C(void);
 void func_8022DE00(void);
 

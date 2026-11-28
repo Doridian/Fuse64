@@ -176,7 +176,7 @@ void func_ovl15_01_8004D4A8(UnkStructA *, f32 *); /* 0x182B */ /* also: void (Un
 void func_ovl15_01_8004D4B0(UnkStructA *, UnkStructA *); /* 0x182C */ /* also: void (UnkStructA *, UnkStructA *) x1; void (UnkStructA *, UnkStructA *) x1; void (void *, UnkStructA *) x1 */
 UnkStructA *func_ovl15_01_8004D4E0(s32, Vec3f *, Vec3f *); /* 0x1832 */
 void func_ovl15_01_8004D4E8(UnkStructA *); /* 0x1833 */
-UnkStructA *func_ovl15_01_8004D500(PORT_IP(s32), PORT_IP(s32), Vec3f *, Vec3f *, s32); /* 0x1836 */
+PORT_IP(s32) func_ovl15_01_8004D500(PORT_IP(s32), PORT_IP(s32), Vec3f *, UnkStructA **, s32); /* 0x1836 */
 void func_ovl15_01_8004D508(s32 *); /* 0x1837 */
 void func_ovl15_01_8004D510(void); /* 0x1838 */
 void func_ovl15_01_8004D518(void); /* 0x1839 */
@@ -3056,7 +3056,7 @@ void func_ovl15_01_80044088(f32 *arg0, f32 *arg1, Vec3f *arg2) {
     p.x = arg1[0] - arg2->x;
     p.y = arg1[1];
     p.z = arg1[2] - arg2->z;
-    D_ovl15_01_8004E070 = func_ovl15_01_8004D500(0x42, (PORT_IP(s32)) pp, &D_ovl15_01_8004DCD0, &D_ovl15_01_8004E078, 8);
+    D_ovl15_01_8004E070 = (UnkStructA *) func_ovl15_01_8004D500(0x42, (PORT_IP(s32)) pp, &D_ovl15_01_8004DCD0, (UnkStructA **) &D_ovl15_01_8004E078, 8);
     if (func_ovl15_01_8004D4E0(1, pp, &D_ovl15_01_8004DCD0) == NULL) { /* a compiled-out debug check (the condition is a guess: either test of the result matches) */
         DEBUG_PRINT(("8004D4E0 == NULL\n"));
     }
@@ -3066,7 +3066,7 @@ void func_ovl15_01_80044088(f32 *arg0, f32 *arg1, Vec3f *arg2) {
     p.x = arg1[0] + arg2->x;
     p.y = arg1[1];
     p.z = arg1[2] - arg2->z;
-    n = (PORT_IP(s32)) func_ovl15_01_8004D500(0x42, (PORT_IP(s32)) pp, &D_ovl15_01_8004DCD0, &D_ovl15_01_8004E078, 8);
+    n = func_ovl15_01_8004D500(0x42, (PORT_IP(s32)) pp, &D_ovl15_01_8004DCD0, (UnkStructA **) &D_ovl15_01_8004E078, 8);
     if (func_ovl15_01_8004D4E0(1, pp, &D_ovl15_01_8004DCD0) != NULL) {
         n += 20;
     }
@@ -3080,7 +3080,7 @@ void func_ovl15_01_80044088(f32 *arg0, f32 *arg1, Vec3f *arg2) {
     p.x = arg1[0] - arg2->x;
     p.y = arg1[1];
     p.z = arg1[2] + arg2->z;
-    n = (PORT_IP(s32)) func_ovl15_01_8004D500(0x42, (PORT_IP(s32)) pp, &D_ovl15_01_8004DCD0, &D_ovl15_01_8004E078, 8);
+    n = func_ovl15_01_8004D500(0x42, (PORT_IP(s32)) pp, &D_ovl15_01_8004DCD0, (UnkStructA **) &D_ovl15_01_8004E078, 8);
     if (func_ovl15_01_8004D4E0(1, pp, &D_ovl15_01_8004DCD0) != NULL) {
         n += 20;
     }
@@ -3094,7 +3094,7 @@ void func_ovl15_01_80044088(f32 *arg0, f32 *arg1, Vec3f *arg2) {
     p.x = arg1[0] + arg2->x;
     p.y = arg1[1];
     p.z = arg1[2] + arg2->z;
-    n = (PORT_IP(s32)) func_ovl15_01_8004D500(0x42, (PORT_IP(s32)) pp, &D_ovl15_01_8004DCD0, &D_ovl15_01_8004E078, 8);
+    n = func_ovl15_01_8004D500(0x42, (PORT_IP(s32)) pp, &D_ovl15_01_8004DCD0, (UnkStructA **) &D_ovl15_01_8004E078, 8);
     if (func_ovl15_01_8004D4E0(1, pp, &D_ovl15_01_8004DCD0) != NULL) {
         n += 20;
     }

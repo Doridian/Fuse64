@@ -51,7 +51,7 @@ UnkStructA *func_ovl10_03_800464F0(s32, s32, s32, PORT_IP(s32));
 void *func_ovl10_03_80046520(s32, s32, UnkStructA *);
 void func_ovl10_03_80046548(UnkStructA *);
 void func_ovl10_03_80046598(UnkStructA *, Vec3f *);
-UnkStruct_ovl10_01_80046830 *func_ovl10_03_800465E0(UnkStructA *, s32);
+UnkStructA *func_ovl10_03_800465E0(UnkStructA *, s32);
 void func_ovl10_03_80046618(void (*)(void), s32, PORT_IP(s32), s32, s32);
 void func_ovl10_03_80046638(s32);
 void func_ovl10_03_80046660(void);
@@ -433,7 +433,7 @@ void func_ovl10_03_80044BBC(s32 arg0) {
 
 void func_ovl10_03_80044964(void) {
     s32 i;
-    UnkStruct_ovl10_01_80046830 *p;
+    UnkStructA *p;
     f32 lim; /* a guess: any float held for the loop fills this slot (42.5f, 34.0f too) */
     f32 x;
 
@@ -520,7 +520,7 @@ void func_ovl10_03_800442D8(void) {
     Vec3f out;
     Vec3f pos;
     Vec3f v;
-    UnkStruct_ovl10_01_80046830 *p;
+    UnkStructA *p;
     f32 x;
     f32 z;
 

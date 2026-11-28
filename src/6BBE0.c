@@ -461,7 +461,7 @@ void func_8025DC18(void);
 void func_8025DC60(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 void func_8025E0C4(s32 arg0, s32 arg1, s32 arg2);
 void func_8025E0D4(s32 arg0);
-void *func_8025E0DC(s32 arg0);
+UnkStruct_800BCFE8 *func_8025E0DC(s32 arg0);
 void func_8025E100(s32 arg0);
 void func_8025E16C(void);
 void func_8025E1D4(u8 **arg0);
@@ -626,8 +626,8 @@ void func_8025E100(s32 arg0) {
     D_802ACFD0 = 1;
 }
 
-void *func_8025E0DC(s32 arg0) {
-    return (arg0 * PORT_HOST(0x128, sizeof(Port_800BCFE8))) + D_800BCFE8;
+UnkStruct_800BCFE8 *func_8025E0DC(s32 arg0) {
+    return (UnkStruct_800BCFE8 *) ((arg0 * PORT_HOST(0x128, sizeof(Port_800BCFE8))) + D_800BCFE8);
 }
 
 void func_8025E0D4(s32 arg0) {

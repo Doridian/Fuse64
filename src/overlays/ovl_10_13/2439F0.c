@@ -147,7 +147,7 @@ void func_ovl10_13_8004A710(s32);
 void func_ovl10_13_8004A740(UnkStructA_40 *, s32, s32, s32, f32);
 void func_ovl10_13_8004A750(UnkStructA_40 *);
 void func_ovl10_13_8004A758(s32, s32, s32, s32, s32);
-UnkStruct_ovl10_13_8004A770 *func_ovl10_13_8004A770(s32);
+UnkStruct_800BCFE8 *func_ovl10_13_8004A770(s32);
 void func_ovl10_13_8004A778(s32);
 void func_ovl10_13_8004A828(void);
 void func_ovl10_13_8004A830(void);
@@ -464,7 +464,7 @@ void func_ovl10_13_80047A0C(void) {
     s32 i;
     s32 task1;
     s32 task2;
-    UnkStruct_ovl10_13_8004A770 *player;
+    UnkStruct_800BCFE8 *player;
 
     obj0 = func_ovl10_13_80049818(0);
     obj2 = func_ovl10_13_80049818(2);
@@ -940,7 +940,7 @@ void func_ovl10_13_800468BC(void) {
 void func_ovl10_13_80046750(void) {
     UnkStructA *temp_v0_2;
     UnkStructA_40 *temp_v1;
-    UnkStruct_ovl10_13_8004A770 *temp_v0;
+    UnkStruct_800BCFE8 *temp_v0;
 
     func_ovl10_13_80049790(0x17, 0, 0x20);
     func_ovl10_13_800497D0(0);
@@ -985,7 +985,7 @@ void func_ovl10_13_800466B8(void) {
 /* limit is also the pointer for the camera's third read (header). */
 void func_ovl10_13_800464B0(void) {
     UnkStructA *obj;
-    UnkStruct_ovl10_13_8004A770 *player;
+    UnkStruct_800BCFE8 *player;
     UnkStruct_802AC610 *info;
     Vec3f pos;
     PORT_IP(s32) limit;
@@ -1039,7 +1039,7 @@ void func_ovl10_13_800464B0(void) {
 
 void func_ovl10_13_80046324(void) {
     s32 limit;
-    UnkStruct_ovl10_13_8004A770 *player;
+    UnkStruct_800BCFE8 *player;
     UnkStruct_802AC610 *info;
     Vec3f pos;
     UnkStructA_40 *temp_v1;
@@ -1212,12 +1212,12 @@ static void func_ovl10_13_8004574C(void) {
     func_ovl10_13_800497C8(1);
     func_ovl10_13_8004A198(0x70, 0x70, 0);
     i = (PORT_IP(s32))func_ovl10_13_8004A770(1);
-    ((UnkStruct_ovl10_13_8004A770 *)i)->unk0 = 0;
-    ((UnkStruct_ovl10_13_8004A770 *)i)->unk88 = -1;
+    ((UnkStruct_800BCFE8 *)i)->unk0 = 0;
+    ((UnkStruct_800BCFE8 *)i)->unk88 = -1;
     i = (PORT_IP(s32))func_ovl10_13_8004A770(2);
-    ((UnkStruct_ovl10_13_8004A770 *)i)->unk0 = 0;
-    ((UnkStruct_ovl10_13_8004A770 *)i)->unk88 = -1;
-    if ((D_ovl10_13_8004ADA8 != 0x1C) && !(((UnkStruct_ovl10_13_8004A770 *)i)->unk124 & 8)) {
+    ((UnkStruct_800BCFE8 *)i)->unk0 = 0;
+    ((UnkStruct_800BCFE8 *)i)->unk88 = -1;
+    if ((D_ovl10_13_8004ADA8 != 0x1C) && !(((UnkStruct_800BCFE8 *)i)->unk124 & 8)) {
         if (((UnkStruct_802AC610 *)obj0)->unk10 == 0) {
 #if VERSION_EU
             limit = 12000;
@@ -1230,8 +1230,8 @@ static void func_ovl10_13_8004574C(void) {
 #endif
         }
         if (limit >= D_ovl10_13_8004ADD0) {
-            func_ovl10_13_8004A358(&((UnkStruct_ovl10_13_8004A770 *)i)->unk2C);
-            ((UnkStruct_ovl10_13_8004A770 *)i)->unk124 |= 8;
+            func_ovl10_13_8004A358(&((UnkStruct_800BCFE8 *)i)->unk2C);
+            ((UnkStruct_800BCFE8 *)i)->unk124 |= 8;
             ((UnkStruct_802AC610 *)obj0)->unk2C += 1;
         }
     }

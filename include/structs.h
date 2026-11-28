@@ -338,6 +338,34 @@ typedef struct {
     /* 0x0E */ u16 unkE;
 } UnkStruct_802ACF08;
 
+/* D_800BCFE8 (6BBE0's .bss, 4 of them): a player's state, what
+ * func_8025E0DC (ZeroJump 0x2D03) returns (0D_07, 10_13, 12_05, 12_06).
+ * 6BBE0 reaches it by offset (port_types.h's Port_800BCFE8 on the port). */
+typedef struct {
+    /* 0x000 */ s32 unk0;
+    /* 0x004 */ u8 unk4[0x14];
+    /* 0x018 */ UnkStructA *unk18;
+    /* 0x01C */ UnkStructA *unk1C;
+    /* 0x020 */ u8 unk20[0xC];
+    /* 0x02C */ Vec3f unk2C;
+    /* 0x038 */ u8 unk38[0x50];
+    /* 0x088 */ s32 unk88;
+    /* 0x08C */ u8 unk8C[4];
+    /* 0x090 */ s32 unk90;
+    /* 0x094 */ u8 unk94[4];
+    /* 0x098 */ void *unk98; /* malloc'd (port_types.h's Port_800BCFE8_98) */
+    /* 0x09C */ UnkStruct_802ACF08 *unk9C;
+    /* 0x0A0 */ union {
+        s32 w;
+        struct {
+            PORT_HALVES(u16 hi, u16 lo)
+            /* (the task id's halves in the host's order) */
+        } h;
+    } unkA0;
+    /* 0x0A4 */ u8 unkA4[0x80];
+    /* 0x124 */ s32 unk124;
+} UnkStruct_800BCFE8; /* size 0x128 */
+
 #ifdef TARGET_PC
 /* the game's objects as the port lays them out where another file's C
    reaches them by offset (port/include/port_types.h) */

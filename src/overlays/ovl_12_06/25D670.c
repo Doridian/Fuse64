@@ -34,14 +34,6 @@ typedef struct {
     /* 0x4C */ f32 unk4C;
 } UnkStruct_ovl12_06_80045FCC;
 
-/* What func_ovl12_06_80045D30 returns (D_ovl12_06_80045FC8). */
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[0x90];, u8 unk0[0x18]; void *unk18; void *unk1C; u8 unk20[0x70];) /* (6BBE0.c's D_800BCFE8[i], Port_800BCFE8: pointers at 0x18, 0x1C, 0x98, 0x9C) */
-    /* 0x90 */ s32 unk90;
-    /* 0x94 */ PORT_RET(u8 unk94[0xE];, u8 unk94[4]; void *unk98; void *unk9C;)
-    /* 0xA2 */ PORT_RET(u16 unkA2;, PORT_HALVES(u16 unkA0, u16 unkA2)) /* (the task id's low half) */
-} UnkStruct_ovl12_06_80045FC8;
-
 void func_ovl12_06_80044B98(s32);
 void func_ovl12_06_80044BB0(s32);
 s32 func_ovl12_06_80044C98(void);
@@ -92,7 +84,7 @@ void func_ovl12_06_80045C80(s32);
 void func_ovl12_06_80045C88(void);
 s32 func_ovl12_06_80045C90(s32, f32, f32, f32);
 void func_ovl12_06_80045D18(s32, s32, s32, s32, s32);
-UnkStruct_ovl12_06_80045FC8 *func_ovl12_06_80045D30(s32);
+UnkStruct_800BCFE8 *func_ovl12_06_80045D30(s32);
 void func_ovl12_06_80045D38(s32);
 void func_ovl12_06_80045DE8(void);
 void func_ovl12_06_80045DF0(void);
@@ -118,7 +110,7 @@ Vec3f D_ovl12_06_80045FB0;
 s32 D_ovl12_06_80045FBC;
 s32 D_ovl12_06_80045FC0;
 s32 D_ovl12_06_80045FC4;
-UnkStruct_ovl12_06_80045FC8 *D_ovl12_06_80045FC8;
+UnkStruct_800BCFE8 *D_ovl12_06_80045FC8;
 UnkStruct_ovl12_06_80045FCC *D_ovl12_06_80045FCC;
 
 /* an angle in degrees moved by d and kept in [0, 360) */
@@ -366,7 +358,7 @@ void func_ovl12_06_800439D4(void) {
     func_ovl12_06_80044D88(0);
     func_ovl12_06_80044E08(0);
     D_ovl12_06_80045FC0 = 0;
-    func_ovl12_06_80045748(D_ovl12_06_80045FC8->unkA2);
+    func_ovl12_06_80045748(D_ovl12_06_80045FC8->unkA0.h.lo);
     func_ovl12_06_800456F8();
 }
 
@@ -393,7 +385,7 @@ static void func_ovl12_06_8004314C(void) {
     func_ovl12_06_80045D18(1, 3, 0x1A, 2, 3);
     D_ovl12_06_80045FC8 = func_ovl12_06_80045D30(1);
     D_ovl12_06_80045FC8->unk90 = 60;
-    func_ovl12_06_80045700(D_ovl12_06_80045FC8->unkA2, 0);
+    func_ovl12_06_80045700(D_ovl12_06_80045FC8->unkA0.h.lo, 0);
     func_ovl12_06_80045D38(0);
     func_ovl12_06_80044E08(1);
     func_ovl12_06_80044D88(1);

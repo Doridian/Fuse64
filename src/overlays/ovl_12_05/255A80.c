@@ -150,7 +150,7 @@ void func_ovl12_05_8004A7E0(s32);
 void func_ovl12_05_8004A810(UnkStructA_40 *, s32, s32, s32, f32);
 void func_ovl12_05_8004A820(UnkStructA_40 *);
 void func_ovl12_05_8004A828(s32, s32, s32, s32, s32);
-UnkStruct_ovl10_13_8004A770 *func_ovl12_05_8004A840(s32);
+UnkStruct_800BCFE8 *func_ovl12_05_8004A840(s32);
 void func_ovl12_05_8004A848(s32);
 void func_ovl12_05_8004A8F8(void);
 void func_ovl12_05_8004A900(void);
@@ -509,7 +509,7 @@ void func_ovl12_05_800485A0(void) {
 }
 
 void func_ovl12_05_80047F94(void) {
-    UnkStruct_ovl10_13_8004A770 *player;
+    UnkStruct_800BCFE8 *player;
     UnkStructA *sp0;
     UnkStructA *sp1;
     f32 dist;
@@ -1185,7 +1185,7 @@ void func_ovl12_05_80045844(void) {
 /* case 18 of the handler (10_13's 800464B0); inlined, its stub stays */
 static void func_ovl12_05_8004583C(void) {
     s32 limit;
-    UnkStruct_ovl10_13_8004A770 *player;
+    UnkStruct_800BCFE8 *player;
     UnkStruct_802AC610 *s;
     Vec3f pos;
     UnkStructA_40 *temp_v1;
@@ -1224,7 +1224,7 @@ static void func_ovl12_05_8004583C(void) {
 /* cases 19 and 30 of the handler (10_13's 80046324); inlined, its stub stays */
 static void func_ovl12_05_80045834(void) {
     s32 limit;
-    UnkStruct_ovl10_13_8004A770 *player;
+    UnkStruct_800BCFE8 *player;
     UnkStruct_802AC610 *s;
     Vec3f pos;
     UnkStructA_40 *temp_v1;
@@ -1310,7 +1310,7 @@ static void func_ovl12_05_80044534(void) {
     UnkStructA_40 *e0;
     UnkStructA_40 *e1;
     s32 i;
-    UnkStruct_ovl10_13_8004A770 *player;
+    UnkStruct_800BCFE8 *player;
     s32 j;
     f32 dx;
     f32 dz;
@@ -1642,7 +1642,7 @@ static void func_ovl12_05_800434C8(void) {
     UnkStructA *sp2;
     UnkStructA_40 *sp7C[6];
     UnkStruct_802AC610 *s;
-    UnkStruct_ovl10_13_8004A770 *player;
+    UnkStruct_800BCFE8 *player;
     f32 x;
     f32 y;
     f32 z;

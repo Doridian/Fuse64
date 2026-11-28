@@ -23,12 +23,6 @@
  * (IDO -O3 emits a file's functions in reverse; docs/DECOMPILING.md).
  */
 
-/* what the ZeroJump stub 0x2D03 returns */
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[0xA2];, u8 unk0[0x18]; void *unk18; void *unk1C; u8 unk20[0x78]; void *unk98; void *unk9C;) /* (6BBE0.c's D_800BCFE8[i], Port_800BCFE8: pointers at 0x18, 0x1C, 0x98, 0x9C) */
-    /* 0xA2 */ PORT_RET(u16 unkA2;, PORT_HALVES(u16 unkA0, u16 unkA2)) /* (the task id's low half) */
-} UnkStruct_ovl0D_07_80046440;
-
 void func_ovl0D_07_800452C0(s32, UnkStructA_40 **); /* 0xD00 */
 void func_ovl0D_07_800452D8(f32); /* 0xD03 */
 void func_ovl0D_07_80045390(void (*)(UnkStructA *)); /* 0xE03 */
@@ -90,7 +84,7 @@ void func_ovl0D_07_80046390(s32); /* 0x2B02 */
 void func_ovl0D_07_80046398(void); /* 0x2B03 */
 s32 func_ovl0D_07_800463A0(s32, f32, f32, f32); /* 0x2B04 */
 void func_ovl0D_07_80046428(s32, s32, s32, s32, s32); /* 0x2D00 */
-UnkStruct_ovl0D_07_80046440 *func_ovl0D_07_80046440(s32); /* 0x2D03 */
+UnkStruct_800BCFE8 *func_ovl0D_07_80046440(s32); /* 0x2D03 */
 void func_ovl0D_07_80046448(s32); /* 0x2D04 */
 void func_ovl0D_07_800464F8(void); /* 0x3000 */
 void func_ovl0D_07_80046500(void); /* 0x3001 */
@@ -487,7 +481,7 @@ void func_ovl0D_07_80043D80(void) {
     func_ovl0D_07_80045518(0);
     D_ovl0D_07_80046734 = 0;
     func_ovl0D_07_80045430(0x3E, 0x11);
-    func_ovl0D_07_80045E58(func_ovl0D_07_80046440(1)->unkA2);
+    func_ovl0D_07_80045E58(func_ovl0D_07_80046440(1)->unkA0.h.lo);
     obj = func_ovl0D_07_800454E8(0);
     obj->unk68 = 0.0f;
     obj->unk70 = 1.6333334f;
@@ -533,7 +527,7 @@ void func_ovl0D_07_80043108(void) {
     obj = func_ovl0D_07_800454E8(1);
     obj->unk40->unk10 += 50.0f;
     obj->unk40->unk14 += 200.0f;
-    func_ovl0D_07_80045E10(func_ovl0D_07_80046440(1)->unkA2, 0);
+    func_ovl0D_07_80045E10(func_ovl0D_07_80046440(1)->unkA0.h.lo, 0);
     for (i = 0; i != 5; i++) {
         D_ovl0D_07_80046720[i] = func_ovl0D_07_80045988(0x171, 0);
         D_ovl0D_07_80046720[i]->unk10 = 2350.0f;

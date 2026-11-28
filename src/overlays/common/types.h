@@ -403,29 +403,6 @@ typedef struct {
     /* 0x20 */ void (*unk20)(s32, s32);
 } UnkStruct_ovl0F_01_80048938; /* size 0x24 */
 
-/* what func_ovl10_13_8004A770 and func_ovl12_05_8004A840 return: a player */
-typedef struct {
-    /* 0x000 */ s32 unk0;
-    /* 0x004 */ PORT_RET(u8 unk4[0x18];, u8 unk4[0x14]; void *unk18;) /* (6BBE0.c's D_800BCFE8[i], Port_800BCFE8: pointers at 0x18, 0x1C, 0x98, 0x9C) */
-    /* 0x01C */ UnkStructA *unk1C;
-    /* 0x020 */ u8 unk20[0xC];
-    /* 0x02C */ Vec3f unk2C;
-    /* 0x038 */ u8 unk38[0x50];
-    /* 0x088 */ s32 unk88;
-    /* 0x08C */ u8 unk8C[4];
-    /* 0x090 */ s32 unk90;
-    /* 0x094 */ PORT_RET(u8 unk94[0xC];, u8 unk94[4]; void *unk98; void *unk9C;)
-    /* 0x0A0 */ union {
-        s32 w;
-        struct {
-            PORT_HALVES(u16 hi, u16 lo)
-            /* (the task id's halves in the host's order) */
-        } h;
-    } unkA0;
-    /* 0x0A4 */ u8 unkA4[0x80];
-    /* 0x124 */ s32 unk124;
-} UnkStruct_ovl10_13_8004A770;
-
 /* an object, its position and an id (D_ovl12_01_80046318; 12_01/03) */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;

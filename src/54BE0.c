@@ -32,10 +32,11 @@ void func_802953B0(void);
 void func_802966E4(void);
 void func_802969F0(void);
 
-extern PORT_RET(s32, void *) D_802AC5C0;
-extern PORT_RET(s32, void *) D_802AC5C4;
-extern s32 D_802AC5C8;
-extern s32 D_802AC5CC;
+/* .bss: the two views (func_80227E38's) and their ids (func_8022773C's) */
+PORT_RET(s32, void *) D_802AC5C0;
+PORT_RET(s32, void *) D_802AC5C4;
+s32 D_802AC5C8;
+s32 D_802AC5CC;
 
 void func_8023A3E0(void) {
     D_802AC5C0 = func_80227E38();

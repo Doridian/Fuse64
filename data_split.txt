@@ -102,6 +102,8 @@ main_code 530C0 0x50 0x60 0x11E0
 # 53D70: the controllers' queue, status, reads and input rings; .data its
 # local pattern and function table
 main_code 53D70 0x60 0x10 0x1E0
+# 54BE0: the two views and their ids (.rodata a float)
+main_code 54BE0 0 0x10 0x10
 
 # Game objects after the cut that own their .rodata (constants, jump tables,
 # strings), placed where the ROM has it; their .data and .bss stay asm
@@ -110,10 +112,6 @@ main_code 53D70 0x60 0x10 0x1E0
 # and tables, jp's 0x80 shorter: its text).
 # So does 54E40 for D_802AC7A0[10] (and the two words after it, which end
 # that run on a 16-byte boundary); the rest of its .bss stays asm.
-main_code 54BE0 0 0x10 0
-main_code @us 54BE0 rodata=0x802A2EF0
-main_code @eu 54BE0 rodata=0x802A2EF0
-main_code @jp 54BE0 rodata=0x802A2130
 main_code 54E40 0xBA0 0x120 0x30
 main_code @eu 54E40 sizes=0xBA0,0x110,0x30
 main_code @jp 54E40 sizes=0xB20,0x110,0x30

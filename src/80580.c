@@ -378,12 +378,14 @@ void func_80298738(void *, u8);
 s32 func_80298740(void *);
 f32 sinf(f32);
 
+typedef struct SndHeap { u8 *base; u8 *cur; s32 len; s32 count; } SndHeap;
+
 /* .bss (D_802AD120-802AD680), in address order before the first function,
  * as IDO lays it out (the order it numbers them). D_802AD3C8's elements
  * are the oscillators' free list (func_8026A164 links them). */
-u8 D_802AD120[0x10];
-u8 D_802AD130[0xC8];
-u8 D_802AD1F8[0x18];
+SndHeap D_802AD120; /* (libaudio.h's ALHeap) */
+void *D_802AD130[50]; /* (OSMesg) */
+UnkStruct_802A5330 D_802AD1F8; /* (os.h's OSMesgQueue) */
 #ifdef TARGET_PC
 u8 *D_802AD210; /* the heap's base */
 #else
@@ -406,7 +408,9 @@ s16 D_802AD246;
 s16 D_802AD248;
 s16 D_802AD24A;
 u8 D_802AD24C;
-u8 D_802AD250[0xF0];
+/* libaudio.h's ALCSeqMarker for alCSeqGetLoc/alCSeqSetLoc: 0xEC bytes
+ * (0x170 where pointers are 8), and the N64's room to 0x802AD340 */
+u8 D_802AD250[PORT_HOST(0xF0, PORT_LP64 ? 0x170 : 0xEC)] PORT_ONLY(__attribute__((aligned(8))));
 ChlState D_802AD340[16];
 s16 D_802AD3C0;
 oscData *D_802AD3C4;
@@ -550,22 +554,22 @@ typedef struct {
     void *heap;
     void *initOsc, *updateOsc, *stopOsc;
 } SeqpConfig80580;
-SynConfig80580 D_802A1254 = { 0x10, 0x10, 0x15E, 0, NULL, D_802AD120, 0, 1, NULL };
+SynConfig80580 D_802A1254 = { 0x10, 0x10, 0x15E, 0, NULL, &D_802AD120, 0, 1, NULL };
 AmConfig80580 D_802A1278 = { 0x18, 0x800, 1, 0x800, 0, NULL, 0, 0 };
-SeqpConfig80580 D_802A1298 = { 0x10, 0x80, 0x10, 0, D_802AD120, func_8026A8B4, func_8026ABF4, func_8026B1EC };
+SeqpConfig80580 D_802A1298 = { 0x10, 0x80, 0x10, 0, &D_802AD120, func_8026A8B4, func_8026ABF4, func_8026B1EC };
 #else
-u32 D_802A1254[] = { 0x10, 0x10, 0x15E, 0, 0, (u32) D_802AD120, 0, 0x01000000, 0 };
+u32 D_802A1254[] = { 0x10, 0x10, 0x15E, 0, 0, (u32) &D_802AD120, 0, 0x01000000, 0 };
 s32 D_802A1278[] = { 0x180000, 0x800, 1, 0x800, 0, 0, 0, 0 };
-u32 D_802A1298[] = { 0x10, 0x80, 0x10000000, (u32) D_802AD120,
+u32 D_802A1298[] = { 0x10, 0x80, 0x10000000, (u32) &D_802AD120,
                      (u32) func_8026A8B4, (u32) func_8026ABF4, (u32) func_8026B1EC };
 #endif
 s32 D_802A12B4 = 2;
 s32 D_802A12B8 = 6;
 #ifdef TARGET_PC
-struct SndpConfig80580 D_802A12BC_cfg = { 8, 0x100, D_802AD120 };
+struct SndpConfig80580 D_802A12BC_cfg = { 8, 0x100, (u8 *) &D_802AD120 };
 #else
 s32 D_802A12BC = 8;
-s32 D_802A12C0[] = { 0x100, (s32) D_802AD120 };
+s32 D_802A12C0[] = { 0x100, (s32) &D_802AD120 };
 #endif
 s32 D_802A12C8[] = {
     3,      0x1900, 0x380, 0xAC0, 0x2A3D, -0x2A3D, 0x30A3, 0, 0, 0x3FFF,
@@ -770,10 +774,10 @@ s16 func_8026A754(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     s16 temp_v0_2;
     s16 temp_v0_3;
 
-    func_80297D80(D_802AD1F8, D_802AD130, 0x32);
+    func_80297D80(&D_802AD1F8, D_802AD130, 0x32);
     D_802AD210 = arg3;
     D_802AD214 = arg4;
-    func_802983D0(D_802AD120, D_802AD210, D_802AD214);
+    func_802983D0(&D_802AD120, D_802AD210, D_802AD214);
 #ifdef TARGET_PC
     D_802A1278.sched = arg2;
     D_802A1254.fxType = 6;
@@ -834,7 +838,7 @@ s16 func_8026A5BC() {
     func_802986D8(D_802AD64C);
     func_8026B7A8(2);
     func_8026B7D4();
-    func_802983D0(D_802AD120, D_802AD210, D_802AD214);
+    func_802983D0(&D_802AD120, D_802AD210, D_802AD214);
 #ifdef TARGET_PC
     D_802A1278.sched = NULL;
     D_802A1278.outputRate = D_802A1250;
@@ -1325,12 +1329,11 @@ s32 func_80269840() {
     return 0x640013;
 }
 
-typedef struct SndHeap { u8 *base; u8 *cur; s32 len; } SndHeap;
 s32 func_80269820() {
     SndHeap *h;
     s32 used;
 
-    h = (SndHeap *) D_802AD120;
+    h = &D_802AD120;
     used = h->len - (h->cur - h->base);
     return used;
 }
@@ -1505,8 +1508,8 @@ static void func_80269144(PORT_IP(s32) rom, void *dst, s32 size) {
     } mb; /* OSIoMesg */
 
     func_80297D50(dst, (void *) size);
-    func_80298028(&mb, 0, 0, rom, dst, size, D_802AD1F8);
-    func_80297D90(D_802AD1F8, NULL, 1);
+    func_80298028(&mb, 0, 0, rom, dst, size, &D_802AD1F8);
+    func_80297D90(&D_802AD1F8, NULL, 1);
 }
 
 void func_8026910C() {

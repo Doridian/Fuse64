@@ -1238,7 +1238,7 @@ before every .rodata). libultra's objects use this where their code needs
 the data in the same file (docs/LIBULTRA.md, "Data"), and so does GNU
 malloc's `libmalloc/gmalloc` (.data and .bss; docs/LIBMALLOC.md). So do the game's
 objects after main_code's cut that have jump tables, strings or
-constants (995C0, 54BE0, 87D80, 8A7A0: `.rodata` only), or whose `.data`/`.bss` is all
+constants (54BE0, 87D80, 8A7A0: `.rodata` only), or whose `.data`/`.bss` is all
 their own (53D70, 530C0, 412F0, AFBF0: all three sections, jp's .data
 its own size; 80580: .data and .rodata, since a function's `static`
 counter puts its .data in the C; 5E3F0: .data and .rodata, its .bss
@@ -1257,7 +1257,14 @@ how IDO orders a .bss; 6BBE0: all three, .data 0x2C0 of tables and
 its second element, since at `-O3` an unreferenced .bss global goes to
 common; 47A80: all three, .data 0x480 the highlight texture, two flags
 and the display list that loads it, .rodata a `const Hilite`, .bss the
-matrix and two words); everything else they use stays `extern`.
+matrix and two words; 949A0: all three, .data module 0x28's table and
+.bss all that it and 93850 use (93850 has neither: the table is 949A0's
+functions, and 949A0 their main user); 97610: .data (two record tables
+as the words the overlays pass too, module 0x23's table) and .bss;
+995C0: .data and .rodata; 99F40: .data and .bss; 9BFD0: .data and .bss;
+A4860: .data. A gap IDO's alignment leaves in a .bss (4 bytes before an
+8-aligned array of 8 bytes or more: 97610's D_802B01B8, 949A0's
+D_802AFF60) needs no variable); everything else they use stays `extern`.
 Build the object once (the link fails, the `.o` is there), run `--place`
 for each version with `--ref build/us/src/<object>.c.o`, add the lines,
 regenerate the configs and extract again. `--place` finds an object named
@@ -1288,17 +1295,10 @@ from 5E3F0's and its .bss 0x10 lower; jp's lower by 0x920 and more past
 | `.data` 0x802A0D50-0x802A0D60 | ZeroJump module 12's table | 5E090 | as above |
 | `.data` 0x802A1230-0x802A1250 | three words 40040 uses | 80420 (between 7D840 and 80580) | a label another object uses: 80420 must define it, 40040 keeps the extern |
 | `.data` 0x802A13D0-0x802A14F0 | module 20's table, 87730's and 87D80's tables | 87190, 87730, 87D80 (8A7A0 reads 87D80's) | not written yet; 87D80 is placed for its .rodata only |
-| `.data` 0x802A1500-0x802A1520 | a module table | 93850 (949A0 reads it) | not written yet |
-| `.data` 0x802A1570-0x802A1630 | tables | 97610, 995C0, 99F40 (module 14's) | not written yet; 995C0 is placed for its .rodata only |
-| `.data` 0x802A1A80-0x802A1AB0 | three words and module table | 9BFD0 | not written yet |
-| `.data` 0x802A1C00-0x802A1C40 | a module table and bytes | A4860 | not written yet |
 | `.bss` 0x802A5A60-0x802AC7A0 | 0x6D40 of state | 52270, 530C0, 53D70, 54BE0 (0x802AC5C0-0x802AC5D0, used by 40040, 426E0, 4E030 too) and 54E40's start | 52270 has no placement yet; 530C0 and 53D70 are placed for .data/.rodata only; 54E40 defines only D_802AC7A0's run |
 | `.bss` 0x802AC7D0-0x802ACFB0 | 54E40's rest, 5E090's word, 5E3F0's | 54E40, 5E090, 5E3F0 | 54E40's .bss is defined in part; 5E3F0's C keeps it extern (its .data and .rodata are placed) |
 | `.bss` 0x802AD0E0-0x802AD680 | `D_802AD0E0`, 80420's, the audio state | 80420, 80580 | not written yet; 80580 is placed for .data/.rodata |
 | `.bss` 0x802AFC30-0x802AFE70 | | 87190, 87730, 87D80 | not written yet |
-| `.bss` 0x802AFE80-0x802AFF70 | | 93850 (949A0) | not written yet |
-| `.bss` 0x802B0180-0x802B01F0 | | 97610 (995C0) | not written yet |
-| `.bss` 0x802B0230-0x802B0260 | | 9BFD0 | not written yet |
 
 Labels inside these that nothing names (`D_802AC402`, `D_802AFF62`, ...)
 are fields: the object's C covers them with its struct. What it takes:

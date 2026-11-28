@@ -171,7 +171,7 @@ void func_ovl0A_02_800438FC(void);
 void func_ovl0A_02_80043938(void);
 void func_ovl0A_02_80043CA0(UnkStructA *obj, f32 *from, f32 *to);
 void func_ovl0A_02_80043D60(f32 *center, f32 *out);
-void func_ovl0A_02_80043E3C(void);
+UnkStructA *func_ovl0A_02_80043E3C(void);
 void func_ovl0A_02_8004426C(void);
 void func_ovl0A_02_8004438C(void);
 void func_ovl0A_02_80044744(void);
@@ -1020,9 +1020,8 @@ void func_ovl0A_02_80043E68(void) {
     f32 dz;
     f32 t;
     s32 i;
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
-    obj = func_ovl0A_02_80047A20(0x1CB, 0x01480000, 0xD0, NULL);
+    obj = func_ovl0A_02_80043E3C();
     obj->unk40->unk30 = 0.5f;
     obj->unk40->unk28 = obj->unk40->unk30;
     func_ovl0A_02_80047AC8(D_ovl0A_02_80048560, pos);
@@ -1077,8 +1076,10 @@ void func_ovl0A_02_80043E68(void) {
     func_ovl0A_02_80047B58();
 }
 
-void func_ovl0A_02_80043E3C(void) {
-    func_ovl0A_02_80047A20(0x1CB, 0x01480000, 0xD0, NULL);
+/* Inlined into 80043E68 (its one call: 8 bytes of frame there), and emitted
+ * too, as a global. */
+UnkStructA *func_ovl0A_02_80043E3C(void) {
+    return func_ovl0A_02_80047A20(0x1CB, 0x01480000, 0xD0, NULL);
 }
 
 void func_ovl0A_02_80043D60(f32 *center, f32 *out) {

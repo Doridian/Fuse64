@@ -172,7 +172,7 @@ void func_ovl0A_05_80045568(void);
 void func_ovl0A_05_8004571C(void);
 void func_ovl0A_05_800458BC(void);
 void func_ovl0A_05_800458DC(UnkStructA *obj, f32 *from, f32 *to);
-void func_ovl0A_05_8004599C(void);
+UnkStructA *func_ovl0A_05_8004599C(void);
 static void func_ovl0A_05_80045C00(UnkStructA *obj);
 void func_ovl0A_05_80045C58(void);
 void func_ovl0A_05_80045D90(void);
@@ -933,18 +933,17 @@ static void func_ovl0A_05_80045C00(UnkStructA *obj) {
 }
 
 void func_ovl0A_05_800459C8(void) {
+    s32 pad[2]; /* fake: unused; two words above the locals, as 8004704C's (and 8004333C's one): all three are tasks (0x1900) */
     s32 i;
     f32 v;
-    f32 s;
-    f32 dv;
     UnkStructA *objs[2];
-    s32 pad1; /* fake: unused; the original's frame has these slots */
+    f32 s;
     f32 b[3];
     f32 a[3];
-    s32 pad2[2]; /* fake: unused; as pad1 */
+    f32 dv;
 
     for (i = 0; i < 2; i++) {
-        objs[i] = func_ovl0A_05_80048CA0(0x1CB, 0x01480000, 0xD0, NULL);
+        objs[i] = func_ovl0A_05_8004599C();
         objs[i]->unk40->unk30 = 0.1f;
         objs[i]->unk40->unk28 = objs[i]->unk40->unk30;
         objs[i]->unk40->unk36 = 0xBF;
@@ -976,8 +975,9 @@ void func_ovl0A_05_800459C8(void) {
     }
 }
 
-void func_ovl0A_05_8004599C(void) {
-    func_ovl0A_05_80048CA0(0x1CB, 0x01480000, 0xD0, NULL);
+/* Inlined into 800459C8 (its one call), and emitted too, as a global. */
+UnkStructA *func_ovl0A_05_8004599C(void) {
+    return func_ovl0A_05_80048CA0(0x1CB, 0x01480000, 0xD0, NULL);
 }
 
 void func_ovl0A_05_800458DC(UnkStructA *obj, f32 *from, f32 *to) {

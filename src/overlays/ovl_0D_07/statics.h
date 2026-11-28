@@ -6,7 +6,7 @@
  */
 
 /* the stage's model (D_ovl0D_07_800465A0) placed */
-static void func_ovl0D_07_80043424(UnkStruct_ovl0D_07_800465A0 *e) {
+static void func_ovl0D_07_80043424(UnkStruct_ovl0C_01_8004A54C *e) {
     e->unk0 = func_ovl0D_07_80045CF0(e->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
     func_ovl0D_07_80045CA8(e->unk0, 0x01080000);
     func_ovl0D_07_80045CB0(e->unk0, 0x02000000);
@@ -29,7 +29,7 @@ static void func_ovl0D_07_80043424(UnkStruct_ovl0D_07_800465A0 *e) {
 }
 
 /* the stage's model removed */
-static void func_ovl0D_07_800432F0(UnkStruct_ovl0D_07_800465A0 *e) {
+static void func_ovl0D_07_800432F0(UnkStruct_ovl0C_01_8004A54C *e) {
     func_ovl0D_07_80045CC0(e->unk0);
     if (e->unkC != 0xFFFF && e->unkE != 0xFFFF && e->unk10 != 0xFFFF && e->unk12 != 0xFFFF) {
         func_ovl0D_07_800459F8(e->unk4);

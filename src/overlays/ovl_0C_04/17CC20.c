@@ -24,26 +24,6 @@
  * ovl_0C_03's 17A5B0 and ovl_0C_05's 17F9F0.
  */
 
-/* one record, set up by the setup function's inlined static */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ s16 unk12;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} UnkStruct_ovl0C_04_80045D34;
-
 /* the task func_ovl0C_04_80043FC0's record */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
@@ -208,7 +188,7 @@ UnkStruct_ovl0C_04_80045C84 D_ovl0C_04_80045C84[] = {
     { 2, 3, NULL, 3200.0f, 0.0f, 2000.0f, 0x20, 0, 0x14, 2, 0x403, 0x410 },
     { 3, 0, NULL, 0.0f, 0.0f, 0.0f, 0, 0, 0, 0, 0, 0 },
 };
-UnkStruct_ovl0C_04_80045D34 D_ovl0C_04_80045D34 = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0C_04_80045D34 = {
     NULL, -1, 0x2B5, -5, -0x400, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 };
 

@@ -24,26 +24,6 @@
  * camera set-up (func_ovl0E_04_8004399C).
  */
 
-/* an object placed at set-up, with a collision box (unkC-unk12, -1 for none) */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ s16 unk12;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} UnkStruct_ovl0E_04_80046D70;
-
 /* the eight movers: each record is passed to its task */
 typedef struct {
     /* 0x00 */ s16 unk0;
@@ -179,7 +159,7 @@ void func_ovl0E_04_800432FC(void);
 void func_ovl0E_04_80043374(void);
 void func_ovl0E_04_8004339C(void);
 void func_ovl0E_04_80043408(void);
-void func_ovl0E_04_80043468(UnkStruct_ovl0E_04_80046D70 *);
+void func_ovl0E_04_80043468(UnkStruct_ovl0C_01_8004A54C *);
 void func_ovl0E_04_800434C4(f32);
 void func_ovl0E_04_8004350C(void);
 void func_ovl0E_04_80043624(void);
@@ -227,7 +207,7 @@ static void func_ovl0E_04_80043188(void);
 /* the camera's position, inlined into its three callers */
 static void func_ovl0E_04_8004399C(f32, s32, s32);
 /* takes its record in s0 */
-static void func_ovl0E_04_80043A78(UnkStruct_ovl0E_04_80046D70 *);
+static void func_ovl0E_04_80043A78(UnkStruct_ovl0C_01_8004A54C *);
 
 /* The three statements are on one line, a macro: only then does IDO
  * schedule across them (the store into the first call's delay slot). */
@@ -278,7 +258,7 @@ UnkStruct_ovl0E_04_80046BE8 D_ovl0E_04_80046BE8[7] = {
     { NULL, 3550.0f, -2100.0f, -2100.0f, 2250.0f, 150.0f, 145.0f, 155.0f, 3.0f, 800.0f, 1, 145.0f, 155.0f, 3.0f },
     { NULL, 3550.0f, -2100.0f, -2100.0f, 2550.0f, 150.0f, 145.0f, 155.0f, 3.0f, 800.0f, 1, 145.0f, 155.0f, 3.0f },
 };
-UnkStruct_ovl0E_04_80046D70 D_ovl0E_04_80046D70[2] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0E_04_80046D70[2] = {
     { NULL, -1, 0x1AE, -1, -1, -1, -1, 90.0f, 40.0f, 15.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x1AF, -1, -1, -1, -1, 90.0f, 0.0f, 40.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
@@ -763,7 +743,7 @@ void func_ovl0E_04_80043AFC(void) {
 static void func_ovl0E_04_80043AF4(void) {
 }
 
-static void func_ovl0E_04_80043A78(UnkStruct_ovl0E_04_80046D70 *e) {
+static void func_ovl0E_04_80043A78(UnkStruct_ovl0C_01_8004A54C *e) {
     func_ovl0E_04_80046160(e->unk0);
     /* 0xFFFF, not -1: never equal to the s16 fields */
     if (e->unkC != 0xFFFF && e->unkE != 0xFFFF && e->unk10 != 0xFFFF && e->unk12 != 0xFFFF) {
@@ -901,7 +881,7 @@ void func_ovl0E_04_80043624(void) {
 #define ANGLE_D_80046D28 D_ovl0E_04_80046F40
 #include "overlays/common/angle.h"
 
-void func_ovl0E_04_80043468(UnkStruct_ovl0E_04_80046D70 *arg0) {
+void func_ovl0E_04_80043468(UnkStruct_ovl0C_01_8004A54C *arg0) {
     arg0->unk0->unk40->unk48->unk4[0].unk4 = func_ovl0E_04_80045E88(arg0->unk0->unk40, 0) - 1.0f;
 }
 

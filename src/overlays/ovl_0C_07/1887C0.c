@@ -118,27 +118,6 @@ typedef struct {
     /* 0x44 */ s32 unk44;
 } UnkStruct_ovl0C_07_800476D0;
 
-/* the stage object func_ovl0C_07_80044178 sets up (ovl_0C_04's
- * D_ovl0C_04_80045D34) */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ s16 unk12;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} UnkStruct_ovl0C_07_800477A8;
-
 void func_ovl0C_07_80046238(s32);
 void func_ovl0C_07_80046250(s32);
 void func_ovl0C_07_80046270(s32, s32, s32, s32);
@@ -336,7 +315,7 @@ UnkStruct_ovl0C_07_800476D0 D_ovl0C_07_800476D0[] = {
     { 2, 0, 0, NULL, NULL, 1850.0f, 100.0f, 1450.0f, 100.0f, 700.0f, 1850.0f, 0.0f, 1450.0f, 43.5f,
       0x12, 1, 0xE, 0x13, 3, 0xF, 0x40, 0, 0 },
 };
-UnkStruct_ovl0C_07_800477A8 D_ovl0C_07_800477A8 = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0C_07_800477A8 = {
     NULL, -1, 0x2B9, -5, -0x400, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 };
 

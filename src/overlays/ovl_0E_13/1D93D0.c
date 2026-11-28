@@ -53,26 +53,6 @@ typedef struct {
     /* 0x16 */ s16 unk16;
 } UnkStruct_ovl0E_13_80046B5C;
 
-/* an object placed at set-up, with a collision box (unkC-unk12, -1 for none) */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ s16 unk12;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} UnkStruct_ovl0E_13_80046800;
-
 /* a switch: its flag and where it is */
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -207,8 +187,8 @@ void func_ovl0E_13_800450C0(f32, f32, f32);
 void func_ovl0E_13_8004511C(void);
 void func_ovl0E_13_80045134(void);
 
-static void func_ovl0E_13_800437B8(UnkStruct_ovl0E_13_80046800 *);
-static void func_ovl0E_13_800437C0(UnkStruct_ovl0E_13_80046800 *);
+static void func_ovl0E_13_800437B8(UnkStruct_ovl0C_01_8004A54C *);
+static void func_ovl0E_13_800437C0(UnkStruct_ovl0C_01_8004A54C *);
 static void func_ovl0E_13_80043CCC(void);
 static void func_ovl0E_13_80043C78(void);
 static void func_ovl0E_13_80043C80(void);
@@ -278,16 +258,16 @@ u32 D_ovl0E_13_800467C4[][3] = {
     { 3, 0xD, 0xEB },
     { 4, 0xF, 0xED },
 };
-UnkStruct_ovl0E_13_80046800 D_ovl0E_13_80046800[1] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0E_13_80046800[1] = {
     { NULL, -1, 0x1B8, -1, -1, -1, -1, 200.0f, 210.0f, 260.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
-UnkStruct_ovl0E_13_80046800 D_ovl0E_13_80046838[4] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0E_13_80046838[4] = {
     { NULL, -1, 0x1B9, -1, -1, -1, -1, 190.0f, 160.0f, 260.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x1B9, -1, -1, -1, -1, 190.0f, 160.0f, 290.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x1B9, -1, -1, -1, -1, 260.0f, 160.0f, 260.0f, 0.0f, 180.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x1B9, -1, -1, -1, -1, 260.0f, 160.0f, 290.0f, 0.0f, 180.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
-UnkStruct_ovl0E_13_80046800 D_ovl0E_13_80046918[4] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0E_13_80046918[4] = {
     { NULL, -1, 0x1BA, -1, -1, -1, -1, 190.0f, 160.0f, 260.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x1BA, -1, -1, -1, -1, 190.0f, 160.0f, 290.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x1BA, -1, -1, -1, -1, 260.0f, 160.0f, 260.0f, 0.0f, 180.0f, 0.0f, 1.0f, 1.0f, 1.0f },
@@ -801,8 +781,8 @@ void func_ovl0E_13_80043A30(void) {
 }
 
 void func_ovl0E_13_80043940(s16 arg0) {
-    UnkStruct_ovl0E_13_80046800 *e;
-    UnkStruct_ovl0E_13_80046800 *f;
+    UnkStruct_ovl0C_01_8004A54C *e;
+    UnkStruct_ovl0C_01_8004A54C *f;
 
     e = &D_ovl0E_13_80046918[arg0];
     f = &D_ovl0E_13_80046838[arg0];

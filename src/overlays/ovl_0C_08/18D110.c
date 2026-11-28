@@ -10,26 +10,6 @@
 #include "common.h"
 #include "overlays/common/types.h"
 
-/* an object placed in the stage (as ovl_17_01's) */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ s16 unk12;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} UnkStruct_ovl0C_08_800454FC; /* size 0x38 */
-
 void func_ovl0C_08_800441C8(s32);
 void func_ovl0C_08_800441E0(s32);
 void func_ovl0C_08_80044250(UnkStructA_40 *, f32 *, f32 *);
@@ -107,7 +87,7 @@ static void func_ovl0C_08_80043018(void);
 static void func_ovl0C_08_80043060(void);
 static void func_ovl0C_08_800430F8(void);
 static void func_ovl0C_08_80043100(void);
-static void func_ovl0C_08_800435D4(UnkStruct_ovl0C_08_800454FC *);
+static void func_ovl0C_08_800435D4(UnkStruct_ovl0C_01_8004A54C *);
 
 /* The three statements are on one line, a macro: only then does IDO
  * schedule across them (the store into the first call's delay slot). */
@@ -140,7 +120,7 @@ u32 D_ovl0C_08_800454E4[][3] = {
     { 1, 0x22, 0xE0 },
 };
 /* an object placed in the stage (func_ovl0C_08_800435D4) */
-UnkStruct_ovl0C_08_800454FC D_ovl0C_08_800454FC = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0C_08_800454FC = {
     NULL, -1, 0x2BA, -5, -0x400, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 };
 

@@ -23,26 +23,6 @@ typedef struct {
     /* 0x48 */ UnkStruct_ovl0E_05_48 *unk48;
 } UnkStruct_ovl0E_05_40;
 
-/* an object placed at set-up, with a collision box (unkC-unk12, -1 for none) */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ s16 unk12;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} UnkStruct_ovl0E_05_8004615C;
-
 /* the nine movers: each record is passed to its task */
 typedef struct {
     /* 0x00 */ s16 unk0;
@@ -148,7 +128,7 @@ void func_ovl0E_05_800432C4(void);
 void func_ovl0E_05_8004332C(void);
 void func_ovl0E_05_800433C4(void);
 void func_ovl0E_05_8004343C(void);
-void func_ovl0E_05_8004345C(UnkStruct_ovl0E_05_8004615C *);
+void func_ovl0E_05_8004345C(UnkStruct_ovl0C_01_8004A54C *);
 void func_ovl0E_05_800434B8(f32);
 void func_ovl0E_05_80043500(void);
 void func_ovl0E_05_80043618(void);
@@ -228,7 +208,7 @@ UnkStruct_ovl0E_05_80045F98 D_ovl0E_05_80045F98[9] = {
 UnkStruct_ovl0E_05_80046124 D_ovl0E_05_80046124[1] = {
     { NULL, 550.0f, -2100.0f, -2100.0f, 550.0f, 140.0f, 135.0f, 145.0f, 3.0f, 490.0f, 1, 135.0f, 145.0f, 3.0f },
 };
-UnkStruct_ovl0E_05_8004615C D_ovl0E_05_8004615C[1] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0E_05_8004615C[1] = {
     { NULL, -1, 0x1AC, -1, -1, -1, -1, 155.0f, 40.0f, 135.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
 
@@ -644,7 +624,7 @@ void func_ovl0E_05_80043618(void) {
 #define ANGLE_D_80046D28 D_ovl0E_05_80046250
 #include "overlays/common/angle.h"
 
-void func_ovl0E_05_8004345C(UnkStruct_ovl0E_05_8004615C *arg0) {
+void func_ovl0E_05_8004345C(UnkStruct_ovl0C_01_8004A54C *arg0) {
     ((UnkStruct_ovl0E_05_40 *) arg0->unk0->unk40)->unk48->unk4->unk4 = func_ovl0E_05_80045398(arg0->unk0->unk40, 0) - 1.0f;
 }
 

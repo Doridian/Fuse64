@@ -21,7 +21,7 @@ static void func_ovl0E_13_80043108(f32 x, s32 z, s32 count) {
     D_ovl0E_13_80046D70 = func_ovl0E_13_80046450(0x27, &D_ovl0E_13_80046D80.x, 0);
 }
 
-static void func_ovl0E_13_800437B8(UnkStruct_ovl0E_13_80046800 *e) {
+static void func_ovl0E_13_800437B8(UnkStruct_ovl0C_01_8004A54C *e) {
     func_ovl0E_13_80045EB0(e->unk0, 0x01000000);
     func_ovl0E_13_80045EC0(e->unk0);
     /* 0xFFFF, not -1: never equal to the s16 fields */
@@ -32,7 +32,7 @@ static void func_ovl0E_13_800437B8(UnkStruct_ovl0E_13_80046800 *e) {
     e->unk4 = -1;
 }
 
-static void func_ovl0E_13_800437C0(UnkStruct_ovl0E_13_80046800 *e) {
+static void func_ovl0E_13_800437C0(UnkStruct_ovl0C_01_8004A54C *e) {
     e->unk0 = func_ovl0E_13_80045EF0(e->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
     func_ovl0E_13_80045EA8(e->unk0, 0x01080000);
     func_ovl0E_13_80045EB0(e->unk0, 0x02000000);

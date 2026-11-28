@@ -1,4 +1,5 @@
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_16_01's game object, built -g (as its entry): every value goes through
@@ -6,26 +7,6 @@
  * to the epilogue.  It is the other overlays' template with its debug
  * messages kept (func_ovl16_01_80043020).
  */
-
-/* an object placed in the stage (as ovl_17_01's) */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ s16 unk12;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} UnkStruct_ovl16_01_80043020; /* size 0x38 */
 
 typedef struct {
     /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (structs.h's UnkStructA_40_48_4: its animation) */
@@ -103,7 +84,7 @@ s32 D_ovl16_01_800452C8;
 u8 D_ovl16_01_800452CC[0x4];
 Vec3f D_ovl16_01_800452D0;
 
-void func_ovl16_01_80043020(UnkStruct_ovl16_01_80043020 *arg0) {
+void func_ovl16_01_80043020(UnkStruct_ovl0C_01_8004A54C *arg0) {
     arg0->unk0 = func_ovl16_01_80044A48(arg0->unk8, 0xC00, 0.0f, 0.0f, 0.0f);
     func_ovl16_01_80044A00(arg0->unk0, 0x01080000);
     func_ovl16_01_80044A08(arg0->unk0, 0x02000000);
@@ -129,7 +110,7 @@ void func_ovl16_01_80043020(UnkStruct_ovl16_01_80043020 *arg0) {
     arg0->unk0->unk40->unk30 = arg0->unk34;
 }
 
-void func_ovl16_01_8004329C(UnkStruct_ovl16_01_80043020 *arg0) {
+void func_ovl16_01_8004329C(UnkStruct_ovl0C_01_8004A54C *arg0) {
     func_ovl16_01_80044A18(arg0->unk0);
     /* 0xFFFF where 80043020 has -1: `li at, 0xffff` */
     if (arg0->unkC != 0xFFFF && arg0->unkE != 0xFFFF && arg0->unk10 != 0xFFFF && arg0->unk12 != 0xFFFF) {
@@ -139,7 +120,7 @@ void func_ovl16_01_8004329C(UnkStruct_ovl16_01_80043020 *arg0) {
     arg0->unk4 = -1;
 }
 
-s32 func_ovl16_01_80043348(UnkStruct_ovl16_01_80043020 *arg0) {
+s32 func_ovl16_01_80043348(UnkStruct_ovl0C_01_8004A54C *arg0) {
     if (arg0->unk0->unk40->unk20 == 0.0f) {
         return 0;
     }

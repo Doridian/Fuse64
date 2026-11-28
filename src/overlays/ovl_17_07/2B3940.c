@@ -39,6 +39,7 @@
  *   order.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_17_07's game object, IDO -O3: the functions are written last to first
@@ -52,26 +53,6 @@ typedef struct {
     /* 0x06 */ s16 unk6;
     /* 0x08 */ s16 unk8;
 } UnkStruct_ovl17_07_80045680; /* size 0xC */
-
-/* a model placed in the stage (ovl_17_01's kind) */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ s16 unk12;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} UnkStruct_ovl17_07_800456B0; /* size 0x38 */
 
 /* the argument of func_ovl17_07_80043C98's tasks: a model moving along x */
 typedef struct {
@@ -157,7 +138,7 @@ u32 D_ovl17_07_8004568C[][3] = {
     { 0, 0, 4 },
     { 0, 0, 4 },
 };
-UnkStruct_ovl17_07_800456B0 D_ovl17_07_800456B0 = {
+UnkStruct_ovl0C_01_8004A54C D_ovl17_07_800456B0 = {
     NULL, -1, 0x215, 0, 0x400, 0, 0x400, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 };
 UnkStruct_ovl17_07_800456E8 D_ovl17_07_800456E8[2] = {

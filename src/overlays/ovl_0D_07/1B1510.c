@@ -16,33 +16,12 @@
  *   80043030 calls (the stubs' placement).
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0D_07's stage object, IDO -O3: the functions are written last to first
  * (IDO -O3 emits a file's functions in reverse; docs/DECOMPILING.md).
  */
-
-/* a model placed on the stage (D_ovl0D_07_800465A0): the object, its
- * collision handle, its model id, its collision box, and its position (in
- * tiles), angles and scale */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ s16 unk12;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} UnkStruct_ovl0D_07_800465A0; /* size 0x38 */
 
 /* what the ZeroJump stub 0x2D03 returns */
 typedef struct {
@@ -126,8 +105,8 @@ static void func_ovl0D_07_80043028(void);
 static void func_ovl0D_07_80043020(void);
 static void func_ovl0D_07_80043018(void);
 static f32 func_ovl0D_07_80043010(UnkStructA *obj0, UnkStructA **obj);
-static void func_ovl0D_07_80043424(UnkStruct_ovl0D_07_800465A0 *e);
-static void func_ovl0D_07_800432F0(UnkStruct_ovl0D_07_800465A0 *e);
+static void func_ovl0D_07_80043424(UnkStruct_ovl0C_01_8004A54C *e);
+static void func_ovl0D_07_800432F0(UnkStruct_ovl0C_01_8004A54C *e);
 void func_ovl0D_07_80044628(void);
 void func_ovl0D_07_80044798(void);
 void func_ovl0D_07_80044918(void);
@@ -148,7 +127,7 @@ s32 D_ovl0D_07_80046738;
 UnkStructA_40 *D_ovl0D_07_8004673C;
 
 /* .data */
-UnkStruct_ovl0D_07_800465A0 D_ovl0D_07_800465A0 = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0D_07_800465A0 = {
     NULL, -1, 0x16F, -1, -1, -1, -1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 };
 

@@ -1,30 +1,10 @@
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_17_08's game object, IDO -O3: the functions are written last to first
  * (IDO -O3 emits a file's functions in reverse).
  */
-
-/* a model placed in the stage: two rows of three (D_ovl17_08_80045A94,
- * D_ovl17_08_80045B3C) */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ s16 unk12;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} UnkStruct_ovl17_08_80045A94; /* size 0x38 */
 
 /* the argument of func_ovl17_08_80043DCC's tasks */
 typedef struct {
@@ -115,12 +95,12 @@ u32 D_ovl17_08_80045A70[][3] = {
     { 0, 0, 4 },
     { 0, 0, 4 },
 };
-UnkStruct_ovl17_08_80045A94 D_ovl17_08_80045A94[3] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl17_08_80045A94[3] = {
     { NULL, -1, 0x1B6, -1, -1, -1, -1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x1B6, -1, -1, -1, -1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x1B6, -1, -1, -1, -1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
-UnkStruct_ovl17_08_80045A94 D_ovl17_08_80045B3C[3] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl17_08_80045B3C[3] = {
     { NULL, -1, 0x1B7, -1, -1, -1, -1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x1B7, -1, -1, -1, -1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0x1B7, -1, -1, -1, -1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
@@ -222,8 +202,8 @@ void func_ovl17_08_800440F4(void) {
 
 void func_ovl17_08_80043DCC(void) {
     UnkStruct_ovl17_08_80045CA0 *arg;
-    UnkStruct_ovl17_08_80045A94 *a;
-    UnkStruct_ovl17_08_80045A94 *b;
+    UnkStruct_ovl0C_01_8004A54C *a;
+    UnkStruct_ovl0C_01_8004A54C *b;
     f32 scale;
 
     func_ovl17_08_80045310();
@@ -326,7 +306,7 @@ void func_ovl17_08_80043AB4(void) {
     }
 }
 
-static void func_ovl17_08_80043848(UnkStruct_ovl17_08_80045A94 *e) {
+static void func_ovl17_08_80043848(UnkStruct_ovl0C_01_8004A54C *e) {
     e->unk0 = func_ovl17_08_800451C0(e->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
     func_ovl17_08_80045178(e->unk0, 0x01080000);
     func_ovl17_08_80045180(e->unk0, 0x02000000);

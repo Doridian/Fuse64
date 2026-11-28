@@ -5,7 +5,7 @@
  * unknown; several overlays' copies of these statics are the same code.
  */
 
-static void func_ovl0C_08_800435D4(UnkStruct_ovl0C_08_800454FC *e) {
+static void func_ovl0C_08_800435D4(UnkStruct_ovl0C_01_8004A54C *e) {
     e->unk0 = func_ovl0C_08_80044C10(e->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
     func_ovl0C_08_80044BC8(e->unk0, 0x01080000);
     func_ovl0C_08_80044BD0(e->unk0, 0x02000000);

@@ -8,26 +8,6 @@
  * and what it calls, with one model pair where ovl_17_10 has three).
  */
 
-/* a model placed at set-up, with a collision box (unkC-unk12, -1 for none) */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ s16 unk12;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} UnkStruct_ovl0E_02_80046684; /* size 0x38 */
-
 /* the four movers: each record is passed to its task */
 typedef struct {
     /* 0x00 */ s16 unk0;
@@ -226,10 +206,10 @@ UnkStruct_ovl0E_02_8004648C D_ovl0E_02_8004648C[9] = {
     { NULL, 3150.0f, -3800.0f, -3800.0f, 1050.0f, 175.0f, 170.0f, 180.0f, 3.0f, 290.0f, 0, 120.0f, 125.0f, 1.5f },
     { NULL, 3350.0f, -3800.0f, -3800.0f, 250.0f, 175.0f, 170.0f, 180.0f, 3.0f, 550.0f, 0, 120.0f, 125.0f, 1.5f },
 };
-UnkStruct_ovl0E_02_80046684 D_ovl0E_02_80046684[1] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0E_02_80046684[1] = {
     { NULL, -1, 0x1B6, -1, -1, -1, -1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
-UnkStruct_ovl0E_02_80046684 D_ovl0E_02_800466BC[1] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0E_02_800466BC[1] = {
     { NULL, -1, 0x1B7, -1, -1, -1, -1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
 
@@ -378,8 +358,8 @@ void func_ovl0E_02_80044780(void) {
 /* drops the model pair from 10000 at the tile its argument gives */
 void func_ovl0E_02_800444BC(void) {
     UnkStruct_ovl0E_02_800467A0 *arg;
-    UnkStruct_ovl0E_02_80046684 *a;
-    UnkStruct_ovl0E_02_80046684 *b;
+    UnkStruct_ovl0C_01_8004A54C *a;
+    UnkStruct_ovl0C_01_8004A54C *b;
 
     func_ovl0E_02_80045C40();
     arg = func_ovl0E_02_80045C20();
@@ -665,7 +645,7 @@ void func_ovl0E_02_8004392C(void) {
 void func_ovl0E_02_800438AC(void) {
 }
 
-static void func_ovl0E_02_80043640(UnkStruct_ovl0E_02_80046684 *e) {
+static void func_ovl0E_02_80043640(UnkStruct_ovl0C_01_8004A54C *e) {
     e->unk0 = func_ovl0E_02_80045AF0(e->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
     func_ovl0E_02_80045AA8(e->unk0, 0x01080000);
     func_ovl0E_02_80045AB0(e->unk0, 0x02000000);

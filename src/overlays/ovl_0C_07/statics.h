@@ -6,7 +6,7 @@
  */
 
 static void func_ovl0C_07_80044170(void) {
-    UnkStruct_ovl0C_07_800477A8 *rec;
+    UnkStruct_ovl0C_01_8004A54C *rec;
 
     rec = &D_ovl0C_07_800477A8;
     rec->unk0 = func_ovl0C_07_80046C80(rec->unk8, 0xD0, 0.0f, 0.0f, 0.0f);

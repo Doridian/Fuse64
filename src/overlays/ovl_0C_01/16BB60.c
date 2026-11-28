@@ -133,26 +133,6 @@ typedef struct {
     /* 0x26 */ s16 unk26;
 } UnkStruct_ovl0C_01_8004A2A4;
 
-/* the stage object (ovl_0C_07's UnkStruct_ovl0C_07_800477A8) */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ s16 unk12;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} UnkStruct_ovl0C_01_8004A54C;
-
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
     /* 0x04 */ s32 unk4;

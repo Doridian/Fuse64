@@ -9,26 +9,6 @@
  * (nonmatching/overlays/ovl_0E_05) as D_ovl0E_01_80046BB0.
  */
 
-/* a model placed at set-up, with a collision box (unkC-unk12, -1 for none) */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ s16 unk12;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} UnkStruct_ovl0E_01_80046B00; /* size 0x38 */
-
 /* what replaces D_ovl0E_01_80046B00's models once their flags (unk0) are set */
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -164,7 +144,7 @@ void func_ovl0E_01_800437E4(void);
 void func_ovl0E_01_800438FC(void);
 void func_ovl0E_01_80043974(void);
 void func_ovl0E_01_800439AC(void);
-void func_ovl0E_01_800439D4(UnkStruct_ovl0E_01_80046B00 *);
+void func_ovl0E_01_800439D4(UnkStruct_ovl0C_01_8004A54C *);
 void func_ovl0E_01_80043A30(f32);
 void func_ovl0E_01_80043A78(void);
 void func_ovl0E_01_80043B90(void);
@@ -206,8 +186,8 @@ static void func_ovl0E_01_800437D4(void);
 static void func_ovl0E_01_800437DC(void);
 static void func_ovl0E_01_800442E8(void);
 /* takes its record in s0 */
-static void func_ovl0E_01_80043294(UnkStruct_ovl0E_01_80046B00 *);
-static void func_ovl0E_01_80043EB4(UnkStruct_ovl0E_01_80046B00 *);
+static void func_ovl0E_01_80043294(UnkStruct_ovl0C_01_8004A54C *);
+static void func_ovl0E_01_80043EB4(UnkStruct_ovl0C_01_8004A54C *);
 
 /* The three statements are on one line, a macro: only then does IDO
  * schedule across them (the store into the first call's delay slot). */
@@ -247,7 +227,7 @@ UnkStruct_ovl0E_01_800469F8 D_ovl0E_01_800469F8[6] = {
     { 4, -1, NULL, 1650.0f, -3800.0f, 1150.0f, 90.0f, 80.0f, 90.0f, 1.6333334f, -3800.0f },
     { 5, -1, NULL, 1950.0f, -3800.0f, 1150.0f, 90.0f, 80.0f, 90.0f, 1.6333334f, -3800.0f },
 };
-UnkStruct_ovl0E_01_80046B00 D_ovl0E_01_80046B00[2] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0E_01_80046B00[2] = {
     { NULL, -1, 0xA0, -1, -1, -1, -1, 70.0f, 40.0f, 135.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
     { NULL, -1, 0xA0, -1, -1, -1, -1, 410.0f, 0.0f, 245.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
@@ -255,13 +235,13 @@ UnkStruct_ovl0E_01_80046B70 D_ovl0E_01_80046B70[2] = {
     { 0x413, 65.0f, 40.0f, 145.0f, 180.0f, 6, 1, 0xE, 7, 0xF, 1 },
     { 0x414, 415.0f, 0.0f, 235.0f, 0.0f, 0x29, 0, 0x17, 0x2A, 0x18, 1 },
 };
-UnkStruct_ovl0E_01_80046B00 D_ovl0E_01_80046BB0[1] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0E_01_80046BB0[1] = {
     { NULL, -1, 0x1AD, -1, -1, -1, -1, 265.0f, 120.0f, 35.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
-UnkStruct_ovl0E_01_80046B00 D_ovl0E_01_80046BE8[1] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0E_01_80046BE8[1] = {
     { NULL, -1, 0x1B6, -1, -1, -1, -1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
-UnkStruct_ovl0E_01_80046B00 D_ovl0E_01_80046C20[1] = {
+UnkStruct_ovl0C_01_8004A54C D_ovl0E_01_80046C20[1] = {
     { NULL, -1, 0x1B7, -1, -1, -1, -1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
 UnkStruct_ovl0E_01_80046C58 D_ovl0E_01_80046C58 = { NULL, 2400.0f, 800.0f, 1400.0f };
@@ -397,8 +377,8 @@ void func_ovl0E_01_80044E20(void) {
 /* drops the model pair from 10000 at the tile its argument gives */
 void func_ovl0E_01_80044B5C(void) {
     UnkStruct_ovl0E_01_80046D20 *arg;
-    UnkStruct_ovl0E_01_80046B00 *a;
-    UnkStruct_ovl0E_01_80046B00 *b;
+    UnkStruct_ovl0C_01_8004A54C *a;
+    UnkStruct_ovl0C_01_8004A54C *b;
 
     func_ovl0E_01_80046250();
     arg = func_ovl0E_01_80046230();
@@ -695,7 +675,7 @@ void func_ovl0E_01_80044034(void) {
     }
 }
 
-static void func_ovl0E_01_80043EB4(UnkStruct_ovl0E_01_80046B00 *e) {
+static void func_ovl0E_01_80043EB4(UnkStruct_ovl0C_01_8004A54C *e) {
     e->unk0 = func_ovl0E_01_80046100(e->unk8, 0xD0, 0.0f, 0.0f, 0.0f);
     func_ovl0E_01_800460B8(e->unk0, 0x01080000);
     func_ovl0E_01_800460C0(e->unk0, 0x02000000);
@@ -792,7 +772,7 @@ void func_ovl0E_01_80043B90(void) {
 #define ANGLE_D_80046D28 D_ovl0E_01_80046D28
 #include "overlays/common/angle.h"
 
-void func_ovl0E_01_800439D4(UnkStruct_ovl0E_01_80046B00 *arg0) {
+void func_ovl0E_01_800439D4(UnkStruct_ovl0C_01_8004A54C *arg0) {
     arg0->unk0->unk40->unk48->unk4[0].unk4 = func_ovl0E_01_80045DF8(arg0->unk0->unk40, 0) - 0.001f;
 }
 
@@ -927,7 +907,7 @@ void func_ovl0E_01_80043310(void) {
     }
 }
 
-static void func_ovl0E_01_80043294(UnkStruct_ovl0E_01_80046B00 *e) {
+static void func_ovl0E_01_80043294(UnkStruct_ovl0C_01_8004A54C *e) {
     func_ovl0E_01_800460D0(e->unk0);
     /* 0xFFFF, not -1: never equal to the s16 fields */
     if (e->unkC != 0xFFFF && e->unkE != 0xFFFF && e->unk10 != 0xFFFF && e->unk12 != 0xFFFF) {

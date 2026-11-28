@@ -262,6 +262,23 @@ libepoxy's names. Not checked: Apple's clang (cdata.py runs its AST and,
 as the i386 probe, an ELF compile with it), ld64, the app, its window,
 sound and dialog.
 
+The zig build's `decls.json` is the host clang's ("Cross builds"), so
+it missed what CI's first macos run (2026-11-28) hit:
+decls.py's 32-bit layouts were the compiler's `-m32`, which Apple's
+clang on arm64 takes as armv4t, and which CMake's `-arch arm64` then
+overrides, so the N64 sizes came out arm64's (gen_digest_pools.py:
+"UnkObj is 104 bytes on the N64, the pool's stride 0x50"); and the
+variables' sizes were `nm -S`'s, which a Mach-O object has none of. Now
+the 32-bit layouts are i386's whatever the host (the command's target,
+`-arch`, `-isysroot` and deployment flags left out; the system's
+headers only on Linux, else freestanding), and the sizes are the
+probe's records'. Checked by the Linux build's compile commands as
+Apple's clang would run them (`-target arm64-apple-macos11 -arch arm64
+-mmacosx-version-min=11.0`, zig's darwin headers as the SDK): before,
+CI's error; after, `regions.c`, `asm_data*.c` and `digest_pools.c` are
+the Linux build's byte for byte, and `decls.json` the same on Linux and
+in the zig build as it was.
+
 ```
 cmake -S port -B build-port-macos -G Ninja -DCMAKE_TOOLCHAIN_FILE=$PWD/port/tools/cross-macos.cmake
 cmake --build build-port-macos            # (-DPORT_ZIG_TARGET=x86_64-macos.11.0 for Intel)

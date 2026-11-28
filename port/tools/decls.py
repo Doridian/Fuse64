@@ -9,8 +9,9 @@ BUILD is a configured port build (its compile_commands.json; any pointer
 size: both are compiled here).  For each file (the game's C, port/src,
 port/libaudio) clang's AST gives the top-level declarations of `D_`
 variables and `func_` functions; a probe (the file included, then a
-`char[sizeof(x)]` per variable, and per element of an array) compiled
--m32 and -m64 gives their sizes.  The JSON is {name: [{file, kind
+`struct { char c[sizeof(x)]; }` per variable, and per element of an
+array) compiled for i386 and -m64 gives their sizes, as its records'
+layouts.  The JSON is {name: [{file, kind
 (var/fun), def, type, s32, s64, e32, e64}]} (sizes in bytes, None where
 the type is incomplete).
 
@@ -38,12 +39,13 @@ SDK_TYPES = ["OSMesgQueue", "OSThread", "OSSched", "OSScClient", "OSIoMesg", "OS
              "ALSndPlayer", "ALSeqFile", "ALBankFile", "ALSynConfig", "ALSeqpConfig", "OSViMode",
              "Mtx", "Vtx", "Gfx", "Lights1", "Vp"]
 
-# The 32-bit layouts come from -m32, which needs a 32-bit C library's
-# headers.  A host without them (CI's x86-64 one, an arm64 or a CLANG64 one)
-# lays them out as i386 (an x86-64 host's -m32), freestanding: clang's own
-# headers, and these stand-ins for the C library's that the probed files
-# include (only the layouts are wanted; what the system's headers declare
-# is left without its 32-bit layout)
+# The 32-bit layouts are i386's (TARGET32), with a 32-bit C library's
+# headers where a Linux host has them (multilib: what an x86-64 host's -m32
+# used).  A host without them (CI's x86-64 one, an arm64, a Mac or a
+# CLANG64 one) lays them out freestanding: clang's own headers, and these
+# stand-ins for the C library's that the probed files include (only the
+# layouts are wanted; what the system's headers declare is left without its
+# 32-bit layout)
 LIBC32 = {
     "stdlib.h": "#include <stddef.h>\nvoid *malloc(size_t); void *calloc(size_t, size_t);\n"
                 "void *realloc(void *, size_t); void free(void *); void abort(void); void exit(int);\n"
@@ -70,6 +72,30 @@ LIBC32 = {
     "assert.h": "#define assert(x) ((void)0)\n",
     "unistd.h": "#include <stddef.h>\n",
 }
+
+
+# (i386's, as cdata.py's probe, never the host compiler's -m32: on an
+# arm64 Mac that is armv4t's APCS, and CMake's `-arch arm64` there
+# overrides it altogether: the "32-bit" layouts were arm64's.  So a
+# command's own target, SDK and CPU flags are left out of that run.)
+TARGET_ARG = {"-target", "-arch", "-isysroot", "--sysroot", "-mcpu", "-march", "-mtune"}
+TARGET_JOINED = ("--target=", "-target=", "--sysroot=", "-mcpu=", "-march=", "-mtune=", "-mabi=", "-mfpu=",
+                 "-mfloat-abi=", "-mmacosx-version-min=", "-mmacos-version-min=", "-miphoneos-version-min=",
+                 "-mios-version-min=", "-mlinker-version=")
+TARGET32 = ["--target=i386-linux-gnu"]
+
+
+def untargeted(argv):
+    """argv without its target's selection (TARGET_ARG, TARGET_JOINED)"""
+    out, skip = [], False
+    for a in argv:
+        if skip:
+            skip = False
+        elif a in TARGET_ARG:
+            skip = True
+        elif not a.startswith(TARGET_JOINED) and a not in ("-m32", "-m64", "-mthumb", "-marm"):
+            out.append(a)
+    return out
 
 
 LIBC32_LOCK = threading.Lock()
@@ -228,9 +254,9 @@ def one(u):
         for n in vs:
             t = types[n]
             if not re.search(r"\[\]", t.split("(")[0]) and not t.startswith("void"):
-                f.write("__attribute__((used)) static char __pz_%s[sizeof(%s)];\n" % (n, n))
+                f.write("struct __pz_%s { char c[sizeof(%s)]; };\n" % (n, n))
             if "[" in t:
-                f.write("__attribute__((used)) static char __pe_%s[sizeof((%s)[0])];\n" % (n, n))
+                f.write("struct __pe_%s { char c[sizeof((%s)[0])]; };\n" % (n, n))
     sizes, recs = {}, {}
     try:
         for arch in ("-m32", "-m64"):
@@ -238,28 +264,31 @@ def one(u):
             flags = ["-O0", "-w", "-c", probe, "-o", obj, "-Xclang", "-fdump-record-layouts-complete",
                      "-Xclang", "-fdump-record-layouts"]
             r = None
-            if arch == "-m64" or not os.environ.get("FUSE64_DECLS_FREESTANDING"):
+            if arch == "-m64":
                 r = subprocess.run(argv + [arch] + flags, capture_output=True, text=True, cwd=cwd)
+            elif sys.platform.startswith("linux") and not os.environ.get("FUSE64_DECLS_FREESTANDING"):
+                r = subprocess.run(untargeted(argv) + TARGET32 + flags, capture_output=True, text=True, cwd=cwd)
             if arch == "-m32" and (r is None or r.returncode):
                 # (no 32-bit C library's headers here: LIBC32)
-                r = subprocess.run(argv + ["--target=i386-linux-gnu", "-ffreestanding", "-nostdlibinc",
-                                           "-isystem", libc32(), "-Wno-error=implicit-function-declaration",
-                                           "-Wno-error=int-conversion"] + flags,
+                r = subprocess.run(untargeted(argv) + TARGET32 + [
+                    "-ffreestanding", "-nostdlibinc", "-isystem", libc32(),
+                    "-Wno-error=implicit-function-declaration", "-Wno-error=int-conversion"] + flags,
                                    capture_output=True, text=True, cwd=cwd)
             if r.returncode:
                 return src, None, r.stderr[-2000:]
+            os.unlink(obj)
             for key, size, fields in parse_layouts(r.stdout):
+                m = re.match(r"struct (__p[ze]_)(\w+)$", key)
+                if m:
+                    # (a size, as a record's: nm's would be the object format's,
+                    # a Mach-O's symbols have no sizes)
+                    sizes[(m.group(1), m.group(2), arch)] = size
+                    continue
                 e = recs.setdefault(key, {"fields": {}})
                 e["size" + arch[2:]] = size
                 for i, (off, t, n) in enumerate(fields):
                     fl = e["fields"].setdefault("%d:%s" % (i, n), {"name": n, "type": t})
                     fl["off" + arch[2:]] = off
-            nm = subprocess.run(["nm", "-S", obj], capture_output=True, text=True).stdout
-            os.unlink(obj)
-            for l in nm.splitlines():
-                p = l.split()
-                if len(p) == 4 and p[3].startswith("__p"):
-                    sizes[(p[3][:5], p[3][5:], arch)] = int(p[1], 16)
     finally:
         os.unlink(probe)
     for d in decls:

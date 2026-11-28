@@ -24,21 +24,6 @@
  * ovl_0C_03's 17A5B0 and ovl_0C_05's 17F9F0.
  */
 
-/* the task func_ovl0C_04_80043FC0's record */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ s32 unk1C;
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ s32 unk28;
-} UnkStruct_ovl0C_04_80045C58;
-
 /* a chain of records (unk2 is the next one's index, 0 ends it), each the
  * task func_ovl0C_04_80043D3C's */
 typedef struct {
@@ -179,7 +164,7 @@ u32 D_ovl0C_04_80045C34[][3] = {
     { 1, 0x23, 0xE2 },
     { 2, 0x26, 0xF5 },
 };
-UnkStruct_ovl0C_04_80045C58 D_ovl0C_04_80045C58[] = {
+UnkStruct_ovl0C_01_8004A17C D_ovl0C_04_80045C58[] = {
     { NULL, 2950.0f, 500.0f, 750.0f, 0x1B, 3, 8, 0x20, 0x14, 90.0f, 0 },
 };
 UnkStruct_ovl0C_04_80045C84 D_ovl0C_04_80045C84[] = {
@@ -257,7 +242,7 @@ static void func_ovl0C_04_80044580(void) {
 #include "overlays/common/core_0c.h"
 
 void func_ovl0C_04_80043FC0(void) {
-    UnkStruct_ovl0C_04_80045C58 *rec;
+    UnkStruct_ovl0C_01_8004A17C *rec;
     UnkStructA *obj;
     f32 dist;
     f32 speed;
@@ -435,7 +420,7 @@ void func_ovl0C_04_80043ACC(s32 arg0) {
 #include "overlays/common/flags.h"
 
 void func_ovl0C_04_80043720(void) {
-    UnkStruct_ovl0C_04_80045C58 *p;
+    UnkStruct_ovl0C_01_8004A17C *p;
     UnkStructA *obj;
     s16 i;
 

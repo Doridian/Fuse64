@@ -118,21 +118,6 @@ typedef struct {
     /* 0x0C */ UnkStruct_ovl0C_01_ZJ3106_C *unkC;
 } UnkStruct_ovl0C_01_ZJ3106;
 
-/* objects at a position, each a task's (func_ovl0C_01_80047A60) */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ s32 unk1C;
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ s32 unk28;
-} UnkStruct_ovl0C_01_8004A17C;
-
 /* a list of these ends at the one whose unk2 is 0 */
 typedef struct {
     /* 0x00 */ s16 unk0;

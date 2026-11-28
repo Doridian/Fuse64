@@ -1,16 +1,17 @@
 /*
- * Without STATICS_PART: the statics below, included before the functions.
- * With it: the runs of code (definitions, or statements inside a function)
- * 197800.c includes where they are, from this same file: the `.file`
- * switches around them end as1's scheduling blocks, as the original's do.
- */
-#ifndef STATICS_PART
-/*
  * Statics the original defined in another file: where one is inlined, the
  * `.file` ugen emits for it ends an as1 scheduling block, which the
  * original's schedule has.  That file's name and what else it held are
  * unknown; several overlays' copies of these statics are the same code.
  */
+
+/* the probe, an invisible object moved about to test for hits (ovl_0D_02's
+ * 800444EC), after the 0xC02 call that precedes it there too */
+static void func_ovl0D_01_800455D8(void) {
+    func_ovl0D_01_80046278(D_ovl0D_01_80047B18);
+    D_ovl0D_01_80047B0C = func_ovl0D_01_80046CB0(-1, 0x80, 0.0f, 0.0f, 0.0f);
+    D_ovl0D_01_80047B0C->unkC = 0x3FFFF;
+}
 
 static void func_ovl0D_01_800455B0(void) {
     func_ovl0D_01_80046B58(2400.0f, 1600.0f, 800.0f, 1600.0f);
@@ -114,6 +115,3 @@ static void func_ovl0D_01_800444E0(UnkStruct_ovl0C_01_8004A54C *e) {
     func_ovl0D_01_800462A8(x2, y0, z2, x3, z3, 0x11);
     func_ovl0D_01_800462A8(x2, y0 + 1, z2, x3, z3, 0x10);
 }
-#elif STATICS_PART == 1
-    func_ovl0D_01_80046278(D_ovl0D_01_80047B18);
-#endif

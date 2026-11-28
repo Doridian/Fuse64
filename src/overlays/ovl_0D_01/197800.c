@@ -26,10 +26,14 @@
  * - 800455E0: both 1600s of the camera static 800455B0 floats, and that
  *   static defined in another file (statics.h; 1600.0f in $f16);
  *   80046C70 takes a u32 (with s32,
- *   uopt kept the three 0x02000000s in s7); the empty static 800455D8
- *   called after the 800455D0 rows (the frame); the 80046278 call in a
- *   statics.h region (its a0 after the three stores); 80046460 returns s32
- *   (v1, not v0, for the two inlined flag tests at the end).
+ *   uopt kept the three 0x02000000s in s7); 80046460 returns s32
+ *   (v1, not v0, for the two inlined flag tests at the end). The stub
+ *   800455D8 is the probe static (ovl_0D_02's 800444EC, with the 0xC02
+ *   call 80046278 that comes just before it there), defined in statics.h:
+ *   its `.file` puts the call's a0 after the three stores, and as a
+ *   parameterless inlined static it is the frame's word (pass 13; it
+ *   replaces an empty static called after the 800455D0 rows for the frame
+ *   and a statics.h region around the 80046278 call, a fake).
  * - 80044154: 15.0f through a local y, and the model reached as D_ovl0D_01_800475D4[2] (the address of
  *   D_ovl0D_01_8004760C[1]; a fake, so uopt doesn't keep &[1] in a
  *   register for both the store and the load).
@@ -486,18 +490,12 @@ void func_ovl0D_01_800455E0(void) {
         D_ovl0D_01_80047844[3].unk8 = 0xE8;
     }
     func_ovl0D_01_800455D0(D_ovl0D_01_80047844, 6);
-    func_ovl0D_01_800455D8();
     func_ovl0D_01_800462E0(0x140);
     func_ovl0D_01_80046418();
     D_ovl0D_01_80047B30.x = 32768.0f;
     D_ovl0D_01_80047B30.y = 32768.0f;
     D_ovl0D_01_80047B30.z = 32768.0f;
-    /* fake: (see the top): its a0 after the stores (pass 12: every stub has its static, so the call is not an inlined static's) */
-#define STATICS_PART 1
-#include "overlays/ovl_0D_01/statics.h"
-#undef STATICS_PART
-    D_ovl0D_01_80047B0C = func_ovl0D_01_80046CB0(-1, 0x80, 0.0f, 0.0f, 0.0f);
-    D_ovl0D_01_80047B0C->unkC = 0x3FFFF;
+    func_ovl0D_01_800455D8();
     func_ovl0D_01_800463B0(0);
     func_ovl0D_01_80047100(1);
     func_ovl0D_01_80046330(0x201F);
@@ -523,9 +521,6 @@ void func_ovl0D_01_800455E0(void) {
     func_ovl0D_01_8004553C();
     func_ovl0D_01_800454F8();
     func_ovl0D_01_800454F0();
-}
-
-static void func_ovl0D_01_800455D8(void) {
 }
 
 static void func_ovl0D_01_800455D0(Trio_0D01 *t, s32 count) {

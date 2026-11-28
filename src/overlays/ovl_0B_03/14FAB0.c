@@ -91,15 +91,11 @@
  */
 
 #include "common.h"
+#include "gfx.h"
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 
 typedef struct Inner Inner;
-
-typedef struct {
-    PORT_UP(u32) w0;
-    PORT_UP(u32) w1;
-} Gfx_ovl0A_01;
 
 /* A text label: the string, its place, its scale and the handle
  * func_ovl0B_03_80048748 returns for it. */
@@ -159,7 +155,7 @@ typedef struct {
 
 #define WRAP_ovl0B_03(x) ((x) >= 360.0f ? (x) - 360.0f : (x) < 0.0f ? (x) + 360.0f : (x))
 #define WRAPW_ovl0B_03(x) ((x) >= 360.0f ? (x) - 360.0f : (w = ((x) < 0.0f ? (x) + 360.0f : (x)), w))
-#define GFX_W_ovl0B_03(pkt, a, b) { Gfx_ovl0A_01 *_g = (pkt); _g->w0 = (a); _g->w1 = (b); }
+#define GFX_W_ovl0B_03(pkt, a, b) { Gfx_80225840 *_g = (pkt); _g->w0 = (a); _g->w1 = (b); }
 
 void func_ovl0B_03_800478B0(s32, s32, s32);
 s32 func_ovl0B_03_800478B8(void);
@@ -172,7 +168,7 @@ void func_ovl0B_03_80047EC0(UnkStructA_40 *, s32);
 void func_ovl0B_03_80047EC8(UnkStructA_40 *, s32, s32, s32);
 void func_ovl0B_03_80047ED8(UnkStructA_40 *, s32);
 void func_ovl0B_03_80047EE0(UnkStructA_40 *, s32, s32);
-Inner *func_ovl0B_03_80047F18(void (*)(s32, Gfx_ovl0A_01 **), s32);
+Inner *func_ovl0B_03_80047F18(void (*)(s32, Gfx_80225840 **), s32);
 s32 func_ovl0B_03_80047F28(UnkStructA_40 *, s32);
 void func_ovl0B_03_80047FD8(s32);
 void func_ovl0B_03_80047FE8(s32);
@@ -225,14 +221,14 @@ void func_ovl0B_03_8004386C(void);
 static void func_ovl0B_03_800464B0(Model_ovl0B_03 *models, s32 n);
 void func_ovl0B_03_80046510(void);
 s32 func_ovl0B_03_80046850(u8 arg0, u16 arg1);
-void func_ovl0B_03_80046918(s32 arg0, Gfx_ovl0A_01 **arg1);
+void func_ovl0B_03_80046918(s32 arg0, Gfx_80225840 **arg1);
 void func_ovl0B_03_800469B4(void);
 void func_ovl0B_03_80046AE8(void);
 void func_ovl0B_03_80046C20(void);
 void func_ovl0B_03_80046D54(void);
 void func_ovl0B_03_80046E8C(void);
 void func_ovl0B_03_80046F78(void);
-void func_ovl0B_03_80047064(s32 arg0, Gfx_ovl0A_01 **arg1);
+void func_ovl0B_03_80047064(s32 arg0, Gfx_80225840 **arg1);
 void func_ovl0B_03_80047188(void);
 static void func_ovl0B_03_80047190(Model_ovl0B_03 *models, s32 n);
 void func_ovl0B_03_80047198(s32 arg0);
@@ -550,8 +546,8 @@ void func_ovl0B_03_80047188(void) {
 
 }
 
-void func_ovl0B_03_80047064(s32 arg0, Gfx_ovl0A_01 **arg1) {
-    Gfx_ovl0A_01 *g;
+void func_ovl0B_03_80047064(s32 arg0, Gfx_80225840 **arg1) {
+    Gfx_80225840 *g;
 
     g = *arg1;
     GFX_W_ovl0B_03(g++, 0xFA000000, 0xFF0080);
@@ -633,8 +629,8 @@ void func_ovl0B_03_800469B4(void) {
     func_ovl0B_03_80048318();
 }
 
-void func_ovl0B_03_80046918(s32 arg0, Gfx_ovl0A_01 **arg1) {
-    Gfx_ovl0A_01 *g;
+void func_ovl0B_03_80046918(s32 arg0, Gfx_80225840 **arg1) {
+    Gfx_80225840 *g;
 
     g = *arg1;
     GFX_W_ovl0B_03(g++, 0xFA000000, 0xFFFFFF80);

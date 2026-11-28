@@ -54,6 +54,7 @@
  * are the floats widened (3FB99999A0000000), which the text alone doesn't show.
  */
 #include "common.h"
+#include "gfx.h"
 
 typedef struct {
     /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;)
@@ -120,11 +121,6 @@ typedef struct {
     /* 0x4C */ f32 unk4C;
 } Sprite;
 
-typedef struct {
-    PORT_UP(u32) w0;
-    PORT_UP(u32) w1;
-} Gfx_ovl0A_01;
-
 /* A placed object: what a table entry spawns and where. */
 typedef struct {
     /* 0x00 */ Obj *obj;
@@ -142,7 +138,7 @@ typedef struct {
     /* 0x00 */ Inner *unk0;
     /* 0x04 */ s32 *unk4[4];
     /* 0x14 */ s32 unk14;
-    /* 0x18 */ void (*unk18)(s32, Gfx_ovl0A_01 **);
+    /* 0x18 */ void (*unk18)(s32, Gfx_80225840 **);
 } UnkStruct_ovl0A_01_Entry2;
 
 typedef struct {
@@ -177,7 +173,7 @@ void func_ovl0A_01_80047B48(Inner *, s32, s32, s32); /* 0x1506 */
 void func_ovl0A_01_80047B58(Inner *, s32); /* 0x1508 */
 void func_ovl0A_01_80047B60(Inner *, s32, s32); /* 0x1509 */
 f32 func_ovl0A_01_80047B78(Inner *, s32); /* 0x150C */
-Inner *func_ovl0A_01_80047B98(void (*)(s32, Gfx_ovl0A_01 **), s32); /* 0x1510 */
+Inner *func_ovl0A_01_80047B98(void (*)(s32, Gfx_80225840 **), s32); /* 0x1510 */
 s32 func_ovl0A_01_80047BA8(Inner *, s32); /* 0x1512 */
 void func_ovl0A_01_80047BB0(s32, s32, s32); /* 0x1513 */
 void func_ovl0A_01_80047BC0(s32, s32, s32); /* 0x1515 */
@@ -226,7 +222,7 @@ s32 *D_ovl0A_01_80048D20;
 Sprite *D_ovl0A_01_80048D24;
 u8 D_ovl0A_01_80048D28[8];
 
-static void func_ovl0A_01_80046F10(s32 arg0, Gfx_ovl0A_01 **arg1);
+static void func_ovl0A_01_80046F10(s32 arg0, Gfx_80225840 **arg1);
 
 /* .data */
 typedef struct { s16 ob[3]; u16 flag; s16 tc[2]; u8 cn[4]; } Vtx_ovl0A_01; /* (a Vtx: halves and bytes) */ Vtx_ovl0A_01 D_ovl0A_01_80048730[4] = {
@@ -571,19 +567,19 @@ static void func_ovl0A_01_80046EB0(void) {
 /* Draws the light's quad: D_ovl0A_01_80048A48[0]'s draw callback. */
 #define RGBA(c) ((((c)[0] & 0xFF) << 24) | (((c)[1] & 0xFF) << 16) | (((c)[2] & 0xFF) << 8) | ((c)[3] & 0xFF))
 /* Draws the light's quad: D_ovl0A_01_80048A48's draw callback. */
-static void func_ovl0A_01_80046F10(s32 arg0, Gfx_ovl0A_01 **arg1) {
-    Gfx_ovl0A_01 *gfx;
+static void func_ovl0A_01_80046F10(s32 arg0, Gfx_80225840 **arg1) {
+    Gfx_80225840 *gfx;
     s32 i;
 
     gfx = *arg1;
-    { Gfx_ovl0A_01 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFE793C; }
-    { Gfx_ovl0A_01 *g = gfx++; g->w0 = 0xB900031D; g->w1 = 0x00504240; }
-    { Gfx_ovl0A_01 *g = gfx++; g->w0 = 0x0400103F; g->w1 = (PORT_UP(u32)) D_ovl0A_01_80048730; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFE793C; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xB900031D; g->w1 = 0x00504240; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0x0400103F; g->w1 = (PORT_UP(u32)) D_ovl0A_01_80048730; }
     for (i = 0; i < 4; i++) {
-        { Gfx_ovl0A_01 *g = gfx++; g->w0 = 0xB2100000 + i * 2; g->w1 = RGBA(D_ovl0A_01_80048A48[0].unk4[i]); }
+        { Gfx_80225840 *g = gfx++; g->w0 = 0xB2100000 + i * 2; g->w1 = RGBA(D_ovl0A_01_80048A48[0].unk4[i]); }
     }
-    { Gfx_ovl0A_01 *g = gfx++; g->w0 = 0xBF000000; g->w1 = 0x204; }
-    { Gfx_ovl0A_01 *g = gfx++; g->w0 = 0xBF000000; g->w1 = 0x40206; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xBF000000; g->w1 = 0x204; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xBF000000; g->w1 = 0x40206; }
     *arg1 = gfx;
 }
 
@@ -1084,7 +1080,7 @@ void func_ovl0A_01_80044F3C(void) {
     func_ovl0A_01_80044A2C();
     v = 0;
     pos[0] = 200.0f;
-#line 1063 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1059 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     pos[2] = 900.0f;
     pos[1] = v;
     played = 0;
@@ -1373,15 +1369,15 @@ void func_ovl0A_01_800442B4(void) {
         } while (++j < 1370);
     }
     v = j;
-#line 1347 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1343 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     func_ovl0A_01_80047530(0x1A, 0x12, 4);
     func_ovl0A_01_80047F98();
 }
 
 static void func_ovl0A_01_8004428C(void) {
-#line 1355 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1351 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     D_ovl0A_01_80048A70 = 0;
-#line 1354 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1350 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     D_ovl0A_01_80048A64 = func_ovl0A_01_80047F88(func_ovl0A_01_80045EA0, NULL, 0, 0, 0x130);
 }
 
@@ -1393,7 +1389,7 @@ static void func_ovl0A_01_800442A4(void) {
     func_ovl0A_01_80047E38(D_ovl0A_01_80048770[4].obj, 0x80000);
 }
 
-#line 1329 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1325 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 static void func_ovl0A_01_800442AC(void) {
     D_ovl0A_01_80048A1C = 0.0f;
     D_ovl0A_01_80048A20 = 0.0f;
@@ -1646,9 +1642,9 @@ static void func_ovl0A_01_80043380(Entry *tbl, s32 n) {
     Entry *e;
 
     for (i = 0; i < n; i++) {
-#line 1614 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1610 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
         e = tbl;
-#line 1613 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1609 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
         tbl->obj = func_ovl0A_01_80047E60(tbl->unk4 == 0 ? tbl->unk8 : 0x320, 0x0D000000, 0xD0, NULL);
         if (tbl->unk4 != 0) {
             func_ovl0A_01_80043378(tbl);

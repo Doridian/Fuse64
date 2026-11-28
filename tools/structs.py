@@ -23,10 +23,9 @@ It reports
   (c) a name defined in more than one place with different layouts (sizes
       or field offsets and types; the field names don't count).
   (d) different names with the same layout (whatever uses them; only
-      layouts of D_MIN_SIZE bytes and D_MIN_FIELDS fields or more): a
-      list to look through, not a check.
---check exits non-zero on (a), (b) not in ALLOW_B (each with its reason),
-or (c).  --json writes everything found.
+      layouts of D_MIN_SIZE bytes and D_MIN_FIELDS fields or more).
+--check exits non-zero on (a), (b) not in ALLOW_B, (c), or (d) not in
+ALLOW_D (each allowance with its reason).  --json writes everything found.
 """
 import argparse
 import collections
@@ -50,6 +49,21 @@ ALLOW_B = {
 }
 # (d) lists layouts at least this big with at least this many fields
 D_MIN_SIZE, D_MIN_FIELDS = 0x10, 3
+# (d)s that are different things with one layout: names -> why (a group is allowed when
+# all its names are in one entry)
+ALLOW_D = [
+    (("RectF", "Vec4f_0D01"),
+     "four floats: 7D840's RectF is a texture rectangle (func_80263E6C's), types.h's Vec4f_0D01 "
+     "a variable of the 0D overlays"),
+    (("RectI", "UnkStruct_802AD680", "UnkStruct_ovl0A_06_80047330"),
+     "four words: 7D840's RectI is a clipped rectangle (func_80264F98's), UnkStruct_802AD680 85A10's "
+     "settings (its fields named flags, maxDMAs, maxBuffers, maxCmds), and 0A_06's a table of "
+     "its .data"),
+]
+
+
+def allowed_d(names):
+    return next((why for ns, why in ALLOW_D if set(names) <= set(ns)), None)
 
 
 def ours(path):
@@ -359,11 +373,13 @@ def main():
     for n in sorted(conf_c):
         for s, ps in conf_c[n].items():
             print("  %s: size 0x%X, %d fields: %s" % (n, s[0] or 0, len(s[2]), " ".join(sorted(ps))))
-    print("\n(d) different names, one layout (0x%X bytes or more, %d fields or more): %d"
-          % (D_MIN_SIZE, D_MIN_FIELDS, len(same_d)))
+    open_d = [x for x in same_d if not allowed_d(x[0])]
+    print("\n(d) different names, one layout (0x%X bytes or more, %d fields or more): %d, %d allowed"
+          % (D_MIN_SIZE, D_MIN_FIELDS, len(open_d), len(same_d) - len(open_d)))
     for ns, sg in same_d:
-        print("  size 0x%X, %d fields: %s" % (sg[0] or 0, len(sg[2]), ", ".join(
-            "%s (%s)" % (n, " ".join(sorted(real[n]))) for n in ns)))
+        why = allowed_d(ns)
+        print("  size 0x%X, %d fields: %s%s" % (sg[0] or 0, len(sg[2]), ", ".join(
+            "%s (%s)" % (n, " ".join(sorted(real[n]))) for n in ns), " allowed: " + why if why else ""))
     if a.json:
         out = {"defs": {n: {p: (l if l[0] == "alias" else {"size": l[0], "align": l[1],
                                                              "fields": [list(f) for f in l[2]]})
@@ -371,11 +387,11 @@ def main():
                "a": sorted(dup_a), "c": sorted(conf_c),
                "b": [{"symbol": s, "role": r, "rest": x, "names": {n: sorted(f) for n, f in ns.items()},
                       "relation": rel, "allowed": ALLOW_B.get((s, r))} for s, r, x, ns, _, rel in same_b],
-               "d": [ns for ns, _ in same_d]}
+               "d": [ns for ns, _ in same_d], "d_allowed": [ns for ns, _ in same_d if allowed_d(ns)]}
         json.dump(out, open(a.json, "w"), indent=1, sort_keys=True)
     if bad:
         return 2
-    if a.check and (dup_a or conf_c or open_b):
+    if a.check and (dup_a or conf_c or open_b or open_d):
         return 1
     return 0
 

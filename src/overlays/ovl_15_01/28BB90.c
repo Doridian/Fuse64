@@ -122,7 +122,7 @@ s32 func_ovl15_01_8004CA68(f32, f32, f32); /* 0xD0F */
 void func_ovl15_01_8004CAB8(void (*)(UnkStructA *), s32); /* 0xE02 */
 void func_ovl15_01_8004CAF8(void); /* 0xF05 */
 void func_ovl15_01_8004CB10(void (*)(UnkStructA *)); /* 0xF08 */
-s32 *func_ovl15_01_8004CB28(void); /* 0xF0B */ /* also: s32 * (void) x3; Save_ovl0B_02 *(void) x1; UnkStruct_ovl0B_05_80046820 *(void) x1 */
+UnkStruct_802AC610 *func_ovl15_01_8004CB28(void); /* 0xF0B */
 void func_ovl15_01_8004CB40(s32); /* 0xF0E */
 void func_ovl15_01_8004CB50(s32); /* 0xF10 */
 void func_ovl15_01_8004CB88(void); /* 0x1000 */
@@ -229,7 +229,7 @@ s32 D_ovl15_01_8004DF54;
 s32 D_ovl15_01_8004DF58;
 Vec3f D_ovl15_01_8004DF60;
 s32 D_ovl15_01_8004DF70[15];
-s32 * D_ovl15_01_8004DFAC;
+UnkStruct_802AC610 *D_ovl15_01_8004DFAC;
 s32 D_ovl15_01_8004DFB0;
 s32 D_ovl15_01_8004DFB4;
 s32 D_ovl15_01_8004DFB8;
@@ -320,7 +320,7 @@ s32 D_ovl15_01_8004DF54;
 s32 D_ovl15_01_8004DF58;
 Vec3f D_ovl15_01_8004DF60;
 s32 D_ovl15_01_8004DF70[15];
-s32 * D_ovl15_01_8004DFAC;
+UnkStruct_802AC610 *D_ovl15_01_8004DFAC;
 s32 D_ovl15_01_8004DFB0;
 s32 D_ovl15_01_8004DFB4;
 s32 D_ovl15_01_8004DFB8;
@@ -568,7 +568,7 @@ static void func_ovl15_01_8004C2AC() {
 }
 
 void func_ovl15_01_8004C164(void) {
-    if (*D_ovl15_01_8004DFAC & 2) {
+    if (D_ovl15_01_8004DFAC->unk0 & 2) {
         func_ovl15_01_8004D528(func_ovl15_01_8004B5FC, NULL, 0, 0, 0x130);
         func_ovl15_01_8004D7A0(0x413);
     }
@@ -629,7 +629,7 @@ void func_ovl15_01_8004C09C(void) {
     func_ovl15_01_8004D740();
     func_ovl15_01_8004D508(&D_ovl15_01_8004E000);
     if (func_ovl15_01_8004D7B0(0x400) != 0) {
-        if (!(*D_ovl15_01_8004DFAC & 2)) {
+        if (!(D_ovl15_01_8004DFAC->unk0 & 2)) {
             func_ovl15_01_8004DAC0(0x13);
         }
     } else {
@@ -662,13 +662,13 @@ void func_ovl15_01_8004BF90(void) {
     }
     func_ovl15_01_8004D828(0, 0, 0, 0.0f);
     func_ovl15_01_8004D518();
-    if (*D_ovl15_01_8004DFAC & 2) {
+    if (D_ovl15_01_8004DFAC->unk0 & 2) {
         func_ovl15_01_8004DC30();
     }
 }
 
 void func_ovl15_01_8004BF54(void) {
-    if (*D_ovl15_01_8004DFAC & 2) {
+    if (D_ovl15_01_8004DFAC->unk0 & 2) {
         func_ovl15_01_8004DC30();
     }
 }
@@ -700,7 +700,7 @@ void func_ovl15_01_8004BE50(void) {
     func_ovl15_01_8004D7A8(0x413);
     func_ovl15_01_8004D7A8(0x401);
     D_ovl15_01_8004DFAC = func_ovl15_01_8004CB28();
-    if (M2C_FIELD(D_ovl15_01_8004DFAC, s32 *, 0x10) == 0) {
+    if (D_ovl15_01_8004DFAC->unk10 == 0) {
         func_ovl15_01_8004D7A0(0x41F);
     }
 }
@@ -877,7 +877,7 @@ void func_ovl15_01_8004B2A0(void) {
             func_ovl15_01_8004D570();
         } while (func_ovl15_01_8004D7B0(0x420) == 0);
     }
-    if (!(*D_ovl15_01_8004DFAC & 2)) {
+    if (!(D_ovl15_01_8004DFAC->unk0 & 2)) {
         func_ovl15_01_8004DAC0((PORT_IP(s32)) sp1C);
     }
     func_ovl15_01_8004D538();
@@ -966,7 +966,7 @@ void func_ovl15_01_8004AE80(void) {
         D_ovl15_01_8004E03C = D_ovl15_01_8004DF70[func_ovl15_01_8004D6E8(n)];
     }
     D_ovl15_01_8004E040 = 0;
-    if (*D_ovl15_01_8004DFAC & 2) {
+    if (D_ovl15_01_8004DFAC->unk0 & 2) {
         if (func_ovl15_01_8004D790(0xA4) != 0) {
             func_ovl15_01_8004D548(0x3C);
             D_ovl15_01_8004E03C = 4;
@@ -1021,7 +1021,7 @@ void func_ovl15_01_8004AD60(void) {
     if (func_ovl15_01_8004D7B0(0x419) != 0) {
         var_s0 += 1;
     }
-    M2C_FIELD(D_ovl15_01_8004DFAC, s32 *, 0x2C) = var_s0;
+    D_ovl15_01_8004DFAC->unk2C = var_s0;
 }
 
 void func_ovl15_01_8004AC68(void) {
@@ -3108,7 +3108,7 @@ void func_ovl15_01_80044088(f32 *arg0, f32 *arg1, Vec3f *arg2) {
     arg0[0] = best.x;
     arg0[1] = best.y;
     arg0[2] = best.z;
-    if (*D_ovl15_01_8004DFAC & 2) {
+    if (D_ovl15_01_8004DFAC->unk0 & 2) {
         arg0[0] = 2900.0f;
         arg0[2] = 750.0f;
     }
@@ -3148,7 +3148,7 @@ void func_ovl15_01_80043EB0(void) {
 }
 
 void func_ovl15_01_80043E44(void) {
-    if (!(*D_ovl15_01_8004DFAC & 2)) {
+    if (!(D_ovl15_01_8004DFAC->unk0 & 2)) {
         if (func_ovl15_01_8004D790(0xA4) == 0) {
             func_ovl15_01_8004D548(0x136);
         } else {

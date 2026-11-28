@@ -163,7 +163,7 @@ void func_ovl15_02_8004FBC8(s32 *); /* 0xC02 */
 void func_ovl15_02_8004FBD0(s32); /* 0xD00 */ /* also: void (s32, UnkStructA_40 **) x1 */
 void func_ovl15_02_8004FCD8(void); /* 0xF05 */
 void func_ovl15_02_8004FCF0(void (*)(UnkStructA *)); /* 0xF08 */
-s32 *func_ovl15_02_8004FD08(void); /* 0xF0B */ /* also: s32 * (void) x3; Save_ovl0B_02 *(void) x1; UnkStruct_ovl0B_05_80046820 *(void) x1 */
+UnkStruct_802AC610 *func_ovl15_02_8004FD08(void); /* 0xF0B */
 void func_ovl15_02_8004FD20(s32); /* 0xF0E */
 void func_ovl15_02_8004FD30(s32); /* 0xF10 */
 void func_ovl15_02_8004FD68(void); /* 0x1000 */
@@ -305,7 +305,7 @@ s32 D_ovl15_02_8005134C;
 s32 D_ovl15_02_80051350;
 Vec3f D_ovl15_02_80051358;
 s32 D_ovl15_02_80051368[17 + 3 * PORT_LP64]; /* (where pointers are 8 bytes 4ED50.c reads its links at 0x40 and 0x48) */
-s32 * D_ovl15_02_800513AC;
+UnkStruct_802AC610 *D_ovl15_02_800513AC;
 UnkStructA * D_ovl15_02_800513B0[2];
 /* (a Vec3f: M2C_FIELD(&D_800513B8, f32 *, 4 and 8), func_80050498) */
 struct port_bss_ovl15_02_800513B8 {
@@ -393,7 +393,7 @@ s32 D_ovl15_02_8005134C;
 s32 D_ovl15_02_80051350;
 Vec3f D_ovl15_02_80051358;
 s32 D_ovl15_02_80051368[17];
-s32 * D_ovl15_02_800513AC;
+UnkStruct_802AC610 *D_ovl15_02_800513AC;
 UnkStructA * D_ovl15_02_800513B0[2];
 f32 D_ovl15_02_800513B8;
 u8 D_ovl15_02_800513BC[4];
@@ -765,7 +765,7 @@ static void func_ovl15_02_8004F868(void) {
 #include "overlays/common/core.h"
 
 void func_ovl15_02_8004F1D4(void) {
-    if (*D_ovl15_02_800513AC & 2) {
+    if (D_ovl15_02_800513AC->unk0 & 2) {
         func_ovl15_02_80050708(func_ovl15_02_8004F66C, NULL, 0, 0, 0x130);
     }
 }
@@ -779,7 +779,7 @@ void func_ovl15_02_8004F6E8(void) {
             func_ovl15_02_80050750();
         } while (func_ovl15_02_80050990(0x420) == 0);
     }
-    if (!(*D_ovl15_02_800513AC & 2)) {
+    if (!(D_ovl15_02_800513AC->unk0 & 2)) {
         func_ovl15_02_80050CA0((PORT_IP(s32)) sp1C);
     }
     func_ovl15_02_80050718();
@@ -900,7 +900,7 @@ void func_ovl15_02_8004F144(void) {
     func_ovl15_02_80043688();
     func_ovl15_02_800506E8(&D_ovl15_02_80051408);
     if (func_ovl15_02_80050990(0x400) != 0) {
-        if (!(*D_ovl15_02_800513AC & 2)) {
+        if (!(D_ovl15_02_800513AC->unk0 & 2)) {
             func_ovl15_02_80050CA0(0x13);
         }
     } else {
@@ -932,7 +932,7 @@ void func_ovl15_02_8004F084(void) {
 }
 
 void func_ovl15_02_8004F048(void) {
-    if (*D_ovl15_02_800513AC & 2) {
+    if (D_ovl15_02_800513AC->unk0 & 2) {
         func_ovl15_02_80050E10();
     }
 }
@@ -973,7 +973,7 @@ void func_ovl15_02_8004EE94(void) {
     func_ovl15_02_80050988(0x412);
     func_ovl15_02_80050988(0x411);
     D_ovl15_02_800513AC = func_ovl15_02_8004FD08();
-    if (D_ovl15_02_800513AC[4] == 0) {
+    if (D_ovl15_02_800513AC->unk10 == 0) {
         func_ovl15_02_80050980(0x41F);
     }
 }
@@ -1172,7 +1172,7 @@ void func_ovl15_02_8004E36C(void) {
     if (func_ovl15_02_80050990(0x418) != 0) {
         var_s0 += 1;
     }
-    M2C_FIELD(D_ovl15_02_800513AC, s32 *, 0x2C) = var_s0;
+    D_ovl15_02_800513AC->unk2C = var_s0;
 }
 
 void func_ovl15_02_8004E048(void) {
@@ -1218,15 +1218,15 @@ void func_ovl15_02_8004E048(void) {
             D_ovl15_02_8005147C = 0;
             break;
         }
-        if (*D_ovl15_02_800513AC & 2) {
+        if (D_ovl15_02_800513AC->unk0 & 2) {
             func_ovl15_02_8004DB80();
         }
     } else {
         D_ovl15_02_80051478 = 11;
         D_ovl15_02_8005147C = 0;
     }
-    if (func_ovl15_02_80050990(0x418) != 0 && !(*D_ovl15_02_800513AC & 2)
-        && (f32) D_ovl15_02_800513AC[12] / (f32) D_ovl15_02_800513AC[10] >= 0.5f
+    if (func_ovl15_02_80050990(0x418) != 0 && !(D_ovl15_02_800513AC->unk0 & 2)
+        && (f32) D_ovl15_02_800513AC->unk30 / (f32) D_ovl15_02_800513AC->unk28 >= 0.5f
         && func_ovl15_02_80050990(0x411) == 0) {
         func_ovl15_02_8004DF64();
     }
@@ -1244,7 +1244,7 @@ void func_ovl15_02_8004DF64(void) {
         case 0:
             D_ovl15_02_80051478 = 0;
             D_ovl15_02_8005147C = func_ovl15_02_800508C8(2) + 2;
-            if (*D_ovl15_02_800513AC & 2) {
+            if (D_ovl15_02_800513AC->unk0 & 2) {
                 D_ovl15_02_8005147C = 4;
             }
             break;
@@ -1268,7 +1268,7 @@ void func_ovl15_02_8004DE84(void) {
         case 0:
             D_ovl15_02_80051478 = 0;
             D_ovl15_02_8005147C = func_ovl15_02_800508C8(2) + 2;
-            if (*D_ovl15_02_800513AC & 2) {
+            if (D_ovl15_02_800513AC->unk0 & 2) {
                 D_ovl15_02_8005147C = 4;
             }
             break;
@@ -1289,7 +1289,7 @@ void func_ovl15_02_8004DD6C(void) {
         case 0:
             D_ovl15_02_80051478 = 0;
             D_ovl15_02_8005147C = func_ovl15_02_800508C8(2) + 2;
-            if (*D_ovl15_02_800513AC & 2) {
+            if (D_ovl15_02_800513AC->unk0 & 2) {
                 D_ovl15_02_8005147C = 4;
             }
             break;
@@ -1323,7 +1323,7 @@ void func_ovl15_02_8004DCA4(void) {
         case 0:
             D_ovl15_02_80051478 = 0;
             D_ovl15_02_8005147C = func_ovl15_02_800508C8(2) + 2;
-            if (*D_ovl15_02_800513AC & 2) {
+            if (D_ovl15_02_800513AC->unk0 & 2) {
                 D_ovl15_02_8005147C = 4;
             }
             break;
@@ -1347,7 +1347,7 @@ void func_ovl15_02_8004DBDC(void) {
         case 0:
             D_ovl15_02_80051478 = 0;
             D_ovl15_02_8005147C = func_ovl15_02_800508C8(2) + 2;
-            if (*D_ovl15_02_800513AC & 2) {
+            if (D_ovl15_02_800513AC->unk0 & 2) {
                 D_ovl15_02_8005147C = 4;
             }
             break;
@@ -1365,7 +1365,7 @@ void func_ovl15_02_8004DBDC(void) {
 void func_ovl15_02_8004DB80(void) {
     D_ovl15_02_80051478 = 0;
     D_ovl15_02_8005147C = func_ovl15_02_800508C8(2) + 2;
-    if (*D_ovl15_02_800513AC & 2) {
+    if (D_ovl15_02_800513AC->unk0 & 2) {
         D_ovl15_02_8005147C = 4;
     }
 }
@@ -4345,7 +4345,7 @@ void func_ovl15_02_80043E84(s32 arg0) {
 }
 
 void func_ovl15_02_80043E38() {
-    if (!(*D_ovl15_02_800513AC & 2)) {
+    if (!(D_ovl15_02_800513AC->unk0 & 2)) {
         func_ovl15_02_80050728(0x1E5);
         func_ovl15_02_80050CA0(0x2A);
     }

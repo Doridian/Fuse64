@@ -80,7 +80,7 @@ void func_ovl0D_02_800463E0(void (*)(UnkStructA *)); /* 0xE03 */
 void func_ovl0D_02_800463F0(s32, s32, s32); /* 0xF00 */
 s32 func_ovl0D_02_800463F8(void); /* 0xF01 */
 void func_ovl0D_02_80046440(s32); /* 0xF0A */
-s32 *func_ovl0D_02_80046448(void); /* 0xF0B */
+UnkStruct_802AC610 *func_ovl0D_02_80046448(void); /* 0xF0B */
 void func_ovl0D_02_80046460(s32); /* 0xF0E */
 void func_ovl0D_02_800464A8(void); /* 0x1000 */
 void func_ovl0D_02_800464B0(s32, s32, s32); /* 0x1001 */
@@ -235,7 +235,7 @@ UnkStructA *D_ovl0D_02_80047A3C;
 s32 D_ovl0D_02_80047A40;
 s32 D_ovl0D_02_80047A44;
 s32 D_ovl0D_02_80047A48[3];
-s32 *D_ovl0D_02_80047A54;
+UnkStruct_802AC610 *D_ovl0D_02_80047A54;
 s32 D_ovl0D_02_80047A58;
 /* where the debris of each of D_ovl0D_02_80047800 falls: three rows of four */
 Vec3f D_ovl0D_02_80047A60[2][3][4];
@@ -422,7 +422,7 @@ static void func_ovl0D_02_80045964(UnkStruct_ovl0C_01_8004A54C *e, s32 *timer) {
             func_ovl0D_02_80046C20(10.0f, 10.0f, 10.0f);
             func_ovl0D_02_80046C10(60);
         }
-        *timer = (D_ovl0D_02_80047A54[4] != 0) ? 240 : 360;
+        *timer = (D_ovl0D_02_80047A54->unk10 != 0) ? 240 : 360;
     } else {
         (*timer)--;
     }
@@ -765,7 +765,7 @@ void func_ovl0D_02_80044A50(s32 arg0) {
 
 
 void func_ovl0D_02_80044474(void) {
-    if (*D_ovl0D_02_80047A54 & 2) {
+    if (D_ovl0D_02_80047A54->unk0 & 2) {
         func_ovl0D_02_800470C0(0x40A);
         func_ovl0D_02_800470C0(0x40B);
         func_ovl0D_02_800470C8(0x40C);
@@ -1048,7 +1048,7 @@ void func_ovl0D_02_80043D78(void) {
 }
 
 void func_ovl0D_02_80043CCC(void) {
-    if (*D_ovl0D_02_80047A54 & 2) {
+    if (D_ovl0D_02_80047A54->unk0 & 2) {
         func_ovl0D_02_800464B0(0x1D, 1, 8);
         func_ovl0D_02_80046508();
         func_ovl0D_02_80046E48(func_ovl0D_02_80044B8C, NULL, 0, 0, 0x130);
@@ -1176,7 +1176,7 @@ static void func_ovl0D_02_80043858(UnkStruct_ovl0C_01_8004A54C *arg0) {
 }
 
 void func_ovl0D_02_8004381C(void) {
-    if (*D_ovl0D_02_80047A54 & 2) {
+    if (D_ovl0D_02_80047A54->unk0 & 2) {
         func_ovl0D_02_80047550();
     }
 }

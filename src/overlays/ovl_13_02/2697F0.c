@@ -87,7 +87,7 @@ void func_ovl13_02_8004C2D8(void (*)(UnkStructA *), s32); /* 0xE02 */
 void func_ovl13_02_8004C2E0(void (*)(UnkStructA *)); /* 0xE03 */ /* also: void (void (*)(UnkStructA *)) x1; void (void (*)(UnkStructA *)) x1; void (void (*)(UnkStructA *)) x1 */
 void func_ovl13_02_8004C318(void); /* 0xF05 */
 void func_ovl13_02_8004C330(void (*)(UnkStructA *)); /* 0xF08 */
-s32 *func_ovl13_02_8004C348(void); /* 0xF0B */ /* also: s32 * (void) x3; Save_ovl0B_02 *(void) x1; UnkStruct_ovl0B_01_80044C58 *(void) x1 */
+UnkStruct_802AC610 *func_ovl13_02_8004C348(void); /* 0xF0B */
 void func_ovl13_02_8004C360(s32); /* 0xF0E */
 void func_ovl13_02_8004C370(s32); /* 0xF10 */
 void func_ovl13_02_8004C3A8(void); /* 0x1000 */
@@ -196,7 +196,7 @@ struct port_bss_ovl13_02_8004DCD0 {
 #define D_ovl13_02_8004DCD0 (port_bss_ovl13_02_8004DCD0.D_ovl13_02_8004DCD0)
 #define D_ovl13_02_8004DCD4 (port_bss_ovl13_02_8004DCD0.D_ovl13_02_8004DCD4)
 #define D_ovl13_02_8004DCD8 (port_bss_ovl13_02_8004DCD0.D_ovl13_02_8004DCD8)
-s32 * D_ovl13_02_8004DCDC;
+UnkStruct_802AC610 *D_ovl13_02_8004DCDC;
 /* (a Vec3f: M2C_FIELD(&D_8004DCE0, f32 *, 4 and 8), func_8004CAD8) */
 struct port_bss_ovl13_02_8004DCE0 {
     f32 D_ovl13_02_8004DCE0;
@@ -305,7 +305,7 @@ u8 D_ovl13_02_8004DCCC[0x4]; /* unused (func_ovl13_02_8004BE60) */
 s32 D_ovl13_02_8004DCD0;
 u8 D_ovl13_02_8004DCD4[0x4];
 s32 D_ovl13_02_8004DCD8;
-s32 * D_ovl13_02_8004DCDC;
+UnkStruct_802AC610 *D_ovl13_02_8004DCDC;
 f32 D_ovl13_02_8004DCE0;
 u8 D_ovl13_02_8004DCE4[0x4];
 u8 D_ovl13_02_8004DCE8[0x4];
@@ -627,7 +627,7 @@ static void func_ovl13_02_8004BD28(void) {
             func_ovl13_02_8004CD90();
         } while (func_ovl13_02_8004CFD0(0x424) == 0);
     }
-    if (!(*D_ovl13_02_8004DCDC & 2)) {
+    if (!(D_ovl13_02_8004DCDC->unk0 & 2)) {
         func_ovl13_02_8004D2E0((PORT_IP(s32)) sp1C);
     }
     func_ovl13_02_8004CD58();
@@ -783,14 +783,14 @@ void func_ovl13_02_8004B690(void) {
     D_ovl13_02_8004DEB0.unk10 = 0.999f;
     D_ovl13_02_8004DEF4 = 0.0f;
     func_ovl13_02_800439DC();
-    if (*D_ovl13_02_8004DCDC & 2) {
+    if (D_ovl13_02_8004DCDC->unk0 & 2) {
         func_ovl13_02_8004CD48(func_ovl13_02_8004BBE4, NULL, 0, 0, 0x130);
     }
     func_ovl13_02_8004CF80();
 }
 
 void func_ovl13_02_8004B644(void) {
-    if (*D_ovl13_02_8004DCDC & 2) {
+    if (D_ovl13_02_8004DCDC->unk0 & 2) {
         func_ovl13_02_8004CD48(func_ovl13_02_8004BBE4, NULL, 0, 0, 0x130);
     }
 }
@@ -801,7 +801,7 @@ void func_ovl13_02_8004B57C(void) {
     func_ovl13_02_8004CF60();
     func_ovl13_02_8004CD28(&D_ovl13_02_8004DE24);
     if (func_ovl13_02_8004CFD0(0x400) != 0) {
-        if (!(*D_ovl13_02_8004DCDC & 2)) {
+        if (!(D_ovl13_02_8004DCDC->unk0 & 2)) {
             func_ovl13_02_8004D2E0(0x13);
         }
     } else {
@@ -849,13 +849,13 @@ void func_ovl13_02_8004B3F0(void) {
     func_ovl13_02_8004CC10(D_ovl13_02_8004DE3C);
     func_ovl13_02_8004CC10(D_ovl13_02_8004DFAC);
     func_ovl13_02_8004CD38();
-    if (*D_ovl13_02_8004DCDC & 2) {
+    if (D_ovl13_02_8004DCDC->unk0 & 2) {
         func_ovl13_02_8004D450();
     }
 }
 
 void func_ovl13_02_8004B3B4(void) {
-    if (*D_ovl13_02_8004DCDC & 2) {
+    if (D_ovl13_02_8004DCDC->unk0 & 2) {
         func_ovl13_02_8004D450();
     }
 }
@@ -902,7 +902,7 @@ void func_ovl13_02_8004B1BC(void) {
     func_ovl13_02_8004CFC8(0x417);
     func_ovl13_02_8004CFC8(0x401);
     D_ovl13_02_8004DCDC = func_ovl13_02_8004C348();
-    if (M2C_FIELD(D_ovl13_02_8004DCDC, s32 *, 0x10) == 0) {
+    if (D_ovl13_02_8004DCDC->unk10 == 0) {
         func_ovl13_02_8004CFC0(0x418);
     }
 }
@@ -1322,7 +1322,7 @@ void func_ovl13_02_8004980C(void) {
     while (func_ovl13_02_8004CFD0(0x424) == 0) {
         func_ovl13_02_8004CD90();
     }
-    if (*D_ovl13_02_8004DCDC & 2) {
+    if (D_ovl13_02_8004DCDC->unk0 & 2) {
         if (func_ovl13_02_8004CFB0(0xA4) != 0) {
             func_ovl13_02_80046E10(2);
         } else {
@@ -2914,7 +2914,7 @@ void func_ovl13_02_80044630(void) {
     if (func_ovl13_02_800445C8() != 0) {
         n++;
     }
-    M2C_FIELD(D_ovl13_02_8004DCDC, s32 *, 0x2C) = n;
+    D_ovl13_02_8004DCDC->unk2C = n;
 }
 
 s32 func_ovl13_02_800445C8(void) {
@@ -3105,7 +3105,7 @@ void func_ovl13_02_800439DC(void) {
 }
 
 void func_ovl13_02_80043970(void) {
-    if (!(*D_ovl13_02_8004DCDC & 2)) {
+    if (!(D_ovl13_02_8004DCDC->unk0 & 2)) {
         if (func_ovl13_02_8004CFB0(0xA4) == 0) {
             func_ovl13_02_8004CD68(0xE6);
         } else {

@@ -92,7 +92,7 @@ void func_ovl0D_06_80045E80(s32, s32, s32); /* 0xF00 */
 s32 func_ovl0D_06_80045E88(void); /* 0xF01 */
 void func_ovl0D_06_80045EA8(void); /* 0xF05 */
 void func_ovl0D_06_80045ED0(s32); /* 0xF0A */
-s32 *func_ovl0D_06_80045ED8(void); /* 0xF0B */
+UnkStruct_802AC610 *func_ovl0D_06_80045ED8(void); /* 0xF0B */
 void func_ovl0D_06_80045EF0(s32); /* 0xF0E */
 void func_ovl0D_06_80045EF8(s32); /* 0xF0F */
 void func_ovl0D_06_80045F38(void); /* 0x1000 */
@@ -244,7 +244,7 @@ s32 D_ovl0D_06_800475F0;
 s32 D_ovl0D_06_800475F4;
 s32 D_ovl0D_06_800475F8[3];
 s32 D_ovl0D_06_80047604;
-s32 *D_ovl0D_06_80047608;
+UnkStruct_802AC610 *D_ovl0D_06_80047608;
 
 /* .data */
 u32 D_ovl0D_06_80047080[][3] = {

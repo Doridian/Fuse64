@@ -92,7 +92,7 @@ void func_ovl0D_01_80046360(s32, s32, s32); /* 0xF00 */
 s32 func_ovl0D_01_80046368(void); /* 0xF01 */
 void func_ovl0D_01_80046388(void); /* 0xF05 */
 void func_ovl0D_01_800463B0(s32); /* 0xF0A */
-s32 *func_ovl0D_01_800463B8(void); /* 0xF0B */
+UnkStruct_802AC610 *func_ovl0D_01_800463B8(void); /* 0xF0B */
 void func_ovl0D_01_800463D0(s32); /* 0xF0E */
 void func_ovl0D_01_800463D8(s32); /* 0xF0F */
 void func_ovl0D_01_800463F0(s32, s32); /* 0xF12 */
@@ -280,7 +280,7 @@ s32 D_ovl0D_01_80047B14;
 s32 D_ovl0D_01_80047B18[3];
 s32 D_ovl0D_01_80047B24;
 s32 D_ovl0D_01_80047B28;
-s32 *D_ovl0D_01_80047B2C;
+UnkStruct_802AC610 *D_ovl0D_01_80047B2C;
 Vec3f D_ovl0D_01_80047B30;
 
 /* .data */
@@ -470,14 +470,14 @@ void func_ovl0D_01_80045A00(s32 arg0) {
 }
 
 void func_ovl0D_01_8004553C(void) {
-    if (*D_ovl0D_01_80047B2C & 2) {
+    if (D_ovl0D_01_80047B2C->unk0 & 2) {
         func_ovl0D_01_80046420(0x27, 3, 0xF);
         func_ovl0D_01_80046460(0x40);
     }
 }
 
 void func_ovl0D_01_800454F8(void) {
-    if (*D_ovl0D_01_80047B2C & 4) {
+    if (D_ovl0D_01_80047B2C->unk0 & 4) {
         func_ovl0D_01_80046420(0x1D, 2, 0x1C);
         func_ovl0D_01_80046460(0);
     }
@@ -653,7 +653,7 @@ void func_ovl0D_01_800452B8(void) {
     func_ovl0D_01_80043D3C();
     func_ovl0D_01_8004363C();
     func_ovl0D_01_80046478();
-    if (!(*D_ovl0D_01_80047B2C & 2)) {
+    if (!(D_ovl0D_01_80047B2C->unk0 & 2)) {
         switch (func_ovl0D_01_80046368()) {
             case 16:
             case 17:
@@ -674,7 +674,7 @@ void func_ovl0D_01_800452B8(void) {
 }
 
 void func_ovl0D_01_800451F4(void) {
-    if (*D_ovl0D_01_80047B2C & 2) {
+    if (D_ovl0D_01_80047B2C->unk0 & 2) {
         func_ovl0D_01_80046AC8(45.0f, 32768.0f, 32768.0f);
         func_ovl0D_01_80046DB8(func_ovl0D_01_80045C60, NULL, 0, 0, 0x130);
         func_ovl0D_01_80046B10(0xF);
@@ -683,7 +683,7 @@ void func_ovl0D_01_800451F4(void) {
 }
 
 void func_ovl0D_01_80045164(void) {
-    if (*D_ovl0D_01_80047B2C & 4) {
+    if (D_ovl0D_01_80047B2C->unk0 & 4) {
         func_ovl0D_01_80046AC8(45.0f, 32768.0f, 32768.0f);
         func_ovl0D_01_80046DB8(func_ovl0D_01_80045BB4, NULL, 0, 0, 0x130);
         func_ovl0D_01_80046B10(0xF);
@@ -719,7 +719,7 @@ static void func_ovl0D_01_80045088(void) {
 }
 
 void func_ovl0D_01_80044EC4(void) {
-    if (*D_ovl0D_01_80047B2C & 2) {
+    if (D_ovl0D_01_80047B2C->unk0 & 2) {
         func_ovl0D_01_800474C0();
     }
 }
@@ -727,7 +727,7 @@ void func_ovl0D_01_80044EC4(void) {
 void func_ovl0D_01_80044E2C(void) {
     Rec_0D01 *r;
 
-    if (*D_ovl0D_01_80047B2C & 4) {
+    if (D_ovl0D_01_80047B2C->unk0 & 4) {
         PORT_ONLY(if (func_ovl0D_01_80047508(0)->unkC != NULL)) func_ovl0D_01_80047508(0)->unkC->unkC |= 1; /* NULL: a demo left early (docs/PORT.md, "Reads through NULL") */
         func_ovl0D_01_80047108(0, 0, 0);
         func_ovl0D_01_800474F8();

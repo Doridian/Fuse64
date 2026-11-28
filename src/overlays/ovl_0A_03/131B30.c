@@ -20,7 +20,7 @@ void func_ovl0A_03_800470B0(const char *); /* 0x100 */
 void func_ovl0A_03_800473F8(s32); /* 0xC00 */
 void func_ovl0A_03_80047410(s32); /* 0xD00 */
 s32 func_ovl0A_03_800474F8(void); /* 0xF01 */
-s32 * func_ovl0A_03_80047548(void); /* 0xF0B */
+UnkStruct_802AC610 *func_ovl0A_03_80047548(void); /* 0xF0B */
 void func_ovl0A_03_80047560(s32); /* 0xF0E */
 void func_ovl0A_03_80047568(s32); /* 0xF0F */
 void func_ovl0A_03_800475A8(void); /* 0x1000 */
@@ -340,7 +340,7 @@ void func_ovl0A_03_80046A24(s32 arg0) {
 }
 
 void func_ovl0A_03_800469C0(void) {
-    if (*func_ovl0A_03_80047548() & 2) {
+    if (func_ovl0A_03_80047548()->unk0 & 2) {
         func_ovl0A_03_800481C0(0x402);
     } else {
         func_ovl0A_03_800481C8(0x402);

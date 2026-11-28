@@ -63,7 +63,7 @@ void func_ovl0D_04_800459F0(void (*)(UnkStructA *)); /* 0xE03 */
 void func_ovl0D_04_80045A00(s32, s32, s32); /* 0xF00 */
 s32 func_ovl0D_04_80045A08(void); /* 0xF01 */
 void func_ovl0D_04_80045A50(s32); /* 0xF0A */
-s32 *func_ovl0D_04_80045A58(void); /* 0xF0B */
+UnkStruct_802AC610 *func_ovl0D_04_80045A58(void); /* 0xF0B */
 void func_ovl0D_04_80045A70(s32); /* 0xF0E */
 void func_ovl0D_04_80045A78(s32); /* 0xF0F */
 void func_ovl0D_04_80045A90(s32, s32); /* 0xF12 */
@@ -207,7 +207,7 @@ s32 D_ovl0D_04_80047060;
 s32 D_ovl0D_04_80047064;
 s32 D_ovl0D_04_80047068[3];
 s32 D_ovl0D_04_80047074;
-s32 *D_ovl0D_04_80047078;
+UnkStruct_802AC610 *D_ovl0D_04_80047078;
 
 /* .data */
 /* passed to func_ovl0D_04_800467C0: three 12-byte records */

@@ -94,25 +94,22 @@ extern UnkStruct_800B15D8 D_800B15D8[];
 extern s32 D_802AC5D0;
 extern u8 *D_802AFE80;
 extern s32 D_802AFE84;
-extern s32 D_802B0180;
-extern s32 D_802B0184;
-extern s16 D_802B0188;
-extern s16 D_802B018A;
-extern s32 D_802B018C;
-extern UnkStruct_802B0190 D_802B0190[3];
-extern u8 D_802B01B4[4];
-extern UnkStruct_802B01B8 D_802B01B8[3];
-extern UnkStruct_802B01D0 *D_802B01D0;
-extern s32 D_802B01D4;
-extern void *D_802B01D8;
-extern void *D_802B01DC;
-extern void *D_802B01E0;
-extern void *D_802B01E4;
-extern void *D_802B01E8;
-extern void *D_802B01EC;
-extern UnkStruct_802B0190 D_802A1570[3];
-extern UnkStruct_802B01B8 D_802A1594[3];
-extern void *D_802A15AC[];
+/* .bss: the 4 bytes after D_802B0190 are IDO's, aligning D_802B01B8 to 8 */
+s32 D_802B0180;
+s32 D_802B0184;
+s16 D_802B0188;
+s16 D_802B018A;
+s32 D_802B018C;
+UnkStruct_802B0190 D_802B0190[3];
+UnkStruct_802B01B8 D_802B01B8[3];
+UnkStruct_802B01D0 *D_802B01D0;
+s32 D_802B01D4;
+void *D_802B01D8;
+void *D_802B01DC;
+void *D_802B01E0;
+void *D_802B01E4;
+void *D_802B01E8;
+void *D_802B01EC;
 
 void func_8027DCB8(void);
 void func_8027DFAC(void);
@@ -143,6 +140,22 @@ void func_8027ED1C(void);
 UnkStruct_80090440 *func_8027ED80(void);
 void func_8027ED90(s16 arg0, s16 arg1, s16 arg2);
 
+/* .data: the default records func_8027ED1C passes to func_8027EB5C and
+   func_8027EB1C (words, as the overlays' u32 [][3] that reach them through
+   the module table; read as halves), and ZeroJump module 0x23's table
+   (the section's padding after it) */
+u32 D_802A1570[3][3] = {
+    { 2, 0, 4 },
+    { 2, 0, 4 },
+    { 2, 0, 4 },
+};
+u32 D_802A1594[3][2] = {
+    { 0, 4 },
+    { 0, 4 },
+    { 0, 4 },
+};
+void *D_802A15AC[] = { func_8027EB5C, func_8027D10C, func_8027ED80, func_8027EB1C };
+
 void func_8027ED90(s16 arg0, s16 arg1, s16 arg2) {
     D_802B0190[0].unk2 = arg0;
     D_802B0190[1].unk2 = arg1;
@@ -159,8 +172,8 @@ void func_8027ED1C(void) {
     D_802B018A = 0;
     D_802B018C = 300;
     D_802B01D4 = 0;
-    func_8027EB5C(D_802A1570);
-    func_8027EB1C(D_802A1594);
+    func_8027EB5C((UnkStruct_802B0190 *)D_802A1570);
+    func_8027EB1C((UnkStruct_802B01B8 *)D_802A1594);
 }
 
 void func_8027EBCC(void) {
@@ -193,8 +206,8 @@ void func_8027EBCC(void) {
         }
         func_8022FC90(D_802B01D0);
         func_80238EA8(D_802B0180);
-        func_8027EB5C(D_802A1570);
-        func_8027EB1C(D_802A1594);
+        func_8027EB5C((UnkStruct_802B0190 *)D_802A1570);
+        func_8027EB1C((UnkStruct_802B01B8 *)D_802A1594);
     }
 }
 

@@ -203,6 +203,12 @@ main_code 96540 0x50 0x80 0x210
 main_code @us 96540 data=0x802A1520 rodata=0x802A3FC0 bss=0x802AFF70
 main_code @eu 96540 data=0x802A1520 rodata=0x802A3FB0 bss=0x802AFF60
 main_code @jp 96540 data=0x802A0B80 rodata=0x802A31F0 bss=0x802AF1A0
+# 97610: .data the two default record tables and module 0x23's table,
+# .bss its globals
+main_code 97610 0x50 0 0x70
+main_code @us 97610 data=0x802A1570 bss=0x802B0180
+main_code @eu 97610 data=0x802A1570 bss=0x802B0170
+main_code @jp 97610 data=0x802A0BD0 bss=0x802AF3B0
 main_code 995C0 0x50 0x10 0
 main_code @us 995C0 data=0x802A15C0 rodata=0x802A4040
 main_code @eu 995C0 data=0x802A15C0 rodata=0x802A4030

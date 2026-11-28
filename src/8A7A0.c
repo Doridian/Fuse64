@@ -121,7 +121,7 @@ s32 func_80232D18(UnkStructA *arg0, s32 arg1);
 s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 void func_80239094(void);
 s32 *func_802391F0(void);
-void * func_802443F4(s32);
+UnkStructA *func_802443F4(s32 arg0);
 s32 func_8027A1F4(void *, PORT_IP(s32));
 void func_8027F820();
 void func_8027F858(PORT_IP(s32), s32);
@@ -2690,7 +2690,7 @@ PORT_IP(s32) func_80271540(s16 arg0) {
     u8 *temp_v1;
 
     func_802714C4();
-    temp_v0 = func_802443F4((s32) arg0);
+    temp_v0 = (u8 *) func_802443F4((s32) arg0);
     sp28 = func_80234434(M2C_FIELD(PORT_FIELD(temp_v0, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x20)) * 100.0f * 0.8f;
     sp24 = func_80234408(M2C_FIELD(PORT_FIELD(temp_v0, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x20)) * 100.0f * 0.8f;
     t1 = func_802336E4(sp28);

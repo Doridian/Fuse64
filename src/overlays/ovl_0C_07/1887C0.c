@@ -22,28 +22,6 @@
  * the camera, the lifts and the movers, ovl_0C_04's object setup.
  */
 
-/* a mover: the tasks func_ovl0C_07_80044CE0 and func_ovl0C_07_80044DC8
- * take one (unk0 indexes D_ovl0C_07_80047608) */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ UnkStructA *unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ f32 unk38;
-    /* 0x3C */ f32 unk3C;
-    /* 0x40 */ f32 unk40;
-} UnkStruct_ovl0C_07_80047648;
-
 void func_ovl0C_07_80046238(s32);
 void func_ovl0C_07_80046250(s32);
 void func_ovl0C_07_80046270(s32, s32, s32, s32);
@@ -129,7 +107,7 @@ static void func_ovl0C_07_80043278(void);
 void func_ovl0C_07_80043280(void *arg0);
 void func_ovl0C_07_800432B8(void *arg0);
 void func_ovl0C_07_800432F0(UnkStructA *arg0, UnkStructA *arg1, f32 arg2);
-void func_ovl0C_07_80043340(UnkStruct_ovl0C_07_80047648 *arg0);
+void func_ovl0C_07_80043340(UnkStruct_ovl0C_06_80049030 *arg0);
 void func_ovl0C_07_80043400(void);
 void func_ovl0C_07_80043450(void);
 void func_ovl0C_07_8004357C(UnkStruct_ovl0C_01_8004A104 *arg0);
@@ -227,7 +205,7 @@ UnkStruct_ovl0C_06_80048FD0 D_ovl0C_07_80047608[] = {
     { NULL, 1550.0f, 1000.0f, 1850.0f, 1000.0f, -400.0f, 3350.0f, 1850.0f },
     { NULL, 3350.0f, 1000.0f, 1850.0f, 1000.0f, -400.0f, 3350.0f, 1850.0f },
 };
-UnkStruct_ovl0C_07_80047648 D_ovl0C_07_80047648[] = {
+UnkStruct_ovl0C_06_80049030 D_ovl0C_07_80047648[] = {
     { 0, NULL, 0x2D, 0x15, 0.0f, 12.0f, 34.0f, 1.0f, 2, 0x439,
       1550.0f, 1500.0f, 1850.0f, 3350.0f, 1450.0f, 3350.0f, 3850.0f },
     { 1, NULL, 0x2D, 0x16, 0.0f, 12.0f, 34.0f, 1.0f, 1, 0x438,
@@ -446,7 +424,7 @@ void func_ovl0C_07_800454AC(UnkStruct_ovl0C_06_80048F88 *arg0, UnkStructA *arg1,
 /* a mover on x and z: carries D_ovl0C_07_80047608[rec->unk0]'s object
  * across, then drops it */
 void func_ovl0C_07_80044DC8(void) {
-    UnkStruct_ovl0C_07_80047648 *rec;
+    UnkStruct_ovl0C_06_80049030 *rec;
     UnkStructA *obj;
     UnkStructA *other;
     UnkStruct_ovl0C_06_80048FD0 *lim;
@@ -1042,7 +1020,7 @@ void func_ovl0C_07_80043400(void) {
     func_ovl0C_07_80046A98(-90.0f, 45.0f, 1800.0f);
 }
 
-void func_ovl0C_07_80043340(UnkStruct_ovl0C_07_80047648 *arg0) {
+void func_ovl0C_07_80043340(UnkStruct_ovl0C_06_80049030 *arg0) {
     UnkStructA *obj;
     UnkStructA *other;
     UnkStruct_ovl0C_06_80048FD0 *lim;

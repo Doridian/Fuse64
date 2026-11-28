@@ -26,28 +26,6 @@
  * ovl_0C_04's 17CC20 (ovl_0C_06 and ovl_0C_07 share most of the rest).
  */
 
-/* a mover: the tasks func_ovl0C_09_80044610 and func_ovl0C_09_80045060
- * take one (unk0 indexes D_ovl0C_09_8004782C) */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ UnkStructA *unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ f32 unk38;
-    /* 0x3C */ f32 unk3C;
-    /* 0x40 */ f32 unk40;
-} UnkStruct_ovl0C_09_8004784C;
-
 /* what func_ovl0C_09_80047020 is given: an object's 0x40 and two numbers */
 typedef struct {
     /* 0x00 */ UnkStructA_40 *unk0;
@@ -154,7 +132,7 @@ void func_ovl0C_09_800439D8(UnkStruct_ovl0C_06_80048FD0 *);
 void func_ovl0C_09_80043A5C(void);
 void func_ovl0C_09_80043AA4(void);
 void func_ovl0C_09_80043BF0(UnkStructA *, UnkStructA *, f32);
-void func_ovl0C_09_80043C40(UnkStruct_ovl0C_09_8004784C *);
+void func_ovl0C_09_80043C40(UnkStruct_ovl0C_06_80049030 *);
 void func_ovl0C_09_80043D08(void);
 void func_ovl0C_09_80043E08(void);
 void func_ovl0C_09_80043E48(void);
@@ -164,8 +142,8 @@ void func_ovl0C_09_8004411C(f32, f32, f32);
 void func_ovl0C_09_800441D4(void);
 void func_ovl0C_09_8004455C(UnkStructA *);
 void func_ovl0C_09_80044588(s32, UnkStructA *, UnkStructA *, f32);
-void func_ovl0C_09_80044610(UnkStruct_ovl0C_09_8004784C *);
-void func_ovl0C_09_80044A5C(UnkStruct_ovl0C_09_8004784C *, void *);
+void func_ovl0C_09_80044610(UnkStruct_ovl0C_06_80049030 *);
+void func_ovl0C_09_80044A5C(UnkStruct_ovl0C_06_80049030 *, void *);
 void func_ovl0C_09_80044AF4(void);
 void func_ovl0C_09_80044B6C(void);
 void func_ovl0C_09_80044BA4(void);
@@ -232,7 +210,7 @@ UnkStructA *D_ovl0C_09_80047828 = NULL;
 UnkStruct_ovl0C_06_80048FD0 D_ovl0C_09_8004782C[] = {
     { NULL, 3150.0f, 3900.0f, 1550.0f, 3900.0f, -400.0f, 3150.0f, 1550.0f },
 };
-UnkStruct_ovl0C_09_8004784C D_ovl0C_09_8004784C = {
+UnkStruct_ovl0C_06_80049030 D_ovl0C_09_8004784C = {
     0, NULL, 0x2D, 0x17, 0.0f, 12.0f, 35.0f, 1.0f, 2, 0x435,
     900.0f, 100.0f, 1550.0f, 3150.0f, 1000.0f, 3150.0f, 1750.0f,
 };
@@ -448,7 +426,7 @@ void func_ovl0C_09_8004574C(UnkStruct_ovl0C_06_80048F88 *arg0, UnkStructA *arg1,
 /* a mover on x and z: carries D_ovl0C_09_8004782C[rec->unk0]'s object
  * across, then drops it */
 void func_ovl0C_09_80045060(void) {
-    UnkStruct_ovl0C_09_8004784C *rec;
+    UnkStruct_ovl0C_06_80049030 *rec;
     UnkStructA *obj;
     UnkStructA *other;
     UnkStruct_ovl0C_06_80048FD0 *lim;
@@ -668,7 +646,7 @@ void func_ovl0C_09_80044AF4(void) {
     func_ovl0C_09_80047038();
 }
 
-void func_ovl0C_09_80044A5C(UnkStruct_ovl0C_09_8004784C *arg0, void *arg1) {
+void func_ovl0C_09_80044A5C(UnkStruct_ovl0C_06_80049030 *arg0, void *arg1) {
     func_ovl0C_09_80046648(1);
     func_ovl0C_09_80046640(0);
     func_ovl0C_09_800466C8(1);
@@ -680,7 +658,7 @@ void func_ovl0C_09_80044A5C(UnkStruct_ovl0C_09_8004784C *arg0, void *arg1) {
 }
 
 /* a mover on z: carries D_ovl0C_09_8004782C[rec->unk0]'s object across */
-void func_ovl0C_09_80044610(UnkStruct_ovl0C_09_8004784C *rec) {
+void func_ovl0C_09_80044610(UnkStruct_ovl0C_06_80049030 *rec) {
     UnkStructA *obj;
     UnkStructA *other;
     UnkStruct_ovl0C_06_80048FD0 *lim;
@@ -929,7 +907,7 @@ void func_ovl0C_09_80043D08(void) {
     func_ovl0C_09_80046518(0x1F, 5, 0xF, 0x20, 0x10, 0x12);
 }
 
-void func_ovl0C_09_80043C40(UnkStruct_ovl0C_09_8004784C *arg0) {
+void func_ovl0C_09_80043C40(UnkStruct_ovl0C_06_80049030 *arg0) {
     UnkStructA *obj;
     UnkStructA *other;
     UnkStruct_ovl0C_06_80048FD0 *lim;

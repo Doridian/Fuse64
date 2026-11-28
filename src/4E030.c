@@ -16,12 +16,8 @@
  * compares call them with a `jal`: 4DE50 is another file. */
 
 void func_80227BAC(s32, s32, s32);
-void func_8022F808(UnkStructA *, f32 *);
 PORT_RET(void, s32) func_8022FC90(UnkStructA *);
-void func_8022FEAC(f32 *, f32 *);
-void func_8022FF58(f32 *, f32 *, f32 *);
 UnkStructA *func_80231274(s32, s32, s32, UnkStructA *);
-void func_80232BA0(f32 *, UnkStructA *);
 PORT_RET(void, s32) func_80238A10(void (*)(), PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);

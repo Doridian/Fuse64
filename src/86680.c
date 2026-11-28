@@ -5,6 +5,7 @@
 #include "86680.h"
 #include "404C0.h"
 #include "40FB0.h"
+#include "48600.h"
 
 typedef struct {
     /* 0x00 */ f32 unk0;
@@ -14,8 +15,6 @@ typedef struct {
     /* 0x10 */ s32 unk10;
 } UnkStruct_800BD778; /* size 0x14 */
 
-void func_8022FEAC(Vec3f *, Vec3f *);
-void func_8022FF58(Vec3f *, Vec3f *, Vec3f *);
 void func_80267654(s32, f32, f32, f32, f32);
 PORT_RET(s32, s16) func_8026A754(s32, s32, void *, void *, s32);
 f32 sqrtf(f32);
@@ -278,11 +277,11 @@ static void func_8026C0A8(Vec3f *pos, f32 *angle, f32 *dist) {
     sp3C.x = sp2C;
     sp3C.y = 0.0f;
     sp3C.z = 300.0f;
-    func_8022FEAC(&sp3C, &sp48);
+    func_8022FEAC(&sp3C.x, &sp48.x);
     sp54.x += sp48.x;
     sp54.y += sp48.y - 100.0f;
     sp54.z += sp48.z;
-    func_8022FF58(&sp54, pos, &sp3C);
+    func_8022FF58(&sp54.x, &pos->x, &sp3C.x);
     dx = pos->x - sp54.x;
     dy = pos->y - sp54.y;
     dz = pos->z - sp54.z;

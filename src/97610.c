@@ -29,9 +29,8 @@ typedef struct {
 } UnkStruct_802B01B8; /* size 0x8 */
 
 PORT_RET(void, s32) func_8022FC90(UnkStructA *);
-void func_8022FF58(f32 *, f32 *, f32 *);
 UnkStructA *func_80231274(s32, s32, s32, PORT_IP(s32));
-s32 func_80232D18(UnkStructA *, s32);
+s32 func_80232D18(UnkStructA *arg0, s32 arg1);
 s32 func_80238A10(void (*)(void), PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);

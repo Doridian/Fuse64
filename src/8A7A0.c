@@ -113,12 +113,11 @@
 
 void free(void *);
 PORT_RET(void, s32) func_8022FC90(void *);
-void func_8022FF58(f32 *, f32 *, f32 *);
 void * func_802308B8(void *, s32);
 void * func_80231274(s32, s32, s32, void *);
 PORT_RET(s32, void) func_80232AA8(PORT_RET(s32, void *));
 PORT_RET(s32, void) func_80232AC8(PORT_RET(s32, void *), PORT_RET(s32, void *));
-s32 func_80232D18(void *, s32);
+s32 func_80232D18(UnkStructA *arg0, s32 arg1);
 s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 void func_80239094(void);
 s32 *func_802391F0(void);

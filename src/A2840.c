@@ -60,8 +60,7 @@ extern UnkStruct_800BA8E8 D_800BA8E8[6];
 #endif
 extern UnkStruct_800BC9F0 D_800BC9F0[PORT_SIZE(16)];
 
-void func_8022FF58(Vec3f *, Vec3f *, f32 *);
-s32 func_80232D18(UnkStructA *, s32);
+s32 func_80232D18(UnkStructA *arg0, s32 arg1);
 PORT_RET(void, s32) func_8023903C(s32);
 f32 func_8026E938(UnkStructA_40 *);
 void func_80282430(UnkStruct_80288040 *, s32, s32);
@@ -153,7 +152,7 @@ void func_80289F04(UnkStruct_80288040 *arg0) {
     pos.x = arg0->unk0->unk40->unk10;
     pos.y = arg0->unk0->unk40->unk14;
     pos.z = arg0->unk0->unk40->unk18;
-    func_8022FF58(&pos, &player, angles);
+    func_8022FF58(&pos.x, &player.x, angles);
     arg0->unk64 = angles[0];
     arg0->unk60 = angles[1];
     arg0->unk50.f = player.y + 50.0f;

@@ -106,7 +106,6 @@ static int port_cell_past(s32 layer, s32 cell, s32 slot, u16 v) {
 }
 #endif
 
-#define SLOTS ((Slot30 *) D_802AFCE8)
 #define ABSF(x) ((x) < 0.0f ? -(x) : (x))
 
 #ifdef TARGET_PC
@@ -116,11 +115,7 @@ static int port_cell_past(s32 layer, s32 cell, s32 slot, u16 v) {
 #endif
 #define PLAYERS ((Player87 *) D_800AEDF0)
 #define ENTS ((Ent88 *) D_8008F438)
-#define OBJ_DD8 (*(Obj8E **) &D_802AFDD8)
-#define VEC_E60 ((f32 *) D_802AFE60)
 
-extern Node87 D_802AFDE0;
-extern Node87 D_802AFE58;
 
 void free(void *);
 void func_8022638C(u32, void *);
@@ -202,15 +197,6 @@ extern u8 D_802A5578[];
 extern s32 D_802AC5D0;
 extern s32 D_802AC89C;
 extern s32 D_802AC8A0;
-extern s32 D_802AFC70;
-extern s32 D_802AFC74;
-extern u8 D_802AFC78[PORT_SIZE(6 * 0x12)];
-extern u8 D_802AFCE8[];
-extern u8 D_802AFCF4[];
-extern s16 D_802AFCF8;
-extern void *D_802AFDD8;
-extern Node87 D_802AFE1C;
-extern u8 D_802AFE60[PORT_SIZE(0xC)];
 extern s16 D_802AFE70;
 
 void func_8026D580(void);

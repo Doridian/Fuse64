@@ -27,9 +27,9 @@
  * tail; none of them is needed now.)
  * func_80277B54's tail writes the new list nodes through a pointer read
  * back from the link just stored (`e = ENTS[0].next; e->next = NULL;
- * ...`, `n = D_802AFDE0.next`). uopt forwards the stored address, and a
+ * ...`, `n = D_802AFDE0[0].n.next`). uopt forwards the stored address, and a
  * forwarded use doesn't count for the address constant's colouring, so
- * ENT_4C0 and &D_802AFE1C have one use each, are not coloured, and ugen
+ * ENT_4C0 and &D_802AFDE0[1].n have one use each, are not coloured, and ugen
  * keeps each in the temporary it loads it into (t0, t1), as the
  * original does (as1 drops the reloads).
  * func_80270770 stores the flags with a second read of the slot
@@ -93,8 +93,6 @@
 #define OBJ_DD8 (*(Obj8E **) &D_802AFDD8)
 #define VEC_E60 ((f32 *) D_802AFE60)
 
-extern Node87 D_802AFDE0;
-extern Node87 D_802AFE58;
 
 void free(void *);
 void func_8022638C(u32, void *);
@@ -196,15 +194,6 @@ extern f32 D_802AFC60;
 extern f32 D_802AFC64;
 extern f32 D_802AFC68;
 extern void *D_802AFC6C;
-extern s32 D_802AFC70;
-extern s32 D_802AFC74;
-extern u8 D_802AFC78[PORT_SIZE(6 * 0x12)]; /* s16 [6][9] */
-extern u8 D_802AFCE8[];
-extern u8 D_802AFCF4[];
-extern s16 D_802AFCF8;
-extern void *D_802AFDD8;
-extern Node87 D_802AFE1C;
-extern u8 D_802AFE60[PORT_SIZE(0xC)]; /* a Vec3f */
 extern s16 D_802AFE70;
 
 void func_8026D580(void);
@@ -343,7 +332,7 @@ typedef struct {
 #endif
 #define IDS ((s16 (*)[9]) D_802AFC78)
 #define LIVE(e) ((e)->x != 1e7f)
-#define NODES ((Node3C *) &D_802AFDE0)
+#define NODES D_802AFDE0
 #define PLAYERS8E ((Player8E *) D_800AEDF0)
 
 void *func_80273F30(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4);
@@ -394,6 +383,19 @@ void func_80277E1C(void);
 void *func_80277FC4(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4, f32 arg5, f32 arg6, f32 arg7, s16 arg8, PORT_RET(s32, void *) arg9);
 void func_80278D54(s32 *arg0);
 void func_80278DBC(void);
+
+/* .bss (0x802AFC70-802AFE70), before the first function and in address
+ * order, as IDO lays it out (the order it numbers them). IDO puts an
+ * array of 16 bytes or more 8-aligned, which leaves the words at
+ * 0x802AFCE4 and 0x802AFDDC empty. */
+s32 D_802AFC70;
+s32 D_802AFC74;
+u8 D_802AFC78[6 * 0x12] PORT_ONLY(__attribute__((aligned(2)))); /* s16 [6][9] */
+u8 D_802AFCE8[5 * sizeof(Slot30)] PORT_ONLY(__attribute__((aligned(8)))); /* Slot30 [5] (SLOTS) */
+void *D_802AFDD8;
+Node3C D_802AFDE0[2]; /* the list's head and its first node */
+Node87 D_802AFE58;
+f32 D_802AFE60[3]; /* a Vec3f */
 
 void func_80273F0C() {
     if (D_802AFC70 != 1) {
@@ -692,9 +694,9 @@ void func_80277B54() {
     e->next = NULL;
     e->prev = ENTS;
     e->xf = (Sub8E *) -1;
-    D_802AFDE0.next = &D_802AFE1C;
-    n = D_802AFDE0.next;
-    D_802AFDE0.unk4 = 0;
+    D_802AFDE0[0].n.next = &D_802AFDE0[1].n;
+    n = D_802AFDE0[0].n.next;
+    D_802AFDE0[0].n.unk4 = 0;
     n->next = NULL;
     n->unk4 = 0;
 }
@@ -744,7 +746,7 @@ void func_8027783C() {
     Ent88 *e;
     s32 live;
     Node87 *n;
-    Node87 *h = &D_802AFDE0;
+    Node87 *h = &D_802AFDE0[0].n;
 
     func_802777D0();
     for (i = 0; i < 5; i++) {
@@ -783,7 +785,7 @@ void func_802777D0() {
 
 void func_80277774() {
     Node87 *n;
-    Node87 *h = &D_802AFDE0;
+    Node87 *h = &D_802AFDE0[0].n;
 
     while (D_802AFE58.next != NULL) {
         n = h->next;
@@ -2034,7 +2036,7 @@ void *func_80273F30(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4) {
     if (bad) {
         v = 0;
     } else {
-        v = PORT_HOST(*(s32 *)(D_802AFCF4 + (arg4 * 0x30)), SLOTS[arg4].unkC != 0);
+        v = PORT_HOST(*(s32 *)((u8 *)D_802AFCE8 + 0xC + (arg4 * 0x30)), SLOTS[arg4].unkC != 0);
     }
     if (v != 0) {
         func_80273E2C(arg4);
@@ -3014,7 +3016,7 @@ void func_80270C24(u8 *arg0, s16 arg1, s32 arg2) {
             func_80270BA4(arg0);
         }
     }
-    for (c = (Ctl87 *) D_802AFDE0.next; c->next != NULL; c = c->next) {
+    for (c = (Ctl87 *) D_802AFDE0[0].n.next; c->next != NULL; c = c->next) {
         if (arg0 == (u8 *) c->obj) {
             break;
         }
@@ -3091,7 +3093,7 @@ void func_80270BA4(u8 *arg0) {
 
     temp_v0 = func_80270B4C((PORT_IP(s32)) arg0);
     if (temp_v0 != -1) {
-        PORT_HOST(*(s16 *)((u8 *)&D_802AFCF8 + (temp_v0 * 0x30)), SLOTS[temp_v0].unk10) = 0;
+        PORT_HOST(*(s16 *)((u8 *)D_802AFCE8 + 0x10 + (temp_v0 * 0x30)), SLOTS[temp_v0].unk10) = 0;
         func_802702EC(temp_v0);
         func_802313DC(arg0, 0x10000);
         func_80232AA8((PORT_RET(s32, void *)) arg0);
@@ -3122,7 +3124,7 @@ void func_80270A80(PORT_IP(s32) *arg0) {
 
     if (*(s32 *) &D_802AFE58 != 0 && arg0 != NULL) {
         found = 0;
-        for (p = &D_802AFDE0; p->next->next != NULL; p = p->next) {
+        for (p = &D_802AFDE0[0].n; p->next->next != NULL; p = p->next) {
             if ((Node87 *) arg0 == p->next) {
                 found = 1;
                 break;
@@ -3378,7 +3380,7 @@ void *func_802700EC(u8 *arg0, u8 *arg1, s32 arg2, f32 arg3) {
 void func_80270080(PORT_IP(s32) *arg0) {
     Node87 *p;
 
-    for (p = &D_802AFDE0; p->next->next != NULL; p = p->next) {
+    for (p = &D_802AFDE0[0].n; p->next->next != NULL; p = p->next) {
     }
     *arg0 = (PORT_IP(s32)) p->next;
     p->next = (Node87 *) arg0;

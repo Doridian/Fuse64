@@ -551,7 +551,7 @@ segments:
       - {type: .bss, vram: 0x802AEE60, name: 87190}
       - {type: .bss, vram: 0x802AEE70, name: 87730}
       - {type: .bss, vram: 0x802AEE80, name: 87D80}
-      - {type: bss, vram: 0x802AEEA0}
+      - {type: .bss, vram: 0x802AEEA0, name: 8A7A0}
       - {type: .bss, vram: 0x802AF0A0, name: 926A0}
       - {type: .bss, vram: 0x802AF0B0, name: 949A0}
       - {type: .bss, vram: 0x802AF1A0, name: 96540}

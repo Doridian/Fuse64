@@ -25,11 +25,17 @@ void func_80297D58(void *, s32);
 
 extern UnkStruct_8019B0D0 D_8019B0D0[PORT_SIZE(0x800)]; /* ROM 0x30800's 0x1000 bytes */
 extern UnkStruct_8019C0D0 D_8019C0D0;
-extern u8 D_8029F5D0[];
-extern s32 D_802A5320;
-extern u32 D_802A5324;
-extern s32 D_802A5328;
-extern PORT_IP(s32) D_802A532C;
+void func_8022691C(s32 arg0);
+void func_802268F4(); /* (s32) on TARGET_PC, below */
+
+/* ZeroJump module 11's table (func_80226860); its .data's other two words
+   are zeros, taken here for the section's padding */
+void *D_8029F5D0[] = { func_8022691C, func_802268F4 };
+
+s32 D_802A5320;
+u32 D_802A5324;
+s32 D_802A5328;
+PORT_IP(s32) D_802A532C;
 
 #ifdef TARGET_PC
 /* the N64's overlay slot, 0x80043000's 0x20000 bytes, as it holds them

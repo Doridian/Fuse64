@@ -436,7 +436,8 @@ segments:
       - [0xB9D70, .data, 40040]
       - [0xB9DA0, .data, 40300]
       - [0xB9DB0, .data, 404C0]
-      - [0xB9DD0, data]
+      - [0xB9DD0, .data, 40FB0]
+      - [0xB9DE0, data]
       - [0xBA080, .data, 45170]
       - [0xBA090, .data, 46300]
       - [0xBA0C0, .data, 47A80]
@@ -516,9 +517,9 @@ segments:
       - [0xBF020, rodata]
       - [0xBF800, rodata, main_code_persist]
       - {type: .bss, vram: 0x802A52F0, name: 404C0}
-      - {type: bss, vram: 0x802A5310}
+      - {type: .bss, vram: 0x802A5310, name: 40FB0}
       - {type: .bss, vram: 0x802A5320, name: 412F0}
-      - {type: bss, vram: 0x802A53C0, name: bss_802A53C0}
+      - {type: bss, vram: 0x802A53C0}
       - {type: .bss, vram: 0x802A5450, name: 426E0}
       - {type: .bss, vram: 0x802A5490, name: 45170}
       - {type: .bss, vram: 0x802A54C0, name: 46300}

@@ -64,18 +64,20 @@ void func_80239430(void);
 extern UnkStruct_802AB200 D_80063370[80];
 /* D_802AB200 and D_802ABAA0 are the list heads (running and free); the
  * asm's D_802ABA9C and D_802AC33C are their unk89C. */
-extern UnkStruct_802AB200 D_802AB200;
-extern UnkStruct_802AB200 D_802ABAA0;
-extern UnkStruct_802AB200 *D_802AC340;
-extern UnkStruct_802AB200 *D_802AC344;
-extern UnkStruct_802AB200 *D_802AC348;
-extern u32 D_802AC34C;
-extern u32 D_802AC350;
-extern u32 D_802AC354;
-extern s32 D_802AC358;
-extern s32 D_802AC35C;
-extern s32 D_802AC360;
-extern PORT_IP(s32) D_802AC368[];
+UnkStruct_802AB200 D_802AB200;
+UnkStruct_802AB200 D_802ABAA0;
+UnkStruct_802AB200 *D_802AC340;
+UnkStruct_802AB200 *D_802AC344;
+UnkStruct_802AB200 *D_802AC348;
+u32 D_802AC34C;
+u32 D_802AC350;
+u32 D_802AC354;
+s32 D_802AC358;
+s32 D_802AC35C;
+s32 D_802AC360;
+/* the scheduler's own jmp_buf, as long as a thread's (unk828); the 8
+ * bytes after it are the section's padding */
+PORT_IP(s32) D_802AC368[28];
 
 void func_8023946C(void) {
     s32 i;

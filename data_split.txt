@@ -431,6 +431,63 @@ boot_code @us libultra/audio/reverb rodata=0x8001BF30
 boot_code @eu libultra/audio/reverb rodata=0x8001BF30
 boot_code @jp libultra/audio/reverb rodata=0x8001BF10
 
+# The rest of boot_code's data: libultra objects whose code took their
+# variables as externs, now defined where ultralib defines them, and the
+# objects with no code (vitbl.c's osViModeTable, the three vimodes, and
+# kdebugserver.c's __osThreadSave), placed though they aren't text objects
+boot_code libultra/io/vitbl 0xD20 0 0
+boot_code @us libultra/io/vitbl data=0x8001A3B0
+boot_code @eu libultra/io/vitbl data=0x8001A3B0
+boot_code @jp libultra/io/vitbl data=0x8001A390
+boot_code libultra/io/controller 0x10 0 0x90
+boot_code @us libultra/io/controller data=0x8001B100 bss=0x80027060
+boot_code @eu libultra/io/controller data=0x8001B100 bss=0x80027060
+boot_code @jp libultra/io/controller data=0x8001B0E0 bss=0x80027040
+boot_code libultra/audio/sl 0x10 0 0
+boot_code @us libultra/audio/sl data=0x8001B110
+boot_code @eu libultra/audio/sl data=0x8001B110
+boot_code @jp libultra/audio/sl data=0x8001B0F0
+boot_code libultra/os/thread 0x20 0 0
+boot_code @us libultra/os/thread data=0x8001B130
+boot_code @eu libultra/os/thread data=0x8001B130
+boot_code @jp libultra/os/thread data=0x8001B110
+boot_code libultra/vimodes/vimodepallan1 0x50 0 0
+boot_code @us libultra/vimodes/vimodepallan1 data=0x8001B520
+boot_code @eu libultra/vimodes/vimodepallan1 data=0x8001B520
+boot_code @jp libultra/vimodes/vimodepallan1 data=0x8001B500
+boot_code libultra/vimodes/vimodempallan1 0x50 0 0
+boot_code @us libultra/vimodes/vimodempallan1 data=0x8001B570
+boot_code @eu libultra/vimodes/vimodempallan1 data=0x8001B570
+boot_code @jp libultra/vimodes/vimodempallan1 data=0x8001B550
+boot_code libultra/vimodes/vimodentsclan1 0x50 0 0
+boot_code @us libultra/vimodes/vimodentsclan1 data=0x8001B5C0
+boot_code @eu libultra/vimodes/vimodentsclan1 data=0x8001B5C0
+boot_code @jp libultra/vimodes/vimodentsclan1 data=0x8001B5A0
+boot_code libultra/os/seteventmesg 0 0 0x80
+boot_code @us libultra/os/seteventmesg bss=0x80026D10
+boot_code @eu libultra/os/seteventmesg bss=0x80026D10
+boot_code @jp libultra/os/seteventmesg bss=0x80026CF0
+boot_code libultra/io/conteepread 0 0 0x40
+boot_code @us libultra/io/conteepread bss=0x80026DE0
+boot_code @eu libultra/io/conteepread bss=0x80026DE0
+boot_code @jp libultra/io/conteepread bss=0x80026DC0
+boot_code libultra/io/motor 0 0 0x240
+boot_code @us libultra/io/motor bss=0x80026E20
+boot_code @eu libultra/io/motor bss=0x80026E20
+boot_code @jp libultra/io/motor bss=0x80026E00
+boot_code libultra/io/pfsisplug 0 0 0x40
+boot_code @us libultra/io/pfsisplug bss=0x800270F0
+boot_code @eu libultra/io/pfsisplug bss=0x800270F0
+boot_code @jp libultra/io/pfsisplug bss=0x800270D0
+boot_code libultra/debug/kdebugserver 0 0 0x1B0
+boot_code @us libultra/debug/kdebugserver bss=0x800272B0
+boot_code @eu libultra/debug/kdebugserver bss=0x800272B0
+boot_code @jp libultra/debug/kdebugserver bss=0x80027290
+boot_code libultra/io/leointerrupt 0 0 0x1000
+boot_code @us libultra/io/leointerrupt bss=0x80027460
+boot_code @eu libultra/io/leointerrupt bss=0x80027460
+boot_code @jp libultra/io/leointerrupt bss=0x80027440
+
 # ovl_0B_01: all C (-O3); jp has its own strings
 ovl_0B_01 ovl_0B_01_entry 0 0 0
 ovl_0B_01 1457B0 0x110 0x70 0x70

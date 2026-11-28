@@ -453,13 +453,6 @@ static OSViMode *vi_mode;
 static u32 vi_control;                  /* VI_CONTROL_REG: the mode's, with the special features */
 static int vi_black;
 
-/* VI_CONTROL_REG's bits that osViSetSpecialFeatures sets */
-#define VI_CTRL_GAMMA_DITHER_ON 0x00004
-#define VI_CTRL_GAMMA_ON 0x00008
-#define VI_CTRL_DIVOT_ON 0x00010
-#define VI_CTRL_ANTIALIAS_MASK 0x00300
-#define VI_CTRL_DITHER_FILTER_ON 0x10000
-
 void osCreateViManager(OSPri pri) { }
 
 void osViSetMode(OSViMode *m) {

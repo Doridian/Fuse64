@@ -62,7 +62,7 @@ void func_800018A8(char *expr, char *file, s32 line);
 /* the task types (OS_SC_TYPE_MASK) that are switched on */
 #define SC_TYPE_XBUS 3
 
-extern OSViMode D_8001A3B0[PORT_SIZE(42)]; /* NTSC, PAL and MPAL's 14 each */
+extern OSViMode osViModeTable[PORT_SIZE(42)]; /* libultra io/vitbl.c: NTSC, PAL and MPAL's 14 each */
 
 /* .data: Hudson's frame timing */
 s32 D_80019FA0 = 0; /* retraces */
@@ -129,7 +129,7 @@ void osCreateScheduler(OSSched *sc, void *stack, OSPri priority, u8 mode, u8 num
     osCreateMesgQueue(&sc->interruptQ, sc->intBuf, OS_SC_MAX_MESGS);
     osCreateMesgQueue(&sc->cmdQ, sc->cmdMsgBuf, OS_SC_MAX_MESGS);
     osCreateViManager(OS_PRIORITY_VIMGR);
-    osViSetMode(&D_8001A3B0[mode]);
+    osViSetMode(&osViModeTable[mode]);
     osViBlack(TRUE);
     osSetEventMesg(OS_EVENT_SP, &sc->interruptQ, (OSMesg)SC_MSG_RSP_DONE);
     osSetEventMesg(OS_EVENT_DP, &sc->interruptQ, (OSMesg)SC_MSG_RDP_DONE);

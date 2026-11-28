@@ -80,4 +80,23 @@ void port_io_write(unsigned int addr, unsigned int data);
 #define VI_PAL_CLOCK 49656530
 #define VI_MPAL_CLOCK 48628316
 
+/* VI_CONTROL_REG's bits (libultra's VI modes, src/libultra/io/vitbl.c, and
+   osViSetSpecialFeatures) */
+#define VI_CTRL_TYPE_16 0x00002
+#define VI_CTRL_TYPE_32 0x00003
+#define VI_CTRL_GAMMA_DITHER_ON 0x00004
+#define VI_CTRL_GAMMA_ON 0x00008
+#define VI_CTRL_DIVOT_ON 0x00010
+#define VI_CTRL_SERRATE_ON 0x00040
+#define VI_CTRL_ANTIALIAS_MASK 0x00300
+#define VI_CTRL_ANTIALIAS_MODE_0 0x00000
+#define VI_CTRL_ANTIALIAS_MODE_1 0x00100
+#define VI_CTRL_ANTIALIAS_MODE_2 0x00200
+#define VI_CTRL_ANTIALIAS_MODE_3 0x00300
+#define VI_CTRL_PIXEL_ADV_MASK 0x0F000
+#define VI_CTRL_PIXEL_ADV_1 0x01000
+#define VI_CTRL_PIXEL_ADV_2 0x02000
+#define VI_CTRL_PIXEL_ADV_3 0x03000
+#define VI_CTRL_DITHER_FILTER_ON 0x10000
+
 #endif

@@ -1,6 +1,5 @@
 /*
- * libultra io/leointerrupt.c, from decompals/ultralib.  leoDiskStack is
- * defined by the asm data (docs/LIBULTRA.md, "Data").
+ * libultra io/leointerrupt.c, from decompals/ultralib.
  */
 #include "PR/os_internal.h"
 #include "PR/rcp.h"
@@ -10,7 +9,7 @@
 
 extern OSPiHandle *__osDiskHandle;
 
-extern u8 leoDiskStack[OS_PIM_STACKSIZE];
+u8 leoDiskStack[OS_PIM_STACKSIZE] ALIGNED(0x10);
 
 static void __osLeoAbnormalResume(void);
 static void __osLeoResume(void);

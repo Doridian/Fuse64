@@ -276,13 +276,23 @@ asm blocks. Only objects that need it are placed:
   `seqplayer`, `csplayer`, `resample`, `reverb`, and main_code's
   `perspective`, `sinf` and `cosf`).
 
-That is 32 objects. The others refer to their variables as externs,
-defined by the asm data (`__osContPifRam`, `__osEepPifRam`,
-`__osPfsPifRam`, the motor buffers, `__osContinitialized`,
-`__osEventStateTab`, the thread queues, `alGlobals`, `leoDiskStack`, ...),
-with the names gen_symbols.py gives them; the file's comment says so.
-boot_code's addresses are the same in us and eu (the 0x60 gap is in the
-text) and 0x20 lower in jp.
+That was 32 objects. The rest of boot_code's library data is placed the
+same way, so none of it is asm any more: the objects that define
+variables their code could take as externs, each as ultralib defines
+them (`controller` its PIF RAM, EEPROM timer and `__osContinitialized`,
+`conteepread` `__osEepPifRam`, `pfsisplug` `__osPfsPifRam`, `motor` the
+older revision's four buffers, `seteventmesg` `__osEventStateTab`,
+`thread` the thread queues, `sl` `alGlobals`, `leointerrupt`
+`leoDiskStack`), and five objects with no code, which aren't text
+objects (`tools/layout.py` places a `libultra/` object without one):
+`io/vitbl.c` (`osViModeTable`, the 42 VI modes the scheduler picks from,
+which was `D_8001A3B0`), `vimodes/vimodepallan1.c`, `vimodempallan1.c`,
+`vimodentsclan1.c`, and `debug/kdebugserver.c`, which a ROM build
+reduces to `__osThreadSave` (exceptasm.s's). All are ultralib's files
+unchanged; their sizes and places are in data_split.txt. boot_code's
+addresses are the same in us and eu (the 0x60 gap is in the text) and
+0x20 lower in jp. main_code's `__libm_qnan_f` (`libc/libm_vals`, no code
+either) is still asm.
 
 ## libaudio
 

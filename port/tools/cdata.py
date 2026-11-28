@@ -52,6 +52,9 @@ import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# libultra's files that the port takes as the game's (CMakeLists.txt): data
+# the game's C uses that the port's libultra hasn't (the VI modes)
+LIB_DATA = ("src/libultra/io/vitbl.c",)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 WIDTHS = {
@@ -981,7 +984,8 @@ def launch(opts, argv):
     real, wrapper = real_source(src)
     real_abs = os.path.abspath(real)
     rel = os.path.relpath(real_abs, ROOT).replace("\\", "/")
-    if not rel.startswith("src/") or rel.startswith(("src/libultra/", "src/libmalloc/")):
+    if not rel.startswith("src/") or (rel.startswith(("src/libultra/", "src/libmalloc/"))
+                                      and rel not in LIB_DATA):
         os.execvp(argv[0], argv)
     gen = os.path.abspath(opts["gen"])
     os.makedirs(gen, exist_ok=True)
@@ -1235,6 +1239,7 @@ def mine_files():
     paths as the copies' are made, or None"""
     src = os.path.join(ROOT, "src")
     libs = (os.path.join(src, "libultra"), os.path.join(src, "libmalloc"))
+    lib_data = {os.path.normcase(os.path.normpath(os.path.join(ROOT, f))) for f in LIB_DATA}
     cache = {}
 
     def mine(p):
@@ -1244,7 +1249,8 @@ def mine_files():
             a = os.path.normpath(os.path.abspath(p))
             c = os.path.normcase(a)
             ok = c.startswith(os.path.normcase(src + os.sep)) and \
-                not any(c.startswith(os.path.normcase(x + os.sep)) for x in libs)
+                (not any(c.startswith(os.path.normcase(x + os.sep)) for x in libs)
+                 or c in lib_data)
             cache[p] = c if ok else None    # (one spelling on Windows too)
         return cache[p]
     return mine

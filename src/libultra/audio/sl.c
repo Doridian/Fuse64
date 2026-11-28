@@ -1,6 +1,5 @@
 /*
- * libultra audio/sl.c, from decompals/ultralib.  alGlobals is defined by
- * the asm data (docs/LIBULTRA.md, "Data").
+ * libultra audio/sl.c, from decompals/ultralib.
  */
 /*====================================================================
  * sl.c
@@ -27,7 +26,7 @@
 
 #include <libaudio.h>
 
-extern ALGlobals *alGlobals;
+ALGlobals *alGlobals=0;
 
 void alInit(ALGlobals *g, ALSynConfig *c)
 {

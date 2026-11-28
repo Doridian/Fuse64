@@ -1509,7 +1509,8 @@ there, at 23,131 retraces.)
 ### The build
 
 `port/CMakeLists.txt` compiles every C file of `src/` but libultra (the
-host has its own) with `-DTARGET_PC -D<VERSION>`, `-std=gnu89
+host has its own; but `io/vitbl.c`, the VI modes the scheduler picks from,
+data only, with ultralib's `viint.h` after the port's headers) with `-DTARGET_PC -D<VERSION>`, `-std=gnu89
 -fsigned-char -fno-strict-aliasing -fwrapv -ftrivial-auto-var-init=zero
 -ffp-contract=off` (and on x86 `-msse2 -mfpmath=sse -malign-double`:
 SSE's rounding, o32's alignment), errors only for what a host can't take,
@@ -1518,9 +1519,9 @@ F3DEX's macros added) and `-include port_game.h`; gmalloc as the Makefile
 does; and four generated files:
 
 - `asm_data.c` (port/tools/asm2c.py): main_code's data that is still asm,
-  and boot_code's VI modes, each label a struct of its own ("The default
-  layout"; with `-DPORT_LAYOUT=n64` each file one packed struct at its N64
-  offsets, each label an alias).
+  each label a struct of its own ("The default layout"; with
+  `-DPORT_LAYOUT=n64` each file one packed struct at its N64 offsets, each
+  label an alias).
 - `zerojump.c` (gen_zerojump.py): every ZeroJump stub as a C function that
   calls its target ("ZeroJump").
 - `regions.c` (gen_regions.py): the fixed addresses, each an array of its
@@ -1536,8 +1537,8 @@ A published executable can't carry the ROM's bytes (docs/ROADMAP.md,
 phase 6, "Hosts and packages"). The code is ours (the game's C compiled
 by the host's compiler, no asm text: ZeroJump and boot.c are C), so what
 the ROM gives a build is its initialized data: the game's C initializers
-(`tools/data_c.py`'s, in `src/`), `asm_data.c` (asm2c.py's, main_code's
-data that is still asm and boot_code's VI modes), and the overlays' `.data`
+(`tools/data_c.py`'s, in `src/`, and libultra's VI modes), `asm_data.c`
+(asm2c.py's, main_code's data that is still asm), and the overlays' `.data`
 and `.rodata`. The archives (the pictures, the models, the sound) were
 never in it: the game reads them from the ROM at run time.
 

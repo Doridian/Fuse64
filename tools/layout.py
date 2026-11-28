@@ -576,7 +576,10 @@ def cut_data(name, vram, data, text_end, region_end, bss_size, text_objs, split,
     # objects placed on their own, inside the asm blocks
     assert not (islands and complete), f"{name}: every object is cut in order"
     for o, (d, r, b, where) in islands.items():
-        assert o not in listed and o in order, f"{name}: {o} is placed on its own but isn't a text object after the cut"
+        # a library object with no code (libultra's VI mode tables,
+        # kdebugserver.c's __osThreadSave) isn't a text object
+        assert o not in listed and (o in order or o.startswith("libultra/")), \
+            f"{name}: {o} is placed on its own but isn't a text object after the cut"
         assert source_exists(seg_dir, o), f"{name}: {o} is in data_split.txt but has no source"
         for kind, size, sect in ((".data", d, "data"), (".rodata", r, "rodata"), (".bss", b, "bss")):
             if not size:

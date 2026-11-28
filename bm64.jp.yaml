@@ -286,12 +286,13 @@ segments:
       - [0x1ABB0, .data, 2350]
       - [0x1AF40, .data, libultra/io/pimgr]
       - [0x1AF70, .data, libultra/io/vimgr]
-      - [0x1AF90, data]
+      - [0x1AF90, .data, libultra/io/vitbl]
       - [0x1BCB0, .data, libultra/os/initialize]
       - [0x1BCD0, .data, libultra/io/aisetnextbuf]
-      - [0x1BCE0, data]
+      - [0x1BCE0, .data, libultra/io/controller]
+      - [0x1BCF0, .data, libultra/audio/sl]
       - [0x1BD00, .data, libultra/io/piacs]
-      - [0x1BD10, data]
+      - [0x1BD10, .data, libultra/os/thread]
       - [0x1BD30, .data, libultra/os/exceptasm]
       - [0x1BD50, .data, libultra/os/timerintr]
       - [0x1BD60, .data, libultra/io/vi]
@@ -299,7 +300,9 @@ segments:
       - [0x1BE20, .data, libultra/io/siacs]
       - [0x1BE30, .data, libultra/audio/drvrnew]
       - [0x1BFC0, .data, libultra/audio/env]
-      - [0x1C100, data]
+      - [0x1C100, .data, libultra/vimodes/vimodepallan1]
+      - [0x1C150, .data, libultra/vimodes/vimodempallan1]
+      - [0x1C1A0, .data, libultra/vimodes/vimodentsclan1]
       - [0x1C1F0, .data, libultra/libc/xlitob]
       - [0x1C220, .rodata, 14B0]
       - [0x1C350, .rodata, libultra/os/setintmask]
@@ -325,16 +328,20 @@ segments:
       - {type: .bss, vram: 0x8001C490, name: 2350}
       - {type: .bss, vram: 0x80024900, name: libultra/io/pimgr}
       - {type: .bss, vram: 0x80025AD0, name: libultra/io/vimgr}
-      - {type: bss, vram: 0x80026CF0}
+      - {type: .bss, vram: 0x80026CF0, name: libultra/os/seteventmesg}
       - {type: .bss, vram: 0x80026D70, name: libultra/io/sptask}
       - {type: .bss, vram: 0x80026DB0, name: libultra/os/initialize}
-      - {type: bss, vram: 0x80026DC0, name: bss_80026DC0}
+      - {type: .bss, vram: 0x80026DC0, name: libultra/io/conteepread}
+      - {type: .bss, vram: 0x80026E00, name: libultra/io/motor}
+      - {type: .bss, vram: 0x80027040, name: libultra/io/controller}
+      - {type: .bss, vram: 0x800270D0, name: libultra/io/pfsisplug}
       - {type: .bss, vram: 0x80027110, name: libultra/io/cartrominit}
       - {type: .bss, vram: 0x80027190, name: libultra/io/leodiskinit}
       - {type: .bss, vram: 0x80027210, name: libultra/io/piacs}
       - {type: .bss, vram: 0x80027230, name: libultra/os/timerintr}
       - {type: .bss, vram: 0x80027270, name: libultra/io/siacs}
-      - {type: bss, vram: 0x80027290, name: bss_80027290}
+      - {type: .bss, vram: 0x80027290, name: libultra/debug/kdebugserver}
+      - {type: .bss, vram: 0x80027440, name: libultra/io/leointerrupt}
   - name: zerojump  # DMAd to 0x80042000, TLB-mapped at 0x00000000
     type: code
     start: 0x1CBA0

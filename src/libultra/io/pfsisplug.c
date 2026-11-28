@@ -2,13 +2,13 @@
  * libultra io/pfsisplug.c, from decompals/ultralib, as this game has it:
  * 2.0I's, but __osPfsRequestData clears all 16 words of the PIF RAM first
  * (an older revision's).
- *
- * __osPfsPifRam is defined by the asm data (docs/LIBULTRA.md, "Data").
  */
 #include "PRinternal/macros.h"
 #include "PR/os_internal.h"
 #include "PRinternal/controller.h"
 #include "PRinternal/siint.h"
+
+OSPifRam __osPfsPifRam;
 
 s32 osPfsIsPlug(OSMesgQueue* mq, u8* pattern) {
     s32 ret = 0;

@@ -5,11 +5,11 @@
  * CONT_NO_RESPONSE_ERROR (returned with the SI still held).  The PIF RAM
  * is refilled with 0xFF before the response is read, and the packer fills
  * all 16 words with 0xFF first.
- *
- * __osEepPifRam is defined by the asm data (docs/LIBULTRA.md, "Data").
  */
 #include "PRinternal/controller.h"
 #include "PRinternal/siint.h"
+
+OSPifRam __osEepPifRam;
 
 static void __osPackEepReadData(u8 address);
 

@@ -1,13 +1,12 @@
 /*
- * libultra os/seteventmesg.c, from decompals/ultralib.  __osEventStateTab
- * is defined by the asm data (docs/LIBULTRA.md, "Data").
+ * libultra os/seteventmesg.c, from decompals/ultralib.
  */
 #include "PRinternal/macros.h"
 #include "PR/os_internal.h"
 #include "PR/ultraerror.h"
 #include "PRinternal/osint.h"
 
-extern __OSEventState __osEventStateTab[OS_NUM_EVENTS];
+__OSEventState __osEventStateTab[OS_NUM_EVENTS] ALIGNED(0x8);
 #if BUILD_VERSION >= VERSION_J
 u32 __osPreNMI = FALSE;
 #endif

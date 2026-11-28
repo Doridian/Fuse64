@@ -4,10 +4,9 @@
  * yet: osMotorStop and osMotorStart don't check that osMotorInit ran,
  * and check the Rumble Pak's reply against fixed CRCs (0 for a block of
  * zeros, 0xEB for a block of ones) instead of computing them, and
- * osMotorInit doesn't first probe for a Controller Pak with 0xFE.
- *
- * The buffers (_MotorStopData, _MotorStartData, _motorstopbuf,
- * _motorstartbuf) are defined by the asm data (docs/LIBULTRA.md, "Data").
+ * osMotorInit doesn't first probe for a Controller Pak with 0xFE.  Its
+ * buffers (_MotorStopData, _MotorStartData, _motorstopbuf, _motorstartbuf)
+ * are the older revision's globals, where 2.0I has one static buffer.
  */
 #include "PRinternal/macros.h"
 #include "PR/os_internal.h"
@@ -15,10 +14,10 @@
 #include "PRinternal/controller.h"
 #include "PRinternal/siint.h"
 
-extern OSPifRam _MotorStopData[MAXCONTROLLERS];
-extern OSPifRam _MotorStartData[MAXCONTROLLERS];
-extern u8 _motorstopbuf[32];
-extern u8 _motorstartbuf[32];
+OSPifRam _MotorStopData[MAXCONTROLLERS];
+OSPifRam _MotorStartData[MAXCONTROLLERS];
+u8 _motorstopbuf[32];
+u8 _motorstartbuf[32];
 
 s32 osMotorStop(OSPfs *pfs) {
     int i;

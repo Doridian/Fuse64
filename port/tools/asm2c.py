@@ -5,14 +5,15 @@ data as C"), as C for the port.
   asm2c.py [--decls DECLS.json | --sizes DECLS.json] [--layout objects|n64|scatter] [--snapshot DIR] OUT.c
 
 Reads the extracted asm/data/*.s (main_code's .data, .rodata and .bss that
-no C object defines yet, and boot_code's VI modes) and the code image
-(assets/code.bin, for the bytes), and writes one C file.  Each asm file is
-laid out as a packed struct of its labels in their order, at their N64
-offsets; in the default layout (docs/PORT.md, "The default layout") each
-label the C declares, and that isn't inside the one before, is a struct of
-its own from its place there to the next one's (port_o_LABEL), the label
-an alias at its offset (module-level asm: `.set`); with --layout n64 each
-file is one variable, that struct, and each label an alias into it.  Each datum is in host order at the width the asm's directive
+no C object defines yet; boot_code's is libultra's, which the port
+replaces) and the code image (assets/code.bin, for the bytes), and writes
+one C file.  Each asm file is laid out as a packed struct of its labels in
+their order, at their N64 offsets; in the default layout (docs/PORT.md,
+"The default layout") each label the C declares, and that isn't inside the
+one before, is a struct of its own from its place there to the next one's
+(port_o_LABEL), the label an alias at its offset (module-level asm:
+`.set`); with --layout n64 each file is one variable, that struct, and
+each label an alias into it.  Each datum is in host order at the width the asm's directive
 gives it (`.word`, `.short`, `.byte`, a string), unless the label is in
 LAYOUTS below, which gives the widths the C reads it at.  A symbolic word
 is a pointer: to a function, to a label (`+ n`), or into the fixed-address
@@ -46,18 +47,12 @@ import layouts  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# the asm data files the port takes: main_code's, and boot_code's VI modes
-# (the rest of boot_code's is libultra's own, which the port replaces)
-BOOT_LABELS = {"D_8001A3B0"}     # (the file that has them: 1AFB0 in us and eu, 1AF90 in jp)
-
 # Labels whose bytes the C reads at other widths than the directives'
 # (B a byte, H a half, I a word; the pattern repeats over the label):
 # text in the game's own encoding (which spimdisasm takes for words), the
 # lights' colours, the RSP's code and data (bytes, as the HLE and nothing
 # else reads them), and records of halves and bytes.
 LAYOUTS = {
-    # OSViMode: u8 type, then u32 registers
-    "D_8001A3B0": "BBBB" + "I" * 19,
     # RSP microcode and its data
     "D_8029D250": "B", "D_8029D320": "B", "D_8029E750": "B", "D_802A4840": "B", "D_802A5040": "B",
     # Lights (gbi.h's): colour bytes
@@ -185,8 +180,7 @@ def load_extract():
     files = sorted(f for f in os.listdir("asm/data") if f.endswith(".s"))
     parsed = []
     for f in files:
-        boot = any("dlabel %s\n" % l in open(os.path.join("asm/data", f)).read() for l in BOOT_LABELS)
-        if boot or (re.match(r"[0-9A-F]+\.", f) and int(f.split(".")[0], 16) >= 0x40000) \
+        if (re.match(r"[0-9A-F]+\.", f) and int(f.split(".")[0], 16) >= 0x40000) \
                 or f.startswith("bss_802") or f.startswith("main_code_persist"):
             labels, sect = parse(os.path.join("asm/data", f))
             if not labels:

@@ -3,10 +3,6 @@
  * 2.0I's code, but osContInit's 0.5s wait is computed through osClockRate
  * (libultra_bm64.h), and __osPackRequestData clears all 16 words of the
  * PIF RAM.
- *
- * Its data (__osContPifRam, __osContLastCmd, __osMaxControllers, the
- * EEPROM timer and __osContinitialized) is defined by the asm data
- * (docs/LIBULTRA.md, "Data").
  */
 #include "PRinternal/macros.h"
 #include "PR/os_internal.h"
@@ -14,7 +10,14 @@
 #include "PRinternal/siint.h"
 #include "libultra_bm64.h"
 
-extern s32 __osContinitialized;
+OSPifRam __osContPifRam;
+u8 __osContLastCmd;
+u8 __osMaxControllers;
+OSTimer __osEepromTimer;
+OSMesgQueue __osEepromTimerQ ALIGNED(0x8);
+OSMesg __osEepromTimerMsg;
+
+s32 __osContinitialized = FALSE;
 
 s32 osContInit(OSMesgQueue* mq, u8* bitpattern, OSContStatus* data) {
     OSMesg dummy;

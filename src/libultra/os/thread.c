@@ -1,16 +1,14 @@
 /*
- * libultra os/thread.c, from decompals/ultralib.  The thread queues
- * (__osThreadTail, __osRunQueue, __osActiveQueue, __osRunningThread,
- * __osFaultedThread) are defined by the asm data (docs/LIBULTRA.md, "Data").
+ * libultra os/thread.c, from decompals/ultralib.
  */
 #include "PR/os_internal.h"
 #include "PRinternal/osint.h"
 
-extern struct __osThreadTail __osThreadTail;
-extern OSThread* __osRunQueue;
-extern OSThread* __osActiveQueue;
-extern OSThread* __osRunningThread;
-extern OSThread* __osFaultedThread;
+struct __osThreadTail __osThreadTail = { NULL, -1 };
+OSThread* __osRunQueue = (OSThread*)&__osThreadTail;
+OSThread* __osActiveQueue = (OSThread*)&__osThreadTail;
+OSThread* __osRunningThread = NULL;
+OSThread* __osFaultedThread = NULL;
 
 void __osDequeueThread(register OSThread** queue, register OSThread* t) {
     register OSThread* pred;

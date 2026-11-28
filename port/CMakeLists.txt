@@ -376,7 +376,8 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8 OR PORT_LAYOUT STREQUAL "objects")
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/decls.py ${CMAKE_CURRENT_BINARY_DIR}
                 --version ${PORT_VERSION} -o ${GEN}/decls.json
         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/decls.py ${GAME_C} ${OVL_C} ${GAME_H}
-                ${CMAKE_CURRENT_SOURCE_DIR}/src/ultra.c ${CMAKE_BINARY_DIR}/compile_commands.json VERBATIM)
+                ${CMAKE_CURRENT_SOURCE_DIR}/src/ultra.c ${CMAKE_BINARY_DIR}/compile_commands.json
+                ${GEN}/sintable.h VERBATIM)     # (gu.c includes it)
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(DECLS_ARG --decls ${GEN}/decls.json)
     else()

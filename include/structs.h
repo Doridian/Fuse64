@@ -55,6 +55,17 @@ typedef struct UnkStructA_40 {
     /* 0x4C */ struct UnkTexSlots *unk4C;
 } UnkStructA_40; /* size 0x50 */
 
+/* A path step: flags (0x80000000 wait, 0xF0000 facing, 0xFFFF mode); a list
+ * of them ends at flags 0.  UnkStructA's unk3C (48600 follows it), set by
+ * func_80232B04 (the overlays' ZeroJump 0x180E: 13_01, 13_02, 14_01's paths). */
+typedef struct Step3C {
+    /* 0x00 */ s32 flags;
+    /* 0x04 */ f32 unk4;
+    /* 0x08 */ f32 unk8;
+    /* 0x0C */ f32 unkC;
+    /* 0x10 */ f32 unk10;
+} Step3C;
+
 /* An object of the pool D_800A3F00 (128 of them, 0x80 bytes; main_code's
  * 48600 links them in the lists D_802A5578, D_802A55F8 and D_802A5678):
  * what the overlays' tasks and callbacks get, and what the main_code

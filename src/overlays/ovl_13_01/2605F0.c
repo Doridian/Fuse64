@@ -93,15 +93,6 @@
 #define W360(v) (((v) >= 360.0f) ? (v) - 360.0f : ((v) < 0.0f) ? (v) + 360.0f : (v))
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 
-/* What func_ovl13_01_8004B620 links two models with (D_ovl13_01_8004C2C0-8004C308). */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-} Link_ovl13_01;
-
 /* D_ovl13_01_8004C3E0 and the unused word after it (8004C3EC). */
 typedef struct {
     /* 0x00 */ Vec3f v;
@@ -172,7 +163,7 @@ void func_ovl13_01_8004B5D0(f32 *, f32 *); /* 0x1804 */
 f32 func_ovl13_01_8004B5E0(f32 *, f32 *); /* 0x1806 */
 s32 func_ovl13_01_8004B5E8(UnkStructA *, s32); /* 0x1807 */
 void func_ovl13_01_8004B608(UnkStructA *, s32); /* 0x180B */
-void func_ovl13_01_8004B620(UnkStructA *, UnkStructA *, Link_ovl13_01 *, s32); /* 0x180E */
+void func_ovl13_01_8004B620(UnkStructA *, UnkStructA *, Step3C *, s32); /* 0x180E */
 void func_ovl13_01_8004B630(s32); /* 0x1810 */
 void func_ovl13_01_8004B638(UnkStructA *, s32); /* 0x1811 */
 void func_ovl13_01_8004B640(UnkStructA *, s32); /* 0x1812 */
@@ -254,10 +245,10 @@ f32 D_ovl13_01_8004C2A8;
 s32 D_ovl13_01_8004C2AC;
 Vec3f D_ovl13_01_8004C2B0;
 f32 D_ovl13_01_8004C2BC;
-Link_ovl13_01 D_ovl13_01_8004C2C0;
-Link_ovl13_01 D_ovl13_01_8004C2D8;
-Link_ovl13_01 D_ovl13_01_8004C2F0;
-Link_ovl13_01 D_ovl13_01_8004C308;
+Step3C D_ovl13_01_8004C2C0;
+Step3C D_ovl13_01_8004C2D8;
+Step3C D_ovl13_01_8004C2F0;
+Step3C D_ovl13_01_8004C308;
 UnkStructA *D_ovl13_01_8004C31C;
 UnkStructA *D_ovl13_01_8004C320;
 UnkStructA *D_ovl13_01_8004C324;
@@ -685,15 +676,15 @@ void func_ovl13_01_80049870(void) {
     D_ovl13_01_8004C3CC = 0;
     func_ovl13_01_8004B788(func_ovl13_01_8004899C, NULL, 0, 0, 0x110);
     func_ovl13_01_8004B788(func_ovl13_01_80048418, NULL, 0, 0, 0x130);
-    D_ovl13_01_8004C2C0.unk0 = 0x10002;
+    D_ovl13_01_8004C2C0.flags = 0x10002;
     D_ovl13_01_8004C2C0.unk8 = 0.0f;
-    D_ovl13_01_8004C2D8.unk0 = 0x10002;
+    D_ovl13_01_8004C2D8.flags = 0x10002;
     D_ovl13_01_8004C2D8.unk8 = 0.0f; D_ovl13_01_8004C2C0.unk10 = 0.9f; D_ovl13_01_8004C2C0.unk4 = 70.0f; D_ovl13_01_8004C2C0.unkC = 1.0f; D_ovl13_01_8004C2D8.unk4 = 5.0f; D_ovl13_01_8004C2D8.unkC = 0.45f;
     D_ovl13_01_8004C2D8.unk10 = 0.9f;
     D_ovl13_01_8004C2BC = D_ovl13_01_8004C2C0.unkC;
-    D_ovl13_01_8004C2F0.unk0 = 0x10002;
+    D_ovl13_01_8004C2F0.flags = 0x10002;
     D_ovl13_01_8004C2F0.unk8 = 0.0f;
-    D_ovl13_01_8004C308.unk0 = 0x10002;
+    D_ovl13_01_8004C308.flags = 0x10002;
     D_ovl13_01_8004C308.unk8 = 0.0f;
     D_ovl13_01_8004C2F0.unk10 = 0.9f;
     D_ovl13_01_8004C308.unk10 = 0.9f;

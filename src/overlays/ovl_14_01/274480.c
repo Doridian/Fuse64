@@ -135,14 +135,6 @@
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 #define WRAP360(x) ((x) >= 360.0f ? (x) - 360.0f : ((x) < 0.0f ? (x) + 360.0f : (x)))
 
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-} Link_ovl14_01;
-
 void func_ovl14_01_8004BE98(s32); /* 0xC00 */
 void func_ovl14_01_8004BEA8(s32 *); /* 0xC02 */
 void func_ovl14_01_8004BEB0(s32); /* 0xD00 */ /* also: void (s32, UnkStructA_40 **) x1 */
@@ -182,7 +174,7 @@ void func_ovl14_01_8004C830(Vec3f *, Vec3f *); /* 0x1804 */
 s32 func_ovl14_01_8004C848(UnkStructA *, s32); /* 0x1807 */ /* also: s32 (Obj_0D02 *, s32) x1; s32 (Obj_0D04 *, s32) x1; s32 (Obj_0D06 *, s32) x1 */
 s32 func_ovl14_01_8004C860(PORT_IP(s32), PORT_IP(s32)); /* 0x180A */
 void func_ovl14_01_8004C868(UnkStructA *, s32); /* 0x180B */ /* also: void (Obj_0D02 *, s32) x1; void (Obj05 *, s32) x1; void (Obj_0D03 *, s32) x1 */
-void func_ovl14_01_8004C880(UnkStructA *, UnkStructA *, Link_ovl14_01 *, s32); /* 0x180E */ /* also: void (UnkStructA *, UnkStructA *, Link_ovl13_01 *, s32) x1 */
+void func_ovl14_01_8004C880(UnkStructA *, UnkStructA *, Step3C *, s32); /* 0x180E */ /* also: void (UnkStructA *, UnkStructA *, Step3C *, s32) x1 */
 void func_ovl14_01_8004C890(s32); /* 0x1810 */
 void func_ovl14_01_8004C898(UnkStructA *, s32); /* 0x1811 */ /* also: void (Obj02 *, s32) x1; void (Obj03 *, s32) x1; void (UnkStruct_ovl0A_05_80048CA0 *, s32) x1 */
 void func_ovl14_01_8004C8A0(UnkStructA *, s32); /* 0x1812 */ /* also: void (Obj02 *, s32) x1; void (Obj03 *, s32) x1; void (UnkStruct_ovl0A_05_80048CA0 *, s32) x1 */
@@ -278,8 +270,8 @@ s32 D_ovl14_01_8004D54C;
 s32 D_ovl14_01_8004D550;
 s32 D_ovl14_01_8004D554;
 s32 D_ovl14_01_8004D558;
-Link_ovl14_01 D_ovl14_01_8004D560[3];
-Link_ovl14_01 D_ovl14_01_8004D5A0[3];
+Step3C D_ovl14_01_8004D560[3];
+Step3C D_ovl14_01_8004D5A0[3];
 UnkStructA * D_ovl14_01_8004D5DC;
 UnkStructA * D_ovl14_01_8004D5E0;
 UnkStructA * D_ovl14_01_8004D5E4;
@@ -350,8 +342,8 @@ s32 D_ovl14_01_8004D54C;
 s32 D_ovl14_01_8004D550;
 s32 D_ovl14_01_8004D554;
 s32 D_ovl14_01_8004D558;
-Link_ovl14_01 D_ovl14_01_8004D560[3];
-Link_ovl14_01 D_ovl14_01_8004D5A0[3];
+Step3C D_ovl14_01_8004D560[3];
+Step3C D_ovl14_01_8004D5A0[3];
 UnkStructA * D_ovl14_01_8004D5DC;
 UnkStructA * D_ovl14_01_8004D5E0;
 UnkStructA * D_ovl14_01_8004D5E4;
@@ -393,13 +385,13 @@ Vec3f D_ovl14_01_8004D6F0[8];
 s32 D_ovl14_01_8004D750[4];
 #endif
 
-void func_ovl14_01_80043010(UnkStructA **arg0, Link_ovl14_01 *arg1);
+void func_ovl14_01_80043010(UnkStructA **arg0, Step3C *arg1);
 s32 func_ovl14_01_800431C4(s32, void *);
 static void func_ovl14_01_800431F8(UnkStructA *obj);
 void func_ovl14_01_80043250(s32 arg0);
 void func_ovl14_01_800432D8(void);
 void func_ovl14_01_80043624(void);
-void func_ovl14_01_80043688(UnkStructA **arg0, Link_ovl14_01 *arg1);
+void func_ovl14_01_80043688(UnkStructA **arg0, Step3C *arg1);
 void func_ovl14_01_800437B8(void);
 void func_ovl14_01_800438D8(void);
 void func_ovl14_01_800439AC(Vec3f *arg0, UnkStructA *arg1);
@@ -425,8 +417,8 @@ void func_ovl14_01_80045FA0(void *arg0);
 void func_ovl14_01_80045FD8(void);
 void func_ovl14_01_80046004(s32 arg0);
 void func_ovl14_01_8004654C(void);
-void func_ovl14_01_80046648(UnkStructA **arg0, Link_ovl14_01 *arg1);
-void func_ovl14_01_800467C0(UnkStructA **arg0, Link_ovl14_01 *arg1);
+void func_ovl14_01_80046648(UnkStructA **arg0, Step3C *arg1);
+void func_ovl14_01_800467C0(UnkStructA **arg0, Step3C *arg1);
 void func_ovl14_01_8004697C(void);
 s32 func_ovl14_01_80046AE8(void);
 void func_ovl14_01_80046B98(s32 arg0, f32 arg1);
@@ -449,14 +441,14 @@ void func_ovl14_01_80048454(void);
 void func_ovl14_01_800487A8(void);
 void func_ovl14_01_8004882C(void);
 void func_ovl14_01_800488B0(void);
-void func_ovl14_01_80048ABC(UnkStructA **arg0, Link_ovl14_01 *arg1);
+void func_ovl14_01_80048ABC(UnkStructA **arg0, Step3C *arg1);
 void func_ovl14_01_80048CE8(Vec3f *arg0, s32 arg1);
 void *func_ovl14_01_80048D48(void *arg0);
 void func_ovl14_01_80048DE8(s32 arg0);
 void func_ovl14_01_80049368(s32 arg0);
 void func_ovl14_01_800494C8(void);
 void func_ovl14_01_80049618(void);
-void func_ovl14_01_80049814(s32 arg0, UnkStructA **arg1, Link_ovl14_01 *arg2);
+void func_ovl14_01_80049814(s32 arg0, UnkStructA **arg1, Step3C *arg2);
 void func_ovl14_01_80049B70(void);
 void func_ovl14_01_80049BC0(void);
 void func_ovl14_01_80049BE0(u32 arg0, s32 arg1);
@@ -877,7 +869,7 @@ void func_ovl14_01_8004A914(void) {
     D_ovl14_01_8004D5DC = func_ovl14_01_8004C8F0(0x1CA, 0x01400000, D_ovl14_01_8004D5E8);
     D_ovl14_01_8004D5E0 = func_ovl14_01_8004C8F0(-1, 0x400000, D_ovl14_01_8004D5E8);
     D_ovl14_01_8004D5E0->unk50 = 800.0f;
-    PORT_FIELD(D_ovl14_01_8004D5E0, Link_ovl14_01 **, 0x3C, UnkStructA, unk3C) = D_ovl14_01_8004D560;
+    PORT_FIELD(D_ovl14_01_8004D5E0, Step3C **, 0x3C, UnkStructA, unk3C) = D_ovl14_01_8004D560;
     D_ovl14_01_8004D5F4 = func_ovl14_01_8004C8F0(-1, 0x400000, D_ovl14_01_8004D5E8);
     D_ovl14_01_8004D5F4->unk50 = 800.0f;
     D_ovl14_01_8004D5F4->unk54 = 490.0f;
@@ -1279,9 +1271,9 @@ void func_ovl14_01_80049B70(void) {
     func_ovl14_01_8004C9F8();
 }
 
-void func_ovl14_01_80049814(s32 id, UnkStructA **parts, Link_ovl14_01 *links) {
+void func_ovl14_01_80049814(s32 id, UnkStructA **parts, Step3C *links) {
     UnkStructA **base;
-    Link_ovl14_01 * volatile l;
+    Step3C * volatile l;
     UnkStructA *o;
     Vec3f *v;
     uintptr_t a; /* fake: the path as an integer, so uopt reads it at the store (see the top) */
@@ -1300,13 +1292,13 @@ void func_ovl14_01_80049814(s32 id, UnkStructA **parts, Link_ovl14_01 *links) {
         D_ovl14_01_8004D4DC = (Vec3f *) a;
     }
     if (a == 0) { DEBUG_PRINT(("no path\n")); } /* a compiled-out debug check */
-    PORT_FIELD(*parts, Link_ovl14_01 **, 0x3C, UnkStructA, unk3C) = links;
+    PORT_FIELD(*parts, Step3C **, 0x3C, UnkStructA, unk3C) = links;
     parts++;
     *parts = func_ovl14_01_8004C8F0(-1, 0x500000, parts[-1]);
     (*parts)->unk50 = 0.0f;
     (*parts)->unk54 = 60.0f;
     parts++;
-    PORT_FIELD(parts[-1], Link_ovl14_01 **, 0x3C, UnkStructA, unk3C) = links;
+    PORT_FIELD(parts[-1], Step3C **, 0x3C, UnkStructA, unk3C) = links;
     *parts = func_ovl14_01_8004C8F0(0x1C7, 0x01000000, parts[-1]);
     func_ovl14_01_8004C880(parts[-1], *parts, links, 0x150);
     func_ovl14_01_8004C8D0(*parts);
@@ -1343,7 +1335,7 @@ void func_ovl14_01_80049814(s32 id, UnkStructA **parts, Link_ovl14_01 *links) {
 }
 
 void func_ovl14_01_80049618(void) {
-    Link_ovl14_01 *l;
+    Step3C *l;
     UnkStructA *obj;
     f32 d;
     s32 i;
@@ -1386,7 +1378,7 @@ void func_ovl14_01_80049618(void) {
 }
 
 void func_ovl14_01_800494C8(void) {
-    Link_ovl14_01 *l;
+    Step3C *l;
     f32 d;
     s32 i;
 
@@ -1537,27 +1529,27 @@ void func_ovl14_01_80048CE8(Vec3f *arg0, s32 arg1) {
     func_ovl14_01_8004C9E8(func_ovl14_01_80049B70, NULL, 0, 0, 0x150);
 }
 
-void func_ovl14_01_80048ABC(UnkStructA **arg0, Link_ovl14_01 *arg1) {
+void func_ovl14_01_80048ABC(UnkStructA **arg0, Step3C *arg1) {
     f32 lift; /* a guess: any held value fills this frame word (1.0f, 0.0f work too) */
     Vec3f out;
     Vec3f from;
     Vec3f to;
     f32 f;
 
-    arg1->unk0 = 2;
+    arg1->flags = 2;
     arg1->unkC = 1.0f;
     arg1->unk10 = 0.0f;
     arg1->unk8 = 0.0f;
     arg1->unk4 = 250.0f;
     arg1++;
-    arg1->unk0 = 2;
+    arg1->flags = 2;
     arg1->unkC = 1.0f;
     arg1->unk10 = 0.0f;
     arg1->unk8 = 0.0f;
     arg1->unk4 = 60.0f;
     do {} while (0); /* fake: a uopt block boundary (no code); any test here works, none natural found (link store orders, chains, indexing, each link in its own do-while) */
     arg1++;
-    arg1->unk0 = 0x10002;
+    arg1->flags = 0x10002;
     arg1->unkC = 1.0f;
     arg1->unk10 = 0.0f;
     arg1->unk8 = 0.0f;
@@ -2304,7 +2296,7 @@ void func_ovl14_01_8004697C(void) {
     }
 }
 
-void func_ovl14_01_800467C0(UnkStructA **arg0, Link_ovl14_01 *arg1) {
+void func_ovl14_01_800467C0(UnkStructA **arg0, Step3C *arg1) {
     Vec3f save;
     f32 d;
     s32 i;
@@ -2348,22 +2340,22 @@ void func_ovl14_01_800467C0(UnkStructA **arg0, Link_ovl14_01 *arg1) {
     D_ovl14_01_8004D6A0.x = save.x;
 }
 
-void func_ovl14_01_80046648(UnkStructA **arg0, Link_ovl14_01 *arg1) {
-    Link_ovl14_01 *l = arg1;
+void func_ovl14_01_80046648(UnkStructA **arg0, Step3C *arg1) {
+    Step3C *l = arg1;
 
-    arg1->unk0 = 2;
+    arg1->flags = 2;
     arg1->unk10 = 0.9f;
     arg1->unkC = 0.3f;
     arg1->unk8 = 0.0f;
     arg1->unk4 = 250.0f;
     arg1++;
-    arg1->unk0 = 2;
+    arg1->flags = 2;
     arg1->unk10 = 0.0f;
     arg1->unkC = 1.0f;
     arg1->unk8 = 0.0f;
     arg1->unk4 = 60.0f;
     arg1++;
-    arg1->unk0 = 0x10002;
+    arg1->flags = 0x10002;
     arg1->unk10 = 0.9f;
     arg1->unkC = 0.3f;
     arg1->unk8 = 0.0f;
@@ -3291,21 +3283,21 @@ void func_ovl14_01_800437B8(void) {
 static void func_ovl14_01_80043680() {
 }
 
-void func_ovl14_01_80043688(UnkStructA **arg0, Link_ovl14_01 *arg1) {
+void func_ovl14_01_80043688(UnkStructA **arg0, Step3C *arg1) {
     func_ovl14_01_80043680();
-    arg1->unk0 = 1;
+    arg1->flags = 1;
     arg1->unk10 = 0.9f;
     arg1->unkC = 0.1f;
     arg1->unk8 = 0.5f;
     arg1->unk4 = 250.0f;
     arg1++;
-    arg1->unk0 = 1;
+    arg1->flags = 1;
     arg1->unk10 = 0.9f;
     arg1->unkC = 0.1f;
     arg1->unk8 = 0.5f;
     arg1->unk4 = 60.0f;
     arg1++;
-    arg1->unk0 = 1;
+    arg1->flags = 1;
     arg1->unk10 = 0.9f;
     arg1->unkC = 0.1f;
     arg1->unk8 = 0.5f;
@@ -3422,8 +3414,8 @@ static void func_ovl14_01_800431F8(UnkStructA *obj) {
 }
 
 
-void func_ovl14_01_80043010(UnkStructA **arg0, Link_ovl14_01 *arg1) {
-    Link_ovl14_01 *l;
+void func_ovl14_01_80043010(UnkStructA **arg0, Step3C *arg1) {
+    Step3C *l;
 
     if (arg1 == D_ovl14_01_8004D560) {
         if (D_ovl14_01_8004D54C == 0) {
@@ -3432,19 +3424,19 @@ void func_ovl14_01_80043010(UnkStructA **arg0, Link_ovl14_01 *arg1) {
     } else if (D_ovl14_01_8004D550 == 0) {
         return;
     }
-    arg1->unk0 = 2;
+    arg1->flags = 2;
     arg1->unk10 = 0.0f;
     arg1->unkC = 0.1f;
     arg1->unk8 = 0.0f;
     arg1->unk4 = 250.0f;
     arg1++;
-    arg1->unk0 = 2;
+    arg1->flags = 2;
     arg1->unk10 = 0.0f;
     arg1->unkC = 0.0f;
     arg1->unk8 = 0.0f;
     arg1->unk4 = 60.0f;
     arg1++;
-    arg1->unk0 = 0x10002;
+    arg1->flags = 0x10002;
     arg1->unk10 = 0.9f;
     arg1->unkC = 0.3f;
     arg1->unk8 = 0.01f;

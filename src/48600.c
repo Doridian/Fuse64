@@ -152,15 +152,6 @@ typedef struct {
     f32 h;
 } Ball;
 
-/* A path step: flags (0x80000000 wait, 0xF0000 facing, 0xFFFF mode). */
-typedef struct Step3C {
-    /* 0x00 */ s32 flags;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-} Step3C;
-
 void func_8022946C(void *, s32);
 void * func_8022A328(void *, s32, s32, s32, s32);
 int func_8023369C(f32, f32, f32);

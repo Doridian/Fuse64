@@ -51,14 +51,6 @@ typedef struct {
     PORT_UP(u32) w1;
 } Gfx_ovl13_02;
 
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-} Link_ovl13_02;
-
 /* A camera move for ZeroJump 0x170B: a list of steps linked both ways. */
 typedef struct Move_ovl13_02 {
     /* 0x00 */ s32 unk0;
@@ -136,7 +128,7 @@ void func_ovl13_02_8004CB90(f32 *, f32 *); /* 0x1804 */
 f32 func_ovl13_02_8004CBA0(f32 *, f32 *); /* 0x1806 */ /* also: f32 (Vec3f *, Vec3f *) x1 */
 s32 func_ovl13_02_8004CBA8(UnkStructA *, s32); /* 0x1807 */ /* also: s32 (Obj_0D01 *, s32) x1; s32 (Obj_0D02 *, s32) x1; s32 (Obj_0D03 *, s32) x1 */
 void func_ovl13_02_8004CBC8(UnkStructA *, s32); /* 0x180B */ /* also: void (Obj_0D02 *, s32) x1; void (Obj_0D03 *, s32) x1; void (Obj05 *, s32) x1 */
-void func_ovl13_02_8004CBE0(UnkStructA *, UnkStructA *, Link_ovl13_02 *, s32); /* 0x180E */
+void func_ovl13_02_8004CBE0(UnkStructA *, UnkStructA *, Step3C *, s32); /* 0x180E */
 void func_ovl13_02_8004CBF8(UnkStructA *, s32); /* 0x1811 */ /* also: void (Obj *, s32) x1; void (Obj02 *, s32) x1; void (Obj03 *, s32) x1 */
 void func_ovl13_02_8004CC00(UnkStructA *, s32); /* 0x1812 */ /* also: void (Obj *, s32) x1; void (Obj02 *, s32) x1; void (Obj03 *, s32) x1 */
 void func_ovl13_02_8004CC10(UnkStructA *); /* 0x1814 */ /* also: void (Obj *) x1; void (Obj02 *) x1; void (Obj03 *) x1 */
@@ -1176,7 +1168,7 @@ void func_ovl13_02_80049F68(void) {
     i = 0;
     D_ovl13_02_8004DE50[i] = func_ovl13_02_8004CC20(0x177, 0, 0xD0, NULL);
     func_ovl13_02_80049F1C(D_ovl13_02_8004DE50[i]);
-    func_ovl13_02_8004CBE0(D_ovl13_02_8004DE50[7], D_ovl13_02_8004DE50[i], (Link_ovl13_02 *) &D_ovl13_02_8004DEB0, 0x150);
+    func_ovl13_02_8004CBE0(D_ovl13_02_8004DE50[7], D_ovl13_02_8004DE50[i], (Step3C *) &D_ovl13_02_8004DEB0, 0x150);
     func_ovl13_02_8004CBF8(D_ovl13_02_8004DE50[i], 0x500000);
     D_ovl13_02_8004DE50[i]->unk4C = 0.0f;
     D_ovl13_02_8004DE50[i]->unk50 = 40.0f;
@@ -1184,27 +1176,27 @@ void func_ovl13_02_80049F68(void) {
     i++;
     D_ovl13_02_8004DE50[i] = func_ovl13_02_8004CC20(0x177, 0, 0xD0, D_ovl13_02_8004DE50[7]);
     func_ovl13_02_80049F1C(D_ovl13_02_8004DE50[i]);
-    func_ovl13_02_8004CBE0(D_ovl13_02_8004DE50[i - 1], D_ovl13_02_8004DE50[i], (Link_ovl13_02 *) &D_ovl13_02_8004DEB0, 0x150);
+    func_ovl13_02_8004CBE0(D_ovl13_02_8004DE50[i - 1], D_ovl13_02_8004DE50[i], (Step3C *) &D_ovl13_02_8004DEB0, 0x150);
     i++;
     D_ovl13_02_8004DE50[i] = func_ovl13_02_8004CC20(0x178, 0, 0xD0, NULL);
     func_ovl13_02_80049F1C(D_ovl13_02_8004DE50[i]);
-    func_ovl13_02_8004CBE0(D_ovl13_02_8004DE50[i - 1], D_ovl13_02_8004DE50[i], (Link_ovl13_02 *) &D_ovl13_02_8004DE98, 0x150);
+    func_ovl13_02_8004CBE0(D_ovl13_02_8004DE50[i - 1], D_ovl13_02_8004DE50[i], (Step3C *) &D_ovl13_02_8004DE98, 0x150);
     i++;
     D_ovl13_02_8004DE50[i] = func_ovl13_02_8004CC20(0x178, 0, 0xD0, NULL);
     func_ovl13_02_80049F1C(D_ovl13_02_8004DE50[i]);
-    func_ovl13_02_8004CBE0(D_ovl13_02_8004DE50[i - 1], D_ovl13_02_8004DE50[i], (Link_ovl13_02 *) &D_ovl13_02_8004DE98, 0x150);
+    func_ovl13_02_8004CBE0(D_ovl13_02_8004DE50[i - 1], D_ovl13_02_8004DE50[i], (Step3C *) &D_ovl13_02_8004DE98, 0x150);
     i++;
     D_ovl13_02_8004DE50[i] = func_ovl13_02_8004CC20(0x17E, 0, 0xD0, NULL);
     func_ovl13_02_80049F1C(D_ovl13_02_8004DE50[i]);
-    func_ovl13_02_8004CBE0(D_ovl13_02_8004DE50[i - 1], D_ovl13_02_8004DE50[i], (Link_ovl13_02 *) &D_ovl13_02_8004DE80, 0x150);
+    func_ovl13_02_8004CBE0(D_ovl13_02_8004DE50[i - 1], D_ovl13_02_8004DE50[i], (Step3C *) &D_ovl13_02_8004DE80, 0x150);
     i++;
     D_ovl13_02_8004DE50[i] = func_ovl13_02_8004CC20(0x17C, 0, 0xD0, NULL);
     func_ovl13_02_80049F1C(D_ovl13_02_8004DE50[i]);
-    func_ovl13_02_8004CBE0(D_ovl13_02_8004DE50[i - 1], D_ovl13_02_8004DE50[i], (Link_ovl13_02 *) &D_ovl13_02_8004DE80, 0x150);
+    func_ovl13_02_8004CBE0(D_ovl13_02_8004DE50[i - 1], D_ovl13_02_8004DE50[i], (Step3C *) &D_ovl13_02_8004DE80, 0x150);
     i++;
     D_ovl13_02_8004DE50[i] = func_ovl13_02_8004CC20(0x180, 0, 0x30, NULL);
     func_ovl13_02_80049F1C(D_ovl13_02_8004DE50[i]);
-    func_ovl13_02_8004CBE0(D_ovl13_02_8004DE50[i - 1], D_ovl13_02_8004DE50[i], (Link_ovl13_02 *) &D_ovl13_02_8004DE80, 0x150);
+    func_ovl13_02_8004CBE0(D_ovl13_02_8004DE50[i - 1], D_ovl13_02_8004DE50[i], (Step3C *) &D_ovl13_02_8004DE80, 0x150);
     func_ovl13_02_8004CBC8(D_ovl13_02_8004DE50[i], 0x30);
     func_ovl13_02_8004CBF8(D_ovl13_02_8004DE50[i], 0x8000);
     D_ovl13_02_8004DE50[i]->unk38 = 0;

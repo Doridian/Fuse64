@@ -42,7 +42,7 @@ static void func_ovl0D_06_80044414(Ent_0D06 *e) {
     s32 x3;
     s32 z3;
     s32 len;
-    Obj40_0D06 *p;
+    UnkStructA_40 *p;
 
     p = e->obj->unk40;
     func_ovl0D_06_80045DE0(p->unk10, p->unk14, p->unk18, grid, 0);

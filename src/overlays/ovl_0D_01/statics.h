@@ -35,7 +35,7 @@ static void func_ovl0D_01_800444E0(Ent_0D01 *e) {
     s32 x3;
     s32 z3;
     s32 len;
-    Obj40_0D01 *p;
+    UnkStructA_40 *p;
 
     p = e->obj->unk40;
     func_ovl0D_01_800462C0(p->unk10, p->unk14, p->unk18, grid, 0);

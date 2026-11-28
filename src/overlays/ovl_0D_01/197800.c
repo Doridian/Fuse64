@@ -52,34 +52,6 @@
  */
 
 typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (structs.h's UnkStructA_40_48_4: its animation) */
-    /* 0x04 */ f32 unk4;
-} Anim2_0D01;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[4];
-    /* 0x04 */ Anim2_0D01 *unk4;
-} Anim_0D01;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ s16 unk34;
-    /* 0x36 */ s16 unk36;
-    /* 0x38 */ PORT_RET(u8 unk38[0x10];, u8 unk38[0x4]; void *unk3C; void *unk40; void *unk44;)
-    /* 0x48 */ Anim_0D01 *unk48;
-} Obj40_0D01;
-
-typedef struct {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ s32 unk8;
     /* 0x0C */ s32 unkC;
@@ -92,7 +64,7 @@ typedef struct {
     /* 0x34 */ f32 unk34;
     /* 0x38 */ f32 unk38;
     /* 0x3C */ PORT_RET(u8 unk3C[4];, void *unk3C;)
-    /* 0x40 */ Obj40_0D01 *unk40;
+    /* 0x40 */ UnkStructA_40 *unk40;
 } Obj_0D01;
 
 /* a model placed on the stage (as in ovl_0D_04 and ovl_0D_06) */
@@ -176,9 +148,9 @@ void func_ovl0D_01_80046480(s32); /* 0x100D */
 void func_ovl0D_01_80046490(s32); /* 0x100F */
 void func_ovl0D_01_80046518(void); /* 0x1020 */
 void func_ovl0D_01_80046950(UnkStructA_40 *); /* 0x1501 */
-void func_ovl0D_01_80046990(Obj40_0D01 *, s32, s32); /* 0x1509 */
-f32 func_ovl0D_01_800469A8(Obj40_0D01 *, s32); /* 0x150C */
-s32 func_ovl0D_01_800469B0(Obj40_0D01 *, s32, s32, s32, s32, s32); /* 0x150D */
+void func_ovl0D_01_80046990(UnkStructA_40 *, s32, s32); /* 0x1509 */
+f32 func_ovl0D_01_800469A8(UnkStructA_40 *, s32); /* 0x150C */
+s32 func_ovl0D_01_800469B0(UnkStructA_40 *, s32, s32, s32, s32, s32); /* 0x150D */
 void func_ovl0D_01_800469B8(s32); /* 0x150E */
 void func_ovl0D_01_800469D0(s32, s32); /* 0x1511 */
 void func_ovl0D_01_80046AA8(f32, f32, f32); /* 0x1704 */
@@ -1207,7 +1179,7 @@ void func_ovl0D_01_800439CC(void) {
 
 static void func_ovl0D_01_80043944(Ent_0D01 *e) {
     s32 pos[6];
-    Obj40_0D01 *p;
+    UnkStructA_40 *p;
 
     p = e->obj->unk40;
     func_ovl0D_01_800462C0(p->unk10, p->unk14, p->unk18, pos, 0);

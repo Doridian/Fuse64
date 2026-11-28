@@ -15,44 +15,12 @@
  */
 
 typedef struct {
-    /* 0x00 */ PORT_IP(s32) unk0; /* (structs.h's UnkStructA_40_48_4: an animation) */
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ PORT_IP(s32) unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ s32 unk14;
-} UnkStruct_ovl0A_05_Anim2;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[4];
-    /* 0x04 */ UnkStruct_ovl0A_05_Anim2 *unk4;
-} UnkStruct_ovl0A_05_Anim;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ s16 unk34;
-    /* 0x36 */ s16 unk36;
-    /* 0x38 */ PORT_RET(u8 unk38[0x10];, u8 unk38[0x4]; void *unk3C; void *unk40; void *unk44;)
-    /* 0x48 */ UnkStruct_ovl0A_05_Anim *unk48;
-} UnkStruct_ovl0A_05_80048CA0_Inner;
-
-typedef struct {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ s32 unk8;
     /* 0x0C */ PORT_RET(u8 unkC[0x1C];, u8 unkC[0x14]; void *unk20; void *unk24;)
     /* 0x28 */ s32 unk28;
     /* 0x2C */ PORT_RET(u8 unk2C[0x14];, u8 unk2C[0x10]; void *unk3C;)
-    /* 0x40 */ UnkStruct_ovl0A_05_80048CA0_Inner *unk40;
+    /* 0x40 */ UnkStructA_40 *unk40;
     /* 0x44 */ PORT_IP(s32) unk44;
     /* 0x48 */ u8 unk48[4];
     /* 0x4C */ f32 unk4C;
@@ -120,10 +88,10 @@ UnkStruct_ovl0A_05_80048CA0 *func_ovl0A_05_800484B8(s32); /* 0x1012 */
 void func_ovl0A_05_80048508(s32, s32); /* 0x101C */
 UnkStruct_ovl0A_05_80048958 *func_ovl0A_05_80048958(s32, s32); /* 0x1500 */
 void func_ovl0A_05_80048960(UnkStruct_ovl0A_05_80048958 *); /* 0x1501 */
-void func_ovl0A_05_80048970(UnkStruct_ovl0A_05_80048CA0_Inner *, s32); /* 0x1503 */
-void func_ovl0A_05_80048998(UnkStruct_ovl0A_05_80048CA0_Inner *, s32); /* 0x1508 */
-void func_ovl0A_05_800489A0(UnkStruct_ovl0A_05_80048CA0_Inner *, s32, s32); /* 0x1509 */
-f32 func_ovl0A_05_800489B8(UnkStruct_ovl0A_05_80048CA0_Inner *, s32); /* 0x150C */
+void func_ovl0A_05_80048970(UnkStructA_40 *, s32); /* 0x1503 */
+void func_ovl0A_05_80048998(UnkStructA_40 *, s32); /* 0x1508 */
+void func_ovl0A_05_800489A0(UnkStructA_40 *, s32, s32); /* 0x1509 */
+f32 func_ovl0A_05_800489B8(UnkStructA_40 *, s32); /* 0x150C */
 void func_ovl0A_05_80048AA8(s32); /* 0x1702 */
 void func_ovl0A_05_80048AB8(f32, f32, f32); /* 0x1704 */
 void func_ovl0A_05_80048AC8(f32, f32, f32); /* 0x1706 */
@@ -1610,12 +1578,12 @@ void func_ovl0A_05_8004333C(void) {
     D_ovl0A_05_80049964->unk40->unk48->unk4->unk8 |= 0x20;
     D_ovl0A_05_80049964->unk40->unk48->unk4->unk8 &= ~0x40;
     func_ovl0A_05_800489A0(D_ovl0A_05_80049964->unk40, 6, 1);
-    D_ovl0A_05_80049964->unk40->unk48->unk4->unk14 |= 0x20;
-    D_ovl0A_05_80049964->unk40->unk48->unk4->unk14 &= ~0x40;
+    D_ovl0A_05_80049964->unk40->unk48->unk4[1].unk8 |= 0x20;
+    D_ovl0A_05_80049964->unk40->unk48->unk4[1].unk8 &= ~0x40;
     len = func_ovl0A_05_800489B8(D_ovl0A_05_80049964->unk40, 1);
     while (!(D_ovl0A_05_80049964->unk40->unk48->unk4->unk8 & 0x40)) {
-        if (len * 0.25f <= D_ovl0A_05_80049964->unk40->unk48->unk4->unk10) {
-            D_ovl0A_05_80049964->unk40->unk48->unk4->unk14 |= 0x40;
+        if (len * 0.25f <= D_ovl0A_05_80049964->unk40->unk48->unk4[1].unk4) {
+            D_ovl0A_05_80049964->unk40->unk48->unk4[1].unk8 |= 0x40;
         }
         func_ovl0A_05_80048E10();
     }

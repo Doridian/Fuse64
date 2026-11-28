@@ -57,44 +57,12 @@
 #include "gfx.h"
 
 typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;)
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ PORT_RET(u8 unkC[4];, void *unkC;)
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ s32 unk14;
-} UnkStruct_ovl0A_01_Anim2;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[4];
-    /* 0x04 */ UnkStruct_ovl0A_01_Anim2 *unk4;
-} UnkStruct_ovl0A_01_Anim;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ s16 unk34;
-    /* 0x36 */ s16 unk36;
-    /* 0x38 */ PORT_RET(u8 unk38[0x10];, u8 unk38[0x4]; void *unk3C; void *unk40; void *unk44;)
-    /* 0x48 */ UnkStruct_ovl0A_01_Anim *unk48;
-} Inner;
-
-typedef struct {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ s32 unk8;
     /* 0x0C */ PORT_RET(u8 unkC[0x1C];, u8 unkC[0x14]; void *unk20; void *unk24;)
     /* 0x28 */ s32 unk28;
     /* 0x2C */ PORT_RET(u8 unk2C[0x14];, u8 unk2C[0x10]; void *unk3C;)
-    /* 0x40 */ Inner *unk40;
+    /* 0x40 */ UnkStructA_40 *unk40;
     /* 0x44 */ PORT_RET(u8 unk44[8];, void *unk44; u8 unk48[0x4];)
     /* 0x4C */ f32 unk4C;
     /* 0x50 */ f32 unk50;
@@ -118,7 +86,7 @@ typedef struct {
 } UnkStruct_ovl0A_01_Entry;
 
 typedef struct {
-    /* 0x00 */ Inner *unk0;
+    /* 0x00 */ UnkStructA_40 *unk0;
     /* 0x04 */ s32 *unk4[4];
     /* 0x14 */ s32 unk14;
     /* 0x18 */ void (*unk18)(s32, Gfx_80225840 **);
@@ -137,15 +105,15 @@ void func_ovl0A_01_80047530(s32, s32, s32); /* 0xF00 */
 s32 func_ovl0A_01_80047538(void); /* 0xF01 */
 s32 * func_ovl0A_01_80047588(void); /* 0xF0B */
 void func_ovl0A_01_800475A0(s32); /* 0xF0E */
-void func_ovl0A_01_80047B20(Inner *); /* 0x1501 */
-void func_ovl0A_01_80047B30(Inner *, s32); /* 0x1503 */
-void func_ovl0A_01_80047B40(Inner *, s32); /* 0x1505 */
-void func_ovl0A_01_80047B48(Inner *, s32, s32, s32); /* 0x1506 */
-void func_ovl0A_01_80047B58(Inner *, s32); /* 0x1508 */
-void func_ovl0A_01_80047B60(Inner *, s32, s32); /* 0x1509 */
-f32 func_ovl0A_01_80047B78(Inner *, s32); /* 0x150C */
-Inner *func_ovl0A_01_80047B98(void (*)(s32, Gfx_80225840 **), s32); /* 0x1510 */
-s32 func_ovl0A_01_80047BA8(Inner *, s32); /* 0x1512 */
+void func_ovl0A_01_80047B20(UnkStructA_40 *); /* 0x1501 */
+void func_ovl0A_01_80047B30(UnkStructA_40 *, s32); /* 0x1503 */
+void func_ovl0A_01_80047B40(UnkStructA_40 *, s32); /* 0x1505 */
+void func_ovl0A_01_80047B48(UnkStructA_40 *, s32, s32, s32); /* 0x1506 */
+void func_ovl0A_01_80047B58(UnkStructA_40 *, s32); /* 0x1508 */
+void func_ovl0A_01_80047B60(UnkStructA_40 *, s32, s32); /* 0x1509 */
+f32 func_ovl0A_01_80047B78(UnkStructA_40 *, s32); /* 0x150C */
+UnkStructA_40 *func_ovl0A_01_80047B98(void (*)(s32, Gfx_80225840 **), s32); /* 0x1510 */
+s32 func_ovl0A_01_80047BA8(UnkStructA_40 *, s32); /* 0x1512 */
 void func_ovl0A_01_80047BB0(s32, s32, s32); /* 0x1513 */
 void func_ovl0A_01_80047BC0(s32, s32, s32); /* 0x1515 */
 void func_ovl0A_01_80047BC8(s32, s32, s32); /* 0x1516 */
@@ -178,7 +146,7 @@ void func_ovl0A_01_800483D8(s32, f32, f32, f32, PORT_IP(s32)); /* 0x2600 */
 void func_ovl0A_01_800483E0(s32, f32 *, s32); /* 0x2601 */
 void func_ovl0A_01_80048510(s32); /* 0x2B00 */
 s32 func_ovl0A_01_80048530(s32, f32, f32, f32); /* 0x2B04 */
-void func_ovl0A_01_800485A0(Inner *, s32, s32, s32, f32); /* 0x2C03 */
+void func_ovl0A_01_800485A0(UnkStructA_40 *, s32, s32, s32, f32); /* 0x2C03 */
 void func_ovl0A_01_80048688(void); /* 0x3000 */
 void func_ovl0A_01_80048690(void); /* 0x3001 */
 void func_ovl0A_01_800486F8(void); /* 0x310A */
@@ -995,7 +963,7 @@ void func_ovl0A_01_80045288(void) {
                     func_ovl0A_01_80047B78(D_ovl0A_01_800488D8[2].obj->unk40, 0) - 0.1f;
                 func_ovl0A_01_80047B60(D_ovl0A_01_800488D8[2].obj->unk40, 0, 1);
                 D_ovl0A_01_800488D8[2].obj->unk40->unk48->unk4->unk8 |= 0x60;
-                D_ovl0A_01_800488D8[2].obj->unk40->unk48->unk4->unk14 |= 0x20;
+                D_ovl0A_01_800488D8[2].obj->unk40->unk48->unk4[1].unk8 |= 0x20;
             }
             D_ovl0A_01_800488D8[2].obj->unk40->unk10 += 8.533334f;
             D_ovl0A_01_800488D8[2].obj->unk40->unk18 += -1.3333335f;
@@ -1051,7 +1019,7 @@ void func_ovl0A_01_80044F3C(void) {
     func_ovl0A_01_80044A2C();
     v = 0;
     pos[0] = 200.0f;
-#line 1030 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 998 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     pos[2] = 900.0f;
     pos[1] = v;
     played = 0;
@@ -1061,7 +1029,7 @@ void func_ovl0A_01_80044F3C(void) {
     D_ovl0A_01_800488D8[2].obj->unk40->unk48->unk4->unk4 = 0.0f;
     func_ovl0A_01_80047E38(D_ovl0A_01_800488D8[2].obj, 0x04000000);
     D_ovl0A_01_800488D8[2].obj->unk40->unk48->unk4->unk8 |= 0x20;
-    D_ovl0A_01_800488D8[2].obj->unk40->unk48->unk4->unk14 |= 0x20;
+    D_ovl0A_01_800488D8[2].obj->unk40->unk48->unk4[1].unk8 |= 0x20;
     for (i = 0, k = 0; i != 120; i++, k++) {
         if (k >= 15) {
             if (!played) {
@@ -1171,7 +1139,7 @@ static void func_ovl0A_01_80044A2C(void) {
             fall = 3;
             if (i & 1) {
                 D_ovl0A_01_800488D8[5].obj->unk40->unk48->unk4->unk4 *= 0.9f;
-                D_ovl0A_01_800488D8[5].obj->unk40->unk48->unk4->unk10 *= 0.9f;
+                D_ovl0A_01_800488D8[5].obj->unk40->unk48->unk4[1].unk4 *= 0.9f;
             }
             func_ovl0A_01_80044798(speed, &fall);
             speed += 0.1f;
@@ -1203,7 +1171,7 @@ static void func_ovl0A_01_80044968(s32 frame, f32 dx, f32 dy) {
 }
 
 static void func_ovl0A_01_80044798(f32 speed, f32 *fall) {
-    Inner *m;
+    UnkStructA_40 *m;
 
     func_ovl0A_01_80044790();
     if (fall == NULL) { DEBUG_PRINT(("fall == NULL\n")); } /* a compiled-out debug check (any test of fall matches: guess) */
@@ -1340,15 +1308,15 @@ void func_ovl0A_01_800442B4(void) {
         } while (++j < 1370);
     }
     v = j;
-#line 1314 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1282 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     func_ovl0A_01_80047530(0x1A, 0x12, 4);
     func_ovl0A_01_80047F98();
 }
 
 static void func_ovl0A_01_8004428C(void) {
-#line 1322 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1290 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     D_ovl0A_01_80048A70 = 0;
-#line 1321 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1289 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     D_ovl0A_01_80048A64 = func_ovl0A_01_80047F88(func_ovl0A_01_80045EA0, NULL, 0, 0, 0x130);
 }
 
@@ -1360,7 +1328,7 @@ static void func_ovl0A_01_800442A4(void) {
     func_ovl0A_01_80047E38(D_ovl0A_01_80048770[4].obj, 0x80000);
 }
 
-#line 1296 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1264 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 static void func_ovl0A_01_800442AC(void) {
     D_ovl0A_01_80048A1C = 0.0f;
     D_ovl0A_01_80048A20 = 0.0f;
@@ -1613,9 +1581,9 @@ static void func_ovl0A_01_80043380(Entry *tbl, s32 n) {
     Entry *e;
 
     for (i = 0; i < n; i++) {
-#line 1581 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1549 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
         e = tbl;
-#line 1580 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1548 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
         tbl->obj = func_ovl0A_01_80047E60(tbl->unk4 == 0 ? tbl->unk8 : 0x320, 0x0D000000, 0xD0, NULL);
         if (tbl->unk4 != 0) {
             func_ovl0A_01_80043378(tbl);

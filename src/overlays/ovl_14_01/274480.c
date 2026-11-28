@@ -155,10 +155,10 @@ void func_ovl14_01_8004C0A0(const char *); /* 0x100B */
 void func_ovl14_01_8004C0A8(void); /* 0x100C */
 UnkStructA * func_ovl14_01_8004C0D8(s32); /* 0x1012 */ /* also: Obj02 * (s32) x1; Obj03 * (s32) x1; UnkStruct_ovl0A_05_80048CA0 *(s32) x1 */
 void func_ovl14_01_8004C138(s32); /* 0x101E */
-void func_ovl14_01_8004C5A0(UnkStructA_40 *, s32); /* 0x1505 */ /* also: void (Obj *, s32) x1; void (UnkStruct_ovl0A_02_80047A20_Inner *, s32) x1; void (UnkStruct_ovl0A_03_80047E20_Inner *, s32) x1 */
-void func_ovl14_01_8004C5A8(UnkStructA_40 *, s32, s32, s32); /* 0x1506 */ /* also: void (Obj *, s32, s32, s32) x1; void (UnkStruct_ovl0A_02_80047A20_Inner *, s32, s32, s32) x1; void (UnkStruct_ovl0A_03_80047E20_Inner *, s32, s32, s32) x1 */
-void func_ovl14_01_8004C5C0(UnkStructA_40 *, s32, s32); /* 0x1509 */ /* also: void (Obj *, s32, s32) x1; void (UnkStruct_ovl0A_02_80047A20_Inner *, s32, s32) x1; void (UnkStruct_ovl0A_03_80047E20_Inner *, s32, s32) x1 */
-f32 func_ovl14_01_8004C5D8(UnkStructA_40 *, s32); /* 0x150C */ /* also: f32 (UnkStruct_ovl0A_02_80047A20_Inner *, s32) x1; f32 (UnkStruct_ovl0A_03_80047E20_Inner *, s32) x1; f32 (UnkStruct_ovl0A_05_80048CA0_Inner *, s32) x1 */
+void func_ovl14_01_8004C5A0(UnkStructA_40 *, s32); /* 0x1505 */ /* also: void (Obj *, s32) x1; void (UnkStructA_40 *, s32) x1; void (UnkStructA_40 *, s32) x1 */
+void func_ovl14_01_8004C5A8(UnkStructA_40 *, s32, s32, s32); /* 0x1506 */ /* also: void (Obj *, s32, s32, s32) x1; void (UnkStructA_40 *, s32, s32, s32) x1; void (UnkStructA_40 *, s32, s32, s32) x1 */
+void func_ovl14_01_8004C5C0(UnkStructA_40 *, s32, s32); /* 0x1509 */ /* also: void (Obj *, s32, s32) x1; void (UnkStructA_40 *, s32, s32) x1; void (UnkStructA_40 *, s32, s32) x1 */
+f32 func_ovl14_01_8004C5D8(UnkStructA_40 *, s32); /* 0x150C */ /* also: f32 (UnkStructA_40 *, s32) x1; f32 (UnkStructA_40 *, s32) x1; f32 (UnkStructA_40 *, s32) x1 */
 void func_ovl14_01_8004C6D8(f32, f32, f32); /* 0x1704 */
 void func_ovl14_01_8004C6F8(f32, f32, f32); /* 0x1708 */
 void func_ovl14_01_8004C700(f32 *, f32 *, f32 *); /* 0x1709 */

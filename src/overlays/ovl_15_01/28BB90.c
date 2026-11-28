@@ -133,11 +133,11 @@ void func_ovl15_01_8004CBC8(s32); /* 0x1008 */
 void func_ovl15_01_8004CBE0(const char *); /* 0x100B */
 UnkStructA * func_ovl15_01_8004CC18(s32); /* 0x1012 */ /* also: UnkStructA * (s32) x1; UnkStructA * (s32) x1; UnkStructA *(s32) x1 */
 void func_ovl15_01_8004CC78(s32); /* 0x101E */
-void func_ovl15_01_8004D0E0(UnkStructA_40 *, s32); /* 0x1505 */ /* also: void (Obj *, s32) x1; void (UnkStruct_ovl0A_02_80047A20_Inner *, s32) x1; void (UnkStruct_ovl0A_03_80047E20_Inner *, s32) x1 */
-void func_ovl15_01_8004D0E8(UnkStructA_40 *, s32, s32, s32); /* 0x1506 */ /* also: void (Obj *, s32, s32, s32) x1; void (UnkStruct_ovl0A_02_80047A20_Inner *, s32, s32, s32) x1; void (UnkStruct_ovl0A_03_80047E20_Inner *, s32, s32, s32) x1 */
-void func_ovl15_01_8004D100(UnkStructA_40 *, s32, s32); /* 0x1509 */ /* also: void (Obj *, s32, s32) x1; void (UnkStruct_ovl0A_02_80047A20_Inner *, s32, s32) x1; void (UnkStruct_ovl0A_03_80047E20_Inner *, s32, s32) x1 */
-f32 func_ovl15_01_8004D118(UnkStructA_40 *, s32); /* 0x150C */ /* also: f32 (UnkStruct_ovl0A_02_80047A20_Inner *, s32) x1; f32 (UnkStruct_ovl0A_03_80047E20_Inner *, s32) x1; f32 (UnkStruct_ovl0A_05_80048CA0_Inner *, s32) x1 */
-void func_ovl15_01_8004D130(UnkStructA_40 *, s32, s32); /* 0x150F */ /* also: void (UnkStruct_ovl0A_03_80047E20_Inner *, s32, s32) x1 */
+void func_ovl15_01_8004D0E0(UnkStructA_40 *, s32); /* 0x1505 */ /* also: void (Obj *, s32) x1; void (UnkStructA_40 *, s32) x1; void (UnkStructA_40 *, s32) x1 */
+void func_ovl15_01_8004D0E8(UnkStructA_40 *, s32, s32, s32); /* 0x1506 */ /* also: void (Obj *, s32, s32, s32) x1; void (UnkStructA_40 *, s32, s32, s32) x1; void (UnkStructA_40 *, s32, s32, s32) x1 */
+void func_ovl15_01_8004D100(UnkStructA_40 *, s32, s32); /* 0x1509 */ /* also: void (Obj *, s32, s32) x1; void (UnkStructA_40 *, s32, s32) x1; void (UnkStructA_40 *, s32, s32) x1 */
+f32 func_ovl15_01_8004D118(UnkStructA_40 *, s32); /* 0x150C */ /* also: f32 (UnkStructA_40 *, s32) x1; f32 (UnkStructA_40 *, s32) x1; f32 (UnkStructA_40 *, s32) x1 */
+void func_ovl15_01_8004D130(UnkStructA_40 *, s32, s32); /* 0x150F */ /* also: void (UnkStructA_40 *, s32, s32) x1 */
 void func_ovl15_01_8004D208(s32); /* 0x1702 */
 void func_ovl15_01_8004D218(f32, f32, f32); /* 0x1704 */
 void func_ovl15_01_8004D228(f32, f32, f32); /* 0x1706 */

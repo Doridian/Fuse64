@@ -16,40 +16,12 @@
  */
 
 typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (structs.h's UnkStructA_40_48_4: its animation) */
-    /* 0x04 */ f32 unk4;
-} UnkStruct_ovl0A_04_Anim2;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[4];
-    /* 0x04 */ UnkStruct_ovl0A_04_Anim2 *unk4;
-} UnkStruct_ovl0A_04_Anim;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ s16 unk34;
-    /* 0x36 */ s16 unk36;
-    /* 0x38 */ PORT_RET(u8 unk38[0x10];, u8 unk38[0x4]; void *unk3C; void *unk40; void *unk44;)
-    /* 0x48 */ UnkStruct_ovl0A_04_Anim *unk48;
-} UnkStruct_ovl0A_04_80045D30_Inner;
-
-typedef struct {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ s32 unk8;
     /* 0x0C */ PORT_RET(u8 unkC[0x1C];, u8 unkC[0x14]; void *unk20; void *unk24;) /* (structs.h's UnkStructA: pointers at 0x20, 0x24, 0x3C, 0x40, 0x44) */
     /* 0x28 */ s32 unk28;
     /* 0x2C */ PORT_RET(u8 unk2C[0x14];, u8 unk2C[0x10]; void *unk3C;)
-    /* 0x40 */ UnkStruct_ovl0A_04_80045D30_Inner *unk40;
+    /* 0x40 */ UnkStructA_40 *unk40;
     /* 0x44 */ PORT_RET(u8 unk44[8];, void *unk44; u8 unk48[4];)
     /* 0x4C */ f32 unk4C;
     /* 0x50 */ f32 unk50;
@@ -74,12 +46,12 @@ void func_ovl0A_04_80045540(s32, s32, s32, s32);
 Obj04 *func_ovl0A_04_80045548(s32);
 void func_ovl0A_04_80045578(s32);
 void func_ovl0A_04_80045590(s32, s32);
-void func_ovl0A_04_80045A10(UnkStruct_ovl0A_04_80045D30_Inner *, s32);
-void func_ovl0A_04_80045A18(UnkStruct_ovl0A_04_80045D30_Inner *, s32, s32, s32);
-void func_ovl0A_04_80045A30(UnkStruct_ovl0A_04_80045D30_Inner *, s32, s32);
-f32 func_ovl0A_04_80045A48(UnkStruct_ovl0A_04_80045D30_Inner *, s32);
-void func_ovl0A_04_80045A60(UnkStruct_ovl0A_04_80045D30_Inner *, s32, s32);
-s32 func_ovl0A_04_80045A78(UnkStruct_ovl0A_04_80045D30_Inner *, s32);
+void func_ovl0A_04_80045A10(UnkStructA_40 *, s32);
+void func_ovl0A_04_80045A18(UnkStructA_40 *, s32, s32, s32);
+void func_ovl0A_04_80045A30(UnkStructA_40 *, s32, s32);
+f32 func_ovl0A_04_80045A48(UnkStructA_40 *, s32);
+void func_ovl0A_04_80045A60(UnkStructA_40 *, s32, s32);
+s32 func_ovl0A_04_80045A78(UnkStructA_40 *, s32);
 void func_ovl0A_04_80045A80(s32, s32, s32);
 void func_ovl0A_04_80045B28(s32);
 void func_ovl0A_04_80045B38(s32);

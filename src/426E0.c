@@ -175,14 +175,6 @@ typedef struct UnkTexSlots {
 #define gDPSetFogColor(pkt, r, g, b, a) \
     gW(pkt, 0xF8000000, _SHIFTL(r, 24, 8) | _SHIFTL(g, 16, 8) | _SHIFTL(b, 8, 8) | _SHIFTL(a, 0, 8))
 
-/* The texture owners (D_80098C18, 5 of them). */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ UnkStructA_40 *unk4;
-    /* 0x08 */ void **unk8;
-    /* 0x0C */ s32 *unkC;
-} UnkTexOwner; /* size 0x10 */
-
 /* A vertex (0x10 bytes); unk8/unkA are its texture coordinates. */
 typedef struct {
     /* 0x00 */ s16 unk0[3];

@@ -61,13 +61,6 @@ typedef struct {
     /* 0x08 */ s32 dl;
 } MeshEntry; /* size 0xC; entry n is at the base + 0xC * (n + 1) */
 
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ void *unk4;
-    /* 0x08 */ PORT_IP(s32) *bases;
-    /* 0x0C */ s32 *meshes;
-} MeshOverride; /* size 0x10 */
-
 void guMtxIdentF(f32 mf[4][4]);
 void guMtxCatF(f32 mf[4][4], f32 nf[4][4], f32 res[4][4]);
 void guMtxF2L(f32 mf[4][4], void *m);
@@ -75,7 +68,7 @@ void func_8029CA80(f32 m[4][4], f32, f32, f32);
 void func_8029C7A8(f32 m[4][4], f32, f32, f32);
 void func_8022928C(f32 m[4][4], f32 n[4][4]);
 
-extern MeshOverride D_80098C18[];
+extern UnkTexOwner D_80098C18[];
 extern f32 D_80098CF8[PORT_SIZE(0x200)][4][4];
 extern s32 D_800A0CF8;
 extern s32 D_8029F840;
@@ -223,9 +216,9 @@ void func_8022D58C(Gfx_80225840 **gp, PORT_IP(s32) base, s32 idx) {
     load = 0;
     pushed = 0;
     if (D_8029F840 != -1) {
-        if (D_80098C18[D_8029F840].bases[idx] != 0) {
-            base = D_80098C18[D_8029F840].bases[idx];
-            idx = D_80098C18[D_8029F840].meshes[idx];
+        if (D_80098C18[D_8029F840].unk8[idx] != NULL) {
+            base = (PORT_IP(s32)) D_80098C18[D_8029F840].unk8[idx];
+            idx = D_80098C18[D_8029F840].unkC[idx];
             if (((MeshEntry *)base)[idx + 1].type == 1U) {
                 D_8029F840 = -1;
             }

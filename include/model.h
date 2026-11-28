@@ -167,4 +167,13 @@ typedef struct UnkAnim {
     /* 0x14 */ UnkTrack *unk14;
 } UnkAnim; /* size 0x18 */
 
+/* The texture owners (D_80098C18, 5 of them): a model object and, per
+ * mesh, the file and the mesh drawn instead (47A80's func_8022D58C). */
+typedef struct {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ UnkStructA_40 *unk4;
+    /* 0x08 */ void **unk8;
+    /* 0x0C */ s32 *unkC;
+} UnkTexOwner; /* size 0x10 */
+
 #endif

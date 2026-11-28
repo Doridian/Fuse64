@@ -36,12 +36,15 @@ void port_spin_wait(void);
 #if defined(VERSION_JP)
 #define ROM_DEFAULT "baserom.jp.z64"
 #define ROM_CODE "NBMJ"
+#define ROM_NAME "Baku Bomberman (Japan)"
 #elif defined(VERSION_EU)
 #define ROM_DEFAULT "baserom.eu.z64"
 #define ROM_CODE "NBMP"
+#define ROM_NAME "Bomberman 64 (Europe)"
 #else
 #define ROM_DEFAULT "baserom.us.z64"
 #define ROM_CODE "NBME"
+#define ROM_NAME "Bomberman 64 (USA)"
 #endif
 
 int host_verbose;
@@ -63,6 +66,11 @@ void host_log(const char *fmt, ...) {
     va_end(ap);
 }
 
+/* host_fatal shows its message in a box too while the ROM is found and
+   loaded with a window to come (a package started from its icon has no
+   terminal) */
+static int fatal_box;
+
 void host_fatal(const char *fmt, ...) {
     va_list ap;
     fprintf(stderr, "fuse64: ");
@@ -70,6 +78,13 @@ void host_fatal(const char *fmt, ...) {
     vfprintf(stderr, fmt, ap);
     va_end(ap);
     fprintf(stderr, "\n");
+    if (fatal_box) {
+        char msg[1024];
+        va_start(ap, fmt);
+        vsnprintf(msg, sizeof msg, fmt, ap);
+        va_end(ap);
+        host_error_box(msg);
+    }
     host_threads_dump();
     fflush(stderr);
     exit(1);
@@ -98,10 +113,49 @@ void host_rom_read(void *dst, uint32_t addr, uint32_t len) {
     port_wc_mark(dst, len, 0);
 }
 
+/* ROM to .z64's byte order (from .n64's little-endian words or .v64's
+   swapped halves); 1 if it is this build's ROM: an N64 ROM, this version's
+   game code, and the data the strip took out (host_rom_fill_check) */
+int host_rom_ours(uint8_t *r, uint32_t n, char *err, size_t errn) {
+    if (n < 0x1000) {
+        if (err)
+            snprintf(err, errn, "not a ROM");
+        return 0;
+    }
+    if (r[0] == 0x40 && r[1] == 0x12) {
+        for (uint32_t i = 0; i + 3 < n; i += 4) {
+            uint8_t a = r[i], b = r[i + 1];
+            r[i] = r[i + 3]; r[i + 1] = r[i + 2]; r[i + 2] = b; r[i + 3] = a;
+        }
+    } else if (r[0] == 0x37 && r[1] == 0x80) {
+        for (uint32_t i = 0; i + 1 < n; i += 2) {
+            uint8_t a = r[i];
+            r[i] = r[i + 1]; r[i + 1] = a;
+        }
+    }
+    if (r[0] != 0x80 || r[1] != 0x37) {
+        if (err)
+            snprintf(err, errn, "not an N64 ROM");
+        return 0;
+    }
+    if (memcmp(r + 0x3B, ROM_CODE, 4) != 0) {
+        if (err)
+            snprintf(err, errn, "game code %.4s, this port is built for %s", (const char *)r + 0x3B, ROM_CODE);
+        return 0;
+    }
+    if (!host_rom_fill_check(r, n)) {
+        if (err)
+            snprintf(err, errn, "this ROM's data isn't what this build was made from (give the %s ROM)", ROM_NAME);
+        return 0;
+    }
+    return 1;
+}
+
 static void load_rom(const char *path) {
+    char err[160];
     FILE *f = fopen(path, "rb");
     if (!f)
-        host_fatal("can't open the ROM %s (give the path of your own %s ROM)", path, ROM_CODE);
+        host_fatal("can't open the ROM %s (give the path of your own %s ROM)", path, ROM_NAME);
     fseek(f, 0, SEEK_END);
     long n = ftell(f);
     fseek(f, 0, SEEK_SET);
@@ -112,22 +166,8 @@ static void load_rom(const char *path) {
         host_fatal("%s: read error", path);
     fclose(f);
     rom_size = (uint32_t)n;
-    /* .n64 (little-endian words) and .v64 (byte-swapped halves) to .z64 */
-    if (rom[0] == 0x40 && rom[1] == 0x12) {
-        for (uint32_t i = 0; i + 3 < rom_size; i += 4) {
-            uint8_t a = rom[i], b = rom[i + 1];
-            rom[i] = rom[i + 3]; rom[i + 1] = rom[i + 2]; rom[i + 2] = b; rom[i + 3] = a;
-        }
-    } else if (rom[0] == 0x37 && rom[1] == 0x80) {
-        for (uint32_t i = 0; i + 1 < rom_size; i += 2) {
-            uint8_t a = rom[i];
-            rom[i] = rom[i + 1]; rom[i + 1] = a;
-        }
-    }
-    if (rom[0] != 0x80 || rom[1] != 0x37)
-        host_fatal("%s: not an N64 ROM", path);
-    if (memcmp(rom + 0x3B, ROM_CODE, 4) != 0)
-        host_fatal("%s: game code %.4s, this port is built for %s", path, (const char *)rom + 0x3B, ROM_CODE);
+    if (!host_rom_ours(rom, rom_size, err, sizeof err))
+        host_fatal("%s: %s", path, err);
     /* the game's data, before anything reads it */
     host_rom_fill(rom, rom_size);
 #ifdef PORT_SCATTER_LAYOUT
@@ -243,7 +283,7 @@ static void deliver_pending(void) {
 
 static void usage(const char *argv0) {
     fprintf(stderr,
-            "usage: %s [options] [ROM]   (default ROM: %s)\n"
+            "usage: %s [options] [ROM]   (default ROM: %s; with a window and none there, it asks)\n"
             "  --headless          no window and no sound (implies --deterministic)\n"
             "  --deterministic     a virtual clock: the same run every time\n"
             "  --frames N          stop after N retraces\n"
@@ -251,7 +291,8 @@ static void usage(const char *argv0) {
             "  --every N           ...\n"
             "  --input FILE        a scripted controller (port/tools/inputs)\n"
             "  --replay FILE       controller 1 from a PORT_DIGEST file, by the game's frame\n"
-            "  --save-dir DIR      where the EEPROM and controller pak files go (default .)\n"
+            "  --save-dir DIR      where the EEPROM and controller pak files go (default ., or the\n"
+            "                      player's data directory with the ROM it asked for)\n"
             "  --wav FILE          the sound to a WAV file\n"
             "  --hash              print each retrace's picture hash\n"
             "  --vi-raw            show the color image as it is, without the VI's filters\n"
@@ -309,6 +350,7 @@ static void dump_rdram(void) {
 
 int main(int argc, char **argv) {
     const char *rom_path = NULL;
+    int save_dir_given = 0;
 #ifdef PORT_AUDIO_RECORD
     /* (the libaudio oracle's recorder: the same addresses every run, the
        heap's too, for the replay to map) */
@@ -337,8 +379,10 @@ int main(int argc, char **argv) {
             host_replay_path = argv[++i];
             deterministic = 1;
         }
-        else if (!strcmp(a, "--save-dir") && i + 1 < argc)
+        else if (!strcmp(a, "--save-dir") && i + 1 < argc) {
             host_save_dir = argv[++i];
+            save_dir_given = 1;
+        }
         else if (!strcmp(a, "--wav") && i + 1 < argc)
             host_wav_path = argv[++i];
         else if (!strcmp(a, "--hash"))
@@ -361,7 +405,11 @@ int main(int argc, char **argv) {
     if (deterministic < 0)
         deterministic = host_headless;
     clock_gettime(CLOCK_MONOTONIC, &t0);
+    fatal_box = !host_headless;
+    if (!rom_path && !host_headless)
+        rom_path = host_find_rom(ROM_DEFAULT, save_dir_given ? NULL : &host_save_dir);
     load_rom(rom_path ? rom_path : ROM_DEFAULT);
+    fatal_box = 0;
     fiber_init();
     host_video_init();
     host_audio_init();

@@ -13,6 +13,14 @@ extern int host_max_frames;             /* stop after so many retraces (0: never
 extern const char *host_screenshot_prefix;  /* --screenshot: PREFIX_<frame>.bmp */
 extern int host_screenshot_every;       /* ... every so many retraces (0: at the end only) */
 extern const char *host_save_dir;       /* where the EEPROM and pak files go */
+
+/* the ROM: ROM to .z64's byte order, 1 if it is this build's (main.c; ERR,
+   if not NULL, says why not); the ROM to load when none is given
+   (romfind.c: the player's, asked for once and kept, SAVE_DIR then its
+   directory); a message box */
+int host_rom_ours(uint8_t *rom, uint32_t size, char *err, size_t errn);
+const char *host_find_rom(const char *def, const char **save_dir);
+void host_error_box(const char *msg);
 extern const char *host_input_script;   /* --input: a scripted controller */
 extern const char *host_replay_path;    /* --replay: a digest's pads, by the game's frame */
 extern unsigned host_vi_count;          /* retraces so far */

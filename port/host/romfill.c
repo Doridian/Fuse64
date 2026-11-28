@@ -259,3 +259,44 @@ NO_ASAN void host_rom_fill(const uint8_t *rom, uint32_t rom_size) {
     if (host_verbose)
         host_log("the ROM's data: %u bytes in %u runs\n", (unsigned)k * 4, (unsigned)h->nruns);
 }
+
+/* 1 if ROM is the one this build's data comes from (the bytes the strip
+   took out, by their checksum), or if the build isn't stripped; nothing is
+   written (romfind.c: a ROM the player picks, before it is used) */
+NO_ASAN int host_rom_fill_check(const uint8_t *rom, uint32_t rom_size) {
+    unsigned char *table = port_romfill;
+    const struct RomFillHeader *h;
+    const struct RomFillRun *runs;
+    const uint8_t *orders;
+    uint8_t *img;
+    uint64_t sum = 0xCBF29CE484222325ull;
+    uint32_t i, w, k = 0;
+    int ok = 1;
+    __asm__ volatile("" : "+r"(table));
+    h = (const struct RomFillHeader *)table;
+    if (h->format == 0xA5A5A5A5u || h->nruns == 0)
+        return 1;
+    if (h->format != 1 || h->capacity != ROMFILL_CAP)
+        return 0;
+    runs = (const struct RomFillRun *)(table + sizeof *h);
+    orders = (const uint8_t *)(runs + h->nruns);
+    img = code_image(rom, rom_size, h->image_size);
+    if (!img)
+        return 0;
+    for (i = 0; ok && i < h->nruns; i++) {
+        const uint8_t *s = img + runs[i].src;
+        uint32_t n = runs[i].words & 0x7FFFFFFF;
+        if (runs[i].src > h->image_size || n > (h->image_size - runs[i].src) / 4) {
+            ok = 0;
+            break;
+        }
+        for (w = 0; w < n; w++, k++) {
+            const unsigned char *o = ORDERS[(orders[k >> 1] >> (k & 1) * 4) & 0xF];
+            int j;
+            for (j = 0; j < 4; j++)
+                sum = (sum ^ s[4 * w + o[j]]) * 0x100000001B3ull;
+        }
+    }
+    free(img);
+    return ok && k == h->nwords && sum == h->checksum;
+}

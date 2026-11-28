@@ -113,6 +113,8 @@ void host_rom_read(void *dst, uint32_t rom, uint32_t len);
 /* the game's data the strip took out of the executable, back from the ROM
    (host/romfill.c; docs/PORT.md, "The ROM's data") */
 void host_rom_fill(const uint8_t *rom, uint32_t size);
+/* 1 if the ROM gives this build its data (or the build isn't stripped) */
+int host_rom_fill_check(const uint8_t *rom, uint32_t size);
 #ifdef PORT_SCATTER_LAYOUT
 /* the scattered layout's copy of the asm data into its objects, after the
    fill (gen_scatter.py) */

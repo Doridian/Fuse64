@@ -1,17 +1,5 @@
 #include "common.h"
-
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ s32 unk1C;
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ s32 unk24;
-} UnkStruct_ovl17_05_80044DA4;
+#include "overlays/common/types.h"
 
 void func_ovl17_05_800433A8(void);
 void func_ovl17_05_80043AD0(s32, s32, s32, s32, s32, s32, s32);
@@ -60,7 +48,7 @@ u32 D_ovl17_05_80044D80[][3] = {
     { 0, 0, 4 },
     { 0, 0, 4 },
 };
-UnkStruct_ovl17_05_80044DA4 D_ovl17_05_80044DA4[] = {
+UnkStruct_ovl17_04_80044D84 D_ovl17_05_80044DA4[] = {
     { NULL, 0x20E, 0x40, 0.0f, 0.0f, 0.0f, 700.0f, 0x10, 9, 0x15 },
     { NULL, 0x20F, 0xC0, 0.0f, 0.0f, 0.0f, -700.0f, 0x1E, 9, 0x15 },
 };
@@ -174,7 +162,7 @@ void func_ovl17_05_800432B0(UnkStructA *arg0) {
 }
 
 void func_ovl17_05_800433A8(void) {
-    UnkStruct_ovl17_05_80044DA4 *rec;
+    UnkStruct_ovl17_04_80044D84 *rec;
     UnkStruct_8023A834 *b;
     f32 acc;
     f32 step;

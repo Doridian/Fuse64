@@ -480,4 +480,17 @@ typedef struct {
     /* 0x14 */ f32 unk14;
 } UnkStruct_ovl17_02_80044D54;
 
+typedef struct {
+    /* 0x00 */ UnkStructA *unk0;
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ s32 unk8;
+    /* 0x0C */ f32 unkC;
+    /* 0x10 */ f32 unk10;
+    /* 0x14 */ f32 unk14;
+    /* 0x18 */ f32 unk18;
+    /* 0x1C */ s32 unk1C;
+    /* 0x20 */ s32 unk20;
+    /* 0x24 */ s32 unk24;
+} UnkStruct_ovl17_04_80044D84;
+
 #endif

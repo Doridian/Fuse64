@@ -1,23 +1,11 @@
 #include "common.h"
+#include "overlays/common/types.h"
 
 void func_ovl17_04_800442A8(f32, f32, f32);
 void func_ovl17_04_800442C8(f32, f32, f32);
 void func_ovl17_04_800442D0(f32 *, f32 *, f32 *);
 void func_ovl17_04_800445D8(s32);
 s32 func_ovl17_04_80044B60(s32, f32, f32, f32);
-
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ s32 unk1C;
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ s32 unk24;
-} UnkStruct_ovl17_04_80044D84;
 
 void func_ovl17_04_80043290(UnkStructA *);
 void func_ovl17_04_80043388(void);

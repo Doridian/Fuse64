@@ -103,7 +103,7 @@ alike).
 
 ```
 tools/structs.py             # the definitions, the duplicates
-tools/structs.py --check     # non-zero on (a) or (c)
+tools/structs.py --check     # non-zero on (a), (b) not allowed, or (c)
 tools/structs.py --json out.json -v   # everything, with each (b)'s files
 ```
 
@@ -117,9 +117,37 @@ name defined in more than one place; (b) different names for the same
 thing: a `D_` symbol's (pointee or element) type, or a `func_`'s
 parameter or return type, named differently in different files, with
 how their layouts compare; (c) one name defined with different layouts
-(sizes, or fields' offsets and types). `--check` fails on (a) and (c); (b)
-is a list to work through. `--version eu`/`jp` parses with that version's
-`#if`s.
+(sizes, or fields' offsets and types); (d) different names with the same
+layout (0x10 bytes and three fields or more), whatever uses them.
+`--check` fails on (a), (b) and (c). A (b) that is one symbol of
+different types for a reason goes in `ALLOW_B` with the reason: so far
+only `func_802391F0`'s return, the running task's argument (530C0.c),
+which each task reads as its own. (d) is a list to look through: mostly
+the overlays' copies of one structure, each overlay's under its own
+name. `--version eu`/`jp` parses with that version's `#if`s. (b) misses
+a view that comes through a cast (8A7A0's was `#define PLAYERS ((Player87 *)
+D_800AEDF0)`) or a file's own type for a pointer field, so a merge is
+worth a look at the files' other local types of the same object.
+
+The merged objects so far, all in `include/structs.h` unless named:
+`UnkStructA`, the object pool's object (D_800A3F00, 0x80, 48600's
+whole layout); `UnkStructA_40`, its unk40, the model object (the pool
+D_800A0D00, 0x50, 426E0's), with `UnkStructA_40_48` its animation slots
+and `UnkStructA_40_48_4` one slot (0xC, indexed: `unk48->unk4[1].unk4`,
+where the overlays had a 0x18 pair); player.h's `UnkStruct_800AEDF0`
+(the players); model.h's `UnkInst`/`UnkNode`/`UnkJoint` (47A80's) and
+`UnkTexOwner` (D_80098C18); grid.h's `UnkCell_800B15D8` (a row of
+cells); gfx.h's `Gfx_80225840` (47A80's Gfx; it stands for gbi.h's
+`Gfx`, which 7D840 uses). Where a file had a field as an array and the
+merged type has scalars, or the other way round, the code may need the
+old form to keep its registers: 48600 and 5E3F0 read UnkStructA's
+unk4C/unk58 as `(&o->unk4C)[i]`, 48600's func_80231434 the parent's
+place as `(&...->unk10)[i]`. A word two kinds of object use differently
+keeps the majority's type, the others reach it through a cast
+(ovl_12_01-04's floats in UnkStructA's unk18/unk1C, 8A7A0's halfword
+of a player's unk1C). The overlays still have their own types for the
+model object and its slots (ovl_0A_01-05, 0B_05, 0D_01/04/06, 0E_05,
+0E_13, 16_01 and 54E40's `UnkStruct_8023FD08_48`).
 
 ## NON_MATCHING drafts
 

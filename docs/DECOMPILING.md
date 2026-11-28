@@ -577,6 +577,15 @@ matches, drop the `#ifdef` and the asm.
     their slots (ovl_0B_04's four page handlers had a `pad[3]` where each
     calls the empty stub 800468E0 with two), so an unidentified stub is
     the first suspect for a pad;
+  - an overlay's empty global (80043010, which nothing calls) is the
+    suspect that leaves no stub: each inlined call of it costs 8 bytes
+    where the call sits, one area per call (a static calling it costs
+    8 per inlining of the static). The 8-byte pads of ovl_0F_05's
+    handler, ovl_0F_07's 8004338C and 80043094 and ovl_0F_08's and
+    ovl_0F_09's setter statics went that way. A call from a static
+    defined above its caller pulls the global's body ahead of the caller
+    (ovl_0F_10's 80044FE8 from 8004405C, six calls giving 80044074's 48
+    bytes, came out out of place); the 80043010s, defined last, stay put;
   - a small function the handler calls can stay a call only by being
     bigger: ovl_0D_04's func_80044840 calls its empty static twice (a
     fake), where once it was inlined into the handler;

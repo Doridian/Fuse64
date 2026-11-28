@@ -82,22 +82,6 @@ typedef struct {
     /* 0x26 */ s16 unk26;
 } UnkStruct_ovl0C_02_80049C24;
 
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ s32 unk1C;
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ s16 unk2C;
-    /* 0x2E */ s16 unk2E;
-} UnkStruct_ovl0C_02_80049F24;
-
 /* what the ZeroJump stub 0x3106 returns */
 typedef struct {
     /* 0x00 */ u8 unk0[0xC];
@@ -440,7 +424,7 @@ UnkStruct_ovl0C_01_8004A3BC D_ovl0C_02_80049EDC[] = {
     { NULL, 3750.0f, 900.0f, 550.0f },
 };
 UnkStruct_ovl0C_01_8004A54C D_ovl0C_02_80049EEC = { NULL, -1, 0x2B4, 0x40, 0x400, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f };
-UnkStruct_ovl0C_02_80049F24 D_ovl0C_02_80049F24[] = {
+UnkStruct_ovl0C_01_8004A3CC D_ovl0C_02_80049F24[] = {
     { NULL, 0x2AD, 2150.0f, 600.0f, 250.0f, 0x15, 3, 2, 5, 5, 0x425, 0, 8 },
     { NULL, 0x2AD, 2550.0f, 600.0f, 250.0f, 0x19, 3, 2, 5, 5, 0x426, 0, 8 },
     { NULL, 0x2AD, 3650.0f, 1000.0f, 150.0f, 0x24, 5, 1, 5, 5, 0x427, 0, 8 },
@@ -1378,7 +1362,7 @@ void func_ovl0C_02_80045668(void) {
 
 void func_ovl0C_02_80045538(void) {
     UnkStructA *obj;
-    UnkStruct_ovl0C_02_80049F24 *p;
+    UnkStruct_ovl0C_01_8004A3CC *p;
     s16 i;
     s32 x;
     s32 z;
@@ -2051,7 +2035,7 @@ void func_ovl0C_02_80043544(UnkStruct_ovl0C_02_80049C24 *arg0, s32 arg1) {
 }
 
 void func_ovl0C_02_80043338(void) {
-    UnkStruct_ovl0C_02_80049F24 *p;
+    UnkStruct_ovl0C_01_8004A3CC *p;
     s16 i;
     s32 hit;
 

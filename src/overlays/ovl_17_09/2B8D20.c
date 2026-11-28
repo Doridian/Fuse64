@@ -80,12 +80,6 @@ typedef struct {
 /* gbi.h's _SHIFTL */
 #define _SHIFTL(v, s, w) ((u32) (((u32) (v) & ((0x01 << (w)) - 1)) << (s)))
 
-/* what func_ovl17_09_800450D8 returns */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl17_09_800450D8;
-
 void func_ovl17_09_80044F88(s32);
 void func_ovl17_09_80044F90(s32, f32, f32, f32, s32, s32);
 void func_ovl17_09_80044FA0(s32);
@@ -93,7 +87,7 @@ void func_ovl17_09_80044FD0(s32, s32, s32, s32, s32, s32, s32);
 void func_ovl17_09_80044FE0(f32, f32, f32, s32 *, s32);
 f32 func_ovl17_09_80045048(UnkStructA_40 *);
 void func_ovl17_09_80045068(void (*)(UnkStructA *), s32);
-UnkStruct_ovl17_09_800450D8 *func_ovl17_09_800450D8(void);
+UnkStruct_802AC610 *func_ovl17_09_800450D8(void);
 void func_ovl17_09_80045100(s32);
 UnkStruct_8023A834 *func_ovl17_09_80045108(void);
 void func_ovl17_09_80045138(void);

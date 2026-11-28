@@ -411,16 +411,6 @@ typedef struct {
     /* 0x10 */ s32 unk10;
 } UnkStruct_ovl10_01_80046830;
 
-/* what func_ovl10_13_80049728 and func_ovl12_05_800497F8 return */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ u8 unk14[0x14];
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ s32 unk2C;
-    /* 0x30 */ s32 unk30;
-} UnkStruct_ovl10_13_80049728;
-
 /* what func_ovl10_13_8004A770 and func_ovl12_05_8004A840 return: a player */
 typedef struct {
     /* 0x000 */ s32 unk0;

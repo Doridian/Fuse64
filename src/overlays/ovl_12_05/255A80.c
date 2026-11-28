@@ -67,7 +67,7 @@ void func_ovl12_05_80049790(void (*)(UnkStructA *));
 void func_ovl12_05_800497A0(s32, s32, s32);
 s32 func_ovl12_05_800497A8(void);
 void func_ovl12_05_800497E0(void (*)(UnkStructA *));
-UnkStruct_ovl10_13_80049728 *func_ovl12_05_800497F8(void);
+UnkStruct_802AC610 *func_ovl12_05_800497F8(void);
 void func_ovl12_05_80049820(s32);
 void func_ovl12_05_80049830(s32, s32);
 void func_ovl12_05_80049848(s32);
@@ -1231,7 +1231,7 @@ void func_ovl12_05_800456A0(void) {
 }
 
 static void func_ovl12_05_80044534(void) {
-    UnkStruct_ovl10_13_80049728 *s;
+    UnkStruct_802AC610 *s;
     UnkStructA *sp0;
     UnkStructA *sp1;
     UnkStructA *obj;
@@ -1569,7 +1569,7 @@ static void func_ovl12_05_800434C8(void) {
     UnkStructA *sp1;
     UnkStructA *sp2;
     UnkStructA_40 *sp7C[6];
-    UnkStruct_ovl10_13_80049728 *s;
+    UnkStruct_802AC610 *s;
     UnkStruct_ovl10_13_8004A770 *player;
     f32 x;
     f32 y;
@@ -1893,13 +1893,13 @@ void func_ovl12_05_80045D3C(s32 arg0) {
     s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
     s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
     UnkStruct_ovl10_13_8004A770 *spC0;
-    UnkStruct_ovl10_13_80049728 *spBC;
+    UnkStruct_802AC610 *spBC;
     Vec3f spB0;
     s32 pad3; /* fake: unused, frame space the original has (no source for it found) */
     s32 pad4; /* fake: unused, frame space the original has (no source for it found) */
     s32 pad5; /* fake: unused, frame space the original has (no source for it found) */
     UnkStruct_ovl10_13_8004A770 *spA0;
-    UnkStruct_ovl10_13_80049728 *sp9C;
+    UnkStruct_802AC610 *sp9C;
     Vec3f sp90;
     s32 pad6; /* fake: unused, frame space the original has (cases 18 and 19 as blocks {player, s, pos, +3 words} under 3 function-level words match: the 3+3+3 words are unexplained) */
     UnkStructA_40 *temp_v1;

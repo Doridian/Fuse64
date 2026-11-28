@@ -38,12 +38,6 @@ typedef struct {
     /* 0x20 */ s32 unk20;
 } UnkStruct_ovl0E_04_80046DE0;
 
-/* what func_ovl0E_04_80045898 returns */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0E_04_80045898;
-
 void func_ovl0E_04_80045748(s32);
 void func_ovl0E_04_80045760(s32);
 void func_ovl0E_04_80045788(s32, s32, s32, s32, s32, s32);
@@ -53,7 +47,7 @@ void func_ovl0E_04_80045830(void (*)(UnkStructA *));
 void func_ovl0E_04_80045840(s32, s32, s32);
 void func_ovl0E_04_80045868(void);
 void func_ovl0E_04_80045880(void (*)(UnkStructA *));
-UnkStruct_ovl0E_04_80045898 *func_ovl0E_04_80045898(void);
+UnkStruct_802AC610 *func_ovl0E_04_80045898(void);
 void func_ovl0E_04_800458B0(s32);
 void func_ovl0E_04_800458B8(s32);
 void func_ovl0E_04_800458F8(void);
@@ -793,7 +787,7 @@ void func_ovl0E_04_80043840(s16 idx, s16 flag) {
 }
 
 void func_ovl0E_04_8004379C(void) {
-    UnkStruct_ovl0E_04_80045898 *state;
+    UnkStruct_802AC610 *state;
     UnkStruct_ovl0E_02_8004648C *rec;
     s16 i;
 

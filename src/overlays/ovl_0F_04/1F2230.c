@@ -202,12 +202,6 @@ typedef struct {
     /* 0x04 */ f32 unk4;
 } UnkStruct_ovl0F_04_800484BC; /* size 0x8 */
 
-/* what func_ovl0F_04_800472C8 returns */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0F_04_800472C8;
-
 /* A display list command (gbi.h's Gfx, as two words) */
 typedef struct {
     /* 0x00 */ PORT_UP(u32) w0;
@@ -244,7 +238,7 @@ UnkStructA *func_ovl0F_04_800478D8(void (*)(s32, UnkStruct_ovl0F_04_Gfx **), s32
 UnkStructA *func_ovl0F_04_80047BA0(s32, s32, s32, PORT_IP(s32));
 UnkStructA *func_ovl0F_04_80047BE8(s32, s32);
 void *func_ovl0F_04_80047CF0(void);
-UnkStruct_ovl0F_04_800472C8 *func_ovl0F_04_800472C8(void);
+UnkStruct_802AC610 *func_ovl0F_04_800472C8(void);
 UnkStruct_ovl0F_01_80048130 *func_ovl0F_04_80047848(s32);
 void func_ovl0F_04_80047178(s32);
 void func_ovl0F_04_80047190(s32);

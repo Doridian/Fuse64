@@ -19,12 +19,6 @@
  * replaces (func_ovl0E_03_800430A8, 80043AB8; nonmatching/overlays/ovl_0E_12).
  */
 
-/* what func_ovl0E_03_80045568 returns */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0E_03_80045568;
-
 /* the argument of func_ovl0E_03_8004483C's task: unk2/unk4 a tile */
 typedef struct {
     /* 0x00 */ s16 unk0;
@@ -43,7 +37,7 @@ void func_ovl0E_03_800454A0(UnkStructA_40 *, f32 *, f32 *);
 void func_ovl0E_03_80045500(void (*)(UnkStructA *));
 void func_ovl0E_03_80045510(s32, s32, s32);
 void func_ovl0E_03_80045550(void (*)(UnkStructA *));
-UnkStruct_ovl0E_03_80045568 *func_ovl0E_03_80045568(void);
+UnkStruct_802AC610 *func_ovl0E_03_80045568(void);
 void func_ovl0E_03_800455C8(void);
 void func_ovl0E_03_800455D0(s32, s32, s32);
 void func_ovl0E_03_800455D8(void *);
@@ -702,7 +696,7 @@ static void func_ovl0E_03_800438E8(UnkStruct_ovl0C_01_8004A54C *e) {
 }
 
 void func_ovl0E_03_80043844(void) {
-    UnkStruct_ovl0E_03_80045568 *state;
+    UnkStruct_802AC610 *state;
     UnkStruct_ovl0E_02_8004648C *rec;
     s16 i;
 

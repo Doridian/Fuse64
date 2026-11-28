@@ -71,7 +71,7 @@ void func_ovl10_13_800495D8(s32);
 void func_ovl10_13_800495F0(s32);
 void func_ovl10_13_800496D0(s32, s32, s32);
 s32 func_ovl10_13_800496D8(void);
-UnkStruct_ovl10_13_80049728 *func_ovl10_13_80049728(void);
+UnkStruct_802AC610 *func_ovl10_13_80049728(void);
 void func_ovl10_13_80049760(s32, s32);
 s32 func_ovl10_13_80049770(s32);
 void func_ovl10_13_80049778(s32);
@@ -986,7 +986,7 @@ void func_ovl10_13_800466B8(void) {
 void func_ovl10_13_800464B0(void) {
     UnkStructA *obj;
     UnkStruct_ovl10_13_8004A770 *player;
-    UnkStruct_ovl10_13_80049728 *info;
+    UnkStruct_802AC610 *info;
     Vec3f pos;
     PORT_IP(s32) limit;
     UnkStructA_40 *temp_v1;
@@ -1040,7 +1040,7 @@ void func_ovl10_13_800464B0(void) {
 void func_ovl10_13_80046324(void) {
     s32 limit;
     UnkStruct_ovl10_13_8004A770 *player;
-    UnkStruct_ovl10_13_80049728 *info;
+    UnkStruct_802AC610 *info;
     Vec3f pos;
     UnkStructA_40 *temp_v1;
 
@@ -1196,7 +1196,7 @@ static void func_ovl10_13_8004574C(void) {
     PORT_IP(s32) i;
 
     obj0 = (UnkStructA *)func_ovl10_13_80049728();
-    D_ovl10_13_8004ADD0 = ((UnkStruct_ovl10_13_80049728 *)obj0)->unk30;
+    D_ovl10_13_8004ADD0 = ((UnkStruct_802AC610 *)obj0)->unk30;
     func_ovl10_13_8004A778(0);
     func_ovl10_13_80049E80(0x1F);
     func_ovl10_13_80049868(0, 0);
@@ -1218,7 +1218,7 @@ static void func_ovl10_13_8004574C(void) {
     ((UnkStruct_ovl10_13_8004A770 *)i)->unk0 = 0;
     ((UnkStruct_ovl10_13_8004A770 *)i)->unk88 = -1;
     if ((D_ovl10_13_8004ADA8 != 0x1C) && !(((UnkStruct_ovl10_13_8004A770 *)i)->unk124 & 8)) {
-        if (((UnkStruct_ovl10_13_80049728 *)obj0)->unk10 == 0) {
+        if (((UnkStruct_802AC610 *)obj0)->unk10 == 0) {
 #if VERSION_EU
             limit = 12000;
         } else {
@@ -1232,7 +1232,7 @@ static void func_ovl10_13_8004574C(void) {
         if (limit >= D_ovl10_13_8004ADD0) {
             func_ovl10_13_8004A358(&((UnkStruct_ovl10_13_8004A770 *)i)->unk2C);
             ((UnkStruct_ovl10_13_8004A770 *)i)->unk124 |= 8;
-            ((UnkStruct_ovl10_13_80049728 *)obj0)->unk2C += 1;
+            ((UnkStruct_802AC610 *)obj0)->unk2C += 1;
         }
     }
     obj0 = func_ovl10_13_80049818(0);
@@ -1534,7 +1534,7 @@ static void func_ovl10_13_80044E48(void) {
 #endif
 
 static void func_ovl10_13_80043070(void) {
-    UnkStruct_ovl10_13_80049728 *s;
+    UnkStruct_802AC610 *s;
     UnkStructA *obj;
     UnkStructA *pair[2];
     UnkStructA *obj2;

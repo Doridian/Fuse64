@@ -8,12 +8,6 @@
  * and what it calls, with one model pair where ovl_17_10 has three).
  */
 
-/* what func_ovl0E_02_800451F8 returns */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0E_02_800451F8;
-
 /* the argument of func_ovl0E_02_800444BC's task: unk2/unk4 a tile */
 typedef struct {
     /* 0x00 */ s16 unk0;
@@ -31,7 +25,7 @@ void func_ovl0E_02_80045130(UnkStructA_40 *, f32 *, f32 *);
 void func_ovl0E_02_80045190(void (*)(UnkStructA *));
 void func_ovl0E_02_800451A0(s32, s32, s32);
 void func_ovl0E_02_800451E0(void (*)(UnkStructA *));
-UnkStruct_ovl0E_02_800451F8 *func_ovl0E_02_800451F8(void);
+UnkStruct_802AC610 *func_ovl0E_02_800451F8(void);
 void func_ovl0E_02_80045258(void);
 void func_ovl0E_02_80045260(s32, s32, s32);
 void func_ovl0E_02_80045268(void *);
@@ -652,7 +646,7 @@ void func_ovl0E_02_800437C0(void) {
 }
 
 void func_ovl0E_02_8004359C(void) {
-    UnkStruct_ovl0E_02_800451F8 *state;
+    UnkStruct_802AC610 *state;
     UnkStruct_ovl0E_02_8004648C *rec;
     s16 i;
 

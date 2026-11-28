@@ -6,12 +6,6 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-/* what func_ovl0E_05_80044DA8 returns */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0E_05_80044DA8;
-
 void func_ovl0E_05_80044918(const char *);
 void func_ovl0E_05_80044C58(s32);
 void func_ovl0E_05_80044C70(s32);
@@ -21,7 +15,7 @@ void func_ovl0E_05_80044CE0(UnkStructA_40 *, f32 *, f32 *);
 void func_ovl0E_05_80044D40(void (*)(UnkStructA *));
 void func_ovl0E_05_80044D50(s32, s32, s32);
 void func_ovl0E_05_80044D90(void (*)(UnkStructA *));
-UnkStruct_ovl0E_05_80044DA8 *func_ovl0E_05_80044DA8(void);
+UnkStruct_802AC610 *func_ovl0E_05_80044DA8(void);
 void func_ovl0E_05_80044E08(void);
 void func_ovl0E_05_80044E10(s32, s32, s32);
 void func_ovl0E_05_80044E18(void *);
@@ -522,7 +516,7 @@ void func_ovl0E_05_80043808(void) {
 }
 
 void func_ovl0E_05_80043768(void) {
-    UnkStruct_ovl0E_05_80044DA8 *state;
+    UnkStruct_802AC610 *state;
     UnkStruct_ovl0E_02_8004648C *rec;
     s16 i;
 

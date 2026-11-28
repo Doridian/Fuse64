@@ -23,24 +23,6 @@ typedef struct {
     /* 0x48 */ UnkStruct_ovl0E_05_48 *unk48;
 } UnkStruct_ovl0E_05_40;
 
-/* the other mover: two sets of speeds, chosen by func_ovl0E_05_80044DA8()->unk10 */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} UnkStruct_ovl0E_05_80046124;
-
 /* what func_ovl0E_05_80044DA8 returns */
 typedef struct {
     /* 0x00 */ u8 unk0[0x10];
@@ -190,7 +172,7 @@ UnkStruct_ovl0E_01_800469F8 D_ovl0E_05_80045F98[9] = {
     { 7, -1, NULL, 1850.0f, -4000.0f, 250.0f, 90.0f, 80.0f, 90.0f, 1.6333334f, -4000.0f },
     { 8, -1, NULL, 1950.0f, -4000.0f, 850.0f, 90.0f, 85.0f, 90.0f, 1.6333334f, -4000.0f },
 };
-UnkStruct_ovl0E_05_80046124 D_ovl0E_05_80046124[1] = {
+UnkStruct_ovl0E_02_8004648C D_ovl0E_05_80046124[1] = {
     { NULL, 550.0f, -2100.0f, -2100.0f, 550.0f, 140.0f, 135.0f, 145.0f, 3.0f, 490.0f, 1, 135.0f, 145.0f, 3.0f },
 };
 UnkStruct_ovl0C_01_8004A54C D_ovl0E_05_8004615C[1] = {
@@ -361,7 +343,7 @@ void func_ovl0E_05_80043EDC(void) {
     /* a guess: two held floats fill these slots (any two do) */
     f32 lim;
     f32 h;
-    UnkStruct_ovl0E_05_80046124 *rec;
+    UnkStruct_ovl0E_02_8004648C *rec;
     s32 up;
     f32 a[3];
     f32 b[3];
@@ -558,7 +540,7 @@ void func_ovl0E_05_80043808(void) {
 
 void func_ovl0E_05_80043768(void) {
     UnkStruct_ovl0E_05_80044DA8 *state;
-    UnkStruct_ovl0E_05_80046124 *rec;
+    UnkStruct_ovl0E_02_8004648C *rec;
     s16 i;
 
     state = func_ovl0E_05_80044DA8();

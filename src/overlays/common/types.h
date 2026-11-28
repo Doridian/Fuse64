@@ -270,4 +270,22 @@ typedef struct {
     /* 0x1E */ s16 unk1E;
 } UnkStruct_ovl0E_01_80046B70;
 
+/* the nine other movers: two sets of speeds, chosen by func_ovl0E_02_800451F8()->unk10 */
+typedef struct {
+    /* 0x00 */ UnkStructA *unk0;
+    /* 0x04 */ f32 unk4;
+    /* 0x08 */ f32 unk8;
+    /* 0x0C */ f32 unkC;
+    /* 0x10 */ f32 unk10;
+    /* 0x14 */ f32 unk14;
+    /* 0x18 */ f32 unk18;
+    /* 0x1C */ f32 unk1C;
+    /* 0x20 */ f32 unk20;
+    /* 0x24 */ f32 unk24;
+    /* 0x28 */ s32 unk28;
+    /* 0x2C */ f32 unk2C;
+    /* 0x30 */ f32 unk30;
+    /* 0x34 */ f32 unk34;
+} UnkStruct_ovl0E_02_8004648C;
+
 #endif

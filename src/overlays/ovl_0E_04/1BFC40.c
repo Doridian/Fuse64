@@ -24,24 +24,6 @@
  * camera set-up (func_ovl0E_04_8004399C).
  */
 
-/* the other movers: two sets of speeds, chosen by func_ovl0E_04_80045898()->unk10 */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} UnkStruct_ovl0E_04_80046BE8;
-
 /* three objects that are swapped for another model when their flag (unk20)
  * is set, and back after a while (unk1C) */
 typedef struct {
@@ -234,7 +216,7 @@ UnkStruct_ovl0E_01_800469F8 D_ovl0E_04_80046A88[8] = {
     { 6, -1, NULL, 3550.0f, -4100.0f, 2550.0f, 90.0f, 90.0f, 90.0f, 1.6333334f, -4100.0f },
     { 7, -1, NULL, 4050.0f, -4100.0f, 2850.0f, 90.0f, 88.0f, 90.0f, 1.6333334f, -4100.0f },
 };
-UnkStruct_ovl0E_04_80046BE8 D_ovl0E_04_80046BE8[7] = {
+UnkStruct_ovl0E_02_8004648C D_ovl0E_04_80046BE8[7] = {
     { NULL, 650.0f, -2100.0f, -2100.0f, 1150.0f, 140.0f, 135.0f, 145.0f, 3.0f, 400.0f, 0, 95.0f, 105.0f, 1.5f },
     { NULL, 950.0f, -2100.0f, -2100.0f, 1050.0f, 140.0f, 135.0f, 145.0f, 3.0f, 400.0f, 0, 95.0f, 105.0f, 1.5f },
     { NULL, 1250.0f, -2100.0f, -2100.0f, 1150.0f, 140.0f, 135.0f, 145.0f, 3.0f, 400.0f, 0, 95.0f, 105.0f, 1.5f },
@@ -393,7 +375,7 @@ void func_ovl0E_04_800449E8(void) {
     /* a guess: two held floats fill these slots (any two do) */
     f32 lim;
     f32 h;
-    UnkStruct_ovl0E_04_80046BE8 *rec;
+    UnkStruct_ovl0E_02_8004648C *rec;
     s32 up;
     f32 a[3];
     f32 b[3];
@@ -812,7 +794,7 @@ void func_ovl0E_04_80043840(s16 idx, s16 flag) {
 
 void func_ovl0E_04_8004379C(void) {
     UnkStruct_ovl0E_04_80045898 *state;
-    UnkStruct_ovl0E_04_80046BE8 *rec;
+    UnkStruct_ovl0E_02_8004648C *rec;
     s16 i;
 
     state = func_ovl0E_04_80045898();

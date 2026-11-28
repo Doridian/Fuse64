@@ -19,24 +19,6 @@
  * replaces (func_ovl0E_03_800430A8, 80043AB8; nonmatching/overlays/ovl_0E_12).
  */
 
-/* the eight other movers: two sets of speeds, chosen by func_ovl0E_03_80045568()->unk10 */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-} UnkStruct_ovl0E_03_80046910;
-
 /* what func_ovl0E_03_80045568 returns */
 typedef struct {
     /* 0x00 */ u8 unk0[0x10];
@@ -202,7 +184,7 @@ UnkStruct_ovl0E_01_800469F8 D_ovl0E_03_80046758[10] = {
     { 8, -1, NULL, 2150.0f, -3800.0f, 950.0f, 90.0f, 80.0f, 90.0f, 1.6333334f, -3800.0f },
     { 9, -1, NULL, 2150.0f, -3800.0f, 1350.0f, 90.0f, 80.0f, 90.0f, 1.6333334f, -3800.0f },
 };
-UnkStruct_ovl0E_03_80046910 D_ovl0E_03_80046910[8] = {
+UnkStruct_ovl0E_02_8004648C D_ovl0E_03_80046910[8] = {
     { NULL, 650.0f, -3800.0f, -3800.0f, 2450.0f, 190.0f, 185.0f, 195.0f, 3.0f, 1200.0f, 0, 130.0f, 135.0f, 1.5f },
     { NULL, 650.0f, -3800.0f, -3800.0f, 2850.0f, 190.0f, 185.0f, 195.0f, 3.0f, 1200.0f, 0, 130.0f, 135.0f, 1.5f },
     { NULL, 750.0f, -3800.0f, -3800.0f, 2650.0f, 190.0f, 185.0f, 195.0f, 3.0f, 1200.0f, 0, 130.0f, 135.0f, 1.5f },
@@ -503,7 +485,7 @@ void func_ovl0E_03_80043F7C(void) {
     /* a guess: two held floats fill these slots (any two do) */
     f32 lim;
     f32 h;
-    UnkStruct_ovl0E_03_80046910 *rec;
+    UnkStruct_ovl0E_02_8004648C *rec;
     s32 up;
     f32 a[3];
     f32 b[3];
@@ -721,7 +703,7 @@ static void func_ovl0E_03_800438E8(UnkStruct_ovl0C_01_8004A54C *e) {
 
 void func_ovl0E_03_80043844(void) {
     UnkStruct_ovl0E_03_80045568 *state;
-    UnkStruct_ovl0E_03_80046910 *rec;
+    UnkStruct_ovl0E_02_8004648C *rec;
     s16 i;
 
     state = func_ovl0E_03_80045568();

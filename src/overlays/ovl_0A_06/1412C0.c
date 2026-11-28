@@ -68,23 +68,6 @@
 #include "common.h"
 #include "gfx.h"
 
-/* what ZeroJump 0x1500 and 0x1510 return, and 0x2508 */
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ u8 unk24[4];
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ u8 unk30[6];
-    /* 0x36 */ s16 unk36;
-    /* 0x38 */ s32 unk38;
-} UnkStruct_ovl0A_06_800460E8;
-
 /* A display list command (gbi.h's Gfx, as two words) */
 typedef struct {
     /* 0x00 */ PORT_UP(u32) w0;
@@ -102,7 +85,7 @@ typedef struct {
 /* a coloured rectangle: its window, its corners' colours, its place, flags
  * and the function that draws it */
 typedef struct {
-    /* 0x00 */ UnkStruct_ovl0A_06_800460E8 *unk0;
+    /* 0x00 */ UnkStructA_40 *unk0;
     /* 0x04 */ s32 *unk4;
     /* 0x08 */ s32 *unk8;
     /* 0x0C */ s32 *unkC;
@@ -129,9 +112,9 @@ s32 func_ovl0A_06_800456D0(u8 *, const char *, s32); /* 0x101 */
 void func_ovl0A_06_80045B00(s32, s32, s32); /* 0xF00 */
 u16 func_ovl0A_06_80045B18(void); /* 0xF03 */
 void func_ovl0A_06_80045B70(s32); /* 0xF0E */
-UnkStruct_ovl0A_06_800460E8 *func_ovl0A_06_800460E8(s32, s32); /* 0x1500 */
-void func_ovl0A_06_800460F0(UnkStruct_ovl0A_06_800460E8 *); /* 0x1501 */
-UnkStruct_ovl0A_06_800460E8 *func_ovl0A_06_80046168(void (*)(s32, UnkStruct_ovl0A_06_800452B8 **), s32); /* 0x1510 */
+UnkStructA_40 *func_ovl0A_06_800460E8(s32, s32); /* 0x1500 */
+void func_ovl0A_06_800460F0(UnkStructA_40 *); /* 0x1501 */
+UnkStructA_40 *func_ovl0A_06_80046168(void (*)(s32, UnkStruct_ovl0A_06_800452B8 **), s32); /* 0x1510 */
 void func_ovl0A_06_80046248(f32, f32, f32); /* 0x1704 */
 void func_ovl0A_06_80046268(f32, f32, f32); /* 0x1708 */
 void func_ovl0A_06_80046270(f32 *, f32 *, f32 *); /* 0x1709 */
@@ -154,7 +137,7 @@ s32 func_ovl0A_06_80046948(s32); /* 0x2502 */
 void func_ovl0A_06_80046950(s32, u8 *, s32); /* 0x2503 */
 void func_ovl0A_06_80046960(s32, u16, u16); /* 0x2505 */
 void func_ovl0A_06_80046968(s32, f32, f32); /* 0x2506 */
-UnkStruct_ovl0A_06_800460E8 *func_ovl0A_06_80046978(s32); /* 0x2508 */
+UnkStructA_40 *func_ovl0A_06_80046978(s32); /* 0x2508 */
 void func_ovl0A_06_80046988(s32, s32, s32, s32); /* 0x250A */
 s32 func_ovl0A_06_80046998(u8 *, u16, u16, f32, f32, s32); /* 0x250C */
 void func_ovl0A_06_800469A0(s32, u8 *, s32); /* 0x250D */
@@ -210,19 +193,19 @@ u8 D_ovl0A_06_80047510[4];
 s32 D_ovl0A_06_80047514;
 s32 D_ovl0A_06_80047518;
 Vec3f_ovl0A_06 D_ovl0A_06_80047520;
-UnkStruct_ovl0A_06_800460E8 *D_ovl0A_06_8004752C;
-UnkStruct_ovl0A_06_800460E8 *D_ovl0A_06_80047530;
-UnkStruct_ovl0A_06_800460E8 *D_ovl0A_06_80047534;
+UnkStructA_40 *D_ovl0A_06_8004752C;
+UnkStructA_40 *D_ovl0A_06_80047530;
+UnkStructA_40 *D_ovl0A_06_80047534;
 #if !VERSION_JP
-UnkStruct_ovl0A_06_800460E8 *D_ovl0A_06_80047538;
+UnkStructA_40 *D_ovl0A_06_80047538;
 #endif
 UnkStruct_ovl0A_06_80047540 D_ovl0A_06_80047540[16];
 u8 D_ovl0A_06_80047700[8];
 s32 D_ovl0A_06_80047708[4];
-UnkStruct_ovl0A_06_800460E8 *D_ovl0A_06_80047718[4];
+UnkStructA_40 *D_ovl0A_06_80047718[4];
 s32 D_ovl0A_06_80047728[4];
 s32 D_ovl0A_06_80047738[4];
-UnkStruct_ovl0A_06_800460E8 *D_ovl0A_06_80047748[4];
+UnkStructA_40 *D_ovl0A_06_80047748[4];
 s32 D_ovl0A_06_80047758;
 
 /* .data */
@@ -1640,9 +1623,9 @@ static s32 func_ovl0A_06_8004311C(void) {
             D_ovl0A_06_80047018 = 1;
             func_ovl0A_06_80043020(0, 1);
         } else if ((pressed & 0x8000) || (pressed & 0x1000)) {
-#line 1686 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1669 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             ret = 1;
-#line 1662 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1645 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             if (D_ovl0A_06_80047018 == 0) {
                 /* SE(1, 1) with `ret = 2` between its wait and its call */
                 switch (1) {
@@ -1659,9 +1642,9 @@ static s32 func_ovl0A_06_8004311C(void) {
                 SE(2, 2);
             }
         } else if (pressed & 0x4000) {
-#line 1686 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1669 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             ret = 1;
-#line 1681 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1664 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             SE(2, 2);
         }
         func_ovl0A_06_800465A0();

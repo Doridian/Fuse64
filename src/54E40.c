@@ -222,32 +222,6 @@ typedef struct {
     /* 0xE8 */ s32 unkE8[4];
 } UnkStruct_802AC660; /* size >= 0xF8 */
 
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (structs.h's UnkStructA_40_48_4: its animation) */
-    /* 0x04 */ f32 unk4;
-} UnkStruct_8023FD08_48_4;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[4];
-    /* 0x04 */ UnkStruct_8023FD08_48_4 *unk4;
-} UnkStruct_8023FD08_48;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ u8 unk1C[0xC];
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ s16 unk34;
-    /* 0x36 */ s16 unk36;
-    /* 0x38 */ PORT_RET(u8 unk38[0x10];, u8 unk38[0x4]; void *unk3C; void *unk40; void *unk44;)
-    /* 0x48 */ UnkStruct_8023FD08_48 *unk48;
-} UnkStruct_8023FD08;
-
 #define PLAYERS ((UnkStruct_800AEDF0 *) D_800AEDF0)
 
 /* A picture drawn by func_80242270: its entry and its rectangle. */
@@ -484,7 +458,7 @@ s32 D_802AC7E4;
 s32 D_802AC7E8;
 s32 D_802AC7EC;
 s32 D_802AC7F0;
-UnkStruct_8023FD08 *D_802AC7F8[5];
+UnkStructA_40 *D_802AC7F8[5];
 s32 D_802AC80C;
 s32 D_802AC810;
 s32 D_802AC814;
@@ -1477,7 +1451,7 @@ void func_80242DA8() {
 static void func_80242994() {
     s32 i;
     s32 n;
-    UnkStruct_8023FD08 *o;
+    UnkStructA_40 *o;
 
     if (D_802AC854 != 0) {
         return;
@@ -1919,7 +1893,7 @@ void func_8023FD08() {
     void *model;
     s32 flagI;
     u8 buf[12];
-    UnkStruct_8023FD08 *o;
+    UnkStructA_40 *o;
     f32 y4;
     f32 y3;
     f32 y2;
@@ -3397,7 +3371,7 @@ static void func_8023CA94() {
 
 static void func_8023C170() {
     s32 i;
-    UnkStruct_8023FD08 *o;
+    UnkStructA_40 *o;
 
     if (D_802AC660.unk0 == 0) {
         if (D_802AC758 < 2) {
@@ -3446,7 +3420,7 @@ static void func_8023C170() {
 static void func_8023B8D0() {
     s32 i;
     PORT_IP(s32) model;
-    UnkStruct_8023FD08 *o;
+    UnkStructA_40 *o;
     u8 buf[4];
 
     if (!(D_802AC5D0 & 4)) {

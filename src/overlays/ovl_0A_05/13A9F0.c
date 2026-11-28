@@ -34,20 +34,6 @@ typedef struct {
     /* 0x70 */ f32 unk70;
 } UnkStruct_ovl0A_05_80048CA0;
 
-/* what ZeroJump 0x1500 returns: a screen rectangle with its size */
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ u8 unk24[4];
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-} UnkStruct_ovl0A_05_80048958;
-
 /* what ZeroJump 0x3100 returns */
 typedef struct {
     /* 0x00 */ u8 unk0[0x10];
@@ -63,7 +49,7 @@ typedef struct {
 /* what ZeroJump 0x3106 returns */
 typedef struct {
     /* 0x00 */ PORT_RET(u8 unk0[0xC];, void *unk0; u8 unk4[0x8];)
-    /* 0x0C */ UnkStruct_ovl0A_05_80048958 *unkC;
+    /* 0x0C */ UnkStructA_40 *unkC;
 } UnkStruct_ovl0A_05_80049518;
 
 typedef struct {
@@ -86,8 +72,8 @@ void func_ovl0A_05_80048480(const char *); /* 0x100B */
 void func_ovl0A_05_80048488(void); /* 0x100C */
 UnkStruct_ovl0A_05_80048CA0 *func_ovl0A_05_800484B8(s32); /* 0x1012 */
 void func_ovl0A_05_80048508(s32, s32); /* 0x101C */
-UnkStruct_ovl0A_05_80048958 *func_ovl0A_05_80048958(s32, s32); /* 0x1500 */
-void func_ovl0A_05_80048960(UnkStruct_ovl0A_05_80048958 *); /* 0x1501 */
+UnkStructA_40 *func_ovl0A_05_80048958(s32, s32); /* 0x1500 */
+void func_ovl0A_05_80048960(UnkStructA_40 *); /* 0x1501 */
 void func_ovl0A_05_80048970(UnkStructA_40 *, s32); /* 0x1503 */
 void func_ovl0A_05_80048998(UnkStructA_40 *, s32); /* 0x1508 */
 void func_ovl0A_05_800489A0(UnkStructA_40 *, s32, s32); /* 0x1509 */
@@ -155,10 +141,10 @@ u8 D_ovl0A_05_800498F0[4];
 s32 D_ovl0A_05_800498F4;
 s32 D_ovl0A_05_800498F8;
 Vec3f_ovl0A_05 D_ovl0A_05_80049900;
-UnkStruct_ovl0A_05_80048958 *D_ovl0A_05_8004990C;
-UnkStruct_ovl0A_05_80048958 *D_ovl0A_05_80049910;
-UnkStruct_ovl0A_05_80048958 *D_ovl0A_05_80049914;
-UnkStruct_ovl0A_05_80048958 *D_ovl0A_05_80049918;
+UnkStructA_40 *D_ovl0A_05_8004990C;
+UnkStructA_40 *D_ovl0A_05_80049910;
+UnkStructA_40 *D_ovl0A_05_80049914;
+UnkStructA_40 *D_ovl0A_05_80049918;
 UnkStruct_802B0260 *D_ovl0A_05_8004991C;
 s32 D_ovl0A_05_80049920;
 UnkStruct_ovl0A_05_80048CA0 *D_ovl0A_05_80049924;

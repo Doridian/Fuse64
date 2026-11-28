@@ -97,7 +97,7 @@
  *   has its own variable and x is read once before its first assignment
  *   (fake: live from the start, so the later tests' x avoids $v0 and the
  *   first test's value goes to $a3 after A178's pointer takes $v1). 0x150A
- *   (80047E28) is `s32 (Obj0B04 *, s32)` as 0B_06's 80048888, which puts H5a's
+ *   (80047E28) is `s32 (UnkStructA_40 *, s32)` as 0B_06's 80048888, which puts H5a's
  *   object in $v1 as in the original.
  *   H5b's calls pass `(x += 1, x - 1)` for the original's `addiu a2,v1,0`
  *   copy (fake), the first with (&A16C)[1] for A170 (fake). H5a is
@@ -199,26 +199,6 @@
 #include "common.h"
 #include "overlays/common/types.h"
 
-/* The game objects the ZeroJump calls make and return. */
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ s16 unk34;
-    /* 0x36 */ s16 unk36;
-    /* 0x38 */ s32 unk38;
-    /* 0x3C */ PORT_RET(u8 unk3C[0xC];, void *unk3C; void *unk40; void *unk44;)
-    /* 0x48 */ UnkStructA_40_48 *unk48;
-} Obj0B04;
-
 typedef struct {
     PORT_UP(u32) w0;
     PORT_UP(u32) w1;
@@ -254,12 +234,12 @@ typedef struct {
     /* 0x18 */ u16 unk18;
     /* 0x1A */ u16 unk1A;
     /* 0x1C */ s32 unk1C;
-    /* 0x20 */ void (*unk20)(Obj0B04 *);
+    /* 0x20 */ void (*unk20)(UnkStructA_40 *);
 } Page; /* size = 0x24 */
 
 /* A fade (ovl_0B_05's D_ovl0B_05_8004669C). */
 typedef struct {
-    /* 0x00 */ Obj0B04 *unk0;
+    /* 0x00 */ UnkStructA_40 *unk0;
     /* 0x04 */ s32 unk4;
     /* 0x08 */ s32 unk8;
     /* 0x0C */ s32 unkC;
@@ -276,7 +256,7 @@ typedef struct {
 } Fade; /* size = 0x38 */
 
 typedef struct {
-    /* 0x00 */ Obj0B04 *unk0;
+    /* 0x00 */ UnkStructA_40 *unk0;
     /* 0x04 */ f32 unk4;
     /* 0x08 */ f32 unk8;
     /* 0x0C */ f32 unkC;
@@ -293,15 +273,15 @@ typedef struct {
 /* ZeroJump (the main code's functions; the code in the comments). */
 void func_ovl0B_04_800477F0(s32, s32, s32); /* 0x0F00 */
 void func_ovl0B_04_800478A0(s32, s32, s32); /* 0x0F16 */
-Obj0B04 *func_ovl0B_04_80047DD8(s32, s32); /* 0x1500 */
-void func_ovl0B_04_80047DE0(Obj0B04 *); /* 0x1501 */
-void func_ovl0B_04_80047DF0(Obj0B04 *, s32); /* 0x1503 */
-void func_ovl0B_04_80047E00(Obj0B04 *, s32); /* 0x1505 */
-void func_ovl0B_04_80047E08(Obj0B04 *, s32, s32, s32); /* 0x1506 */
-void func_ovl0B_04_80047E20(Obj0B04 *, s32, s32); /* 0x1509 */
-s32 func_ovl0B_04_80047E28(Obj0B04 *, s32); /* 0x150A */
-Obj0B04 *func_ovl0B_04_80047E58(void (*)(s32, Gfx0B04 **), s32); /* 0x1510 */
-s32 func_ovl0B_04_80047E68(Obj0B04 *, s32); /* 0x1512 */
+UnkStructA_40 *func_ovl0B_04_80047DD8(s32, s32); /* 0x1500 */
+void func_ovl0B_04_80047DE0(UnkStructA_40 *); /* 0x1501 */
+void func_ovl0B_04_80047DF0(UnkStructA_40 *, s32); /* 0x1503 */
+void func_ovl0B_04_80047E00(UnkStructA_40 *, s32); /* 0x1505 */
+void func_ovl0B_04_80047E08(UnkStructA_40 *, s32, s32, s32); /* 0x1506 */
+void func_ovl0B_04_80047E20(UnkStructA_40 *, s32, s32); /* 0x1509 */
+s32 func_ovl0B_04_80047E28(UnkStructA_40 *, s32); /* 0x150A */
+UnkStructA_40 *func_ovl0B_04_80047E58(void (*)(s32, Gfx0B04 **), s32); /* 0x1510 */
+s32 func_ovl0B_04_80047E68(UnkStructA_40 *, s32); /* 0x1512 */
 void func_ovl0B_04_80047E70(s32, s32, s32); /* 0x1513 */
 void func_ovl0B_04_80047E78(s32); /* 0x1514 */
 void func_ovl0B_04_80047F18(s32); /* 0x1700 */
@@ -320,18 +300,18 @@ s32 func_ovl0B_04_800484B0(s32); /* 0x1E04 */
 void *func_ovl0B_04_800484E0(s32); /* 0x1E0A */
 void func_ovl0B_04_800485A0(s32); /* 0x2202 */
 void func_ovl0B_04_800485A8(s32); /* 0x2203 */
-Obj0B04 *func_ovl0B_04_800485D0(u8 (*)(u8, u16), void *, s32, s32, s32); /* 0x2400 */
+UnkStructA_40 *func_ovl0B_04_800485D0(u8 (*)(u8, u16), void *, s32, s32, s32); /* 0x2400 */
 void func_ovl0B_04_800485E8(void); /* 0x2403 */
 void func_ovl0B_04_800485F0(void); /* 0x2404 */
 void func_ovl0B_04_800485F8(u8); /* 0x2405 */
-Obj0B04 *func_ovl0B_04_80048608(void); /* 0x2407 */
+UnkStructA_40 *func_ovl0B_04_80048608(void); /* 0x2407 */
 s32 func_ovl0B_04_80048630(u8 *, u16, u16, f32, f32, s32); /* 0x2501 */
 void func_ovl0B_04_80048638(s32); /* 0x2502 */
 void func_ovl0B_04_80048640(s32, u8 *, s32); /* 0x2503 */
 void func_ovl0B_04_80048650(s32, u16, u16); /* 0x2505 */
 void func_ovl0B_04_80048658(s32, f32, f32); /* 0x2506 */
 void func_ovl0B_04_80048660(s32, f32, f32); /* 0x2507 */
-Obj0B04 *func_ovl0B_04_80048668(s32); /* 0x2508 */
+UnkStructA_40 *func_ovl0B_04_80048668(s32); /* 0x2508 */
 s32 func_ovl0B_04_80048680(u8 *); /* 0x250B */
 #if !VERSION_JP
 s32 func_ovl0B_04_80048688(u8 *, u16, u16, f32, f32, s32); /* 0x250C */
@@ -352,25 +332,25 @@ s32 func_ovl0B_04_80048910(void); /* 0x2F0A */
 
 /* The pages' handlers and set-ups (the page table refers to them). */
 static u8 func_ovl0B_04_80044BE8(u8 arg0, u16 arg1);
-static void func_ovl0B_04_800444E8(Obj0B04 *arg0);
+static void func_ovl0B_04_800444E8(UnkStructA_40 *arg0);
 static u8 func_ovl0B_04_80045AF0(u8 arg0, u16 arg1);
-static void func_ovl0B_04_800459C4(Obj0B04 *arg0);
+static void func_ovl0B_04_800459C4(UnkStructA_40 *arg0);
 static u8 func_ovl0B_04_80045D20(u8 arg0, u16 arg1);
-static void func_ovl0B_04_80045BF4(Obj0B04 *arg0);
+static void func_ovl0B_04_80045BF4(UnkStructA_40 *arg0);
 static u8 func_ovl0B_04_80045F50(u8 arg0, u16 arg1);
-static void func_ovl0B_04_80045E24(Obj0B04 *arg0);
+static void func_ovl0B_04_80045E24(UnkStructA_40 *arg0);
 static u8 func_ovl0B_04_80046180(u8 arg0, u16 arg1);
-static void func_ovl0B_04_80046054(Obj0B04 *arg0);
+static void func_ovl0B_04_80046054(UnkStructA_40 *arg0);
 static u8 func_ovl0B_04_80046B28(u8 arg0, u16 arg1);
-static void func_ovl0B_04_80046AA0(Obj0B04 *arg0);
+static void func_ovl0B_04_80046AA0(UnkStructA_40 *arg0);
 static u8 func_ovl0B_04_80046D74(u8 arg0, u16 arg1);
-static void func_ovl0B_04_80046CEC(Obj0B04 *arg0);
+static void func_ovl0B_04_80046CEC(UnkStructA_40 *arg0);
 static u8 func_ovl0B_04_80046FA8(u8 arg0, u16 arg1);
-static void func_ovl0B_04_80046F20(Obj0B04 *arg0);
+static void func_ovl0B_04_80046F20(UnkStructA_40 *arg0);
 static u8 func_ovl0B_04_800471F4(u8 arg0, u16 arg1);
-static void func_ovl0B_04_8004716C(Obj0B04 *arg0);
+static void func_ovl0B_04_8004716C(UnkStructA_40 *arg0);
 static u8 func_ovl0B_04_80045214(u8 arg0, u16 arg1);
-static void func_ovl0B_04_800450C0(Obj0B04 *arg0);
+static void func_ovl0B_04_800450C0(UnkStructA_40 *arg0);
 
 /* .bss */
 u8 D_ovl0B_04_8004A290[12][2]; /* the name being entered, one character a string */
@@ -1268,7 +1248,7 @@ Entry0B04 D_ovl0B_04_8004A060[13] = {
 };
 #endif
 
-Obj0B04 *D_ovl0B_04_8004A164 = NULL;
+UnkStructA_40 *D_ovl0B_04_8004A164 = NULL;
 s32 D_ovl0B_04_8004A168 = 0; /* the page; 0xFF ends the screen */
 s32 D_ovl0B_04_8004A16C = 0; /* the page's first item */
 s32 D_ovl0B_04_8004A170 = -1;
@@ -1556,7 +1536,7 @@ static void func_ovl0B_04_8004430C(u8 item) {
 
 /* A text dimmed (alpha 100). */
 static void func_ovl0B_04_80044384(s32 id) {
-    Obj0B04 *o = func_ovl0B_04_80048668(id);
+    UnkStructA_40 *o = func_ovl0B_04_80048668(id);
 
     o->unkC |= 0x480;
     o->unk36 = 100;
@@ -1580,7 +1560,7 @@ static void func_ovl0B_04_80044394(s32 a, s32 b) {
 #else
     s32 x;
 #endif
-    Obj0B04 *o;
+    UnkStructA_40 *o;
     s32 m;
 
     m = func_ovl0B_04_8004438C();
@@ -1599,7 +1579,7 @@ static void func_ovl0B_04_80044394(s32 a, s32 b) {
 }
 
 static void func_ovl0B_04_8004447C(s32 id, s32 alpha) {
-    Obj0B04 *o = func_ovl0B_04_80048668(id);
+    UnkStructA_40 *o = func_ovl0B_04_80048668(id);
 
     if (alpha != 0xFF) {
         o->unkC |= 0x80;
@@ -1617,14 +1597,14 @@ static void func_ovl0B_04_800444D8(void) { /* unidentified: an original static (
 
 /* The menu cursor hidden. */
 static void func_ovl0B_04_800444E0(void) {
-    Obj0B04 *o = func_ovl0B_04_80048608();
+    UnkStructA_40 *o = func_ovl0B_04_80048608();
 
     o->unk36 = 0;
     o->unkC |= 0x80;
 }
 
 /* Page 0's set-up. */
-static void func_ovl0B_04_800444E8(Obj0B04 *arg0) {
+static void func_ovl0B_04_800444E8(UnkStructA_40 *arg0) {
     func_ovl0B_04_80044394(D_ovl0B_04_8004A2A8[6], D_ovl0B_04_8004A2A8[7]);
     func_ovl0B_04_80044384(D_ovl0B_04_8004A2A8[8]);
 #if !VERSION_JP
@@ -1874,8 +1854,8 @@ static void func_ovl0B_04_80044BE0(void) {
 static u8 func_ovl0B_04_80044BE8(u8 arg0, u16 arg1) {
     u8 ret = 1;
     s32 changed;
-    Obj0B04 *a;
-    Obj0B04 *b;
+    UnkStructA_40 *a;
+    UnkStructA_40 *b;
     s32 i;
     s32 j;
 
@@ -2000,8 +1980,8 @@ static s32 func_ovl0B_04_800450B8(void) {
 
 /* Page 9's set-up: the name over a fade (written out: the stub before it,
  * 800450B8, is 80045214's save). */
-static void func_ovl0B_04_800450C0(Obj0B04 *arg0) {
-    Obj0B04 *o = func_ovl0B_04_80048668(D_ovl0B_04_8004A3B0[4]);
+static void func_ovl0B_04_800450C0(UnkStructA_40 *arg0) {
+    UnkStructA_40 *o = func_ovl0B_04_80048668(D_ovl0B_04_8004A3B0[4]);
     Fade *f;
     f32 step;
 
@@ -2159,9 +2139,9 @@ static void func_ovl0B_04_80045850(void) {
 }
 
 static void func_ovl0B_04_800458F4(s32 id0, s32 id1) {
-    Obj0B04 *a = func_ovl0B_04_80048668(id0);
-    Obj0B04 *b = func_ovl0B_04_80048668(id1);
-    Obj0B04 *c = func_ovl0B_04_80048608();
+    UnkStructA_40 *a = func_ovl0B_04_80048668(id0);
+    UnkStructA_40 *b = func_ovl0B_04_80048668(id1);
+    UnkStructA_40 *c = func_ovl0B_04_80048608();
 
     a->unkC |= 1;
     b->unkC |= 1;
@@ -2170,9 +2150,9 @@ static void func_ovl0B_04_800458F4(s32 id0, s32 id1) {
 
 /* A page's two texts and the menu's cursor shown, and hidden. */
 static void func_ovl0B_04_80045958(s32 id0, s32 id1) {
-    Obj0B04 *a = func_ovl0B_04_80048668(id0);
-    Obj0B04 *b = func_ovl0B_04_80048668(id1);
-    Obj0B04 *c = func_ovl0B_04_80048608();
+    UnkStructA_40 *a = func_ovl0B_04_80048668(id0);
+    UnkStructA_40 *b = func_ovl0B_04_80048668(id1);
+    UnkStructA_40 *c = func_ovl0B_04_80048608();
 
     a->unkC &= ~1;
     b->unkC &= ~1;
@@ -2185,7 +2165,7 @@ static void func_ovl0B_04_SetText(s32 id, u8 *str, s32 col, f32 scale) {
     func_ovl0B_04_80048658(id, scale, scale);
 }
 
-static void func_ovl0B_04_800459C4(Obj0B04 *arg0) {
+static void func_ovl0B_04_800459C4(UnkStructA_40 *arg0) {
     func_ovl0B_04_800458F4(D_ovl0B_04_8004A2D0[0], D_ovl0B_04_8004A2D0[1]);
     func_ovl0B_04_80047DF0(arg0, 0x55);
     func_ovl0B_04_8004401C(&D_ovl0B_04_80049B20[0]);
@@ -2212,7 +2192,7 @@ static u8 func_ovl0B_04_80045AF0(u8 arg0, u16 arg1) {
     return ret;
 }
 
-static void func_ovl0B_04_80045BF4(Obj0B04 *arg0) {
+static void func_ovl0B_04_80045BF4(UnkStructA_40 *arg0) {
     func_ovl0B_04_800458F4(D_ovl0B_04_8004A2D8[0], D_ovl0B_04_8004A2D8[1]);
     func_ovl0B_04_80047DF0(arg0, 0x55);
     func_ovl0B_04_8004401C(&D_ovl0B_04_80049B20[1]);
@@ -2239,7 +2219,7 @@ static u8 func_ovl0B_04_80045D20(u8 arg0, u16 arg1) {
     return ret;
 }
 
-static void func_ovl0B_04_80045E24(Obj0B04 *arg0) {
+static void func_ovl0B_04_80045E24(UnkStructA_40 *arg0) {
     func_ovl0B_04_800458F4(D_ovl0B_04_8004A2E0[0], D_ovl0B_04_8004A2E0[1]);
     func_ovl0B_04_80047DF0(arg0, 0x55);
     func_ovl0B_04_8004401C(&D_ovl0B_04_80049B20[2]);
@@ -2270,7 +2250,7 @@ static u8 func_ovl0B_04_80045F50(u8 arg0, u16 arg1) {
     return ret;
 }
 
-static void func_ovl0B_04_80046054(Obj0B04 *arg0) {
+static void func_ovl0B_04_80046054(UnkStructA_40 *arg0) {
     func_ovl0B_04_800458F4(D_ovl0B_04_8004A2E8[0], D_ovl0B_04_8004A2E8[1]);
     func_ovl0B_04_80047DF0(arg0, 0x55);
     func_ovl0B_04_8004401C(&D_ovl0B_04_80049B20[3]);
@@ -2441,7 +2421,7 @@ static void func_ovl0B_04_800468E8(s32 n, s32 i) {
 
 /* Pages 5-8's set-up: which of the ten choices from base + 1 are open. */
 static void func_ovl0B_04_800468F0(s32 base) {
-    Obj0B04 *o;
+    UnkStructA_40 *o;
     s32 i;
 
     D_ovl0B_04_8004A404 = &D_ovl0B_04_800499B8[D_ovl0B_04_8004A168];
@@ -2473,7 +2453,7 @@ static void func_ovl0B_04_800468F0(s32 base) {
 #endif
 }
 
-static void func_ovl0B_04_80046AA0(Obj0B04 *arg0) {
+static void func_ovl0B_04_80046AA0(UnkStructA_40 *arg0) {
     func_ovl0B_04_80046A98();
 }
 
@@ -2506,7 +2486,7 @@ static u8 func_ovl0B_04_80046B28(u8 arg0, u16 arg1) {
     return ret;
 }
 
-static void func_ovl0B_04_80046CEC(Obj0B04 *arg0) {
+static void func_ovl0B_04_80046CEC(UnkStructA_40 *arg0) {
     func_ovl0B_04_80046CE4();
 }
 
@@ -2538,7 +2518,7 @@ static u8 func_ovl0B_04_80046D74(u8 arg0, u16 arg1) {
     return ret;
 }
 
-static void func_ovl0B_04_80046F20(Obj0B04 *arg0) {
+static void func_ovl0B_04_80046F20(UnkStructA_40 *arg0) {
     func_ovl0B_04_80046F18();
 }
 
@@ -2571,7 +2551,7 @@ static u8 func_ovl0B_04_80046FA8(u8 arg0, u16 arg1) {
     return ret;
 }
 
-static void func_ovl0B_04_8004716C(Obj0B04 *arg0) {
+static void func_ovl0B_04_8004716C(UnkStructA_40 *arg0) {
     func_ovl0B_04_80047164();
 }
 
@@ -2645,7 +2625,7 @@ void func_ovl0B_04_80043ADC(void) {
     Page *p3;
     Page *p4;
 #endif
-    Obj0B04 *menu;
+    UnkStructA_40 *menu;
     s32 i;
 
 #if !VERSION_JP

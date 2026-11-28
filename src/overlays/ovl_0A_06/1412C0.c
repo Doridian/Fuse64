@@ -95,15 +95,6 @@ typedef struct {
     /* 0x28 */ void (*unk28)(s32, UnkStruct_ovl0A_06_800452B8 **);
 } UnkStruct_ovl0A_06_80047178; /* size 0x2C */
 
-/* what ZeroJump 0x1C05 fills in */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ u32 unk8;
-    /* 0x0C */ u8 unkC[4];
-    /* 0x10 */ u8 unk10[0xC];
-} UnkStruct_ovl0A_06_80047540; /* size 0x1C */
-
 s32 func_ovl0A_06_800456D0(u8 *, const char *, s32); /* 0x101 */
 void func_ovl0A_06_80045B00(s32, s32, s32); /* 0xF00 */
 u16 func_ovl0A_06_80045B18(void); /* 0xF03 */
@@ -120,7 +111,7 @@ void func_ovl0A_06_80046578(s32); /* 0x1904 */
 s32 func_ovl0A_06_800465A0(void); /* 0x1909 */
 s32 func_ovl0A_06_800466A0(s32); /* 0x1C02 */
 s32 func_ovl0A_06_800466B0(s32); /* 0x1C04 */
-s32 func_ovl0A_06_800466B8(UnkStruct_ovl0A_06_80047540 *); /* 0x1C05 */
+s32 func_ovl0A_06_800466B8(PakDir *); /* 0x1C05 */
 s32 func_ovl0A_06_800466C0(void); /* 0x1C06 */
 s32 func_ovl0A_06_800466C8(void); /* 0x1C07 */
 s32 func_ovl0A_06_800466D0(s32); /* 0x1C08 */
@@ -195,7 +186,9 @@ UnkStructA_40 *D_ovl0A_06_80047534;
 #if !VERSION_JP
 UnkStructA_40 *D_ovl0A_06_80047538;
 #endif
-UnkStruct_ovl0A_06_80047540 D_ovl0A_06_80047540[16];
+/* a PakDir (0x1C4 bytes) in 0x1C0: a sixteenth file's name ends in
+ * D_ovl0A_06_80047700 on the N64 */
+s32 D_ovl0A_06_80047540[0x1C0 / 4 PORT_MORE(1)];
 u8 D_ovl0A_06_80047700[8];
 s32 D_ovl0A_06_80047708[4];
 UnkStructA_40 *D_ovl0A_06_80047718[4];
@@ -497,7 +490,7 @@ static void func_ovl0A_06_80043020(s32 sfx, s32 sel);
 static s32 func_ovl0A_06_8004311C(void);
 static void func_ovl0A_06_80043248();
 static void func_ovl0A_06_80043250(s32 value, u8 *dest);
-static void func_ovl0A_06_800432F8(UnkStruct_ovl0A_06_80047540 *notes);
+static void func_ovl0A_06_800432F8(PakDir *dir);
 static s32 func_ovl0A_06_80043464(void);
 static void func_ovl0A_06_800434CC(UnkStruct_ovl0A_06_80047178 *tbl, s32 n);
 static void func_ovl0A_06_800434D4(void);
@@ -542,7 +535,7 @@ static void func_ovl0A_06_80043020(s32 sfx, s32 sel);
 static s32 func_ovl0A_06_8004311C(void);
 static void func_ovl0A_06_80043248();
 static void func_ovl0A_06_80043250(s32 value, u8 *dest);
-static void func_ovl0A_06_800432F8(UnkStruct_ovl0A_06_80047540 *notes);
+static void func_ovl0A_06_800432F8(PakDir *dir);
 static s32 func_ovl0A_06_80043464(void);
 static void func_ovl0A_06_800434CC(UnkStruct_ovl0A_06_80047178 *tbl, s32 n);
 static void func_ovl0A_06_800434D4(void);
@@ -587,7 +580,7 @@ static void func_ovl0A_06_80043020(s32 sfx, s32 sel);
 static s32 func_ovl0A_06_8004311C(void);
 static void func_ovl0A_06_80043248();
 static void func_ovl0A_06_80043250(s32 value, u8 *dest);
-static void func_ovl0A_06_800432F8(UnkStruct_ovl0A_06_80047540 *notes);
+static void func_ovl0A_06_800432F8(PakDir *dir);
 static s32 func_ovl0A_06_80043464(void);
 static void func_ovl0A_06_800434CC(UnkStruct_ovl0A_06_80047178 *tbl, s32 n);
 static void func_ovl0A_06_800434D4(void);
@@ -632,7 +625,7 @@ static void func_ovl0A_06_80043020(s32 sfx, s32 sel);
 static s32 func_ovl0A_06_8004311C(void);
 static void func_ovl0A_06_80043248();
 static void func_ovl0A_06_80043250(s32 value, u8 *dest);
-static void func_ovl0A_06_800432F8(UnkStruct_ovl0A_06_80047540 *notes);
+static void func_ovl0A_06_800432F8(PakDir *dir);
 static s32 func_ovl0A_06_80043464(void);
 static void func_ovl0A_06_800434CC(UnkStruct_ovl0A_06_80047178 *tbl, s32 n);
 static void func_ovl0A_06_800434D4(void);
@@ -863,12 +856,12 @@ static void func_ovl0A_06_80044F60(void) {
 static void func_ovl0A_06_80044F58(void) {
     s32 i;
 
-    D_ovl0A_06_80047540[0].unk0 = 0x7B00;
+    ((PakDir *) D_ovl0A_06_80047540)->freeBytes = 0x7B00;
     for (i = 0; i < 16; i++) {
-        D_ovl0A_06_80047540[i].unk4 = 0;
-        D_ovl0A_06_80047540[i].unk8 = 0;
-        D_ovl0A_06_80047540[i].unkC[0] = 0;
-        D_ovl0A_06_80047540[i].unk10[0] = 0;
+        ((PakDir *) D_ovl0A_06_80047540)->files[i].used = 0;
+        ((PakDir *) D_ovl0A_06_80047540)->files[i].size = 0;
+        ((PakDir *) D_ovl0A_06_80047540)->files[i].ext[0] = 0;
+        ((PakDir *) D_ovl0A_06_80047540)->files[i].name[0] = 0;
     }
 }
 
@@ -1149,7 +1142,7 @@ static s32 func_ovl0A_06_80044468(s32 reload) {
     if (reload) {
         ret = func_ovl0A_06_80043464();
     } else {
-        func_ovl0A_06_800432F8(D_ovl0A_06_80047540);
+        func_ovl0A_06_800432F8((PakDir *) D_ovl0A_06_80047540);
     }
     if (ret == 9) {
         func_ovl0A_06_80046988(8, 0xC, 0x48, 0x200);
@@ -1517,21 +1510,21 @@ static void func_ovl0A_06_800434D4(void) {
 
 
 static s32 func_ovl0A_06_80043464(void) {
-    s32 ret = func_ovl0A_06_800466B8(D_ovl0A_06_80047540);
+    s32 ret = func_ovl0A_06_800466B8((PakDir *) D_ovl0A_06_80047540);
 
     if (ret == 9) {
 #if VERSION_JP
-        func_ovl0A_06_80043250(D_ovl0A_06_80047540[0].unk0 >> 8, &D_ovl0A_06_80046DE0[0x12]);
+        func_ovl0A_06_80043250(((PakDir *) D_ovl0A_06_80047540)->freeBytes >> 8, &D_ovl0A_06_80046DE0[0x12]);
 #else
-        func_ovl0A_06_80043250(D_ovl0A_06_80047540[0].unk0 >> 8, &D_ovl0A_06_80046DE0[0x1A]);
+        func_ovl0A_06_80043250(((PakDir *) D_ovl0A_06_80047540)->freeBytes >> 8, &D_ovl0A_06_80046DE0[0x1A]);
 #endif
-        func_ovl0A_06_800432F8(D_ovl0A_06_80047540);
+        func_ovl0A_06_800432F8((PakDir *) D_ovl0A_06_80047540);
     }
     D_ovl0A_06_80047024 = ret;
     return ret;
 }
 
-static void func_ovl0A_06_800432F8(UnkStruct_ovl0A_06_80047540 *notes) {
+static void func_ovl0A_06_800432F8(PakDir *dir) {
     s32 i;
     s32 j;
     s32 len;
@@ -1540,21 +1533,21 @@ static void func_ovl0A_06_800432F8(UnkStruct_ovl0A_06_80047540 *notes) {
     n = D_ovl0A_06_80047020 * 4;
     for (i = 0; i < 4; i++) {
         func_ovl0A_06_80043250(n + 1, D_ovl0A_06_80047068[i]);
-        if (notes[n].unk4 != 0) {
+        if (dir->files[n].used != 0) {
             D_ovl0A_06_80047068[i][0x16] = 0;
             for (j = 0; j < 16; j++) {
-                D_ovl0A_06_80047068[i][j + 5] = notes[n].unk10[j];
-                if (notes[n].unk10[j] == 0) {
+                D_ovl0A_06_80047068[i][j + 5] = dir->files[n].name[j];
+                if (dir->files[n].name[j] == 0) {
                     break;
                 }
             }
             len = j + 5;
-            if (notes[n].unkC[0] != 0) {
+            if (dir->files[n].ext[0] != 0) {
                 D_ovl0A_06_80047068[i][len] = 0x3C;
                 len++;
                 for (j = 0; j < 4; j++) {
-                    D_ovl0A_06_80047068[i][len] = notes[n].unkC[j];
-                    if (notes[n].unkC[j] == 0) {
+                    D_ovl0A_06_80047068[i][len] = dir->files[n].ext[j];
+                    if (dir->files[n].ext[j] == 0) {
                         break;
                     }
                     len++;
@@ -1563,7 +1556,7 @@ static void func_ovl0A_06_800432F8(UnkStruct_ovl0A_06_80047540 *notes) {
             for (; len < 0x1C; len++) {
                 D_ovl0A_06_80047068[i][len] = 0xF;
             }
-            func_ovl0A_06_80043250(notes[n].unk8 >> 8, &D_ovl0A_06_80047068[i][0x1C]);
+            func_ovl0A_06_80043250(dir->files[n].size >> 8, &D_ovl0A_06_80047068[i][0x1C]);
             D_ovl0A_06_80047068[i][0x1F] = 0;
         } else {
             D_ovl0A_06_80047068[i][5] = 0;
@@ -1619,9 +1612,9 @@ static s32 func_ovl0A_06_8004311C(void) {
             D_ovl0A_06_80047018 = 1;
             func_ovl0A_06_80043020(0, 1);
         } else if ((pressed & 0x8000) || (pressed & 0x1000)) {
-#line 1665 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1658 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             ret = 1;
-#line 1641 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1634 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             if (D_ovl0A_06_80047018 == 0) {
                 /* SE(1, 1) with `ret = 2` between its wait and its call */
                 switch (1) {
@@ -1638,9 +1631,9 @@ static s32 func_ovl0A_06_8004311C(void) {
                 SE(2, 2);
             }
         } else if (pressed & 0x4000) {
-#line 1665 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1658 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             ret = 1;
-#line 1660 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1653 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             SE(2, 2);
         }
         func_ovl0A_06_800465A0();

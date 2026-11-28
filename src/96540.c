@@ -41,19 +41,6 @@ s32 func_80298878(OSPfs *, s32 *, s32 *);                     /* 0x160C osPfsNum
 s32 func_80298888(OSMesgQueue *, OSPfs *, int);               /* 0x160E osPfsInitPak */
 s32 func_80298890(OSPfs *);                                   /* 0x160F osPfsRepairId */
 
-/* A file in func_8027BF38's listing. */
-typedef struct {
-    /* 0x00 */ s32 used;
-    /* 0x04 */ u32 size;
-    /* 0x08 */ u8 ext[4];
-    /* 0x0C */ u8 name[16];
-} PakFile; /* size 0x1C */
-
-typedef struct {
-    /* 0x00 */ s32 freeBytes;
-    /* 0x04 */ PakFile files[16];
-} PakDir;
-
 /* A slot of the EEPROM save image (AD5B0's D_80063000). */
 typedef struct {
     /* 0x00 */ u8 unk0[0x10];

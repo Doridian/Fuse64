@@ -206,6 +206,20 @@ typedef struct UnkStruct_802363BC {
     /* 0x40 */ struct UnkStruct_802363BC *unk40;
 } UnkStruct_802363BC; /* size 0x44 */
 
+/* A file in func_8027BF38's listing. */
+typedef struct {
+    /* 0x00 */ s32 used;
+    /* 0x04 */ u32 size;
+    /* 0x08 */ u8 ext[4];
+    /* 0x0C */ u8 name[16];
+} PakFile; /* size 0x1C */
+
+/* A controller pak's listing: what func_8027BF38 (ZeroJump 0x1C05) fills in. */
+typedef struct {
+    /* 0x00 */ s32 freeBytes;
+    /* 0x04 */ PakFile files[16];
+} PakDir; /* size 0x1C4 */
+
 /*
  * A word's low half, as 93850 and 949A0 read UnkStruct_802AC610's unk4,
  * unk8 and unkC: the halfword at +2 on the N64; the port takes the whole

@@ -1,21 +1,22 @@
 /*
  * -O3. Every function is emitted in the original's order, with the
  * original's stubs for the inlined statics. Matching notes:
- * - The #line directives order as1's .loc lines; only their differences
+ * - The #line directive orders as1's .loc lines; only differences
  *   matter. In func_8029414C the for gets a line below the
  *   *p++ = ...(chk, 6) line before it, which schedules the loop's init
- *   before the sw of p and chk; in func_80292DB0 the for's line must be
- *   below the line of the func_80292DB0 call in func_80292E88, which puts
- *   move v0,zero before andi v1. Moving lines above the first #line
- *   changes the first difference: shift both by the same amount.
+ *   before the sw of p and chk. Moving lines above it changes the first
+ *   difference: shift it by the same amount.
+ * - func_80292DB0 is defined before func_80292E88: its for's line must be
+ *   below the line of its call there, which puts move v0,zero before
+ *   andi v1.
  * - func_80297E80 is declared returning u16: the narrowing stops uopt
  *   copy-propagating ret into v0, so func_80292E90 keeps it in v1.
  * - func_80292DB8's loop is while (ret != 0 && i++ < 3) with ret = -1:
  *   uopt folds the i++ < 3 entry test but keeps ret != 0 (li v0,1; beqz).
- * - func_802934D8/D0 interleave the checksum with the ors, and the last
- *   or of D0 and the first of D8 read (u8)(x << 0), which burns one ugen
- *   temp so the t registers rotate as the original's. D0 is defined
- *   before func_802934E8 (its .loc lines put li a0,2 in the delay slot).
+ * - func_802934D0/D8 and func_80293378 interleave the checksum with the
+ *   ors, each byte read as (p[0] << n) & mask, the last as << 0 too (with
+ *   p[0] & 0xFF the t registers rotate one off). D0 is defined before
+ *   func_802934E8 (its .loc lines put li a0,2 in the delay slot).
  * - Frames: s32 pad[8] in D8 and pad2[6] in E0 (after its locals) give
  *   the 0x128 frame and E0's i at sp+0x5C. func_80292E90 declares i first.
  * - func_802933E8 and func_80294064 take their pointer arguments first,
@@ -562,7 +563,7 @@ static u8 func_802934D0(u8 **pp, s32 *out) {
     sum += *p++;
     *out |= (p[0] << 8) & 0xFF00;
     sum += *p++;
-    *out |= (u8)(p[0] << 0); /* fake: `(u8)(x << 0)` burns one ugen temp (header) */
+    *out |= (p[0] << 0) & 0xFF;
     sum += *p++;
     *pp = p;
     return sum;
@@ -744,7 +745,7 @@ static u8 func_802934D8(u8 **pp, s32 *out) {
 
     *out = (p[0] << 8) & 0xFF00;
     sum = *p++;
-    *out |= (u8)(*p << 0); /* fake: `(u8)(x << 0)` burns one ugen temp (header) */
+    *out |= (p[0] << 0) & 0xFF;
     sum += *p++;
     *pp = p;
     return sum;
@@ -776,16 +777,13 @@ static u8 func_80293378(u8 **pp, s32 *out) {
     u8 *p = *pp;
     u8 sum;
 
-    do { /* fake: a do/while (0) around the body */
     *out |= (p[0] << 16) & 0xFF0000;
-    sum = p[0];
-    *out |= (p[1] << 8) & 0xFF00;
-    sum += p[1];
-    *out |= p[2] & 0xFF;
-    sum += p[2];
-    p += 3;
+    sum = *p++;
+    *out |= (p[0] << 8) & 0xFF00;
+    sum += *p++;
+    *out |= (p[0] << 0) & 0xFF;
+    sum += *p++;
     *pp = p;
-    } while (0);
     return sum;
 }
 
@@ -911,6 +909,17 @@ static s32 func_80292E90(u8 addr, u8 *buf, u8 n) {
     return -1;
 }
 
+static s32 func_80292DB0(u8 *a, u8 *b, u8 n) {
+    s32 i;
+
+    for (i = 0; i < n * 8; i++) {
+        if (b[i] != a[i]) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 static s32 func_80292E88(u8 addr, u8 n) {
     u8 *p = &D_800631B8[addr * 8];
 
@@ -950,14 +959,3 @@ static s32 func_80292DB8(u8 addr, u8 *buf, u8 n) {
     return ret;
 }
 
-static s32 func_80292DB0(u8 *a, u8 *b, u8 n) {
-    s32 i;
-
-#line 886 /* fake: numbering for as1 order (header) */
-    for (i = 0; i < n * 8; i++) {
-        if (b[i] != a[i]) {
-            return 1;
-        }
-    }
-    return 0;
-}

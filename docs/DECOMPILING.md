@@ -1237,23 +1237,31 @@ before every .rodata). libultra's objects use this where their code needs
 the data in the same file (docs/LIBULTRA.md, "Data"), and so does GNU
 malloc's `libmalloc/gmalloc` (.data and .bss; docs/LIBMALLOC.md). So do the game's
 objects after main_code's cut that have jump tables, strings or
-constants (87D80, 8A7A0: `.rodata` only), or whose `.data`/`.bss` is all
-their own (AFBF0: all three sections, jp's .data
-its own size; 80580: .data and .rodata, since a function's `static`
-counter puts its .data in the C; 9CAB0: .data and .rodata, its .bss
-outside main_code; 949A0: all three, .data module 0x28's table and
-.bss all that it and 93850 use (93850 has neither: the table is 949A0's
-functions, and 949A0 their main user); 97610: .data (two record tables
-as the words the overlays pass too, module 0x23's table) and .bss;
-995C0: .data and .rodata; 99F40: .data and .bss; 9BFD0: .data and .bss;
-A4860: .data. A gap IDO's alignment leaves in a .bss (4 bytes before an
-8-aligned array of 8 bytes or more: 97610's D_802B01B8, 949A0's
-D_802AFF60) needs no variable); everything else they use stays `extern`. Objects
-the cut has since reached were placed so first (426E0 and 46300 for
-their functions' `static`s, 48600 for its interleaved .bss: its header
-has how IDO orders a .bss; 6BBE0, whose unreferenced word after
-D_802ACFC8 is written as its second element, since at `-O3` an
-unreferenced .bss global goes to common).
+constants (8A7A0's .rodata), or whose `.data`/`.bss` is all their own
+(AFBF0: all three sections, jp's .data its own size; 85A10, 86680; 87190,
+87730: .data and .bss, their ZeroJump module tables; 87D80: all three,
+its .data module 13's table and, with no 16-byte boundary after it,
+D_802A14B4 and module 0x27's table, which only 8A7A0 uses; 8A7A0:
+.rodata and .bss, the slots, the nodes and the IDs, its references to
+D_802AFCF4/D_802AFCF8 inside the slots written as offsets from
+D_802AFCE8 (postsplit only defines interior names the asm uses),
+D_802AFCE8 a byte array as before (a `Slot30[5]` changed
+func_80270770's registers) and the nodes a `Node3C[2]`; 9CAB0: .data
+and .rodata, its .bss outside main_code; 949A0: all three, .data module
+0x28's table and .bss all that it and 93850 use (93850 has neither: the
+table is 949A0's functions, and 949A0 their main user); 97610: .data
+(two record tables as the words the overlays pass too, module 0x23's
+table) and .bss; 995C0: .data and .rodata; 99F40: .data and .bss;
+9BFD0: .data and .bss; A4860: .data. A gap IDO's alignment leaves in a
+.bss (4 bytes before an 8-aligned array of 8 bytes or more: 97610's
+D_802B01B8, 949A0's D_802AFF60) needs no variable); everything else they
+use stays `extern`. Objects the cut has since reached were placed so
+first (426E0 and 46300 for their functions' `static`s, 48600 for its
+interleaved .bss: its header has how IDO orders a .bss; 6BBE0, whose
+unreferenced word after D_802ACFC8 is written as its second element,
+since at `-O3` an unreferenced .bss global goes to common; 80420 and
+80580, whose SDK objects are sized for the host in the port: the marker
+`PORT_HOST`, the others by their types).
 Build the object once (the link fails, the `.o` is there), run `--place`
 for each version with `--ref build/us/src/<object>.c.o`, add the lines,
 regenerate the configs and extract again. `--place` finds an object named
@@ -1279,10 +1287,6 @@ from 5E3F0's and its .bss 0x10 lower; jp's lower by 0x920 and more past
 | main_code `.data` 0x8029D250-0x8029F570 | rspboot (0xD0), F3DEX's text (0x1430), aspMain's text (0xE20) | the SDK's microcode, linked before the game's `.data` | binary, not C (data_split.txt's `data=` starts the objects after it) |
 | main_code `.rodata` 0x802A4840-0x802A5000 | F3DEX's data (`D_802A4840`, 0x7C0) | the microcode | binary (`__libm_qnan_f` before it is ultralib's `gu/libm_vals.s`, placed) |
 | main_code_persist `.rodata` 0x802A5000-0x802A5300 | F3DEX's data's tail (`D_802A5000`), aspMain's data (`D_802A5040`, 0x2C0) | the microcode | binary |
-| `.data` 0x802A1230-0x802A1250 | three words 40040 uses | 80420 (between 7D840 and 80580) | a label another object uses: 80420 must define it, 40040 keeps the extern |
-| `.data` 0x802A13D0-0x802A14F0 | module 20's table, 87730's and 87D80's tables | 87190, 87730, 87D80 (8A7A0 reads 87D80's) | not written yet; 87D80 is placed for its .rodata only |
-| `.bss` 0x802AD0E0-0x802AD680 | `D_802AD0E0`, 80420's, the audio state | 80420, 80580 | not written yet; 80580 is placed for .data/.rodata |
-| `.bss` 0x802AFC30-0x802AFE70 | | 87190, 87730, 87D80 | not written yet |
 
 Labels inside these that nothing names (`D_802AC402`, `D_802AFF62`, ...)
 are fields: the object's C covers them with its struct. What it takes:
@@ -1293,6 +1297,12 @@ and the overlays did; an object's run ends where the next owner's first
 label (or 16-byte padding) is. Where the cut reaches the owner, it
 needs no placement: list it in data_split.txt in order. The microcode
 blocks stay asm (or become binary objects); they aren't the game's C.
+For the port, what the asm block gave `port/tools/asm2c.py` the host's
+layout of (its `TYPES`: the SDK's objects declared as bytes, the pointer
+tables) needs the host's size in the C: a type with the pointers, or
+`PORT_HOST` bytes (80580's marker); an x86-64 run crashed on 80580's heap
+and queue as N64-sized bytes. A digest pool the C defines is named in
+`port/tools/gen_digest_pools.py`'s `C_POOLS` (8A7A0's slots).
 
 **The build date.** main_code's .rodata starts at 0x802A2D00 with
 `"SAT SEP  6 14:57:59 JST 1997"` (eu `"MON SEP  8 12:04:49 JST 1997"`, jp

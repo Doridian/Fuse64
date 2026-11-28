@@ -53,6 +53,7 @@
  * one-variable condition matches; `== 0` is a guess).
  */
 #include "common.h"
+#include "ultralib/ultra64.h"
 #include "m2c.h"
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
@@ -385,7 +386,7 @@ typedef struct SndHeap { u8 *base; u8 *cur; s32 len; s32 count; } SndHeap;
  * are the oscillators' free list (func_8026A164 links them). */
 SndHeap D_802AD120; /* (libaudio.h's ALHeap) */
 void *D_802AD130[50]; /* (OSMesg) */
-UnkStruct_802A5330 D_802AD1F8; /* (os.h's OSMesgQueue) */
+OSMesgQueue D_802AD1F8;
 #ifdef TARGET_PC
 u8 *D_802AD210; /* the heap's base */
 #else

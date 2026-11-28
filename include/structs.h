@@ -318,7 +318,9 @@ typedef struct {
     /* 0x24 */ f32 unk24;
 } UnkStruct_800BC770; /* size 0x28 */
 
-/* a message queue (os.h's OSMesgQueue) */
+/* a message queue: os.h's OSMesgQueue, which the files that have one use (with
+   ultralib/ultra64.h); this name is left only for AD5B0's extern of 53D70's
+   D_802AC3E0, until AD5B0 takes OSMesgQueue too */
 typedef struct {
     /* 0x00 */ void *unk0;
     /* 0x04 */ void *unk4;

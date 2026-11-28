@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ultralib/ultra64.h"
 
 /* A controller's input, one per frame in a ring of 16 per controller. */
 typedef struct {
@@ -65,7 +66,7 @@ extern void *D_802A015C[];
 /* .bss (0x802AC3E0-0x802AC5C0): the controllers' message queue (AD5B0's
  * EEPROM reads and writes use it too) and its buffer (one message used),
  * their status and reads, the rings of inputs */
-UnkStruct_802A5330 D_802AC3E0;
+OSMesgQueue D_802AC3E0;
 void *D_802AC3F8[2];
 UnkStruct_802AC400 D_802AC400[4];
 UnkStruct_802AC410 D_802AC410[4];

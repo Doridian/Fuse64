@@ -25,6 +25,7 @@
  *   after next.
  */
 #include "common.h"
+#include "ultralib/ultra64.h"
 
 /* audiomgr.c's DMABuffer (an ALLink first) */
 typedef struct UnkStruct_8026B804 {
@@ -170,7 +171,7 @@ void func_80297DA8(void *, s32, void *, void *, void *, s32);
 void func_80297DB0(void *);
 void func_80297DC8(void *);
 void func_80297DF0(void *, void *, void *);
-void *func_80297E00(void *);
+OSMesgQueue *func_80297E00(void *);
 u32 func_80297FB8(void);
 s32 func_80297FC0(s32);
 void func_80297FC8(void *, s32);
@@ -194,7 +195,7 @@ extern u8 D_802A5040[PORT_SIZE(0x2C0)]; /* and its data */
 /* The holes at 0x802AD694 and 0x802AF92C are IDO's: it puts an 8-byte
  * array or struct 8-aligned. */
 UnkStruct_802AD680 D_802AD680;
-void *D_802AD690;
+OSMesgQueue *D_802AD690;
 u8 D_802AD698[PORT_HOST(0x8, 2 * sizeof(void *))] PORT_ONLY(__attribute__((aligned(8)))); /* (sched.h's OSScClient) */
 UnkStruct_802AD6A0 D_802AD6A0;
 u64 D_802AD928[0x2000 / 8];

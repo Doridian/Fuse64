@@ -79,7 +79,6 @@ ALLOW_E = {
                                   "(docs/DECOMPILING.md, \"Types\")",
     ("func_8026D4B0", "param 0"): "to do: the draw callbacks are typed with each overlay's own copy of "
                                   "Gfx_80225840 (Gfx_ovl0B_01, Gfx0B04, ...)",
-    ("func_80001480", "ret"): "to do: 14B0's OSMesgQueue, 52270's UnkStruct_802A5330",
     ("func_8022DBBC", "param 0"): "to do: 0C_09's and 0C_10's views (48300 takes an s32)",
     ("func_8022F550", "ret"): "to do: 10_01..05's and 10_06's views, 48300's and 48600's f32 *",
     ("func_8022F698", "param 3"): "to do: 10_06's UnkStructA **, 15_01's and 15_02's Vec3f *, 48300's f32 **",

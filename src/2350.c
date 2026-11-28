@@ -26,7 +26,7 @@ void func_80000524();
 void func_8000059C();
 void func_8000064C();
 void func_80000768();
-void func_80001480();
+OSMesgQueue *func_80001480();
 void func_80001488();
 void func_80001698();
 void __d_to_ll();

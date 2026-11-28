@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ultralib/ultra64.h"
 #include "gfx.h"
 
 /* gbi.h's _SHIFTL: func_80226E84's texture rectangles match only with its
@@ -28,23 +29,23 @@ typedef struct {
     /* 0x44 */ u32 unk44;
     /* 0x48 */ void *unk48;
     /* 0x4C */ u32 unk4C;
-    /* 0x50 */ UnkStruct_802A5330 *unk50;
+    /* 0x50 */ OSMesgQueue *unk50;
     /* 0x54 */ void *unk54;
     /* 0x58 */ u8 unk58[0x10];
 } UnkStruct_8029F608; /* size 0x68 */
 
 void func_8022997C(void);
-void func_80237A70(UnkStruct_802A5330 *, void *);
+void func_80237A70(OSMesgQueue *, void *);
 void func_80237A90(UnkStruct_8029F608 *);
-void func_80237AE4(void *, UnkStruct_802A5330 *);
+void func_80237AE4(void *, OSMesgQueue *);
 PORT_RET(void, s32) func_80237D4C(s32);
 PORT_RET(void, s32) func_80237E18(s32, s32);
-void func_80237F44(UnkStruct_802A5330 *);
+void func_80237F44(OSMesgQueue *);
 s32 func_80238564(void (*)(void *), PORT_RET(s32, void *), s32, PORT_RET(s32, void *));
 PORT_RET(void, s32) func_802383A4(s32);
-void func_80297D80(UnkStruct_802A5330 *, void *, s32);
-PORT_RET(void, s32) func_80297D90(UnkStruct_802A5330 *, void *, s32);
-PORT_RET(void, s32) func_80297D98(UnkStruct_802A5330 *, PORT_IP(s32), s32);
+void func_80297D80(OSMesgQueue *, void *, s32);
+PORT_RET(void, s32) func_80297D90(OSMesgQueue *, void *, s32);
+PORT_RET(void, s32) func_80297D98(OSMesgQueue *, PORT_IP(s32), s32);
 
 extern u8 D_1000000[];
 extern u8 D_200000[];
@@ -113,8 +114,8 @@ void *D_8029F7C8[] = { func_802276FC, func_802276E0, func_802276D4, func_802276C
 /* This object's .bss (0x802A5330-0x802A53D0). Defined here because the
  * code depends on it: as1 shares one `lui $at` between stores to two
  * variables of the file's own .bss (func_80226D80), not between externs. */
-UnkStruct_802A5330 D_802A5330;
-UnkStruct_802A5330 D_802A5348;
+OSMesgQueue D_802A5330;
+OSMesgQueue D_802A5348;
 void *D_802A5360;
 void *D_802A5364;
 s32 D_802A5368;
@@ -127,7 +128,7 @@ Gfx_80225840 *D_802A5390;
 s32 D_802A5394;
 PORT_IP(s32) D_802A5398; /* (a message: a pointer's size) */
 u8 D_802A539C[4];
-UnkStruct_802A5330 D_802A53A0;
+OSMesgQueue D_802A53A0;
 void *D_802A53B8;
 s32 D_802A53BC;
 s32 D_802A53C0;
@@ -296,7 +297,7 @@ void func_80226D80(void) {
 
 void func_80226B18(void *arg0) {
     u8 client[PORT_HOST(8, 2 * sizeof(void *))] PORT_ONLY(__attribute__((aligned(8)))); /* (sched.h's OSScClient) */
-    UnkStruct_802A5330 mq;
+    OSMesgQueue mq;
     void *msgbuf;
     UnkStruct_8029F608 *task;
     void *msg5C;
@@ -309,7 +310,7 @@ void func_80226B18(void *arg0) {
     func_80237AE4(client, &mq);
     D_8029F5E0 = 0;
     while (1) {
-        if (D_802A5330.unk8 >= D_802A5330.unk10) {
+        if (D_802A5330.validCount >= D_802A5330.msgCount) {
             func_80297D90(&D_802A5330, &msg54, 1);
         }
         func_80297D90(&D_802A5330, &D_802A5398, 1);

@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ultralib/ultra64.h"
 
 /* -O3 (the Makefile's O3_C_FILES), so written last function first.  Eight
  * threads, each with its queue and stack (D_802A5A60), and a thread
@@ -12,7 +13,7 @@
 typedef struct {
     /* 0x000 */ s32 unk0;
     /* 0x004 */ u16 unk4;
-    /* 0x008 */ UnkStruct_802A5330 unk8;
+    /* 0x008 */ OSMesgQueue unk8;
     /* 0x020 */ void *unk20;
     /* 0x024 */ u8 unk24[4];
 #ifdef TARGET_PC
@@ -23,9 +24,9 @@ typedef struct {
     /* 0x1D8 */ u8 unk1D8[0x400];
 } UnkStruct_802A5A60; /* size 0x5D8 */
 
-void func_80297D80(UnkStruct_802A5330 *, void *, s32);
-s32 func_80297D90(UnkStruct_802A5330 *, void *, s32);
-s32 func_80297D98(UnkStruct_802A5330 *, void *, s32);
+void func_80297D80(OSMesgQueue *, void *, s32);
+s32 func_80297D90(OSMesgQueue *, void *, s32);
+s32 func_80297D98(OSMesgQueue *, void *, s32);
 void func_80297DA8(void *, s32, void (*)(void *), void *, void *, s32);
 void func_80297DB0(void *);
 void func_80297DB8(void *);
@@ -35,9 +36,9 @@ s32 func_80297DD0(void *);
 void func_80297DD8(void *, s32);
 s32 func_80297DE0(void *);
 void func_80297DE8(void *, void *, s32, u8, s32);
-void func_80297DF0(void *, void *, UnkStruct_802A5330 *);
+void func_80297DF0(void *, void *, OSMesgQueue *);
 void func_80297DF8(void *, void *);
-UnkStruct_802A5330 *func_80297E00(void *);
+OSMesgQueue *func_80297E00(void *);
 s32 func_802983B0(void);
 
 /* the scheduler client's thread (func_80237F84) and its stack */
@@ -55,16 +56,16 @@ s32 D_802A8928;
 s32 D_802A892C;
 s32 D_802A8930;
 s32 D_802A8934;
-UnkStruct_802A5330 D_802A8938;
+OSMesgQueue D_802A8938;
 void *D_802A8950;
 s32 D_802A8954;
-UnkStruct_802A5330 D_802A8958;
+OSMesgQueue D_802A8958;
 void *D_802A8970[16];
 /* func_8023876C passes its end (D_802AAC38's address) as the second
  * argument: written as &D_802AAC38, IDO keeps that address in a register
  * for the store that follows. */
 u8 D_802A89B0[0x2288];
-UnkStruct_802A5330 *D_802AAC38;
+OSMesgQueue *D_802AAC38;
 u8 D_802AAC40[PORT_HOST(0x8, 2 * sizeof(void *))] PORT_ONLY(__attribute__((aligned(8)))); /* (sched.h's OSScClient) */
 UnkStruct_802AAC48 D_802AAC48;
 /* the thread's stack top is this variable's address (2350's threads have
@@ -166,7 +167,7 @@ s32 func_80238564(void (*arg0)(void *), void *arg1, s32 arg2, void *arg3) {
     } else {
         func_80297DA8(p->unk28, p->unk0, arg0, arg1, arg3, D_802A8928 + arg2);
     }
-    if (p->unk8.unk8 >= p->unk8.unk10) {
+    if (p->unk8.validCount >= p->unk8.msgCount) {
         func_80297D90(&p->unk8, NULL, 0);
     }
     return p->unk0;
@@ -271,7 +272,7 @@ void func_80238100(void) {
 void func_80237F84(void *arg0) {
     s32 run;
     s16 type;
-    UnkStruct_802A5330 *mq;
+    OSMesgQueue *mq;
     s16 *msg = NULL;
 
     func_80297D80(&D_802A8938, &D_802A8950, 1);
@@ -280,7 +281,7 @@ void func_80237F84(void *arg0) {
     D_802A8954 = 0;
     run = 1;
     while (run) {
-        if (D_802A8938.unk8 >= D_802A8938.unk10) {
+        if (D_802A8938.validCount >= D_802A8938.msgCount) {
             func_80297D90(&D_802A8938, &msg, 1);
         }
         func_80297D90(&D_802A8938, &msg, 1);
@@ -298,7 +299,7 @@ void func_80237F84(void *arg0) {
     }
 }
 
-void func_80237F44(UnkStruct_802A5330 *arg0) {
+void func_80237F44(OSMesgQueue *arg0) {
     func_80297D98(&D_802A8958, arg0, 0);
     func_80297D90(arg0, NULL, 1);
 }
@@ -405,7 +406,7 @@ s32 func_80237B14(u16 arg0) {
     return -1;
 }
 
-void func_80237AE4(void *arg0, UnkStruct_802A5330 *arg1) {
+void func_80237AE4(void *arg0, OSMesgQueue *arg1) {
     func_80297DF0(D_802A89B0, arg0, arg1);
 }
 
@@ -417,6 +418,6 @@ void func_80237A90(void *arg0) {
     func_80297D98(D_802AAC38, arg0, 1);
 }
 
-void func_80237A70(UnkStruct_802A5330 *arg0, void *arg1) {
+void func_80237A70(OSMesgQueue *arg0, void *arg1) {
     func_80297D90(arg0, arg1, 1);
 }

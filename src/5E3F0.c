@@ -1835,20 +1835,7 @@ void func_8024D8C4(Ctl58 *arg0) {
 }
 
 void func_8024D5D0(Ctl58 *arg0) {
-#ifdef TARGET_PC
-    /* yaw, pitch and dist are the frame's 100, 104 and 108 on the N64, and
-       func_8022FF58 writes three floats from &yaw: pitch and dist become
-       the pitch and the horizontal distance it computes, and the code
-       reads dist back from 108 after the call (the ROM's code) */
-    f32 port_angles[3];
-#define yaw port_angles[0]
-#define pitch port_angles[1]
-#define dist port_angles[2]
-#else
-    f32 dist;
-    f32 pitch;
-    f32 yaw;
-#endif
+    Vec3f angle; /* yaw, pitch, dist: func_8022FF58 writes all three from &angle.x */
     f32 org[3];
     f32 vec[3];
     f32 x;
@@ -1858,64 +1845,64 @@ void func_8024D5D0(Ctl58 *arg0) {
     f32 cs;
     s32 tilt;
     s32 yawDir;
-    s32 pad[1]; /* fake: frame-tuned (p10: dist/pitch/yaw as one f32[3], which func_8022FF58 fills from &yaw, is 8-aligned: frame +8 with any extra word, s's slot 4 high without) */
+    f32 len;
     f32 s;
 
-    if (!arg0->unk0 && !arg0->unk0) {} /* fake: dead read (ugen temporaries, see the header); the original loads dist first, into f0; p10: the three loads in any order or as initialisers, DEBUG_PRINT compares of unk0: no (`!arg0->unk0` alone matches) */
+    len = arg0->unk0;
     dir = arg0->unk4;
     tilt = arg0->unk8;
-    dist = arg0->unk0;
+    angle.z = len;
     switch (dir) {
     case 0x0:
-        yaw = 180.0f;
+        angle.x = 180.0f;
         break;
     case 0x20:
-        yaw = 135.0f;
+        angle.x = 135.0f;
         break;
     case 0x40:
-        yaw = 90.0f;
+        angle.x = 90.0f;
         break;
     case 0x60:
-        yaw = 45.0f;
+        angle.x = 45.0f;
         break;
     case 0x80:
-        yaw = 0.0f;
+        angle.x = 0.0f;
         break;
     case 0xA0:
-        yaw = 315.0f;
+        angle.x = 315.0f;
         break;
     case 0xC0:
-        yaw = 270.0f;
+        angle.x = 270.0f;
         break;
     case 0xE0:
-        yaw = 225.0f;
+        angle.x = 225.0f;
         break;
     }
     switch (tilt) {
     case 1:
-        pitch = 0.0f;
-        yaw = 0.0f;
+        angle.y = 0.0f;
+        angle.x = 0.0f;
         break;
     case 2:
-        pitch = 45.0f;
+        angle.y = 45.0f;
         break;
     case 3:
-        pitch = 90.0f;
+        angle.y = 90.0f;
         break;
     case 4:
-        pitch = 135.0f;
+        angle.y = 135.0f;
         break;
     case 5:
-        yaw = 0.0f;
-        pitch = 180.0f;
+        angle.x = 0.0f;
+        angle.y = 180.0f;
         break;
     }
-    s = func_80234434(yaw);
-    x = func_80234434(pitch) * (dist * s);
-    cs = func_80234408(pitch);
-    y = cs * dist;
-    s = func_80234408(yaw);
-    z = func_80234434(pitch) * (dist * s);
+    s = func_80234434(angle.x);
+    x = func_80234434(angle.y) * (angle.z * s);
+    cs = func_80234408(angle.y);
+    y = cs * angle.z;
+    s = func_80234408(angle.x);
+    z = func_80234434(angle.y) * (angle.z * s);
     if (x < 0.01 && x > -0.01) {
         x = 0.0f;
     }
@@ -1931,17 +1918,12 @@ void func_8024D5D0(Ctl58 *arg0) {
     vec[1] = 0.0f;
     vec[2] = z;
     vec[0] = x;
-    func_8022FF58(org, vec, &yaw);
-    yawDir = func_80243F50(yaw);
+    func_8022FF58(org, vec, &angle.x);
+    yawDir = func_80243F50(angle.x);
     arg0->unk4 = yawDir;
-    arg0->unk0 = dist;
+    arg0->unk0 = angle.z;
     arg0->unkC = y;
 }
-#ifdef TARGET_PC
-#undef yaw
-#undef pitch
-#undef dist
-#endif
 
 void func_8024D540(s32 arg0, f32 *arg1) {
     UnkStructA *obj;
@@ -2288,12 +2270,12 @@ void func_8024C334(s32 arg0, PORT_IP(s32) arg1, u16 arg2, f32 *arg3) {
     s32 t2;
     s32 t3;
     UnkStruct_800AEDF0 *e = &D_800AEDF0[arg0];
-    PORT_IP(s32) obj = (PORT_IP(s32)) e->unk28;
+    UnkStructA *obj = e->unk28;
 
     t1 = func_80244BA4(arg0, 2);
     if (!t1) {
         func_80243D54(arg0); /* fake: unused call: its R2 store frees v0 for the flag (header); p10: getters for unk28 in place of obj/e->unk28, at each fake's place, no */
-        if (!((UnkStructA *)obj)->unk40 && !((UnkStructA *)obj)->unk40) {} /* fake: keeps unk28 loaded (t0); p10: no DEBUG_PRINT check of obj/obj->unk40 (single or `||`) anywhere in the branch */
+        if (!obj->unk40 && !obj->unk40) {} /* fake: keeps unk28 loaded (t0); p10: no DEBUG_PRINT check of obj/obj->unk40 (single or `||`) anywhere in the branch */
         if (!(e->unk38 & 0x1000)) {
             func_8024C314(arg0);
             e->unk38 |= 0x1000;

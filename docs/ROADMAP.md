@@ -176,17 +176,18 @@ docs/LIBULTRA.md has the details.
   the differences, matching in us, eu and jp (docs/LIBULTRA.md, "What 2.0I
   doesn't reproduce"). `make libultra-ref` builds them as a reference
   library, so gen_symbols.py names them and their variables.
-- **All of the linked libultra is source** (`src/libultra`, 246 objects:
-  239 in boot_code, 7 gu/libm objects in main_code), but three: the rest
+- **All of the linked libultra is source** (`src/libultra`, 249 objects:
+  242 in boot_code, 7 gu/libm objects in main_code): the rest
   of the matched library is ultralib's 2.0I files as they are (they
   compile to the ROM's bytes; `osDestroyThread` and main_code's
   `guMtxL2F` are older forms too), 32 of them owning their data through
   `data_split.txt`'s placements (docs/LIBULTRA.md, "Sources" and "Data").
   boot_code went from 29% C to 95%.
-- **Not yet:** `osUnmapTLBAll` (older too, but EU's 0x60-byte gap follows
-  it) stays asm, and so do `osPiGetDeviceType` and `alSndpGetSound` (two
-  instructions each, too short for `libmatch.py` to place, so they have no
-  object of their own). Overlay copies of `osSpTaskYield`/`__osSpSetStatus`
+- The last three were source last: `osUnmapTLBAll` (an older revision,
+  `os/unmaptlball.s` written to match; EU's 0x60-byte gap after it is an
+  asm object of its own, as us's and jp's are), `osPiGetDeviceType` and
+  `alSndpGetSound` (two instructions each, placed by `libmatch.py`
+  between their placed neighbours). Overlay copies of `osSpTaskYield`/`__osSpSetStatus`
   aren't named yet (one image, shared VRAM).
 - **Hudson's allocator** is GNU malloc's `gmalloc.c` (1995), IDO 5.3
   `-g -mips1 -DPAGESIZE=0x1000`, a byte-exact match for ROM

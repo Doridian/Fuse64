@@ -29,9 +29,6 @@ void func_80000768();
 void func_80001480();
 void func_80001488();
 void func_80001698();
-void func_80003190(void);
-void func_80005480();
-void func_8000C8D0();
 void __d_to_ll();
 void __ll_to_d();
 void __ull_to_f();
@@ -145,7 +142,7 @@ void *D_8001A0DC[] = {
 /* module 9: PI */
 void *D_8001A0EC[] = {
     osPiGetStatus,
-    func_80005480,
+    osPiGetDeviceType,
     osPiRawWriteIo,
     osPiRawReadIo,
     osPiRawStartDma,
@@ -286,7 +283,7 @@ void *D_8001A14C[] = {
     alSndpAllocate,
     alSndpDeallocate,
     alSndpSetSound,
-    func_8000C8D0,
+    alSndpGetSound,
     alSndpPlay,
     alSndpPlayAt,
     alSndpStop,
@@ -387,7 +384,7 @@ void func_80001914(void *arg) {
 }
 
 void func_800019A0(void) {
-    func_80003190();
+    osUnmapTLBAll();
 #if VERSION_EU
     osTvType = OS_TV_PAL;
 #endif

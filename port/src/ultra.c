@@ -342,8 +342,8 @@ s32 osPiRawWriteIo(u32 devAddr, u32 data) { return 0; }
 s32 osPiWriteIo(u32 devAddr, u32 data) { return 0; }
 u32 osPiGetStatus(void) { return 0; }
 
-/* boot_code 6080, handwritten: osPiGetDeviceType */
-s32 func_80005480(void) { return 0; }
+/* osRomType: the cartridge's (DEVICE_TYPE_CART) */
+s32 osPiGetDeviceType(void) { return 0; }
 
 /* ---- SI: controllers, EEPROM, the controller pak ---------------------------------------- */
 

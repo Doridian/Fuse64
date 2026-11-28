@@ -254,9 +254,6 @@ void alSndpDeallocate(ALSndPlayer *sndp, ALSndId id) {
 void alSndpSetSound(ALSndPlayer *sndp, ALSndId id) { sndp->target = id; }
 ALSndId alSndpGetSound(ALSndPlayer *sndp) { return (ALSndId)sndp->target; }
 
-/* boot_code D4D0, handwritten: alSndpGetSound */
-s32 func_8000C8D0(ALSndPlayer *sndp) { return sndp->target; }
-
 /* the target's state (as the library, no check of the target: the game
    sets one first) */
 static SndState *target(ALSndPlayer *sndp) {

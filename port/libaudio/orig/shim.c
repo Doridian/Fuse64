@@ -15,11 +15,6 @@ const int port_sizeof_ALCSPlayer = sizeof(ALCSPlayer);
 const int port_sizeof_ALCSeq = sizeof(ALCSeq);
 const int port_sizeof_ALSndPlayer = sizeof(ALSndPlayer);
 
-/* boot_code's D4D0 (after sndpsetsound.o), handwritten: alSndpGetSound */
-s32 func_8000C8D0(ALSndPlayer *sndp) {
-    return sndp->target;
-}
-
 #ifdef PORT_AUDIO_RECORD
 #include "audio/synthInternals.h"
 

@@ -26,6 +26,7 @@ tools/gen_symbols.py turns the result into the symbol_addrs files, and
 tools/build_ultralib.sh builds the reference objects.
 """
 import argparse
+import bisect
 import re
 import struct
 import sys
@@ -428,6 +429,60 @@ def fuzzy(m, funcs, threshold, margin=0.05):
         m.place(name, addr, f"fuzzy match {r:.2f} vs {sig.obj.path.name}")
 
 
+def between(m):
+    """Place the short functions resolve() won't (bodies under min_words that
+    fit more than one place, or `jr $ra` and one load, which fit any stub)
+    where the library's own link order leaves room for exactly one: an
+    exact body match, relocations included and none of the globals it uses
+    placed elsewhere, at the start of an object (16-aligned, after a
+    return) whose neighbours on both sides, the functions before and after
+    it, are already placed library functions.  One name may fit there, and
+    that name nowhere else so boxed in."""
+    def strict(sig, b):
+        # consistency(), and no global it uses already placed elsewhere
+        # (getters of different globals have one body)
+        if m.consistency(sig, b) is None:
+            return False
+        return all(kind != "data" or not m.data_addr.get(name) or tgt in m.data_addr[name]
+                   for kind, name, tgt in m.reloc_targets(sig, b))
+
+    starts = func_starts(m)
+    placed = set(m.func_at)
+    boxed = defaultdict(list)  # addr -> [(name, sig, base)]
+    for name, where in m.cands.items():
+        if name in m.func_addr:
+            continue
+        for addr, hits in where.items():
+            base = (addr - m.vram) // 4
+            if addr in placed or addr % 16 or not m.is_func_start(base):
+                continue
+            i = bisect.bisect_left(starts, base)
+            if i == 0 or i + 1 >= len(starts) or starts[i] != base:
+                continue
+            if m.addr(starts[i - 1]) not in placed or m.addr(starts[i + 1]) not in placed:
+                continue
+            for sig, b, how in hits:
+                # the whole function, up to the next start (its padding aside)
+                rest = m.words[b + len(sig):starts[i + 1]]
+                if how == "body" and not any(rest) and strict(sig, b):
+                    boxed[addr].append((name, sig, b))
+                    break
+    per_name = defaultdict(set)
+    for addr, cands in boxed.items():
+        for name, _, _ in cands:
+            per_name[name].add(addr)
+    for addr, cands in sorted(boxed.items()):
+        if len({n for n, _, _ in cands}) != 1:
+            continue
+        name, sig, b = cands[0]
+        if len(per_name[name]) != 1:
+            continue
+        m.place(name, addr, f"body match between placed library functions "
+                            f"{m.func_at[m.addr(starts[bisect.bisect_left(starts, b) - 1])]} and "
+                            f"{m.func_at[m.addr(starts[bisect.bisect_left(starts, b) + 1])]}")
+        m.place_refs(sig, b)
+
+
 def load_signatures(objdirs):
     """Per-function signatures, and whole-object ones (functions listed with offsets)."""
     funcs, objs = [], []
@@ -573,6 +628,8 @@ def match_version(version, objdirs, min_words=6, fuzzy_ratio=0.85):
         # has none of it (the overlays are the game's own code).
         if fuzzy_ratio and m.func_at:
             fuzzy(m, funcs, fuzzy_ratio)
+        if m.func_at:
+            between(m)
 
         syms = []
         for addr in sorted(set(m.func_at) | set(m.data_at)):

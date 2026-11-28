@@ -31,9 +31,6 @@ void *port_segment_entry(int seg) {
     return (void *)func_80225800;
 }
 
-/* boot_code 3D90, handwritten: osUnmapTLBAll */
-void func_80003190(void) { }
-
 /* zerojump's dispatcher (virtual 0): the port binds every stub when it
    builds (gen/zerojump.c), so nothing calls it; 1050.c maps its page */
 void func_80042000(void) { }

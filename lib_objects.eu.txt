@@ -28,7 +28,8 @@ boot_code 0x80002DA0 start src/os/writebackdcacheall.o
 boot_code 0x80002DD0 start src/io/sptask.o
 boot_code 0x800030C0 start src/io/dpsetnextbuf.o
 boot_code 0x80003170 start src/io/sptaskyield.o
-boot_code 0x80003190 end src/io/sptaskyield.o
+boot_code 0x80003190 start src/os/unmaptlball.o
+boot_code 0x800031E0 end src/os/unmaptlball.o
 boot_code 0x80003240 start src/os/initialize.o
 boot_code 0x800034D0 start src/os/setthreadpri.o
 boot_code 0x800035B0 start src/libc/sprintf.o
@@ -65,7 +66,7 @@ boot_code 0x80005400 start src/io/dpgetstat.o
 boot_code 0x80005410 start src/io/dpsetstat.o
 boot_code 0x80005420 start src/io/dpctr.o
 boot_code 0x80005470 start src/io/pigetstat.o
-boot_code 0x80005480 end src/io/pigetstat.o
+boot_code 0x80005480 start src/io/pigettype.o
 boot_code 0x80005490 start src/io/pirawwrite.o
 boot_code 0x800054E0 start src/io/pirawread.o
 boot_code 0x80005540 start src/io/pirawdma.o
@@ -158,7 +159,7 @@ boot_code 0x8000C790 start src/audio/sndpdelete.o
 boot_code 0x8000C7C0 start src/audio/sndpallocate.o
 boot_code 0x8000C860 start src/audio/sndpdeallocate.o
 boot_code 0x8000C8B0 start src/audio/sndpsetsound.o
-boot_code 0x8000C8D0 end src/audio/sndpsetsound.o
+boot_code 0x8000C8D0 start src/audio/sndpgetsound.o
 boot_code 0x8000C8E0 start src/audio/sndpplay.o
 boot_code 0x8000C950 start src/audio/sndpplayat.o
 boot_code 0x8000C9A0 start src/audio/sndpstop.o

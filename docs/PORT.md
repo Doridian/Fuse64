@@ -2344,7 +2344,7 @@ address could be us's name of another stub (jp has no 0x1208 or
 missing ids and 19 bound to another id than us's, every one only
 declared there: no jp object calls them; eu had none).
 boot.c has the handwritten asm's replacements (ROADMAP's list:
-func_80003190, func_80042000, WatchLo, the long long helpers).
+func_80042000, WatchLo, the long long helpers).
 
 ### Overlays
 
@@ -3749,8 +3749,7 @@ What is still asm, and what replaces it in the port:
 | `*_zerojmp` | each module's 711 stubs (`jr $zero; li $t0, id`) | "ZeroJump", below |
 | `B2410` func_80297C10, func_80297C7C | setjmp and longjmp, for the cooperative tasks (530C0) | not the host's alone: func_80238A10 makes a task by writing its entry and a stack top (0x800 bytes in the task, or the caller's) into the buffer as `ra` and `sp`, and func_80239208 reads `sp` back (the stack check). The port needs a coroutine per task with a host-sized stack (ucontext, fibers, threads run one at a time: DozerEncore's "Threads without ucontext"), and 530C0's switches under `TARGET_PC` |
 | `B2500` func_80297D00, func_80297D20 | WatchLo set and clear (4E030, 40040) | no-ops |
-| `3D90` func_80003190, `6080` func_80005480, `D4D0` func_8000C8D0 | osUnmapTLBAll, osPiGetDeviceType, alSndpGetSound | the host libultra |
-| `4150` func_80003550 | a lone `nop`, no `jr` (nothing refers to it) | nothing |
+| `4150` func_80003550 (eu `3DE0_eu`, jp `138D0_jp`) | no code: the 0x60 bytes of zeros between two libultra objects (docs/LIBULTRA.md, "Sources"; nothing refers to it) | nothing |
 | libultra's `.s` | exceptions, cache, TLB, `bcopy`/`bzero`, sqrtf | the host libultra |
 
 ### ZeroJump

@@ -52,7 +52,7 @@ HOST_SIGS = {"osVirtualToPhysical": ("uintptr_t", ["void *"]),
 NARROW = []
 # the handwritten asm the port has in C (port/src/boot.c): in jp a stub of
 # its own addresses can have one of these (us's) names
-HANDWRITTEN = {"func_80003190", "func_80005480", "func_8000C8D0", "func_80042000", "func_80297D00", "func_80297D20",
+HANDWRITTEN = {"func_80042000", "func_80297D00", "func_80297D20",
                "func_80297C10", "func_80297C7C"}
 
 

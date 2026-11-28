@@ -94,7 +94,7 @@ byte US's. Only a 0x60-byte gap of zeros between two link units sits
 elsewhere (after `osUnmapTLBAll` in EU, after `osSetThreadPri` in US,
 between `__ll_rshift` and `bzero` in JP), so `osInitialize` and
 `osSetThreadPri` are 0x60 later in EU. (JP's boot_code is 0x10 shorter
-before them: one game function is.) gen_symbols.py gives jp the same 424
+before them: one game function is.) gen_symbols.py gives jp the same 428
 names, and the C in `src/libultra` matches jp unchanged. The PAL/MPAL handling is
 libultra's own: `__osViInit` picks `osViModePalLan1`, `osViModeMpalLan1`
 or `osViModeNtscLan1` from `osTvType`.
@@ -212,19 +212,43 @@ like libaudio.
 2.0I byte for byte; they are static, so no symbol named them, and
 `libmatch.py` now matches such objects whole.
 
-Still asm (the only library objects that are): `osUnmapTLBAll`
-(`0x80003190`, `unmaptlball.s`) is an older
-revision too (all 31 entries, `bnezl`), but EU's 0x60-byte link gap
-follows it, which a source object can't carry. `osPiGetDeviceType` and
-`alSndpGetSound` (`0x80005480`, `0x8000C8D0`) match 2.0I but are two
-instructions long, too short to place by body.
+**`osUnmapTLBAll`** (`0x80003190`, `os/unmaptlball.s`) is older than
+any ultralib revision: it starts at entry 31 (rdb's, `NTLBENTRIES`) and
+loops down to entry 1 with `bnezl`, where ultralib's starts at 30 and
+stops after entry 0 (`bgez`). No source of that revision is at hand, so
+the file is ultralib's, changed to match the game's bytes (its comment
+says so). `make libultra-ref` builds it, and gen_symbols.py places it by
+that body (17 words, `lib=exact`). The boot thread calls it first thing,
+before `osInitialize` (`func_800019A0`, `src/2350.c`), as N64 boot code
+does.
+
+**Two-instruction functions**, 2.0I's: `osPiGetDeviceType`
+(`0x80005480`, `io/pigettype.c`: `return osRomType;`, so `lui`, `jr`,
+`lw`) and `alSndpGetSound` (`0x8000C8D0`, `audio/sndpgetsound.c`: `jr`,
+`lh v0, 0x3E(a0)`, the player's `target`). Bodies this short fit many
+places (any getter of a global; any `jr $ra` and a load), so resolve()
+won't place them. `libmatch.py`'s `between()` does, where the link
+leaves room for exactly one: a 16-aligned function start whose
+neighbours on both sides are placed library functions, the body
+matching exactly (relocations included, and no global it uses placed
+elsewhere: `__osViGetNextContext` and `__osGetActiveQueue` have
+`osPiGetDeviceType`'s body, but their globals are already placed), and
+only one name fitting there, that name nowhere else. Each sits where
+ultralib's link order puts it: `pigettype.o` after `pigetstat.o`
+(`osPiGetStatus`) and before `pirawwrite.o`, `sndpgetsound.o` after
+`sndpsetsound.o` and before `sndpplay.o`. The game's own use agrees:
+ZeroJump's module 9 table (`src/2350.c`) is `osPiGetStatus`,
+`osPiGetDeviceType`, `osPiRawWriteIo`, ..., `os_pi.h`'s order, and
+module 0xA's has `alSndpSetSound`, `alSndpGetSound`, `alSndpPlay`,
+`libaudio.h`'s order. Placing `osPiGetDeviceType` also names
+`osRomType` (`0x80000304`, the boot parameter after `osTvType`), which
+`tools/ld_fix.py` defines like the others.
 
 ## Sources
 
 Every libultra object the game links is C (or libultra's own `.s`) in
-`src/libultra/<dir>/<file>.c` (or `.s`), but the three above (still
-asm): 239 objects in boot_code (`io/` 90, `os/` 40, `libc/` 10, `audio/`
-99, with ultralib's private headers beside them) and 7 in main_code
+`src/libultra/<dir>/<file>.c` (or `.s`): 242 objects in boot_code
+(`io/` 91, `os/` 41, `libc/` 10, `audio/` 100, with ultralib's private headers beside them) and 7 in main_code
 (`gu/`: `lookat`, `mtxutil`, `perspective`, `mtxcatf` with `guMtxXFMF`,
 `sinf`, `cosf`, `sqrtf.s`).
 Each is ultralib's file of that name at the pinned commit. Most are
@@ -235,7 +259,7 @@ file (NOTICES.md has the attribution). They are built with ultralib's
 headers (`include/ultralib`, `BUILD_VERSION=VERSION_I`) and 2.0I's
 `libultra_rom` flags: `-mips2`, `-O1`, `-O3` for `audio/`, `libc/` and
 `gu/`, but `-O1 -mips3` for `libc/ll.c` and `libc/llcvt.c` (the long long
-helpers), as ultralib does. The `.s` files (16 in `os/`, `bcopy.s` and
+helpers), as ultralib does. The `.s` files (17 in `os/`, `bcopy.s` and
 `bzero.s` in `libc/`, `gu/sqrtf.s`) are assembled by IDO too, which
 schedules them: `-O1 -mips2`, `-O2` in `libc/`, and `-mips3` for
 `os/exceptasm.s`. Each is a `hasm` subsegment, its symbol table rewritten
@@ -243,10 +267,13 @@ by strip for GNU ld; the `-mips3` objects (`exceptasm.s`, `ll.c`,
 `llcvt.c`) are relabelled mips2 (`tools/elf_mips2.py`).
 
 Where a library object ends before a gap of zeros (us's 0x60 bytes after
-`osSetThreadPri`, jp's after `ll.o`), `lib_objects.<v>.txt` has an `end`
-line and `tools/layout.py` makes the gap an asm object of its own, so the
-C object before it doesn't have to carry it. EU's gap follows
-`osUnmapTLBAll`, which is asm.
+`osSetThreadPri`, `asm/4150.s`; eu's after `osUnmapTLBAll`, `3DE0_eu`;
+jp's after `ll.o`, `138D0_jp`), `lib_objects.<v>.txt` has an `end` line
+and `tools/layout.py` makes the gap an asm object of its own, so the
+object before it doesn't have to carry it. The gap is no object of the
+link order: the three versions link the same objects in the same order,
+and the gap sits between a different pair in each, so there is no source
+for it to be. Its bytes stay as the ROM has them (pad bytes are data).
 
 `-O1` code is sensitive to the source's line breaks: a loop body on the
 loop's line schedules differently (`contramwrite.c`), and statement order

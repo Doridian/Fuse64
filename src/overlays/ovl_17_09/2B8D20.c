@@ -399,7 +399,9 @@ static void func_ovl17_09_8004412C(UnkStruct_ovl0C_01_8004A3BC *rec) {
 void func_ovl17_09_80044198(void) {
     UnkStruct_8023A834 *b;
     s32 i;
-    s32 pad[4]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad[4]; /* fake: unused; four words between i and cell (at 0x7C) that any declared locals
+                 * fill. Not inlined calls: two calls of any of the empty statics give 8 bytes
+                 * below cell and a stub before 8004412C, where the original has none */
     s32 cell;
     s32 last0;
     s32 last1;
@@ -564,7 +566,10 @@ static void func_ovl17_09_8004312C(void) {
     } else {
         t = D_ovl17_09_800462A0;
     }
-    if (D_ovl17_09_800462A0) { /* fake: a dead test, for the register allocation or schedule */
+    /* fake: a dead test that keeps the counter in a0 for case 3's `== 0` test (318 words
+     * without; t read from the counter first as in ovl_0F_04, or the step taking the
+     * counter itself, t being equal to it, don't) */
+    if (D_ovl17_09_800462A0) {
     }
     d = func_ovl17_09_80043124(t);
     D_ovl17_09_800462A4 += d;
@@ -576,7 +581,10 @@ static void func_ovl17_09_8004312C(void) {
     }
     d = D_ovl17_09_800462A4 * 0.5f;
     D_ovl17_09_8004628C = d;
-    if (D_ovl17_09_800462A4) { /* fake: a dead test, for the register allocation or schedule */
+    /* fake: a dead test: the loads of 800462A4 and 800462A0 after the 80046060 call come in
+     * the original's order with it (4 words without; ovl_0F_04's unused `level =
+     * D_ovl0F_04_8004848C` first in the twin gives the same 4) */
+    if (D_ovl17_09_800462A4) {
     }
     D_ovl17_09_80046290 = 0.0f;
 }

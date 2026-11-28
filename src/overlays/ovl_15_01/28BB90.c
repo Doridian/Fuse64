@@ -49,7 +49,7 @@
  * 16` int divisor keeps the div.s), 80045E14 (the fade stores as
  * separate statements: a chain reloads the field), 80049ADC (register
  * locals declared in the frame's gaps around objs[3], speed/acc and the
- * f32[3] arrays, two pads after them; `pos[k] + vel[k] * 10.0f`),
+ * f32[3] arrays, 8 bytes after them (fakes pass 8: the 80047954 call); `pos[k] + vel[k] * 10.0f`),
  * 8004AE80 (the six `= 2` entries written out, not a loop; 8004E03C is
  * an s32; `(&D_ovl15_01_8004E040)[-1] = 2` and `*(s32 *)&` for the `= 3`
  * store; `(&D_ovl15_01_8004E004)[1]` for one 8004E008 read).
@@ -109,6 +109,10 @@
  * guess); 80049358's pad is the clamp's lower limit in a local; the
  * dead tests in 80044088, 800483AC, 80044730 and 80047270 (both) are
  * compiled-out DEBUG_PRINT checks (conditions guessed).
+ * Fakes pass 8: 80049ADC's pad[2] is a call of the uncalled empty global
+ * 80047954 (inlined: 8 bytes of frame, no stub; any place in the body
+ * matches, as in ovl_0F_05). The pads left are declared-local words
+ * (every declared local gets a home at -O3) that any local fills.
  */
 #include "common.h"
 
@@ -1333,8 +1337,10 @@ void func_ovl15_01_80049ADC(void) {
     f32 pos[3];
     f32 tgt[3];
     f32 rot[3];
-    s32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
 
+    /* the empty global: inlined, its call gives this frame the original's
+     * 8 extra bytes and leaves no stub (an empty static would) */
+    func_ovl15_01_80047954();
     src = func_ovl15_01_8004D550();
     obj = func_ovl15_01_8004D400(0x2CB, 0x01401014, 0xC0, src);
     func_ovl15_01_8004D410(obj);
@@ -1839,7 +1845,8 @@ void func_ovl15_01_80047D8C(void) {
     f32 dy;
     f32 y;
     s32 n;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad; /* fake: unused; any declared local fills this word (an unused one, or e.g. `dist` taking
+              * the 8004D380 results before and in the do-while: all match), so which one isn't known */
     s32 flag;
     Vec3f rot;
     f32 speed;
@@ -2171,7 +2178,8 @@ void func_ovl15_01_80046D18(void) {
     f32 stepX;
     f32 baseX;
     f32 s;
-    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    f32 pad; /* fake: unused; every declared local has a home here, and any one fills this word
+              * (an `angle` for the 8004D6D0 argument, a `sy` copy of s: all match) */
     f32 y;
     f32 stepY;
     f32 baseY;
@@ -3318,8 +3326,8 @@ void func_ovl15_01_80043248(void) {
     f32 speed;
     f32 acc;
     f32 t;
-    f32 pad; /* fake: unused, frame space the original has (no source for it found) */
-    f32 pad2; /* fake: unused, frame space the original has (no source for it found) */
+    f32 pad; /* fake: unused, two words above pos that any two declared locals fill; a call of the */
+    f32 pad2; /* fake: empty global 80047954 in their place puts its 8 bytes below pos and rot (12 words off) */
     Vec3f pos;
     Vec3f rot;
 

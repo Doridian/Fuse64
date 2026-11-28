@@ -29,19 +29,6 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-/* the nine movers' records: each is passed to its task */
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ UnkStructA *unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-} UnkStruct_ovl0E_13_80046A3C;
-
 /* a mover's path: fifteen points */
 typedef struct {
     /* 0x00 */ f32 unk0;
@@ -177,8 +164,8 @@ void func_ovl0E_13_8004439C(void);
 void func_ovl0E_13_80044590(s32);
 void func_ovl0E_13_800446F0(void);
 void func_ovl0E_13_80044780(void);
-void func_ovl0E_13_80044848(UnkStruct_ovl0E_13_80046A3C *, UnkStructA *);
-void func_ovl0E_13_80044894(UnkStruct_ovl0E_13_80046A3C *);
+void func_ovl0E_13_80044848(UnkStruct_ovl0E_09_80045DCC *, UnkStructA *);
+void func_ovl0E_13_80044894(UnkStruct_ovl0E_09_80045DCC *);
 void func_ovl0E_13_800449CC(void);
 void func_ovl0E_13_80044F30(UnkStructA *);
 void func_ovl0E_13_80044FF4(UnkStructA *);
@@ -280,7 +267,7 @@ UnkStruct_ovl0E_13_800469F8 D_ovl0E_13_800469F8[4] = {
     { 0x412, 260.0f, 160.0f, 290.0f },
 };
 s32 D_ovl0E_13_80046A38 = -1;
-UnkStruct_ovl0E_13_80046A3C D_ovl0E_13_80046A3C[9] = {
+UnkStruct_ovl0E_09_80045DCC D_ovl0E_13_80046A3C[9] = {
     { 0, -1, NULL, 0, 0, 0, 550.0f, 2000.0f, 2449.0f },
     { 1, -1, NULL, 0, 0, 0, 550.0f, 2000.0f, 2449.0f },
     { 2, -1, NULL, 0, 0, 0, 550.0f, 2000.0f, 2449.0f },
@@ -374,7 +361,7 @@ void func_ovl0E_13_80044F30(UnkStructA *arg0) {
 void func_ovl0E_13_800449CC(void) {
     s16 moving;
     f32 h; /* a guess: any float held here fills the slot (1200.0f, 4.0f too) */
-    UnkStruct_ovl0E_13_80046A3C *rec;
+    UnkStruct_ovl0E_09_80045DCC *rec;
     UnkStructA *obj;
     s16 doneX;
     s16 doneZ;
@@ -470,7 +457,7 @@ void func_ovl0E_13_800449CC(void) {
     }
 }
 
-void func_ovl0E_13_80044894(UnkStruct_ovl0E_13_80046A3C *arg0) {
+void func_ovl0E_13_80044894(UnkStruct_ovl0E_09_80045DCC *arg0) {
     UnkStructA *obj;
     f32 floor;
 
@@ -485,7 +472,7 @@ void func_ovl0E_13_80044894(UnkStruct_ovl0E_13_80046A3C *arg0) {
     }
 }
 
-void func_ovl0E_13_80044848(UnkStruct_ovl0E_13_80046A3C *arg0, UnkStructA *arg1) {
+void func_ovl0E_13_80044848(UnkStruct_ovl0E_09_80045DCC *arg0, UnkStructA *arg1) {
     func_ovl0E_13_80045EB0(arg1, 0x01000000);
     func_ovl0E_13_80045EC0(arg1);
     arg0->unk4 = -1;
@@ -527,7 +514,7 @@ void func_ovl0E_13_8004439C(void) {
 }
 
 void func_ovl0E_13_80044780(void) {
-    UnkStruct_ovl0E_13_80046A3C *rec;
+    UnkStruct_ovl0E_09_80045DCC *rec;
     s16 i;
 
     while (TRUE) {
@@ -546,7 +533,7 @@ void func_ovl0E_13_80044780(void) {
 }
 
 void func_ovl0E_13_800446F0(void) {
-    UnkStruct_ovl0E_13_80046A3C *rec;
+    UnkStruct_ovl0E_09_80045DCC *rec;
     s16 i;
 
     func_ovl0E_13_8004424C();

@@ -6,19 +6,6 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-/* the two movers' records: each is passed to its task */
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ UnkStructA *unk8;
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ s16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-} UnkStruct_ovl0E_09_80045DCC;
-
 /* a mover's path: ten points */
 typedef struct {
     /* 0x00 */ f32 unk0;

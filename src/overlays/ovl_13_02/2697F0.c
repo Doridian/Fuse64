@@ -526,7 +526,7 @@ static void func_ovl13_02_8004BEA8(void) {
 #include "overlays/common/core.h"
 
 void func_ovl13_02_80048FBC(s32 arg0) {
-    /* the reset's three values held: what the frame's three words were (a guess:
+    /* fake: the reset's three values held: what the frame's three words were (a guess:
        held one by one before their stores, in any order, they fit too) */
     f32 v8;
     f32 vC;
@@ -992,7 +992,7 @@ void func_ovl13_02_8004AB3C(void) {
 }
 
 void func_ovl13_02_8004A8E0(void) {
-    /* the per-frame steps held (a guess: any three of the constants fit, in any order) */
+    /* fake: the per-frame steps held (a guess: any three of the constants fit, in any order) */
     f32 fall = 1.0f;
     f32 back = 2.0f;
     f32 fly = 15.0f;
@@ -1207,7 +1207,7 @@ void func_ovl13_02_80049F1C(UnkStructA *arg0) {
 }
 
 void func_ovl13_02_80049D50(void) {
-    f32 side = 300.0f; /* the side rows' offset held (a guess: any constant held fits) */
+    f32 side = 300.0f; /* fake: the side rows' offset held (a guess: any constant held fits) */
 
     ((Vec3f *) D_ovl13_02_8004DF18)[0].x = (*(Vec3f *) &D_ovl13_02_8004DD10).x;
     ((Vec3f *) D_ovl13_02_8004DF18)[0].y = (*(Vec3f *) &D_ovl13_02_8004DD10).y;
@@ -1251,7 +1251,7 @@ void func_ovl13_02_80049D50(void) {
 }
 
 void func_ovl13_02_800499A0(void) {
-    f32 frames = 30.0f; /* D_8004D8B0's step count (unk0) as a float: a guess, other constants held fit too */
+    f32 frames = 30.0f; /* fake: D_8004D8B0's step count (unk0) as a float: a guess, other constants held fit too */
 
     D_ovl13_02_8004D4F8[0].unk24 = (M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4)) / D_ovl13_02_8004D4F8[0].unk0;
     D_ovl13_02_8004D4F8[0].unk28 = (M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4)) / D_ovl13_02_8004D4F8[0].unk0;
@@ -1449,7 +1449,7 @@ static void func_ovl13_02_80049400(void) {
 }
 
 void func_ovl13_02_800489C0(s32 arg0) {
-    f32 back = 1000.0f; /* the camera's pull-back held (a guess: other constants held fit too) */
+    f32 back = 1000.0f; /* fake: the camera's pull-back held (a guess: other constants held fit too) */
     f32 spA0[3];
     f32 sp94[3];
     f32 v8;
@@ -1852,7 +1852,7 @@ void func_ovl13_02_80046E10(s32 arg0) {
     f32 save;
     f32 w;
     s32 found;
-    f32 near = 700.0f; /* the distance clamp's floor held (a guess: other constants held fit too) */
+    f32 near = 700.0f; /* fake: the distance clamp's floor held (a guess: other constants held fit too) */
 
     func_ovl13_02_8004CBF8(D_ovl13_02_8004DE3C, 0x08000000);
     func_ovl13_02_8004511C();
@@ -1919,7 +1919,7 @@ void func_ovl13_02_80046E10(s32 arg0) {
         D_ovl13_02_8004DEF4 = 0.0f;
         ang = M2C_FIELD(&D_ovl13_02_8004DED8, f32 *, 4);
         save = D_ovl13_02_8004DE50[0]->unk50;
-        /* each of the eight settings of DE80/DE98/DEB0 holds its values in a block
+        /* fake: each of the eight settings of DE80/DE98/DEB0 holds its values in a block
            of its own: their 32 words of frame (a guess, as any locals filling that
            space fit; one inlined setter can't be it, each stores in its own order) */
         {
@@ -2272,7 +2272,7 @@ void func_ovl13_02_8004640C(void) {
     f32 ry;
     f32 a;
     f32 rad;
-    f32 amp = 15.0f; /* the sway's amplitude held (a guess: other constants held fit too) */
+    f32 amp = 15.0f; /* fake: the sway's amplitude held (a guess: other constants held fit too) */
     f32 dr;
     f32 pos[3];
 
@@ -2651,7 +2651,7 @@ void func_ovl13_02_80045460(void) {
 }
 
 void func_ovl13_02_8004521C(void) {
-    /* the ring's radius and step as locals: a guess, the first word of each pair
+    /* fake: the ring's radius and step as locals: a guess, the first word of each pair
        of held values fits as well (the frame has their two words) */
     f32 dist = 800.0f;
     f32 step = 15.0f;
@@ -3017,7 +3017,7 @@ void func_ovl13_02_80043B64(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     f32 ang[3];
     f32 dx;
     f32 dy;
-    f32 lo; /* the clamp's lower limit (a guess among matching placements: any point after dx's wrap) */
+    f32 lo; /* fake: the clamp's lower limit (a guess among matching placements: any point after dx's wrap) */
 
     func_ovl13_02_8004CB88(arg0, arg3, ang);
     ang[1] = ((ang[1] - 90.0f) >= 360.0f) ? (ang[1] - 90.0f) - 360.0f : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + 360.0f : (ang[1] - 90.0f);
@@ -3207,7 +3207,7 @@ void func_ovl13_02_800434C0(f32 *arg0) {
 
 void func_ovl13_02_800430CC(f32 *arg0, s32 arg1, s32 arg2) {
     f32 sp3C[3];
-    f32 steps; /* arg1 as a float, both steps' divisor (a guess: 90.0f, -1.0f or 0.0f held fit the word too) */
+    f32 steps; /* fake: arg1 as a float, both steps' divisor (a guess: 90.0f, -1.0f or 0.0f held fit the word too) */
     f32 dy;
     f32 dx;
     s32 i;

@@ -465,7 +465,7 @@ void func_ovl0E_15_800444C4(void) {
 /* a task: an object at the one it is given, scaled up and turned for 500
  * frames, its unk36 lowered after 300 */
 void func_ovl0E_15_80044290(void) {
-    s32 pad; /* fake: unused; the original's frame is 8 bytes bigger (one slot, aligned) */
+    s32 pad; /* fake: unused; the original's frame is 8 bytes bigger (one slot, aligned, above src). Not found: an inlined call (the overlay has no uncalled empty global, and calling one of the unused static stubs moves its stub), a local for src->unk40 (its own register, 113 words) */
     UnkStructA *src;
     UnkStructA *obj;
     UnkStructA_40 *p;
@@ -742,7 +742,7 @@ void func_ovl0E_15_80043010(void) {
 /* Case 11: a static inlined into the handler (as in ovl_12_06); its stub
  * is the one at 80043068. */
 static void func_ovl0E_15_80043068(void) {
-    s32 pad; /* fake: unused; places the block (the handler's frame 0xA0) */
+    s32 pad; /* fake: unused; only the handler's frame size depends on it (0xA0, 0x98 without): any word in the blocks of the statics it inlines gives it. No uncalled empty global exists here to call (as in 0F_05's handler), and the empty statics each have their caller */
     UnkStructA *obj0;
     UnkStructA *obj1;
     s32 i;

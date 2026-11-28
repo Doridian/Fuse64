@@ -804,7 +804,7 @@ void func_ovl14_01_8004AF68(void) {
 }
 
 void func_ovl14_01_8004A914(void) {
-    f32 c; /* a guess: any held value fills this frame word (-1, 0.0f, 800.0f work too) */
+    f32 c; /* fake: held value; a guess: any held value fills this frame word (-1, 0.0f, 800.0f work too) */
     Vec3f angle;
     s32 i;
 
@@ -990,7 +990,7 @@ void func_ovl14_01_8004A11C(void) {
     s32 t3;
     s32 t2;
     s32 t1;
-    f32 h; /* a guess: any held value fills this frame word (120, 15 work too) */
+    f32 h; /* fake: held value; a guess: any held value fills this frame word (120, 15 work too) */
     s32 cnt;
     s32 flag;
     s32 n;
@@ -1343,7 +1343,7 @@ void func_ovl14_01_80049618(void) {
     Vec3f to;
     Vec3f ang;
     s32 done;
-    f32 lift; /* lift, steps: a guess, any two held values fill these frame words */
+    f32 lift; /* fake: held value; lift, steps: a guess, any two held values fill these frame words */
     f32 steps;
 
     if (func_ovl14_01_8004CA10() == (void *) 0x1C8) {
@@ -1530,7 +1530,7 @@ void func_ovl14_01_80048CE8(Vec3f *arg0, s32 arg1) {
 }
 
 void func_ovl14_01_80048ABC(UnkStructA **arg0, Step3C *arg1) {
-    f32 lift; /* a guess: any held value fills this frame word (1.0f, 0.0f work too) */
+    f32 lift; /* fake: held value; a guess: any held value fills this frame word (1.0f, 0.0f work too) */
     Vec3f out;
     Vec3f from;
     Vec3f to;
@@ -1680,7 +1680,7 @@ void func_ovl14_01_80048454(void) {
     f32 w;
     Vec3f ang;
     Vec3f out;
-    f32 step; /* a guess: any held value fills this frame word (90.0f, 360.0f work too) */
+    f32 step; /* fake: held value; a guess: any held value fills this frame word (90.0f, 360.0f work too) */
 
     func_ovl14_01_80044B38(&D_ovl14_01_8004D4A0, 10);
     func_ovl14_01_80046648(D_ovl14_01_8004D600, D_ovl14_01_8004D560);

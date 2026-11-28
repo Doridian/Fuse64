@@ -946,7 +946,11 @@ static s32 func_ovl14_02_8004D578(UnkStructA *obj) {
     s32 id;
     s32 pad[6]; /* fake: unused, frame space the original has (24 bytes of this inlined block; the twins in
                  * 0F_05 and 17_10 have none; not found: the second half of 8004D640 as an inlined static, its
-                 * locals in block scopes, an EDE8 id per call) */
+                 * locals in block scopes, an EDE8 id per call. The words lie below this block's locals, where the
+                 * blocks of callees inlined after it go: a `(void)` empty stub costs 8 there. 8004D628 so,
+                 * called after it (K&R 8004D630 kept at the top for the `move a3,a0`), makes 8004D640 match
+                 * with pad[4], but its stub then comes out ahead of 8004D580 (39 words) wherever it's
+                 * defined; both stubs so (pad[2]) lose the `move a3,a0`) */
 
     hit = 0;
     other = NULL;
@@ -2798,7 +2802,7 @@ void func_ovl14_02_80048830(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     f32 ang[3];
     f32 dx;
     f32 dy;
-    f32 lo; /* the clamp's lower limit (a guess among matching placements: any point after dx's wrap) */
+    f32 lo; /* fake: the clamp's lower limit (a guess among matching placements: any point after dx's wrap) */
 
     func_ovl14_02_8004F598((Vec3f *) arg0, (Vec3f *) arg3, (Vec3f *) ang);
     ang[1] = ((ang[1] - 90.0f) >= 360.0f) ? (ang[1] - 90.0f) - 360.0f : (ang[1] < 90.0f) ? (ang[1] - 90.0f) + 360.0f : (ang[1] - 90.0f);

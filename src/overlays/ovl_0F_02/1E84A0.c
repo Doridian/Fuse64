@@ -94,25 +94,10 @@ static void func_ovl0F_02_80045F1C(UnkStructA **arg0);
  * IDO inlines everywhere are named for the empty stubs they leave.
  */
 
-/* a model the stage places */
-typedef struct {
-    /* 0x00 */ UnkStructA **unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ s32 unk28;
-} UnkStruct_ovl0F_02_80048734; /* size 0x2C */
-
 /* the door func_ovl0F_02_80045024 runs as a task: two models and what to
  * call once it is open */
 typedef struct {
-    /* 0x00 */ UnkStruct_ovl0F_02_80048734 unk0[2];
+    /* 0x00 */ UnkStruct_ovl0F_01_80048264 unk0[2];
     /* 0x58 */ void (*unk58)(void);
     /* 0x5C */ void (*unk5C)(void);
 } UnkStruct_ovl0F_02_800489F4; /* size 0x60 */
@@ -300,7 +285,7 @@ static void func_ovl0F_02_80046E80(void);
 void func_ovl0F_02_80046DF8(void);
 void func_ovl0F_02_80046D9C(f32, f32, f32);
 s32 func_ovl0F_02_80046D20(s32, void *);
-static void func_ovl0F_02_80046150(s32 n, UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags);
+static void func_ovl0F_02_80046150(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_02_80048918 *flags);
 static void func_ovl0F_02_80046178(s32 n1, s32 n2);
 static void func_ovl0F_02_80046160(UnkStruct_ovl0F_02_800489F4 *door);
 static void func_ovl0F_02_800462E8(void);
@@ -314,8 +299,8 @@ void func_ovl0F_02_8004533C(UnkStructA *obj);
 void func_ovl0F_02_80045024(void);
 static void func_ovl0F_02_80044E9C(s32 id, f32 *pos, f32 d, f32 h);
 void func_ovl0F_02_80044D20(s32 idx, s32 flag);
-static f32 func_ovl0F_02_80043FEC_inl0(UnkStruct_ovl0F_02_80048734 *p);
-static void func_ovl0F_02_80043FEC_inl1(UnkStruct_ovl0F_02_80048734 *p);
+static f32 func_ovl0F_02_80043FEC_inl0(UnkStruct_ovl0F_01_80048264 *p);
+static void func_ovl0F_02_80043FEC_inl1(UnkStruct_ovl0F_01_80048264 *p);
 s32 func_ovl0F_02_80044C6C(s32 arg0);
 void func_ovl0F_02_80044B28(void);
 void func_ovl0F_02_80044824(UnkStructA *arg0);
@@ -323,8 +308,8 @@ void func_ovl0F_02_80043FEC(void);
 void func_ovl0F_02_800462F8(s32 arg0);
 static void func_ovl0F_02_80043D6C(s32 flag);
 static void func_ovl0F_02_80043B30(s32 i);
-static void func_ovl0F_02_8004393C(UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags);
-static s32 func_ovl0F_02_80043398(s32 n, UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags);
+static void func_ovl0F_02_8004393C(UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_02_80048918 *flags);
+static s32 func_ovl0F_02_80043398(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_02_80048918 *flags);
 void func_ovl0F_02_80043944(void);
 void func_ovl0F_02_800438B4(UnkStructA *obj);
 void func_ovl0F_02_80043858(UnkStructA *obj);
@@ -337,12 +322,12 @@ void func_ovl0F_02_80043618(void);
 void func_ovl0F_02_800434F8(UnkStructA *arg0);
 void func_ovl0F_02_80046D54(f32);
 void func_ovl0F_02_80043404(void);
-static void func_ovl0F_02_80044F74(s32 arg1, UnkStruct_ovl0F_02_80048734 *arg0);
-static void func_ovl0F_02_80044C94(UnkStruct_ovl0F_02_80048734 *arg0);
+static void func_ovl0F_02_80044F74(s32 arg1, UnkStruct_ovl0F_01_80048264 *arg0);
+static void func_ovl0F_02_80044C94(UnkStruct_ovl0F_01_80048264 *arg0);
 static void func_ovl0F_02_800433A0(s32 *arg0);
 static void func_ovl0F_02_80045F24(UnkStructA **arg0);
 static void func_ovl0F_02_80043028(void);
-static void func_ovl0F_02_80043020(s32 count, UnkStruct_ovl0F_02_80048734 *p);
+static void func_ovl0F_02_80043020(s32 count, UnkStruct_ovl0F_01_80048264 *p);
 void func_ovl0F_02_80043010(void);
 
 /* .bss */
@@ -415,7 +400,7 @@ UnkStruct_ovl0F_01_800481D4 D_ovl0F_02_800486A4[6] = {
     { 0xC0, 1.0f, 0.0f, 0, 0, 0, 0, 1 },
 };
 /* the movers' models */
-UnkStruct_ovl0F_02_80048734 D_ovl0F_02_80048734[6] = {
+UnkStruct_ovl0F_01_80048264 D_ovl0F_02_80048734[6] = {
     { &D_ovl0F_02_80048D00[0], 0x259, 0, 0.0f, 4.0f, 6.0f, 0.0f, 90.0f, 0.0f, 0xC000070, 0 },
     { &D_ovl0F_02_80048D00[1], 0x259, 0, 0.0f, 4.0f, 11.0f, 0.0f, 90.0f, 0.0f, 0xC000070, 0 },
     { &D_ovl0F_02_80048D00[2], 0x259, 0, 0.0f, 4.0f, 17.0f, 0.0f, 90.0f, 0.0f, 0xC000070, 0 },
@@ -424,7 +409,7 @@ UnkStruct_ovl0F_02_80048734 D_ovl0F_02_80048734[6] = {
     { &D_ovl0F_02_80048D00[5], 0x259, 0, 45.0f, 4.0f, 17.0f, 0.0f, 270.0f, 0.0f, 0xC000070, 0 },
 };
 /* the switches' models */
-UnkStruct_ovl0F_02_80048734 D_ovl0F_02_8004883C[5] = {
+UnkStruct_ovl0F_01_80048264 D_ovl0F_02_8004883C[5] = {
     { &D_ovl0F_02_80048D18[0], 0x25B, 0, 23.0f, 4.0f, 14.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
     { &D_ovl0F_02_80048D18[1], 0x25B, 0, 24.0f, 4.0f, 16.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
     { &D_ovl0F_02_80048D18[2], 0x25B, 0, 24.0f, 4.0f, 18.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
@@ -451,7 +436,7 @@ u32 D_ovl0F_02_8004897C[][3] = {
     { 4, 2, 0xE0 },
     { 5, 0x15, 0xF3 },
 };
-UnkStruct_ovl0F_02_80048734 D_ovl0F_02_800489C4 = {
+UnkStruct_ovl0F_01_80048264 D_ovl0F_02_800489C4 = {
     &D_ovl0F_02_80048D18[5], 0x225, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0,
 };
 UnkStructA *D_ovl0F_02_800489F0 = NULL;
@@ -580,8 +565,8 @@ static void func_ovl0F_02_80046170(void) {
 
 /* case 2's: the door, closed or already open */
 static void func_ovl0F_02_80046160(UnkStruct_ovl0F_02_800489F4 *door) {
-    UnkStruct_ovl0F_02_80048734 *m1; /* the door's two entries held in locals (the */
-    UnkStruct_ovl0F_02_80048734 *m0; /* frame's 8 bytes; which values: a guess) */
+    UnkStruct_ovl0F_01_80048264 *m1; /* the door's two entries held in locals (the */
+    UnkStruct_ovl0F_01_80048264 *m0; /* frame's 8 bytes; which values: a guess) */
 
     m0 = door->unk0;
     m1 = &door->unk0[1];
@@ -665,7 +650,7 @@ static void func_ovl0F_02_80045F24(UnkStructA **arg0) {
 
     func_ovl0F_02_80045F1C(arg0);
     func_ovl0F_02_80045F14();
-    func_ovl0F_02_80045F0C(PORT_HOST((UnkStruct_ovl0F_02_80048734 *)&D_ovl0F_02_800486A4[6], D_ovl0F_02_80048734), 6); /* (the next object on the N64 only) */
+    func_ovl0F_02_80045F0C(PORT_HOST((UnkStruct_ovl0F_01_80048264 *)&D_ovl0F_02_800486A4[6], D_ovl0F_02_80048734), 6); /* (the next object on the N64 only) */
     for (i = 0; i < 6; i++) {
         func_ovl0F_02_80047CE8(func_ovl0F_02_80047D20(*D_ovl0F_02_80048734[i].unk0), 0x02100000);
         D_ovl0F_02_800486A4[i].unk11 = 0;
@@ -802,8 +787,8 @@ void func_ovl0F_02_8004533C(UnkStructA *obj) {
 
 void func_ovl0F_02_80045024(void) {
     UnkStruct_ovl0F_02_800489F4 *task;
-    UnkStruct_ovl0F_02_80048734 *a;
-    UnkStruct_ovl0F_02_80048734 *b;
+    UnkStruct_ovl0F_01_80048264 *a;
+    UnkStruct_ovl0F_01_80048264 *b;
     f32 pos[3];
     s32 hit;
 
@@ -846,7 +831,7 @@ void func_ovl0F_02_80045024(void) {
     func_ovl0F_02_80047E48();
 }
 
-static void func_ovl0F_02_80044F74(s32 arg1, UnkStruct_ovl0F_02_80048734 *arg0) {
+static void func_ovl0F_02_80044F74(s32 arg1, UnkStruct_ovl0F_01_80048264 *arg0) {
     s32 i;
 
     for (i = 0; i < arg1; i++) {
@@ -904,7 +889,7 @@ void func_ovl0F_02_80044D20(s32 idx, s32 flag) {
     }
 }
 
-static f32 func_ovl0F_02_80043FEC_inl0(UnkStruct_ovl0F_02_80048734 *p) {
+static f32 func_ovl0F_02_80043FEC_inl0(UnkStruct_ovl0F_01_80048264 *p) {
     f32 tilt;
     f32 slope;
 
@@ -917,7 +902,7 @@ static f32 func_ovl0F_02_80043FEC_inl0(UnkStruct_ovl0F_02_80048734 *p) {
     return tilt * 0.6f;
 }
 
-static void func_ovl0F_02_80043FEC_inl1(UnkStruct_ovl0F_02_80048734 *p) {
+static void func_ovl0F_02_80043FEC_inl1(UnkStruct_ovl0F_01_80048264 *p) {
     s32 snd = 0x168; /* held (frame space before pos, at sp+0xA8; which value: a guess) */
     f32 pos[3];
 
@@ -932,7 +917,7 @@ static void func_ovl0F_02_80043FEC_inl1(UnkStruct_ovl0F_02_80048734 *p) {
 static void func_ovl0F_02_80044C8C(void) {
 }
 
-static void func_ovl0F_02_80044C94(UnkStruct_ovl0F_02_80048734 *arg0) {
+static void func_ovl0F_02_80044C94(UnkStruct_ovl0F_01_80048264 *arg0) {
     f32 pos[3];
 
     func_ovl0F_02_80044C8C();
@@ -951,7 +936,7 @@ s32 func_ovl0F_02_80044C6C(s32 arg0) {
 
 /* a task: a hit mover's effects */
 void func_ovl0F_02_80044B28(void) {
-    UnkStruct_ovl0F_02_80048734 *p;
+    UnkStruct_ovl0F_01_80048264 *p;
     s32 i;
 
     p = &D_ovl0F_02_80048734[(PORT_IP(s32)) func_ovl0F_02_80047E60()];
@@ -1013,7 +998,7 @@ void func_ovl0F_02_80043FEC(void) {
     s32 active;
     s32 i;
     UnkStruct_ovl0F_01_800481D4 *st; /* unused, as rec, step and player: with fewer, unk16's store addresses the symbol (2 words) */
-    UnkStruct_ovl0F_02_80048734 *rec;
+    UnkStruct_ovl0F_01_80048264 *rec;
     UnkStruct_ovl0F_02_8004862C *step;
     UnkStructA *obj;
     UnkStructA *player;
@@ -1294,7 +1279,7 @@ static void func_ovl0F_02_80043B30(s32 i) {
  * cleared (inlined into 80043944 just below, its lines before the caller's,
  * its stub just before it; the code was 80043944's own, with the caller
  * renumbered by `#line`s) */
-static void func_ovl0F_02_8004393C(UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags) {
+static void func_ovl0F_02_8004393C(UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_02_80048918 *flags) {
     if (p->unk1C == 0.0f) {
         func_ovl0F_02_80047328((s32) p->unkC - 1, (s32) p->unk10,
                                (s32) p->unk14 - 1, (s32) p->unkC,
@@ -1559,7 +1544,7 @@ static void func_ovl0F_02_80043028(void) {
     D_ovl0F_02_800485F0 = 0.0f;
 }
 
-static void func_ovl0F_02_80043020(s32 count, UnkStruct_ovl0F_02_80048734 *p) {
+static void func_ovl0F_02_80043020(s32 count, UnkStruct_ovl0F_01_80048264 *p) {
     s32 i;
 
     for (i = 0; i < count; i++) {
@@ -1601,7 +1586,7 @@ static void func_ovl0F_02_800462F8_inl0(u32 (*p)[3], s32 count) {
  * is 80043398, among the handler's). Defined just before the handler and
  * taking the panels as p itself; found is a held value (frame space;
  * which: a guess). */
-static s32 func_ovl0F_02_80043398(s32 n, UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags) {
+static s32 func_ovl0F_02_80043398(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_02_80048918 *flags) {
     s32 i;
     s32 found = -1;
 

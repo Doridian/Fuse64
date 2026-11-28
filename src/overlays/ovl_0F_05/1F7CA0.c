@@ -38,6 +38,7 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0F_05's game object, IDO -O3: the functions are written last to first
@@ -45,21 +46,6 @@
  * its callback (func_ovl0F_05_800440AC) and the small functions at the end;
  * the handler and the three tasks are its own.
  */
-
-/* a model the stage places: twelve in D_ovl0F_05_800461E0 */
-typedef struct {
-    /* 0x00 */ UnkStructA **unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ s32 unk28;
-} UnkStruct_ovl0F_05_800461E0; /* size 0x2C */
 
 /* what func_ovl0F_05_80045110 returns (the camera?) */
 typedef struct {
@@ -138,7 +124,7 @@ void func_ovl0F_05_80044A10(f32, f32, f32);
 void func_ovl0F_05_80044A6C(void);
 void func_ovl0F_05_80044A84(void);
 
-static void func_ovl0F_05_80043020(UnkStruct_ovl0F_05_800461E0 *);
+static void func_ovl0F_05_80043020(UnkStruct_ovl0F_01_80048264 *);
 static void func_ovl0F_05_8004409C();
 static void func_ovl0F_05_80043FF4(f32);
 static s32 func_ovl0F_05_80043FEC(UnkStructA *);
@@ -186,7 +172,7 @@ u32 D_ovl0F_05_800461B0[][3] = {
     { 2, 0x12, 0xF0 },
     { 3, 0x15, 0xF3 },
 };
-UnkStruct_ovl0F_05_800461E0 D_ovl0F_05_800461E0[12] = {
+UnkStruct_ovl0F_01_80048264 D_ovl0F_05_800461E0[12] = {
     { &D_ovl0F_05_800464E0[0], 0x22B, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
     { &D_ovl0F_05_800464E0[1], 0x261, 0, 21.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
     { &D_ovl0F_05_800464E0[2], 0x268, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
@@ -502,7 +488,7 @@ void func_ovl0F_05_800430BC(s32 arg0) {
     }
 }
 
-static void func_ovl0F_05_80043020(UnkStruct_ovl0F_05_800461E0 *arg0) {
+static void func_ovl0F_05_80043020(UnkStruct_ovl0F_01_80048264 *arg0) {
     f32 pos[3];
 
     func_ovl0F_05_80044EB8(arg0->unkC, arg0->unk10, arg0->unk14, pos, 0);

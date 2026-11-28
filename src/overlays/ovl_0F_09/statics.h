@@ -105,7 +105,7 @@ static void func_ovl0F_09_80043424(void) {
     func_ovl0F_09_800430BC();
 }
 
-static void func_ovl0F_09_8004341C(s32 arg1, UnkStruct_ovl0F_09_80045FC0 *arg0) {
+static void func_ovl0F_09_8004341C(s32 arg1, UnkStruct_ovl0F_01_80048264 *arg0) {
     s32 i;
 
     for (i = 0; i < arg1; i++) {
@@ -119,7 +119,7 @@ static void func_ovl0F_09_8004341C(s32 arg1, UnkStruct_ovl0F_09_80045FC0 *arg0) 
     }
 }
 #elif STATICS_PART == 2
-static void func_ovl0F_09_80043020(s32 count, UnkStruct_ovl0F_09_80045FC0 *p) {
+static void func_ovl0F_09_80043020(s32 count, UnkStruct_ovl0F_01_80048264 *p) {
     s32 i;
 
     for (i = 0; i < count; i++) {

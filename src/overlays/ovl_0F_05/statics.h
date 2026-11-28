@@ -222,7 +222,7 @@ static void func_ovl0F_05_800430AC(void) {
     func_ovl0F_05_80045008();
 }
 
-static void func_ovl0F_05_800430A4(s32 arg1, UnkStruct_ovl0F_05_800461E0 *arg0) {
+static void func_ovl0F_05_800430A4(s32 arg1, UnkStruct_ovl0F_01_80048264 *arg0) {
     s32 i;
 
     for (i = 0; i < arg1; i++) {
@@ -236,7 +236,7 @@ static void func_ovl0F_05_800430A4(s32 arg1, UnkStruct_ovl0F_05_800461E0 *arg0) 
     }
 }
 
-static void func_ovl0F_05_80043018(s32 count, UnkStruct_ovl0F_05_800461E0 *p) {
+static void func_ovl0F_05_80043018(s32 count, UnkStruct_ovl0F_01_80048264 *p) {
     s32 i;
 
     for (i = 0; i < count; i++) {

@@ -92,7 +92,7 @@ static void func_ovl0F_08_800433C4(void) {
     func_ovl0F_08_800430BC();
 }
 
-static void func_ovl0F_08_800433BC(s32 arg1, UnkStruct_ovl0F_08_80045B90 *arg0) {
+static void func_ovl0F_08_800433BC(s32 arg1, UnkStruct_ovl0F_01_80048264 *arg0) {
     s32 i;
 
     for (i = 0; i < arg1; i++) {
@@ -155,7 +155,7 @@ static void func_ovl0F_08_800431F8(void) {
     D_ovl0F_08_80045B28 = 0;
 }
 
-static void func_ovl0F_08_80043020(s32 count, UnkStruct_ovl0F_08_80045B90 *p) {
+static void func_ovl0F_08_80043020(s32 count, UnkStruct_ovl0F_01_80048264 *p) {
     s32 i;
 
     for (i = 0; i < count; i++) {

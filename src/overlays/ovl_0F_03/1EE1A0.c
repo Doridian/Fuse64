@@ -83,25 +83,10 @@
  * statics IDO inlines everywhere are named for the empty stubs they leave.
  */
 
-/* a model the stage places */
-typedef struct {
-    /* 0x00 */ UnkStructA **unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ s32 unk28;
-} UnkStruct_ovl0F_03_80046E88; /* size 0x2C */
-
 /* the door func_ovl0F_03_80043F38 runs as a task: two models and what to
  * call once it is open */
 typedef struct {
-    /* 0x00 */ UnkStruct_ovl0F_03_80046E88 unk0[2];
+    /* 0x00 */ UnkStruct_ovl0F_01_80048264 unk0[2];
     /* 0x58 */ void (*unk58)(void);
     /* 0x5C */ void (*unk5C)(void);
 } UnkStruct_ovl0F_03_80046F0C; /* size 0x60 */
@@ -236,9 +221,9 @@ s32 func_ovl0F_03_80045568(s32, void *);
 void func_ovl0F_03_8004559C(f32, f32, f32);
 void func_ovl0F_03_800455F8(void);
 
-static void func_ovl0F_03_80043030(UnkStruct_ovl0F_03_80046E88 *);
-static void func_ovl0F_03_800430B4(s32, UnkStruct_ovl0F_03_80046E88 *);
-static void func_ovl0F_03_80043164(UnkStruct_ovl0F_03_80046E88 *, s32);
+static void func_ovl0F_03_80043030(UnkStruct_ovl0F_01_80048264 *);
+static void func_ovl0F_03_800430B4(s32, UnkStruct_ovl0F_01_80048264 *);
+static void func_ovl0F_03_80043164(UnkStruct_ovl0F_01_80048264 *, s32);
 static void func_ovl0F_03_80043284(s32 *);
 static void func_ovl0F_03_800432F0(UnkStruct_ovl0F_03_800470E8 *);
 static void func_ovl0F_03_80043E60(s32, f32 *, f32, f32);
@@ -246,7 +231,7 @@ static void func_ovl0F_03_80045680(void);
 static void func_ovl0F_03_800456BC(void);
 static void func_ovl0F_03_80043028(void);
 static void func_ovl0F_03_8004326C(void);
-static void func_ovl0F_03_80043020(s32, UnkStruct_ovl0F_03_80046E88 *);
+static void func_ovl0F_03_80043020(s32, UnkStruct_ovl0F_01_80048264 *);
 static void func_ovl0F_03_8004327C(void);
 static void func_ovl0F_03_80043274(s32 *);
 static void func_ovl0F_03_800432D0(void);
@@ -260,7 +245,7 @@ static void func_ovl0F_03_8004393C(void);
 
 static void func_ovl0F_03_80043434(void);
 static void func_ovl0F_03_80044C7C(UnkStruct_ovl0F_03_80046F0C *);
-static void func_ovl0F_03_80043020(s32 count, UnkStruct_ovl0F_03_80046E88 *p);
+static void func_ovl0F_03_80043020(s32 count, UnkStruct_ovl0F_01_80048264 *p);
 static void func_ovl0F_03_80043274(s32 *p);
 static void func_ovl0F_03_8004343C(void);
 static void func_ovl0F_03_8004342C(void);
@@ -293,8 +278,8 @@ s32 D_ovl0F_03_80046E0C = -1;
 extern f32 D_ovl0F_03_80046E18;
 extern u32 D_ovl0F_03_80046E1C[][3];
 extern u32 D_ovl0F_03_80046E40[][3];
-extern UnkStruct_ovl0F_03_80046E88 D_ovl0F_03_80046E88;
-extern UnkStruct_ovl0F_03_80046E88 D_ovl0F_03_80046EB4[2];
+extern UnkStruct_ovl0F_01_80048264 D_ovl0F_03_80046E88;
+extern UnkStruct_ovl0F_01_80048264 D_ovl0F_03_80046EB4[2];
 extern UnkStruct_ovl0F_03_80046F0C D_ovl0F_03_80046F0C;
 extern s32 D_ovl0F_03_80046F6C[7];
 extern s32 D_ovl0F_03_80046F88[7];
@@ -487,8 +472,8 @@ void func_ovl0F_03_80044258(s32 arg0, UnkStruct_ovl0F_03_Gfx **arg1) {
 
 void func_ovl0F_03_80043F38(void) {
     UnkStruct_ovl0F_03_80046F0C *task;
-    UnkStruct_ovl0F_03_80046E88 *a;
-    UnkStruct_ovl0F_03_80046E88 *b;
+    UnkStruct_ovl0F_01_80048264 *a;
+    UnkStruct_ovl0F_01_80048264 *b;
     f32 pos[3];
     s32 hit;
 
@@ -541,7 +526,7 @@ static void func_ovl0F_03_80043E60(s32 id, f32 *pos, f32 d, f32 h) {
 /* a task: the gate rises and the camera follows */
 void func_ovl0F_03_80043AF0(void) {
     static s32 D_ovl0F_03_80046E10 = 0;
-    UnkStruct_ovl0F_03_80046E88 *task;
+    UnkStruct_ovl0F_01_80048264 *task;
     f32 pos[3];
 
     task = func_ovl0F_03_80046670();
@@ -602,7 +587,7 @@ void func_ovl0F_03_80043AF0(void) {
 /* a task: the gate sinks back */
 void func_ovl0F_03_80043944(void) {
     static s32 D_ovl0F_03_80046E14 = 0;
-    UnkStruct_ovl0F_03_80046E88 *task;
+    UnkStruct_ovl0F_01_80048264 *task;
     UnkStructA *obj;
 
     task = func_ovl0F_03_80046670();
@@ -635,10 +620,10 @@ u32 D_ovl0F_03_80046E40[][3] = {
     { 4, 2, 0xE0 },
     { 5, 0x15, 0xF3 },
 };
-UnkStruct_ovl0F_03_80046E88 D_ovl0F_03_80046E88 = {
+UnkStruct_ovl0F_01_80048264 D_ovl0F_03_80046E88 = {
     &D_ovl0F_03_80047090[0], 0x261, 0, 21.0f, 5.0f, 9.0f, 0.0f, 0.0f, 0.0f, 0, 0,
 };
-UnkStruct_ovl0F_03_80046E88 D_ovl0F_03_80046EB4[2] = {
+UnkStruct_ovl0F_01_80048264 D_ovl0F_03_80046EB4[2] = {
     { &D_ovl0F_03_80047090[1], 0x1B3, 0, 22.0f, 2.0f, 31.0f, 0.0f, 0.0f, 0.0f, 0, 0x404 },
     { &D_ovl0F_03_80047090[2], 0x262, 0, 22.0f, 5.0f, 7.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
 };
@@ -844,7 +829,7 @@ static void func_ovl0F_03_80043284(s32 *arg0) {
     }
 }
 
-static void func_ovl0F_03_80043164(UnkStruct_ovl0F_03_80046E88 *arg0, s32 arg1) {
+static void func_ovl0F_03_80043164(UnkStruct_ovl0F_01_80048264 *arg0, s32 arg1) {
     f32 pos[3];
 
     if (func_ovl0F_03_800468D0(arg0->unk28) != 0) {
@@ -864,7 +849,7 @@ static void func_ovl0F_03_80043164(UnkStruct_ovl0F_03_80046E88 *arg0, s32 arg1) 
     (*arg0->unk0)->unk40->unk14 += 42.0f;
 }
 
-static void func_ovl0F_03_800430B4(s32 arg1, UnkStruct_ovl0F_03_80046E88 *arg0) {
+static void func_ovl0F_03_800430B4(s32 arg1, UnkStruct_ovl0F_01_80048264 *arg0) {
     s32 i;
 
     for (i = 0; i < arg1; i++) {
@@ -878,7 +863,7 @@ static void func_ovl0F_03_800430B4(s32 arg1, UnkStruct_ovl0F_03_80046E88 *arg0) 
     }
 }
 
-static void func_ovl0F_03_80043030(UnkStruct_ovl0F_03_80046E88 *arg0) {
+static void func_ovl0F_03_80043030(UnkStruct_ovl0F_01_80048264 *arg0) {
     f32 pos[3];
 
     func_ovl0F_03_80045B58(arg0->unkC, arg0->unk10, arg0->unk14, pos, 0);
@@ -887,7 +872,7 @@ static void func_ovl0F_03_80043030(UnkStruct_ovl0F_03_80046E88 *arg0) {
     (*arg0->unk0)->unk40->unk18 = pos[2];
 }
 
-static void func_ovl0F_03_80043020(s32 count, UnkStruct_ovl0F_03_80046E88 *p) {
+static void func_ovl0F_03_80043020(s32 count, UnkStruct_ovl0F_01_80048264 *p) {
     s32 i;
 
     for (i = 0; i < count; i++) {

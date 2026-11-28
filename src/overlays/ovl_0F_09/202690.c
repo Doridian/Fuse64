@@ -39,6 +39,7 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0F_09's game object, IDO -O3: the functions are written last to first
@@ -47,21 +48,6 @@
  * func_ovl0F_09_80044528 are its code). The statics IDO inlines everywhere
  * are named for the empty stubs they leave.
  */
-
-/* a model the stage places: seven in D_ovl0F_09_80045FC0 */
-typedef struct {
-    /* 0x00 */ UnkStructA **unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ s32 unk28;
-} UnkStruct_ovl0F_09_80045FC0; /* size 0x2C */
 
 /* seven arguments of func_ovl0F_09_80044E58 */
 typedef struct {
@@ -149,7 +135,7 @@ static void func_ovl0F_09_80043150(s32);
 static void func_ovl0F_09_80043200(s32, f32, f32, UnkStructA *);
 static void func_ovl0F_09_800432C4(void);
 static void func_ovl0F_09_80043314(s32);
-static void func_ovl0F_09_80043398(UnkStruct_ovl0F_09_80045FC0 *);
+static void func_ovl0F_09_80043398(UnkStruct_ovl0F_01_80048264 *);
 static s32 func_ovl0F_09_80043CD0(UnkStructA *);
 static void func_ovl0F_09_80043CD8(f32);
 static void func_ovl0F_09_80043CC8(s32 *, f32, f32);
@@ -187,7 +173,7 @@ u32 D_ovl0F_09_80045F90[][3] = {
     { 2, 0x12, 0xF0 },
     { 3, 0x15, 0xF3 },
 };
-UnkStruct_ovl0F_09_80045FC0 D_ovl0F_09_80045FC0[7] = {
+UnkStruct_ovl0F_01_80048264 D_ovl0F_09_80045FC0[7] = {
     { &D_ovl0F_09_80046200[0], 0x231, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
     { &D_ovl0F_09_80046200[1], 0x232, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0x80000, 0 },
     { &D_ovl0F_09_80046200[2], 0x268, 0, 0.0f, 0.0f, 0.0f, 0.0f, 260.0f, 0.0f, 0, 0 },
@@ -592,7 +578,7 @@ void func_ovl0F_09_8004343C(s32 arg0) {
     }
 }
 
-static void func_ovl0F_09_80043398(UnkStruct_ovl0F_09_80045FC0 *arg0) {
+static void func_ovl0F_09_80043398(UnkStruct_ovl0F_01_80048264 *arg0) {
     f32 pos[3];
 
     func_ovl0F_09_80044CB8(arg0->unkC, arg0->unk10, arg0->unk14, pos, 0);

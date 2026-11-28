@@ -14,7 +14,7 @@
  * it (2026-11-15: each of the others tried in 1E84A0.c matches there).
  */
 
-static void func_ovl0F_02_80045F0C(UnkStruct_ovl0F_02_80048734 *p, s32 count) {
+static void func_ovl0F_02_80045F0C(UnkStruct_ovl0F_01_80048264 *p, s32 count) {
     s32 i;
 
     for (i = 0; i < count; i++) {
@@ -38,7 +38,7 @@ static void func_ovl0F_02_800462E8(void) {
 }
 
 /* case 2's: the panels and their tiles; one hides something */
-static void func_ovl0F_02_80046150(s32 n, UnkStruct_ovl0F_02_80048734 *p, UnkStruct_ovl0F_02_80048918 *flags) {
+static void func_ovl0F_02_80046150(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_02_80048918 *flags) {
     s32 i;
 
     func_ovl0F_02_80044F74(n, p);

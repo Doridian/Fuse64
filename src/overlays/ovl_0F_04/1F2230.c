@@ -187,25 +187,10 @@ static void func_ovl0F_04_80045E80(UnkStructA **arg0);
  * stubs they leave.
  */
 
-/* a model the stage places */
-typedef struct {
-    /* 0x00 */ UnkStructA **unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ s32 unk28;
-} UnkStruct_ovl0F_04_800485C4; /* size 0x2C */
-
 /* the door func_ovl0F_04_80044F88 runs as a task: two models and what to
  * call once it is open */
 typedef struct {
-    /* 0x00 */ UnkStruct_ovl0F_04_800485C4 unk0[2];
+    /* 0x00 */ UnkStruct_ovl0F_01_80048264 unk0[2];
     /* 0x58 */ void (*unk58)(void);
     /* 0x5C */ void (*unk5C)(void);
 } UnkStruct_ovl0F_04_80048880; /* size 0x60 */
@@ -379,7 +364,7 @@ static void func_ovl0F_04_80046D14(void);
 void func_ovl0F_04_80046C58(void);
 void func_ovl0F_04_80046BFC(f32, f32, f32);
 s32 func_ovl0F_04_80046BC8(s32, void *);
-static void func_ovl0F_04_80043578(s32 n, UnkStruct_ovl0F_04_800485C4 *p, UnkStruct_ovl0F_04_800487A8 *flags);
+static void func_ovl0F_04_80043578(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_04_800487A8 *flags);
 static void func_ovl0F_04_800460CC(s32 n1, s32 n2);
 static void func_ovl0F_04_80046244(UnkStruct_ovl0F_04_80048880 *door);
 static void func_ovl0F_04_8004623C(void);
@@ -393,8 +378,8 @@ void func_ovl0F_04_800452A0(UnkStructA *obj);
 void func_ovl0F_04_80044F88(void);
 static void func_ovl0F_04_80044EB0(s32 id, f32 *pos, f32 d, f32 h);
 void func_ovl0F_04_80044D34(s32 idx, s32 flag);
-static f32 func_ovl0F_04_80044084_inl0(UnkStruct_ovl0F_04_800485C4 *p);
-static void func_ovl0F_04_80044084_inl1(UnkStruct_ovl0F_04_800485C4 *p);
+static f32 func_ovl0F_04_80044084_inl0(UnkStruct_ovl0F_01_80048264 *p);
+static void func_ovl0F_04_80044084_inl1(UnkStruct_ovl0F_01_80048264 *p);
 s32 func_ovl0F_04_80044D04(s32 arg0);
 void func_ovl0F_04_80044BC0(void);
 void func_ovl0F_04_800448BC(UnkStructA *arg0);
@@ -402,8 +387,8 @@ void func_ovl0F_04_80044084(void);
 void func_ovl0F_04_8004624C(s32 arg0);
 static void func_ovl0F_04_80043E04(s32 flag);
 static void func_ovl0F_04_80043BC8(s32 i);
-static void func_ovl0F_04_800439D4(UnkStruct_ovl0F_04_800485C4 *p, UnkStruct_ovl0F_04_800487A8 *flags);
-static s32 func_ovl0F_04_80043398(s32 n, UnkStruct_ovl0F_04_800485C4 *p, UnkStruct_ovl0F_04_800487A8 *flags);
+static void func_ovl0F_04_800439D4(UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_04_800487A8 *flags);
+static s32 func_ovl0F_04_80043398(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_04_800487A8 *flags);
 void func_ovl0F_04_800439DC(void);
 void func_ovl0F_04_8004394C(UnkStructA *obj);
 void func_ovl0F_04_800438F0(UnkStructA *obj);
@@ -415,12 +400,12 @@ static void func_ovl0F_04_80043768(UnkStructA *obj, f32 speed);
 void func_ovl0F_04_800436B0(void);
 void func_ovl0F_04_80043590(UnkStructA *arg0);
 void func_ovl0F_04_80043530(f32);
-static void func_ovl0F_04_80043480(s32 arg1, UnkStruct_ovl0F_04_800485C4 *arg0);
-static void func_ovl0F_04_800433FC(UnkStruct_ovl0F_04_800485C4 *arg0);
+static void func_ovl0F_04_80043480(s32 arg1, UnkStruct_ovl0F_01_80048264 *arg0);
+static void func_ovl0F_04_800433FC(UnkStruct_ovl0F_01_80048264 *arg0);
 static void func_ovl0F_04_800433A0(s32 *arg0);
 static void func_ovl0F_04_80045E88(UnkStructA **arg0);
 static void func_ovl0F_04_80043028(void);
-static void func_ovl0F_04_80043020(s32 count, UnkStruct_ovl0F_04_800485C4 *p);
+static void func_ovl0F_04_80043020(s32 count, UnkStruct_ovl0F_01_80048264 *p);
 void func_ovl0F_04_80043010(void);
 
 /* .bss */
@@ -488,7 +473,7 @@ UnkStruct_ovl0F_01_800481D4 D_ovl0F_04_80048534[6] = {
     { 0xC0, 1.0f, 0.0f, 0, 0, 0, 0, 1 }, { 0xC0, 1.0f, 0.0f, 0, 0, 0, 0, 1 }, { 0xC0, 1.0f, 0.0f, 0, 0, 0, 0, 1 },
 };
 /* the movers' models */
-UnkStruct_ovl0F_04_800485C4 D_ovl0F_04_800485C4[6] = {
+UnkStruct_ovl0F_01_80048264 D_ovl0F_04_800485C4[6] = {
     { &D_ovl0F_04_80048A70[0], 0x259, 0, 0.0f, 4.0f, 6.0f, 0.0f, 90.0f, 0.0f, 0x0C000070, 0 },
     { &D_ovl0F_04_80048A70[1], 0x259, 0, 0.0f, 4.0f, 11.0f, 0.0f, 90.0f, 0.0f, 0x0C000070, 0 },
     { &D_ovl0F_04_80048A70[2], 0x259, 0, 0.0f, 4.0f, 17.0f, 0.0f, 90.0f, 0.0f, 0x0C000070, 0 },
@@ -497,7 +482,7 @@ UnkStruct_ovl0F_04_800485C4 D_ovl0F_04_800485C4[6] = {
     { &D_ovl0F_04_80048A70[5], 0x259, 0, 45.0f, 4.0f, 17.0f, 0.0f, 270.0f, 0.0f, 0x0C000070, 0 },
 };
 /* the panels */
-UnkStruct_ovl0F_04_800485C4 D_ovl0F_04_800486CC[5] = {
+UnkStruct_ovl0F_01_80048264 D_ovl0F_04_800486CC[5] = {
     { &D_ovl0F_04_80048A88[0], 0x25B, 0, 22.0f, 4.0f, 11.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
     { &D_ovl0F_04_80048A88[1], 0x25B, 0, 23.0f, 4.0f, 13.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
     { &D_ovl0F_04_80048A88[2], 0x25B, 0, 24.0f, 4.0f, 18.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
@@ -517,7 +502,7 @@ u32 D_ovl0F_04_800487E4[][3] = {
 u32 D_ovl0F_04_80048808[][3] = {
     { 0, 0x12, 0xF0 }, { 1, 0x13, 0xF1 }, { 2, 0x16, 0xF4 }, { 3, 0, 0xDE }, { 4, 2, 0xE0 }, { 5, 0x15, 0xF3 },
 };
-UnkStruct_ovl0F_04_800485C4 D_ovl0F_04_80048850 = {
+UnkStruct_ovl0F_01_80048264 D_ovl0F_04_80048850 = {
     &D_ovl0F_04_80048A88[5], 0x225, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0,
 };
 UnkStructA *D_ovl0F_04_8004887C = NULL;
@@ -633,8 +618,8 @@ static void func_ovl0F_04_800460B4(void) {
 
 /* case 2's: the door, closed or already open */
 static void func_ovl0F_04_80046244(UnkStruct_ovl0F_04_80048880 *door) {
-    UnkStruct_ovl0F_04_800485C4 *m1; /* the door's two entries held in locals (the */
-    UnkStruct_ovl0F_04_800485C4 *m0; /* frame's 8 bytes; which values: a guess, as 0F_02's) */
+    UnkStruct_ovl0F_01_80048264 *m1; /* the door's two entries held in locals (the */
+    UnkStruct_ovl0F_01_80048264 *m0; /* frame's 8 bytes; which values: a guess, as 0F_02's) */
 
     m0 = door->unk0;
     m1 = &door->unk0[1];
@@ -654,7 +639,7 @@ static void func_ovl0F_04_80046244(UnkStruct_ovl0F_04_80048880 *door) {
 
 /* case 0x52's: the panel the player stands on, if it is still up (its stub
  * is 80043398, among the handler's) */
-static s32 func_ovl0F_04_80043398(s32 n, UnkStruct_ovl0F_04_800485C4 *p, UnkStruct_ovl0F_04_800487A8 *flags) {
+static s32 func_ovl0F_04_80043398(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_04_800487A8 *flags) {
     s32 i;
     s32 none; /* -1 held for the return (a guess: any held value fills this word) */
 
@@ -751,7 +736,7 @@ static void func_ovl0F_04_80045E88(UnkStructA **arg0) {
 
     func_ovl0F_04_80045E80(arg0);
     func_ovl0F_04_80045E78();
-    func_ovl0F_04_80045E70(PORT_HOST((UnkStruct_ovl0F_04_800485C4 *)&D_ovl0F_04_80048534[6], D_ovl0F_04_800485C4), 6); /* (the next object on the N64 only) */
+    func_ovl0F_04_80045E70(PORT_HOST((UnkStruct_ovl0F_01_80048264 *)&D_ovl0F_04_80048534[6], D_ovl0F_04_800485C4), 6); /* (the next object on the N64 only) */
     for (i = 0; i < 6; i++) {
         func_ovl0F_04_80047B78(func_ovl0F_04_80047BB0(*D_ovl0F_04_800485C4[i].unk0), 0x02100000);
         D_ovl0F_04_80048534[i].unk11 = 0;
@@ -888,8 +873,8 @@ void func_ovl0F_04_800452A0(UnkStructA *obj) {
 
 void func_ovl0F_04_80044F88(void) {
     UnkStruct_ovl0F_04_80048880 *task;
-    UnkStruct_ovl0F_04_800485C4 *a;
-    UnkStruct_ovl0F_04_800485C4 *b;
+    UnkStruct_ovl0F_01_80048264 *a;
+    UnkStruct_ovl0F_01_80048264 *b;
     f32 pos[3];
     s32 hit;
 
@@ -978,7 +963,7 @@ void func_ovl0F_04_80044D34(s32 idx, s32 flag) {
     }
 }
 
-static f32 func_ovl0F_04_80044084_inl0(UnkStruct_ovl0F_04_800485C4 *p) {
+static f32 func_ovl0F_04_80044084_inl0(UnkStruct_ovl0F_01_80048264 *p) {
     f32 tilt;
     f32 slope;
 
@@ -991,7 +976,7 @@ static f32 func_ovl0F_04_80044084_inl0(UnkStruct_ovl0F_04_800485C4 *p) {
     return tilt * 0.6f;
 }
 
-static void func_ovl0F_04_80044084_inl1(UnkStruct_ovl0F_04_800485C4 *p) {
+static void func_ovl0F_04_80044084_inl1(UnkStruct_ovl0F_01_80048264 *p) {
     s32 id = 0x168; /* the effect, held (a guess: it is the word above pos, 0xA8) */
     f32 pos[3];
 
@@ -1012,7 +997,7 @@ s32 func_ovl0F_04_80044D04(s32 arg0) {
 
 /* a task: a hit mover's effects */
 void func_ovl0F_04_80044BC0(void) {
-    UnkStruct_ovl0F_04_800485C4 *p;
+    UnkStruct_ovl0F_01_80048264 *p;
     s32 i;
 
     p = &D_ovl0F_04_800485C4[(PORT_IP(s32)) func_ovl0F_04_80047CF0()];
@@ -1074,7 +1059,7 @@ void func_ovl0F_04_80044084(void) {
     s32 active;
     s32 i;
     UnkStruct_ovl0F_01_800481D4 *st; /* unused, as rec, step and player: with fewer, unk16's store addresses the symbol (2 words) */
-    UnkStruct_ovl0F_04_800485C4 *rec;
+    UnkStruct_ovl0F_01_80048264 *rec;
     UnkStruct_ovl0F_04_800484BC *step;
     UnkStructA *obj;
     UnkStructA *player;
@@ -1352,7 +1337,7 @@ static void func_ovl0F_04_80043BC8(s32 i) {
  * cleared (inlined into 800439DC just below, its lines before the caller's,
  * its stub just before it; the code was 800439DC's own, with the caller
  * renumbered by `#line`s), as ovl_0F_02's 8004393C */
-static void func_ovl0F_04_800439D4(UnkStruct_ovl0F_04_800485C4 *p, UnkStruct_ovl0F_04_800487A8 *flags) {
+static void func_ovl0F_04_800439D4(UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_04_800487A8 *flags) {
     if (p->unk1C == 0.0f) {
         func_ovl0F_04_800471B8((s32) p->unkC - 1, (s32) p->unk10,
                                (s32) p->unk14 - 1, (s32) p->unkC,
@@ -1500,7 +1485,7 @@ void func_ovl0F_04_80043590(UnkStructA *arg0) {
 
 
 
-static void func_ovl0F_04_80043480(s32 arg1, UnkStruct_ovl0F_04_800485C4 *arg0) {
+static void func_ovl0F_04_80043480(s32 arg1, UnkStruct_ovl0F_01_80048264 *arg0) {
     s32 i;
 
     for (i = 0; i < arg1; i++) {
@@ -1520,7 +1505,7 @@ static void func_ovl0F_04_800433EC(void) {
 static void func_ovl0F_04_800433F4(void) {
 }
 
-static void func_ovl0F_04_800433FC(UnkStruct_ovl0F_04_800485C4 *arg0) {
+static void func_ovl0F_04_800433FC(UnkStruct_ovl0F_01_80048264 *arg0) {
     f32 pos[3];
 
     func_ovl0F_04_800433F4();
@@ -1624,7 +1609,7 @@ static void func_ovl0F_04_80043028(void) {
     D_ovl0F_04_80048480 = 0.0f;
 }
 
-static void func_ovl0F_04_80043020(s32 count, UnkStruct_ovl0F_04_800485C4 *p) {
+static void func_ovl0F_04_80043020(s32 count, UnkStruct_ovl0F_01_80048264 *p) {
     s32 i;
 
     for (i = 0; i < count; i++) {

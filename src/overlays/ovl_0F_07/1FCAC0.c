@@ -16,27 +16,12 @@
  * named the same whatever path it is compiled by).
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0F_07's game object, IDO -O3: the functions are written last to first
  * (IDO -O3 emits a file's functions in reverse).
  */
-
-/* a model the stage places: seven in D_ovl0F_07_80045B88, two in
- * D_ovl0F_07_80045CBC */
-typedef struct {
-    /* 0x00 */ UnkStructA **unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ s32 unk28;
-} UnkStruct_ovl0F_07_80045B88; /* size 0x2C */
 
 /* seven arguments of func_ovl0F_07_80044A18 */
 typedef struct {
@@ -125,9 +110,9 @@ void func_ovl0F_07_80044448(void);
 void func_ovl0F_07_80044460(void);
 
 static void func_ovl0F_07_80043040(s32 *);
-static void func_ovl0F_07_800430F4(UnkStruct_ovl0F_07_80045B88 *);
-static void func_ovl0F_07_80043178(UnkStruct_ovl0F_07_80045B88 *, s32);
-static void func_ovl0F_07_80043228(UnkStruct_ovl0F_07_80045B88 *, s32);
+static void func_ovl0F_07_800430F4(UnkStruct_ovl0F_01_80048264 *);
+static void func_ovl0F_07_80043178(UnkStruct_ovl0F_01_80048264 *, s32);
+static void func_ovl0F_07_80043228(UnkStruct_ovl0F_01_80048264 *, s32);
 static void func_ovl0F_07_80043310(s32);
 static void func_ovl0F_07_800439A8(f32);
 static s32 func_ovl0F_07_800439A0(UnkStructA *);
@@ -155,7 +140,7 @@ UnkStructA *D_ovl0F_07_80045B20 = NULL;
 s32 D_ovl0F_07_80045B24 = 0;
 s32 D_ovl0F_07_80045B28 = -1;
 u8 D_ovl0F_07_80045B2C[4] = { 0 };
-extern UnkStruct_ovl0F_07_80045B88 D_ovl0F_07_80045B88[7];
+extern UnkStruct_ovl0F_01_80048264 D_ovl0F_07_80045B88[7];
 extern UnkStruct_ovl0F_07_80045D90 D_ovl0F_07_80045D90;
 
 /* the PACK of the two speeds into unk64 */
@@ -267,7 +252,7 @@ u32 D_ovl0F_07_80045B58[][3] = {
     { 2, 0x12, 0xF0 },
     { 3, 0x15, 0xF3 },
 };
-UnkStruct_ovl0F_07_80045B88 D_ovl0F_07_80045B88[7] = {
+UnkStruct_ovl0F_01_80048264 D_ovl0F_07_80045B88[7] = {
     { &D_ovl0F_07_80045E30[0], 0x22B, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
     { &D_ovl0F_07_80045E30[1], 0x261, 0, 21.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
     { &D_ovl0F_07_80045E30[2], 0x268, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
@@ -276,7 +261,7 @@ UnkStruct_ovl0F_07_80045B88 D_ovl0F_07_80045B88[7] = {
     { &D_ovl0F_07_80045E30[5], 0x22C, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
     { &D_ovl0F_07_80045E30[6], 0x231, 0, -12.0f, 0.0f, 14.0f, 0.0f, 90.0f, 0.0f, 0, 0 },
 };
-UnkStruct_ovl0F_07_80045B88 D_ovl0F_07_80045CBC[2] = {
+UnkStruct_ovl0F_01_80048264 D_ovl0F_07_80045CBC[2] = {
     { &D_ovl0F_07_80045E30[7], 0x262, 0, 22.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0, 0x405 },
     { &D_ovl0F_07_80045E30[7], 0x262, 0, 22.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0, 0 },
 };
@@ -474,7 +459,7 @@ static void func_ovl0F_07_8004338C(void) {
     func_ovl0F_07_80044F10(D_ovl0F_07_80045E30[4]->unk40, 0x61);
 }
 
-static void func_ovl0F_07_80043020(s32 count, UnkStruct_ovl0F_07_80045B88 *p) {
+static void func_ovl0F_07_80043020(s32 count, UnkStruct_ovl0F_01_80048264 *p) {
     s32 i;
 
     for (i = 0; i < count; i++) {
@@ -632,7 +617,7 @@ static void func_ovl0F_07_80043310(s32 arg0) {
     D_ovl0F_07_80045E8C->unk3C = D_ovl0F_07_80045E8C->unk4C * 0.3f;
 }
 
-static void func_ovl0F_07_80043228(UnkStruct_ovl0F_07_80045B88 *arg0, s32 arg1) {
+static void func_ovl0F_07_80043228(UnkStruct_ovl0F_01_80048264 *arg0, s32 arg1) {
     f32 pos[3];
 
     if (func_ovl0F_07_800455F0(arg0->unk28) != 0) {
@@ -648,7 +633,7 @@ static void func_ovl0F_07_80043228(UnkStruct_ovl0F_07_80045B88 *arg0, s32 arg1) 
     func_ovl0F_07_80043178(arg0, D_ovl0F_07_80045B24);
 }
 
-static void func_ovl0F_07_80043178(UnkStruct_ovl0F_07_80045B88 *arg0, s32 arg1) {
+static void func_ovl0F_07_80043178(UnkStruct_ovl0F_01_80048264 *arg0, s32 arg1) {
     s32 i;
 
     for (i = 0; i < arg1; i++) {
@@ -662,7 +647,7 @@ static void func_ovl0F_07_80043178(UnkStruct_ovl0F_07_80045B88 *arg0, s32 arg1) 
     }
 }
 
-static void func_ovl0F_07_800430F4(UnkStruct_ovl0F_07_80045B88 *arg0) {
+static void func_ovl0F_07_800430F4(UnkStruct_ovl0F_01_80048264 *arg0) {
     f32 pos[3];
 
     func_ovl0F_07_80044878(arg0->unkC, arg0->unk10, arg0->unk14, pos, 0);

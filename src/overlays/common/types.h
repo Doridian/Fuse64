@@ -350,4 +350,19 @@ typedef struct {
     /* 0x14 */ s32 unk14;
 } UnkStruct_ovl0F_01_800481D4; /* size 0x18 */
 
+/* a model the stage places */
+typedef struct {
+    /* 0x00 */ UnkStructA **unk0;
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ s32 unk8;
+    /* 0x0C */ f32 unkC;
+    /* 0x10 */ f32 unk10;
+    /* 0x14 */ f32 unk14;
+    /* 0x18 */ f32 unk18;
+    /* 0x1C */ f32 unk1C;
+    /* 0x20 */ f32 unk20;
+    /* 0x24 */ s32 unk24;
+    /* 0x28 */ s32 unk28;
+} UnkStruct_ovl0F_01_80048264; /* size 0x2C */
+
 #endif

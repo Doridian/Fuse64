@@ -3151,7 +3151,7 @@ static void func_ovl0B_06_80043018(void) {
  * two; tried: the start index as a parameter (jp's n home moves), OPEN_B
  * in a statics.h (jp swaps). The number is the call's line minus 5, so a
  * line added or removed above the handler changes it. */
-#line 2701
+#line 2696
 static void OPEN_B(s32 n, UnkStruct_ovl0B_01_80045E34 *box) {
     s32 i;
     f32 step;

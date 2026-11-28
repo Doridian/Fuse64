@@ -16,7 +16,7 @@
 #   file-local       a type a file defines for itself (97610's u32 (*)[3])
 #   if-variant       an #if VERSION_ variant (in some versions only)
 #   other            none of these
-func_8000059C	param 0	int-sign	us	int | unsigned int
+func_8000059C	param 0	int-sign	us,eu,jp	int | unsigned int
 func_8000059C	param 1	int-sign	us,eu,jp	int | unsigned int
 func_8000059C	param 2	int-pointer	us,eu,jp	unsigned int | void*
 func_80000698	param 1	int-sign	us,eu,jp	int | unsigned int

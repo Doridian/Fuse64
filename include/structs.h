@@ -228,6 +228,16 @@ typedef struct {
     /* 0x24 */ f32 unk24;
 } UnkStruct_800BC770; /* size 0x28 */
 
+/* a message queue (os.h's OSMesgQueue) */
+typedef struct {
+    /* 0x00 */ void *unk0;
+    /* 0x04 */ void *unk4;
+    /* 0x08 */ s32 unk8;
+    /* 0x0C */ s32 unkC;
+    /* 0x10 */ s32 unk10;
+    /* 0x14 */ void *unk14;
+} UnkStruct_802A5330; /* size 0x18 */
+
 #ifdef TARGET_PC
 /* the game's objects as the port lays them out where another file's C
    reaches them by offset (port/include/port_types.h) */

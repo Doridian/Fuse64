@@ -2,17 +2,11 @@
 #include "grid.h"
 
 typedef struct {
-    /* 0x0 */ f32 x;
-    /* 0x4 */ f32 y;
-    /* 0x8 */ f32 z;
-} Vec3f_8008E648; /* size 0xC */
-
-typedef struct {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ s32 unk4;
-    /* 0x08 */ Vec3f_8008E648 unk8;
-    /* 0x14 */ Vec3f_8008E648 unk14;
-    /* 0x20 */ Vec3f_8008E648 unk20;
+    /* 0x08 */ Vec3f unk8;
+    /* 0x14 */ Vec3f unk14;
+    /* 0x20 */ Vec3f unk20;
     /* 0x2C */ s32 unk2C;
 } UnkStruct_80090050;
 
@@ -38,31 +32,31 @@ typedef struct UnkStruct_802363BC {
 
 s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 void func_80234F6C(s32);
-void func_80235114(Vec3f_8008E648 *);
+void func_80235114(Vec3f *);
 #ifdef TARGET_PC
 /* IDO: implicitly `int` (func_80236658 has why); it is void (530C0.c) */
 void func_80239094(void);
 #endif
-void func_80235178(Vec3f_8008E648 *);
+void func_80235178(Vec3f *);
 void func_80236218(s32);
 void func_80236658(void);
-void func_80237164(Vec3f_8008E648 *);
+void func_80237164(Vec3f *);
 s32 func_80234768(void);
 s32 func_802348A4(void);
-void func_802351DC(Vec3f_8008E648 *);
-void func_80235208(Vec3f_8008E648 *);
+void func_802351DC(Vec3f *);
+void func_80235208(Vec3f *);
 u16 func_80235924(void);
 s32 func_80236208(void);
-void func_80237264(Vec3f_8008E648 *);
+void func_80237264(Vec3f *);
 
-extern Vec3f_8008E648 D_8008E648;
-extern Vec3f_8008E648 D_8008F3E8;
-extern Vec3f_8008E648 D_8008F3F8;
+extern Vec3f D_8008E648;
+extern Vec3f D_8008F3E8;
+extern Vec3f D_8008F3F8;
 extern s32 D_8008F404;
 extern s32 D_8008F408;
 extern s32 D_8008F40C;
 extern s32 D_8008F410;
-extern Vec3f_8008E648 D_8008F418;
+extern Vec3f D_8008F418;
 extern u16 D_8008F424;
 extern u16 D_8008F426;
 extern s32 D_8008F428;
@@ -70,7 +64,7 @@ extern s32 D_8008F42C;
 extern f32 D_8008FFE8;
 extern f32 D_8008FFEC;
 extern f32 D_8008FFF0;
-extern Vec3f_8008E648 D_8008FFF8;
+extern Vec3f D_8008FFF8;
 extern f32 D_80090004;
 extern f32 D_80090018;
 extern f32 D_8009001C;
@@ -84,8 +78,8 @@ extern UnkStruct_80090050 D_80090050;
 
 #define WRAP360(a) ((a) >= 360.0f ? (a) - 360.0f : ((a) < 0.0f ? (a) + 360.0f : (a)))
 
-void func_8022FEAC(Vec3f_8008E648 *, Vec3f_8008E648 *);
-void func_8022FF58(Vec3f_8008E648 *, Vec3f_8008E648 *, Vec3f_8008E648 *);
+void func_8022FEAC(Vec3f *, Vec3f *);
+void func_8022FF58(Vec3f *, Vec3f *, Vec3f *);
 s32 func_80233650(f32, f32);
 s32 func_802336E4(f32);
 s32 func_80233768(f32);
@@ -130,11 +124,11 @@ void func_802358D0(void *, s32, s16);
 PORT_RET(s32, u16) func_802399AC(s32);
 extern UnkStruct_802443F4 *D_8009004C;
 s32 func_80243DDC(void);
-void func_80234578(Vec3f_8008E648 *, Vec3f_8008E648 *, Vec3f_8008E648 *);
+void func_80234578(Vec3f *, Vec3f *, Vec3f *);
 void func_8023494C(f32 *);
-void func_80235234(Vec3f_8008E648 *);
-void func_80235934(Vec3f_8008E648 *, u16 *);
-extern Vec3f_8008E648 D_80090020;
+void func_80235234(Vec3f *);
+void func_80235934(Vec3f *, u16 *);
+extern Vec3f D_80090020;
 extern f32 D_8009002C;
 extern f32 D_80090030;
 void func_802346C8(f32, f32, f32);
@@ -151,12 +145,12 @@ void func_80236ACC(u16);
 s32 func_80234248(s32);
 void func_80227CD0(PORT_RET(s32, void *), f32, f32, f32, f32, f32, f32, f32, f32, f32);
 extern PORT_RET(s32, void *) D_802AC5C0;
-extern Vec3f_8008E648 D_8008F3D8;
+extern Vec3f D_8008F3D8;
 void func_80235D7C(void);
 void func_80236D30(void);
-s32 func_80236BA8(Vec3f_8008E648 *);
+s32 func_80236BA8(Vec3f *);
 typedef struct {
-    /* 0x0 */ Vec3f_8008E648 pos;
+    /* 0x0 */ Vec3f pos;
     /* 0xC */ s32 unkC;
 } UnkStruct_80250338;
 void func_80250338(s32, UnkStruct_80250338 *);
@@ -167,7 +161,7 @@ void func_802361FC(f32);
 void func_802361F0(f32);
 void func_802361E4(f32);
 void func_80236174(f32);
-void func_80236180(Vec3f_8008E648 *);
+void func_80236180(Vec3f *);
 void func_80235FE4(f32, f32, f32, f32);
 void func_80235FD8(UnkStruct_802443F4 *);
 void func_802360D4(f32, f32, f32, f32);
@@ -189,7 +183,7 @@ void func_80237890(void) {
 }
 
 void func_80237664(void) {
-    Vec3f_8008E648 sp9C;
+    Vec3f sp9C;
     UnkStruct_80250338 sp8C;
 
     func_802350F8(1);
@@ -215,7 +209,7 @@ void func_80237664(void) {
 }
 
 f32 func_802375A4(f32 arg0) {
-    Vec3f_8008E648 sp2C;
+    Vec3f sp2C;
 
     switch (D_8008F404) {
         case 0:
@@ -229,7 +223,7 @@ f32 func_802375A4(f32 arg0) {
 }
 
 void func_80237478(f32 *arg0, f32 *arg1) {
-    Vec3f_8008E648 sp24;
+    Vec3f sp24;
 
     switch (D_8008F404) {
         case 0:
@@ -244,8 +238,8 @@ void func_80237478(f32 *arg0, f32 *arg1) {
 }
 
 void func_8023733C(UnkStruct_80234DD4 *arg0, f32 *arg1, f32 *arg2) {
-    Vec3f_8008E648 sp34;
-    Vec3f_8008E648 sp28;
+    Vec3f sp34;
+    Vec3f sp28;
 
     sp28.x = arg0->unk10;
     sp28.y = arg0->unk14;
@@ -277,7 +271,7 @@ void func_80237290(void) {
     D_80090050.unk2C = func_80236208();
 }
 
-void func_80237264(Vec3f_8008E648 *arg0) {
+void func_80237264(Vec3f *arg0) {
     arg0->x = D_8008F3F8.x;
     arg0->y = D_8008F3F8.y;
     arg0->z = D_8008F3F8.z;
@@ -300,7 +294,7 @@ void func_802371C8(void) {
     func_80236218(D_80090050.unk2C);
 }
 
-void func_80237164(Vec3f_8008E648 *arg0) {
+void func_80237164(Vec3f *arg0) {
     if (arg0->x != 32768.0f) {
         D_8008F3F8.x = arg0->x;
     }
@@ -322,7 +316,7 @@ void func_80236F54(void) {
     f32 upX;
     f32 upY;
     f32 upZ;
-    Vec3f_8008E648 sp88;
+    Vec3f sp88;
 
     eyeX = eyeY = eyeZ = atX = atY = atZ = 0.0f;
     func_802358D0(NULL, 0, 0);
@@ -365,7 +359,7 @@ void func_80236F54(void) {
 }
 
 void func_80236D30(void) {
-    Vec3f_8008E648 sp2C;
+    Vec3f sp2C;
 
     switch (D_8008F408) {
         case 0:
@@ -390,7 +384,7 @@ void func_80236D30(void) {
     }
 }
 
-s32 func_80236BA8(Vec3f_8008E648 *arg0) {
+s32 func_80236BA8(Vec3f *arg0) {
     f32 t;
 
     if (D_8008F40C != 0) {
@@ -475,8 +469,8 @@ void func_80236658(void) {
     UnkStruct_802363BC *entry;
     s32 flags;
     s32 active;
-    Vec3f_8008E648 spB8;
-    Vec3f_8008E648 spAC;
+    Vec3f spB8;
+    Vec3f spAC;
 
     func_802363BC(&sp114);
     entry = &spD0;
@@ -688,7 +682,7 @@ void func_802361E4(f32 arg0) {
     D_8008FFF0 = arg0;
 }
 
-void func_80236180(Vec3f_8008E648 *arg0) {
+void func_80236180(Vec3f *arg0) {
     if (arg0->x != 32768.0f) {
         D_8008FFF8.x = arg0->x;
     }
@@ -766,9 +760,9 @@ void func_80235FD8(UnkStruct_802443F4 *arg0) {
 void func_80235D7C(void) {
     UnkStruct_802443F4 *p;
     u16 sp8A;
-    Vec3f_8008E648 sp7C;
-    Vec3f_8008E648 sp70;
-    Vec3f_8008E648 sp64;
+    Vec3f sp7C;
+    Vec3f sp70;
+    Vec3f sp64;
     f32 sp60;
 
     sp60 = 0.0f;
@@ -805,7 +799,7 @@ void func_80235D7C(void) {
     }
 }
 
-void func_80235934(Vec3f_8008E648 *arg0, u16 *arg1) {
+void func_80235934(Vec3f *arg0, u16 *arg1) {
     switch (func_80235924()) {
         case 0:
             *arg1 = func_802399AC(0) & 0xF;
@@ -893,15 +887,15 @@ void func_80235934(Vec3f_8008E648 *arg0, u16 *arg1) {
 
 
 
-void func_80235234(Vec3f_8008E648 *arg0) {
+void func_80235234(Vec3f *arg0) {
     static f32 D_802A003C = 0.5f;
     static f32 D_802A0040 = 1.0f;
     static f32 D_802A0044 = 0.0f;
     static s32 D_802A0048 = 0;
     static s32 D_802A004C = 1;
-    Vec3f_8008E648 sp94;
-    Vec3f_8008E648 sp88;
-    Vec3f_8008E648 sp7C;
+    Vec3f sp94;
+    Vec3f sp88;
+    Vec3f sp7C;
     s32 ret;
     f32 sp74;
     f32 sp70;
@@ -1030,19 +1024,19 @@ void func_80235234(Vec3f_8008E648 *arg0) {
     }
 }
 
-void func_80235208(Vec3f_8008E648 *arg0) {
+void func_80235208(Vec3f *arg0) {
     arg0->x = D_8008F3E8.x;
     arg0->y = D_8008F3E8.y;
     arg0->z = D_8008F3E8.z;
 }
 
-void func_802351DC(Vec3f_8008E648 *arg0) {
+void func_802351DC(Vec3f *arg0) {
     arg0->x = D_8008E648.x;
     arg0->y = D_8008E648.y;
     arg0->z = D_8008E648.z;
 }
 
-void func_80235178(Vec3f_8008E648 *arg0) {
+void func_80235178(Vec3f *arg0) {
     if (arg0->x != 32768.0f) {
         D_8008F3E8.x = arg0->x;
     }
@@ -1054,7 +1048,7 @@ void func_80235178(Vec3f_8008E648 *arg0) {
     }
 }
 
-void func_80235114(Vec3f_8008E648 *arg0) {
+void func_80235114(Vec3f *arg0) {
     if (arg0->x != 32768.0f) {
         D_8008E648.x = arg0->x;
     }
@@ -1073,7 +1067,7 @@ void func_802350F8(s32 arg0) {
 }
 
 void func_80234F6C(s32 arg0) {
-    Vec3f_8008E648 sp2C;
+    Vec3f sp2C;
 
     switch (arg0) {
         case 0:
@@ -1101,8 +1095,8 @@ void func_80234F6C(s32 arg0) {
 }
 
 s32 func_80234DD4(f32 arg0, f32 arg1, f32 arg2, UnkStruct_80234DD4 *arg3) {
-    Vec3f_8008E648 sp8C;
-    Vec3f_8008E648 sp80;
+    Vec3f sp8C;
+    Vec3f sp80;
     Unk8026DCAC sp68;
     s32 ret;
 
@@ -1152,12 +1146,12 @@ f32 func_80234D24(f32 arg0, f32 arg1, f32 arg2) {
 }
 
 void func_8023494C(f32 *arg0) {
-    Vec3f_8008E648 spCC;
-    Vec3f_8008E648 spC0;
-    Vec3f_8008E648 spB4;
-    Vec3f_8008E648 spA8;
+    Vec3f spCC;
+    Vec3f spC0;
+    Vec3f spB4;
+    Vec3f spA8;
     f32 spA4;
-    Vec3f_8008E648 sp98;
+    Vec3f sp98;
     f32 far;
     f32 near;
 
@@ -1301,8 +1295,8 @@ void func_802346C8(f32 arg0, f32 arg1, f32 arg2) {
     }
 }
 
-void func_80234578(Vec3f_8008E648 *arg0, Vec3f_8008E648 *arg1, Vec3f_8008E648 *arg2) {
-    Vec3f_8008E648 sp24;
+void func_80234578(Vec3f *arg0, Vec3f *arg1, Vec3f *arg2) {
+    Vec3f sp24;
 
     func_8022FF58(arg1, arg2, &sp24);
     sp24.y = WRAP360(sp24.y - 90.0f);

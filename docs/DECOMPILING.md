@@ -95,7 +95,11 @@ that knows fewer of its fields uses the shared definition anyway; one that
 knows more adds them there, as long as every user still compiles to the
 same code. Two names for one thing (the same pool or entity, the same
 function's parameter) become one: the address-named one, or the one more
-files use. A type only one file uses may stay in that file.
+files use. A type only one file uses may stay in that file. Moving a
+definition out of a file with `#line` fakes (9CAB0, AD5B0, some
+overlays) shifts its lines: lower every `#line N` below by the lines
+removed above it, or as1's order changes (the whole file must shift
+alike).
 
 ```
 tools/structs.py             # the definitions, the duplicates

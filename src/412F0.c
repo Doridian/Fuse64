@@ -6,16 +6,6 @@
  * unrolled copies) */
 #define _SHIFTL(v, s, w) ((u32) (((u32) (v) & ((0x01 << (w)) - 1)) << (s)))
 
-/* a message queue (os.h's OSMesgQueue) */
-typedef struct {
-    /* 0x00 */ void *unk0;
-    /* 0x04 */ void *unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ void *unk14;
-} UnkStruct_802A5330; /* size 0x18 */
-
 /* a scheduler task (sched.h's OSScTask) */
 typedef struct {
     /* 0x00 */ void *unk0;

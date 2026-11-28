@@ -15,7 +15,7 @@ typedef struct {
 
 /* what UnkStructA_40's 0x48 points to (func_ovl0E_05_8004345C) */
 typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (426E0.c's UnkAnimSlot: its animation) */
+    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (structs.h's UnkStructA_40_48_4: its animation) */
     /* 0x04 */ f32 unk4;
 } UnkStruct_ovl0E_05_48_4;
 

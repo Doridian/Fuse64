@@ -16,7 +16,7 @@
  */
 
 typedef struct {
-    /* 0x00 */ PORT_IP(s32) unk0; /* (426E0.c's UnkAnimSlot: an animation) */
+    /* 0x00 */ PORT_IP(s32) unk0; /* (structs.h's UnkStructA_40_48_4: an animation) */
     /* 0x04 */ f32 unk4;
     /* 0x08 */ s32 unk8;
     /* 0x0C */ PORT_IP(s32) unkC;

@@ -223,7 +223,7 @@ typedef struct {
 } UnkStruct_802AC660; /* size >= 0xF8 */
 
 typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (426E0.c's UnkAnimSlot: its animation) */
+    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (structs.h's UnkStructA_40_48_4: its animation) */
     /* 0x04 */ f32 unk4;
 } UnkStruct_8023FD08_48_4;
 

@@ -166,14 +166,6 @@ struct UnkStruct_ovl0C_06_800490FC {
     /* 0x24 */ s32 unk24;
 };
 
-/* an object and its position */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-} UnkStruct_ovl0C_06_80049264;
-
 void func_ovl0C_06_80047BB8(s32);
 void func_ovl0C_06_80047BD0(s32);
 void func_ovl0C_06_80047BF0(s32, s32, s32, s32);
@@ -264,8 +256,8 @@ void func_ovl0C_06_80043060(void);
 s32 func_ovl0C_06_800430A8(UnkStructA *arg0, UnkStructA *arg1);
 void func_ovl0C_06_800431B8(void);
 void func_ovl0C_06_80043248(UnkStruct_ovl0C_06_8004914C *arg0, s32 arg1);
-void func_ovl0C_06_80043354(UnkStruct_ovl0C_06_80049264 *arg0, UnkStruct_ovl0C_06_8004914C *arg1, UnkStruct_ovl0C_06_800490FC *arg2, s32 arg3);
-s32 func_ovl0C_06_80043544(UnkStruct_ovl0C_06_80049264 *arg0, UnkStruct_ovl0C_06_8004914C *arg1, UnkStruct_ovl0C_06_800490FC *list, s32 arg3);
+void func_ovl0C_06_80043354(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_06_8004914C *arg1, UnkStruct_ovl0C_06_800490FC *arg2, s32 arg3);
+s32 func_ovl0C_06_80043544(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_06_8004914C *arg1, UnkStruct_ovl0C_06_800490FC *list, s32 arg3);
 void func_ovl0C_06_80043710(UnkStruct_ovl0C_06_80048F10 *arg0);
 void func_ovl0C_06_8004379C(UnkStruct_ovl0C_06_80048F10 *arg0);
 void func_ovl0C_06_80043820(void);
@@ -294,7 +286,7 @@ void func_ovl0C_06_800442BC(UnkStruct_ovl0C_06_80048FD0 *arg0);
 void func_ovl0C_06_800442BC(UnkStruct_ovl0C_06_80048FD0 *arg0);
 void func_ovl0C_06_80044340(UnkStruct_ovl0C_06_800490FC *arg0, s32 arg1);
 void func_ovl0C_06_80044340(UnkStruct_ovl0C_06_800490FC *arg0, s32 arg1);
-void func_ovl0C_06_80044494(UnkStruct_ovl0C_06_80049264 *arg0, UnkStruct_ovl0C_06_8004914C *arg1, s32 arg2);
+void func_ovl0C_06_80044494(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_06_8004914C *arg1, s32 arg2);
 void func_ovl0C_06_80044584(f32);
 void func_ovl0C_06_800445CC(void);
 void func_ovl0C_06_800446FC(void);
@@ -437,11 +429,11 @@ UnkStruct_ovl0C_06_8004914C D_ovl0C_06_8004914C[] = {
     { 5, 6, NULL, 4350.0f, 700.0f, 2549.9f, 700.0f, 0x2A, 4, 0x17, 3, NULL, 1, 0 },
     { 6, 0, NULL, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0, 0, 0, NULL, 1, 0 },
 };
-UnkStruct_ovl0C_06_80049264 D_ovl0C_06_80049264 = { NULL, 4350.0f, 700.0f, 1050.0f };
+UnkStruct_ovl0C_01_8004A3BC D_ovl0C_06_80049264 = { NULL, 4350.0f, 700.0f, 1050.0f };
 UnkStruct_ovl0C_01_8004A54C D_ovl0C_06_80049274 = {
     NULL, -1, 0x2B8, -5, -0x400, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 };
-UnkStruct_ovl0C_06_80049264 D_ovl0C_06_800492AC = { NULL, 300.0f, 200.0f, 1600.0f };
+UnkStruct_ovl0C_01_8004A3BC D_ovl0C_06_800492AC = { NULL, 300.0f, 200.0f, 1600.0f };
 
 /* unused: the stubs IDO -O3 leaves at the end of the object */
 static void func_ovl0C_06_80047864(void) {

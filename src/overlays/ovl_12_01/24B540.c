@@ -53,14 +53,6 @@ typedef struct {
     /* 0x10 */ s32 unk10;
 } UnkStruct_ovl12_01_80046318;
 
-/* an object and where it is made */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-} UnkStruct_ovl12_01_8004632C;
-
 void func_ovl12_01_80044F38(s32);
 void func_ovl12_01_80044F50(s32);
 void func_ovl12_01_80044F78(s32, s32, s32, s32, s32, s32);
@@ -232,8 +224,8 @@ UnkStruct_ovl12_01_800462F0 D_ovl12_01_800462F0[] = {
     { NULL, 3900.0f, 0.0f, 1500.0f, 4200.0f, 0.0f, 1500.0f, 0x27, 0, 0xF, 0x28, 0x10 },
 };
 UnkStruct_ovl12_01_80046318 D_ovl12_01_80046318 = { NULL, 2350.0f, 602.0f, 1550.0f, 0x409 };
-UnkStruct_ovl12_01_8004632C D_ovl12_01_8004632C = { NULL, 4500.0f, 450.0f, 1550.0f };
-UnkStruct_ovl12_01_8004632C D_ovl12_01_8004633C = { NULL, 3700.0f, 0.0f, 600.0f };
+UnkStruct_ovl0C_01_8004A3BC D_ovl12_01_8004632C = { NULL, 4500.0f, 450.0f, 1550.0f };
+UnkStruct_ovl0C_01_8004A3BC D_ovl12_01_8004633C = { NULL, 3700.0f, 0.0f, 600.0f };
 
 #include "statics.h"
 

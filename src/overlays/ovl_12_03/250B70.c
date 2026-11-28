@@ -17,14 +17,6 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-/* an object and where it is made */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-} UnkStruct_ovl12_03_80045E24;
-
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
     /* 0x04 */ f32 unk4;
@@ -221,10 +213,10 @@ UnkStruct_ovl12_03_80045CE4 D_ovl12_03_80045D84[] = {
     { NULL, 2750.0f, 200.0f, 1000.0f, 180.0f },
     { NULL, 2750.0f, 200.0f, 2000.0f, 0.0f },
 };
-UnkStruct_ovl12_03_80045E24 D_ovl12_03_80045E24[] = {
+UnkStruct_ovl0C_01_8004A3BC D_ovl12_03_80045E24[] = {
     { NULL, 400.0f, 200.0f, 1300.0f },
 };
-UnkStruct_ovl12_03_80045E24 D_ovl12_03_80045E34 = { NULL, 3850.0f, 400.0f, 1350.0f };
+UnkStruct_ovl0C_01_8004A3BC D_ovl12_03_80045E34 = { NULL, 3850.0f, 400.0f, 1350.0f };
 
 #include "statics.h"
 

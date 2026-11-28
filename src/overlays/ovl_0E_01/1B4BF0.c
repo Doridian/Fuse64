@@ -39,13 +39,6 @@ typedef struct {
     /* 0x28 */ f32 unk28;
 } UnkStruct_ovl0E_01_800469F8;
 
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-} UnkStruct_ovl0E_01_80046C58;
-
 /* what func_ovl0E_01_80045808 returns */
 typedef struct {
     /* 0x00 */ u8 unk0[0x10];
@@ -244,7 +237,7 @@ UnkStruct_ovl0C_01_8004A54C D_ovl0E_01_80046BE8[1] = {
 UnkStruct_ovl0C_01_8004A54C D_ovl0E_01_80046C20[1] = {
     { NULL, -1, 0x1B7, -1, -1, -1, -1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
-UnkStruct_ovl0E_01_80046C58 D_ovl0E_01_80046C58 = { NULL, 2400.0f, 800.0f, 1400.0f };
+UnkStruct_ovl0C_01_8004A3BC D_ovl0E_01_80046C58 = { NULL, 2400.0f, 800.0f, 1400.0f };
 
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */

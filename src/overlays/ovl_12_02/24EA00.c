@@ -6,13 +6,6 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-} UnkStruct_ovl12_02_80045110;
-
 void func_ovl12_02_80043DB8(s32);
 void func_ovl12_02_80043DD0(s32);
 void func_ovl12_02_80043DF8(s32, s32, s32, s32, s32, s32);
@@ -119,7 +112,7 @@ u32 D_ovl12_02_800450EC[][3] = {
     { 1, 0x1F, 0xFD },
     { 2, 0x20, 0xFE },
 };
-UnkStruct_ovl12_02_80045110 D_ovl12_02_80045110 = { NULL, 1100.0f, 200.0f, 2300.0f };
+UnkStruct_ovl0C_01_8004A3BC D_ovl12_02_80045110 = { NULL, 1100.0f, 200.0f, 2300.0f };
 
 /* unused: the stubs IDO -O3 leaves at the end of the object; one of them
  * refers to the .bss nothing else uses, which would otherwise be common */

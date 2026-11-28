@@ -41,4 +41,13 @@ typedef struct {
     /* 0x34 */ f32 unk34;
 } UnkStruct_ovl0C_01_8004A54C;
 
+/* an object and its position (0C_01/02/06/09, 0E_01/06/07/08/10/14,
+ * 12_01..03, 17_09) */
+typedef struct {
+    /* 0x00 */ UnkStructA *unk0;
+    /* 0x04 */ f32 unk4;
+    /* 0x08 */ f32 unk8;
+    /* 0x0C */ f32 unkC;
+} UnkStruct_ovl0C_01_8004A3BC;
+
 #endif

@@ -84,14 +84,6 @@ typedef struct {
     /* 0x14 */ s32 unk14;
 } UnkStruct_ovl0C_02_80049B20;
 
-/* an object and its position */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-} UnkStruct_ovl0C_02_80049B50;
-
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
     /* 0x04 */ f32 unk4;
@@ -312,7 +304,7 @@ void func_ovl0C_02_80044810(void);
 void func_ovl0C_02_80044868(void);
 void func_ovl0C_02_800448CC(void);
 void func_ovl0C_02_80044914(UnkStruct_ovl0C_02_80049B84 *arg0, s32 arg1);
-void func_ovl0C_02_80044A68(UnkStruct_ovl0C_02_80049B50 *arg0, UnkStruct_ovl0C_02_80049C24 *arg1, s32 arg2);
+void func_ovl0C_02_80044A68(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_02_80049C24 *arg1, s32 arg2);
 void func_ovl0C_02_80044B58(f32);
 void func_ovl0C_02_80044BA0(void);
 void func_ovl0C_02_80044CD0(void);
@@ -458,7 +450,7 @@ UnkStruct_ovl0C_02_80049B20 D_ovl0C_02_80049B38[] = {
     { NULL, 4100.0f, 400.0f, 900.0f, 0x1A, 0x419 },
 };
 #endif
-UnkStruct_ovl0C_02_80049B50 D_ovl0C_02_80049B50[] = {
+UnkStruct_ovl0C_01_8004A3BC D_ovl0C_02_80049B50[] = {
     { NULL, 2350.0f, 1000.0f, 1450.0f },
 };
 UnkStruct_ovl0C_02_80049B60 D_ovl0C_02_80049B60[] = {
@@ -493,10 +485,10 @@ UnkStruct_ovl0C_02_80049C24 D_ovl0C_02_80049DB4[] = {
     { 5, 6, NULL, 3750.0f, 900.0f, 2050.0f, 900.0f, 0x24, 5, 0x12, 4, NULL, 0, 0 },
     { 6, 0, NULL, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0, 0, 0, NULL, 0, 0 },
 };
-UnkStruct_ovl0C_02_80049B50 D_ovl0C_02_80049ECC[] = {
+UnkStruct_ovl0C_01_8004A3BC D_ovl0C_02_80049ECC[] = {
     { NULL, 4450.0f, 900.0f, 1350.0f },
 };
-UnkStruct_ovl0C_02_80049B50 D_ovl0C_02_80049EDC[] = {
+UnkStruct_ovl0C_01_8004A3BC D_ovl0C_02_80049EDC[] = {
     { NULL, 3750.0f, 900.0f, 550.0f },
 };
 UnkStruct_ovl0C_01_8004A54C D_ovl0C_02_80049EEC = { NULL, -1, 0x2B4, 0x40, 0x400, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f };
@@ -1343,7 +1335,7 @@ void func_ovl0C_02_80045D74(UnkStruct_ovl0C_02_80049A38 *arg0) {
 void func_ovl0C_02_80045B50(void) {
     UnkStructA *obj;
     UnkStructA *sub;
-    UnkStruct_ovl0C_02_80049B50 *p;
+    UnkStruct_ovl0C_01_8004A3BC *p;
     s16 i;
 
     for (i = 0; i < 1; i++) {
@@ -1662,7 +1654,7 @@ void func_ovl0C_02_80044BA0(void) {
 
 
 
-void func_ovl0C_02_80044A68(UnkStruct_ovl0C_02_80049B50 *arg0, UnkStruct_ovl0C_02_80049C24 *arg1, s32 arg2) {
+void func_ovl0C_02_80044A68(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_02_80049C24 *arg1, s32 arg2) {
     UnkStructA *obj;
     union { s32 i; u32 u; } fl;
 

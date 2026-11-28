@@ -26,14 +26,6 @@
  * ovl_0C_04's 17CC20 (ovl_0C_06 and ovl_0C_07 share most of the rest).
  */
 
-/* an object and a position */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-} UnkStruct_ovl0C_09_80047818;
-
 /* an object, its position and the limits the movers check it against */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
@@ -274,7 +266,7 @@ u32 D_ovl0C_09_800477F4[][3] = {
     { 1, 2, 0xE0 },
     { 2, 4, 0xE2 },
 };
-UnkStruct_ovl0C_09_80047818 D_ovl0C_09_80047818 = { NULL, 3150.0f, 4600.0f, 2000.0f };
+UnkStruct_ovl0C_01_8004A3BC D_ovl0C_09_80047818 = { NULL, 3150.0f, 4600.0f, 2000.0f };
 UnkStructA *D_ovl0C_09_80047828 = NULL;
 UnkStruct_ovl0C_09_8004782C D_ovl0C_09_8004782C[] = {
     { NULL, 3150.0f, 3900.0f, 1550.0f, 3900.0f, -400.0f, 3150.0f, 1550.0f },

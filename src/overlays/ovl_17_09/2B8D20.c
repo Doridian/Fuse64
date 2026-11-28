@@ -64,6 +64,7 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_17_09's game object, IDO -O3: the functions are written last to first
@@ -87,14 +88,6 @@ typedef struct {
     /* 0x0C */ f32 unkC;
     /* 0x10 */ s32 unk10;
 } UnkStruct_ovl17_09_800463D0; /* size 0x14 */
-
-/* a model placed by func_ovl17_09_8004412C (D_ovl17_09_800462DC) */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-} UnkStruct_ovl17_09_800462DC; /* size 0x10 */
 
 /* what func_ovl17_09_80045658 returns: offsets into itself */
 typedef struct {
@@ -166,7 +159,7 @@ s32 func_ovl17_09_80046080(s32, f32, f32, f32);
 static void func_ovl17_09_80043010(void);
 static void func_ovl17_09_80043144(UnkStruct_ovl17_09_800463D0 *);
 static void func_ovl17_09_80043748(UnkStruct_ovl17_09_Gfx **);
-static void func_ovl17_09_8004412C(UnkStruct_ovl17_09_800462DC *);
+static void func_ovl17_09_8004412C(UnkStruct_ovl0C_01_8004A3BC *);
 static s32 func_ovl17_09_80044504(UnkStructA *);
 static void func_ovl17_09_8004456C(UnkStructA *, f32);
 void func_ovl17_09_80043750(s32, UnkStruct_ovl17_09_Gfx **);
@@ -209,7 +202,7 @@ u32 D_ovl17_09_800462B8[][3] = {
     { 0, 0, 4 },
     { 0, 0, 4 },
 };
-UnkStruct_ovl17_09_800462DC D_ovl17_09_800462DC[2] = {
+UnkStruct_ovl0C_01_8004A3BC D_ovl17_09_800462DC[2] = {
     { NULL, 420.0f, 2000.0f, 1800.0f },
     { NULL, 4200.0f, 2000.0f, 1800.0f },
 };
@@ -423,7 +416,7 @@ void func_ovl17_09_80044828(UnkStructA *obj) {
     func_ovl17_09_8004456C(obj, D_ovl17_09_800462A4 * 0.42857143f);
 }
 
-static void func_ovl17_09_8004412C(UnkStruct_ovl17_09_800462DC *rec) {
+static void func_ovl17_09_8004412C(UnkStruct_ovl0C_01_8004A3BC *rec) {
     rec->unk0 = func_ovl17_09_800459A8(0x269, -1, 0x01000000, 0xD0, 0);
     rec->unk0->unk40->unk10 = rec->unk4;
     rec->unk0->unk40->unk14 = rec->unk8;

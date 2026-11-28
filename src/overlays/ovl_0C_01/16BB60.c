@@ -88,14 +88,6 @@ typedef struct {
     /* 0x14 */ s32 unk14;
 } UnkStruct_ovl0C_01_8004A584;
 
-/* an object and its position */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-} UnkStruct_ovl0C_01_8004A3BC;
-
 /* a list of these ends at the one whose unk2 is 0; unk20 and unk22 count */
 typedef struct {
     /* 0x00 */ s16 unk0;

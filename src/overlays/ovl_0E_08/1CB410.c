@@ -1,13 +1,6 @@
 #include "common.h"
 #include "overlays/common/types.h"
 
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-} UnkStruct_ovl0E_08_80045300;
-
 void func_ovl0E_08_80043838(void);
 void func_ovl0E_08_80043988(void);
 void func_ovl0E_08_80043A40(UnkStructA *);
@@ -75,7 +68,7 @@ u32 D_ovl0E_08_800452D0[][3] = {
 u32 D_ovl0E_08_800452F4[][3] = {
     { 0, 0x10, 0xEE },
 };
-UnkStruct_ovl0E_08_80045300 D_ovl0E_08_80045300 = { NULL, 300.0f, 200.0f, 1300.0f };
+UnkStruct_ovl0C_01_8004A3BC D_ovl0E_08_80045300 = { NULL, 300.0f, 200.0f, 1300.0f };
 
 /* The three statements are on one line, a macro: only then does IDO
  * schedule across them (the store into the first call's delay slot). */

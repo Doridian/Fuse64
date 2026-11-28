@@ -32,13 +32,6 @@ void func_ovl0E_10_80045298(s32, f32 *);
 #define UNK_MACRO_ovl0E_10_8004325C() \
     D_ovl0E_10_8004557C = func_ovl0E_10_80044378(); func_ovl0E_10_80044358(&D_ovl0E_10_80045570); func_ovl0E_10_80044380(D_ovl0E_10_8004557C, D_ovl0E_10_80045560)
 
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-} UnkStruct_ovl0E_10_800454E4;
-
 void func_ovl0E_10_80044198(s32);
 void func_ovl0E_10_800441B0(s32);
 void func_ovl0E_10_80044290(s32, s32, s32);
@@ -90,7 +83,7 @@ u32 D_ovl0E_10_800454B4[][3] = {
     { 2, 0x22, 0xE0 },
     { 3, 0xF, 0xED },
 };
-UnkStruct_ovl0E_10_800454E4 D_ovl0E_10_800454E4 = { NULL, 2700.0f, 1200.0f, 1100.0f };
+UnkStruct_ovl0C_01_8004A3BC D_ovl0E_10_800454E4 = { NULL, 2700.0f, 1200.0f, 1100.0f };
 
 void func_ovl0E_10_80043010(void) {
 }

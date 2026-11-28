@@ -874,11 +874,23 @@ Item D_ovl0B_04_80049308[8] = {
     { D_ovl0B_04_8004A290[6], 240, 50, 0.8f, 0.8f, 2, 0 },
     { D_ovl0B_04_8004A290[7], 260, 50, 0.8f, 0.8f, 2, 0 },
 };
+#ifdef TARGET_PC
+/* jp's name entry writes 800493A8's text and the first five of
+   800493BC's with one call (80044BE8's func_ovl0B_04_80043A24 of six),
+   the ROM having the two one after the other: one array on the host,
+   800493BC an alias (Item is 0x18 bytes where pointers are 8, and two
+   arrays needn't be adjacent: x86-64 read a NULL string there) */
+Item D_ovl0B_04_800493A8[14] = {
+    { D_ovl0B_04_800489F0 + 0x8, 50, 50, 0.8f, 0.8f, 0, 0 },
+#else
 Item D_ovl0B_04_800493A8[1] = {
     { D_ovl0B_04_800489F0 + 0x8, 50, 50, 0.8f, 0.8f, 0, 0 },
 };
+#endif
 #if VERSION_JP
+#ifndef TARGET_PC
 Item D_ovl0B_04_800493BC[13] = {
+#endif
     { D_ovl0B_04_80048A78, 163, 25, 0.5f, 0.5f, 6, 5 },
     { D_ovl0B_04_80048A7C, 193, 25, 0.5f, 0.5f, 6, 5 },
     { D_ovl0B_04_80048A80, 223, 25, 0.5f, 0.5f, 6, 5 },
@@ -894,7 +906,9 @@ Item D_ovl0B_04_800493BC[13] = {
     { D_ovl0B_04_80048A84 + 0xE4, 170, 82, 0.85f, 0.85f, 3, 3 },
 };
 #else
+#ifndef TARGET_PC
 Item D_ovl0B_04_800493BC[13] = {
+#endif
     { D_ovl0B_04_80048A78, 163, 25, 0.5f, 0.5f, 6, 5 },
     { D_ovl0B_04_80048A7C, 193, 25, 0.5f, 0.5f, 6, 5 },
     { D_ovl0B_04_80048A80, 223, 25, 0.5f, 0.5f, 6, 5 },
@@ -909,6 +923,9 @@ Item D_ovl0B_04_800493BC[13] = {
     { D_ovl0B_04_80048A84 + 0xC4, 58, 82, 0.85f, 0.85f, 3, 3 },
     { D_ovl0B_04_80048A84 + 0xE4, 160, 82, 0.85f, 0.85f, 3, 3 },
 };
+#endif
+#ifdef TARGET_PC
+#define D_ovl0B_04_800493BC (&D_ovl0B_04_800493A8[1])
 #endif
 #if VERSION_JP
 u8 *D_ovl0B_04_800494C0[4][10] = {

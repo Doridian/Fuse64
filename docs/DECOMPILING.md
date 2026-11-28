@@ -86,6 +86,37 @@ tools/progress.py                                # per module, overlays per bank
 - The permuter's "fake" matches (`if (1) {}` and the like) are accepted
   with a comment saying so; prefer a natural spelling when one is found.
 
+## Types
+
+A structure is defined once, in a header under `include/` grouped by
+what it belongs to (`include/structs.h` for the general ones, the others
+by game object), and every file that uses it includes that header. A file
+that knows fewer of its fields uses the shared definition anyway; one that
+knows more adds them there, as long as every user still compiles to the
+same code. Two names for one thing (the same pool or entity, the same
+function's parameter) become one: the address-named one, or the one more
+files use. A type only one file uses may stay in that file.
+
+```
+tools/structs.py             # the definitions, the duplicates
+tools/structs.py --check     # non-zero on (a) or (c)
+tools/structs.py --json out.json -v   # everything, with each (b)'s files
+```
+
+It parses every C file of `src/` (not libultra's or libmalloc's) with
+clang as the ROM build sees it (IDO's include path and defines, no
+`TARGET_PC`), laid out for i386 with `-malign-double` (the N64's o32
+layout), and takes the definitions in `src/` and `include/` from clang's
+AST and their sizes and offsets from `-fdump-record-layouts-complete`. A
+definition is one place, however many files include it. It reports (a) a
+name defined in more than one place; (b) different names for the same
+thing: a `D_` symbol's (pointee or element) type, or a `func_`'s
+parameter or return type, named differently in different files, with
+how their layouts compare; (c) one name defined with different layouts
+(sizes, or fields' offsets and types). `--check` fails on (a) and (c); (b)
+is a list to work through. `--version eu`/`jp` parses with that version's
+`#if`s.
+
 ## NON_MATCHING drafts
 
 An `-O3` object can't keep GLOBAL_ASM functions: IDO inlines, orders and

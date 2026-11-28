@@ -42,6 +42,7 @@ make VERSION=us shift-check    # both, run in mupen64plus (system or $M64P_DIR),
 tools/tas.py check 4908M build/jp/bm64.jp.z64 build/jp-shift/bm64.jp.z64  # a TAS on two ROMs (docs/TAS.md)
 tools/find_abs.py us           # addresses left without a relocation (should be 0)
 tools/progress.py              # how much is C (docs/DECOMPILING.md has the loop)
+tools/structs.py --check       # each struct defined once, no conflicting layouts (docs/DECOMPILING.md, "Types")
 tools/data_split.py us         # data_split.txt's sizes against the built C objects
 tools/data_c.py <mod> <lo> <hi>  # C definitions for a run of asm data or bss
 tools/fcmp.py draft.c -O3 [-v f] # a draft's functions against the original, before it goes in src/

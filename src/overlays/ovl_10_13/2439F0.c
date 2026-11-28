@@ -58,16 +58,7 @@
  * storage. 80049228-80049280 are unused statics, defined in ROM order.
  */
 #include "common.h"
-
-/* What func_ovl10_13_80049728 returns. */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ u8 unk14[0x14];
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ s32 unk2C;
-    /* 0x30 */ s32 unk30;
-} UnkStruct_ovl10_13_80049728;
+#include "overlays/common/types.h"
 
 /* What func_ovl10_13_8004A770 returns: a player. */
 typedef struct {

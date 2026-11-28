@@ -62,24 +62,6 @@ typedef struct {
     /* 0x20 */ s32 unk20;
 } UnkStruct_ovl0C_02_80049B60;
 
-/* a list of these ends at the one whose unk2 is 0; unk20 and unk22 count */
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ s16 unk2;
-    /* 0x04 */ UnkStructA *unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ s16 unk18;
-    /* 0x1A */ s16 unk1A;
-    /* 0x1C */ s16 unk1C;
-    /* 0x1E */ s16 unk1E;
-    /* 0x20 */ s16 unk20;
-    /* 0x22 */ s16 unk22;
-    /* 0x24 */ s32 unk24;
-} UnkStruct_ovl0C_02_80049B84;
-
 
 /* a list of these ends at the one whose unk2 is 0; unk20 points into
  * another list */
@@ -95,7 +77,7 @@ typedef struct {
     /* 0x1A */ s16 unk1A;
     /* 0x1C */ s16 unk1C;
     /* 0x1E */ s16 unk1E;
-    /* 0x20 */ UnkStruct_ovl0C_02_80049B84 *unk20;
+    /* 0x20 */ UnkStruct_ovl0C_01_8004A22C *unk20;
     /* 0x24 */ s16 unk24;
     /* 0x26 */ s16 unk26;
 } UnkStruct_ovl0C_02_80049C24;
@@ -236,8 +218,8 @@ s32 func_ovl0C_02_800431D4(void);
 void func_ovl0C_02_80043250(void);
 void func_ovl0C_02_80043338(void);
 void func_ovl0C_02_80043544(UnkStruct_ovl0C_02_80049C24 *arg0, s32 arg1);
-void func_ovl0C_02_80043650(UnkStructA **arg0, UnkStruct_ovl0C_02_80049C24 *arg1, UnkStruct_ovl0C_02_80049B84 *arg2, s32 arg3);
-s32 func_ovl0C_02_80043840(UnkStructA **arg0, UnkStruct_ovl0C_02_80049C24 *arg1, UnkStruct_ovl0C_02_80049B84 *arg2, s32 arg3);
+void func_ovl0C_02_80043650(UnkStructA **arg0, UnkStruct_ovl0C_02_80049C24 *arg1, UnkStruct_ovl0C_01_8004A22C *arg2, s32 arg3);
+s32 func_ovl0C_02_80043840(UnkStructA **arg0, UnkStruct_ovl0C_02_80049C24 *arg1, UnkStruct_ovl0C_01_8004A22C *arg2, s32 arg3);
 void func_ovl0C_02_80043A0C(UnkStruct_ovl0C_01_8004A104 *arg0);
 static void func_ovl0C_02_80043B14(void) {
 }
@@ -269,7 +251,7 @@ void func_ovl0C_02_800447D4(UnkStruct_ovl0C_01_8004A104 *arg0);
 void func_ovl0C_02_80044810(void);
 void func_ovl0C_02_80044868(void);
 void func_ovl0C_02_800448CC(void);
-void func_ovl0C_02_80044914(UnkStruct_ovl0C_02_80049B84 *arg0, s32 arg1);
+void func_ovl0C_02_80044914(UnkStruct_ovl0C_01_8004A22C *arg0, s32 arg1);
 void func_ovl0C_02_80044A68(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_02_80049C24 *arg1, s32 arg2);
 void func_ovl0C_02_80044B58(f32);
 void func_ovl0C_02_80044BA0(void);
@@ -422,7 +404,7 @@ UnkStruct_ovl0C_01_8004A3BC D_ovl0C_02_80049B50[] = {
 UnkStruct_ovl0C_02_80049B60 D_ovl0C_02_80049B60[] = {
     { NULL, 0.0f, 0.0f, 0.0f, 0x15, 5, 0xC, 0x1A, 0x11 },
 };
-UnkStruct_ovl0C_02_80049B84 D_ovl0C_02_80049B84[] = {
+UnkStruct_ovl0C_01_8004A22C D_ovl0C_02_80049B84[] = {
     { 0, 1, NULL, 4450.0f, 400.0f, 1450.0f, 650.0f, 0x2C, 3, 0xE, 2, 0, 0, 0x407 },
     { 1, 2, NULL, 4450.0f, 400.0f, 1950.0f, 650.0f, 0x2C, 3, 0x13, 2, 0, 0, 0x408 },
     { 2, 3, NULL, 4450.0f, 400.0f, 2450.0f, 650.0f, 0x2C, 3, 0x18, 2, 0, 0, 0x409 },
@@ -437,7 +419,7 @@ UnkStruct_ovl0C_02_80049C24 D_ovl0C_02_80049C24[] = {
     { 5, 6, NULL, 4450.0f, 900.0f, 2850.0f, 900.0f, 0x2B, 5, 0x1A, 4, NULL, 0, 0 },
     { 6, 0, NULL, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0, 0, 0, NULL, 0, 0 },
 };
-UnkStruct_ovl0C_02_80049B84 D_ovl0C_02_80049D3C[] = {
+UnkStruct_ovl0C_01_8004A22C D_ovl0C_02_80049D3C[] = {
     { 0, 1, NULL, 3750.0f, 400.0f, 1150.0f, 650.0f, 0x25, 3, 0xB, 2, 0, 0, 0x40A },
     { 1, 2, NULL, 3750.0f, 400.0f, 1650.0f, 650.0f, 0x25, 3, 0x10, 2, 0, 0, 0x40B },
     { 2, 0, NULL, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0, 0, 0, 0, 0, 0 },
@@ -523,7 +505,7 @@ static void func_ovl0C_02_80048348(void) {
 
 /* a switch fading out with its block: its tiles open */
 void func_ovl0C_02_80047E90(void) {
-    UnkStruct_ovl0C_02_80049B84 *rec;
+    UnkStruct_ovl0C_01_8004A22C *rec;
     s16 alpha;
 
     rec = func_ovl0C_02_80049240();
@@ -546,8 +528,8 @@ void func_ovl0C_02_80047E90(void) {
 }
 
 void func_ovl0C_02_80047D78(void) {
-    UnkStruct_ovl0C_02_80049B84 *list;
-    UnkStruct_ovl0C_02_80049B84 *p;
+    UnkStruct_ovl0C_01_8004A22C *list;
+    UnkStruct_ovl0C_01_8004A22C *p;
 
     list = func_ovl0C_02_80049240();
     for (p = list; p->unk2 != 0; p++) {
@@ -1637,7 +1619,7 @@ void func_ovl0C_02_80044A68(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_0
     }
 }
 
-void func_ovl0C_02_80044914(UnkStruct_ovl0C_02_80049B84 *arg0, s32 arg1) {
+void func_ovl0C_02_80044914(UnkStruct_ovl0C_01_8004A22C *arg0, s32 arg1) {
     UnkStructA *obj;
     union { s32 i; u32 u; } fl;
 
@@ -1970,12 +1952,12 @@ void func_ovl0C_02_80043A0C(UnkStruct_ovl0C_01_8004A104 *arg0) {
 
 /* bombs on the switches: a switch hit turns, and once none is left the
  * blocks crumble */
-s32 func_ovl0C_02_80043840(UnkStructA **arg0, UnkStruct_ovl0C_02_80049C24 *arg1, UnkStruct_ovl0C_02_80049B84 *list, s32 arg3) {
+s32 func_ovl0C_02_80043840(UnkStructA **arg0, UnkStruct_ovl0C_02_80049C24 *arg1, UnkStruct_ovl0C_01_8004A22C *list, s32 arg3) {
     UnkStructA_40 *pos;
     s32 hit;
     s32 left;
     s32 ret;
-    UnkStruct_ovl0C_02_80049B84 *saved;
+    UnkStruct_ovl0C_01_8004A22C *saved;
 
     saved = list;
     D_ovl0C_02_8004A124->unk30 = 4;
@@ -2014,7 +1996,7 @@ s32 func_ovl0C_02_80043840(UnkStructA **arg0, UnkStruct_ovl0C_02_80049C24 *arg1,
 }
 
 /* the blocks crumble (a cut scene) */
-void func_ovl0C_02_80043650(UnkStructA **arg0, UnkStruct_ovl0C_02_80049C24 *arg1, UnkStruct_ovl0C_02_80049B84 *arg2, s32 arg3) {
+void func_ovl0C_02_80043650(UnkStructA **arg0, UnkStruct_ovl0C_02_80049C24 *arg1, UnkStruct_ovl0C_01_8004A22C *arg2, s32 arg3) {
     s32 sparks;
     s32 task;
     UnkStruct_ovl0C_02_80049C24 *p;

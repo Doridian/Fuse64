@@ -93,10 +93,14 @@ class ImageNames:
     """A code image offset as its module and splat subsegment (bm64.<v>.yaml)."""
 
     def __init__(self, version):
-        import yaml
-        cfg = yaml.safe_load(open(os.path.join(ROOT, "bm64.%s.yaml" % version)))
         self.top = []   # (start, name, vram)
         self.sub = []   # (start, label)
+        try:
+            import yaml
+        except ImportError:     # (a Python without PyYAML: no names, "?")
+            cfg = {"segments": []}
+        else:
+            cfg = yaml.safe_load(open(os.path.join(ROOT, "bm64.%s.yaml" % version)))
         for s in cfg["segments"]:
             if isinstance(s, dict):
                 self.top.append((s["start"], s["name"], s.get("vram")))

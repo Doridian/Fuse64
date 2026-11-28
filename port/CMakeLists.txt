@@ -35,7 +35,8 @@ if(NOT CMAKE_C_COMPILER_ID MATCHES "Clang")
 endif()
 # the ROM-free build (docs/PORT.md, "The snapshot"): what the generators
 # read of the extract (asm/, assets/code.bin, undefined_syms_auto.txt) and
-# what the strip finds by the ROM's bytes, from port/snapshot/<version>
+# where the game's C's data is in the code image (tools/cdata.py), from
+# port/snapshot/<version>
 # (port/tools/snapshot.py makes it, with the ROM).  AUTO: the snapshot
 # when there is no extract.
 set(PORT_SNAPSHOT AUTO CACHE STRING "build from port/snapshot/<version>, without the extract: ON, OFF or AUTO")
@@ -68,6 +69,31 @@ else()
         message(FATAL_ERROR "asm/ is extracted for ${EXTRACTED}, not ${PORT_VERSION}")
     endif()
     set(SNAP_ARG)
+endif()
+# the ROM's data out of the executable (docs/PORT.md, "The ROM's data"): the
+# game's C compiled from copies whose initializers have zeros for the ROM's
+# values (tools/cdata.py, its compiler launcher), and tables of where each
+# comes from in the code image, by the N64 link's map (the extract: build
+# the ROM first) or the snapshot's cdata.json, which host/romfill.c fills
+# from the player's ROM at startup
+option(PORT_ROM_FREE "the game's C's data from the ROM at startup, not in the executable (tools/cdata.py)" ON)
+set(CDATA_LAUNCHER)
+if(PORT_ROM_FREE)
+    if(USE_SNAPSHOT)
+        set(CDATA_WHERE --snapshot ${SNAP}/cdata.json)
+        set(CDATA_DEPS ${SNAP}/cdata.json)
+    else()
+        set(N64_MAP ${ROOT}/build/${PORT_VERSION}/bm64.${PORT_VERSION}.map)
+        if(NOT EXISTS ${N64_MAP})
+            message(FATAL_ERROR "no ${N64_MAP}: make VERSION=${PORT_VERSION} first (the port takes where the ROM "
+                "has the game's C's data from the N64 link's map)")
+        endif()
+        set(CDATA_WHERE --map ${N64_MAP} --image ${ROOT}/assets/code.bin)
+        set(CDATA_DEPS ${N64_MAP} ${ROOT}/assets/code.bin)
+    endif()
+    set(CDATA_LAUNCHER ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/cdata.py launch --gen ${GEN}/cdata
+        ${CDATA_WHERE} --)
+    list(APPEND CDATA_DEPS ${CMAKE_CURRENT_SOURCE_DIR}/tools/cdata.py ${CMAKE_CURRENT_SOURCE_DIR}/tools/decls.py)
 endif()
 if(EMSCRIPTEN)
     # node: headless, the files the host's (the tests); web: a page
@@ -184,6 +210,10 @@ set(N64_FLAGS -std=gnu89 -O2 -g -fsigned-char -fno-strict-aliasing -fwrapv -fno-
     # host can't take is an error
     -Wno-everything -Werror=implicit-function-declaration -Werror=int-conversion
     -Werror=incompatible-pointer-types -Werror=return-mismatch
+    # no switch made a table of its cases' constants, which can be a run of
+    # the ROM's (func_8024A824's angles are 5E3F0's D_802A0DE8): the
+    # executable carries none of its bytes (docs/PORT.md, "The ROM's data")
+    -fno-jump-tables
     ${SAN_FLAGS})
 set(HOST_FLAGS -O2 -g -Wall -Wno-unused-function -ffp-contract=off ${SAN_FLAGS})
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86|i.86|AMD64|x86_64)" AND NOT EMSCRIPTEN)
@@ -265,6 +295,19 @@ foreach(f ${OVL_C})
         set_property(SOURCE ${f} APPEND PROPERTY COMPILE_DEFINITIONS PORT_OVL=${CMAKE_MATCH_1})
     endif()
 endforeach()
+# (the game's C through tools/cdata.py: its data from the ROM at startup)
+if(PORT_ROM_FREE)
+    set_target_properties(game_c ovl_c PROPERTIES C_COMPILER_LAUNCHER "${CDATA_LAUNCHER}")
+    set_property(SOURCE ${GAME_SRC} ${OVL_SRC} APPEND PROPERTY OBJECT_DEPENDS ${CDATA_DEPS})
+    add_custom_command(OUTPUT ${GEN}/cdata_list.c
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/cdata.py list ${GEN}/cdata_list.c
+                ${GAME_C} ${OVL_C}
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/cdata.py VERBATIM)
+else()
+    add_custom_command(OUTPUT ${GEN}/cdata_list.c
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/cdata.py list --empty ${GEN}/cdata_list.c
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/cdata.py VERBATIM)
+endif()
 
 reset_wrap(MALLOC_SRC ${MALLOC_C})
 add_library(malloc_c OBJECT ${MALLOC_SRC})
@@ -387,7 +430,8 @@ endif()
 # startup copies, RDRAM, the generated tables, and the files with no
 # variables, whose declarations a wrapper's `#define const` would break)
 set(NO_RESET_C ${CMAKE_CURRENT_SOURCE_DIR}/src/overlay.c ${CMAKE_CURRENT_SOURCE_DIR}/src/reset.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/heapcheck.c ${CMAKE_CURRENT_SOURCE_DIR}/src/memory.c ${GEN}/asm_data_fill.c)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/heapcheck.c ${CMAKE_CURRENT_SOURCE_DIR}/src/memory.c ${GEN}/asm_data_fill.c
+    ${GEN}/cdata_list.c)
 if(NOT PORT_LIBAUDIO_ORIGINAL)
     list(APPEND NO_RESET_C ${CMAKE_CURRENT_SOURCE_DIR}/libaudio/extra.c)
 endif()
@@ -577,57 +621,19 @@ if(PORT_SDL)
         message(STATUS "no SDL2: a headless build")
     endif()
 endif()
-# the ROM's data out of the executable (docs/PORT.md, "The ROM's data"):
-# after every link, rom_strip.py zeroes every run of the code image's bytes in
-# the game's initialized data and writes where they go into port_romfill
-# (host/romfill.c), which fills them from the player's ROM at startup
-# (ELF, PE and WebAssembly: not yet a Mach-O, so not on macOS)
-option(PORT_ROM_FREE "take the ROM's data out of the executable after the link (rom_strip.py)" ON)
-if(PORT_ROM_FREE AND APPLE)
-    message(FATAL_ERROR "rom_strip.py can't read a Mach-O yet, so the ROM's data would stay in the executable: "
-        "-DPORT_ROM_FREE=OFF for a build of your own (not one to give away)")
-endif()
-if(PORT_ROM_FREE AND NOT APPLE)
+# the check (docs/PORT.md, "The ROM's data"): from the extract, where the ROM
+# is, after every link, nothing of the ROM's in the executable's data
+# (rom_free_check.py, ELF, PE and WebAssembly; not a Mach-O yet)
+if(PORT_ROM_FREE AND NOT USE_SNAPSHOT AND NOT APPLE)
     if(EMSCRIPTEN)
-        set(ROM_STRIP_FILE $<TARGET_FILE_DIR:fuse64>/fuse64.wasm)
+        set(ROM_CHECK_FILE $<TARGET_FILE_DIR:fuse64>/fuse64.wasm)
     else()
-        set(ROM_STRIP_FILE $<TARGET_FILE:fuse64>)
+        set(ROM_CHECK_FILE $<TARGET_FILE:fuse64>)
     endif()
-    if(USE_SNAPSHOT)
-        # (no ROM: the snapshot's units for this target, found by their
-        # hashes: port/tools/snapshot.py's targets)
-        string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" UNITS_ARCH)
-        if(UNITS_ARCH MATCHES "^(x86_64|amd64)$")
-            set(UNITS_ARCH x86_64)
-        elseif(UNITS_ARCH MATCHES "^(aarch64|arm64)$")
-            set(UNITS_ARCH aarch64)
-        endif()
-        if(EMSCRIPTEN)
-            set(UNITS_TARGET wasm32)
-        elseif(WIN32)
-            set(UNITS_TARGET windows-${UNITS_ARCH})
-        else()
-            string(TOLOWER "${CMAKE_SYSTEM_NAME}-${UNITS_ARCH}" UNITS_TARGET)
-        endif()
-        set(STRIP_UNITS ${SNAP}/strip_units.${UNITS_TARGET}.json)
-        if(NOT EXISTS ${STRIP_UNITS})
-            message(FATAL_ERROR "the snapshot has no strip units for ${UNITS_TARGET} (port/tools/snapshot.py's "
-                "targets), so the ROM's data can't be taken out: build from the extract, or -DPORT_ROM_FREE=OFF "
-                "for a build of your own")
-        endif()
-        add_custom_command(TARGET fuse64 POST_BUILD
-            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/rom_strip.py ${ROM_STRIP_FILE}
-                --units ${STRIP_UNITS} --version ${PORT_VERSION}
-            VERBATIM)
-        set_property(TARGET fuse64 APPEND PROPERTY LINK_DEPENDS ${STRIP_UNITS})
-    else()
-        # (and what it took as units, for port/tools/snapshot.py)
-        add_custom_command(TARGET fuse64 POST_BUILD
-            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/rom_strip.py ${ROM_STRIP_FILE}
-                --image ${ROOT}/assets/code.bin --version ${PORT_VERSION} --objects ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles
-                --max 0 --units-out ${GEN}/strip_units.json
-            VERBATIM)
-    endif()
+    add_custom_command(TARGET fuse64 POST_BUILD
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/rom_free_check.py ${ROM_CHECK_FILE}
+            --version ${PORT_VERSION} --objects ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles --max 0 -q
+        VERBATIM)
 endif()
 # the Linux package (docs/PORT.md, "Packages"): `cmake --build BUILD --target
 # appimage` makes BUILD/fuse64-<version>-<arch>.AppImage (tools/appimage.py:

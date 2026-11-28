@@ -104,8 +104,12 @@ void port_reset_game(void) {
     resets++;
     memcpy(keep, osAppNMIBuffer, sizeof keep);
     copy(DATA_LO, data_copy, (size_t)(DATA_HI - DATA_LO));
-    if (BSS_LO)
+    if (BSS_LO) {
         zero(BSS_LO, (size_t)(BSS_HI - BSS_LO));
+        /* (the variables there whose values are the ROM's: zeros in the
+           executable, docs/PORT.md "The ROM's data") */
+        host_rom_refill(BSS_LO, BSS_HI);
+    }
     memcpy(osAppNMIBuffer, keep, sizeof keep);
     for (i = 0; i < port_noverlays; i++)
         port_overlay_reset(i);

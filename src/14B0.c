@@ -40,7 +40,14 @@
 
 void func_800018A8(char *expr, char *file, s32 line);
 
+#ifdef TARGET_PC
+/* (the expression's text is the ROM's, and the port's copy of the C has
+   only the string literals it replaces: port/tools/cdata.py; the stub
+   ignores it) */
+#define SC_ASSERT(e, line) ((e) ? (void)0 : func_800018A8("", "sched.c", line))
+#else
 #define SC_ASSERT(e, line) ((e) ? (void)0 : func_800018A8(#e, "sched.c", line))
+#endif
 
 /* the interrupt queue's messages */
 #define SC_MSG_RETRACE 0x29A

@@ -110,11 +110,13 @@ extern int host_verbose;
 uint32_t host_rom_size(void);
 const uint8_t *host_rom(void);
 void host_rom_read(void *dst, uint32_t rom, uint32_t len);
-/* the game's data the strip took out of the executable, back from the ROM
+/* the game's data, which the executable has as zeros, from the ROM
    (host/romfill.c; docs/PORT.md, "The ROM's data") */
 void host_rom_fill(const uint8_t *rom, uint32_t size);
-/* 1 if the ROM gives this build its data (or the build isn't stripped) */
+/* 1 if the ROM gives this build its data */
 int host_rom_fill_check(const uint8_t *rom, uint32_t size);
+/* the ROM's values of the variables in [lo, hi) again (a .bss cleared) */
+void host_rom_refill(char *lo, char *hi);
 #ifdef PORT_SCATTER_LAYOUT
 /* the scattered layout's copy of the asm data into its objects, after the
    fill (gen_scatter.py) */

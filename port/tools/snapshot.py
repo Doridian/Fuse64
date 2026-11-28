@@ -19,14 +19,15 @@ build/snapshot-<target>, and takes from them:
   zerojump.json             gen_zerojump.py's: the ZeroJump stubs and the
                             asm data's tables of symbolic words
   undefined_syms.txt        the extract's fixed addresses (gen_regions.py)
-  strip_units.<target>.json what rom_strip.py took out of that target's build
-                            (the game's C's initializers), as units a build
-                            without the ROM finds again by their hashes,
-                            and the hashes of what it took, which that build
-                            checks its stripped data for
+  cdata.json                cdata.py's: where the code image has each of
+                            the game's C's initialized variables and string
+                            literals (by name, and each value's place in
+                            it: the C's own layout on the N64), the same
+                            for every target and compiler
 
-The targets (all by default; a cross one needs zig, $ZIG or
-~/.local/opt/zig: port/tools/cross-zig.cmake):
+Run `make VERSION=us` first: cdata.py reads the N64 link's map.  The
+targets (linux-x86_64 and wasm32 always, the two pointer sizes; a cross
+one needs zig, $ZIG or ~/.local/opt/zig: port/tools/cross-zig.cmake):
 
   linux-x86_64     clang, linked by lld (as CI's)
   linux-aarch64    port/tools/cross-aarch64.cmake (zig), or with --podman
@@ -36,16 +37,14 @@ The targets (all by default; a cross one needs zig, $ZIG or
                    which should be CI's version, EMSDK_VERSION in
                    .github/workflows/build.yml)
 
-A target built by another compiler than its units were made with can lay
-the data out otherwise, and then fails its strip rather than keep the
-ROM's bytes, so the units are made with CI's compilers: --podman
-linux-x86_64=IMAGE builds that target in CI's environment
+Nothing in it depends on the compiler: every target reads the same
+cdata.json (checked: each build's is the same), so a build from the
+snapshot by any reasonable clang takes the ROM's data out as the extract's
+does.  --podman linux-x86_64=IMAGE builds that target in CI's environment
 (port/tools/ci/linux.Containerfile; linux-aarch64=IMAGE@arm64 under qemu),
-the repository mounted where it is.  --target with --keep remakes some
-targets' units and keeps the others' (linux-x86_64 and wasm32 are always
-read, for the fill's checksums).  Then it runs rom_free_check.py --max 0 on
-every file it wrote.  Re-run it whenever the extract's output or the
-game's C's data changes.
+the repository mounted where it is.  Then it runs rom_free_check.py --all
+--max 0 on every file it wrote.  Re-run it whenever the extract's output
+or the game's C's data changes.
 
 --check builds each target again from the snapshot, in the same build
 directory (PORT_SNAPSHOT=ON: the debug information names the directory),
@@ -67,7 +66,7 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 # .github/workflows/build.yml), else the PATH's
 EMCMAKE = os.path.join(os.environ["EMSDK"], "upstream/emscripten/emcmake") if os.environ.get("EMSDK") else "emcmake"
 
-# target: (configure command, the stripped file, pointer size)
+# target: (configure command, the executable, pointer size)
 TARGETS = {
     "linux-x86_64": (["cmake", "-DCMAKE_C_COMPILER=clang", "-DCMAKE_EXE_LINKER_FLAGS=-fuse-ld=lld"], "fuse64", 8),
     "linux-aarch64": (["cmake", "-DCMAKE_TOOLCHAIN_FILE=%s/port/tools/cross-aarch64.cmake" % ROOT], "fuse64", 8),
@@ -112,7 +111,7 @@ def build(target, snapshot):
     run(configure(target) + ["-S", "port", "-B", d, "-G", "Ninja",
                              "-DPORT_SNAPSHOT=%s" % ("ON" if snapshot else "OFF")],
         target, stdout=subprocess.DEVNULL)
-    # (the strip runs after the link: a binary from before goes, so it runs;
+    # (the check runs after the link: a binary from before goes, so it runs;
     # the page's link makes the .html)
     out = os.path.join(d, TARGETS[target][1])
     for f in (out, os.path.join(d, "fuse64.html")):
@@ -159,7 +158,8 @@ def fill_sum(gen):
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--version", default="us", choices=["us"])
-    ap.add_argument("--target", action="append", choices=sorted(TARGETS), help="(default: all)")
+    ap.add_argument("--target", action="append", choices=sorted(TARGETS),
+                    help="another target to build (and --check)")
     ap.add_argument("--no-build", action="store_true", help="take build/snapshot-<target> as they are")
     ap.add_argument("--keep", action="append", default=[], choices=sorted(TARGETS), metavar="TARGET",
                     help="take that target's build as it is (and don't --check it)")
@@ -177,7 +177,7 @@ def main():
     ver = os.path.join(ROOT, ".version")
     if not os.path.exists(ver) or open(ver).read().strip() != v:
         die("no extract of %s: make VERSION=%s extract first" % (v, v))
-    targets = a.target or sorted(TARGETS)
+    targets = sorted(set(a.target or []) | {"linux-x86_64", "wasm32"})
     if "linux-x86_64" not in targets or "wasm32" not in targets:
         die("linux-x86_64 and wasm32 are needed (the fill's checksums for both pointer sizes)")
     builds = {}
@@ -187,7 +187,7 @@ def main():
         builds[t] = (d, os.path.join(d, TARGETS[t][1])) if keep else build(t, False)
     gens = {t: os.path.join(d, "gen") for t, (d, _) in builds.items()}
     for g in gens.values():
-        for f in ("asm_data_snapshot.json", "zerojump_snapshot.json", "strip_units.json", "asm_data_fill.c"):
+        for f in ("asm_data_snapshot.json", "zerojump_snapshot.json", "cdata", "asm_data_fill.c"):
             if not os.path.exists(os.path.join(g, f)):
                 die("%s is missing: build it from the extract first" % os.path.join(g, f))
 
@@ -207,18 +207,20 @@ def main():
     out["asm_data.json"] = json.dumps(asm[0], separators=(",", ":"), sort_keys=True) + "\n"
     out["zerojump.json"] = zj[0] + "\n"
     out["undefined_syms.txt"] = open(os.path.join(ROOT, "undefined_syms_auto.txt")).read()
+    cd = []
     for t, g in gens.items():
-        units = json.load(open(os.path.join(g, "strip_units.json")))
-        if units["word"] != TARGETS[t][2] or units["version"] != v:
-            die("%s/strip_units.json is %s's with %d-byte pointers" % (g, units["version"], units["word"]))
-        out["strip_units.%s.json" % t] = open(os.path.join(g, "strip_units.json")).read()
+        tmp = os.path.join(g, "cdata_snapshot.json")
+        run([sys.executable, os.path.join(HERE, "cdata.py"), "merge", tmp, os.path.join(g, "cdata")])
+        cd.append((t, open(tmp).read()))
+    for t, x in cd:
+        if x != cd[0][1]:
+            die("%s's cdata.json isn't %s's: the game's C read differently" % (t, cd[0][0]))
+    out["cdata.json"] = cd[0][1]
 
-    # (the other targets' units stay as they are: --target takes some)
     dst = os.path.join(ROOT, "port/snapshot", v)
     os.makedirs(dst, exist_ok=True)
-    known = {"asm_data.json", "zerojump.json", "undefined_syms.txt"} | {"strip_units.%s.json" % t for t in TARGETS}
     for name in os.listdir(dst):
-        if name not in known:
+        if name not in out:
             os.remove(os.path.join(dst, name))
     for name, text in sorted(out.items()):
         open(os.path.join(dst, name), "w").write(text)

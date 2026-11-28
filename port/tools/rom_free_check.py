@@ -21,16 +21,13 @@ PROGBITS sections that aren't code, a .exe's initialized data sections, a
 .wasm's data segments; --all scans the whole file (the code and the debug
 information too).  The report says how many bytes, by the binary's section
 and symbol and by where the ROM has them (its module and splat's
-subsegment).  --max N exits 1 when more than N bytes are found (the gate on
-a stripped build: port/tools/rom_strip.py).
+subsegment).  --max N exits 1 when more than N bytes are found (the gate
+after every link of a build from the extract: port/CMakeLists.txt).
 
 --objects DIR (a build directory) counts only the runs that are the build's
 own objects' data (*.o, *.obj under DIR), and lists the others apart: a
 library linked in (a sanitizer's runtime, a static libc) can have a table
 the game has too.
-
-The functions are rom_strip.py's too: it zeroes what this finds and keeps
-where the port takes it back from at startup.
 """
 import argparse
 import bisect
@@ -138,9 +135,9 @@ class ImageNames:
 class Binary:
     """The regions of a built file that hold initialized data, each
     (name, file offset, size, address), and its symbols where it has them.
-    For rom_strip.py also: the byte order, whether each region is read-only
-    once the program runs (`readonly`), the addresses the loader relocates
-    (`relocs`: (address, size)) and, for an ELF, its pages (`page_class`)."""
+    Also the byte order, whether each region is read-only once the program
+    runs (`readonly`), the addresses the loader relocates (`relocs`:
+    (address, size)) and, for an ELF, its pages (`page_class`)."""
 
     PAGE = 0x1000
 
@@ -707,6 +704,13 @@ def split_ours(binary, view, runs, objects, window=8):
         for i in range(0, n - w + 1, 4):
             if view[s + i:s + i + w] in blob:
                 mine[i // 4:(i + w) // 4] = b"\1" * (w // 4)
+        if 4 * sum(mine) < MIN_RUN:
+            # (a window or two of a library's table in the objects' data by
+            # chance: the .wasm's memory has 01 02 03 ... 30 twice, as the
+            # ROM's ovl_0B_04 has 01 ... 24, and the host's RDP code has
+            # 09 0A ... 10)
+            theirs.append((s, si, r, perms))
+            continue
         pieces = []
         k = 0
         while k < len(perms):

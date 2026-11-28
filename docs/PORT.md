@@ -197,7 +197,7 @@ DozerEncore's package: linuxdeploy makes the AppDir from the executable,
 and what they link go in, libGL and the system's base libraries stay the
 host's (linuxdeploy's exclude list). Where SDL2 is sdl2-compat, which
 loads SDL3 by name at run time, `libSDL3.so.0` is added by hand. The
-script refuses a cross, headless, sanitized, scattered or unstripped
+script refuses a cross, headless, sanitized, scattered or `PORT_ROM_FREE=OFF`
 build; it runs `rom_free_check.py --max 0` on the executable before
 linuxdeploy and on the AppDir's copy after it (its patchelf and strip
 rewrite the file), then the AppImage, extracted, with `--help` and, with
@@ -229,8 +229,8 @@ with the system's file dialog (Windows' open dialog, osascript's `choose
 file` on macOS, zenity or kdialog on Linux), or, with none of those, a
 window of its own that takes the ROM dropped on it (what it wants in its
 title: there is no font in the port). A ROM is taken only if it is this
-version's and gives the build its data (`host_rom_fill_check`: the bytes
-the strip took out, by their checksum, nothing written); another is
+version's and gives the build its data (`host_rom_fill_check`: the asm
+data's bytes, by their checksum, nothing written); another is
 refused with a message box and it asks again. The save then goes in the
 data directory too, unless `--save-dir` says otherwise. A fatal error
 while finding or loading the ROM is also shown in a message box. Headless
@@ -243,99 +243,64 @@ on the command line no dialog and the save in the working directory.
 ### The snapshot
 
 The port builds without the ROM, for us, from `port/snapshot/us`
-(committed, 1.05 MB in 7 files, each target's units about 250 KB), as CI builds it. It holds what the build otherwise
-reads of the extract (`asm/`, `assets/code.bin`), and none of the ROM's
-bytes:
+(committed, 103 KB in 4 files, `cdata.json` 52 KB), as CI builds it. It holds what the build
+otherwise reads of the extract (`asm/`, `assets/code.bin`, the N64 link's
+map), and none of the ROM's bytes; nothing in it depends on the target or
+the compiler:
 
 - `asm_data.json`: asm2c.py's reading of `asm/data`, the labels, their
   directives and their symbolic words, with no datum. The asm data is
-  zeros in the C in every build now, and a table in `asm_data_fill.c`
+  zeros in the C in every build, and a table in `asm_data_fill.c`
   (`port_asmfill`: each run's place, where in the code image it comes from
   and how it is laid out, bytes, halfwords, words or a word in a pointer's
-  slot) fills it from the player's ROM before the strip's table does
-  ("The ROM's data"), checked by an FNV-1a checksum of each pointer size's
-  build.
+  slot) fills it from the player's ROM ("The ROM's data"), checked by an
+  FNV-1a checksum of the values for each pointer size (two 64-bit sums of
+  about 25 KB each: they tell this ROM from another and say nothing of a
+  value).
 - `zerojump.json`: gen_zerojump.py's, the ZeroJump stubs and the asm
   data's tables of symbolic words (numbers in them are zeros there too).
 - `undefined_syms.txt`: the extract's fixed addresses (gen_regions.py's).
-- `strip_units.<target>.json`, for `linux-x86_64`, `linux-aarch64`,
-  `windows-x86_64` and `wasm32`: what rom_strip.py took out of that
-  target's build from the extract (the game's C's initializers, which the
-  repository has as C), as units a build without the ROM finds again by
-  their hashes. A unit is a run of taken words cut at the symbols' bounds,
-  at the start of a string where there is no symbol, and where two or more
-  zero words meet others; each has a 64-bit hash of its bytes, and a
-  distinctive one (a 32-byte stretch of 6 byte values or more, the check's
-  test) also the CRC-32 of its first 32 bytes and its rank among the
-  places those bytes are. Blocks of units side by side have the same. In a
-  build from the snapshot, `rom_strip.py --units` places the blocks, then
-  the distinctive units, then the others beside a placed one (at the gap
-  they had, where the code image goes on, or, failing both, at the nearest
-  place within 256 bytes with their bytes); a copy of what the units take
-  that the snapshot's build didn't have (an initializer kept twice) is
-  taken too, with the same sources. The file also has the hash of every
-  distinctive 32-byte stretch the snapshot's build took, and the strip
-  fails the build if any of them is still in the binary: a build whose
-  data another compiler laid out otherwise fails rather than keep the
-  ROM's bytes.
+- `cdata.json`: cdata.py's, for each of the game's C files with data,
+  each variable's name, its place in the code image, how many values it
+  has and which are left as they are, and each string literal's place
+  and size. With the C (the AST and the i386 probe give each value's
+  place in the variable and its width), it is the same tables as from
+  the extract; the counts are checked, so a C file changed since fails
+  its build rather than take the wrong bytes.
 
 `port/tools/snapshot.py` makes it, with the ROM, after `make VERSION=us
-extract`: it builds each target from the extract into
-`build/snapshot-<target>`, takes those files from them, runs
+extract` and `make VERSION=us` (cdata.py reads the map): it builds
+linux-x86_64 and wasm32 (the two pointer sizes, for the checksums; and
+any `--target`) from the extract into `build/snapshot-<target>`, checks
+that their `cdata.json` are the same, writes the files, runs
 `rom_free_check.py --all --max 0` on each, and with `--check` builds each
 target again from the snapshot in the same directory and compares the two
-binaries (a PE's link time aside). The units depend on the compiler, so
-each target's are made with CI's: linux-x86_64 in CI's environment
-(`port/tools/ci/linux.Containerfile`: Ubuntu 22.04, apt.llvm.org's clang 18,
-lld), wasm32 with CI's emsdk (`$EMSDK`, `EMSDK_VERSION` in
-`.github/workflows/build.yml`). linux-aarch64 and windows-x86_64 are
-zig's (`port/tools/cross-aarch64.cmake`, `cross-win64.cmake`), not CI's
-(clang 18 on the arm64 runner, MSYS2's clang): `--podman
-linux-aarch64=IMAGE@arm64` builds in the arm64 image of the same
-Containerfile under qemu, which is right but was too slow here to finish
-(below):
+binaries (a PE's link time aside):
 
 ```
-podman build -t fuse64-ci-linux -f port/tools/ci/linux.Containerfile port/tools/ci
-EMSDK=~/emsdk python3 port/tools/snapshot.py --check --podman linux-x86_64=localhost/fuse64-ci-linux
+EMSDK=~/emsdk python3 port/tools/snapshot.py --check [--target linux-aarch64 --target windows-x86_64]
 ```
 
 Run it again whenever the extract's output or the game's C's data
-changes (a build from a stale snapshot fails its strip, or its fill's
+changes (a build from a stale snapshot fails at a count, or at the fill's
 checksum).
 
 CMake uses the snapshot when there is no extract (`.version`), or when
-asked (`-DPORT_SNAPSHOT=ON|OFF`). Checked (us, 2026-11-27): `snapshot.py --check`: each of the four targets' binary from the
-snapshot is the same file as from the extract (sha256 linux-x86_64
-`c88e53ff6da9`, linux-aarch64 `b2af223e6118`, windows-x86_64
-`0b321495cf07`, wasm32 `b06b073c9be4`); every strip took the units all
-(x86-64 51,524 bytes in 811 runs, aarch64 53,328, Windows 53,460, wasm
-59,956), nothing left, nothing counted a library's, no stretch left;
-`rom_free_check.py --all --max 0` finds nothing in the snapshot's files.
-A clean copy of the repository (no extract, no ROM) built by the linux
-job's commands in the container, as on a tag, and by the web job's with
-emsdk 6.0.10: `rom_free_check.py --max 0` (without `--objects`) finds
-nothing in the executable, the AppImage's copy or the `.wasm`; the
-AppImage ran 600 retraces with the ROM, and test.py's seven scenarios
-give the references on the x86-64 build (CI's compiler; the build from
-the snapshot is the same file).
+asked (`-DPORT_SNAPSHOT=ON|OFF`). Checked (us, 2026-11-27): `snapshot.py --check`:
+linux-x86_64's and wasm32's binaries from the snapshot are the same files
+as from the extract, and their `cdata.json` the same; `rom_free_check.py
+--all --max 0` finds nothing in the snapshot's files. From the snapshot,
+CI's clang 18 x86-64 build (in the Containerfile's image) and a clang 23
+i386 build: `rom_free_check.py --max 0` (no `--objects`) finds nothing,
+and test.py's seven scenarios give the references.
 
-What the snapshot can't say: a target whose compiler isn't the one its
-units were made with can lay the data out otherwise, and then fails. Clang
-18's x86-64 build from clang 23's units found every unit but kept one
-initializer as a `.rodata` constant that clang 23 builds with immediate
-stores, a run the units never had; so each target's units come from CI's
-compiler. aarch64's and Windows' are zig's (clang 22), and CI builds them
-with clang 18 (arm64) and MSYS2's CLANG64 clang, which moves with MSYS2:
-those two jobs may fail their strip until their units are made with
-those compilers (the arm64 image under qemu, or on an arm64 machine; for
-Windows, MSYS2's clang, or the job on a pinned toolchain).
-
-Short units' hashes say little about their bytes, but a one-word unit's
-64-bit hash can be inverted by trying the 2^32 words: what the units hide
-is the data's arrangement, not a 4-byte constant. A target's units have 170 to 200 such words (about 700 bytes),
-isolated constants; making a one-word unit's hash shorter, and placing
-it only beside its neighbours, would hide them too.
+The snapshot before this one had each target's "strip units", what a
+post-link strip took out of that target's binary, with hashes to find
+them again: those depended on the compiler's layout (CI's arm64 and
+MSYS2 builds would have failed their strip), and a one-word unit's
+64-bit hash could be inverted by trying the 2^32 words. Neither is so
+now: the snapshot has places and counts, and the only hashes of the
+ROM's data are the two aggregate checksums.
 
 ### Releases
 
@@ -346,7 +311,7 @@ the snapshot alone (no ROM, none in any artifact):
 |---|---|---|
 | `linux` | `ubuntu-22.04`, `ubuntu-22.04-arm` | apt.llvm.org's clang 18 and lld (`port/tools/ci/linux.Containerfile` is the same), then `appimage.py`: `fuse64-x86_64.AppImage`, `fuse64-aarch64.AppImage` |
 | `windows` | `windows-latest`, MSYS2 CLANG64 | `PORT_STATIC` (SDL2 and libepoxy linked in), checked to need no CLANG64 DLL and to start (`--help`): `fuse64-windows-x86_64.exe`, and `fuse64-licenses.zip` (LICENSE, NOTICES.md, SDL2's, libepoxy's and winpthreads' licenses) |
-| `macos` | `macos-26` | DozerEncore's app in a dmg; off (`vars.FUSE64_MACOS`) until the strip reads a Mach-O: CMake refuses a macOS build with `PORT_ROM_FREE`, and there is no `port/res/Info.plist` yet |
+| `macos` | `macos-26` | DozerEncore's app in a dmg; off (`vars.FUSE64_MACOS`): there is no `port/res/Info.plist` yet (the ROM's data is out of a macOS build as of any other, but `rom_free_check.py` can't read a Mach-O) |
 | `web` | `ubuntu-24.04`, emsdk `EMSDK_VERSION` | the page (`PORT_WASM_TARGET=web`): `fuse64-web.zip`, and on `main` the Pages artifact (`fuse64.html` as `index.html`, `.js`, `.wasm`) |
 | `pages` | | on a push to `main`: deploys the page to GitHub Pages (the repository's Pages source must be GitHub Actions) |
 | `release` | | on a `v*` tag, once the others pass (macos skipped): creates the tag's release if there is none (`gh release create --verify-tag --generate-notes`) and uploads every artifact to it (`--clobber`, so a re-run replaces them) |
@@ -354,17 +319,17 @@ the snapshot alone (no ROM, none in any artifact):
 A release is a tag: `git tag v0.1.0 && git push origin v0.1.0`. On a tag,
 every build gets `-DPORT_RELEASE=<tag>` (CMake checks it is a tag's name),
 which `--help` prints (`Fuse64 v0.1.0, a port of Bomberman 64`); other
-builds say `(no release)`. Each strip fails the job if anything of the
-ROM's is left, so no artifact carries it; the AppImage script's own
-`rom_free_check.py` needs the ROM and is skipped in CI. `ci.yml` (the
+builds say `(no release)`. A build from the snapshot carries none of the
+ROM's data whatever its compiler ("The ROM's data"); the check needs the
+ROM, so CI can't run it, and the AppImage script's skips it there. `ci.yml` (the
 decompilation's tools, without a ROM) is unchanged.
 
 Checked locally (2026-11-27): actionlint 1.7.12 with shellcheck (no
 errors; SC2086 notes as in DozerEncore's), the linux job's build in
-`port/tools/ci/linux.Containerfile` (x86-64) (build, strip, `appimage.py` with linuxdeploy, on a tag), the web job's
-with emsdk 6.0.10 (the page's three files, stripped). Not run: the workflow on GitHub itself, the
+`port/tools/ci/linux.Containerfile` (x86-64) (build, `appimage.py` with linuxdeploy, on a tag), the web job's
+with emsdk 6.0.10 (the page's three files). Not run: the workflow on GitHub itself, the
 Windows job (MSYS2; the zig cross build stands in for it), the arm64
-runner's build (and its units, zig's: "The snapshot"), the Pages deploy and the release upload.
+runner's build (zig's aarch64 cross build stands in for it), the Pages deploy and the release upload.
 
 ## Testing
 
@@ -1477,8 +1442,8 @@ does; and four generated files:
 - `regions.c` (gen_regions.py): the fixed addresses ("Memory").
 - `overlays.c` (gen_overlays.py): the overlays' table.
 
-After the link, `rom_strip.py` takes the ROM's data out of the executable
-("The ROM's data").
+The game's C is compiled through `tools/cdata.py`, which takes the ROM's
+data out of it ("The ROM's data").
 
 ### The ROM's data
 
@@ -1518,92 +1483,106 @@ Before (us, 2026-11-27, every byte of a run counted, zeros in it too):
 By the ROM's module (i386): main_code 21.8 K, boot_code 3.4 K, the
 overlays the rest (ovl_0B_04 3.9 K the most).
 
-**The strip.** After every link, `port/tools/rom_strip.py` (CMake's
-`PORT_ROM_FREE`, on; not on macOS: no Mach-O reader yet) takes the
-runs out: it finds them as the check does, gives each byte to the
-longest run that has it, zeroes them in the file and writes where each
-run goes (its distance from the table), where in the code image it comes
-from and each word's order (a nibble) into `port_romfill`, a 96 KiB table
-in the executable's data (`port/host/romfill.c`, filled with 0xA5 so that
-wasm-opt keeps it, found by its magic), with an FNV-1a checksum of the
-bytes it took out. It scans again until nothing is found (a run taken out
-leaves zeros the ROM has too, and a few words between two runs, the same
-data at another overlay's place, show up then), and fails the build
-(`--max 0`) if anything is left. Left in place: a word the loader
-relocates (an ELF's REL, RELA or RELR, a PE's base relocations), the
-table, a run in read-only memory whose pages it couldn't open alone
-(code or writable data on the same 4 KiB page; none in these builds), and
-a run that isn't the build's own objects' data (`--objects`, the build
-directory's `*.o` and `*.obj`, which CMake gives it): a library linked in
-can have a table the game has too, and its runtime may read it before
-main, before the fill. AddressSanitizer's runtime has 0, 0x20, ... 0xE0
-as 32-bit words, as 5E3F0's data has; stripped, ASan's start hung before
-main. A run counts as the objects' where its bytes are their data
-(`rom_free_check.split_ours`: each 8-byte window of it in their
-initialized sections, an end shorter than a run next to one that is
-counting too, the padding between two objects; wasm-ld puts an object's
-variables side by side in another order than the object has them) and, in an ELF, where the
-nearest local data symbol before it is one of their files' (its `FILE`
-symbol): ASan's table is byte for byte the game's, but it follows the
-sanitizer's own symbols. That rule gives way to a global data symbol one
-of the objects defines between the local symbol and the run (clang 18
-puts crtbegin's local symbol before the game's `.data`, whose symbols
-are global: 1572 bytes of main_code's tables were left so), and to text
-(the linker pools every object's strings, and zig's aarch64 build put
-the game's after one of its libc's: 3.2 K of the game's strings). `rom_free_check.py --objects DIR` counts the
-same way and lists the others apart; without it the ASan build has those
-32 bytes.
+**The game's C's data.** The game's C is compiled from copies of its
+files whose initializers have zeros where the ROM's values were, with
+a table of where each value comes from in the code image
+(`port/tools/cdata.py`, CMake's compiler launcher of the game's C, on by
+`PORT_ROM_FREE`). Nothing in it depends on the compiler that builds the
+port: the copy is made from the C and the table from where the ROM has
+each variable, so every target and every clang gets the same.
+
+- The AST (the build's own compiler, `-Xclang -ast-dump=json`) gives each
+  variable with an initializer at file scope, each function's `static`
+  variables with one, each automatic aggregate a function initializes
+  with constants (an array of floats, a structure: IDO copies a template
+  of it from `.data`), and each string literal that becomes a pointer.
+  The files it rewrites are the game's under `src/` (not libultra's or
+  libmalloc's), the headers there too (ovl_0F_10's `statics.h`).
+- A probe (the file, with the function's variables at file scope, then
+  each value's offset) compiled for i386 with `-malign-double`, which
+  lays a structure out as the N64 does (4-byte pointers and longs,
+  doubles 8-aligned), gives each value's place and width on the N64, and
+  the C's bytes.
+- Where the ROM has each variable: from the extract, the N64 link's map
+  (`build/<v>/bm64.<v>.map`, so `make VERSION=<v>` first) by the
+  variable's name, or, for a static, found by its bytes among its
+  object's sections; each value is checked against the code image
+  (`assets/code.bin`), a value the port changed is left as it is, and a
+  halfword the port writes in its bytes' order (`PORT_U16_BYTES`) is
+  taken byte by byte. A string literal is found by its bytes in its
+  object's `.rodata` first. From the snapshot, from its `cdata.json`
+  ("The snapshot"), with a check that the C still has the values it
+  counted (a stale snapshot fails the build).
+- The copy (`gen/cdata/<file>/c/`, `#line` naming the original, so the
+  lines and `__FILE__` stay): each such initializer has only what isn't
+  the ROM's (pointers to the game's names, the replaced strings), in a
+  designated or positional form that keeps the variable's size; a
+  `const` one loses its const (the compiler would fold the zeros); a
+  function's static is declared before the function instead, and an
+  automatic aggregate is copied (`__builtin_memcpy`) where it was
+  declared from a zeroed static before the function; each string literal
+  is a zeroed `static char` array of its size. The file's table,
+  `port_cfill_<file>`, is at its end, and `gen/cdata_list.c` lists the
+  tables. An entry is {where, image offset, width, n1, n2, host stride,
+  N64 stride}: n2 runs of n1 values of 1, 2, 4 or 8 bytes (big-endian in
+  the image), the runs a stride apart (an array of structures' field).
+
+Two of the game's habits needed the source to say otherwise for the port
+(both `#ifdef TARGET_PC` or the port's flags): 14B0.c's `SC_ASSERT`
+stringizes its expression, a literal that isn't in the file (the port
+passes `""`: the stub ignores it), and clang turns a `switch` over
+constants into a table of them (func_8024A824's angles are 5E3F0's
+`D_802A0DE8`), which `-fno-jump-tables` stops. us: 116 files, 1,082
+variables (65 of them a function's automatic aggregates), 22,615 values
+and 160 strings, all found in the code image, none left as it is (6
+halfwords taken byte by byte).
 
 **The fill.** `host_rom_fill` (romfill.c) runs in `load_rom`, before
 anything reads the game's data: it builds the code image from the
 player's ROM as tools/layout.py does (the ROM below the first archive,
 then each overlay archive's members but the index, inflated by an LZSS
-decoder of its own), copies every run back in its words' orders (the
-read-only ones between an `mprotect`, or `VirtualProtect`, that opens
-their pages and one that closes them), and checks the checksum: another
-ROM, or one whose data differs, stops with a message naming the ROM it
-wants. An executable the strip hasn't run on (`PORT_ROM_FREE=OFF`) has
-an empty table and runs as before. The reset's copy of the data and the
+decoder of its own), checks the asm data's bytes against their checksum
+(another ROM, or one whose data differs, stops with a message naming the
+ROM it wants), and puts every value of both tables in place in the
+host's order. A variable whose initializer is all zeros now is in `.bss`,
+which the soft reset and an overlay's loading clear: `host_rom_refill`
+puts the values in that range back from the code image, which it keeps
+(boot_code's VI modes, asm data, had been in the reset's `.bss` and were
+cleared by a reset before this). The reset's copy of the data and the
 overlays' copies (port_reset_init, port_overlay_init) are taken after
-it.
+the fill. A build with `PORT_ROM_FREE=OFF` compiles the C as it is and
+has empty C tables.
 
-**The asm data's fill.** `asm_data.c` no longer has the asm data's
-values: asm2c.py makes it zeros and writes `asm_data_fill.c`, a table
+**The asm data's fill.** `asm_data.c` has none of the asm data's values:
+asm2c.py makes it zeros and writes `asm_data_fill.c`, a table
 (`port_asmfill`) of where each run of values goes, where in the code image
 it comes from and how (bytes, big-endian halfwords or words, or a word in
 a pointer's slot), with the image's size and an FNV-1a checksum of the
-values. `host_rom_fill` applies it first, then the strip's table, and
-`host_rom_fill_check` checks both. So the strip has only the game's C's
-initializers left to take (x86-64: 51,344 bytes in 800 runs, from 67,224),
-and a build from the snapshot needs none of the asm data's bytes ("The
-snapshot").
+values (about 25 KB of them: it tells this version's ROM from any other,
+and says nothing of any one value). `host_rom_fill_check` (the ROM
+finder) checks that checksum alone, writing nothing.
 
-After (us, 2026-11-27, before the asm data's fill):
+**The check.** After every link of a build from the extract,
+`rom_free_check.py --max 0 --objects` fails the build if anything of the
+ROM's is in the executable; a build from the snapshot has no ROM to
+check with (the snapshot's own check, below, and a build from it is the
+extract's file).
 
-| build | taken out | left | kept in place |
-|---|---|---|---|
-| Linux i386 | 75,504 bytes, 321 runs (80 in `.rodata`) | 0 | 4 bytes (one relocated word) |
-| Linux x86-64 | 67,224 bytes, 806 runs | 0 | 20 bytes (relocated words) |
-| WebAssembly (node) | 108,108 bytes, 600 runs | 0 | 0 |
-| Linux i386, jp | 73,372 bytes, 320 runs | 0 | 0 |
-
-The test scenarios give the references with the stripped builds (i386
-the seven, x86-64 and jp `legal`, the `.wasm` `legal`'s 300 retraces
-under node). The strip also checks that the code image is the build's
-version's (`--version`).
-
-The other builds (us, 2026-11-27, `legal` and `rom_free_check.py --max 0`
-on each): ASan and UBSan on x86-64 (66,696 bytes taken out; ASan's own
-32-byte table left, which `--objects` doesn't count), the scattered check
-build (seed 1, 66,676; no report), Windows i386 and x64 by zig (77,140
-and 68,768, under wine), big-endian MIPS by zig under qemu (75,084): all
-`legal` as the reference, nothing left. Three of them needed fixes: the
-scattered layout's copy of the asm data ran before the fill
-(`port_scatter_copy` now runs after it), ASan's start read a table the
-strip had zeroed (`--objects`, above), and the Windows builds' gameplay
-digest had CRs (written in binary mode now). The zig cross builds have
-no OpenGL renderer (the host's libepoxy had put glibc's headers on the
-mips build's command line).
+Checked (us, 2026-11-27; clang 23 unless said): from the extract, the
+post-link check finds nothing in Linux x86-64 and i386, aarch64 and
+Windows x64 by zig (cross-aarch64.cmake, cross-win64.cmake), and the
+`.wasm` (node and the page; emscripten 6.0.12); the AppImage's
+executable (before and after linuxdeploy) and the AppImage nothing
+either (`--all` finds the same library's counting tables as the `.wasm`
+has, below). test.py's seven scenarios give the references on i386 and
+x86-64, from the extract and from the snapshot ("The snapshot"), and
+`legal` on the `.wasm` under node, zig's aarch64 under qemu, zig's
+Windows x64 under wine (headless: wine's first start hung on its prefix
+setup with a display) and jp's i386. Three things were the compilers': the
+switch tables (above), zig's `cc -fsyntax-only` failing after it printed
+the AST (it wants an object; cdata.py takes the AST), and gfx.c's
+comparison with the F3DEX microcode's 32-byte name, a string in the
+host's code that zig's builds kept whole (two halves now).
 
 Not counted, and so left:
 
@@ -1620,13 +1599,18 @@ Not counted, and so left:
 - **What the code holds as constants**: a compiler may build a small
   initializer in the code (an immediate), and the text isn't scanned
   (`--all` scans the whole file, debug information included; not run on
-  these builds).
+  these builds). A table it makes of a `switch`'s constants is data, and
+  `-fno-jump-tables` keeps those out.
 - **Coincidences with the assets**: `--assets` finds one 32-byte run, a
   texture load's commands (`E8000000 ... F0000000 073FC000`, the gbi
   macros' bytes) that every model in bank 0x18 has too.
-- **macOS**: no Mach-O reader in the strip, so no strip there yet.
-- **Windows** ran stripped under wine only (`legal`, i386 and x64), not
-  on Windows itself.
+- **macOS**: the data is out as on every host (it is the C's), but the
+  check has no Mach-O reader, so a macOS build isn't checked.
+- **Windows** ran under wine only, not on Windows itself.
+- **A library's tables**: `--objects` lists apart what isn't the build's
+  objects' data; the `.wasm`'s memory has a library's 01 02 03 ... 30
+  twice, which matches 36 bytes of ovl_0B_04's data (four runs of 32 to
+  36 bytes, each place), and nothing is done to it.
 
 ### Memory
 
@@ -3244,8 +3228,7 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   built and tried, the ROM finder is in ("Packages"), the port builds
   from the snapshot without the ROM ("The snapshot") and CI builds and
   releases the packages ("Releases"). Left there: the workflow's first
-  run on GitHub (Windows' MSYS2 build may need its own strip units,
-  "The snapshot"); a Mach-O for macOS (the strip, then the app); the
+  run on GitHub; macOS's app (and a Mach-O reader for the check); the
   shorter runs.
 - **Renderer**: checked task by task against angrylion and the game's
   microcode ("Graphics": `gfx_ref.py`); the microcode runs on the port's

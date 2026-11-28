@@ -935,7 +935,10 @@ static void hc_begin(void);
 
 static void uc_begin(void) {
     uc_ok = uc_boot && uc_text && uc_data && uc_data_size >= 0x2D0 &&
-            !memcmp(uc_data + 0x2B0, "RSP Gfx ucode F3DEX.NoN     1.21", 32);
+            /* (its name in two parts: the 32 bytes whole are a run of the
+               ROM's, which the executable doesn't carry) */
+            !memcmp(uc_data + 0x2B0, "RSP Gfx ucode F3DEX.NoN", 23) &&
+            !memcmp(uc_data + 0x2B0 + 23, "     1.21", 9);
     uint32_t stack_size = uc_stack_size < sizeof uc_stack ? uc_stack_size : (uint32_t)sizeof uc_stack;
     if (uc_ok && (fe_hle || hle_check)) {
         gfx_hle_out = rdp_cmd;

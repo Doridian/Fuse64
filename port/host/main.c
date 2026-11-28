@@ -115,7 +115,7 @@ void host_rom_read(void *dst, uint32_t addr, uint32_t len) {
 
 /* ROM to .z64's byte order (from .n64's little-endian words or .v64's
    swapped halves); 1 if it is this build's ROM: an N64 ROM, this version's
-   game code, and the data the strip took out (host_rom_fill_check) */
+   game code, and the data this build takes from it (host_rom_fill_check) */
 int host_rom_ours(uint8_t *r, uint32_t n, char *err, size_t errn) {
     if (n < 0x1000) {
         if (err)

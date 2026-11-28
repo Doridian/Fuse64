@@ -9,10 +9,10 @@ name: Build
 # main also deploys the page to GitHub Pages; a tag v* publishes every build
 # on the tag's release (docs/PORT.md, "Releases").
 #
-# The snapshot's strip units are per target and made with these compilers
-# (port/tools/snapshot.py): a build with another compiler or linker may find
-# the ROM's data laid out differently and then fails rather than keep any
-# of it.  So the compilers here are pinned where they can be.
+# The snapshot is the same for every target and compiler: the game's C is
+# compiled without its data whatever compiles it (port/tools/cdata.py;
+# docs/PORT.md, "The ROM's data").  The compilers are pinned where they can
+# be all the same, for repeatable builds.
 
 on:
   push:
@@ -134,11 +134,11 @@ jobs:
           name: fuse64-licenses
           path: fuse64-licenses.zip
 
-  # macOS (arm64, an app in a dmg, as DozerEncore's) waits for rom_strip.py
-  # to read a Mach-O: until then a macOS build would keep the ROM's data, so
-  # port/CMakeLists.txt refuses it (docs/PORT.md, "Packages").  The job is
-  # here for that day; set the repository variable FUSE64_MACOS to true to
-  # run it.
+  # macOS (arm64, an app in a dmg, as DozerEncore's) waits for its
+  # port/res/Info.plist; the ROM's data is out of its executable as out of
+  # every other (port/tools/cdata.py), though rom_free_check.py can't read a
+  # Mach-O to show it (docs/PORT.md, "Packages").  The job is here for that
+  # day; set the repository variable FUSE64_MACOS to true to run it.
   macos:
     if: vars.FUSE64_MACOS == 'true'
     runs-on: macos-26

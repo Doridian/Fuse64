@@ -1,8 +1,7 @@
 # CI's Linux build environment (.github/workflows/build.yml, the linux job):
-# Ubuntu 22.04 with apt.llvm.org's clang 18 and lld, SDL2 and libepoxy.  The
-# snapshot's strip units for linux-x86_64 and linux-aarch64 are made in it
-# (port/tools/snapshot.py --podman), since another compiler can lay the
-# game's data out otherwise (docs/PORT.md, "The snapshot"):
+# Ubuntu 22.04 with apt.llvm.org's clang 18 and lld, SDL2 and libepoxy, for
+# trying CI's builds here (port/tools/snapshot.py --podman; docs/PORT.md,
+# "The snapshot"):
 #   podman build -t fuse64-ci-linux -f port/tools/ci/linux.Containerfile port/tools/ci
 #   podman build --arch arm64 -t fuse64-ci-linux-arm64 -f port/tools/ci/linux.Containerfile port/tools/ci
 # Keep it the same as the linux job's "Install tools".

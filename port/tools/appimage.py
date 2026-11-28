@@ -10,7 +10,7 @@ the icon (port/res) and the licenses (LICENSE, NOTICES.md); libGL and the
 system's base libraries stay the host's (linuxdeploy's exclude list).
 Where the system's SDL2 is sdl2-compat (which loads SDL3 at run time),
 SDL3 goes in too.  The AppImage carries none of the ROM's bytes: the
-executable must be stripped (PORT_ROM_FREE, the default) and
+executable must have its data from the ROM (PORT_ROM_FREE, the default) and
 rom_free_check.py --max 0 must find nothing in it, before and after
 linuxdeploy (whose patchelf and strip rewrite it), where the ROM is there
 (not in CI, which builds from the snapshot: docs/PORT.md, "The snapshot").  Started from its icon
@@ -75,7 +75,7 @@ def needed(path):
 def rom_free(path, version):
     if not ROM:
         # (without the ROM nothing can be compared: the build from the
-        # snapshot took out what the snapshot's units say, or failed)
+        # snapshot compiled the game's C without its data, as cdata.json says)
         print("appimage: no ROM here, so no rom_free_check.py on %s" % path)
         return
     r = subprocess.run([sys.executable, os.path.join(HERE, "rom_free_check.py"), path, "--max", "0", "-q",

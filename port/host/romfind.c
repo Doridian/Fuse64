@@ -6,8 +6,8 @@
  * osascript's `choose file` on macOS, zenity or kdialog on Linux), or,
  * where there is none of those, a window of the port's own takes it
  * dropped on it.  A ROM is taken only if it is this build's version and
- * gives the build its data (host_rom_fill_check: the bytes the strip took
- * out); another is refused and it asks again.  The choice is kept in the
+ * gives the build its data (host_rom_fill_check: the asm data's bytes the
+ * build was made from); another is refused and it asks again.  The choice is kept in the
  * player's data directory (SDL_GetPrefPath: ~/.local/share/Fuse64,
  * %APPDATA%\Fuse64, ~/Library/Application Support/Fuse64) as
  * rom-path.<v>.txt, and the save goes there too unless --save-dir says

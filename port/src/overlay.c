@@ -116,8 +116,12 @@ void port_overlay_reset(unsigned i) {
     const PortOverlay *o = &port_overlays[i];
     if (o->data && o->data_end > o->data)
         copy(o->data, initial[i], (size_t)(o->data_end - o->data));
-    if (o->bss && o->bss_end > o->bss)
+    if (o->bss && o->bss_end > o->bss) {
         zero(o->bss, (size_t)(o->bss_end - o->bss), NULL);
+        /* (the variables there whose values are the ROM's: zeros in the
+           executable, docs/PORT.md "The ROM's data") */
+        host_rom_refill(o->bss, o->bss_end);
+    }
 }
 
 /* the slot's words at off as the N64 has them: put, or taken */

@@ -1146,7 +1146,7 @@ Cut so far (the same in us, eu and jp):
 | module | objects | .data/.rodata boundary |
 |---|---|---|
 | ovl_09_01 | all: `ovl_09_01_entry`, `120010` (.data 0x30, .rodata 0x50: the handler's jump table, .bss 0x50) | 0x80044990 (the compiler's) |
-| main_code | `main_code_entry` (.rodata 0x20: the build date), `40040` (.data 0x30: two tables), `40300` (.data 0x10: the bump pointer), `404C0` (.data 0x20, .bss 0x20), `40FB0` (.data 0x10, .bss 0x10), `412F0` (.data 0x200: the graphics tasks and display lists, .bss 0xA0), `41FD0` (.data 0x60, .bss 0x90), `426E0`, `45170`, `46300`, `479D0` (none), `47A80`, after the RSP code at 0x8029D250-0x8029F570 | 0x802A2D00 (jp 0x802A1F40): the build date, after the libraries' .data |
+| main_code | `main_code_entry` (.rodata 0x20: the build date), `40040` (.data 0x30: two tables), `40300` (.data 0x10: the bump pointer), `404C0` (.data 0x20, .bss 0x20), `40FB0` (.data 0x10, .bss 0x10), `412F0` (.data 0x200: the graphics tasks and display lists, .bss 0xA0), `41FD0` (.data 0x60, .bss 0x90), `426E0`, `45170`, `46300`, `479D0` (none), `47A80`, `48300` (.data 0xF0: a module table), `48600`, `4DE50`, `4E030`, `4ED50`, `52270` (.bss 0x57A0: threads), `530C0` (.bss 0x11E0: the task lists), `53D70` (.bss 0x1E0: the controllers), `54BE0` (.bss 0x10: the views), `54E40` (.bss 0x2B0; jp's .data 0xB20, eu's and jp's .rodata 0x110), `5E090`, `5E3F0` (.bss 0x720), `6BBE0`, `78CA0`, `78F60`, `7B2D0` (none), `7C4D0`, `7D840`, after the RSP code at 0x8029D250-0x8029F570 | 0x802A2D00 (jp 0x802A1F40): the build date, after the libraries' .data |
 | boot_code | all of the game's C from the first object after the entry: `1050` (.data 0x10, .bss 0x400), `10D0` (.bss 0x80), `13F0` (.data 0x10), `14B0` (the scheduler: .data 0x20, .rodata 0x130: its assert strings and a jump table, .bss 0x70), `2350` (.data 0x3A0, jp 0x390: the jp table is an entry shorter; .bss 0x8470); the entry and 2630 are hasm and skipped | 0x8001B640 (jp 0x8001B620): 14B0's strings, after the libraries' .data |
 
 The sizes are the same in every version as long as the C is. Where a
@@ -1221,8 +1221,8 @@ jump table, no `static` or initialized globals. Check with
 and `.bss` must be empty. Their variables are `extern`, named
 `D_<us address>`, and defined by the asm blocks.
 
-The next object that extends main_code's cut is `48300`: see "What's
-left of the data".
+The next object that extends main_code's cut is `80420` (its .data
+0x802A1230-0x802A1250 and .bss): see "What's left of the data".
 
 **Objects placed on their own.** A library object after the game's code
 can't join the cut, so data_split.txt can place its sections where the
@@ -1237,33 +1237,23 @@ before every .rodata). libultra's objects use this where their code needs
 the data in the same file (docs/LIBULTRA.md, "Data"), and so does GNU
 malloc's `libmalloc/gmalloc` (.data and .bss; docs/LIBMALLOC.md). So do the game's
 objects after main_code's cut that have jump tables, strings or
-constants (54BE0, 87D80, 8A7A0: `.rodata` only), or whose `.data`/`.bss` is all
-their own (53D70, 530C0, 412F0, AFBF0: all three sections, jp's .data
+constants (87D80, 8A7A0: `.rodata` only), or whose `.data`/`.bss` is all
+their own (AFBF0: all three sections, jp's .data
 its own size; 80580: .data and .rodata, since a function's `static`
-counter puts its .data in the C; 5E3F0: .data and .rodata, its .bss
-staying asm; 9CAB0: .data and .rodata, its .bss
-outside main_code; 46300: all three, since
-func_8022C8B8's `static`s put its .bss in the C; 426E0: all three,
-since func_8022A328's and func_8022A6C4's `static`s do the same,
-its .data placed with them; 54E40: .rodata, .data (its strings, text items and
-tables; jp's strings make its .data 0xB20 against us's 0xBA0, eu's times
-differ) and part of its .bss, D_802AC7A0[10] and the two words after it,
-defined so as1 knows the array, the rest of its .bss staying asm; 48600: .rodata
-and all of its .bss, 0x4D0 of globals and function-local statics that IDO
-interleaves, laid out by where the functions are defined: its header has
-how IDO orders a .bss; 6BBE0: all three, .data 0x2C0 of tables and
-.bss nine globals, the unreferenced word after D_802ACFC8 written as
-its second element, since at `-O3` an unreferenced .bss global goes to
-common; 47A80: all three, .data 0x480 the highlight texture, two flags
-and the display list that loads it, .rodata a `const Hilite`, .bss the
-matrix and two words; 949A0: all three, .data module 0x28's table and
+counter puts its .data in the C; 9CAB0: .data and .rodata, its .bss
+outside main_code; 949A0: all three, .data module 0x28's table and
 .bss all that it and 93850 use (93850 has neither: the table is 949A0's
 functions, and 949A0 their main user); 97610: .data (two record tables
 as the words the overlays pass too, module 0x23's table) and .bss;
 995C0: .data and .rodata; 99F40: .data and .bss; 9BFD0: .data and .bss;
 A4860: .data. A gap IDO's alignment leaves in a .bss (4 bytes before an
 8-aligned array of 8 bytes or more: 97610's D_802B01B8, 949A0's
-D_802AFF60) needs no variable); everything else they use stays `extern`.
+D_802AFF60) needs no variable); everything else they use stays `extern`. Objects
+the cut has since reached were placed so first (426E0 and 46300 for
+their functions' `static`s, 48600 for its interleaved .bss: its header
+has how IDO orders a .bss; 6BBE0, whose unreferenced word after
+D_802ACFC8 is written as its second element, since at `-O3` an
+unreferenced .bss global goes to common).
 Build the object once (the link fails, the `.o` is there), run `--place`
 for each version with `--ref build/us/src/<object>.c.o`, add the lines,
 regenerate the configs and extract again. `--place` finds an object named
@@ -1289,12 +1279,8 @@ from 5E3F0's and its .bss 0x10 lower; jp's lower by 0x920 and more past
 | main_code `.data` 0x8029D250-0x8029F570 | rspboot (0xD0), F3DEX's text (0x1430), aspMain's text (0xE20) | the SDK's microcode, linked before the game's `.data` | binary, not C (data_split.txt's `data=` starts the objects after it) |
 | main_code `.rodata` 0x802A4840-0x802A5000 | F3DEX's data (`D_802A4840`, 0x7C0) | the microcode | binary (`__libm_qnan_f` before it is ultralib's `gu/libm_vals.s`, placed) |
 | main_code_persist `.rodata` 0x802A5000-0x802A5300 | F3DEX's data's tail (`D_802A5000`), aspMain's data (`D_802A5040`, 0x2C0) | the microcode | binary |
-| `.data` 0x8029FD40-0x8029FE30 | ZeroJump module 0x18's table and the rest | 48300 (48600 has none of its own known) | 48300's C defines none of it yet (placing it would do, as for 426E0) |
-| `.data` 0x802A0D50-0x802A0D60 | ZeroJump module 12's table | 5E090 | as above |
 | `.data` 0x802A1230-0x802A1250 | three words 40040 uses | 80420 (between 7D840 and 80580) | a label another object uses: 80420 must define it, 40040 keeps the extern |
 | `.data` 0x802A13D0-0x802A14F0 | module 20's table, 87730's and 87D80's tables | 87190, 87730, 87D80 (8A7A0 reads 87D80's) | not written yet; 87D80 is placed for its .rodata only |
-| `.bss` 0x802A5A60-0x802AC7A0 | 0x6D40 of state | 52270, 530C0, 53D70, 54BE0 (0x802AC5C0-0x802AC5D0, used by 40040, 426E0, 4E030 too) and 54E40's start | 52270 has no placement yet; 530C0 and 53D70 are placed for .data/.rodata only; 54E40 defines only D_802AC7A0's run |
-| `.bss` 0x802AC7D0-0x802ACFB0 | 54E40's rest, 5E090's word, 5E3F0's | 54E40, 5E090, 5E3F0 | 54E40's .bss is defined in part; 5E3F0's C keeps it extern (its .data and .rodata are placed) |
 | `.bss` 0x802AD0E0-0x802AD680 | `D_802AD0E0`, 80420's, the audio state | 80420, 80580 | not written yet; 80580 is placed for .data/.rodata |
 | `.bss` 0x802AFC30-0x802AFE70 | | 87190, 87730, 87D80 | not written yet |
 
@@ -1326,4 +1312,19 @@ every build suits a file the build treats specially, linked first. A
 generated object with no code, linked first, would put the same bytes in
 the same place; the entry stands for it. With an owner, the cut gives
 main_code's .data/.rodata boundary (`rodata=` on its `@us`/`@eu`/`@jp`
-line), and 426E0, 45170, 46300, 479D0 and 47A80 joined it.
+line), and the objects after it joined it in order as their data went
+into their C, up to 7D840.
+
+**What the cut through 7D840 showed.** IDO puts a `.bss` array or struct
+8-aligned, whatever its elements: every 4-byte hole in 54E40's and
+5E3F0's .bss (before D_802AC610, D_802AC770, D_802AC7F8, D_802AC820,
+D_802AC8D0, D_802ACE90, ...) is that padding, so the definitions are
+the variables alone. A name the asm had inside another variable can be
+that variable's field in the C (54E40's D_802AC624 and D_802AC628 as
+`D_802AC610.unk14`/`.unk18`, D_802AC714 as `D_802AC660.unkB4`: the code
+didn't change), except where the original reached it by its own
+address: as `&D_802AC770[4]`, IDO folded func_8023CC54's offsets
+differently, so D_802AC780 is an array of its own after D_802AC770[4]
+(the port keeps one array of ten). A thread's stack top passed as the
+next variable's address (52270's D_802AB1F0, as in 2350) is that
+variable, with the stack in the thread's struct.

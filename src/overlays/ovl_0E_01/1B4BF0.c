@@ -9,21 +9,6 @@
  * (nonmatching/overlays/ovl_0E_05) as D_ovl0E_01_80046BB0.
  */
 
-/* what replaces D_ovl0E_01_80046B00's models once their flags (unk0) are set */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ s16 unk14;
-    /* 0x16 */ s16 unk16;
-    /* 0x18 */ s16 unk18;
-    /* 0x1A */ s16 unk1A;
-    /* 0x1C */ s16 unk1C;
-    /* 0x1E */ s16 unk1E;
-} UnkStruct_ovl0E_01_80046B70;
-
 /* what func_ovl0E_01_80045808 returns */
 typedef struct {
     /* 0x00 */ u8 unk0[0x10];

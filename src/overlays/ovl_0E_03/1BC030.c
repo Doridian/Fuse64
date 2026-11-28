@@ -19,21 +19,6 @@
  * replaces (func_ovl0E_03_800430A8, 80043AB8; nonmatching/overlays/ovl_0E_12).
  */
 
-/* what replaces D_ovl0E_03_80046B40's model once its flag (unk0) is set */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ s16 unk14;
-    /* 0x16 */ s16 unk16;
-    /* 0x18 */ s16 unk18;
-    /* 0x1A */ s16 unk1A;
-    /* 0x1C */ s16 unk1C;
-    /* 0x1E */ s16 unk1E;
-} UnkStruct_ovl0E_03_80046B78;
-
 /* the eight other movers: two sets of speeds, chosen by func_ovl0E_03_80045568()->unk10 */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
@@ -127,7 +112,7 @@ void func_ovl0E_03_80046518(s32, f32 *);
 void func_ovl0E_03_80043010(void);
 void func_ovl0E_03_80043020(void);
 void func_ovl0E_03_80043040(void);
-void func_ovl0E_03_80043060(UnkStruct_ovl0E_03_80046B78 *);
+void func_ovl0E_03_80043060(UnkStruct_ovl0E_01_80046B70 *);
 void func_ovl0E_03_800430A8(void);
 void func_ovl0E_03_800432F0(void);
 void func_ovl0E_03_80043338(void);
@@ -236,7 +221,7 @@ UnkStruct_ovl0C_01_8004A54C D_ovl0E_03_80046B08[1] = {
 UnkStruct_ovl0C_01_8004A54C D_ovl0E_03_80046B40[1] = {
     { NULL, -1, 0xA0, -1, -1, -1, -1, 355.0f, -10.0f, 150.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
-UnkStruct_ovl0E_03_80046B78 D_ovl0E_03_80046B78[1] = {
+UnkStruct_ovl0E_01_80046B70 D_ovl0E_03_80046B78[1] = {
     { 0x415, 365.0f, -10.0f, 155.0f, 270.0f, 0x24, 0, 0xF, 0x25, 0x10, 1 },
 };
 
@@ -846,7 +831,7 @@ static void func_ovl0E_03_800432E8(void) {
 }
 
 void func_ovl0E_03_800430A8(void) {
-    UnkStruct_ovl0E_03_80046B78 *p;
+    UnkStruct_ovl0E_01_80046B70 *p;
     s16 i;
     s32 flags;
 
@@ -883,7 +868,7 @@ void func_ovl0E_03_800430A8(void) {
     }
 }
 
-void func_ovl0E_03_80043060(UnkStruct_ovl0E_03_80046B78 *arg0) {
+void func_ovl0E_03_80043060(UnkStruct_ovl0E_01_80046B70 *arg0) {
     func_ovl0E_03_80045458(arg0->unk14, arg0->unk16, arg0->unk18, arg0->unk1A, arg0->unk1C, arg0->unk1E);
 }
 

@@ -23,21 +23,6 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-/* what replaces it once its flag (unk0) is set */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ s16 unk14;
-    /* 0x16 */ s16 unk16;
-    /* 0x18 */ s16 unk18;
-    /* 0x1A */ s16 unk1A;
-    /* 0x1C */ s16 unk1C;
-    /* 0x1E */ s16 unk1E;
-} UnkStruct_ovl0E_12_80045FCC;
-
 /* the five movers: each record is passed to its task */
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -131,7 +116,7 @@ void func_ovl0E_12_80043084(void);
 void func_ovl0E_12_800430A4(void);
 void func_ovl0E_12_800430DC(void);
 void func_ovl0E_12_800430FC(void);
-void func_ovl0E_12_8004311C(UnkStruct_ovl0E_12_80045FCC *);
+void func_ovl0E_12_8004311C(UnkStruct_ovl0E_01_80046B70 *);
 void func_ovl0E_12_80043164(void);
 void func_ovl0E_12_800433AC(void);
 void func_ovl0E_12_800433F4(void);
@@ -209,7 +194,7 @@ u32 D_ovl0E_12_80045F64[][3] = {
 UnkStruct_ovl0C_01_8004A54C D_ovl0E_12_80045F94[1] = {
     { NULL, -1, 0xA0, -1, -1, -1, -1, 400.0f, 60.0f, 275.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
-UnkStruct_ovl0E_12_80045FCC D_ovl0E_12_80045FCC[1] = {
+UnkStruct_ovl0E_01_80046B70 D_ovl0E_12_80045FCC[1] = {
     { 0x416, 395.0f, 60.0f, 285.0f, 180.0f, 0x27, 4, 0x1C, 0x28, 0x1D, 1 },
 };
 UnkStruct_ovl0E_12_80045FEC D_ovl0E_12_80045FEC[5] = {
@@ -664,7 +649,7 @@ static void func_ovl0E_12_800433A4(void) {
 }
 
 void func_ovl0E_12_80043164(void) {
-    UnkStruct_ovl0E_12_80045FCC *p;
+    UnkStruct_ovl0E_01_80046B70 *p;
     s16 i;
     s32 flags;
 
@@ -701,7 +686,7 @@ void func_ovl0E_12_80043164(void) {
     }
 }
 
-void func_ovl0E_12_8004311C(UnkStruct_ovl0E_12_80045FCC *arg0) {
+void func_ovl0E_12_8004311C(UnkStruct_ovl0E_01_80046B70 *arg0) {
     func_ovl0E_12_80044C88(arg0->unk14, arg0->unk16, arg0->unk18, arg0->unk1A, arg0->unk1C, arg0->unk1E);
 }
 

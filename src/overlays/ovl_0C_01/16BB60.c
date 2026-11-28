@@ -48,7 +48,6 @@ typedef struct {
     /* 0x0C */ UnkStruct_ovl0C_01_ZJ3106_C *unkC;
 } UnkStruct_ovl0C_01_ZJ3106;
 
-#define ZJ_0000 func_ovl0C_01_80048A70
 #define ZJ_0C00 func_ovl0C_01_80048DB8
 #define ZJ_0D00 func_ovl0C_01_80048DD0
 #define ZJ_0D04 func_ovl0C_01_80048DF0

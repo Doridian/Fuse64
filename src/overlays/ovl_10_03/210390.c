@@ -61,7 +61,6 @@ UnkStruct_802B0260 *func_ovl10_03_800466A0(void); /* 0x1A00, kept: called with 0
 #define ZJ_1D03 func_ovl10_03_800467D8
 s32 *func_ovl10_03_800468B0(void); /* 0x1E0A, kept: called with 0 arguments (the definition takes 1) */
 #define ZJ_2004 func_ovl10_03_80046918
-#define ZJ_2101 func_ovl10_03_80046940
 #define ZJ_2300 func_ovl10_03_80046980
 #define ZJ_2600 func_ovl10_03_80046A68
 void func_ovl10_03_80046A70(s32, Vec3f *, s32); /* 0x2601, kept: its callers pass Vec3f * (the header's f32 *) */

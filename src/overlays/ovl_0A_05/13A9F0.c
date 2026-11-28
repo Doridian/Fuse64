@@ -14,7 +14,6 @@
  * rather than taken from the register holding `zero`.
  */
 
-#define ZJ_0000 func_ovl0A_05_80047F30
 #define ZJ_0D00 func_ovl0A_05_80048290
 #define ZJ_0F00 func_ovl0A_05_80048370
 #define ZJ_0F01 func_ovl0A_05_80048378

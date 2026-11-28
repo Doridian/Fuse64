@@ -16,7 +16,6 @@
  */
 
 
-#define ZJ_0000 func_ovl0A_03_800470B0
 #define ZJ_0C00 func_ovl0A_03_800473F8
 #define ZJ_0D00 func_ovl0A_03_80047410
 #define ZJ_0F01 func_ovl0A_03_800474F8

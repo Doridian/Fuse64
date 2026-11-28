@@ -295,7 +295,10 @@ it calls (`#define ZJ_0F0B func_ovl0C_01_80048F08`) and includes the
 header after them; the calls keep the stubs' names. The shared code in
 `src/overlays/common/core.h`, `core_d.h` and `core_0c.h` calls its stubs
 by these `ZJ_<id>` names, so an overlay that includes it defines them
-(0x1704, 0x1708, 0x1709, 0x1904, 0x2B04) like any other. A declaration is the target's (from its `include/<obj>.h`
+(0x1704, 0x1708, 0x1709, 0x1904, 0x2B04) like any other. An id no code
+calls isn't defined (no overlay calls 0x0000, the module registration;
+its stub's `const char *` in five overlays was a first draft's misreading
+of splat's one symbol over the first stubs as 0x0100's debug print). A declaration is the target's (from its `include/<obj>.h`
 or its definition: its PORT_IP/PORT_RET and parameter names) where every
 overlay compiles to the same code with it, ROM and port; otherwise it is
 the overlays' view, and its comment says how it differs and why:

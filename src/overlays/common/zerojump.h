@@ -16,11 +16,13 @@
 #include "player.h"
 #include "slots.h"
 
-/* 0x0000: func_80001A30 (1050); the overlays pass it a string (stub 0 is the module
- * registration: a debug print in their source?)
- * (definition: void func_80001A30(PORT_IP(s32) id, void **table)) */
+/* 0x0000: func_80001A30 (1050), the module registration: module 0's table
+ * (1050's D_80019F80) has it alone.  No overlay calls it; main_code's stub
+ * (func_80297D30) registers its modules' tables with it.  (Five overlays
+ * once declared their stub 0 as taking a string, never calling it: a first
+ * draft's guess that splat's one symbol over the first stubs was 0x0100.) */
 #ifdef ZJ_0000
-void ZJ_0000(const char *);
+void ZJ_0000(PORT_IP(s32) id, void **table);
 #endif
 /* 0x0100: func_800018F8 (2350) */
 #ifdef ZJ_0100

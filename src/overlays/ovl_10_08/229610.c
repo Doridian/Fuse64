@@ -34,7 +34,6 @@
 #define ZJ_0100 func_ovl10_08_80047BA8
 #define ZJ_0C00 func_ovl10_08_80047EE8
 #define ZJ_0C01 func_ovl10_08_80047EF0
-#define ZJ_0D00 func_ovl10_08_80047F00
 #define ZJ_0D04 func_ovl10_08_80047F20
 #define ZJ_0D08 func_ovl10_08_80047F40
 void func_ovl10_08_80047F48(f32, f32, f32, Vec3f *, s32); /* 0x0D09, kept: its callers pass Vec3f * (the header's f32 *) */

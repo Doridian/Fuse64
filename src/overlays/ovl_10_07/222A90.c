@@ -74,30 +74,16 @@ s32 func_ovl10_07_800495D0(s32, Vec3f *, UnkStructA *); /* 0x2601, kept: its cal
 #define ZJ_2B00 func_ovl10_07_80049700
 #define ZJ_2B04 func_ovl10_07_80049720
 #define ZJ_1009 func_ovl10_07_80048820
-#define ZJ_100B func_ovl10_07_80048830
-#define ZJ_101E func_ovl10_07_800488C8
 #define ZJ_1023 func_ovl10_07_800488F0
 #define ZJ_1505 func_ovl10_07_80048D30
 #define ZJ_1506 func_ovl10_07_80048D38
 #define ZJ_150D func_ovl10_07_80048D70
-#define ZJ_170B func_ovl10_07_80048EA0
-#define ZJ_1713 func_ovl10_07_80048EE0
 f32 func_ovl10_07_80048FD0(Vec3f *, Vec3f *); /* 0x1806, kept: its callers pass Vec3f * (the header's f32 *) */
 #define ZJ_1811 func_ovl10_07_80049028
-#define ZJ_1902 func_ovl10_07_80049188
 #define ZJ_1D03 func_ovl10_07_80049338
-#define ZJ_2A04 func_ovl10_07_800496A8
 s32 func_ovl10_07_80049728(s32, Vec3f *); /* 0x2B05, kept: its callers pass Vec3f * (the header's f32 *) */
 #define ZJ_2B06 func_ovl10_07_80049730
-#define ZJ_3000 func_ovl10_07_80049878
-#define ZJ_3001 func_ovl10_07_80049880
 
-#define ZJ_0D0C func_ovl10_07_800486A0
-#define ZJ_0D0D func_ovl10_07_800486A8
-#define ZJ_0E00 func_ovl10_07_800486F8
-#define ZJ_0E01 func_ovl10_07_80048700
-#define ZJ_2702 func_ovl10_07_800495F8
-#define ZJ_2703 func_ovl10_07_80049600
 
 
 #define ZJ_0F0F func_ovl10_07_80048798

@@ -81,7 +81,6 @@ typedef struct {
     /* 0x18 */ void (*unk18)(UnkStructA_40 *, Gfx_80225840 **);
 } UnkStruct_ovl0A_01_Entry2;
 
-#define ZJ_0000 func_ovl0A_01_800470F0
 #define ZJ_0D00 func_ovl0A_01_80047450
 #define ZJ_0F00 func_ovl0A_01_80047530
 #define ZJ_0F01 func_ovl0A_01_80047538

@@ -40,26 +40,37 @@ void func_80297DF8(void *, void *);
 UnkStruct_802A5330 *func_80297E00(void *);
 s32 func_802983B0(void);
 
-extern UnkStruct_802A5A60 D_802A5A60[8];
-extern void *D_802A8920;
-extern s32 D_802A8924;
-extern s32 D_802A8928;
-extern s32 D_802A892C;
-extern s32 D_802A8930;
-extern s32 D_802A8934;
-extern UnkStruct_802A5330 D_802A8938;
-extern void *D_802A8950;
-extern s32 D_802A8954;
-extern UnkStruct_802A5330 D_802A8958;
-extern void *D_802A8970[16];
+/* the scheduler client's thread (func_80237F84) and its stack */
+typedef struct {
+    /* 0x000 */ u64 thread[PORT_HOST(0x1B0, PORT_SIZEOF_OSTHREAD) / 8]; /* an OSThread */
+    /* 0x1B0 */ u64 stack[0x3F8 / 8];
+} UnkStruct_802AAC48; /* size 0x5A8 */
+
+/* .bss (0x802A5A60-0x802AB200), in address order: IDO lays it out in the
+ * order it first sees each variable */
+UnkStruct_802A5A60 D_802A5A60[8];
+void *D_802A8920;
+s32 D_802A8924;
+s32 D_802A8928;
+s32 D_802A892C;
+s32 D_802A8930;
+s32 D_802A8934;
+UnkStruct_802A5330 D_802A8938;
+void *D_802A8950;
+s32 D_802A8954;
+UnkStruct_802A5330 D_802A8958;
+void *D_802A8970[16];
 /* func_8023876C passes its end (D_802AAC38's address) as the second
  * argument: written as &D_802AAC38, IDO keeps that address in a register
  * for the store that follows. */
-extern u8 D_802A89B0[0x2288];
-extern UnkStruct_802A5330 *D_802AAC38;
-extern u8 D_802AAC40[];
-extern u8 D_802AAC48[PORT_SIZE(PORT_SIZEOF_OSTHREAD)]; /* an OSThread (its stack after it, up to D_802AB1F0, is the host thread's own) */
-extern u8 D_802AB1F0[];
+u8 D_802A89B0[0x2288];
+UnkStruct_802A5330 *D_802AAC38;
+u8 D_802AAC40[PORT_HOST(0x8, 2 * sizeof(void *))] PORT_ONLY(__attribute__((aligned(8)))); /* (sched.h's OSScClient) */
+UnkStruct_802AAC48 D_802AAC48;
+/* the thread's stack top is this variable's address (2350's threads have
+ * theirs so too); nothing else uses it, so its size is the 0x10 up to
+ * 530C0's .bss */
+u8 D_802AB1F0[0x10];
 
 void func_80237F84(void *arg0);
 s32 func_80237B14(u16 arg0);
@@ -96,8 +107,8 @@ void func_8023876C(void *arg0, s32 arg1, s32 arg2) {
 #endif
     func_80297DE8(D_802A89B0, D_802A89B0 + 0x2288, 0x7F, mode, 1);
     D_802AAC38 = func_80297E00(D_802A89B0);
-    func_80297DA8(D_802AAC48, arg1 + 9, func_80237F84, NULL, D_802AB1F0, 0x7D);
-    func_80297DB0(D_802AAC48);
+    func_80297DA8(D_802AAC48.thread, arg1 + 9, func_80237F84, NULL, D_802AB1F0, 0x7D);
+    func_80297DB0(D_802AAC48.thread);
     D_802A8920 = arg0;
     D_802A8924 = arg1;
     D_802A8928 = arg2;

@@ -89,14 +89,6 @@ typedef struct {
     /* 0x10 */ s32 unk10;
 } UnkStruct_ovl17_09_800463D0; /* size 0x14 */
 
-/* what func_ovl17_09_80045658 returns: offsets into itself */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x14];
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ u8 unk18[8];
-    /* 0x20 */ s32 unk20;
-} UnkStruct_ovl17_09_80046280;
-
 /* what func_ovl17_09_800450D8 returns */
 typedef struct {
     /* 0x00 */ u8 unk0[0x10];
@@ -116,7 +108,7 @@ UnkStruct_8023A834 *func_ovl17_09_80045108(void);
 void func_ovl17_09_80045138(void);
 UnkStructA *func_ovl17_09_800451C8(s32);
 UnkStructA *func_ovl17_09_80045208(s32);
-UnkStruct_ovl17_09_80046280 *func_ovl17_09_80045658(s32);
+UnkStruct_ovl0F_01_80048130 *func_ovl17_09_80045658(s32);
 void func_ovl17_09_80045660(s32);
 void func_ovl17_09_80045678(UnkStructA *);
 s32 func_ovl17_09_800456D0(UnkStructA_40 *, s32, s32, s32, s32, s32);
@@ -182,7 +174,7 @@ f32 D_ovl17_09_80046574;
 u8 D_ovl17_09_80046578[0x8];
 
 /* .data */
-UnkStruct_ovl17_09_80046280 *D_ovl17_09_80046280 = NULL;
+UnkStruct_ovl0F_01_80048130 *D_ovl17_09_80046280 = NULL;
 f32 D_ovl17_09_80046284 = 0.0f;
 f32 D_ovl17_09_80046288 = 0.0f;
 f32 D_ovl17_09_8004628C = 0.0f;
@@ -538,7 +530,7 @@ static void func_ovl17_09_80043748(UnkStruct_ovl17_09_Gfx **gdl) {
 
 void func_ovl17_09_80043750(s32 arg0, UnkStruct_ovl17_09_Gfx **arg1) {
     UnkStruct_ovl17_09_Gfx *gfx;
-    UnkStruct_ovl17_09_80046280 *t;
+    UnkStruct_ovl0F_01_80048130 *t;
 
     gfx = *arg1;
     { UnkStruct_ovl17_09_Gfx *g = gfx++; g->w0 = 0xB900031D; g->w1 = 0x00553048; }

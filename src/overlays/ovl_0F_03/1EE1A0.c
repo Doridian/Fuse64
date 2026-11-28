@@ -74,6 +74,7 @@
  * region or renumbering that is gone, it is no longer needed.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_0F_03's game object, IDO -O3: the functions are written last to first
@@ -125,14 +126,6 @@ typedef struct {
     /* 0x10 */ s32 unk10;
 } UnkStruct_ovl0F_03_800470E8; /* size 0x14 */
 
-/* what func_ovl0F_03_800461C8 returns: offsets into itself */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x14];
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ u8 unk18[8];
-    /* 0x20 */ s32 unk20;
-} UnkStruct_ovl0F_03_80046DF0;
-
 /* A display list command (gbi.h's Gfx, as two words) */
 typedef struct {
     /* 0x00 */ PORT_UP(u32) w0;
@@ -173,7 +166,7 @@ void func_ovl0F_03_80045D20(s32);
 UnkStructA *func_ovl0F_03_80045D38(s32);
 void func_ovl0F_03_80045D40(s32);
 UnkStructA *func_ovl0F_03_80045D78(s32);
-UnkStruct_ovl0F_03_80046DF0 *func_ovl0F_03_800461C8(s32);
+UnkStruct_ovl0F_01_80048130 *func_ovl0F_03_800461C8(s32);
 void func_ovl0F_03_800461D0(s32);
 void func_ovl0F_03_800461E8(UnkStructA *);
 UnkStructA *func_ovl0F_03_80046258(void (*)(s32, UnkStruct_ovl0F_03_Gfx **), s32);
@@ -289,7 +282,7 @@ Vec3f D_ovl0F_03_80047278;
 UnkStructA *D_ovl0F_03_80047284;
 
 /* .data */
-UnkStruct_ovl0F_03_80046DF0 *D_ovl0F_03_80046DF0 = NULL;
+UnkStruct_ovl0F_01_80048130 *D_ovl0F_03_80046DF0 = NULL;
 f32 D_ovl0F_03_80046DF4 = 0.0f;
 f32 D_ovl0F_03_80046DF8 = 0.0f;
 f32 D_ovl0F_03_80046DFC = 0.0f;
@@ -464,7 +457,7 @@ static void func_ovl0F_03_80044250(UnkStruct_ovl0F_03_Gfx **gdl) {
 
 void func_ovl0F_03_80044258(s32 arg0, UnkStruct_ovl0F_03_Gfx **arg1) {
     UnkStruct_ovl0F_03_Gfx *gfx;
-    UnkStruct_ovl0F_03_80046DF0 *t;
+    UnkStruct_ovl0F_01_80048130 *t;
 
     gfx = *arg1;
     { UnkStruct_ovl0F_03_Gfx *g = gfx++; g->w0 = 0xB900031D; g->w1 = 0x00553048; }

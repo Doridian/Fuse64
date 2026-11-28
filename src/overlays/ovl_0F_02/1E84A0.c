@@ -70,6 +70,7 @@
  * are held values.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 static void func_ovl0F_02_80043D64(void);
 static void func_ovl0F_02_80043D5C(void);
 static void func_ovl0F_02_80043D54(void);
@@ -183,14 +184,6 @@ typedef struct {
     /* 0x10 */ s32 unk10;
 } UnkStruct_ovl0F_02_80048D80; /* size 0x14 */
 
-/* what func_ovl0F_02_800479B8 returns: offsets into itself */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x14];
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ u8 unk18[8];
-    /* 0x20 */ s32 unk20;
-} UnkStruct_ovl0F_02_800485E0;
-
 /* what func_ovl0F_02_80047438 returns */
 typedef struct {
     /* 0x00 */ u8 unk0[0x10];
@@ -235,7 +228,7 @@ UnkStructA *func_ovl0F_02_80047528(s32);
 void func_ovl0F_02_80047530(s32);
 UnkStructA *func_ovl0F_02_80047568(s32);
 void func_ovl0F_02_80047588(s32);
-UnkStruct_ovl0F_02_800485E0 *func_ovl0F_02_800479B8(s32);
+UnkStruct_ovl0F_01_80048130 *func_ovl0F_02_800479B8(s32);
 void func_ovl0F_02_800479C0(s32);
 void func_ovl0F_02_800479D8(UnkStructA *);
 void func_ovl0F_02_80047A10(UnkStructA_40 *, s32, s32);
@@ -383,7 +376,7 @@ UnkStructA *D_ovl0F_02_80048F1C;
 UnkStruct_ovl0F_02_80048F20 D_ovl0F_02_80048F20;
 
 /* .data */
-UnkStruct_ovl0F_02_800485E0 *D_ovl0F_02_800485E0 = NULL;
+UnkStruct_ovl0F_01_80048130 *D_ovl0F_02_800485E0 = NULL;
 f32 D_ovl0F_02_800485E4 = 0.0f;
 f32 D_ovl0F_02_800485E8 = 0.0f;
 f32 D_ovl0F_02_800485EC = 0.0f;
@@ -769,7 +762,7 @@ static void func_ovl0F_02_800454E0(UnkStruct_ovl0F_02_Gfx **gdl) {
 
 void func_ovl0F_02_800454E8(s32 arg0, UnkStruct_ovl0F_02_Gfx **arg1) {
     UnkStruct_ovl0F_02_Gfx *gfx;
-    UnkStruct_ovl0F_02_800485E0 *t;
+    UnkStruct_ovl0F_01_80048130 *t;
 
     gfx = *arg1;
     { UnkStruct_ovl0F_02_Gfx *g = gfx++; g->w0 = 0xB900031D; g->w1 = 0x00553048; }

@@ -161,6 +161,7 @@
  * 800460B4's list lost 80043590 and 80043530 (not needed).
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 static void func_ovl0F_04_80043DFC(void);
 static void func_ovl0F_04_80043DF4(void);
@@ -270,14 +271,6 @@ typedef struct {
     /* 0x10 */ s32 unk10;
 } UnkStruct_ovl0F_04_80048AF0; /* size 0x14 */
 
-/* what func_ovl0F_04_80047848 returns: offsets into itself */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x14];
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ u8 unk18[8];
-    /* 0x20 */ s32 unk20;
-} UnkStruct_ovl0F_04_80048470;
-
 /* what func_ovl0F_04_800472C8 returns */
 typedef struct {
     /* 0x00 */ u8 unk0[0x10];
@@ -321,7 +314,7 @@ UnkStructA *func_ovl0F_04_80047BA0(s32, s32, s32, PORT_IP(s32));
 UnkStructA *func_ovl0F_04_80047BE8(s32, s32);
 void *func_ovl0F_04_80047CF0(void);
 UnkStruct_ovl0F_04_800472C8 *func_ovl0F_04_800472C8(void);
-UnkStruct_ovl0F_04_80048470 *func_ovl0F_04_80047848(s32);
+UnkStruct_ovl0F_01_80048130 *func_ovl0F_04_80047848(s32);
 void func_ovl0F_04_80047178(s32);
 void func_ovl0F_04_80047190(s32);
 void func_ovl0F_04_800471B8(s32, s32, s32, s32, s32, s32);
@@ -460,7 +453,7 @@ UnkStructA *D_ovl0F_04_80048C8C;
 UnkStruct_ovl0F_04_80048C90 D_ovl0F_04_80048C90;
 
 /* .data */
-UnkStruct_ovl0F_04_80048470 *D_ovl0F_04_80048470 = NULL;
+UnkStruct_ovl0F_01_80048130 *D_ovl0F_04_80048470 = NULL;
 f32 D_ovl0F_04_80048474 = 0.0f;
 f32 D_ovl0F_04_80048478 = 0.0f;
 f32 D_ovl0F_04_8004847C = 0.0f;
@@ -855,7 +848,7 @@ static void func_ovl0F_04_80045444(UnkStruct_ovl0F_04_Gfx **gdl) {
 
 void func_ovl0F_04_8004544C(s32 arg0, UnkStruct_ovl0F_04_Gfx **arg1) {
     UnkStruct_ovl0F_04_Gfx *gfx;
-    UnkStruct_ovl0F_04_80048470 *t;
+    UnkStruct_ovl0F_01_80048130 *t;
 
     gfx = *arg1;
     { UnkStruct_ovl0F_04_Gfx *g = gfx++; g->w0 = 0xB900031D; g->w1 = 0x00553048; }

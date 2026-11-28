@@ -240,7 +240,7 @@ typedef struct {
     /* 0x40 */ f32 unk40;
 } UnkStruct_ovl0C_06_80049030;
 
-/* the six movers: each record is passed to its task */
+/* a mover: each record is passed to its task (0E_01..05) */
 typedef struct {
     /* 0x00 */ s16 unk0;
     /* 0x04 */ s32 unk4;
@@ -255,7 +255,8 @@ typedef struct {
     /* 0x28 */ f32 unk28;
 } UnkStruct_ovl0E_01_800469F8;
 
-/* what replaces D_ovl0E_01_80046B00's models once their flags (unk0) are set */
+/* what replaces a placed model (UnkStruct_ovl0C_01_8004A54C) once its flag
+ * (unk0) is set (0E_01/03/12) */
 typedef struct {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ f32 unk4;
@@ -270,7 +271,8 @@ typedef struct {
     /* 0x1E */ s16 unk1E;
 } UnkStruct_ovl0E_01_80046B70;
 
-/* the nine other movers: two sets of speeds, chosen by func_ovl0E_02_800451F8()->unk10 */
+/* a mover with two sets of speeds, chosen by func_ovl0E_02_800451F8()->unk10
+ * and its copies (0E_02..05) */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
     /* 0x04 */ f32 unk4;
@@ -288,7 +290,7 @@ typedef struct {
     /* 0x34 */ f32 unk34;
 } UnkStruct_ovl0E_02_8004648C;
 
-/* the two movers' records: each is passed to its task */
+/* a mover: each record is passed to its task (0E_09/13) */
 typedef struct {
     /* 0x00 */ s16 unk0;
     /* 0x04 */ s32 unk4;
@@ -301,7 +303,7 @@ typedef struct {
     /* 0x1C */ f32 unk1C;
 } UnkStruct_ovl0E_09_80045DCC;
 
-/* a mover's path: ten points */
+/* a mover's path (0E_09: ten points, 0E_13: fifteen) */
 typedef struct {
     /* 0x00 */ f32 unk0;
     /* 0x04 */ f32 unk4;
@@ -312,7 +314,7 @@ typedef struct {
     /* 0x16 */ s16 unk16;
 } UnkStruct_ovl0E_09_80045E0C;
 
-/* the four movers: each record is passed to its task */
+/* a mover: each record is passed to its task (0E_11/12) */
 typedef struct {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ UnkStructA *unk4;
@@ -327,5 +329,13 @@ typedef struct {
     /* 0x20 */ f32 unk20;
     /* 0x24 */ f32 unk24;
 } UnkStruct_ovl0E_11_800463AC;
+
+/* what func_ovl0F_01_80047508 returns: offsets into itself */
+typedef struct {
+    /* 0x00 */ u8 unk0[0x14];
+    /* 0x14 */ s32 unk14;
+    /* 0x18 */ u8 unk18[8];
+    /* 0x20 */ s32 unk20;
+} UnkStruct_ovl0F_01_80048130;
 
 #endif

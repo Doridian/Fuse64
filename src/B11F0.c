@@ -65,7 +65,7 @@ void func_802362B8(s32);
 PORT_RET(void, s32) func_80238EA8(s32);
 void func_80239430(void);
 PORT_RET(s32, u16) func_80239FF8(s32);
-s32 *func_8023A840(void);
+UnkStruct_802AC610 *func_8023A840(void);
 void func_80243DEC(s32);
 void func_80261CD0(void *, void *, s32, PORT_RET(s32, void *), s32, s32, s32, s32, s32, s32, s32);
 void func_8026BEB0(void);
@@ -163,10 +163,10 @@ void func_80297114(void);
 void func_80297A34(void);
 
 void func_80297ADC(void) {
-    s32 *flags = func_8023A840();
+    UnkStruct_802AC610 *flags = func_8023A840();
     s32 i;
 
-    *flags |= 4;
+    flags->unk0 |= 4;
     func_8028A0B4();
     func_80277E1C();
     func_80243DEC(0);
@@ -174,9 +174,9 @@ void func_80297ADC(void) {
     D_802B3614 = func_80238A10(func_80297A34, 0, 0, 0, 9);
     D_802B03A4 = 0;
     if (D_802A2C70 != 0) {
-        *flags &= ~8;
+        flags->unk0 &= ~8;
     } else {
-        *flags |= 8;
+        flags->unk0 |= 8;
         D_802B03A8 = 0;
         for (i = 0; i < 4; i++) {
             D_802B03B0[i] = NULL;
@@ -290,13 +290,13 @@ void func_80297498(void) {
 }
 
 void func_8029738C(void) {
-    s32 *flags = func_8023A840();
+    UnkStruct_802AC610 *flags = func_8023A840();
 
     func_80243DEC(0);
     if (D_802B03A0 != 0) {
         func_8026C8E8();
         func_8026BEB0();
-        *flags &= ~0xC;
+        flags->unk0 &= ~0xC;
         func_8028A0B4();
         if (D_802A2C70 == 0) {
             func_802972D0();

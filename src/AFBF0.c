@@ -55,7 +55,7 @@ s32 func_8023903C(u32);
 void func_80239094(void);
 void func_80239430(void);
 PORT_RET(s32, u16) func_802399AC(s32);
-UnkStruct_8023A840 *func_8023A840(void);
+UnkStruct_802AC610 *func_8023A840(void);
 void func_8023AA78(s32);
 void func_8023AE6C(s32, s32, s32);
 void func_80243DEC(s32);
@@ -1351,7 +1351,7 @@ void func_8029698C(s32 arg0) {
 }
 
 void func_802968BC(s32 arg0) {
-    UnkStruct_8023A840 *p = func_8023A840();
+    UnkStruct_802AC610 *p = func_8023A840();
 
     func_80277E1C();
     func_8028A0B4();
@@ -1475,7 +1475,7 @@ void func_80295F5C(void) {
 }
 
 void func_80295B80(void) {
-    UnkStruct_8023A840 *sp94 = func_8023A840();
+    UnkStruct_802AC610 *sp94 = func_8023A840();
     UnkStructA_40 *obj;
     u8 sp80[14] = { 0x29, 0x4B, 0x3E, 0x4C, 0x3E, 0x47, 0x4D, 0x3E, 0x3D, 0x0F, 0x1B, 0x52, 0x00, 0x00 };
     s32 sp7C;

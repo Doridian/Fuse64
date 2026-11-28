@@ -122,20 +122,11 @@ typedef struct {
     /* 0x8 */ s32 unk8;
 } Group_ovl0B_02;
 
-/* What func_ovl0B_02_80048778 returns. */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ u8 unkC[0x2C];
-    /* 0x38 */ s32 unk38;
-} Save_ovl0B_02;
-
 s32 func_ovl0B_02_800482F0(u8 *, const char *, s32); /* 0x101 */
 void func_ovl0B_02_80048720(s32, s32, s32); /* 0xF00 */
 s32 func_ovl0B_02_80048728(void); /* 0xF01 */
 s32 func_ovl0B_02_80048738(void); /* 0xF03 */
-Save_ovl0B_02 *func_ovl0B_02_80048778(void); /* 0xF0B */
+UnkStruct_802AC610 *func_ovl0B_02_80048778(void); /* 0xF0B */
 void func_ovl0B_02_80048788(void); /* 0xF0D */
 void func_ovl0B_02_80048790(s32); /* 0xF0E */
 PORT_UP(u32) func_ovl0B_02_80048CF8(s32); /* 0x1400 */
@@ -224,7 +215,7 @@ s32 D_ovl0B_02_8004A3D0;
 s32 D_ovl0B_02_8004A3D4;
 s32 D_ovl0B_02_8004A3D8;
 s32 D_ovl0B_02_8004A3DC;
-Save_ovl0B_02 *D_ovl0B_02_8004A3E0;
+UnkStruct_802AC610 *D_ovl0B_02_8004A3E0;
 s32 D_ovl0B_02_8004A3E4;
 UnkStructA_40 *D_ovl0B_02_8004A3E8[2];
 UnkStructA_40 *D_ovl0B_02_8004A3F0[20];

@@ -58,7 +58,7 @@ void func_80231408(UnkStructA *, s32);
 s32 func_80232D18(UnkStructA *, s32);
 void func_80232DB4(UnkStructA *);
 PORT_RET(void, s32) func_8023903C(s32);
-UnkStruct_8023A840 *func_8023A840(void);
+UnkStruct_802AC610 *func_8023A840(void);
 s32 func_80243DDC(void);
 void func_80250338(s32, Vec3f *);
 PORT_RET(void, s32) func_8026C51C(s32, f32, f32, f32);
@@ -412,7 +412,7 @@ s32 func_80289760(UnkStruct_80288040 *arg0) {
 }
 
 s32 func_80289464(UnkStruct_80288040 *arg0) {
-    UnkStruct_8023A840 *g = func_8023A840();
+    UnkStruct_802AC610 *g = func_8023A840();
     s32 n = arg0->unk4C;
 
     switch (PORT_HOST(D_800BA8EA[arg0->unk84].unk0, D_800BA8E8[arg0->unk84].unk2)) {

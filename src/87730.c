@@ -28,7 +28,7 @@ void *func_8022A328(void *, s32, s32, s32, s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 PORT_RET(s32, u16) func_802399AC(s32);
-s32 *func_8023A840(void);
+UnkStruct_802AC610 *func_8023A840(void);
 void func_8023A864(s32);
 void func_80243698(s32);
 PORT_RET(void, s32) func_8026C660(s32);
@@ -102,7 +102,7 @@ void func_8026CFF4(s32 arg0, s32 arg1, s32 arg2) {
     s32 i;
 
     D_802AFC40 = 0;
-    if (!(*func_8023A840() & 6)) {
+    if (!(func_8023A840()->unk0 & 6)) {
         func_8026C660(0x28);
     }
     func_8023A864(0);

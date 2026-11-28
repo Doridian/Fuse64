@@ -124,7 +124,7 @@ s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_80238EA8(s32);
 void func_80239094(void);
 s32 *func_802391F0(void);
-s32 *func_8023A840(void);
+UnkStruct_802AC610 *func_8023A840(void);
 void func_802438BC(s32 *);
 void func_802441F4(void *, s32, s32 *, f32 *);
 PORT_IP(s32) func_802442A8(s32);

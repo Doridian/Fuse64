@@ -26,7 +26,7 @@ void func_80231408(UnkStructA *, s32);
 UnkStructA *func_802308B8(UnkStructA *, s32);
 s32 func_80234248(s32);
 void func_80239094(void);
-UnkStruct_8023A840 *func_8023A840(void);
+UnkStruct_802AC610 *func_8023A840(void);
 void func_8024694C(s32, s32, s32);
 void func_80246C3C(s32, s32, s32);
 void func_80246D74(s32);
@@ -279,7 +279,7 @@ void func_802797BC(UnkStructA *arg0, UnkStruct_800BB4A8 *arg1) {
     s16 item;
     s16 sound;
     s32 special;
-    UnkStruct_8023A840 *st;
+    UnkStruct_802AC610 *st;
     s16 x;
     s16 y;
     UnkStruct_800BA8A0 *stats;
@@ -460,7 +460,7 @@ void func_80279560(void) {
 }
 
 void func_802794FC(s16 arg0) {
-    UnkStruct_8023A840 *p = func_8023A840();
+    UnkStruct_802AC610 *p = func_8023A840();
 
     p->unk1C += arg0;
     if (p->unk1C >= 50) {

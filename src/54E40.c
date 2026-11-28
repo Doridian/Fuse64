@@ -180,29 +180,6 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ s32 unk1C;
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ s32 unk2C;
-    /* 0x30 */ s32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ s32 unk38;
-    /* 0x3C */ s32 unk3C;
-    /* 0x40 */ s32 unk40;
-    /* 0x44 */ s32 unk44;
-    /* 0x48 */ s32 unk48;
-    /* 0x4C */ s32 unk4C;
-} UnkStruct_802AC610; /* size = 0x50 */
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
     /* 0x04 */ s32 unk4[4];
     /* 0x14 */ s32 unk14[4];
     /* 0x24 */ s32 unk24;
@@ -505,7 +482,7 @@ void func_8023A640(void);
 void func_8023A68C(void);
 void func_8023A734(s32 arg0, s32 arg1, s32 arg2);
 s32 *func_8023A834(void);
-s32 *func_8023A840(void);
+UnkStruct_802AC610 *func_8023A840(void);
 void func_8023A84C(s32 arg0);
 void func_8023A858(s32 arg0);
 void func_8023A864(s32 arg0);
@@ -3850,8 +3827,8 @@ void func_8023A84C(s32 arg0) {
     D_802AC798 = arg0;
 }
 
-s32 *func_8023A840() {
-    return (s32 *) &D_802AC610;
+UnkStruct_802AC610 *func_8023A840() {
+    return &D_802AC610;
 }
 
 s32 *func_8023A834() {

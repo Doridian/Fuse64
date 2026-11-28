@@ -71,15 +71,10 @@ typedef struct {
     u16 v[4];
 } UnkStruct_ovl0B_01_80045EDC;
 
-typedef struct {
-    /* 0x00 */ u8 unk0[0x44];
-    /* 0x44 */ s32 unk44;
-} UnkStruct_ovl0B_01_80044C58;
-
 void func_ovl0B_01_80044C00(s32, s32, s32); /* 0xF00 */
 s32 func_ovl0B_01_80044C08(void); /* 0xF01 */
 s32 func_ovl0B_01_80044C18(void); /* 0xF03 */
-UnkStruct_ovl0B_01_80044C58 *func_ovl0B_01_80044C58(void); /* 0xF0B */
+UnkStruct_802AC610 *func_ovl0B_01_80044C58(void); /* 0xF0B */
 UnkStructA_40 *func_ovl0B_01_800451E8(s32, s32); /* 0x1500 */
 void func_ovl0B_01_800451F0(UnkStructA_40 *); /* 0x1501 */
 UnkStructA_40 *func_ovl0B_01_80045268(void (*)(s32, Gfx_ovl0B_01 **), s32); /* 0x1510 */
@@ -535,7 +530,7 @@ static void func_ovl0B_01_8004376C(s32 *ids, s32 mode) {
 
 void func_ovl0B_01_80043660(void) {
     s32 pad[3]; /* fake: unused; the original's frame has the slots */
-    UnkStruct_ovl0B_01_80044C58 *state;
+    UnkStruct_802AC610 *state;
     s32 presses;
     s32 idle;
     s32 t;

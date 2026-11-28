@@ -158,20 +158,32 @@ typedef struct {
     /* 0x4C */ f32 unk4C;
 } UnkStruct_802B0260; /* size 0x50 */
 
-/* What func_8023A840 returns. */
+/* D_802AC610 (54E40.c), what func_8023A840 (ZeroJump 0x0F0B) returns. */
 typedef struct {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ s32 unk4;
     /* 0x08 */ s32 unk8;
     /* 0x0C */ s32 unkC;
     /* 0x10 */ s32 unk10;
-    /* 0x14 */ u8 unk14[0x4];
+    /* 0x14 */ s32 unk14;
     /* 0x18 */ s32 unk18;
     /* 0x1C */ s32 unk1C;
-} UnkStruct_8023A840;
+    /* 0x20 */ s32 unk20;
+    /* 0x24 */ s32 unk24;
+    /* 0x28 */ s32 unk28;
+    /* 0x2C */ s32 unk2C;
+    /* 0x30 */ s32 unk30;
+    /* 0x34 */ f32 unk34;
+    /* 0x38 */ s32 unk38;
+    /* 0x3C */ s32 unk3C;
+    /* 0x40 */ s32 unk40;
+    /* 0x44 */ s32 unk44;
+    /* 0x48 */ s32 unk48;
+    /* 0x4C */ s32 unk4C;
+} UnkStruct_802AC610; /* size 0x50 */
 
 /*
- * A word's low half, as 93850 and 949A0 read UnkStruct_8023A840's unk4,
+ * A word's low half, as 93850 and 949A0 read UnkStruct_802AC610's unk4,
  * unk8 and unkC: the halfword at +2 on the N64; the port takes the whole
  * word, its own order's (they are small counts).
  */

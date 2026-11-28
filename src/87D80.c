@@ -147,7 +147,7 @@ s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 void func_80238EA8(s32);
 void func_80239094(void);
 s32 *func_802391F0(void);
-s32 *func_8023A840(void);
+UnkStruct_802AC610 *func_8023A840(void);
 void func_802438BC(s32 *);
 void func_802441F4(void *, s32, s32 *, f32 *);
 PORT_IP(s32) func_802442A8(s32);
@@ -502,7 +502,7 @@ void func_8026F5E8(s32 arg0, s32 arg1, s32 arg2) {
     f32 z;
 
     sp28 = D_802AC5D0 & 4;
-    sp24 = *func_8023A840() & 6;
+    sp24 = func_8023A840()->unk0 & 6;
     temp_v0 = func_8026D7D8(arg0, arg1, arg2);
     if (temp_v0 & 0x380) {
         if (pos[1]) { /* fake: a dead read of pos[1] gives z f16 */

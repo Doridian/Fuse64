@@ -50,7 +50,7 @@ PORT_RET(void, s32) func_80238EA8(s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 UnkStruct_8023A834 *func_8023A834(void);
-UnkStruct_8023A840 *func_8023A840(void);
+UnkStruct_802AC610 *func_8023A840(void);
 PORT_RET(void, s32) func_8026C660(s32);
 s32 func_8026D7D8(s32, s32, s32);
 PORT_RET(s32, u8) func_8026DC74(s32);

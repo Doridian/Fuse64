@@ -66,19 +66,10 @@ typedef struct {
     /* 0x07 */ u8 unk7;
 } UnkStruct_ovl0B_05_80046674;
 
-/* What func_ovl0B_05_800453F8 (ZeroJump 0x0F0B) returns. */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x3C];
-    /* 0x3C */ s32 unk3C;
-    /* 0x40 */ s32 unk40;
-    /* 0x44 */ u8 unk44[4];
-    /* 0x48 */ s32 unk48;
-} UnkStruct_ovl0B_05_80046820;
-
 s32 func_ovl0B_05_80044F70(u8 *, const char *, s32); /* 0x0101 */
 void func_ovl0B_05_800452A8(s32); /* 0x0C00 */
 void func_ovl0B_05_800453A0(s32, s32, s32); /* 0x0F00 */
-UnkStruct_ovl0B_05_80046820 *func_ovl0B_05_800453F8(void); /* 0x0F0B */
+UnkStruct_802AC610 *func_ovl0B_05_800453F8(void); /* 0x0F0B */
 void func_ovl0B_05_80045410(s32); /* 0x0F0E */
 void func_ovl0B_05_80045990(UnkStructA_40 *); /* 0x1501 */
 void func_ovl0B_05_800459B0(UnkStructA_40 *, s32); /* 0x1505 */
@@ -134,7 +125,7 @@ UnkStruct_802B0260 *D_ovl0B_05_800467FC;
 s32 D_ovl0B_05_80046800;
 s32 D_ovl0B_05_80046804;
 UnkStructA *D_ovl0B_05_80046808[6];
-UnkStruct_ovl0B_05_80046820 *D_ovl0B_05_80046820;
+UnkStruct_802AC610 *D_ovl0B_05_80046820;
 s32 D_ovl0B_05_80046828[8];
 s32 D_ovl0B_05_80046848[4];
 s32 D_ovl0B_05_80046858[2];

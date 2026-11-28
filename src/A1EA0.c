@@ -41,7 +41,7 @@ PORT_RET(void, s32) func_80238EA8(s32);
 void func_80239094(void);
 UnkStruct_800BB340 *func_802391F0(void);
 void func_80239430(void);
-UnkStruct_8023A840 *func_8023A840(void);
+UnkStruct_802AC610 *func_8023A840(void);
 s32 func_80243DDC(void);
 UnkStructA *func_802443F4(s32);
 void func_80250338(s32, Vec3f *);

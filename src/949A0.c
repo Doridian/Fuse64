@@ -19,7 +19,7 @@ void func_80231408(UnkStructA *, s32);
 UnkStructA *func_802308B8(UnkStructA *, s32);
 s32 func_80234248(s32);
 void func_80239094(void);
-UnkStruct_8023A840 *func_8023A840(void);
+UnkStruct_802AC610 *func_8023A840(void);
 void func_8024694C(s32, s32, s32);
 void func_80246C3C(s32, s32, s32);
 void func_80246D74(s32);
@@ -735,7 +735,7 @@ void func_8027A950(void) {
 }
 
 void func_8027A640(void) {
-    UnkStruct_8023A840 *st;
+    UnkStruct_802AC610 *st;
     u8 *p;
     s32 found;
     s32 off;

@@ -12,8 +12,10 @@
  *   CORE_FUNC_A .. CORE_FUNC_D  the functions, in definition order
  *   CORE_BSS_A0, CORE_BSS_A1    two s32 in .bss (CORE_FUNC_A sets them)
  *   CORE_BSS_B                  a Vec3f in .bss (CORE_FUNC_B reads it)
- *   CORE_ZJ_<id>                the ZeroJump stubs called, by the id each
- *                               loads into $t0 (the same in every overlay)
+ *
+ * The ZeroJump stubs it calls (0x1704, 0x1708, 0x1709, 0x1904; core_d.h's
+ * 0x2B04) are the overlay's ZJ_<id> names, declared by
+ * overlays/common/zerojump.h, which the overlay includes before this.
  *
  * CORE_FUNC_D is core_d.h, which this includes last; an overlay that
  * defines CORE_D_LATE includes it itself, further down (ovl_15_01: its
@@ -26,16 +28,16 @@ void CORE_FUNC_A(void) {
 }
 
 void CORE_FUNC_B(f32 arg0, f32 arg1, f32 arg2) {
-    CORE_ZJ_1704(CORE_BSS_B.x, CORE_BSS_B.y, CORE_BSS_B.z);
-    CORE_ZJ_1708(arg0, arg1, arg2);
-    CORE_ZJ_1904(180);
+    ZJ_1704(CORE_BSS_B.x, CORE_BSS_B.y, CORE_BSS_B.z);
+    ZJ_1708(arg0, arg1, arg2);
+    ZJ_1904(180);
 }
 
 void CORE_FUNC_C(f32 arg0) {
     f32 sp1C;
 
-    CORE_ZJ_1709(&sp1C, NULL, NULL);
-    CORE_ZJ_1708(sp1C + arg0, 32768.0f, 32768.0f);
+    ZJ_1709(&sp1C, NULL, NULL);
+    ZJ_1708(sp1C + arg0, 32768.0f, 32768.0f);
 }
 
 #ifndef CORE_D_LATE

@@ -1118,11 +1118,6 @@ static void func_ovl0B_06_80047D00(void) {
 #define CORE_BSS_A0 D_ovl0B_06_8004A5B4
 #define CORE_BSS_A1 D_ovl0B_06_8004A5B8
 #define CORE_BSS_B D_ovl0B_06_8004A5C0
-#define CORE_ZJ_1704 func_ovl0B_06_80048998
-#define CORE_ZJ_1708 func_ovl0B_06_800489B8
-#define CORE_ZJ_1709 func_ovl0B_06_800489C0
-#define CORE_ZJ_1904 func_ovl0B_06_80048CC8
-#define CORE_ZJ_2B04 func_ovl0B_06_80049250
 #include "overlays/common/core.h"
 
 
@@ -3156,7 +3151,7 @@ static void func_ovl0B_06_80043018(void) {
  * two; tried: the start index as a parameter (jp's n home moves), OPEN_B
  * in a statics.h (jp swaps). The number is the call's line minus 5, so a
  * line added or removed above the handler changes it. */
-#line 2701
+#line 2696
 static void OPEN_B(s32 n, UnkStruct_ovl0B_01_80045E34 *box) {
     s32 i;
     f32 step;

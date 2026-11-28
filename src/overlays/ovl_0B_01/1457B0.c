@@ -217,11 +217,6 @@ static void func_ovl0B_01_8004464C(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
 #define CORE_BSS_A0 D_ovl0B_01_80045FA4
 #define CORE_BSS_A1 D_ovl0B_01_80045FA8
 #define CORE_BSS_B D_ovl0B_01_80045FB0
-#define CORE_ZJ_1704 func_ovl0B_01_80045348
-#define CORE_ZJ_1708 func_ovl0B_01_80045368
-#define CORE_ZJ_1709 func_ovl0B_01_80045370
-#define CORE_ZJ_1904 func_ovl0B_01_80045678
-#define CORE_ZJ_2B04 func_ovl0B_01_80045C00
 #include "overlays/common/core.h"
 
 static void func_ovl0B_01_80043010(UnkStruct_ovl0B_01_80045E34 *arg0);

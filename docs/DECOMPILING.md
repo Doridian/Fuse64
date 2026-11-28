@@ -146,9 +146,15 @@ too. A position where two or more structure types meet fails `--check`
 unless it is in `ALLOW_E` with the reason: the task's argument and
 7D840's `Gfx` for 426E0's `Gfx_80225840`. The other differences (an `s32` for a `u32` or a pointer, a `void *` for a
 structure's pointer, a `void` return for an `s32`, fewer parameters:
-279 in us, from about 400 before "Prototypes", below) are counted and listed with `-v`, and
-`--check` fails when there are more than `E_OTHER_MAX` (per version);
-several are what a match or the port needs (PORT_RET, a halfword
+279 in us, from about 400 before "Prototypes", below) are listed with `-v`,
+and each is a line of `tools/structs_allow_e.txt` (function, role, a
+reason class such as `narrow-int`, `void-read-v0`, `m2c-placeholder`,
+`vec3f-f32` or `callback`, the versions it differs in). `--check` fails
+on a difference the file doesn't have for the version, and on a line of
+the version's that no longer differs (resolved: remove it).
+`tools/structs.py --update-allow --version <v>` rewrites the file for one
+version (run it for us, eu and jp): a new line gets a guessed class, and a
+line keeps the class it has, which can be bettered by hand; several are what a match or the port needs (PORT_RET, a halfword
 argument), and proto_check.py checks the ones that matter where pointers
 are 8 bytes.
 
@@ -291,9 +297,14 @@ stubs at its own addresses (`func_ovl0C_01_80048F08` is 0C_01's 0x0F0B),
 so one id is one main_code function, and `src/overlays/common/zerojump.h`
 declares each id once, as `ZJ_<id>`, under `#ifdef ZJ_<id>`. In place of
 its stubs' prototypes an overlay defines the name of its stub for each id
-it calls (`#define ZJ_0F0B func_ovl0C_01_80048F08`, as core.h's
-`CORE_ZJ_<id>`) and includes the header after them; the calls keep the
-stubs' names. A declaration is the target's (from its `include/<obj>.h`
+it calls (`#define ZJ_0F0B func_ovl0C_01_80048F08`) and includes the
+header after them; the calls keep the stubs' names. The shared code in
+`src/overlays/common/core.h`, `core_d.h` and `core_0c.h` calls its stubs
+by these `ZJ_<id>` names, so an overlay that includes it defines them
+(0x1704, 0x1708, 0x1709, 0x1904, 0x2B04) like any other. An id no code
+calls isn't defined (no overlay calls 0x0000, the module registration;
+its stub's `const char *` in five overlays was a first draft's misreading
+of splat's one symbol over the first stubs as 0x0100's debug print). A declaration is the target's (from its `include/<obj>.h`
 or its definition: its PORT_IP/PORT_RET and parameter names) where every
 overlay compiles to the same code with it, ROM and port; otherwise it is
 the overlays' view, and its comment says how it differs and why:
@@ -319,7 +330,8 @@ a `Vec3f *` where the others pass an `f32 *` (0x1803, 0x1806, 0x2601,
 0x10 bank, tasks.h), a narrower type changes its code (0D_01's u32 for
 0x1812, 0F_02/0F_04's s16 for 0x2801), it passes a pointer through a
 `PORT_IP(s32)` parameter (kept so that port/tools/proto_check.py sees it
-at the stub), or jp's `#define`s make two of its stubs one (0B_05's 0x2503
+at the stub; 0A_03's 0x1904, whose `ZJ_1904` it defines after the
+header's include, for core.h), or jp's `#define`s make two of its stubs one (0B_05's 0x2503
 and 0x250D). `scratch/protos2/gen.py` wrote the header and the overlays'
 lines from their original declarations (`choice.txt` and `keep.txt` there
 hold the decisions; each was checked by the ROM's objects in us, eu and

@@ -134,11 +134,6 @@ static void func_ovl17_08_800443D4(void) {
 #define CORE_BSS_A0 D_ovl17_08_80045C84
 #define CORE_BSS_A1 D_ovl17_08_80045C88
 #define CORE_BSS_B D_ovl17_08_80045C90
-#define CORE_ZJ_1704 func_ovl17_08_80044FB8
-#define CORE_ZJ_1708 func_ovl17_08_80044FD8
-#define CORE_ZJ_1709 func_ovl17_08_80044FE0
-#define CORE_ZJ_1904 func_ovl17_08_800452E8
-#define CORE_ZJ_2B04 func_ovl17_08_80045870
 #include "overlays/common/core.h"
 
 void func_ovl17_08_800440F4(void) {

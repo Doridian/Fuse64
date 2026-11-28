@@ -323,11 +323,6 @@ static void func_ovl0D_03_80046678(void) {
 #define CORE_BSS_A0 D_ovl0D_03_80048164
 #define CORE_BSS_A1 D_ovl0D_03_80048168
 #define CORE_BSS_B D_ovl0D_03_80048170
-#define CORE_ZJ_1704 func_ovl0D_03_80047228
-#define CORE_ZJ_1708 func_ovl0D_03_80047248
-#define CORE_ZJ_1709 func_ovl0D_03_80047250
-#define CORE_ZJ_1904 func_ovl0D_03_80047558
-#define CORE_ZJ_2B04 func_ovl0D_03_80047AE0
 #include "overlays/common/core.h"
 
 /* unused here (ovl_0D_04's 80043478) */

@@ -195,7 +195,6 @@ void func_ovl17_02_80043490(void) {
 }
 
 #define CORE_FUNC_D func_ovl17_02_800435A0
-#define CORE_ZJ_2B04 func_ovl17_02_80044B30
 #include "overlays/common/core_d.h"
 
 void func_ovl17_02_800435D4(f32 arg0) {

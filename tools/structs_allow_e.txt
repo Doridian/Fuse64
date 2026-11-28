@@ -1,0 +1,297 @@
+# (e)'s other differences that tools/structs.py --check allows: a function's
+# declarations that differ, but not between structure types (docs/DECOMPILING.md,
+# "Prototypes").  Written by tools/structs.py --update-allow --version V, one
+# version at a time; it keeps each line's class, which can be changed by hand.
+# Tab-separated: function, role, class, the versions it differs in, the types.
+# The classes (structs.py's E_CLASSES):
+#   narrow-int       an int where another declaration has a char or a short (the callers' view)
+#   int-sign         int, unsigned int or long long: the same register, another view
+#   void-read-v0     a void function whose callers read $v0 (or the other way)
+#   int-pointer      an int where another has a pointer (m2c's placeholder or a PORT_IP(s32))
+#   m2c-placeholder  a u8 */f32 */void */int * where another has a structure's pointer
+#   vec3f-f32        a Vec3f * where another passes an f32 *
+#   float-bits       an int where another has an f32 (its bits, in an integer register)
+#   callback         a function pointer's type
+#   count            called or declared with another number of parameters
+#   file-local       a type a file defines for itself (97610's u32 (*)[3])
+#   if-variant       an #if VERSION_ variant (in some versions only)
+#   other            none of these
+func_8000059C	param 0	int-sign	us,eu,jp	int | unsigned int
+func_8000059C	param 1	int-sign	us,eu,jp	int | unsigned int
+func_8000059C	param 2	int-pointer	us,eu,jp	unsigned int | void*
+func_80000698	param 1	int-sign	us,eu,jp	int | unsigned int
+func_80000698	param 2	int-sign	us,eu,jp	int | unsigned int
+func_80000698	ret	void-read-v0	us,eu,jp	long long | void
+func_80001480	param 0	m2c-placeholder	us,eu,jp	OSSched* | void*
+func_80001488	param 0	m2c-placeholder	us,eu,jp	OSSched* | void*
+func_80001488	param 1	m2c-placeholder	us,eu,jp	OSScClient* | void*
+func_80225B90	count	count	us,eu,jp	0 | 1
+func_80225B90	ret	int-sign	us,eu,jp	int | unsigned int
+func_802268F4	count	count	us,eu,jp	0 | 1
+func_80227678	ret	int-pointer	us,eu,jp	unsigned int | void*
+func_80227BAC	param 0	narrow-int	us,eu,jp	int | signed char
+func_80227BAC	param 1	narrow-int	us,eu,jp	int | signed char
+func_80227BAC	param 2	narrow-int	us,eu,jp	int | signed char
+func_80227C9C	param 0	int-pointer	us,eu,jp	UnkStruct_800BD5B0* | int
+func_80227CD0	param 0	int-pointer	us,eu,jp	UnkStruct_800BD5B0* | int
+func_80227D50	param 0	int-pointer	us,eu,jp	UnkStruct_800BD5B0* | int
+func_80227D50	param 1	int-sign	us,eu,jp	int | unsigned int
+func_80227D50	param 2	int-sign	us,eu,jp	int | unsigned int
+func_80227D50	param 3	int-sign	us,eu,jp	int | unsigned int
+func_80227D50	param 4	int-sign	us,eu,jp	int | unsigned int
+func_80227E38	ret	int-pointer	us,eu,jp	UnkStruct_800BD5B0* | int
+func_8022946C	param 0	m2c-placeholder	us,eu,jp	UnkStructA_40* | void*
+func_8022979C	param 0	int-pointer	us,eu,jp	UnkStructA_40* | int | void*
+func_8022979C	ret	void-read-v0	us,eu,jp	int | void
+func_8022984C	param 0	int-pointer	us,eu,jp	UnkStructA_40* | int | void*
+func_8022984C	ret	void-read-v0	us,eu,jp	int | void
+func_80229C90	param 0	int-pointer	us,eu,jp	UnkStructA_40* | int | void*
+func_80229C90	param 2	narrow-int	us,eu,jp	int | short
+func_80229C90	param 3	narrow-int	us,eu,jp	int | short
+func_80229C90	param 4	narrow-int	us,eu,jp	int | short
+func_80229C90	param 5	narrow-int	us,eu,jp	int | short
+func_80229F74	param 0	int-pointer	us,eu,jp	UnkStructA_40* | int | void*
+func_80229F74	ret	void-read-v0	us,eu,jp	int | void
+func_8022A328	param 0	m2c-placeholder	us,eu,jp	UnkModel* | void*
+func_8022A328	param 3	int-sign	us,eu,jp	int | unsigned int
+func_8022A328	ret	m2c-placeholder	us,eu,jp	UnkStructA_40* | void*
+func_8022DDB4	param 0	int-pointer	us,eu,jp	int | int*
+func_8022DF68	param 0	vec3f-f32	us,eu,jp	Vec3f* | float*
+func_8022DF68	param 1	vec3f-f32	us,eu,jp	Vec3f* | float* | void*
+func_8022E884	param 0	int-pointer	us,eu,jp	UnkStructA* | int
+func_8022E884	param 1	int-pointer	us,eu,jp	UnkStructA* | int
+func_8022F4AC	param 2	int-pointer	us,eu,jp	UnkStructA* | int
+func_8022F4AC	ret	int-pointer	us,eu,jp	UnkStructA* | int
+func_8022F550	param 0	int-pointer	us,eu,jp	UnkStructA* | int
+func_8022F550	ret	int-pointer	us,eu,jp	UnkStructA* | int
+func_8022F698	param 0	int-pointer	us,eu,jp	int | void*
+func_8022F698	param 1	vec3f-f32	us,eu,jp	Vec3f* | float* | int
+func_8022F698	param 2	vec3f-f32	us,eu,jp	Vec3f* | float*
+func_8022F698	param 3	m2c-placeholder	us,eu,jp	UnkStructA** | void*
+func_8022F77C	param 1	int-pointer	us,eu,jp	Vec3f* | int
+func_8022F77C	param 2	int-pointer	us,eu,jp	Vec3f* | int
+func_8022F77C	ret	int-pointer	us,eu,jp	UnkStructA* | int
+func_8022F808	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | float* | void*
+func_8022F808	param 1	vec3f-f32	us,eu,jp	Vec3f* | float*
+func_8022FA88	ret	void-read-v0	us,eu,jp	void | void*
+func_8022FC90	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | void*
+func_8022FC90	ret	void-read-v0	us,eu,jp	int | void
+func_8022FEAC	param 0	vec3f-f32	us,eu,jp	Vec3f* | float*
+func_8022FEAC	param 1	vec3f-f32	us,eu,jp	Vec3f* | float*
+func_8022FF58	param 0	vec3f-f32	us,eu,jp	Vec3f* | float* | int
+func_8022FF58	param 1	vec3f-f32	us,eu,jp	Vec3f* | float*
+func_8022FF58	param 2	vec3f-f32	us,eu,jp	Vec3f* | float*
+func_8023085C	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | float*
+func_8023085C	ret	void-read-v0	us,eu,jp	UnkStructA* | void
+func_802308B8	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | float* | void*
+func_802308B8	ret	void-read-v0	us,eu,jp	UnkStructA* | void | void*
+func_80230AA0	param 1	int-pointer	us,eu,jp	float* | int
+func_80230AA0	param 2	int-pointer	us,eu,jp	float* | int
+func_80230AA0	param 3	int-pointer	us,eu,jp	float* | int
+func_80230AA0	ret	void-read-v0	us,eu,jp	int | void
+func_80230E6C	ret	void-read-v0	us,eu,jp	UnkStructA* | void
+func_802310BC	param 2	m2c-placeholder	us,eu,jp	UnkStructA* | unsigned char*
+func_802310BC	ret	void-read-v0	us,eu,jp	void | void*
+func_80231274	param 3	int-pointer	us,eu,jp	UnkStructA* | int | void*
+func_80231274	ret	void-read-v0	us,eu,jp	UnkStructA* | void | void*
+func_802313DC	param 1	int-sign	us,eu,jp	int | unsigned int
+func_80232A34	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | unsigned char*
+func_80232AA8	param 0	int-pointer	us,eu,jp	UnkStructA* | int | unsigned char*
+func_80232AA8	ret	void-read-v0	us,eu,jp	int | void
+func_80232AC8	param 0	int-pointer	us,eu,jp	UnkStructA* | int | unsigned char*
+func_80232AC8	param 1	int-pointer	us,eu,jp	UnkStructA* | int | unsigned char*
+func_80232AC8	ret	void-read-v0	us,eu,jp	int | void
+func_80232B04	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | unsigned char*
+func_80232B04	param 1	m2c-placeholder	us,eu,jp	UnkStructA* | unsigned char*
+func_80232B04	param 2	int-pointer	us,eu,jp	Step3C* | int | void*
+func_80232BA0	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | float* | unsigned char* | void*
+func_80232BA0	param 1	m2c-placeholder	us,eu,jp	UnkStructA* | unsigned char* | void*
+func_80232C74	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | float*
+func_80232D18	count	count	us,eu,jp	2 | 3
+func_80232D18	param 0	int-pointer	us,eu,jp	UnkStructA* | float* | int | void*
+func_80233C80	param 0	vec3f-f32	us,eu,jp	Vec3f* | float*
+func_80234DD4	param 3	m2c-placeholder	us,eu,jp	UnkStructA_40* | void*
+func_80237D4C	param 0	narrow-int	us,eu,jp	int | unsigned short
+func_80237D4C	ret	void-read-v0	us,eu,jp	int | void
+func_80238A10	param 0	callback	us,eu,jp	int | void (*)() | void (*)(void) | void*
+func_80238A10	param 1	int-pointer	us,eu,jp	int | unsigned int | void*
+func_80238A10	param 2	int-pointer	us,eu,jp	int | unsigned char* | void*
+func_80238A10	param 4	narrow-int	us,eu,jp	int | unsigned short
+func_80238A10	ret	void-read-v0	us,eu,jp	int | void
+func_8023903C	param 0	int-sign	us,eu,jp	int | unsigned int
+func_8023903C	ret	void-read-v0	us,eu,jp	int | void
+func_80239094	ret	void-read-v0	us,eu,jp	int | void
+func_802399AC	ret	narrow-int	us,eu,jp	int | unsigned short
+func_80239F70	count	count	us,eu,jp	0 | 1
+func_80239F70	ret	narrow-int	us,eu,jp	int | signed char
+func_80239FF8	ret	narrow-int	us,eu,jp	int | unsigned short
+func_8023A038	ret	narrow-int	us,eu,jp	int | unsigned char
+func_8023A058	ret	narrow-int	us,eu,jp	int | unsigned char
+func_8023A070	ret	narrow-int	us,eu,jp	int | unsigned char
+func_8023A834	ret	m2c-placeholder	us,eu,jp	UnkStruct_8023A834* | int* | void*
+func_8024368C	param 0	callback	us,eu,jp	int (*)(void*) | void (*)(UnkStructA*)
+func_802437C0	ret	void-read-v0	us,eu,jp	int | unsigned short | void
+func_80243824	ret	void-read-v0	us,eu,jp	int | void
+func_80243A50	param 5	narrow-int	us,eu,jp	int | short
+func_802442A8	ret	int-pointer	us,eu,jp	UnkStructA* | int
+func_802443F4	ret	int-pointer	us,eu,jp	UnkStructA* | int | void*
+func_80245150	ret	void-read-v0	us,eu,jp	int | void
+func_8024557C	param 0	m2c-placeholder	us,eu,jp	int* | void*
+func_802457D8	ret	void-read-v0	us,eu,jp	int | void
+func_80250DC8	count	count	us,eu,jp	0 | 1
+func_8025E1D4	param 0	m2c-placeholder	us,eu,jp	Gfx_80225840** | unsigned char**
+func_80261CD0	param 0	m2c-placeholder	us,eu,jp	Gfx** | void*
+func_80261CD0	param 1	m2c-placeholder	us,eu,jp	Vtx* | void*
+func_80261CD0	param 3	int-pointer	us,eu,jp	int | unsigned char*
+func_80261CD0	param 4	int-sign	us,eu,jp	int | unsigned int
+func_80261CD0	param 5	int-sign	us,eu,jp	int | unsigned int
+func_80261CD0	param 6	narrow-int	us,eu,jp	int | unsigned char
+func_80261CD0	param 7	narrow-int	us,eu,jp	int | unsigned char
+func_8026437C	param 1	m2c-placeholder	us,eu,jp	TexFile* | void*
+func_80267654	param 0	narrow-int	us,eu,jp	int | short
+func_8026A754	param 2	int-pointer	us,eu,jp	int | void*
+func_8026A754	param 3	int-pointer	us,eu,jp	int | void*
+func_8026A754	ret	narrow-int	us,eu,jp	int | short
+func_8026B79C	ret	m2c-placeholder	us,eu,jp	UnkStruct_802AD680* | int*
+func_8026B9CC	param 0	m2c-placeholder	us,eu,jp	UnkStruct_8026B9CC_0* | void*
+func_8026B9CC	param 1	m2c-placeholder	us,eu,jp	UnkStruct_8026B9CC_1* | void*
+func_8026BF28	param 0	narrow-int	us,eu,jp	int | signed char
+func_8026BF90	param 0	narrow-int	us,eu,jp	int | signed char
+func_8026C51C	ret	void-read-v0	us,eu,jp	int | void
+func_8026C630	param 1	vec3f-f32	us,eu,jp	Vec3f* | float*
+func_8026C630	ret	void-read-v0	us,eu,jp	int | void
+func_8026CE28	ret	int-pointer	us,eu,jp	unsigned int | void*
+func_8026D4B0	ret	void-read-v0	us,eu,jp	UnkStructA_40* | void | void*
+func_8026D518	ret	void-read-v0	us,eu,jp	UnkStructA_40* | void
+func_8026DC74	ret	narrow-int	us,eu,jp	int | unsigned char
+func_8026E338	param 3	vec3f-f32	us,eu,jp	Vec3f* | float* | int*
+func_8026E6E4	param 0	m2c-placeholder	us,eu,jp	UnkStructA_40* | unsigned char* | void*
+func_8026E938	param 0	m2c-placeholder	us,eu,jp	UnkStructA_40* | unsigned char* | void*
+func_8026EAF8	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | unsigned char* | void*
+func_8026FF64	count	count	us,eu,jp	1 | 2
+func_80270080	param 0	m2c-placeholder	us,eu,jp	UnkStruct_8027A264* | int*
+func_802700EC	param 0	int-pointer	us,eu,jp	UnkStructA* | int | unsigned char*
+func_802700EC	param 1	int-pointer	us,eu,jp	UnkStructA* | int | unsigned char*
+func_802700EC	param 3	float-bits	us,eu,jp	float | int
+func_802700EC	ret	int-pointer	us,eu,jp	int | void*
+func_80270354	param 0	m2c-placeholder	us,eu,jp	int* | short*
+func_80270354	param 1	narrow-int	us,eu,jp	int | short
+func_8027036C	param 0	m2c-placeholder	us,eu,jp	int* | short*
+func_8027036C	param 1	narrow-int	us,eu,jp	int | short
+func_8027036C	ret	void-read-v0	us,eu,jp	int | void
+func_80270714	param 0	narrow-int	us,eu,jp	int | short
+func_80270770	param 1	narrow-int	us,eu,jp	int | short
+func_80270770	ret	void-read-v0	us,eu,jp	int | void
+func_80270B4C	param 0	int-pointer	us,eu,jp	UnkStructA* | int
+func_80270B4C	ret	narrow-int	us,eu,jp	int | short
+func_80270BA4	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | unsigned char* | void*
+func_80270C24	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | unsigned char*
+func_80270C24	param 1	narrow-int	us,eu,jp	int | short
+func_802712A8	param 0	m2c-placeholder	us,eu,jp	int* | short*
+func_802712A8	param 1	narrow-int	us,eu,jp	int | short
+func_802712A8	ret	narrow-int	us,eu,jp	int | short
+func_802712C4	param 0	int-pointer	us,eu,jp	int | short*
+func_802712C4	ret	void-read-v0	us,eu,jp	int | void
+func_80271BB8	param 0	narrow-int	us,eu,jp	int | short
+func_80271BB8	ret	void-read-v0	us,eu,jp	int | void
+func_80271F74	param 0	int-pointer	us,eu,jp	int | int*
+func_80271F74	ret	void-read-v0	us,eu,jp	int | void
+func_802733C8	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | unsigned char* | void*
+func_802734BC	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | unsigned char* | void*
+func_802741D8	ret	void-read-v0	us,eu,jp	int | void
+func_80274F64	param 0	narrow-int	us,eu,jp	int | short
+func_80274F64	ret	narrow-int	us,eu,jp	int | short
+func_80274F8C	param 4	narrow-int	us,eu,jp	int | short
+func_80274F8C	ret	void-read-v0	us,eu,jp	int | void
+func_80275C7C	param 0	narrow-int	us,eu,jp	int | short
+func_80275C7C	param 1	int-pointer	us,eu,jp	int | unsigned char*
+func_80275C7C	param 2	narrow-int	us,eu,jp	int | short
+func_80275C7C	ret	void-read-v0	us,eu,jp	int | void
+func_80277484	ret	void-read-v0	us,eu,jp	float | void
+func_8027750C	param 0	narrow-int	us,eu,jp	int | short
+func_8027750C	ret	void-read-v0	us,eu,jp	int | void
+func_802775D8	param 0	int-pointer	us,eu,jp	float* | int
+func_802775D8	ret	void-read-v0	us,eu,jp	int | void
+func_8027799C	param 0	narrow-int	us,eu,jp	int | short
+func_8027799C	ret	int-pointer	us,eu,jp	int | void*
+func_80277AF8	param 1	narrow-int	us,eu,jp	int | short
+func_80277CC0	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | unsigned char*
+func_80277CC0	ret	narrow-int	us,eu,jp	int | short
+func_80277D20	param 1	narrow-int	us,eu,jp	int | short
+func_80277D60	param 0	narrow-int	us,eu,jp	int | short
+func_80277D60	param 1	narrow-int	us,eu,jp	int | short
+func_80277DA8	param 1	narrow-int	us,eu,jp	int | short
+func_80277FC4	param 9	int-pointer	us,eu,jp	int | int*
+func_80277FC4	ret	m2c-placeholder	us,eu,jp	Rec926* | void*
+func_80278D54	param 0	m2c-placeholder	us,eu,jp	Rec926* | int*
+func_80278E84	param 0	narrow-int	us,eu,jp	int | short
+func_80278E84	param 1	narrow-int	us,eu,jp	int | short
+func_80278E84	ret	void-read-v0	us,eu,jp	int | void
+func_8027A1F4	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | void*
+func_8027B0BC	ret	void-read-v0	us,eu,jp	int | void
+func_8027B7C4	param 0	narrow-int	us,eu,jp	int | short
+func_8027B7C4	ret	void-read-v0	us,eu,jp	int | void
+func_8027B828	param 0	narrow-int	us,eu,jp	int | short
+func_8027B828	param 1	narrow-int	us,eu,jp	int | short
+func_8027B828	param 2	narrow-int	us,eu,jp	int | short
+func_8027B828	param 3	narrow-int	us,eu,jp	int | short
+func_8027B828	ret	void-read-v0	us,eu,jp	int | void
+func_8027BA80	param 0	narrow-int	us,eu,jp	int | short
+func_8027BA80	ret	void-read-v0	us,eu,jp	int | void
+func_8027BAE8	param 0	narrow-int	us,eu,jp	int | short
+func_8027BAE8	param 2	float-bits	us,eu,jp	float | int
+func_8027BAE8	param 3	float-bits	us,eu,jp	float | int
+func_8027EB1C	param 0	file-local	us,eu,jp	UnkStruct_802B01B8* | unsigned int (*)[3]
+func_8027EB5C	param 0	file-local	us,eu,jp	UnkStruct_802B0190* | unsigned int (*)[3] | unsigned int*
+func_8027EFA8	ret	void-read-v0	us,eu,jp	int | unsigned short | void
+func_8027F658	param 0	callback	us,eu,jp	int (*)(unsigned char, unsigned short) | unsigned char (*)(unsigned char, unsigned short)
+func_8027F658	param 1	m2c-placeholder	us,eu,jp	UnkStruct_8027F0C4* | void*
+func_8027F658	param 2	narrow-int	us,eu,jp	int | unsigned short
+func_8027F658	param 3	narrow-int	us,eu,jp	int | unsigned short
+func_8027F658	param 4	narrow-int	us,eu,jp	int | unsigned short
+func_8027F658	ret	void-read-v0	us,eu,jp	UnkStructA_40* | void
+func_8027F820	count	count	us,eu,jp	0 | 1
+func_8027F820	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | void*
+func_8027F84C	param 0	callback	us,eu,jp	void (*)(UnkStructA*) | void (*)(void)
+func_8027F858	param 0	int-pointer	us,eu,jp	UnkStructA* | int
+func_8027F88C	param 0	callback	us,eu,jp	void (*)(UnkStructA*) | void (*)(int)
+func_80280A74	param 2	narrow-int	us,eu,jp	int | unsigned char
+func_80280A74	ret	void-read-v0	us,eu,jp	int | void
+func_80280BD0	param 2	narrow-int	us,eu	int | unsigned char
+func_80280BD0	ret	void-read-v0	us,eu	int | void
+func_80280DB4	ret	void-read-v0	us,eu,jp	int | void
+func_802810A0	param 5	narrow-int	us,eu,jp	int | unsigned char
+func_802811F0	param 5	narrow-int	us,eu	int | unsigned char
+func_802811F0	ret	void-read-v0	us,eu,jp	int | void
+func_80282430	param 0	m2c-placeholder	us,eu,jp	UnkStruct_80288040* | void*
+func_802867E4	ret	m2c-placeholder	us,eu,jp	UnkStruct_80288040* | void*
+func_80286F04	ret	void-read-v0	us,eu,jp	int | void
+func_80287008	ret	void-read-v0	us,eu,jp	int | void
+func_80287440	ret	void-read-v0	us,eu,jp	int | void
+func_8028A060	count	count	us,eu,jp	0 | 1
+func_8028A060	ret	m2c-placeholder	us,eu,jp	int* | int[4]* | void*
+func_8028A7CC	ret	void-read-v0	us,eu,jp	int | void
+func_8028A81C	param 4	int-pointer	us,eu,jp	UnkStructA* | int
+func_8028A81C	ret	void-read-v0	us,eu,jp	int | void
+func_8028E8E0	ret	void-read-v0	us,eu,jp	int | void
+func_802909FC	param 0	m2c-placeholder	us,eu,jp	UnkStructA* | void*
+func_802909FC	param 1	callback	us,eu,jp	int (*)(int) | void (*)() | void*
+func_80291944	param 0	int-pointer	us,eu,jp	UnkStructA* | int | void*
+func_8029217C	param 3	callback	us,eu,jp	int (*)(int) | void (*)()
+func_8029217C	ret	void-read-v0	us,eu,jp	int | void
+func_80294A48	param 1	int-sign	us,eu,jp	int | unsigned int
+func_ovl09_01_80043010	count	count	us,eu,jp	0 | 1
+func_ovl09_02_800430A0	count	count	us,eu,jp	0 | 1
+func_ovl09_03_80043010	count	count	us,eu,jp	0 | 1
+func_ovl09_04_80043010	count	count	us,eu,jp	0 | 1
+osCreateMesgQueue	param 0	m2c-placeholder	us,eu,jp	OSMesgQueue* | void*
+osCreateThread	param 2	callback	us,eu,jp	void (*)(void*) | void*
+osInvalDCache	param 1	int-pointer	us,eu,jp	int | void*
+osPiStartDma	param 3	int-sign	us,eu,jp	int | unsigned int
+osRecvMesg	param 0	int-pointer	us,eu,jp	OSMesgQueue* | int | void*
+osRecvMesg	param 1	int-pointer	us,eu,jp	int | void*
+osRecvMesg	ret	void-read-v0	us,eu,jp	int | void
+osScAddClient	param 2	m2c-placeholder	us,eu,jp	OSMesgQueue* | void*
+osSendMesg	param 0	m2c-placeholder	us,eu,jp	OSMesgQueue* | void*
+osSendMesg	param 1	int-pointer	us,eu,jp	int | void*
+osSendMesg	ret	void-read-v0	us,eu,jp	int | void

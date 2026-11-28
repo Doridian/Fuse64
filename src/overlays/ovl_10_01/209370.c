@@ -69,7 +69,6 @@ UnkStruct_802B0260 *func_ovl10_01_800468F0(void);
 #define ZJ_1D03 func_ovl10_01_80046A28
 s32 *func_ovl10_01_80046B00(void); /* 0x1E0A, kept: called with 0 arguments (the definition takes 1) */
 #define ZJ_2004 func_ovl10_01_80046B68
-#define ZJ_2101 func_ovl10_01_80046B90
 void func_ovl10_01_80046BD0(u32 *); /* 0x2300, kept: its callers pass u32[] (the header's u32 (*)[3]) */
 #define ZJ_2600 func_ovl10_01_80046CB8
 void func_ovl10_01_80046CC0(s32, Vec3f *, s32); /* 0x2601, kept: its callers pass Vec3f * (the header's f32 *) */
@@ -276,11 +275,6 @@ static void func_ovl10_01_80045980(void) {
 #define CORE_BSS_A0 D_ovl10_01_80047314
 #define CORE_BSS_A1 D_ovl10_01_80047318
 #define CORE_BSS_B D_ovl10_01_80047320
-#define CORE_ZJ_1704 func_ovl10_01_80046558
-#define CORE_ZJ_1708 func_ovl10_01_80046578
-#define CORE_ZJ_1709 func_ovl10_01_80046580
-#define CORE_ZJ_1904 func_ovl10_01_80046888
-#define CORE_ZJ_2B04 func_ovl10_01_80046E10
 #include "overlays/common/core.h"
 
 /* runs the tasks, one frame each time round */

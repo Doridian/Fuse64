@@ -525,11 +525,6 @@ static void func_ovl15_01_8004C684(void) {
 #define CORE_BSS_A0 D_ovl15_01_8004DF54
 #define CORE_BSS_A1 D_ovl15_01_8004DF58
 #define CORE_BSS_B D_ovl15_01_8004DF60
-#define CORE_ZJ_1704 func_ovl15_01_8004D218
-#define CORE_ZJ_1708 func_ovl15_01_8004D238
-#define CORE_ZJ_1709 func_ovl15_01_8004D240
-#define CORE_ZJ_1904 func_ovl15_01_8004D548
-#define CORE_ZJ_2B04 func_ovl15_01_8004DAD0
 /* CORE_FUNC_D comes out first here, so it is defined last (the end of the file) */
 #define CORE_D_LATE
 #include "overlays/common/core.h"

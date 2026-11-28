@@ -2,7 +2,7 @@
 """The game C's structure types: where each is defined, its size and its
 fields' offsets, and the duplicates (docs/DECOMPILING.md, "Types").
 
-    tools/structs.py [--version V] [--check] [--json OUT] [-v] [-j N] [FILE.c ...]
+    tools/structs.py [--version V] [--check] [--update-allow] [--json OUT] [-v] [-j N] [FILE.c ...]
 
 Every C file of src/ (but libultra's and libmalloc's) is parsed by clang
 as the ROM build sees it (IDO's include path and defines, no TARGET_PC)
@@ -31,12 +31,17 @@ It reports
       asm/*_zerojmp.s, or port/snapshot/us without an extract).  Those
       where two or more structure types meet fail --check; the others
       (an s32 for a u32 or a pointer, a void * for a structure's, a void
-      return for an s32) are counted, -v lists them, and --check fails
-      when there are more than E_OTHER_MAX of them.
+      return for an s32) are listed by -v, and each must be in
+      ALLOW_E_FILE (tools/structs_allow_e.txt) for the version: one line
+      per function and role, with its reason class and the versions it
+      differs in.
 --check exits non-zero on (a), (b) not in ALLOW_B, (c), (d) not in
-ALLOW_D, (e) not in ALLOW_E (each allowance with its reason), or more
-(e)s of the other kind than E_OTHER_MAX.  --json
-writes everything found.
+ALLOW_D, (e) not in ALLOW_E (each allowance with its reason), an (e) of
+the other kind not in ALLOW_E_FILE, or an ALLOW_E_FILE line for the
+version that no longer differs (resolved: remove it).  --update-allow
+rewrites ALLOW_E_FILE for the version (adding new lines with a guessed
+class, dropping the version from resolved ones, keeping the classes it
+has).  --json writes everything found.
 """
 import argparse
 import collections
@@ -102,17 +107,90 @@ ALLOW_E = {
 }
 
 
-# (e)'s other differences: at most this many (lower it when they drop), per version.  They
-# are docs/DECOMPILING.md's "Prototypes": an s8/s16 parameter or a narrow
-# return whose callers read an int (the match needs the caller's view), a
-# void function whose callers read $v0, 48600's and 8A7A0's m2c objects
-# (u8 *, f32 *) that their callers hold as structures or integers, and the
-# task's argument (func_802391F0); and the same for the overlays' ZeroJump
-# stubs: src/overlays/common/zerojump.h's views that aren't the target's
-# (each with its reason there) and the declarations an overlay keeps (each
-# with its reason: a Vec3f * where the others pass an f32 *, a stub called
-# without its argument, ...).
-E_OTHER_MAX = {"us": 279, "eu": 279, "jp": 276}
+# (e)'s other differences, each allowed by a line of ALLOW_E_FILE (written by
+# --update-allow, one version at a time).  They are docs/DECOMPILING.md's
+# "Prototypes": an s8/s16 parameter or a narrow return whose callers read an
+# int (the match needs the caller's view), a void function whose callers read
+# $v0, m2c's placeholders (u8 *, f32 *, s32) that callers hold as structures,
+# the task's argument (func_802391F0); and the same for the overlays'
+# ZeroJump stubs: src/overlays/common/zerojump.h's views that aren't the
+# target's (each with its reason there) and the declarations an overlay keeps
+# (each with its reason: a Vec3f * where the others pass an f32 *, a stub
+# called without its argument, ...).  The class is a short reason, one of
+# E_CLASSES; --update-allow guesses one for a new line (guess_class) and keeps
+# a line's class once it has one, so a better one can be written by hand.
+ALLOW_E_FILE = os.path.join(ROOT, "tools", "structs_allow_e.txt")
+E_CLASSES = {
+    "narrow-int": "an int where another declaration has a char or a short (the callers' view)",
+    "int-sign": "int, unsigned int or long long: the same register, another view",
+    "void-read-v0": "a void function whose callers read $v0 (or the other way)",
+    "int-pointer": "an int where another has a pointer (m2c's placeholder or a PORT_IP(s32))",
+    "m2c-placeholder": "a u8 */f32 */void */int * where another has a structure's pointer",
+    "vec3f-f32": "a Vec3f * where another passes an f32 *",
+    "float-bits": "an int where another has an f32 (its bits, in an integer register)",
+    "callback": "a function pointer's type",
+    "count": "called or declared with another number of parameters",
+    "file-local": "a type a file defines for itself (97610's u32 (*)[3])",
+    "if-variant": "an #if VERSION_ variant (in some versions only)",
+    "other": "none of these",
+}
+
+
+def guess_class(role, types):
+    """a reason class for an (e) other difference, from its types"""
+    ts = set(types)
+    narrow = {"char", "signed char", "unsigned char", "short", "unsigned short"}
+    ints = {"int", "unsigned int", "long long", "unsigned long long"} | narrow
+    if role == "count":
+        return "count"
+    if role == "ret" and "void" in ts:
+        return "void-read-v0"
+    if any("(*)[" in x for x in ts):
+        return "file-local"
+    if any("(*)(" in x for x in ts):
+        return "callback"
+    if ts == {"int", "float"}:
+        return "float-bits"
+    if "Vec3f*" in ts and "float*" in ts:
+        return "vec3f-f32"
+    if ts <= ints:
+        return "narrow-int" if ts & narrow else "int-sign"
+    if ts & ints and any("*" in x for x in ts):
+        return "int-pointer"
+    if any(re.fullmatch(r"(void|(unsigned )?(char|short|int)|float)\*+", x) for x in ts):
+        return "m2c-placeholder"
+    return "other"
+
+
+def read_allow_e():
+    """ALLOW_E_FILE: {(function, role): [class, {versions}, types]}"""
+    out = {}
+    if not os.path.exists(ALLOW_E_FILE):
+        return out
+    for line in open(ALLOW_E_FILE):
+        line = line.rstrip("\n")
+        if not line or line.startswith("#"):
+            continue
+        f = line.split("\t")
+        func, role, cls, vers = f[:4]
+        out[(func, role)] = [cls, set(vers.split(",")), f[4] if len(f) > 4 else ""]
+    return out
+
+
+def write_allow_e(allow):
+    with open(ALLOW_E_FILE, "w") as fp:
+        fp.write("# (e)'s other differences that tools/structs.py --check allows: a function's\n"
+                 "# declarations that differ, but not between structure types (docs/DECOMPILING.md,\n"
+                 "# \"Prototypes\").  Written by tools/structs.py --update-allow --version V, one\n"
+                 "# version at a time; it keeps each line's class, which can be changed by hand.\n"
+                 "# Tab-separated: function, role, class, the versions it differs in, the types.\n"
+                 "# The classes (structs.py's E_CLASSES):\n")
+        for c, why in E_CLASSES.items():
+            fp.write("#   %-16s %s\n" % (c, why))
+        for (func, role), (cls, vers, desc) in sorted(allow.items()):
+            if vers:
+                fp.write("%s\t%s\t%s\t%s\t%s\n" % (func, role, cls, ",".join(
+                    v for v in ("us", "eu", "jp") if v in vers), desc))
 
 
 def allowed_d(names):
@@ -544,6 +622,8 @@ def main():
     ap.add_argument("files", nargs="*")
     ap.add_argument("--version", default="us", choices=["us", "eu", "jp"])
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--update-allow", action="store_true",
+                    help="rewrite tools/structs_allow_e.txt's lines for --version")
     ap.add_argument("--json")
     ap.add_argument("-v", "--verbose", action="store_true", help="list every (b) group's files")
     ap.add_argument("-j", type=int, default=min(8, os.cpu_count() or 1))
@@ -666,11 +746,37 @@ def main():
         json.dump(out, open(a.json, "w"), indent=1, sort_keys=True)
     if bad:
         return 2
-    n_other = sum(1 for x in same_e if not x[4])
-    e_max = E_OTHER_MAX[a.version]
-    if n_other < e_max:
-        print("(e): %d other differences, fewer than E_OTHER_MAX's %d for %s: lower it" % (n_other, e_max, a.version))
-    if a.check and (dup_a or conf_c or open_b or open_d or open_e or n_other > e_max):
+    other = {(name.split(" ")[0], role): types for name, role, types, _, rec in same_e if not rec}
+    allow = read_allow_e()
+    rel_file = os.path.relpath(ALLOW_E_FILE, ROOT)
+    if a.update_allow:
+        if a.files:
+            print("--update-allow needs every file (no FILE arguments)", file=sys.stderr)
+            return 2
+        for ent in allow.values():
+            ent[1].discard(a.version)
+        for key, types in other.items():
+            desc = " | ".join(sorted(types))
+            if key not in allow:
+                allow[key] = [guess_class(key[1], types), set(), desc]
+            elif a.version == "us" or not allow[key][1]:
+                allow[key][2] = desc
+            allow[key][1].add(a.version)
+        write_allow_e(allow)
+        print("(e): %s written for %s" % (rel_file, a.version))
+        allow = read_allow_e()
+    new_e = sorted(k for k in other if a.version not in allow.get(k, ["", set()])[1])
+    gone_e = [] if a.files else sorted(k for k, v in allow.items() if a.version in v[1] and k not in other)
+    bad_cls = sorted(k for k, v in allow.items() if v[0] not in E_CLASSES)
+    print("(e): %d other differences, %d not in %s; %d of its lines for %s resolved"
+          % (len(other), len(new_e), rel_file, len(gone_e), a.version))
+    for k in new_e:
+        print("  new: %s %s: %s" % (k[0], k[1], " | ".join(sorted(other[k]))))
+    for k in gone_e:
+        print("  resolved (remove its line, or --update-allow): %s %s" % k)
+    for k in bad_cls:
+        print("  unknown class %r: %s %s" % ((allow[k][0],) + k))
+    if a.check and (dup_a or conf_c or open_b or open_d or open_e or new_e or gone_e or bad_cls):
         return 1
     return 0
 

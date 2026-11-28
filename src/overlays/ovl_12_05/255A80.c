@@ -293,11 +293,6 @@ static void func_ovl12_05_800492FC(void) {
 #define CORE_BSS_A0 D_ovl12_05_8004AC14
 #define CORE_BSS_A1 D_ovl12_05_8004AC18
 #define CORE_BSS_B D_ovl12_05_8004AC20
-#define CORE_ZJ_1704 func_ovl12_05_80049EE8
-#define CORE_ZJ_1708 func_ovl12_05_80049F08
-#define CORE_ZJ_1709 func_ovl12_05_80049F10
-#define CORE_ZJ_1904 func_ovl12_05_8004A218
-#define CORE_ZJ_2B04 func_ovl12_05_8004A7A0
 #include "overlays/common/core.h"
 
 /* twin of 17_09:80044B14 (nonmatching/overlays/ovl_17_09/2B8D20.c) */

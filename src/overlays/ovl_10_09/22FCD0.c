@@ -76,31 +76,16 @@ void func_ovl10_09_800490B0(s32, Vec3f *, s32); /* 0x2601, kept: its callers pas
 #define ZJ_2A00 func_ovl10_09_80049168
 #define ZJ_2B00 func_ovl10_09_800491E0
 #define ZJ_2B04 func_ovl10_09_80049200
-#define ZJ_1009 func_ovl10_09_80048300
-#define ZJ_100B func_ovl10_09_80048310
-#define ZJ_101E func_ovl10_09_800483A8
 #define ZJ_1023 func_ovl10_09_800483D0
 #define ZJ_1505 func_ovl10_09_80048810
 #define ZJ_1506 func_ovl10_09_80048818
 #define ZJ_150D func_ovl10_09_80048850
-#define ZJ_170B func_ovl10_09_80048980
-#define ZJ_1713 func_ovl10_09_800489C0
 f32 func_ovl10_09_80048AB0(Vec3f *, Vec3f *); /* 0x1806, kept: its callers pass Vec3f * (the header's f32 *) */
 #define ZJ_1811 func_ovl10_09_80048B08
-#define ZJ_1902 func_ovl10_09_80048C68
 #define ZJ_1D03 func_ovl10_09_80048E18
-#define ZJ_2A04 func_ovl10_09_80049188
 s32 func_ovl10_09_80049208(s32, Vec3f *); /* 0x2B05, kept: its callers pass Vec3f * (the header's f32 *) */
 #define ZJ_2B06 func_ovl10_09_80049210
-#define ZJ_3000 func_ovl10_09_80049358
-#define ZJ_3001 func_ovl10_09_80049360
 
-#define ZJ_0D0C func_ovl10_09_80048180
-#define ZJ_0D0D func_ovl10_09_80048188
-#define ZJ_0E00 func_ovl10_09_800481D8
-#define ZJ_0E01 func_ovl10_09_800481E0
-#define ZJ_2702 func_ovl10_09_800490D8
-#define ZJ_2703 func_ovl10_09_800490E0
 
 #define ZJ_0F0F func_ovl10_09_80048278
 #include "overlays/common/zerojump.h"
@@ -351,11 +336,6 @@ static void func_ovl10_09_80047D68(void) {
 #define CORE_BSS_A0 D_ovl10_09_800499D4
 #define CORE_BSS_A1 D_ovl10_09_800499D8
 #define CORE_BSS_B D_ovl10_09_800499E0
-#define CORE_ZJ_1704 func_ovl10_09_80048948
-#define CORE_ZJ_1708 func_ovl10_09_80048968
-#define CORE_ZJ_1709 func_ovl10_09_80048970
-#define CORE_ZJ_1904 func_ovl10_09_80048C78
-#define CORE_ZJ_2B04 func_ovl10_09_80049200
 #include "overlays/common/core.h"
 
 /* runs the tasks, one frame each time round */

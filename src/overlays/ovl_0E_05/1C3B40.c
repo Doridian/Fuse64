@@ -188,11 +188,6 @@ void func_ovl0E_05_800448D8(void) {
 #define CORE_BSS_A0 D_ovl0E_05_80046234
 #define CORE_BSS_A1 D_ovl0E_05_80046238
 #define CORE_BSS_B D_ovl0E_05_80046240
-#define CORE_ZJ_1704 func_ovl0E_05_80045498
-#define CORE_ZJ_1708 func_ovl0E_05_800454B8
-#define CORE_ZJ_1709 func_ovl0E_05_800454C0
-#define CORE_ZJ_1904 func_ovl0E_05_800457C8
-#define CORE_ZJ_2B04 func_ovl0E_05_80045D50
 #include "overlays/common/core.h"
 
 void func_ovl0E_05_80044798(UnkStructA *arg0) {

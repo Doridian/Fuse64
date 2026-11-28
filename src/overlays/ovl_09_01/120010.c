@@ -89,11 +89,6 @@ static void func_ovl09_01_800432B8(void) {
 #define CORE_BSS_A0 D_ovl09_01_80044A04
 #define CORE_BSS_A1 D_ovl09_01_80044A08
 #define CORE_BSS_B D_ovl09_01_80044A10
-#define CORE_ZJ_1704 func_ovl09_01_80043EA8
-#define CORE_ZJ_1708 func_ovl09_01_80043EC8
-#define CORE_ZJ_1709 func_ovl09_01_80043ED0
-#define CORE_ZJ_1904 func_ovl09_01_800441D8
-#define CORE_ZJ_2B04 func_ovl09_01_80044760
 #include "overlays/common/core.h"
 
 void func_ovl09_01_8004316C(void) {

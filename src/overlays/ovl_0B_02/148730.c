@@ -16,18 +16,19 @@
  * ($s2, $s3), 80043054 and 80043F4C (i in $s1), 80043EF8 (its one
  * parameter in $a1), 800430C4 ($f12), 80044424 ($f20); 800472C0 and
  * 80043FC4 are static too. The 22 stubs (two `jr ra` in a row): 80043010
- * is 800431C4's inlined copy of 80043018's loop (its n kept in $s1, as
- * inlined parameters are); 80043FBC is 80043FC4's object loop, inlined
+ * is a second copy of 80043018's loop, the 0x8000 exit's (in 800431C4,
+ * inlined: its n kept in a variable, as inlined parameters are; the
+ * 0x4000 exit's inlined call of 80043018 itself is what places 80043018
+ * after the stub); 80043FBC is 80043FC4's object loop, inlined
  * (n's home stored); 800443D4 and 800472A0-B8 are inlined-once statics
  * before their callers; 80047C14-80047C7C are the 14 unused stubs after
  * the tail, and the four group tasks in D_ovl0B_02_8004A150
  * (80047C84-800481E8, static, referred to only from .data) come out after
  * them in definition order, then 800482D0 (a dead block in it keeps the
- * .bss words nobody uses). A dead call in 800431C4 places 80043018 after
- * the 80043010 stub; six dead calls in 80044490 bring it over IDO's
+ * .bss words nobody uses). Six dead calls in 80044490 bring it over IDO's
  * per-caller inline budget, which keeps both 80043018 and 80044424 out of
  * line there (with fewer, one of the two is inlined). Loop bounds held in
- * a variable (j = 2, buttons = 3, n = 2) are what make uopt derive the end
+ * a variable (j = 2, n = 2) are what make uopt derive the end
  * pointer from the start one (`addiu s1,s0,0x60`); the 4x4 table is read
  * flat (tbl[i * 4 + j]) in 800431C4 and 800472C0. 800470B0/800471A8 are
  * ovl_0B_03's 80046E8C/80046F78; 80043018-80043150 and 80044424 are
@@ -44,8 +45,7 @@
  * 800431C4's exits count their piece loops with k, declared in i's place
  * (its home is the one the 0x8000 exit stores k = 0 to), with i declared
  * after marks: k gets no s register there, as in the original. Their
- * marks loops count with n, the 0x8000 exit's box loop with task (bound
- * buttons = 3), and its alpha loop goes through m. The dead `t = 0.0f`
+ * marks loops count with n, and the 0x8000 exit's alpha loop goes through m. The dead `t = 0.0f`
  * before the final infinite loop stops uopt reloading t (40.0f) into
  * $f20 ahead of it (it treats every variable as live in a loop with no
  * exit, and rematerialises the constant ones; any constant but 40.0f
@@ -1683,10 +1683,7 @@ void func_ovl0B_02_800431C4(void) {
         } else if (func_ovl0B_02_80048738() & 0x4000) {
             func_ovl0B_02_80049700(2);
             func_ovl0B_02_80049180(task);
-            if (0) { /* fake: places 80043018 after this function's stub */
-                func_ovl0B_02_80043018(D_ovl0B_02_800499F0, 3);
-            }
-            func_ovl0B_02_80043010(D_ovl0B_02_800499F0, 3);
+            func_ovl0B_02_80043018(D_ovl0B_02_800499F0, 3);
             func_ovl0B_02_80049180(D_ovl0B_02_8004A3C8);
             func_ovl0B_02_80048D10(D_ovl0B_02_8004A3E8[0]);
             for (n = 0; n != 5; n++) {
@@ -1721,10 +1718,7 @@ void func_ovl0B_02_800431C4(void) {
             func_ovl0B_02_80048788();
             func_ovl0B_02_80048D10(D_ovl0B_02_8004A3E8[0]);
             func_ovl0B_02_80049180(D_ovl0B_02_8004A3C8);
-            buttons = 3;
-            for (task = 0; task < buttons; task++) {
-                func_ovl0B_02_80048D10(D_ovl0B_02_800499F0[task].unk1C);
-            }
+            func_ovl0B_02_80043010(D_ovl0B_02_800499F0, 3);
             for (n = 0; n != 5; n++) {
                 func_ovl0B_02_80048D10(marks[n]);
             }

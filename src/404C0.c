@@ -4,8 +4,8 @@
  * cache at D_8014B008). Once built at -O2 with func_80225EBC and
  * func_80225FB8 left GLOBAL_ASM, it is -O3 (func_80225FB8 matches only
  * there), written last function first, every function emitted in the
- * original's order. It defines no data: its variables stay extern, in
- * main_code's asm blocks.
+ * original's order. Its .data is the five counters it clears (padded to
+ * 0x20), its .bss the open-file state.
  *
  * func_80225FB8's unused local gives its frame.
  * func_80225EBC's page table address is built `lui a3; addiu a2, a3,
@@ -34,16 +34,16 @@ extern UnkStruct_8014B000 D_8014B000;
 extern UnkStruct_8014B008 D_8014B008[256];
 extern UnkStruct_80225CC0 D_8014B808[8];
 extern u8 D_8014B8A8[0x400];
-extern s32 D_8029F5B0;
-extern s32 D_8029F5B4;
-extern s32 D_8029F5B8;
-extern s32 D_8029F5BC;
-extern s32 D_8029F5C0;
-extern s32 D_802A5300;
-extern UnkStruct_80225CC0 *D_802A5304;
-extern s32 D_802A5308;
-extern s32 D_802A530C;
-extern s32 D_802A5310;
+s32 D_8029F5B0 = 0;
+s32 D_8029F5B4 = 0;
+s32 D_8029F5B8 = 0;
+s32 D_8029F5BC = 0;
+s32 D_8029F5C0 = 0;
+s32 D_802A5300;
+UnkStruct_80225CC0 *D_802A5304;
+s32 D_802A5308;
+s32 D_802A530C;
+s32 D_802A5310;
 
 u32 func_80225CC0(UnkStruct_80225CC0 *arg0);
 s32 func_80225CCC(UnkStruct_80225CC0 *arg0, s32 arg1, s32 arg2);

@@ -436,7 +436,8 @@ segments:
       - [0xB7130, data]
       - [0xB9450, .data, 40040]
       - [0xB9480, .data, 40300]
-      - [0xB9490, data]
+      - [0xB9490, .data, 404C0]
+      - [0xB94B0, data]
       - [0xB9760, .data, 45170]
       - [0xB9770, .data, 46300]
       - [0xB97A0, .data, 47A80]
@@ -514,7 +515,8 @@ segments:
       - [0xBE1C0, .rodata, libultra/gu/sinf]
       - [0xBE210, .rodata, libultra/gu/cosf]
       - [0xBE260, rodata]
-      - {type: bss, vram: 0x802A4530}
+      - {type: .bss, vram: 0x802A4530, name: 404C0}
+      - {type: bss, vram: 0x802A4550}
       - {type: .bss, vram: 0x802A4560, name: 412F0}
       - {type: bss, vram: 0x802A4600, name: bss_802A4600}
       - {type: .bss, vram: 0x802A4690, name: 426E0}

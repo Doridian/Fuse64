@@ -70,3 +70,4 @@ indirect src/libmalloc/gmalloc.c bm64_free - 0 1 1 1  # the hooks, never set
 indirect src/libmalloc/gmalloc.c bm64_realloc - 0 1 1 1  # the hooks, never set
 indirect src/main_code_entry.c func_80225800 - 0 1 1 1  # func_80225840, typed
 indirect src/overlays/ovl_0B_04/155D90.c func_ovl0B_04_80043ADC - 0 1 1 1  # a typed field
+indirect port/src/memory.c port_image_each - 0 1 1 1  # the image's callback: a host buffer and its length (gl_cmp/digest dumps), not the game's

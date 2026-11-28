@@ -40,11 +40,13 @@
  *   calls around it go into their delay slots). 8004421C takes its first
  *   row j as a parameter (0 from 8004422C, whose line comes after the
  *   loop's; a guess for what was a `j = 0` at `#line 3000`): that puts
- *   `move v0,a1` ahead of `move a0,zero`. In 8004311C, case 0's first statement in a statics.h
- *   region: as1 then computes z1 right after x1 and stores z2 in order,
- *   with x0's home store in the branch's delay slot, as the original (no
- *   order of the case's ugen instructions fed to as1 by hand did that; a
- *   .file at the block's start did).
+ *   `move v0,a1` ahead of `move a0,zero`.
+ * - 8004311C (the gate's tiles) is defined in another file (statics.h, as
+ *   ovl_0D_01/03/04/06's): the `.file`s where it is inlined make as1
+ *   compute case 0's z1 right after x1 and store z2 in order, with x0's
+ *   home store in the branch's delay slot, as the original (pass 13; it
+ *   replaces a statics.h region from case 0's first statement to the end
+ *   of the file, a fake).
  * - 800438FC and 80043510: the statics they inline first, 800438D8 and
  *   80043508, are defined in another file (statics.h): the `.file` keeps
  *   the first call out of the prologue (they replace two
@@ -1237,46 +1239,40 @@ static s32 func_ovl0D_02_80043114(UnkStruct_ovl0C_01_8004A54C *e) {
     return -1;
 }
 
-/* the tiles under the gate: solid, and the frame around its opening */
-static void func_ovl0D_02_8004311C(UnkStruct_ovl0C_01_8004A54C *e) {
-    s32 grid[6];
-    s32 x0;
-    s32 y0;
-    s32 z0;
-    s32 x1;
-    s32 y1;
-    s32 z1;
-    s32 x2;
-    s32 z2;
-    s32 x3;
-    s32 z3;
-    s32 len;
-    UnkStructA_40 *p;
+/* the clamp: v's parameter before size's (see the top) */
+static void func_ovl0D_02_800430A0(s32 axis, s32 *v, s32 *size) {
+    s32 max;
 
-    p = e->unk0->unk40;
-    func_ovl0D_02_80046350(p->unk10, p->unk14, p->unk18, grid, 0);
-    len = x1 + z1; /* fake: (see the top) */
-    x0 = grid[0];
-    y0 = grid[1];
-    z0 = grid[2];
-    switch (e->unk0->unk28) {
-        case 0x15C:
-            len = 5;
-            break;
-        case 0x15D:
-            len = 7;
-            break;
-        case 0x15E:
-            len = 10;
-            break;
-        default:
-            while (1) {
-            }
-    }
-    y1 = grid[1] + 2;
-    switch (func_ovl0D_02_80043114(e)) {
+    switch (axis) {
         case 0:
-            /* fake: (see the top) */
-#define STATICS_PART 3
-#include "overlays/ovl_0D_02/statics.h"
-#undef STATICS_PART
+            max = size[0];
+            break;
+        case 1:
+            max = size[1];
+            break;
+        case 2:
+            max = size[2];
+            break;
+    }
+    if (*v < 0) {
+        *v = 0;
+    } else if (*v >= max) {
+        *v = max - 1;
+    }
+}
+
+/* the models' state from the flags already set */
+void func_ovl0D_02_80043010(void) {
+    f32 y;
+
+    if (func_ovl0D_02_800470D0(0x407) != 0) {
+        func_ovl0D_02_80046D00(D_ovl0D_02_8004762C[0].unk0, 0x01000000);
+        y = -105.0f;
+        PORT_HOST(D_ovl0D_02_8004762C[1], D_ovl0D_02_80047664[0]).unk18 = y;
+        D_ovl0D_02_80047664[0].unk0->unk40->unk14 = y * 10.0f;
+        func_ovl0D_02_80046D00(D_ovl0D_02_8004769C[0].unk0, 0x01000000);
+    }
+    if (func_ovl0D_02_800470D0(0x408) != 0) {
+        func_ovl0D_02_80046D00(D_ovl0D_02_80047664[0].unk0, 0x01000000);
+    }
+}

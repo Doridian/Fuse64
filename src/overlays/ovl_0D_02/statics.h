@@ -32,11 +32,45 @@ static void func_ovl0D_02_800444EC(void) {
     D_ovl0D_02_80047A3C = func_ovl0D_02_80046D40(-1, 0x80, 0.0f, 0.0f, 0.0f);
     D_ovl0D_02_80047A3C->unkC = 0x3FFFF;
 }
-#elif STATICS_PART == 1
-    func_ovl0D_02_80044474();
-#elif STATICS_PART == 2
-            o->unk40->unk48->unk4[0].unk4 = func_ovl0D_02_80046A38(o->unk40, 0) - 0.001f;
-#elif STATICS_PART == 3
+/* the tiles under the gate: solid, and the frame around its opening */
+static void func_ovl0D_02_8004311C(UnkStruct_ovl0C_01_8004A54C *e) {
+    s32 grid[6];
+    s32 x0;
+    s32 y0;
+    s32 z0;
+    s32 x1;
+    s32 y1;
+    s32 z1;
+    s32 x2;
+    s32 z2;
+    s32 x3;
+    s32 z3;
+    s32 len;
+    UnkStructA_40 *p;
+
+    p = e->unk0->unk40;
+    func_ovl0D_02_80046350(p->unk10, p->unk14, p->unk18, grid, 0);
+    len = x1 + z1; /* fake: (see the top) */
+    x0 = grid[0];
+    y0 = grid[1];
+    z0 = grid[2];
+    switch (e->unk0->unk28) {
+        case 0x15C:
+            len = 5;
+            break;
+        case 0x15D:
+            len = 7;
+            break;
+        case 0x15E:
+            len = 10;
+            break;
+        default:
+            while (1) {
+            }
+    }
+    y1 = grid[1] + 2;
+    switch (func_ovl0D_02_80043114(e)) {
+        case 0:
             x0 = grid[0] - 1;
             x1 = x0 + 4;
             z1 = grid[2] + len;
@@ -91,43 +125,8 @@ static void func_ovl0D_02_800444EC(void) {
     func_ovl0D_02_80046338(x2, y0, z2, x3, z3, 0x12);
     func_ovl0D_02_80046338(x2, y0 + 1, z2, x3, z3, 0x10);
 }
-
-/* the clamp: v's parameter before size's (see the top) */
-static void func_ovl0D_02_800430A0(s32 axis, s32 *v, s32 *size) {
-    s32 max;
-
-    switch (axis) {
-        case 0:
-            max = size[0];
-            break;
-        case 1:
-            max = size[1];
-            break;
-        case 2:
-            max = size[2];
-            break;
-    }
-    if (*v < 0) {
-        *v = 0;
-    } else if (*v >= max) {
-        *v = max - 1;
-    }
-}
-
-/* the models' state from the flags already set */
-void func_ovl0D_02_80043010(void) {
-    f32 y;
-
-    if (func_ovl0D_02_800470D0(0x407) != 0) {
-        func_ovl0D_02_80046D00(D_ovl0D_02_8004762C[0].unk0, 0x01000000);
-        y = -105.0f;
-        PORT_HOST(D_ovl0D_02_8004762C[1], D_ovl0D_02_80047664[0]).unk18 = y;
-        D_ovl0D_02_80047664[0].unk0->unk40->unk14 = y * 10.0f;
-        func_ovl0D_02_80046D00(D_ovl0D_02_8004769C[0].unk0, 0x01000000);
-    }
-    if (func_ovl0D_02_800470D0(0x408) != 0) {
-        func_ovl0D_02_80046D00(D_ovl0D_02_80047664[0].unk0, 0x01000000);
-    }
-}
-
+#elif STATICS_PART == 1
+    func_ovl0D_02_80044474();
+#elif STATICS_PART == 2
+            o->unk40->unk48->unk4[0].unk4 = func_ovl0D_02_80046A38(o->unk40, 0) - 0.001f;
 #endif

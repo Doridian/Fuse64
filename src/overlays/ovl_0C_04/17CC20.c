@@ -24,23 +24,6 @@
  * ovl_0C_03's 17A5B0 and ovl_0C_05's 17F9F0.
  */
 
-/* a chain of records (unk2 is the next one's index, 0 ends it), each the
- * task func_ovl0C_04_80043D3C's */
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ s16 unk2;
-    /* 0x04 */ UnkStructA *unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ s32 unk1C;
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ s32 unk28;
-} UnkStruct_ovl0C_04_80045C84;
-
 void func_ovl0C_04_80044918(s32);
 void func_ovl0C_04_80044930(s32);
 void func_ovl0C_04_80044958(s32, s32, s32, s32, s32, s32);
@@ -167,7 +150,7 @@ u32 D_ovl0C_04_80045C34[][3] = {
 UnkStruct_ovl0C_01_8004A17C D_ovl0C_04_80045C58[] = {
     { NULL, 2950.0f, 500.0f, 750.0f, 0x1B, 3, 8, 0x20, 0x14, 90.0f, 0 },
 };
-UnkStruct_ovl0C_04_80045C84 D_ovl0C_04_80045C84[] = {
+UnkStruct_ovl0C_01_8004A1A8 D_ovl0C_04_80045C84[] = {
     { 0, 1, NULL, 3200.0f, 0.0f, 1000.0f, 0x20, 0, 0xA, 2, 0x401, 0x410 },
     { 1, 2, NULL, 3200.0f, 0.0f, 1500.0f, 0x20, 0, 0xF, 2, 0x402, 0x410 },
     { 2, 3, NULL, 3200.0f, 0.0f, 2000.0f, 0x20, 0, 0x14, 2, 0x403, 0x410 },
@@ -289,7 +272,7 @@ void func_ovl0C_04_80043FC0(void) {
 }
 
 void func_ovl0C_04_80043D3C(void) {
-    UnkStruct_ovl0C_04_80045C84 *rec;
+    UnkStruct_ovl0C_01_8004A1A8 *rec;
     UnkStructA *obj;
     s16 alpha;
     s32 i;
@@ -436,7 +419,7 @@ void func_ovl0C_04_80043720(void) {
 }
 
 void func_ovl0C_04_80043664(void) {
-    UnkStruct_ovl0C_04_80045C84 *p;
+    UnkStruct_ovl0C_01_8004A1A8 *p;
     UnkStructA *obj;
 
     for (p = D_ovl0C_04_80045C84; p->unk2 != 0; p++) {
@@ -577,7 +560,7 @@ void func_ovl0C_04_800431E8(void) {
 }
 
 void func_ovl0C_04_80043170(void) {
-    UnkStruct_ovl0C_04_80045C84 *p;
+    UnkStruct_ovl0C_01_8004A1A8 *p;
 
     for (p = D_ovl0C_04_80045C84; p->unk2 != 0; p++) {
         if (func_ovl0C_04_800456F0(p->unk24) == 0) {

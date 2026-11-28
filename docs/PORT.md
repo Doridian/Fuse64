@@ -639,7 +639,11 @@ whole-game run on BizHawk's core (2026-11-22, i386 and x86-64) is **the
 same at every frame**: part 0's 317 and part 1's 73,577, the title, the
 file select, every stage and boss of the route (Blue Resort to Black
 Fortress) and the last fight, to the movie's last input; the test's
-reference (`jp/tas-4908M`) is this run. Two differences in the port's
+reference (`jp/tas-4908M`) is this run. It still is on 2026-11-27
+(439deff1: the pointer-wide conventions of the room sweep, the ROM's
+data out of the executable, 332dcc77's calls), on i386 and x86-64
+(non-ASan): both parts every frame the same, the digest's hashes and
+the save test.py's. Two differences in the port's
 game code were in the way, both found by the digest's first differing
 frame, a hardware watchpoint on the port (gdb) and breakpoints on
 BizHawk's core (`tools/tas.py`'s `breaks`) on the function the
@@ -982,7 +986,13 @@ after the host arenas, c44b7cbb), monkey (257), battle setup (20) and
 extras (9), and eu's and jp's census (eu as us's, 282 and 13; jp 283
 `same` lines, 116:18 the one that loops on both). Port side only, against the
 emulator digests of the i386 runs, non-ASan builds, both hosts run at
-the same commit. Before, the 64-bit runs differed in five ways, none
+the same commit. eu's and jp's monkey (286 each), battle setup (20
+each) and extras (9 each) followed on 439deff1 (after 332dcc77's
+calls), against the i386 results of the tables above: every result
+line and every port digest i386's, byte for byte, the loops (41:23-26)
+too; the only lines that moved are i386's own since those runs (126:18
+and 126:19 the same since the .bss residue's model, and 155:16, below),
+so no fix was needed. Before, the 64-bit runs differed in five ways, none
 of them on i386:
 
 - two words that keep a pointer the game only writes were 32-bit, so
@@ -1022,6 +1032,14 @@ end (eu 66,844, jp 57,085, into the attract after it); 28:17 to its
 end (eu 69,041, jp 68,555); the demos (29) to 19,159 and 18,098; and
 the attract to 28,926 and 28,607 (its digest has no retrace column
 without a warp, so `rooms.py`'s "N64 stops" there is the harness's).
+Since f85a5ce0 (87D80.c's cells past the layers) 155:16 no longer
+stops on the port, on any host: the same as the emulator to where the
+N64 stops (us 1033, eu 1054, jp 856), then the port plays on. The warp
+artefact's room has func_8026D620 write 35 cells into layers 52-55 of a
+map with six (0x27000-0x2A000 bytes past D_800B15D8, past D_800B5F20
+too), which the N64 does and then hangs; the port used to write them
+into `port_rdram` as well and crash there (exit -11), and now leaves out
+what lands past D_800B5F20. 24:16 still stops on both.
 The Rainbow Palace boss's 126:18 and 126:19 differed in all three
 versions until the port modelled the .bss residue (below): now the same.
 
@@ -2741,9 +2759,10 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   there). eu and jp ran the 77 under ASan and UBSan (x86-64) and a
   handful under qemu (mips); us all 77 on i386 under the sanitizers and
   under qemu (mips).
-  The room sweep ("Every room") on x86-64 is i386's in us's four sets
-  and eu's and jp's census; eu's and jp's monkey, battle setup and
-  extras, and the TAS route on any set, haven't run there yet.
+  The room sweep ("Every room") on x86-64 is i386's in every set of
+  us, eu and jp but `ovl` (us) and `tas` (4908M's route from 56:16,
+  in no version: its emulator digest wasn't kept); 4908M's whole movie
+  on jp (test.py's `tas`) is the same there ("The TAS").
   `proto_check.py` sees the calls through a declaration that isn't the
   definition's (func_802870A8's); left to it: a call through a pointer
   is read by hand (23 sites), and a `void *` that keeps a function to
@@ -2839,8 +2858,10 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   credits, the attract) in all three ("Every room"), the overlay .bss
   residue modelled (126:18, 126:19 warped); on x86-64 us's census, the
   pools by field at the host's offsets, as i386 ("Every room": three
-  64-bit fixes). Left: x86-64's census in eu and jp, and its monkey,
-  battle setup, extras and 4908M's route (only the census ran);
+  64-bit fixes), and every other set of the sweep in all three but `ovl`
+  and `tas`, and 4908M's whole movie on jp. Left: x86-64's `ovl` and
+  4908M's route from 56:16; 155:16 played on past the N64's hang since
+  the port leaves out the cells past D_800B5F20 ("Every room");
   9CAB0.c's two unions (left out of the pools on every host: they
   didn't show up).
 - **Audio** ("Audio"): checked against mupen64plus in us's menus, story

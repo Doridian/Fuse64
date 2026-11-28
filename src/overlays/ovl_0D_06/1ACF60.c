@@ -41,9 +41,12 @@
  *   slots, `multu` by 0x38 for 80047164); with one i walking both arrays
  *   uopt shared i*56 between them and spilled it. The frame (0x48) takes a
  *   local j for 80045E58's result (`j = D_ovl0D_06_80047604 = ...`, which
- *   also puts `move a0,v0` right after the store) and the empty static
- *   80043010 called once more after 80045E60 (a fake; unused locals do it
- *   too). That statement in a statics.h region (a fake): the `.file`
+ *   also puts `move a0,v0` right after the store) and a second call of the
+ *   empty global 80043010 after 80045E60 (an inlined `(void)` call costs 8
+ *   bytes of frame, as ovl_0F_05/07/08/09's; pass 13: it was an empty
+ *   static, called the second time as a fake; as a global it is the 0F
+ *   overlays' empty 80043010, which the static 80043018 calls too).
+ *   The j statement in a statics.h region (a fake): the `.file`
  *   after it ends as1's block, so the loads of 800475F8[2] and [0] for
  *   80045E60 stay after the store (ugen marks the two addresses
  *   `.noalias`, and as1 hoisted them; hand-edited ugen output with a
@@ -179,7 +182,7 @@ void func_ovl0D_06_80045788(void);
 void func_ovl0D_06_80045884(s32, s32);
 void func_ovl0D_06_800458F8(f32, f32, f32, f32, s32);
 
-static void func_ovl0D_06_80043010(void);
+void func_ovl0D_06_80043010(void);
 static void func_ovl0D_06_80043018(UnkStructA *);
 void func_ovl0D_06_8004305C(void);
 static void func_ovl0D_06_800431D8(void);
@@ -1107,7 +1110,7 @@ void func_ovl0D_06_8004305C(void) {
 #include "overlays/ovl_0D_06/statics.h"
 #undef STATICS_PART
         func_ovl0D_06_80045E60(j, 0, 0, D_ovl0D_06_800475F8[0] - 1, D_ovl0D_06_800475F8[2] - 1, 0, 0, 0);
-        func_ovl0D_06_80043010(); /* fake: (see the top); without it the frame is 8 short (80043010 with an s32 or pointer parameter, a debug check in it: the same; the statics.h line as an inlined static returning j: a stub more) */
+        func_ovl0D_06_80043010(); /* the empty global, inlined: 8 bytes of frame (see the top) */
         i = 0;
         func_ovl0D_06_80046790(D_ovl0D_06_800470BC[i++].unk0, 0x01000000);
         D_ovl0D_06_800470BC[i].unk18 = 180.0f;
@@ -1130,5 +1133,8 @@ static void func_ovl0D_06_80043018(UnkStructA *o) {
     o->unk40->unk48->unk4->unk4 = func_ovl0D_06_800464C8(o->unk40, 0) - 0.001f;
 }
 
-static void func_ovl0D_06_80043010(void) {
+/* empty and global, as ovl_0F_05's 80043010: every call of it is inlined,
+ * each costing its caller 8 bytes of frame where the call sits, and its own
+ * copy still comes out (first, as defined last) */
+void func_ovl0D_06_80043010(void) {
 }

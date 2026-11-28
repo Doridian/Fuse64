@@ -376,6 +376,11 @@ pictures in all three versions (us's from retrace 4328 to 4602, eu's
 checkpoint at 4500, jp's at 4200; the sound, the EEPROM and the digest the
 same) and nothing else (us's other six with soft, eu's and jp's with gl,
 which draws the same noise): story recorded again (i386).
+aspmain.c written out from the microcode ("Audio", 2026-11-27) changed
+the sound of 18 of the 21 (not the three legal's, which stayed: us's and
+jp's are silent) and nothing else; recorded again (i386), us's seven the
+same on x86-64, and the same with `--audio lle` (us's seven, eu's
+battle and menus, jp's battle).
 jp's battle input is the port's own timing of battle.jp.txt
 (`port/tools/inputs/battle.jp.txt`, which test.py prefers to the shift
 check's): the port loads without the N64's waits, so
@@ -2748,10 +2753,12 @@ RDP's own memory, both inside the tasks.
 libaudio is DozerEncore's port of Blast Corps' library (port/libaudio),
 with the calls this game makes that Blast Corps doesn't (extra.c: the
 compressed-sequence player's channel calls, the synthesizer's) and the
-sound player (sndplayer.c). The RSP's audio microcode is DozerEncore's
-HLE (aspmain.c), or with `--audio lle` the game's own on the RSP
-interpreter (asp_lle.c, "The microcode, low level" below). The AI's
-buffers go to SDL or `--wav`.
+sound player (sndplayer.c). The RSP's audio microcode is aspmain.c, the
+game's own aspMain written out in C and the same to the bit ("The
+microcode, in C" below), or with `--audio lle` the microcode itself on
+the RSP interpreter (asp_lle.c, "The microcode, low level" below): the
+two give the same sound, byte for byte. The AI's buffers go to SDL or
+`--wav`.
 
 This game's libaudio is 2.0I's (docs/LIBULTRA.md), Blast Corps' older.
 Their C (src/libultra/audio against DozerEncore's
@@ -2762,10 +2769,11 @@ port's exact against. What differs, and the port now does as 2.0I:
 - **The envelope** is exponential (env.c's `_getRate`: the factor the
   volume is multiplied by every 8 samples, (target / volume)^(8 / n),
   16.16, by rww's table-and-squaring approximation; `_getVol` where a ramp
-  got to), and so is 2.0I's aspMain's envelope mixer (aspmain.c): over
-  each block of 8 samples the volume steps evenly to the next point of
-  the series, the first the volume times the rate twice, and stops at the
-  target. Blast Corps' were linear: the music was 0.7 to 1.3 dB too loud.
+  got to), and so is 2.0I's aspMain's envelope mixer: a volume a sample,
+  the first block's eight from the volume to the volume times the rate in
+  eighths, each block after it the last block's times the rate, each
+  clamped at the target ("The microcode, in C"). Blast Corps' were
+  linear: the music was 0.7 to 1.3 dB too loud.
 - **The sound player** (sndplayer.c, which Blast Corps has none of) as
   2.0I's: a sound's volume is the game's (at first its `sampleVolume`
   out of 127, times 0x7FFF) times the envelope's attack or decay volume
@@ -2786,18 +2794,86 @@ port's exact against. What differs, and the port now does as 2.0I:
   528 or 544 samples a retrace, 533.4 on average (640 in eu, at 50 Hz).
   It read 0 before, and every frame was the most, 640 (20% too much
   sound: in real time SDL's queue cap dropped buffers).
-- **Checked** against mupen64plus (its rsp-hle runs the audio lists):
-  `port/tools/emu_digest.py V OUT --wav W` records what the game gives
-  the AI (tools/src/m64p_audiodump.c, an audio plugin; `W.log` has each
-  buffer's retrace and length), the port replays the digest
-  (`PORT_SEED=0x1997 --replay OUT --wav`) with `PORT_REPLAY_LAG=1`, and
-  `port/tools/wav_cmp.py W PORT.wav` compares: RMS a second, correlation
-  a half-second window at the best lag (followed through the run), the
-  windows' spectra. `PORT_REPLAY_LAG=1` makes the game's thread wait
-  (spinning) at each read of the pads until the retrace the digest's read
-  was at, so the port lags as mupen64plus's run did and its audio frames
-  fall on the same game frames; without it the game is the same (the
-  digest is) but the sound per frame isn't. Results (2026-11-21, i386):
+- **The microcode, in C** (port/host/aspmain.c, the default, `--audio
+  hle`): each command is the microcode's routine (its text `D_8029E750`,
+  read from its disassembly) written out: the same vector operations, in
+  the same order, on the same 32 registers of eight lanes, the 48-bit
+  accumulators and the flags (rsp.c's arithmetic, which is cxd4's: the
+  products, the clamps, VSAR, the saturating adds with their carries, VGE
+  and VCL), the same loads and stores in a 4 KiB DMEM of big-endian bytes
+  (the microcode's data at its start at each task, as rspboot loads it;
+  the SETBUFF and SETVOL values at 0x360, the codebook at 0x4C0, the state
+  scratch at 0xF90), the same DMAs (8-byte units, wrapping) for the state
+  blocks it keeps in RDRAM, in its own layout. Only the scalar unit's
+  bookkeeping is the host's: the command list isn't copied into DMEM, and
+  the segment table and the loop address are host pointers. The registers
+  and flags carry from command to command and start each task at zero,
+  DMEM as the last audio task left it, as on the interpreter. What the
+  microcode does that rsp-hle's arithmetic (aspmain.c's before,
+  2026-11-27) didn't:
+  - MIXER: VMULF the destination by 0x7FFF, VMACF the source by the gain:
+    (2·d·0x7FFF + 2·s·g + 0x8000) >> 16, saturated (rsp-hle d + (s·g >>
+    15), truncated), 16 samples at a time;
+  - RESAMPLE: each lane's position and phase from the pitch in 16.16
+    (VMUDM, VMADN on the lane offsets), each of the four taps' products
+    rounded (VMULF), added in pairs with saturation (VADD), the state (the
+    phase, the next four samples, and for A_LOOP the 16 aligned bytes
+    around them) where it leaves off;
+  - POLEF: the response to an input sample times the gain (VMUDM: table
+    times gain·4 >> 16), written back over the codebook's second half in
+    DMEM; the input times the gain in the same 48-bit sum as the history
+    and the earlier samples, shifted left 2 before its high half is
+    taken;
+  - ENVMIXER: the ramp above (16.16 volumes, VMUDL/VMADM/VMADN/VMADH by
+    the rate), VGE going down and VCL going up for the target, the gains
+    the volume times the dry and wet amounts (VMULF, rounded), the mix as
+    MIXER's; without A_AUX the wet sends go to the scratch at DMEM 0xFE0;
+  - ADPCM, as before but for a header's scale above 12, which is 12's
+    (the nibbles are shifted only by up to 12: none in the scenarios);
+  - CLEARBUFF, DMEMMOVE and INTERLEAVE in 16-byte units (DMEMMOVE
+    overlapping as it reads 16 and writes 16), LOADADPCM's count to 0x4C0
+    as it is.
+
+  0.21 ms a task on i386 (0.15 x86-64; us's battle, under the same load
+  as the interpreter's 0.87 and 0.76 ms; rsp-hle's arithmetic was about
+  0.03 ms).
+- **Checked against mupen64plus** with its LLE RSP plugin,
+  mupen64plus-rsp-cxd4 (at the commit gfx_ref takes, built as a plugin
+  from its projects/unix Makefile and given to `emu_digest.py --m64p DIR`
+  as DIR's `mupen64plus-rsp-hle.so`, beside the system's core: its audio
+  lists run on cxd4's interpreter, since the plugin sends none to the
+  audio plugin): `port/tools/emu_digest.py V OUT --m64p DIR --wav W`
+  records what the game gives the AI (tools/src/m64p_audiodump.c, an
+  audio plugin; `W.log` has each buffer's retrace and length), the port
+  replays the digest (`PORT_SEED=0x1997 --replay OUT --wav`) with
+  `PORT_REPLAY_LAG=1`, and `port/tools/wav_cmp.py W PORT.wav` compares:
+  RMS a second, correlation a half-second window at the best lag
+  (followed through the run), the windows' spectra; and sample by sample,
+  equal and within 1 by quarter-second windows at the best lag (the
+  audio-lle scratch's lagexact.py). `PORT_REPLAY_LAG=1` makes the game's
+  thread wait (spinning) at each read of the pads until the retrace the
+  digest's read was at, so the port lags as mupen64plus's run did and its
+  audio frames fall on the same game frames; without it the game is the
+  same (the digest is) but the sound per frame isn't. us's menus (4000
+  retraces, 2026-11-27): the RMS a second 0.06 dB apart, window
+  correlation median 1.0000 (min 0.9786), the residual median -78.5 dB,
+  the spectra median 1.0000 (min 0.9995); sample by sample 57.8% equal and
+  87.6% within 1 (`--audio hle` and `lle` the same file). Against
+  mupen64plus's HLE plugin, rsp-hle, whose rounding aspmain.c had before
+  (its own run of the same retraces): 0.8% equal, 1.7% within 1, the
+  residual -45.2 dB; with that aspmain.c it was 29.0% equal, 72.7% within
+  1, -74.7 dB, and 0.8%, 1.7%, -45.1 dB against cxd4's run. What is left
+  against the emulator is the frames' timing: the sound effects start up
+  to three retraces off from the music, against mupen64plus (where in a
+  lagging frame the game asks for them: its work takes no time in the
+  port), so windows with both correlate 0.3 to 0.99 (us's battle median
+  0.76). The two emulator runs aren't comparable sample by sample with
+  each other: the LLE RSP takes longer and the game's frames fall
+  otherwise (3,514 reads of the pads against 3,509).
+
+  Before, against rsp-hle (2026-11-21, i386, with rsp-hle's rounding,
+  found by output: which operation rounds moved the silence's level, -10
+  with the reverb's feedback, from -15 to +2):
 
   | scenario | RMS a second, mean difference | window correlation | spectra |
   |---|---|---|---|
@@ -2807,21 +2883,9 @@ port's exact against. What differs, and the port now does as 2.0I:
   | eu battle (8000) | 0.30 dB (0.99 before the oracle) | median 0.74 | median 0.9991 |
   | jp menus (4000) | 0.38 dB | median 1.0000 | 1.0000 |
 
-  The music is mupen64plus's to the rounding: at a fixed lag 76% of the
-  samples are within 1 of it and 30% the same (a handful of spots differ
-  more, up to 102). The sound effects are the same sounds, each the same
-  where it plays alone, but they start up to three retraces off from the
-  music, against mupen64plus (where in a lagging frame the game asks for
-  them: its work takes no time in the port), so windows with both
-  correlate 0.3 to 0.99. Before (HEAD 8cddbb5d): 640 samples a retrace,
-  the music 0.7 to 1.3 dB loud and correlating 0.99 at best, the logos'
-  effects 13.5 dB quiet.
-- **The rounding** that makes it mupen64plus's, found by output (which
-  operation rounds moved its silence's level, -10 with the reverb's
-  feedback, from -15 to +2): the envelope mixer's gains rounded, its
-  samples times the gains truncated, the mixer truncated, the low-pass's
-  input gain rounded and its output truncated, the resampler and ADPCM
-  truncated. That is rsp-hle's arithmetic, not the RSP's (below).
+  Before that (HEAD 8cddbb5d): 640 samples a retrace, the music 0.7 to
+  1.3 dB loud and correlating 0.99 at best, the logos' effects 13.5 dB
+  quiet.
 - **The microcode, low level** (`--audio lle`, `PORT_AUDIO_LLE=1`;
   port/host/asp_lle.c): each audio task runs the game's own aspMain
   (text `D_8029E750`, data `D_802A5040`, booted by rspboot `D_8029D250`
@@ -2853,55 +2917,33 @@ port's exact against. What differs, and the port now does as 2.0I:
     checked on the graphics microcode before; the audio one uses the
     packed loads and stores, VSAR, the saturating adds and VMRG more.
   - **Against aspmain.c, a command at a time** (`-DPORT_ASP_DIAG` in
-    `CMAKE_C_FLAGS`: the microcode stops at its dispatch, 0x0E4, before
-    each command, and aspmain.c runs the command on a copy of the DMEM
-    there, with the microcode's ADPCM, RESAMPLE and POLEF state given to
-    it in its own layout; the table at the exit). us's menus (2026-11-27):
-    ADPCM, LOADBUFF, CLEARBUFF, DMEMMOVE and INTERLEAVE the same in
-    every command; the others differ in rounding, the microcode's
-    arithmetic against rsp-hle's:
-
-    | command | commands that differ | samples that differ | by | the microcode |
-    |---|---|---|---|---|
-    | MIXER | 112,776 of 143,904 | 50% | 1 (0.08% 2) | VMULF the destination by 0x7FFF, VMACF the source by the gain: (d·0xFFFE + 2·s·g + 0x8000) >> 16, rounded; aspmain.c d + (s·g >> 15) |
-    | RESAMPLE | 31,722 of 32,145 | 54% | 1 or 2 | each tap's product rounded (VMULF), the four added in pairs with saturation; aspmain.c the sum truncated |
-    | POLEF | 28,734 of 35,976 | 53% | 1 (2 to 5: 1.5% of its samples) | its gain and accumulation (VMUDM, VMADH, VSAR) |
-    | ENVMIXER | 31,582 of 32,145 | 59% | mostly 1; 0.14% more than 64, up to 2,699 | the same mix as MIXER, and the ramp's volumes, 8 lanes at a time in 32-bit fixed point |
-
-    With aspmain.c's MIXER and RESAMPLE written as the microcode's
-    formulas (a trial, not kept), both were the same in every command,
-    and ENVMIXER's mix as MIXER's halved the envelope commands that differ
-    (14,403 left: those whose volume ramps).
-  - **The sound** (test.py's scenarios, `--keep`; frames, EEPROM and
-    gameplay digest the same, as the audio doesn't reach the game):
-    legal is silent in both; the others differ from the first note (us's
-    menus at 10.0 s) in 80% to 94% of the samples, mostly by 6 to 12
-    (the reverb's feedback carries the low bits), up to 2,710 (menus),
-    7,641 (battle), 5,247 (story), 2,659 (warp-stage), 26,379
-    (warp-boss: a ramp), 9,280 (warp-battle); the same level (RMS a
-    second within 0.01 dB), window correlation 0.9992 or more, the
-    difference 45 to 53 dB under the sound. eu's menus and battle the
-    same (80%, 89%; -44.9, -48.5 dB). x86-64's menus is i386's.
-  - **Against mupen64plus with an LLE RSP** (mupen64plus-rsp-cxd4 at the
-    commit gfx_ref takes, built as a plugin from its projects/unix
-    Makefile and given to `emu_digest.py --m64p DIR` as DIR's
-    `mupen64plus-rsp-hle.so`, beside the system's core: its audio lists
-    run on cxd4, LLE, since its plugin sends none to the audio plugin):
-    us's menus, 4000 retraces, each emulator's digest replayed by the
-    port (`PORT_REPLAY_LAG=1`) with each audio path, the samples
-    compared at the window's lag (port/tools/wav_cmp.py; equal and
-    within 1 by quarter-second windows at the best lag):
-
-    | port against | rsp-hle's run | cxd4's run |
-    |---|---|---|
-    | `--audio hle` | 29.0% equal, 72.7% within 1, residual -74.7 dB | 0.8%, 1.7%, -45.1 dB |
-    | `--audio lle` | 0.8%, 1.7%, -45.2 dB | 57.8% equal, 87.6% within 1, residual -78.5 dB |
-
-    What is left against the emulator is the frames' timing (the sound
-    effects' start, "Checked" above), the same in both columns. The two
-    emulator runs aren't comparable sample by sample with each other: the
-    LLE RSP takes longer and the game's frames fall otherwise (3,514
-    reads of the pads against 3,509).
+    `CMAKE_C_FLAGS`, with `--audio lle`: the microcode stops at its
+    dispatch, 0x0E4, before each command, and aspmain.c runs the command
+    from the same DMEM, vector registers, accumulators and flags and a
+    copy of the state block as they were there; then DMEM (but the
+    command list at 0x380-0x4BF, which the microcode refills after a
+    chunk's last command), the registers, the accumulators, the flags and
+    the state block are compared with the microcode's after it; the table
+    at the exit; SEGMENT and SETLOOP, whose addresses the microcode keeps
+    in DMEM and aspmain.c as pointers, aren't compared): us's seven
+    scenarios (17,555,179 commands), eu's battle (2,990,906) and jp's
+    battle (2,961,043), none differs (2026-11-27). Before, with rsp-hle's
+    arithmetic (us's menus, the samples a command wrote): MIXER differed
+    in 112,776 commands of 143,904 (50% of the samples, by 1), RESAMPLE
+    31,722 of 32,145 (54%, 1 or 2), POLEF 28,734 of 35,976 (53%, 1 to 5),
+    ENVMIXER 31,582 of 32,145 (59%, mostly 1, 0.14% more than 64, up to
+    2,699: the ramp); ADPCM, LOADBUFF, CLEARBUFF, DMEMMOVE and INTERLEAVE
+    were the same.
+  - **The sound** (test.py's scenarios, `--keep`): `--audio hle` and
+    `lle` give the same file in us's seven, eu's and jp's battle
+    (2026-11-27), i386 and x86-64. Against rsp-hle's arithmetic (frames,
+    EEPROM and gameplay digest the same, as the audio doesn't reach the
+    game) it differs from the first note (us's menus at 10.0 s) in 80% to
+    94% of the samples, mostly by 6 to 12 (the reverb's feedback carries
+    the low bits), up to 2,710 (menus), 7,641 (battle), 5,247 (story),
+    2,659 (warp-stage), 26,379 (warp-boss: a ramp), 9,280 (warp-battle);
+    the same level (RMS a second within 0.01 dB), window correlation
+    0.9992 or more, the difference 45 to 53 dB under the sound.
   - **What the microcode reads that a task didn't write**
     (`-DPORT_RSP_WATCH`: rsp.c marks the DMEM bytes written since the
     task began, the DMAs in too, and asp_lle.c lists the bytes read
@@ -2909,15 +2951,23 @@ port's exact against. What differs, and the port now does as 2.0I:
     resampler's loads past their buffers' ends (their results unused),
     and POLEF with A_INIT, which loads two samples of history from DMEM
     0xF94-0xF97 it doesn't clear: the state scratch at 0xF90 that the
-    last RESAMPLE, ENVMIXER or POLEF left (aspmain.c's POLEF starts from
-    0). `PORT_AUDIO_LLE_FILL=N[:LO-HI[:T]]` (that build) fills DMEM
-    from LO to HI with byte N at each of the first T tasks: 0xF00-0xFBF
-    and 0xF94-0xF97 at the first task alone change menus' sound (21% of
-    the samples, mostly by 2: the reverb carries it), every other range
+    last RESAMPLE, ENVMIXER or POLEF left, in this task or an earlier one
+    (aspmain.c the same, from its DMEM: before, it started from 0).
+    `PORT_AUDIO_LLE_FILL=N[:LO-HI[:T]]` (that build) fills DMEM from LO
+    to HI with byte N at each of the first T tasks: 0xF00-0xFBF and
+    0xF94-0xF97 at the first task alone change menus' sound (21% of the
+    samples, mostly by 2: the reverb carries it), every other range
     nothing. In menus the three POLEF inits are each where no command of
-    the task used the scratch yet, so on the N64 they take what the task
-    before left there, a graphics task's (the port gives the last audio
-    task's, 0 in these: the same as zeros, or as the port's own DMEM's).
+    the task used the scratch yet. On the N64 DMEM is the graphics
+    task's too, and rspboot loads only the microcode's data (0x000-0x7FF),
+    so 0xF94 holds what the last audio task left unless a graphics task
+    in between wrote it: `PORT_AUDIO_LLE_GFXDMEM=1` (that build) logs it
+    before each audio task, and whether a graphics task (F3DEX.NoN on
+    rsp.c, the soft renderer) wrote any of 0xF90-0xF97 since the last
+    audio task: none did in us's menus (2,998 tasks), so the port's
+    history is the N64's, as far as the graphics microcode's paths the
+    port runs go (a yielded graphics task, which the port never has,
+    saves its DMEM rather than writing it).
 - **The libaudio oracle** (`port/tools/audio_oracle`, DozerEncore's "The
   libaudio oracle"): port/libaudio is the original's exactly in every
   scenario recorded (test.py's seven, in us, eu and jp): every audio
@@ -2959,7 +3009,11 @@ port's exact against. What differs, and the port now does as 2.0I:
     recorder (build/oracle-rec-V), plays test.py's scenarios with it and
     checks their frames, EEPROM and digest against test_refs.json (about
     20 minutes a version). A change to a scenario's run (its frames or
-    digest) needs its log remade.
+    digest) needs its log remade, and so does one to aspmain.c's output
+    (`V.json`'s sound, and the RSP's writes the logs carry: the state
+    blocks): all 21 were recorded again with the exact aspmain.c
+    (2026-11-27; each version's `V.json` is test_refs.json's sound, and
+    the replay passes in all 21).
   - **Found**: at a voice's stop, the samples mixed before it didn't
     move its envelope's ramp (voice.c; env.c's `_pullSubFrame` moves a
     playing voice's by every sample), so the voice's next note started
@@ -2973,10 +3027,10 @@ port's exact against. What differs, and the port now does as 2.0I:
     is NULL instead of the header: no recorded run selects one.
     Since, port/libaudio's sound is the original's to the sample (the
     port's wav hashes, i386 and x86-64, are the recorder's). Against
-    mupen64plus (above) us and jp are as before (us menus 0.06 dB,
-    median 1.0000, its min 0.9773 from 0.9993; story 0.17 dB, 0.9964;
-    battle 0.15 dB, 0.76; jp menus 0.37 dB, 1.0000), and eu's battle
-    went from 0.99 dB to 0.30 dB (median 0.73 to 0.74).
+    mupen64plus's rsp-hle then (above) us and jp were as before (us menus
+    0.06 dB, median 1.0000, its min 0.9773 from 0.9993; story 0.17 dB,
+    0.9964; battle 0.15 dB, 0.76; jp menus 0.37 dB, 1.0000), and eu's
+    battle went from 0.99 dB to 0.30 dB (median 0.73 to 0.74).
 
 ### Checks and debugging aids
 
@@ -3260,25 +3314,16 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   the port leaves out the cells past D_800B5F20 ("Every room");
   9CAB0.c's two unions (left out of the pools on every host: they
   didn't show up).
-- **Audio** ("Audio"): checked against mupen64plus in us's menus, story
-  and battle, eu's battle and jp's menus; port/libaudio against the
-  original library by the oracle ("Audio"). Left: the sound effects'
-  start within a lagging frame (only in a lagged replay). The default,
-  aspmain.c, has rsp-hle's rounding, not the RSP's: `--audio lle` runs
-  the microcode itself, the same as cxd4's interpreter in every task of
-  us's seven scenarios and eu's two ("The microcode, low level"), and
-  differs from aspmain.c in 80% to 94% of the samples, 45 to 53 dB under
-  the sound. Proposed, not done: `lle` the default and the reference
-  (0.77 ms a retrace on i386; the WebAssembly build not measured), which
-  changes test_refs.json's `wav` of the scenarios with sound (up to all
-  21: us's legal is silent in both) and nothing else, the oracle's
-  `V.json` wav hashes recorded again with it, and the emulator to check
-  the sound against mupen64plus-rsp-cxd4 instead of rsp-hle; aspmain.c
-  stays as `--audio hle`, to be made the microcode's command by command
-  under `PORT_ASP_DIAG` (MIXER's and RESAMPLE's formulas are found;
-  POLEF's, and ENVMIXER's ramp, are left). POLEF's A_INIT history from
-  DMEM 0xF94 that no command of the task wrote is, on the N64, what the
-  graphics task before left there (three times in menus).
+- **Audio** ("Audio"): aspmain.c, the default, is the game's microcode
+  written out in C, the same as `--audio lle` (the microcode on the RSP
+  interpreter, itself cxd4's in every task) in every command of us's
+  seven scenarios and eu's and jp's battle, and the sound against
+  mupen64plus with cxd4 as before with `lle` (us's menus 57.8% of the
+  samples equal, the residual -78.5 dB). Left: the sound effects' start
+  within a lagging frame (only in a lagged replay); POLEF's A_INIT
+  history from DMEM 0xF94 is the last audio task's, the N64's as long as
+  no graphics task writes there (none of the port's runs of F3DEX.NoN
+  does); the WebAssembly build's time for aspmain.c not measured.
 - Phase 7 and 8 (docs/ROADMAP.md, docs/NETPLAY.md): the input and the RNG
   seed through the network.
 

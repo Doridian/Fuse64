@@ -62,6 +62,7 @@
  * outer loop with j instead merged i's ranges and swapped s0/s1.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /* The text is drawn through ZeroJump 0x250C in us and eu, 0x2501 in jp. */
 #if VERSION_JP
@@ -95,15 +96,6 @@ typedef struct {
     /* 0x18 */ s32 unk18;
     /* 0x1C */ UnkStructA_40 *unk1C;
 } Box_ovl0B_02;
-
-/* A model at a place, and its object. */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ UnkStructA_40 *unk10;
-} Model_ovl0B_02;
 
 /* A piece of a group: its model, place, object, frame, colour, angles and
  * scale. */
@@ -296,7 +288,7 @@ Box_ovl0B_02 D_ovl0B_02_800499F0[3] = {
     { 174.0f, 201.0f, 20.0f, 20.0f, 1.0f, 0x39, 0, NULL },
     { 299.0f, 201.0f, 20.0f, 20.0f, 1.0f, 0x39, 2, NULL }
 };
-Model_ovl0B_02 D_ovl0B_02_80049A50[2] = {
+UnkStruct_ovl0B_02_80049A50 D_ovl0B_02_80049A50[2] = {
     { 0x27, 120.0f, -950.0f, -1160.0f, NULL },
     { 0x2C, 0.0f, 45.0f, 0.0f, NULL }
 };

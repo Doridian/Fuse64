@@ -197,6 +197,7 @@
  * frame by 8 but leaves them at 84/96/112).
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 /* The game objects the ZeroJump calls make and return. */
 typedef struct {
@@ -273,16 +274,6 @@ typedef struct {
     /* 0x30 */ s32 unk30;
     /* 0x34 */ f32 unk34;
 } Fade; /* size = 0x38 */
-
-/* How func_ovl0B_04_80043050 makes an Entry0B04's object. */
-typedef struct {
-    /* 0x00 */ f32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-} Desc; /* size = 0x18 */
 
 typedef struct {
     /* 0x00 */ Obj0B04 *unk0;
@@ -1186,7 +1177,7 @@ Fade D_ovl0B_04_80049B20[5] = {
     { NULL, 140, 20, 200, 100, 5.0f, 135.0f, 10.0f, 0.44f, 110, 10, 161, 133, 0.0f },
     { NULL, 50, 50, 50, 120, 5.0f, 160.0f, 5.0f, 0.75f, 110, 10, 160, 120, 0.0f },
 };
-Desc D_ovl0B_04_80049C38[11] = {
+UnkStruct_ovl0B_04_80049C38 D_ovl0B_04_80049C38[11] = {
     { 32.0f, 32.0f, 67, 2, 0, 1024 },
     { 64.0f, 11.0f, 67, 0, 1, 1024 },
     { 24.0f, 24.0f, 67, 4, 0, 0 },
@@ -1296,8 +1287,8 @@ extern s32 D_ovl0B_04_8004A1A4; /* defined after 800447DC, whose static is A1A0 
 extern s32 D_ovl0B_04_8004A1A8;
 extern s32 D_ovl0B_04_8004A1AC[14];
 
-static void func_ovl0B_04_80043050(Entry0B04 *e, Desc *d);
-static void func_ovl0B_04_80043010(s32 n, Entry0B04 *e, Desc *d);
+static void func_ovl0B_04_80043050(Entry0B04 *e, UnkStruct_ovl0B_04_80049C38 *d);
+static void func_ovl0B_04_80043010(s32 n, Entry0B04 *e, UnkStruct_ovl0B_04_80049C38 *d);
 static void func_ovl0B_04_800438FC(s32 id, u32 mode, Item *it);
 static void func_ovl0B_04_80043A24(s32 n, s32 *ids, Item *items);
 #if !VERSION_JP
@@ -1364,7 +1355,7 @@ static void func_ovl0B_04_80043AD4(s32 *ids, s32 n) {
 /* The objects of a run of entries, and their removal (inlined). */
 /* n first: its home is at the top of the inlined copy's slots, as in the
  * original's 80043110 (with (e, n, d) it sits 4 bytes higher). */
-static void func_ovl0B_04_MakeEntries(s32 n, Entry0B04 *e, Desc *d) {
+static void func_ovl0B_04_MakeEntries(s32 n, Entry0B04 *e, UnkStruct_ovl0B_04_80049C38 *d) {
     s32 i;
 
     for (i = 0; i < n; i++) {
@@ -1373,11 +1364,11 @@ static void func_ovl0B_04_MakeEntries(s32 n, Entry0B04 *e, Desc *d) {
     return;
 }
 
-/* MakeEntries' arguments, the Desc unused (the callers pass the one they
+/* MakeEntries' arguments, the UnkStruct_ovl0B_04_80049C38 unused (the callers pass the one they
  * made the run with): the third parameter's home is part of the frame
  * (80043110's FreeEntries n homes at the original's 80 and 64; 16-byte
  * areas). */
-static void func_ovl0B_04_80043010(s32 n, Entry0B04 *e, Desc *d) {
+static void func_ovl0B_04_80043010(s32 n, Entry0B04 *e, UnkStruct_ovl0B_04_80049C38 *d) {
     s32 i;
 
     for (i = 0; i < n; i++) {
@@ -2994,8 +2985,8 @@ void func_ovl0B_04_80043110(s32 arg0) {
     }
 }
 
-/* An entry's object made as its Desc says. */
-static void func_ovl0B_04_80043050(Entry0B04 *e, Desc *d) {
+/* An entry's object made as its UnkStruct_ovl0B_04_80049C38 says. */
+static void func_ovl0B_04_80043050(Entry0B04 *e, UnkStruct_ovl0B_04_80049C38 *d) {
     e->unk0 = func_ovl0B_04_80047DD8(d->unk8, d->unk10);
     e->unk0->unk38 = d->unkC;
     e->unk0->unk28 = d->unk0;

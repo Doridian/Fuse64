@@ -439,6 +439,7 @@
  *   the OPEN_B #line.
  */
 #include "common.h"
+#include "overlays/common/types.h"
 
 typedef struct {
     PORT_UP(u32) w0;
@@ -498,15 +499,6 @@ typedef struct {
     /* 0x0C */ f32 unkC;
     /* 0x10 */ f32 unk10;
 } Rect_ovl0B_06; /* size = 0x14 */
-
-typedef struct {
-    /* 0x00 */ f32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-} Spr_ovl0B_06; /* size = 0x18 */
 
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -637,7 +629,7 @@ static void func_ovl0B_06_80043030(void);
 static void func_ovl0B_06_80043028(void);
 static void func_ovl0B_06_80043020(void);
 static void func_ovl0B_06_80043018(void);
-static void func_ovl0B_06_80043040(Rect_ovl0B_06 *rect, Spr_ovl0B_06 *spr, f32 dy);
+static void func_ovl0B_06_80043040(Rect_ovl0B_06 *rect, UnkStruct_ovl0B_04_80049C38 *spr, f32 dy);
 static void func_ovl0B_06_800430F0(s32 arg0);
 static void func_ovl0B_06_80043218(void);
 void func_ovl0B_06_80043220(void);
@@ -938,7 +930,7 @@ Rect_ovl0B_06 D_ovl0B_06_80049F20[3][7] = {
         { NULL, 222.0f, 61.0f, 232.0f, 71.0f }
     }
 };
-Spr_ovl0B_06 D_ovl0B_06_8004A0C4[15] = {
+UnkStruct_ovl0B_04_80049C38 D_ovl0B_06_8004A0C4[15] = {
     { 18.0f, 24.0f, 0x43, 8, 0, 0 },
     { 32.0f, 32.0f, 0x45, 0, 0, 0x200 },
     { 32.0f, 32.0f, 0x45, 2, 0, 0x200 },
@@ -955,7 +947,7 @@ Spr_ovl0B_06 D_ovl0B_06_8004A0C4[15] = {
     { 20.0f, 20.0f, 0x39, 2, 0, 0 },
     { 32.0f, 32.0f, 0x45, 6, 0, 0x200 }
 };
-Spr_ovl0B_06 * D_ovl0B_06_8004A22C[3] = { &D_ovl0B_06_8004A0C4[1], &D_ovl0B_06_8004A0C4[0], &D_ovl0B_06_8004A0C4[2] };
+UnkStruct_ovl0B_04_80049C38 * D_ovl0B_06_8004A22C[3] = { &D_ovl0B_06_8004A0C4[1], &D_ovl0B_06_8004A0C4[0], &D_ovl0B_06_8004A0C4[2] };
 Rect_ovl0B_06 * D_ovl0B_06_8004A238[3] = { &D_ovl0B_06_80049E44[0], &D_ovl0B_06_80049E44[1], &D_ovl0B_06_80049E44[2] };
 Col_ovl0B_06 D_ovl0B_06_8004A244 = { 0, 0xB4, 0, 0x78 };
 Col_ovl0B_06 D_ovl0B_06_8004A254 = { 0xFA, 0xFA, 0, 0x78 };
@@ -3157,7 +3149,7 @@ static void func_ovl0B_06_800430F0(s32 arg0) {
 
 
 /* @80043040 */
-static void func_ovl0B_06_80043040(Rect_ovl0B_06 *rect, Spr_ovl0B_06 *spr, f32 dy) {
+static void func_ovl0B_06_80043040(Rect_ovl0B_06 *rect, UnkStruct_ovl0B_04_80049C38 *spr, f32 dy) {
     func_ovl0B_06_80043030();
     func_ovl0B_06_80043028();
     func_ovl0B_06_80043020();
@@ -3195,7 +3187,7 @@ static void func_ovl0B_06_80043018(void) {
  * two; tried: the start index as a parameter (jp's n home moves), OPEN_B
  * in a statics.h (jp swaps). The number is the call's line minus 5, so a
  * line added or removed above the handler changes it. */
-#line 2740
+#line 2732
 static void OPEN_B(s32 n, Box_ovl0B_06 *box) {
     s32 i;
     f32 step;

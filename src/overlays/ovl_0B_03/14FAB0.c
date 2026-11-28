@@ -91,6 +91,7 @@
  */
 
 #include "common.h"
+#include "overlays/common/types.h"
 #include "gfx.h"
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
@@ -120,15 +121,6 @@ typedef struct {
     /* 0x10 */ f32 unk10;
     /* 0x14 */ UnkStructA_40 *unk14;
 } Box_ovl0B_03;
-
-/* A model: what func_ovl0B_03_80047E98 makes, where, and the result. */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ UnkStructA_40 *unk10;
-} Model_ovl0B_03;
 
 typedef struct {
     /* 0x0 */ s32 unk0;
@@ -218,7 +210,7 @@ static void func_ovl0B_03_8004368C(s32 obj, s32 *vals);
 static void func_ovl0B_03_800436EC(s32 n, Box_ovl0B_03 *boxes, s32 alpha);
 void func_ovl0B_03_80043834(void);
 void func_ovl0B_03_8004386C(void);
-static void func_ovl0B_03_800464B0(Model_ovl0B_03 *models, s32 n);
+static void func_ovl0B_03_800464B0(UnkStruct_ovl0B_02_80049A50 *models, s32 n);
 void func_ovl0B_03_80046510(void);
 s32 func_ovl0B_03_80046850(u8 arg0, u16 arg1);
 void func_ovl0B_03_80046918(s32 arg0, Gfx_80225840 **arg1);
@@ -230,7 +222,7 @@ void func_ovl0B_03_80046E8C(void);
 void func_ovl0B_03_80046F78(void);
 void func_ovl0B_03_80047064(s32 arg0, Gfx_80225840 **arg1);
 void func_ovl0B_03_80047188(void);
-static void func_ovl0B_03_80047190(Model_ovl0B_03 *models, s32 n);
+static void func_ovl0B_03_80047190(UnkStruct_ovl0B_02_80049A50 *models, s32 n);
 void func_ovl0B_03_80047198(s32 arg0);
 s32 func_ovl0B_03_8004730C(s32, void *);
 void func_ovl0B_03_80047340(f32);
@@ -307,7 +299,7 @@ Label_ovl0B_03 D_ovl0B_03_80048C90[4] = {
 };
 #endif
 u8 *D_ovl0B_03_80048D00[2] = { D_ovl0B_03_80048AB0 + 0x10, D_ovl0B_03_80048AB0 + 0xC };
-Model_ovl0B_03 D_ovl0B_03_80048D08[4] = {
+UnkStruct_ovl0B_02_80049A50 D_ovl0B_03_80048D08[4] = {
     { 0x32, 0.0f, 0.0f, 0.0f, NULL },
     { 0x33, 0.0f, 85.0f, 0.0f, NULL },
     { 0x34, 115.0f, 0.0f, 0.0f, NULL },
@@ -345,7 +337,7 @@ Box_ovl0B_03 D_ovl0B_03_80048E84[1] = {
     { 115.0f, 114.0f, 20.0f, 20.0f, 0.7f, NULL },
 };
 #endif
-Model_ovl0B_03 D_ovl0B_03_80048E9C[4] = {
+UnkStruct_ovl0B_02_80049A50 D_ovl0B_03_80048E9C[4] = {
     { 0x49, -75.0f, -10.0f, 0.0f, NULL },
     { 0x49, -24.0f, -10.0f, 0.0f, NULL },
     { 0x49, 24.0f, -10.0f, 0.0f, NULL },
@@ -534,7 +526,7 @@ void func_ovl0B_03_80047198(s32 arg0) {
     }
 }
 
-static void func_ovl0B_03_80047190(Model_ovl0B_03 *models, s32 n) {
+static void func_ovl0B_03_80047190(UnkStruct_ovl0B_02_80049A50 *models, s32 n) {
     s32 i;
 
     for (i = 0; i < n; i++) {
@@ -730,7 +722,7 @@ void func_ovl0B_03_80046510(void) {
 
 
 /* The original passes n in $s2 (its callers' register). */
-static void func_ovl0B_03_800464B0(Model_ovl0B_03 *models, s32 n) {
+static void func_ovl0B_03_800464B0(UnkStruct_ovl0B_02_80049A50 *models, s32 n) {
     s32 i;
 
     for (i = 0; i < n; i++) {

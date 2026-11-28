@@ -15,6 +15,7 @@ void func_8023AA78(s32 arg0);
 void func_8023AE6C(s32 arg0, s32 arg1, s32 arg2);
 void func_8023AED0(s32 arg0);
 void func_8023E8AC();
+void func_8024368C(PORT_RET(s32, void) (*arg0)(void *));
 void func_80243698(s32 arg0);
 
 #endif

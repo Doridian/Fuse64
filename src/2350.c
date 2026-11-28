@@ -17,17 +17,11 @@
 #include "10D0.h"
 #include "13F0.h"
 #include "2350.h"
+#include "14B0.h"
 
 /* boot_code's own functions in the tables */
 void func_80000698(void *dst, u32 size, u32 rom);
 void func_80001A30(PORT_IP(s32) id, void **table);
-void func_800004D0();
-void func_80000524();
-void func_8000059C();
-void func_8000064C();
-OSMesgQueue *func_80001480();
-void func_80001488();
-void func_80001698();
 void __d_to_ll();
 void __ll_to_d();
 void __ull_to_f();

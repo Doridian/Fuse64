@@ -10,6 +10,7 @@
 #include "9BFD0.h"
 #include "A4860.h"
 #include "AFBF0.h"
+#include "426E0.h"
 
 typedef struct {
     /* 0x00 */ u32 unk0;
@@ -53,14 +54,11 @@ u32 func_80225B90(char *str);
 u32 func_80225B90(void);
 #endif
 void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
-void func_8022946C(UnkStructA_40 *, s32);
 s32 func_80238A10(void *, PORT_IP(s32), void *, s32, u16);
 s32 func_8023903C(u32);
 void func_80239094(void);
 PORT_RET(s32, u16) func_802399AC(s32);
 PORT_RET(void, s32) func_80280DB4(s32);
-s32 func_802810A0(TextArg, u16, u16, f32, f32, u8);
-s32 func_80281278(TextArg, u16, u16, f32, f32, u8);
 
 void func_802953F0(s32 *arg0, UnkStructA_40 **arg1);
 void func_8029547C(TextArg arg0, u16 arg1, u16 arg2, u8 arg3, s32 arg4, f32 arg5, f32 arg6, s32 *arg7,

@@ -38,6 +38,7 @@
 #include "ultralib/ultra64.h"
 #include "ultralib/PR/sched.h"
 #include "2350.h"
+#include "14B0.h"
 
 #ifdef TARGET_PC
 /* (the expression's text is the ROM's, and the port's copy of the C has

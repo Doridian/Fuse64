@@ -40,7 +40,6 @@ s32 D_802AFC20;
 s32 D_802AFC24;
 f32 D_802AFC28;
 
-void func_80269704(void);
 s32 func_8026C660(s32 arg0);
 s32 func_8026C630(s32 arg0, Vec3f *arg1);
 void func_8026C40C(s32 arg0, Vec3f *arg1);

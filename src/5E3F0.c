@@ -122,6 +122,8 @@
 #include "9BFD0.h"
 #include "9CAB0.h"
 #include "A4CE0.h"
+#include "426E0.h"
+#include "ACA00.h"
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 #define M2C_BITWISE(type, expr) ((type)(expr))
@@ -239,12 +241,8 @@ typedef struct { s32 x, y, z, w; f32 h; PORT_PAD(4) } Cell5_5E3F0; /* (func_8026
 
 void free(void *);
 PORT_RET(s32, void) func_8022979C(PORT_RET(s32, void *), s32, s32);
-void func_802297B8(PORT_RET(s32, void *), s32, s32, s32);
 PORT_RET(s32, void) func_8022984C(PORT_RET(s32, void *), s32);
-f32 func_80229D3C(void *, s32);
-void func_80229E38(void *, s32, s32);
 PORT_RET(s32, void) func_80229F74(PORT_RET(s32, void *), s32);
-s32 func_8022E884(PORT_RET(s32, void *), PORT_RET(s32, void *));
 PORT_RET(s32, void *) func_8022F4AC(PORT_RET(s32, void *), s32, PORT_RET(s32, void *));
 PORT_RET(s32, void *) func_8022F550(PORT_RET(s32, void *), s32);
 void func_8022F808(void *, f32 *);
@@ -256,7 +254,6 @@ PORT_RET(s32, void *) func_802311E8(void *);
 void * func_80231274(s32, s32, s32, void *);
 void func_802313DC(void *, s32);
 void func_80231408(void *, s32);
-void func_80231434(void *);
 PORT_RET(s32, void) func_80232AA8(PORT_RET(s32, void *));
 PORT_RET(s32, void) func_80232AC8(PORT_RET(s32, void *), PORT_RET(s32, void *));
 void func_80232BA0(f32 *, void *);
@@ -273,7 +270,6 @@ void func_802506B8(u8 *);
 s32 func_8026C660(s32);
 s32 func_8026D7D8(s32, s32, s32);
 PORT_RET(s32, u8) func_8026DC74(s32);
-void func_8026DCAC(f32, f32, f32, void *, s32);
 f32 func_8026E938(void *);
 f32 func_8026EAF8(void *);
 PORT_RET(s32, void *) func_802700EC(PORT_RET(s32, void *), PORT_RET(s32, void *), s32, PORT_RET(s32, f32)); /* (the fourth is a float: 8.0f's bits below) */
@@ -284,7 +280,6 @@ void func_80270BA4(void *);
 PORT_RET(s32, s16) func_802712A8(s32 *, s32);
 PORT_RET(s32, void) func_802712C4(PORT_RET(s32, void *));
 PORT_RET(s32, void) func_80271BB8(s32);
-void func_802727D8(PORT_RET(s32, void *));
 void func_802733C8(void *);
 PORT_RET(s32, void) func_802741D8(s16);
 PORT_RET(s32, s16) func_80274F64(s32);
@@ -299,15 +294,10 @@ void func_8027F820(void *);
 void func_8027F858(PORT_IP(s32), s32);
 void * func_802867E4(s32, f32, f32, f32);
 PORT_RET(s32, void) func_80287008(s32, s32, s32);
-s32 func_802871D0(PORT_RET(s32, void *));
 s32 func_8028A7CC(s32, f32 *, PORT_IP(s32));
 PORT_RET(void, s32) func_8028A81C(s32, f32, f32, f32, PORT_IP(s32));
 s32 func_802909FC(void *, void *);
-s32 func_80277378();
-s32 func_8027B480();
 void func_80291944(void *, s32, f32);
-void func_802926EC(void *);
-s32 func_8029279C(void *, s32, s32, s32, f32);
 void func_80297D30(s32, void *);
 void * malloc(s32);
 
@@ -407,7 +397,6 @@ s32 func_802443CC(s32 arg0);
 PORT_IP(s32) func_802443F4(s32 arg0);
 f32 func_8024441C(s32 arg0, s32 arg1);
 void func_80244BE0(s32 arg0, s16 arg1);
-s32 func_80244FF8(UnkStructA *arg0);
 void func_802450DC(s32 arg0);
 s32 func_80245150(s32 arg0);
 s32 func_802452AC(s32 arg0, s32 arg1);
@@ -432,7 +421,6 @@ void func_80246604(void);
 void func_8024663C(void);
 void func_80246808(void);
 void func_80246938(void);
-void func_80246D74();
 void func_80247614(void);
 void func_80247848(s32 arg0, s32 arg1);
 void func_80247928(s32 arg0, PORT_IP(s32) arg1);
@@ -498,7 +486,6 @@ void func_8024D8C4(Ctl58 *arg0);
 void func_8024E088(s32 arg0);
 void func_8024FFF0(void);
 void func_802500D4(void);
-void func_80250338(s32 arg0, void *arg1);
 s32 func_80250398(s32 arg0);
 void func_8025068C(s32 arg0);
 void func_802506B8(u8 *str);

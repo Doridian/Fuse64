@@ -16,8 +16,8 @@
  */
 #include "common.h"
 #include "A8DE0.h"
+#include "426E0.h"
 
-f32 func_80229D3C(UnkStructA_40 *, s32);
 PORT_RET(void, s32) func_8022FC90(UnkStructA *);
 UnkStructA *func_80230E6C(s32, PORT_IP(s32));
 UnkStructA *func_802311E8(UnkStructA *);

@@ -51,9 +51,9 @@
 #include "4E030.h"
 #include "530C0.h"
 #include "A4CE0.h"
+#include "426E0.h"
 
 PORT_RET(s32, void) func_8022979C(UnkStructA_40 *, s32, s32);
-void func_802297B8(UnkStructA_40 *, s32, s32, s32);
 PORT_RET(s32, void) func_8022984C(UnkStructA_40 *, s32);
 PORT_RET(void, s32) func_8022FC90(UnkStructA *);
 UnkStructA *func_80230CB4(s32, s32, s32, s32, PORT_RET(s32, void *));

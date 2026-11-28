@@ -37,10 +37,8 @@ typedef struct {
     /* 0x58 */ u8 unk58[0x10];
 } UnkStruct_8029F608; /* size 0x68 */
 
-void func_80237A90(UnkStruct_8029F608 *);
 PORT_RET(void, s32) func_80237D4C(s32);
 PORT_RET(void, s32) func_80237E18(s32, s32);
-s32 func_80238564(void (*)(void *), PORT_RET(s32, void *), s32, PORT_RET(s32, void *));
 PORT_RET(void, s32) func_802383A4(s32);
 void func_80297D80(OSMesgQueue *, void *, s32);
 PORT_RET(void, s32) func_80297D90(OSMesgQueue *, void *, s32);

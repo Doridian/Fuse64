@@ -157,7 +157,6 @@ void func_8026DA1C(u8 *arg0, s32 arg1, s32 arg2, s32 arg3);
 void func_8026DA2C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 void func_8026DB88(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);
 u8 func_8026DC74(s32 arg0);
-void func_8026DCAC(f32 arg0, f32 arg1, f32 arg2, void *arg3, s32 arg4);
 void func_8026DFB8(f32 arg0, f32 arg1, f32 arg2, f32 *arg3);
 f32 func_8026E2B0(s32 arg0);
 f32 func_8026E3AC(f32 arg0, f32 arg1, f32 arg2);

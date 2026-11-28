@@ -141,6 +141,7 @@
 #include "4ED50.h"
 #include "87190.h"
 #include "B6680.h"
+#include "ACA00.h"
 
 void *malloc(u32);
 void free(void *);
@@ -214,7 +215,6 @@ extern UnkAnim *D_802A5500;
 extern UnkTrack *D_802A5504;
 void *func_80227678(s32);
 void func_8026437C(Gfx_80225840 **, void *, f32, f32, f32, f32, f32, f32, f32, f32, s32);
-void func_802926EC(void *);
 void guMtxCatF(f32 mf[4][4], f32 nf[4][4], f32 res[4][4]);
 void guMtxF2L(f32 mf[4][4], UnkStruct_802A53D8 *m);
 void guMtxIdentF(f32 mf[4][4]);
@@ -250,7 +250,6 @@ extern s32 D_802A5490;
 extern s32 D_802AC5C8;
 
 static s32 func_802280EC(void);
-s32 func_802280F4(UnkStructA_40 *arg0, s32 arg1);
 static void func_8022827C(UnkStructA_40 *arg0);
 static void func_802284F0(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 static s32 func_802284F8(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
@@ -258,21 +257,13 @@ static void func_80228500(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 static s32 func_802289B8(UnkStructA_40 *arg0);
 void func_802289C0(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 void func_80229448(s32 arg0, s32 arg1, s32 arg2);
-void func_8022946C(UnkStructA_40 *arg0, s32 arg1);
-void func_80229560(UnkStructA_40 *arg0);
 void func_802295F4(UnkStructA_40 *arg0, s32 *arg1, s32 arg2);
 void func_80229640(UnkStructA_40 *arg0, s32 arg1);
 void func_8022979C(UnkStructA_40 *arg0, s32 arg1, s32 arg2);
-void func_802297B8(UnkStructA_40 *arg0, s32 arg1, s32 arg2, s32 arg3);
 void func_8022984C(UnkStructA_40 *arg0, s32 arg1);
 u32 func_80229C10(UnkStructA_40 *arg0, PORT_IP(s32) arg1, UnkVtx **arg2);
 s32 func_80229C90(UnkStructA_40 *arg0, s32 arg1, s16 arg2, s16 arg3, s16 arg4, s16 arg5);
-f32 func_80229D3C(UnkStructA_40 *arg0, s32 arg1);
-void func_80229D68(UnkStructA_40 *arg0);
-void func_80229E38(UnkStructA_40 *arg0, s32 arg1, s32 arg2);
 void func_80229F74(UnkStructA_40 *arg0, s32 arg1);
-s32 func_8022A0D8(UnkStructA_40 *arg0, s32 arg1);
-void func_8022A19C(UnkStructA_40 *arg0, s32 arg1);
 UnkStructA_40 *func_8022A328(UnkModel *arg0, s32 arg1, s32 arg2, u32 arg3, s32 arg4);
 static void func_8022A850(void);
 

@@ -89,6 +89,8 @@
 #include "8A7A0.h"
 #include "926A0.h"
 #include "A4CE0.h"
+#include "949A0.h"
+#include "9CAB0.h"
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 #define M2C_BITWISE(type, expr) ((type)(expr))
@@ -108,7 +110,6 @@
 
 
 void free(void *);
-s32 func_8022E884(PORT_RET(s32, void *), PORT_RET(s32, void *));
 PORT_RET(s32, void *) func_8022F4AC(PORT_RET(s32, void *), s32, PORT_RET(s32, void *));
 PORT_RET(void, s32) func_8022FC90(void *);
 void func_8022FF58(f32 *, f32 *, f32 *);
@@ -118,7 +119,6 @@ PORT_RET(s32, void *) func_802311E8(void *);
 void * func_80231274(s32, s32, s32, void *);
 void func_802313DC(void *, s32);
 void func_80231408(void *, s32);
-void func_80231434(void *);
 PORT_RET(s32, void) func_80232AA8(PORT_RET(s32, void *));
 PORT_RET(s32, void) func_80232AC8(PORT_RET(s32, void *), PORT_RET(s32, void *));
 s32 func_80232D18(void *, s32);
@@ -127,21 +127,16 @@ PORT_RET(void, s32) func_80238EA8(s32);
 void func_80239094(void);
 s32 *func_802391F0(void);
 void * func_802443F4(s32);
-s32 func_80244FF8(void *);
 s32 func_8026C51C(s32, f32, f32, f32);
 s32 func_8026C660(s32);
 void * func_8027A1A0(void *);
 s32 func_8027A1F4(void *, PORT_IP(s32));
-void func_8027B440(void *);
-s32 func_8027B5A8(void *);
 void func_8027F820();
 void func_8027F858(PORT_IP(s32), s32);
 s32 func_802870A8();
 PORT_RET(s32, void) func_80287440(UnkStructA *arg0);
-s32 func_802875B0();
 s32 func_8028A81C(s32, f32, f32, f32, PORT_IP(s32));
 s32 func_802909FC(void *, void *);
-s32 func_80277378(s32 arg0);
 void func_80291944(void *, s32, f32);
 void * malloc(s32);
 
@@ -184,7 +179,6 @@ extern s16 D_802AFE70;
 
 u16 func_8026D7D8(s32 arg0, s32 arg1, s32 arg2);
 u8 func_8026DC74(s32 arg0);
-void func_8026DCAC(f32 arg0, f32 arg1, f32 arg2, void *arg3, s32 arg4);
 f32 func_8026E938(u8 *arg0);
 s32 func_8026FFA0(s16 arg0);
 void func_80270080(PORT_IP(s32) *arg0);
@@ -199,7 +193,6 @@ s32 func_80270438(u8 *arg0, s32 *arg1);
 PORT_IP(s32) func_80270714(s16 arg0);
 PORT_RET(void, s32) func_80270770(s16 arg0, s16 arg1);
 void func_80270A80(PORT_IP(s32) *arg0);
-void func_80270B20(u8 *arg0);
 void func_80270BA4(u8 *arg0);
 void func_80270C24(u8 *arg0, s16 arg1, s32 arg2);
 void func_80270EF0(u8 *arg0);
@@ -220,7 +213,6 @@ void func_802720C8(u8 *arg0);
 s32 func_802721D4(UnkStructA *arg0, PORT_IP(s32) arg1, Ctl87 *arg2);
 s16 func_8027241C(s16 arg0);
 void func_80272494(UnkStructA *arg0, UnkStructA *arg1, Ctl87 *arg2);
-void func_802727D8(Ctl87 *arg0);
 void func_80272FC0(UnkStructA *arg0, s16 arg1);
 void func_802731A4(UnkStructA *arg0, s16 arg1);
 void *func_80273370(PORT_IP(s32) arg0);

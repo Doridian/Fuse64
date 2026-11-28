@@ -22,5 +22,6 @@ void func_80268EE4();
 void func_802690DC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 void func_8026910C();
 void func_802691A8();
+void func_80269704(u8 arg0);
 
 #endif

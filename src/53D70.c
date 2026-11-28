@@ -46,7 +46,6 @@ void func_80298040(UnkStruct_802AC410 *);
 void func_80298048(void *, UnkStruct_802AC400 *);
 void func_80298050(void *);
 void func_80298060(UnkStruct_802AC400 *);
-void func_8027CDA4(void *);
 
 s32 func_8023957C(s32 arg0, s32 arg1);
 s8 func_802395A8(s32 arg0, s32 arg1);

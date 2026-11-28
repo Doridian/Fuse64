@@ -39,19 +39,10 @@ PORT_RET(void, PORT_IP(s32)) func_8026D4B0(void (*arg0)(UnkStructA_40 *, Gfx_802
 void func_8026D2A4(s32 arg0, s32 arg1);
 void func_8026CFF4(s32 arg0, s32 arg1, s32 arg2);
 /* 426E0's (in its table only here; UnkObj is 426E0.c's) */
-void func_8022946C(void *, s32);
-void func_8022A19C(void *, s32);
 void func_8022984C(void *, s32);
-void func_802297B8(void *, s32, s32, s32);
-void func_80229560(void *);
 void func_80229F74(void *, s32);
-void func_80229E38(void *, s32, s32);
-s32 func_8022A0D8(void *, s32);
-void func_80229D68(void *);
-f32 func_80229D3C(void *, s32);
 s32 func_80229C90(void *, s32, s16, s16, s16, s16);
 void func_8022979C(void *, s32, s32);
-s32 func_802280F4(void *, s32);
 
 void *D_802A13E0 = NULL;
 /* ZeroJump module 21's table (func_8026CF30); the zeros end it, as in

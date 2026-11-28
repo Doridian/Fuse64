@@ -35,6 +35,7 @@
 #include "87D80.h"
 #include "9CAB0.h"
 #include "A2840.h"
+#include "426E0.h"
 
 /* A record of the table read from file 0x10B (func_802883B0). */
 typedef struct {
@@ -55,7 +56,6 @@ extern UnkStruct_800BA8E8 D_800BA8E8[6];
 #endif
 extern UnkStruct_800BC9F0 D_800BC9F0[PORT_SIZE(16)];
 
-void func_80229E38(UnkStructA_40 *, s32, s32);
 void func_8022FF58(Vec3f *, Vec3f *, f32 *);
 void func_80230914(UnkStructA *);
 void func_802313DC(UnkStructA *, s32);
@@ -63,7 +63,6 @@ void func_80231408(UnkStructA *, s32);
 s32 func_80232D18(UnkStructA *, s32);
 void func_80232DB4(UnkStructA *);
 PORT_RET(void, s32) func_8023903C(s32);
-void func_80250338(s32, Vec3f *);
 PORT_RET(void, s32) func_8026C51C(s32, f32, f32, f32);
 f32 func_8026E938(UnkStructA_40 *);
 void func_80282430(UnkStruct_80288040 *, s32, s32);
@@ -767,8 +766,6 @@ static s32 func_80288198(UnkStruct_80288040 *arg0) {
     }
     return 0;
 }
-
-void func_8028805C(UnkStruct_80288040 *arg0);
 
 void func_802881A0(UnkStruct_80288040 *arg0) {
     Vec3f player;

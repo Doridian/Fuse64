@@ -7,6 +7,7 @@
 #include "common.h"
 
 void *func_8026B72C(s32 size);
+void func_8026B7A8(u32 frames);
 void func_8026B7D4(void);
 
 #endif

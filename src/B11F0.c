@@ -49,8 +49,8 @@
 #include "9BFD0.h"
 #include "A4860.h"
 #include "B11F0.h"
+#include "426E0.h"
 
-void func_8022946C(void *, s32);
 PORT_RET(void, s32) func_8023903C(s32);
 s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 void func_80239094(void);

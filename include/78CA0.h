@@ -7,5 +7,6 @@
 #include "common.h"
 
 s32 func_8025E5EC(void);
+void func_8025E6A4(s32 mj);
 
 #endif

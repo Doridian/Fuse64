@@ -23,7 +23,6 @@ s32 func_8026C51C(s32, f32, f32, f32);
 void func_8022FF58(f32 *arg0, f32 *arg1, f32 *arg2);
 void func_8022FEAC(f32 *arg0, f32 *arg1);
 s32 func_80232D18(f32 *arg0, s32 arg1);
-s32 func_8022E884(UnkStructA *arg0, UnkStructA *arg1);
 void func_80232AA8(u8 *arg0);
 void func_80232AC8(u8 *arg0, u8 *arg1);
 void func_80231408(u8 *arg0, s32 arg1);

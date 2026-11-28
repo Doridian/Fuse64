@@ -19,14 +19,13 @@
 #include "86680.h"
 #include "9BFD0.h"
 #include "ACA00.h"
+#include "78CA0.h"
 
 s32 func_80225CCC(UnkStruct_80225CC0 *, s32, s32);
 PORT_UP(u32) func_80227678(s32);
 void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
-void func_8023876C(PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_80238A10(void (*)(void), PORT_IP(s32), void *, s32, s32);
 void func_8025E1D4(Gfx_80225840 **);
-void func_8025E6A4(u32);
 PORT_RET(void, s32) func_80294E54(void);
 void func_80297D20(void);
 void func_80297D30(s32, void *);

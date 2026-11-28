@@ -79,7 +79,6 @@ s32 D_802A0038 = 0;
 extern f32 D_8008F430;
 #define ABS(x) ((x) < 0.0f ? -(x) : (x))
 
-void func_8026DCAC(f32, f32, f32, Unk8026DCAC *, s32);
 s32 func_8026D7D8(s32, s32, s32);
 void func_802358D0(UnkStruct_802363BC *, s32, s16);
 PORT_RET(s32, u16) func_802399AC(s32);
@@ -110,7 +109,6 @@ typedef struct {
     /* 0x0 */ Vec3f pos;
     /* 0xC */ s32 unkC;
 } UnkStruct_80250338;
-void func_80250338(s32, Vec3f *);
 void func_80234550(void);
 void func_80236048(f32, f32);
 void func_802361FC(f32);

@@ -7,6 +7,7 @@
 #include "8A7A0.h"
 #include "949A0.h"
 #include "97610.h"
+#include "426E0.h"
 
 typedef struct {
     /* 0x00 */ s16 unk0;
@@ -24,7 +25,6 @@ typedef struct {
     /* 0x06 */ s16 unk6;
 } UnkStruct_802B01B8; /* size 0x8 */
 
-void func_8022946C(UnkStructA_40 *, s32);
 PORT_RET(void, s32) func_8022FC90(UnkStructA *);
 void func_8022FF58(f32 *, f32 *, f32 *);
 UnkStructA *func_80231274(s32, s32, s32, PORT_IP(s32));

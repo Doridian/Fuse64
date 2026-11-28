@@ -30,7 +30,6 @@ static void func_8027F0BC(UnkStruct_8027F0C4 *entry, u16 dir);
 static void *func_8027F4B0(u16 arg0);
 static void func_8027F420(void);
 
-void func_8027F658(s32 (*arg0)(u8, u16), UnkStruct_8027F0C4 *arg1, u16 arg2, u16 arg3, u16 arg4);
 void func_8027F64C(s32 arg0);
 void func_8027F63C(u8 arg0);
 void func_8027F5A8(u16 arg0, u16 arg1, u16 arg2);

@@ -22,11 +22,9 @@
 
 void func_802313DC(UnkStructA *, s32);
 void func_80231408(UnkStructA *, s32);
-void func_80246D74(s32);
 void func_80270354(s32 *, s32);
 void func_8027036C(s32 *, s32);
 PORT_RET(s32, s16) func_802712A8(s32 *, s32);
-s32 func_8027B480(s32 arg0);
 void *malloc(s32);
 void free(void *);
 s16 func_8026FFA0(s16);
@@ -50,7 +48,6 @@ extern UnkStruct_800AEDF0 D_800AEDF0[];
 extern UnkStruct_800BB4A8 D_800BB4A0[48];
 extern UnkStruct_800BB4A8 D_800BB4F8; /* [0] the list's head, [1] its sentinel, [2..47] the pool */
 
-void func_80270B20(PORT_RET(s32, void *));
 void func_80270BA4(UnkStructA *);
 PORT_RET(void, s32) func_80238EA8(s32);
 void func_80297D30(s32, void *);
@@ -78,9 +75,7 @@ s32 func_8027A1F4(UnkStructA *arg0, PORT_IP(s32) arg1);
 UnkStruct_800BB4A8 *func_8027AA74(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg4, s32 arg5, s32 arg6);
 s32 func_8027B094(s16 arg0);
 void func_8027B0BC(s16 arg0);
-void func_8027B440(UnkStructA *arg0);
 void func_8027B4B0(s16 arg0);
-s32 func_8027B5A8(UnkStructA *arg0);
 void func_8027B66C(s16 arg0, s16 arg1);
 void func_8027B6A4(UnkStruct_800BB4A8 *arg0, UnkStruct_800BB4A8 *arg1);
 void func_8027B6D4(UnkStruct_800BB4A8 *arg0, UnkStruct_800BB4A8 *arg1);

@@ -37,6 +37,7 @@
 #include "48600.h"
 #include "78CA0.h"
 #include "86680.h"
+#include "AA580.h"
 
 extern UnkStruct_800BA8E8 D_800BA8E8[6];
 extern UnkStruct_800BA900 D_800BA900[16];
@@ -56,7 +57,6 @@ PORT_RET(void, s32) func_8027B7C4(s16, f32, f32, f32);
 void func_8027F820(UnkStructA *);
 void func_8027F858(UnkStructA *, s32);
 s32 func_8028A81C(s32, f32, f32, f32, UnkStructA *);
-s32 func_802909FC(UnkStructA *, void *);
 void func_80291944(void *, s32, f32);
 f32 sinf(f32);
 

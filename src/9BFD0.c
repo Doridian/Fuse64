@@ -2,21 +2,14 @@
 #include "530C0.h"
 #include "9BFD0.h"
 
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ u8 unk10[0x24];
-    /* 0x34 */ s16 unk34;
-    /* 0x36 */ s16 unk36;
-} UnkStruct_802A1A80;
-
 #include "gfx.h"
+#include "model.h"
 
 /* The display list commands are written as gbi.h's macros expand, one per
  * line; the colour's first component is masked like the others (_SHIFTL),
  * which sets its registers. */
 
-void *func_8022A328(void *, s32, s32, s32, s32);
+UnkStructA_40 *func_8022A328(UnkModel *arg0, s32 arg1, s32 arg2, u32 arg3, s32 arg4);
 s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
@@ -39,8 +32,8 @@ extern u8 D_1000000[];
 /* .data: the two objects' pointers and ZeroJump module 32's table
    (func_802817D0); its last two words are zeros, taken here for the
    section's padding */
-UnkStruct_802A1A80 *D_802A1A80 = NULL;
-UnkStruct_802A1A80 *D_802A1A84 = NULL;
+UnkStructA_40 *D_802A1A80 = NULL;
+UnkStructA_40 *D_802A1A84 = NULL;
 void *D_802A1A88[] = {
     func_80281A00, func_80281994, func_8028192C, func_80281A40,
     func_80282144, func_80281AE0, func_80281AB4, func_80281A88,
@@ -60,7 +53,7 @@ void func_80282144(s32 arg0, s32 arg1, s32 arg2, f32 arg3) {
     f32 alpha;
 
     if (D_802A1A84 == NULL) {
-        D_802A1A84 = func_8022A328(func_802820BC, 0x9B, 1, 0, 0);
+        D_802A1A84 = func_8022A328((UnkModel *) func_802820BC, 0x9B, 1, 0, 0);
         D_802A1A84->unkC |= 0x90;
     } else if (arg3 == 0.0f) {
         func_8022A1E8(D_802A1A84);
@@ -246,7 +239,7 @@ void func_802817F8(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, void (*arg5
     }
     D_802B0240 = 1;
     if (D_802A1A80 == NULL) {
-        D_802A1A80 = func_8022A328(func_80282034, 0x9F, 1, 0, 0);
+        D_802A1A80 = func_8022A328((UnkModel *) func_80282034, 0x9F, 1, 0, 0);
         D_802A1A80->unkC |= 0x90;
         D_802A1A80->unk34 = D_802AC5CC;
     }

@@ -93,6 +93,7 @@
 #include "9CAB0.h"
 #include "530C0.h"
 #include "86680.h"
+#include "AA580.h"
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 #define M2C_BITWISE(type, expr) ((type)(expr))
@@ -127,7 +128,6 @@ void func_8027F820();
 void func_8027F858(PORT_IP(s32), s32);
 PORT_RET(s32, void) func_80287440(UnkStructA *arg0);
 s32 func_8028A81C(s32, f32, f32, f32, PORT_IP(s32));
-s32 func_802909FC(void *, void *);
 void func_80291944(void *, s32, f32);
 void * malloc(s32);
 

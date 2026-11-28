@@ -230,6 +230,7 @@
 #include "78CA0.h"
 #include "8A7A0.h"
 #include "949A0.h"
+#include "AA580.h"
 
 typedef struct { s32 n; f32 f4; s32 unk8; f32 fC; } SeqA; /* 0x10 */
 typedef struct { s32 n; u16 v; } SeqB; /* 0x8 */
@@ -274,7 +275,6 @@ PORT_RET(f32, void) func_80277484(void);
 void func_8027F820();
 void func_8027F858(PORT_IP(s32), s32);
 s32 func_8028A81C(s32, f32, f32, f32, PORT_IP(s32));
-s32 func_802909FC(void *, void *);
 void func_80291944(void *, s32, f32);
 void func_80297D30(s32, void *);
 void func_80297D80(void *, void *, s32);
@@ -1819,7 +1819,7 @@ loop_148:
                             }
                             func_80291944(M2C_FIELD(var_fp, f32 **, 0x18), D_802A0F7C[var_s3], 20.0f);
                             func_80230914(M2C_FIELD(var_fp, UnkStructA **, 0x18));
-                            func_802909FC(M2C_FIELD(var_fp, f32 **, 0x18), func_8025D504);
+                            func_802909FC((UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18), func_8025D504);
                             if ((func_8026E8B8() >= M2C_FIELD(PORT_FIELD(M2C_FIELD(var_fp, f32 **, 0x18), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x14)) ? 1 : 0) {
                                 func_8024585C(1);
                                 func_802452E8(0);
@@ -2833,7 +2833,7 @@ loop_658:
                             if (func_80251AC8(func_80252330((s32 *) ((u8 *) PORT_AT(var_fp, 0x38, Port_800BCFE8, unk20[24])), PORT_FIELD(var_fp, f32 *, 0x74, Port_800BCFE8, unk20[84]))) == 0) {
                                 func_80291944(M2C_FIELD(var_fp, f32 **, 0x18), D_802A0F7C[var_s3], 50.0f);
                                 func_80230914(M2C_FIELD(var_fp, UnkStructA **, 0x18));
-                                func_802909FC(M2C_FIELD(var_fp, f32 **, 0x18), func_8025D504);
+                                func_802909FC((UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18), func_8025D504);
                                 if ((var_s5 = (PORT_IP(s32)) func_8022F550((UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18), 0x10)) != 0) {
                                     func_80232BA0(PORT_RET((f32 *)((u8 *)M2C_FIELD(var_fp, f32 **, 0x18) + 0x58), &((UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18))->unk58), (UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18)); /* (the object's 0x58: unk58, at another offset where pointers are 8 bytes) */
                                 } else {

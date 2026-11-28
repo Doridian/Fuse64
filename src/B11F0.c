@@ -37,6 +37,7 @@
 #endif
 #include "ultralib/PR/gbi.h"
 #include "gfx.h"
+#include "model.h"
 #include "412F0.h"
 #include "41FD0.h"
 #include "4ED50.h"
@@ -55,8 +56,8 @@
 PORT_RET(void, s32) func_8023903C(s32);
 s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 void func_80239094(void);
-void *func_8026D4B0(void (*)(UnkStructA_40 *, Gfx_80225840 **), s32);
-void *func_8022A328(void *, s32, s32, s32, s32);
+void *func_8026D4B0(UnkCb_8026D4B0, s32);
+UnkStructA_40 *func_8022A328(UnkModel *arg0, s32 arg1, s32 arg2, u32 arg3, s32 arg4);
 void free(void *);
 void *malloc(s32);
 void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
@@ -180,7 +181,7 @@ void func_80297858(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
 }
 
 UnkStructA_40 *func_80297804(void) {
-    UnkStructA_40 *obj = func_8022A328(func_80297858, 0x3F, 1, 0, 0);
+    UnkStructA_40 *obj = func_8022A328((UnkModel *) func_80297858, 0x3F, 1, 0, 0);
 
     if (obj != NULL) {
         obj->unkC |= 0x410;

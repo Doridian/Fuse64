@@ -153,7 +153,7 @@ typedef struct {
 } Ball;
 
 void func_8022946C(void *, s32);
-void * func_8022A328(void *, s32, s32, s32, s32);
+UnkStructA_40 *func_8022A328(struct UnkModel *, s32, s32, u32, s32);
 int func_8023369C(f32, f32, f32);
 int func_802336E4(f32);
 s32 func_8023372C(f32, f32);
@@ -1333,7 +1333,7 @@ UnkStructA *func_80230CB4(s32 arg0, s32 arg1, s32 arg2, s32 arg3, UnkStructA *ar
     if (arg1 == -1) {
         shape = func_8022A6C4(res, kind);
     } else {
-        shape = func_8022A328(res, kind, 2, arg1, 0);
+        shape = func_8022A328((struct UnkModel *) res, kind, 2, arg1, 0);
     }
     if (shape == NULL) {
         for (;;) {}

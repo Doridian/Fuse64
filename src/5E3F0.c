@@ -124,6 +124,7 @@
 #include "A4CE0.h"
 #include "426E0.h"
 #include "ACA00.h"
+#include "AA580.h"
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 #define M2C_BITWISE(type, expr) ((type)(expr))
@@ -277,7 +278,6 @@ void * func_802867E4(s32, f32, f32, f32);
 PORT_RET(s32, void) func_80287008(s32, s32, s32);
 s32 func_8028A7CC(s32, f32 *, PORT_IP(s32));
 PORT_RET(void, s32) func_8028A81C(s32, f32, f32, f32, PORT_IP(s32));
-s32 func_802909FC(void *, void *);
 void func_80291944(void *, s32, f32);
 void func_80297D30(s32, void *);
 void * malloc(s32);

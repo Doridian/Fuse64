@@ -18,7 +18,9 @@ void func_ovl14_02_8004D640(UnkStructA *obj) {
     s32 id;
     Vec3f pos2;
     Vec3f dir;
-    f32 pad1[4]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 pad1[4]; /* fake: unused, frame space the original has (four words between dir and vel; not
+                  * found: x/z locals for the chained stores, a second pointer for the 0x800 object,
+                  * ints for (s32) dx/dz, a player flag, block-scoped vectors) */
     Vec3f vel;
     f32 dx;
     f32 dz;

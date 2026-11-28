@@ -19,7 +19,7 @@
  * (ovl_13_01, through m2c), 80048830 (ovl_13_02's 80043B64, 35 words
  * left), 8004CCA8 (ovl_15_01's 80043104 with the target read by 0x182B),
  * 8004DF98/8004DFA0 (ovl_13_02's 8004B524/B52C). Tuned by hand to match:
- * 8004314C (8 bytes of pad), 800441AC, 800440C4, 80048E98 (the division
+ * 8004314C (now A180 and a diff local), 800441AC, 800440C4, 80048E98 (the division
  * written at each use), 8004E138 (D_800502B8 a Vec3f written x, y, z),
  * 8004E4E4 (`case 17`, the inlined 8004DF98). Rewritten from the asm as
  * plain C (pass 2): 800436F0, 80044720 (`d /= 15` before the loop),
@@ -169,6 +169,14 @@
  * compiled-out debug check. 80048490's y.c/x.c pair stays: two switches
  * to new names work, an include there (empty or holding `row = 0;`,
  * before or after the `do`) doesn't.
+ *
+ * Fakes pass 8: 80048490's pair is gone: the do-while is a `for (i = 0,
+ * row = 0; i < 12; row++)`. 8004314C is two A180s and a `diff` local
+ * (no gotos, no pad). 8004AD5C's second half has its own lo2/hi2.
+ * 8004D640's pad0 is the id passed to 8004EE48. The pads of 80045384
+ * and 80044C60 are held values (radius/steps/eps, w/slow/fast): any
+ * register-allocated local fills such a slot, so which values the
+ * original held there is a guess.
  *
  * Everything matches in every version.
  *
@@ -936,7 +944,9 @@ static s32 func_ovl14_02_8004D578(UnkStructA *obj) {
     s32 saved;
     UnkStructA *other;
     s32 id;
-    s32 pad[6]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad[6]; /* fake: unused, frame space the original has (24 bytes of this inlined block; the twins in
+                 * 0F_05 and 17_10 have none; not found: the second half of 8004D640 as an inlined static, its
+                 * locals in block scopes, an EDE8 id per call) */
 
     hit = 0;
     other = NULL;
@@ -3640,7 +3650,9 @@ void func_ovl14_02_80045384(void) {
     f32 b;
     f32 t;
     s32 i;
-    f32 pad[3]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 radius; /* radius, steps, eps: held values; their slots make the original's frame (which values is a guess) */
+    f32 steps;
+    f32 eps;
 
     if (D_ovl14_02_80050408 < D_ovl14_02_8005040C + 1) {
         func_ovl14_02_8004F768();
@@ -3705,7 +3717,8 @@ loop:
             if (ang.x < -2.0f) {
                 ang.x = -2.0f;
             }
-            if (ang.x < -0.01f || ang.x > 0.01f) {
+            eps = 0.01f;
+            if (ang.x < -eps || ang.x > eps) {
                 obj->unk40->unk20 += ang.x;
             }
             ang.x = obj->unk40->unk20;
@@ -3723,8 +3736,9 @@ loop:
             }
             obj->unk40->unk48->unk4[0].unk4 = b;
             func_ovl14_02_8004F598(D_ovl14_02_800502EC, (Vec3f *) pos, &ang);
-            if (ang.z > 1500.0f) {
-                ang.z = 1500.0f;
+            radius = 1500.0f;
+            if (ang.z > radius) {
+                ang.z = radius;
                 ang.y -= 90.0f;
                 func_ovl14_02_8004F5A0(&ang, &step);
                 pos[0] = D_ovl14_02_800502EC->x + step.x;
@@ -3744,8 +3758,9 @@ loop:
     }
     if (!(obj->unk10 & 0x40000000)) {
         func_ovl14_02_8004F608(obj, 0x80000);
+        steps = 20.0f;
         for (i = 0; i < 20; i++) {
-            t = 1.0f - (f32) i / 20.0f;
+            t = 1.0f - (f32) i / steps;
             obj->unk40->unk2C = 0.9f * t + 0.1f;
             obj->unk40->unk36 = 255.0f * t;
             func_ovl14_02_8004F7A0();
@@ -3783,9 +3798,10 @@ void func_ovl14_02_80044C60(void) {
     s32 j;
     f32 t;
     f32 scale;
-    f32 pad4; /* fake: unused, frame space the original has (no source for it found) */
+    f32 w; /* w, slow, fast: held values; their slots make the original's frame (which values is a guess) */
     f32 sign;
-    f32 pad5[2]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 slow;
+    f32 fast;
     f32 b;
     f32 fn;
 
@@ -3840,13 +3856,16 @@ void func_ovl14_02_80044C60(void) {
     }
     func_ovl14_02_80043834();
     (&D_ovl14_02_800503F0)[1] = 90.0f;
-    scale = func_ovl14_02_80043010(12) / 320.0f;
+    w = func_ovl14_02_80043010(12);
+    scale = w / 320.0f;
     i = 180;
     if (func_ovl14_02_8004F918(1) != 0) {
         sign = 1.0f;
     } else {
         sign = -1.0f;
     }
+    slow = 0.25f;
+    fast = 0.5f;
     j = 0;
     while (D_ovl14_02_80050378 != 0 && func_ovl14_02_8004327C() == 0 && func_ovl14_02_80044C08(D_ovl14_02_800503C4) < 2 && func_ovl14_02_80044C08(D_ovl14_02_800503C8) < 2 && j != 1800) {
         i++;
@@ -3856,10 +3875,10 @@ void func_ovl14_02_80044C60(void) {
         }
         func_ovl14_02_8004F598(D_ovl14_02_800502EC, &D_ovl14_02_800503E0, (Vec3f *) r);
         if (func_ovl14_02_8004F9E0(0x41F) != 0) {
-            r[0] += 0.25f * sign;
+            r[0] += slow * sign;
         } else {
             do {} while (0); /* trick: empty loop = uopt block boundary */
-            r[0] = (t = r[0]) + 0.5f * sign; /* trick: dead copy t moves the product to $f2 */
+            r[0] = (t = r[0]) + fast * sign; /* trick: dead copy t moves the product to $f2 */
         }
         r[1] = (r[1] - 90.0f >= 360.0f) ? r[1] - 90.0f - 360.0f : (r[1] < 90.0f ? r[1] - 90.0f + 360.0f : r[1] - 90.0f);
         r[2] = D_ovl14_02_80050410;
@@ -4352,9 +4371,10 @@ void func_ovl14_02_800436F0(void) {
 }
 
 void func_ovl14_02_8004338C(void) {
-    s32 pa[1];
+    s32 pa;
     s32 n;
-    s32 pad[4]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad[4]; /* fake: unused, frame space the original has (with pa, five words: any held value fills
+                 * them, e.g. the 0x04000000 flag, so the slots say nothing about what they held) */
     UnkStructA *obj;
     f32 done;
     s32 a;
@@ -4432,40 +4452,22 @@ s32 func_ovl14_02_8004327C(void) {
 }
 
 s32 func_ovl14_02_8004314C(void) {
-    Vec3f sp2C;
-    f32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
-    f32 var_fv0;
-    f32 var_fv1;
+    Vec3f ang;
+    f32 diff;
+    f32 a;
+    f32 b;
 
-    func_ovl14_02_8004F598(&D_ovl14_02_800503E0, &D_ovl14_02_80050270, &sp2C);
-    if (D_ovl14_02_800503F0 >= 0.0f) {
-        if (D_ovl14_02_800503F0 <= 180.0f) {
-            var_fv1 = D_ovl14_02_800503F0;
-        } else {
-            goto block_4;
-        }
-    } else {
-block_4:
-        var_fv1 = (360.0f - D_ovl14_02_800503F0) * -1.0f;
-    }
-    if (sp2C.x >= 0.0f) {
-        if (sp2C.x <= 180.0f) {
-            var_fv0 = sp2C.x;
-        } else {
-            goto block_9;
-        }
-    } else {
-block_9:
-        var_fv0 = (360.0f - sp2C.x) * -1.0f;
-    }
-    if (var_fv0 <= var_fv1) {
-        if ((var_fv1 - var_fv0) <= 135.0f) {
+    func_ovl14_02_8004F598(&D_ovl14_02_800503E0, &D_ovl14_02_80050270, &ang);
+    b = A180(D_ovl14_02_800503F0);
+    a = A180(ang.x);
+    diff = b - a;
+    if (a <= b) {
+        if (diff <= 135.0f) {
             return 1;
         }
         return 0;
     }
-
-    if ((var_fv1 - var_fv0) >= -135.0f) {
+    if (diff >= -135.0f) {
         return 1;
     }
     return 0;

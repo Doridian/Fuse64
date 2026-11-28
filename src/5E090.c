@@ -20,9 +20,16 @@ typedef struct {
 
 extern UnkStruct_800AED78 D_800AED78[];
 extern UnkStruct_800B15D8 D_800B15D8[];
-extern u8 D_802A0D50[];
-extern s32 D_802AC880;
-extern s32 D_802AC884;
+void func_802438BC(s32 *arg0);
+void func_80243A50(s32 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg4, s16 arg5);
+void func_80243BA8(s32 arg0);
+
+/* ZeroJump module 12's table (func_80243890); the zero word after it is
+   the section's padding */
+void *D_802A0D50[] = { func_80243BA8, func_80243A50, func_802438BC };
+
+s32 D_802AC880;
+s32 D_802AC884; /* how many of D_800AED78 are in use */
 
 void func_80243890(void) {
     func_80297D30(12, D_802A0D50);

@@ -451,7 +451,7 @@ segments:
       - [0xBA900, .data, 530C0]
       - [0xBA950, .data, 53D70]
       - [0xBA9B0, .data, 54E40]
-      - [0xBB550, data]
+      - [0xBB550, .data, 5E090]
       - [0xBB560, .data, 5E3F0]
       - [0xBB6F0, .data, 6BBE0]
       - [0xBB9B0, .data, 7D840]
@@ -538,11 +538,12 @@ segments:
       - {type: .bss, vram: 0x802AC3E0, name: 53D70}
       - {type: .bss, vram: 0x802AC5C0, name: 54BE0}
       - {type: .bss, vram: 0x802AC5D0, name: 54E40}
-      - {type: bss, vram: 0x802AC880}
+      - {type: .bss, vram: 0x802AC880, name: 5E090}
+      - {type: .bss, vram: 0x802AC890, name: 5E3F0}
       - {type: .bss, vram: 0x802ACFB0, name: 6BBE0}
       - {type: .bss, vram: 0x802ACFE0, name: 78CA0}
       - {type: .bss, vram: 0x802AD0D0, name: 7D840}
-      - {type: bss, vram: 0x802AD0E0, name: bss_802AD0E0}
+      - {type: bss, vram: 0x802AD0E0}
       - {type: .bss, vram: 0x802AD680, name: 85A10}
       - {type: .bss, vram: 0x802AFC20, name: 86680}
       - {type: bss, vram: 0x802AFC30, name: bss_802AFC30}

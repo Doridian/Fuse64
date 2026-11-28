@@ -111,35 +111,21 @@ main_code 54E40 0xBA0 0x120 0x2B0
 main_code @eu 54E40 sizes=0xBA0,0x110,0x2B0
 main_code @jp 54E40 sizes=0xB20,0x110,0x2B0
 
+# 5E090: ZeroJump module 12's table, its two words of state
+main_code 5E090 0x10 0 0x10
+# 5E3F0: .data its tables, .rodata its constants and jump tables (403
+# entries), .bss its state (87D80, 8A7A0 and 6BBE0 read some)
+main_code 5E3F0 0x190 0x870 0x720
+main_code 6BBE0 0x2C0 0x180 0x30
+main_code 78CA0 0 0x10 0xF0
+main_code 78F60 0 0x20 0
+main_code 7B2D0 0 0 0
+main_code 7C4D0 0 0x20 0
+main_code 7D840 0x80 0x10 0x10
+
 # Game objects after the cut that own their .rodata (constants, jump tables,
 # strings), placed where the ROM has it; their .data and .bss stay asm
-# until the cut reaches them (unless all of an object's .data is its own:
-# 53D70's local pattern and its function table; 54E40's strings, text items
-# and tables, jp's 0x80 shorter: its text).
-main_code 5E3F0 0x190 0x870 0
-main_code @us 5E3F0 data=0x802A0D60 rodata=0x802A3020
-main_code @eu 5E3F0 data=0x802A0D60 rodata=0x802A3010
-main_code @jp 5E3F0 data=0x802A03C0 rodata=0x802A2250
-main_code 6BBE0 0x2C0 0x180 0x30
-main_code @us 6BBE0 data=0x802A0EF0 rodata=0x802A3890 bss=0x802ACFB0
-main_code @eu 6BBE0 data=0x802A0EF0 rodata=0x802A3880 bss=0x802ACFA0
-main_code @jp 6BBE0 data=0x802A0550 rodata=0x802A2AC0 bss=0x802AC1E0
-main_code 78CA0 0 0x10 0xF0
-main_code @us 78CA0 rodata=0x802A3A10 bss=0x802ACFE0
-main_code @eu 78CA0 rodata=0x802A3A00 bss=0x802ACFD0
-main_code @jp 78CA0 rodata=0x802A2C40 bss=0x802AC210
-main_code 78F60 0 0x20 0
-main_code @us 78F60 rodata=0x802A3A20
-main_code @eu 78F60 rodata=0x802A3A10
-main_code @jp 78F60 rodata=0x802A2C50
-main_code 7C4D0 0 0x20 0
-main_code @us 7C4D0 rodata=0x802A3A40
-main_code @eu 7C4D0 rodata=0x802A3A30
-main_code @jp 7C4D0 rodata=0x802A2C70
-main_code 7D840 0x80 0x10 0x10
-main_code @us 7D840 data=0x802A11B0 rodata=0x802A3A60 bss=0x802AD0D0
-main_code @eu 7D840 data=0x802A11B0 rodata=0x802A3A50 bss=0x802AD0C0
-main_code @jp 7D840 data=0x802A0810 rodata=0x802A2C90 bss=0x802AC300
+# until the cut reaches them (unless all of an object's .data is its own).
 main_code 80580 0x120 0xE0 0
 main_code @us 80580 data=0x802A1250 rodata=0x802A3A70
 main_code @eu 80580 data=0x802A1250 rodata=0x802A3A60

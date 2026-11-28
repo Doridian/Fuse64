@@ -98,10 +98,10 @@
  * internal pads; split after func_80244354 (the only out-of-line
  * function, 16-aligned end), the rest no longer inlines the getters
  * before it.
- * .data (0x190) is defined below and placed in data_split.txt with the
+ * .data (0x190) is defined below with the
  * .rodata (0x870: 540 words, 403 of them jump-table entries). The .bss
- * (D_802AC890..) stays extern: 87D80, 8A7A0 and 6BBE0 use some of it, and
- * IDO would make these uninitialised globals common.
+ * (D_802AC890..D_802ACF68) is defined below too (87D80, 8A7A0 and 6BBE0
+ * use some of it); the cut reaches it.
  */
 #include "common.h"
 #include "m2c.h"
@@ -404,67 +404,70 @@ extern s32 D_800B15D4[PORT_SIZE(1)];
 extern u8 D_800B15D8;
 extern s32 D_802A01B0;
 extern s32 D_802AC5D0;
-extern s32 D_802AC890;
-extern s32 D_802AC894;
-extern s32 D_802AC898;
-extern s32 D_802AC89C;
-extern s32 D_802AC8A0;
-extern s32 D_802AC8A4;
-extern s32 D_802AC8A8[PORT_SIZE(5)];
-extern s32 D_802AC8BC;
-extern s32 D_802AC8C0;
-extern s32 D_802AC8C4;
-extern s32 D_802AC8C8;
-extern s32 D_802AC8D0[PORT_SIZE(5)];
-extern s32 D_802AC8E8[PORT_SIZE(5)];
-extern s32 D_802AC900[PORT_SIZE(5)];
-extern s32 D_802AC918[PORT_SIZE(5)];
-extern s32 D_802AC930[PORT_SIZE(5)];
-extern s32 D_802AC948[PORT_SIZE(5)];
-extern s32 D_802AC95C;
-extern s32 D_802AC960;
-extern s32 D_802AC968[PORT_SIZE(5)];
-extern s32 D_802AC97C;
-extern s32 D_802AC980[PORT_SIZE(5)];
-extern s32 D_802AC998[PORT_SIZE(5)];
-extern s32 D_802AC9B0[PORT_SIZE(5)];
-extern s32 D_802AC9C8[PORT_SIZE(5)];
-extern s32 D_802AC9DC;
-extern s32 D_802AC9E0;
-extern s32 D_802AC9E4;
-extern s32 D_802AC9E8;
-extern s32 D_802AC9EC;
-extern s32 D_802AC9F0;
-extern s32 D_802AC9F4;
-extern s32 D_802AC9F8[PORT_SIZE(5)];
-extern s32 D_802ACA10[PORT_SIZE(5)];
-extern f32 D_802ACA24;
-extern f32 D_802ACA28;
-extern f32 D_802ACA2C;
-extern f32 D_802ACA30[PORT_SIZE(5)];
-extern f32 D_802ACA44;
-extern f32 D_802ACA48[PORT_SIZE(5)];
-extern f32 D_802ACA60[PORT_SIZE(5)];
-extern f32 D_802ACA78[PORT_SIZE(5)];
-extern f32 D_802ACA8C;
-extern f32 D_802ACA90[PORT_SIZE(255)];
-extern f32 D_802ACE90[PORT_SIZE(5)];
-extern f32 D_802ACEA4;
-extern f32 D_802ACEA8;
-extern f32 D_802ACEAC;
-extern f32 D_802ACEB0;
-extern f32 D_802ACEB4;
-extern f32 D_802ACEB8;
-extern f32 D_802ACEBC;
-extern f32 D_802ACEC0;
-extern f32 D_802ACEC4;
-extern s32 D_802ACEC8[PORT_SIZE(5)][3];
-extern void * D_802ACF04;
-extern PadState D_802ACF08[PORT_SIZE(5)];
-extern UnkStructA **D_802ACF58;
-extern void * D_802ACF5C;
-extern s32 * D_802ACF60;
-extern f32 D_802ACF68[PORT_SIZE(5)][3];
+/* .bss (0x802AC890-0x802ACFB0, from 5E090's to 6BBE0's), in address
+ * order: IDO puts the arrays 8-aligned (the words before D_802AC8D0,
+ * D_802AC968, ... are that padding) */
+s32 D_802AC890;
+s32 D_802AC894;
+s32 D_802AC898;
+s32 D_802AC89C;
+s32 D_802AC8A0;
+s32 D_802AC8A4;
+s32 D_802AC8A8[5];
+s32 D_802AC8BC;
+s32 D_802AC8C0;
+s32 D_802AC8C4;
+s32 D_802AC8C8;
+s32 D_802AC8D0[5];
+s32 D_802AC8E8[5];
+s32 D_802AC900[5];
+s32 D_802AC918[5];
+s32 D_802AC930[5];
+s32 D_802AC948[5];
+s32 D_802AC95C;
+s32 D_802AC960;
+s32 D_802AC968[5];
+s32 D_802AC97C;
+s32 D_802AC980[5];
+s32 D_802AC998[5];
+s32 D_802AC9B0[5];
+s32 D_802AC9C8[5];
+s32 D_802AC9DC;
+s32 D_802AC9E0;
+s32 D_802AC9E4;
+s32 D_802AC9E8;
+s32 D_802AC9EC;
+s32 D_802AC9F0;
+s32 D_802AC9F4;
+s32 D_802AC9F8[5];
+s32 D_802ACA10[5];
+f32 D_802ACA24;
+f32 D_802ACA28;
+f32 D_802ACA2C;
+f32 D_802ACA30[5];
+f32 D_802ACA44;
+f32 D_802ACA48[5];
+f32 D_802ACA60[5];
+f32 D_802ACA78[5];
+f32 D_802ACA8C;
+f32 D_802ACA90[255];
+f32 D_802ACE90[5];
+f32 D_802ACEA4;
+f32 D_802ACEA8;
+f32 D_802ACEAC;
+f32 D_802ACEB0;
+f32 D_802ACEB4;
+f32 D_802ACEB8;
+f32 D_802ACEBC;
+f32 D_802ACEC0;
+f32 D_802ACEC4;
+s32 D_802ACEC8[5][3];
+void *D_802ACF04;
+PadState D_802ACF08[5];
+UnkStructA **D_802ACF58;
+void *D_802ACF5C;
+s32 * D_802ACF60;
+f32 D_802ACF68[5][3];
 
 void func_80243BF0(void);
 void func_80243D20(s32 arg0);

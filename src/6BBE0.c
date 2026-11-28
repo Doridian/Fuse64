@@ -203,8 +203,8 @@
  *
  * Data: the file defines its .data (0x2C0, D_802A0EF0-D_802A11A0) and
  * .bss (0x30, D_802ACFB0-D_802ACFD4), both only its own (5E3F0's .data
- * ends where it starts; 5E3F0's .bss up to D_802ACF68 stays asm, and
- * D_802ACF08, which this file reads, is in it). Typed definitions in
+ * ends where it starts, and its .bss, up to D_802ACF68, holds D_802ACF08,
+ * which this file reads). Typed definitions in
  * place of the draft's u8 externs; the byte arithmetic on them casts to
  * u8 * and the .text is the same.
  *

@@ -45,14 +45,6 @@ typedef struct {
     /* 0x24 */ s16 unk24;
 } UnkStruct_ovl12_01_800462F0;
 
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl12_01_80046318;
-
 void func_ovl12_01_80044F38(s32);
 void func_ovl12_01_80044F50(s32);
 void func_ovl12_01_80044F78(s32, s32, s32, s32, s32, s32);

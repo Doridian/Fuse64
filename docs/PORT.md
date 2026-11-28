@@ -204,9 +204,17 @@ the version's ROM, 60 retraces headless. linuxdeploy is `--linuxdeploy`,
 `~/.cache/fuse64`; it runs extracted (`APPIMAGE_EXTRACT_AND_RUN`), so
 building needs no FUSE. The AppImage needs the glibc it was built
 against or a newer one, so a package for others is built on an old
-distribution (DozerEncore's on Ubuntu 22.04). The checks before
-linuxdeploy have run (us, 2026-11-27); linuxdeploy itself hasn't run
-here yet ("What's left").
+distribution (DozerEncore's on Ubuntu 22.04; CI's, "Releases"). Built
+and tried here (us, 2026-11-27, x86-64): `rom_free_check.py` nothing
+before and after linuxdeploy, `--help`, 60 retraces with the ROM; 4.2 MB,
+with SDL2, SDL3 (the host's SDL2 is sdl2-compat) and libepoxy inside.
+Without the ROM (CI) the script skips its `rom_free_check.py`: the build
+from the snapshot has checked itself ("The snapshot").
+
+On Windows the executable is one file: `PORT_STATIC` (on by default
+there) links SDL2's static library and libepoxy's (`EPOXY_PUBLIC` made
+`extern` for it), and MinGW's runtime is static already. `--help` (every
+build) names the release, `-DPORT_RELEASE=<tag>` ("Releases").
 
 **The ROM** (`port/host/romfind.c`, DozerEncore's): a package is
 started from its icon, with no arguments and no telling what the working
@@ -229,6 +237,132 @@ zenity, SDL's offscreen video and a data directory of its own (us): the
 eu ROM refused and asked again, a `.v64` taken and kept, the next run
 taking it without a dialog, a cancelled dialog the fatal message, a ROM
 on the command line no dialog and the save in the working directory.
+
+### The snapshot
+
+The port builds without the ROM, for us, from `port/snapshot/us`
+(committed, 1.05 MB in 7 files, each target's units about 250 KB), as CI builds it. It holds what the build otherwise
+reads of the extract (`asm/`, `assets/code.bin`), and none of the ROM's
+bytes:
+
+- `asm_data.json`: asm2c.py's reading of `asm/data`, the labels, their
+  directives and their symbolic words, with no datum. The asm data is
+  zeros in the C in every build now, and a table in `asm_data_fill.c`
+  (`port_asmfill`: each run's place, where in the code image it comes from
+  and how it is laid out, bytes, halfwords, words or a word in a pointer's
+  slot) fills it from the player's ROM before the strip's table does
+  ("The ROM's data"), checked by an FNV-1a checksum of each pointer size's
+  build.
+- `zerojump.json`: gen_zerojump.py's, the ZeroJump stubs and the asm
+  data's tables of symbolic words (numbers in them are zeros there too).
+- `undefined_syms.txt`: the extract's fixed addresses (gen_regions.py's).
+- `strip_units.<target>.json`, for `linux-x86_64`, `linux-aarch64`,
+  `windows-x86_64` and `wasm32`: what rom_strip.py took out of that
+  target's build from the extract (the game's C's initializers, which the
+  repository has as C), as units a build without the ROM finds again by
+  their hashes. A unit is a run of taken words cut at the symbols' bounds,
+  at the start of a string where there is no symbol, and where two or more
+  zero words meet others; each has a 64-bit hash of its bytes, and a
+  distinctive one (a 32-byte stretch of 6 byte values or more, the check's
+  test) also the CRC-32 of its first 32 bytes and its rank among the
+  places those bytes are. Blocks of units side by side have the same. In a
+  build from the snapshot, `rom_strip.py --units` places the blocks, then
+  the distinctive units, then the others beside a placed one (at the gap
+  they had, where the code image goes on, or, failing both, at the nearest
+  place within 256 bytes with their bytes); a copy of what the units take
+  that the snapshot's build didn't have (an initializer kept twice) is
+  taken too, with the same sources. The file also has the hash of every
+  distinctive 32-byte stretch the snapshot's build took, and the strip
+  fails the build if any of them is still in the binary: a build whose
+  data another compiler laid out otherwise fails rather than keep the
+  ROM's bytes.
+
+`port/tools/snapshot.py` makes it, with the ROM, after `make VERSION=us
+extract`: it builds each target from the extract into
+`build/snapshot-<target>`, takes those files from them, runs
+`rom_free_check.py --all --max 0` on each, and with `--check` builds each
+target again from the snapshot in the same directory and compares the two
+binaries (a PE's link time aside). The units depend on the compiler, so
+each target's are made with CI's: linux-x86_64 in CI's environment
+(`port/tools/ci/linux.Containerfile`: Ubuntu 22.04, apt.llvm.org's clang 18,
+lld), wasm32 with CI's emsdk (`$EMSDK`, `EMSDK_VERSION` in
+`.github/workflows/build.yml`). linux-aarch64 and windows-x86_64 are
+zig's (`port/tools/cross-aarch64.cmake`, `cross-win64.cmake`), not CI's
+(clang 18 on the arm64 runner, MSYS2's clang): `--podman
+linux-aarch64=IMAGE@arm64` builds in the arm64 image of the same
+Containerfile under qemu, which is right but was too slow here to finish
+(below):
+
+```
+podman build -t fuse64-ci-linux -f port/tools/ci/linux.Containerfile port/tools/ci
+EMSDK=~/emsdk python3 port/tools/snapshot.py --check --podman linux-x86_64=localhost/fuse64-ci-linux
+```
+
+Run it again whenever the extract's output or the game's C's data
+changes (a build from a stale snapshot fails its strip, or its fill's
+checksum).
+
+CMake uses the snapshot when there is no extract (`.version`), or when
+asked (`-DPORT_SNAPSHOT=ON|OFF`). Checked (us, 2026-11-27): `snapshot.py --check`: each of the four targets' binary from the
+snapshot is the same file as from the extract (sha256 linux-x86_64
+`c88e53ff6da9`, linux-aarch64 `b2af223e6118`, windows-x86_64
+`0b321495cf07`, wasm32 `b06b073c9be4`); every strip took the units all
+(x86-64 51,524 bytes in 811 runs, aarch64 53,328, Windows 53,460, wasm
+59,956), nothing left, nothing counted a library's, no stretch left;
+`rom_free_check.py --all --max 0` finds nothing in the snapshot's files.
+A clean copy of the repository (no extract, no ROM) built by the linux
+job's commands in the container, as on a tag, and by the web job's with
+emsdk 6.0.10: `rom_free_check.py --max 0` (without `--objects`) finds
+nothing in the executable, the AppImage's copy or the `.wasm`; the
+AppImage ran 600 retraces with the ROM, and test.py's seven scenarios
+give the references on the x86-64 build (CI's compiler; the build from
+the snapshot is the same file).
+
+What the snapshot can't say: a target whose compiler isn't the one its
+units were made with can lay the data out otherwise, and then fails. Clang
+18's x86-64 build from clang 23's units found every unit but kept one
+initializer as a `.rodata` constant that clang 23 builds with immediate
+stores, a run the units never had; so each target's units come from CI's
+compiler. aarch64's and Windows' are zig's (clang 22), and CI builds them
+with clang 18 (arm64) and MSYS2's CLANG64 clang, which moves with MSYS2:
+those two jobs may fail their strip until their units are made with
+those compilers (the arm64 image under qemu, or on an arm64 machine; for
+Windows, MSYS2's clang, or the job on a pinned toolchain).
+
+Short units' hashes say little about their bytes, but a one-word unit's
+64-bit hash can be inverted by trying the 2^32 words: what the units hide
+is the data's arrangement, not a 4-byte constant. A target's units have 170 to 200 such words (about 700 bytes),
+isolated constants; making a one-word unit's hash shorter, and placing
+it only beside its neighbours, would hide them too.
+
+### Releases
+
+`.github/workflows/build.yml`, on every push and pull request, builds from
+the snapshot alone (no ROM, none in any artifact):
+
+| job | runner | what |
+|---|---|---|
+| `linux` | `ubuntu-22.04`, `ubuntu-22.04-arm` | apt.llvm.org's clang 18 and lld (`port/tools/ci/linux.Containerfile` is the same), then `appimage.py`: `fuse64-x86_64.AppImage`, `fuse64-aarch64.AppImage` |
+| `windows` | `windows-latest`, MSYS2 CLANG64 | `PORT_STATIC` (SDL2 and libepoxy linked in), checked to need no CLANG64 DLL and to start (`--help`): `fuse64-windows-x86_64.exe`, and `fuse64-licenses.zip` (LICENSE, NOTICES.md, SDL2's, libepoxy's and winpthreads' licenses) |
+| `macos` | `macos-26` | DozerEncore's app in a dmg; off (`vars.FUSE64_MACOS`) until the strip reads a Mach-O: CMake refuses a macOS build with `PORT_ROM_FREE`, and there is no `port/res/Info.plist` yet |
+| `web` | `ubuntu-24.04`, emsdk `EMSDK_VERSION` | the page (`PORT_WASM_TARGET=web`): `fuse64-web.zip`, and on `main` the Pages artifact (`fuse64.html` as `index.html`, `.js`, `.wasm`) |
+| `pages` | | on a push to `main`: deploys the page to GitHub Pages (the repository's Pages source must be GitHub Actions) |
+| `release` | | on a `v*` tag, once the others pass (macos skipped): creates the tag's release if there is none (`gh release create --verify-tag --generate-notes`) and uploads every artifact to it (`--clobber`, so a re-run replaces them) |
+
+A release is a tag: `git tag v0.1.0 && git push origin v0.1.0`. On a tag,
+every build gets `-DPORT_RELEASE=<tag>` (CMake checks it is a tag's name),
+which `--help` prints (`Fuse64 v0.1.0, a port of Bomberman 64`); other
+builds say `(no release)`. Each strip fails the job if anything of the
+ROM's is left, so no artifact carries it; the AppImage script's own
+`rom_free_check.py` needs the ROM and is skipped in CI. `ci.yml` (the
+decompilation's tools, without a ROM) is unchanged.
+
+Checked locally (2026-11-27): actionlint 1.7.12 with shellcheck (no
+errors; SC2086 notes as in DozerEncore's), the linux job's build in
+`port/tools/ci/linux.Containerfile` (x86-64) (build, strip, `appimage.py` with linuxdeploy, on a tag), the web job's
+with emsdk 6.0.10 (the page's three files, stripped). Not run: the workflow on GitHub itself, the
+Windows job (MSYS2; the zig cross build stands in for it), the arm64
+runner's build (and its units, zig's: "The snapshot"), the Pages deploy and the release upload.
 
 ## Testing
 
@@ -1402,7 +1536,12 @@ counting too, the padding between two objects; wasm-ld puts an object's
 variables side by side in another order than the object has them) and, in an ELF, where the
 nearest local data symbol before it is one of their files' (its `FILE`
 symbol): ASan's table is byte for byte the game's, but it follows the
-sanitizer's own symbols. `rom_free_check.py --objects DIR` counts the
+sanitizer's own symbols. That rule gives way to a global data symbol one
+of the objects defines between the local symbol and the run (clang 18
+puts crtbegin's local symbol before the game's `.data`, whose symbols
+are global: 1572 bytes of main_code's tables were left so), and to text
+(the linker pools every object's strings, and zig's aarch64 build put
+the game's after one of its libc's: 3.2 K of the game's strings). `rom_free_check.py --objects DIR` counts the
 same way and lists the others apart; without it the ASan build has those
 32 bytes.
 
@@ -1419,7 +1558,18 @@ an empty table and runs as before. The reset's copy of the data and the
 overlays' copies (port_reset_init, port_overlay_init) are taken after
 it.
 
-After (us, 2026-11-27):
+**The asm data's fill.** `asm_data.c` no longer has the asm data's
+values: asm2c.py makes it zeros and writes `asm_data_fill.c`, a table
+(`port_asmfill`) of where each run of values goes, where in the code image
+it comes from and how (bytes, big-endian halfwords or words, or a word in
+a pointer's slot), with the image's size and an FNV-1a checksum of the
+values. `host_rom_fill` applies it first, then the strip's table, and
+`host_rom_fill_check` checks both. So the strip has only the game's C's
+initializers left to take (x86-64: 51,344 bytes in 800 runs, from 67,224),
+and a build from the snapshot needs none of the asm data's bytes ("The
+snapshot").
+
+After (us, 2026-11-27, before the asm data's fill):
 
 | build | taken out | left | kept in place |
 |---|---|---|---|
@@ -2867,11 +3017,13 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   Corps' "Packages") and a hosted page: after 64-bit, with SDL in the
   Windows cross build. Their first step is done: the executable and the
   `.wasm` carry none of the code image's runs of 32 bytes or more, and
-  fill them from the player's ROM ("The ROM's data"), and the AppImage's
-  script and the ROM finder are in ("Packages"). Left there: the
-  AppImage itself built and tried (its linuxdeploy step hasn't run
-  here), on an old distribution for its glibc; a Mach-O for macOS; the
-  `.exe` with SDL; the shorter runs.
+  fill them from the player's ROM ("The ROM's data"); the AppImage is
+  built and tried, the ROM finder is in ("Packages"), the port builds
+  from the snapshot without the ROM ("The snapshot") and CI builds and
+  releases the packages ("Releases"). Left there: the workflow's first
+  run on GitHub (Windows' MSYS2 build may need its own strip units,
+  "The snapshot"); a Mach-O for macOS (the strip, then the app); the
+  shorter runs.
 - **Renderer**: checked task by task against angrylion and the game's
   microcode ("Graphics": `gfx_ref.py`); the microcode runs on the port's
   RSP interpreter, so every task's RDP commands are the N64's, and with

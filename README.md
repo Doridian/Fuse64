@@ -13,6 +13,18 @@ at build time. A shifted build, with every module's code and data moved,
 plays the same as the original in an emulator. Nothing is decompiled yet. docs/ROADMAP.md has the plan,
 and docs/NETPLAY.md the multiplayer design.
 
+## The port
+
+Prebuilt Fuse64 ports (us) are built by `.github/workflows/build.yml` on
+every push, as the run's artifacts, and attached to the GitHub release of
+every `v*` tag, each one file: an AppImage for Linux (x86-64, arm64), an
+`.exe` for Windows (x86-64) and a zip of the browser page, which a push to
+`main` also puts on GitHub Pages. They are built from the repository alone
+(`port/snapshot/us`) and hold none of the ROM's data: started without one,
+they ask for your ROM and fill the game's data in from it
+(docs/PORT.md, "The snapshot", "Packages", "Releases"). To build the port
+yourself, see docs/PORT.md, "Building and running".
+
 ## ROMs
 
 | version | file | code | sha1 |

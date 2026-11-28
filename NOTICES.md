@@ -3,8 +3,11 @@
 This project's own code is licensed under the GNU Affero General Public
 License, version 3 or later: see [LICENSE](LICENSE).
 
-Some files in the repository are not the project's own work. Each entry
-says where they come from and on what terms they are here.
+Some files in the repository are not the project's own work, and a built
+port (the native packages, or the WebAssembly page) contains or links some
+third-party libraries. Each entry says where they come from and on what
+terms they are here. No package carries any of the ROM's data
+(docs/PORT.md, "The snapshot"): the player gives the port their own ROM.
 
 | Component | Where it is | Terms |
 | --- | --- | --- |
@@ -14,6 +17,12 @@ says where they come from and on what terms they are here.
 | DozerEncore: the PC port | parts of Fuse64 (`port/`) copied or adapted from `../DozerEncore/port` | AGPL-3.0, same author; see below |
 | parallel-rdp (Themaister): the RDP's triangle setup and interpolation, its depth test, blender and coverage rules; the VI's filters and scaling | adapted in `port/host/gfx_soft.c` (`rdp_tri`, `rdp_pixel`) and `port/host/vi.c` | MIT; see below |
 | mupen64plus-rsp-cxd4 (Iconoclast): the RSP's vector arithmetic | followed in `port/host/rsp.c` | CC0 1.0 (public domain dedication); see below |
+| SDL2 | the native build links it (statically on Windows; inside the AppImage); the WebAssembly build uses Emscripten's SDL2 port | zlib; see below |
+| libepoxy | the native build's OpenGL loader (as SDL2) | MIT; see below |
+| MinGW-w64 runtime, winpthreads | the Windows build links them statically (the release's licenses archive has their texts) | ZPL 2.1 and public domain (runtime), MIT (winpthreads) |
+| compiler-rt | the Windows and WebAssembly builds' compiler runtime | Apache-2.0 with LLVM exception |
+| musl libc | the WebAssembly build's C library (Emscripten's copy) | MIT; see below |
+| Emscripten runtime | the WebAssembly build's toolchain and runtime | MIT or UIUC/NCSA; see below |
 
 ---
 
@@ -146,3 +155,136 @@ ROM, LTV/STV) follows cxd4's interpreter
 (https://github.com/mupen64plus/mupen64plus-rsp-cxd4), which its author,
 Iconoclast, dedicated to the public domain under CC0 1.0. The port is
 checked against it (port/tools/gfx_ref), which isn't part of the port.
+
+## SDL2
+
+Copyright (C) Sam Lantinga <slouken@libsdl.org>
+
+```
+This software is provided 'as-is', without any express or implied
+warranty.  In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required.
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
+```
+
+## libepoxy
+
+```
+Copyright © 2013-2014 Intel Corporation
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice (including the next
+paragraph) shall be included in all copies or substantial portions of the
+Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+IN THE SOFTWARE.
+```
+
+libepoxy's generated code is derived from Khronos's XML registry, which is
+under the following license:
+
+```
+Copyright (c) 2013 The Khronos Group Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and/or associated documentation files (the
+"Materials"), to deal in the Materials without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Materials, and to
+permit persons to whom the Materials are furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Materials.
+
+THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
+```
+
+## musl libc
+
+Copyright © 2005-2020 Rich Felker, et al. (the authors listed in musl's
+`COPYRIGHT`, which also covers the parts licensed under the BSD and other
+MIT-compatible terms that it names).
+
+```
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
+
+## Emscripten
+
+Emscripten (the compiler, the runtime and its ports' build glue) is
+available under two licenses: the MIT license and the University of
+Illinois/NCSA Open Source License.  The MIT text below is from
+`/usr/lib/emscripten/LICENSE` (the emsdk install); the NCSA text is in the
+same file, and a user may take either.
+
+```
+Copyright (c) 2010-2014 Emscripten authors, see AUTHORS file.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+```
+
+The musl libc that Emscripten ships (`system/lib/libc/musl/COPYRIGHT`) is the
+same MIT text as the musl section above.

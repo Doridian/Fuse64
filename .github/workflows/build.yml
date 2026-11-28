@@ -1,0 +1,285 @@
+name: Build
+
+# The port, Fuse64, for Linux (x86-64, arm64: AppImages), Windows (x86-64)
+# and the WebAssembly page, on every push and pull request.  Everything is
+# built from the repository alone (port/snapshot/us, docs/PORT.md "The
+# snapshot"): no ROM is needed, and none of its bytes is in any artifact
+# (each build's strip takes the ROM's data out and fails if any of it is
+# left); the player gives the port their own ROM at run time.  A push to
+# main also deploys the page to GitHub Pages; a tag v* publishes every build
+# on the tag's release (docs/PORT.md, "Releases").
+#
+# The snapshot's strip units are per target and made with these compilers
+# (port/tools/snapshot.py): a build with another compiler or linker may find
+# the ROM's data laid out differently and then fails rather than keep any
+# of it.  So the compilers here are pinned where they can be.
+
+on:
+  push:
+    branches: ['main']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  EMSDK_VERSION: 6.0.10
+
+jobs:
+  linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        # The oldest Ubuntu LTS still in standard support, on purpose: the
+        # AppImage uses the host's glibc, which has to be at least as new as
+        # the one it was built against.  Move on only when this one leaves
+        # standard support.
+        include:
+          - runner: ubuntu-22.04
+            arch: x86_64
+          - runner: ubuntu-22.04-arm
+            arch: aarch64
+    runs-on: ${{ matrix.runner }}
+    env:
+      APPIMAGE_EXTRACT_AND_RUN: 1
+      LLVM_VERSION: 18
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build pkg-config libsdl2-dev libepoxy-dev file
+          # 22.04's own clang (14) is too old; apt.llvm.org's, with lld
+          curl -sSLfo llvm.sh https://apt.llvm.org/llvm.sh
+          sudo bash llvm.sh $LLVM_VERSION
+          echo /usr/lib/llvm-$LLVM_VERSION/bin >> $GITHUB_PATH
+
+      - name: Build
+        run: |
+          release=
+          case "$GITHUB_REF" in refs/tags/v*) release=$GITHUB_REF_NAME ;; esac
+          cmake -S port -B build/port -G Ninja -DPORT_SNAPSHOT=ON "-DPORT_RELEASE=$release" \
+              -DCMAKE_C_COMPILER=clang -DCMAKE_EXE_LINKER_FLAGS=-fuse-ld=lld
+          cmake --build build/port
+
+      - name: Package (AppImage)
+        timeout-minutes: 15
+        run: python3 port/tools/appimage.py build/port --out fuse64-${{ matrix.arch }}.AppImage
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: fuse64-${{ matrix.arch }}.AppImage
+          path: fuse64-${{ matrix.arch }}.AppImage
+
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: CLANG64
+          update: true
+          install: >-
+            mingw-w64-clang-x86_64-clang
+            mingw-w64-clang-x86_64-lld
+            mingw-w64-clang-x86_64-cmake
+            mingw-w64-clang-x86_64-ninja
+            mingw-w64-clang-x86_64-pkgconf
+            mingw-w64-clang-x86_64-python
+            mingw-w64-clang-x86_64-SDL2
+            mingw-w64-clang-x86_64-libepoxy
+            zip
+
+      - name: Build
+        run: |
+          release=
+          case "$GITHUB_REF" in refs/tags/v*) release=$GITHUB_REF_NAME ;; esac
+          # PORT_STATIC (the default here): SDL2 and libepoxy linked in
+          cmake -S port -B build/port -G Ninja -DPORT_SNAPSHOT=ON "-DPORT_RELEASE=$release" \
+              -DCMAKE_C_COMPILER=clang
+          cmake --build build/port
+
+      - name: Package
+        timeout-minutes: 10
+        run: |
+          # one file: SDL2 and libepoxy are linked in
+          cp build/port/fuse64.exe fuse64-windows-x86_64.exe
+          if ldd fuse64-windows-x86_64.exe | grep -i /clang64/; then exit 1; fi
+          # (it starts)
+          { ./fuse64-windows-x86_64.exe --help 2>&1 || true; } | grep "usage:"
+          # every package's licenses, for the release (the AppImage carries
+          # its own inside)
+          d=fuse64-licenses
+          mkdir -p $d
+          cp LICENSE NOTICES.md $d/
+          for p in SDL2 libepoxy libwinpthread winpthreads; do
+              cp -r /clang64/share/licenses/$p $d/$p 2>/dev/null || true
+          done
+          zip -r $d.zip $d
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: fuse64-windows-x86_64
+          path: fuse64-windows-x86_64.exe
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: fuse64-licenses
+          path: fuse64-licenses.zip
+
+  # macOS (arm64, an app in a dmg, as DozerEncore's) waits for rom_strip.py
+  # to read a Mach-O: until then a macOS build would keep the ROM's data, so
+  # port/CMakeLists.txt refuses it (docs/PORT.md, "Packages").  The job is
+  # here for that day; set the repository variable FUSE64_MACOS to true to
+  # run it.
+  macos:
+    if: vars.FUSE64_MACOS == 'true'
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install tools
+        run: brew install libepoxy pkgconf ninja dylibbundler
+
+      # SDL2 itself, linked in: Homebrew's sdl2 is sdl2-compat, which loads
+      # SDL3 at run time (a library dylibbundler can't see)
+      - name: SDL2
+        run: |
+          curl -sSLf https://github.com/libsdl-org/SDL/releases/download/release-$SDL2_VERSION/SDL2-$SDL2_VERSION.tar.gz | tar xz
+          cmake -S SDL2-$SDL2_VERSION -B sdl2-build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+              -DSDL_SHARED=OFF -DSDL_STATIC=ON -DSDL_TEST=OFF -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
+              -DCMAKE_INSTALL_PREFIX=$PWD/sdl2
+          cmake --build sdl2-build
+          cmake --install sdl2-build
+          echo "PKG_CONFIG_PATH=$PWD/sdl2/lib/pkgconfig" >> $GITHUB_ENV
+        env:
+          SDL2_VERSION: 2.32.10
+
+      - name: Build
+        run: |
+          release=
+          case "$GITHUB_REF" in refs/tags/v*) release=$GITHUB_REF_NAME ;; esac
+          cmake -S port -B build/port -G Ninja -DPORT_SNAPSHOT=ON "-DPORT_RELEASE=$release" -DPORT_STATIC=ON
+          cmake --build build/port
+
+      - name: Package (app in a dmg)
+        timeout-minutes: 10
+        run: |
+          app="dmg/Fuse64.app"
+          c="$app/Contents"
+          mkdir -p "$c/MacOS" "$c/Resources/licenses" "$c/Frameworks"
+          cp build/port/fuse64 "$c/MacOS/"
+          v=0.0.0
+          case "$GITHUB_REF" in refs/tags/v*) v=${GITHUB_REF_NAME#v} ;; esac
+          sed "s/@VERSION@/$v/" port/res/Info.plist > "$c/Info.plist"
+          mkdir fuse64.iconset
+          for n in 16 32 128 256 512; do
+              sips -z $n $n port/res/fuse64.png --out fuse64.iconset/icon_${n}x${n}.png > /dev/null
+              if [ $n -le 256 ]; then
+                  sips -z $((n * 2)) $((n * 2)) port/res/fuse64.png --out fuse64.iconset/icon_${n}x${n}@2x.png > /dev/null
+              fi
+          done
+          iconutil -c icns fuse64.iconset -o "$c/Resources/fuse64.icns"
+          cp LICENSE NOTICES.md "$c/Resources/licenses/"
+          dylibbundler -od -b -x "$c/MacOS/fuse64" -d "$c/Frameworks" -p @executable_path/../Frameworks/ < /dev/null
+          otool -L "$c/MacOS/fuse64"
+          codesign --force --deep -s - "$app"
+          { "$c/MacOS/fuse64" --help 2>&1 || true; } | grep "usage:"
+          ln -s /Applications dmg/Applications
+          hdiutil create -volname "Fuse64" -srcfolder dmg -ov -format UDZO fuse64-macos-arm64.dmg
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: fuse64-macos-arm64
+          path: fuse64-macos-arm64.dmg
+
+  web:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build zip
+
+      - uses: mymindstorm/setup-emsdk@v16
+        with:
+          version: ${{ env.EMSDK_VERSION }}
+          actions-cache-folder: emsdk-cache
+
+      - name: Build the WebAssembly page
+        run: |
+          release=
+          case "$GITHUB_REF" in refs/tags/v*) release=$GITHUB_REF_NAME ;; esac
+          emcmake cmake -S port -B build/web -G Ninja -DPORT_SNAPSHOT=ON "-DPORT_RELEASE=$release" \
+              -DPORT_WASM_TARGET=web
+          cmake --build build/web
+
+      - name: Assemble the site
+        run: |
+          mkdir _site
+          cp build/web/fuse64.{html,js,wasm} _site/
+          cp build/web/fuse64.html _site/index.html
+          d=fuse64-web
+          mkdir -p $d
+          cp _site/* $d/
+          cp LICENSE NOTICES.md $d/
+          zip -r $d.zip $d
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: fuse64-web
+          path: fuse64-web.zip
+
+      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  pages:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: web
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
+
+  release:
+    # (macos only when it runs: a skipped job doesn't hold the release)
+    if: ${{ !cancelled() && !failure() && startsWith(github.ref, 'refs/tags/v') }}
+    needs: [linux, windows, macos, web]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Publish on the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          ls -l dist
+          gh release view "$TAG" > /dev/null 2>&1 || gh release create "$TAG" --verify-tag --generate-notes --title "$TAG"
+          gh release upload "$TAG" dist/* --clobber

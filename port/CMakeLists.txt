@@ -209,11 +209,6 @@ list(FILTER GAME_C EXCLUDE REGEX "/src/libultra/")
 # but libultra's VI modes, which the scheduler (14B0.c) picks from: data only,
 # from the ROM like the game's (tools/cdata.py)
 list(APPEND GAME_C ${ROOT}/src/libultra/io/vitbl.c)
-# (its PRinternal/viint.h and PR/os_version.h searched after the port's SDK,
-# whose PR/ headers have the host's types; 2.0I's table, as the Makefile builds it)
-set_source_files_properties(${ROOT}/src/libultra/io/vitbl.c PROPERTIES
-    COMPILE_OPTIONS "-idirafter;${ROOT}/include/ultralib;-include;PR/os_version.h"
-    COMPILE_DEFINITIONS BUILD_VERSION=VERSION_I)
 set(MALLOC_C ${ROOT}/src/libmalloc/gmalloc.c)
 list(REMOVE_ITEM GAME_C ${MALLOC_C})
 set(OVL_C ${GAME_C})
@@ -277,6 +272,16 @@ function(reset_wrap out_var)
 endfunction()
 
 reset_wrap(GAME_SRC ${GAME_C})
+# vitbl.c (or its wrapper): its PRinternal/viint.h and PR/os_version.h searched
+# after the port's SDK, whose PR/ headers have the host's types; 2.0I's
+# table, as the Makefile builds it
+foreach(f ${GAME_SRC})
+    if(f MATCHES "vitbl\\.c$")
+        set_source_files_properties(${f} PROPERTIES
+            COMPILE_OPTIONS "-idirafter;${ROOT}/include/ultralib;-include;PR/os_version.h"
+            COMPILE_DEFINITIONS BUILD_VERSION=VERSION_I)
+    endif()
+endforeach()
 add_library(game_c OBJECT ${GAME_SRC})
 target_include_directories(game_c PRIVATE ${N64_INCLUDES})
 target_compile_definitions(game_c PRIVATE ${N64_DEFINES})

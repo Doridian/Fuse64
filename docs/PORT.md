@@ -1899,7 +1899,8 @@ digests: 277 the same, and the 9 that differed before (41:29, 45:22,
 the same lines and the same port digests as the commit before's; an
 ASan and UBSan build (x86-64, `PORT_SANITIZE=address,undefined`; its
 post-link check finds gfx.c's two halves of the F3DEX name side by side
-in `.rodata`, ASan's redzones zeros between them, as before this change)
+in `.rodata`, ASan's redzones zeros between them: the strings' place,
+not this change)
 gives the references for legal, menus, battle, warp-boss and
 warp-stage with no report; gfx_ref.py's 20 screens
 (i386) print the same table as the commit before's, every image and the
@@ -1913,7 +1914,10 @@ legal, menus and battle with an empty `PORT_SCATTER_OUT`.
 `snapshot.py --check` (linux-x86_64, wasm32, windows-x86_64): the same
 binaries from the snapshot, the snapshot unchanged, `rom_free_check.py`
 0 in each; the Windows build's `legal` under wine and the WebAssembly
-(node) build's give the references.
+(node) build's give the references. jp (i386): `legal` and `battle` give
+the references, and 4908M (`test.py tas`) part 0's 317 and part 1's
+73,577 frames are the emulator's, the digest's hashes and the save the
+reference's.
 
 ### The scattered layout
 

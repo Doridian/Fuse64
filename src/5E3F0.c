@@ -264,7 +264,7 @@ void func_80239880(s32, s32, f32 *);
 PORT_RET(s32, u16) func_802399AC(s32);
 PORT_RET(s32, u16) func_80239FF8(s32);
 void * func_8023A834(void);
-void * func_8023A840(void);
+UnkStruct_802AC610 *func_8023A840(void);
 s32 func_8023A870(s32, s32);
 PORT_RET(s32, void) func_80243824(s32);
 void func_802506B8(u8 *);
@@ -399,7 +399,7 @@ void *D_802ACF04;
 UnkStruct_802ACF08 D_802ACF08[5];
 UnkStructA **D_802ACF58;
 void *D_802ACF5C;
-s32 * D_802ACF60;
+UnkStruct_802AC610 *D_802ACF60;
 f32 D_802ACF68[5][3];
 
 void func_80243BF0(void);
@@ -1088,7 +1088,7 @@ void func_8024E088(s32 arg0) {
     s32 sp104;
     s32 sp100;
     s32 spFC;
-    void *spF8;
+    UnkStruct_802AC610 *spF8;
     s32 spF4;
     s32 spF0;
     Unk8026DCAC spD8;
@@ -1896,7 +1896,7 @@ void func_8024D8C4(Ctl58 *arg0) {
     if (!(D_802ACA10[id] & 3)) {
         func_8022F808(obj, pos);
         D_802ACF60 = func_8023A840();
-        if (!(*D_802ACF60 & 2)) {
+        if (!(D_802ACF60->unk0 & 2)) {
             func_802775D8((PORT_RET(s32, void *)) pos);
         }
         func_80282934();
@@ -2158,10 +2158,10 @@ void func_8024CEB8(s32 arg0) {
     }
     if (hit) {
         D_802ACF60 = func_8023A840();
-        if (D_802ACF60[1] == 3 && D_802ACF60[2] == 0) {
+        if (D_802ACF60->unk4 == 3 && D_802ACF60->unk8 == 0) {
             func_8026C660(0x30);
         }
-        if (D_802ACF60[1] == 0) {
+        if (D_802ACF60->unk4 == 0) {
             func_8022F808(obj, pos);
             code = func_8026DF74(pos[0], pos[1], pos[2]);
             if ((code & 0x1C00) == 0x400) {
@@ -2247,7 +2247,7 @@ void func_8024C884(s32 arg0, f32 arg1, s32 arg2) {
                 break;
             }
         }
-        if (*(s32 *)((u8 *)func_8023A840() + 0x48) == 1 && !func_80244BA4(arg0, 0x80000)) {
+        if (func_8023A840()->unk48 == 1 && !func_80244BA4(arg0, 0x80000)) {
             if (D_800AEDF0[arg0].unkAC < 6) {
                 level = 1;
             }
@@ -3639,7 +3639,7 @@ void func_80248148(s32 arg0, s32 arg1) {
         } else {
             D_800AEDF0[arg0].unk2C = 0;
             D_802ACF60 = func_8023A840();
-            if (D_802ACF60[4] == 0 || link) {
+            if (D_802ACF60->unk10 == 0 || link) {
                 func_8027B39C(4, (s16)arg0);
             } else {
                 func_8028A81C(6, obj->unk40->unk10, obj->unk40->unk14 + 200.0f, obj->unk40->unk18, 0);
@@ -3647,7 +3647,7 @@ void func_80248148(s32 arg0, s32 arg1) {
             func_80247CD0(arg0, 3);
             func_8026C660(0x1D);
             if (arg0 == 1) {
-                switch ((u32)D_802ACF60[1]) {
+                switch ((u32)D_802ACF60->unk4) {
                 case 0:
                 case 5:
                     func_8026C660(0x1CD);
@@ -3666,7 +3666,7 @@ void func_80248148(s32 arg0, s32 arg1) {
                     break;
                 }
             }
-            if (arg0 == 2 && D_802ACF60[1] == 5) {
+            if (arg0 == 2 && D_802ACF60->unk4 == 5) {
                 func_8026C660(0x1BA);
             }
             if (obj->unk44 != NULL) {

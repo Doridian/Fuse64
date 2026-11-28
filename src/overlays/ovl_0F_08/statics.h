@@ -119,7 +119,7 @@ static void func_ovl0F_08_80043254(f32 arg0, f32 arg1) {
 }
 
 static void func_ovl0F_08_8004325C(void) {
-    if (func_ovl0F_08_80044978()[4] == 0) {
+    if (func_ovl0F_08_80044978()->unk10 == 0) {
         func_ovl0F_08_80043254(0.3f, 0.5f);
     } else {
         func_ovl0F_08_80043254(0.12f, 0.15f);

@@ -87,7 +87,7 @@ void func_ovl10_01_80046750(UnkStructA *);
 f32 func_ovl10_01_80046A18(f32);
 void func_ovl10_01_80046E18(s32, Vec3f *);
 s32 func_ovl10_01_80045E18(void);
-s32 *func_ovl10_01_80045E68(void);
+UnkStruct_802AC610 *func_ovl10_01_80045E68(void);
 void func_ovl10_01_80045E80(s32);
 void func_ovl10_01_80045ED8(void *);
 void func_ovl10_01_80045F00(s32, void *);
@@ -207,7 +207,7 @@ s32 D_ovl10_01_80047660[2];
 s32 D_ovl10_01_80047668[64]; /* per task: which of the two */
 f32 D_ovl10_01_80047768[2][10];
 f32 D_ovl10_01_800477B8[2][10];
-s32 *D_ovl10_01_80047808;
+UnkStruct_802AC610 *D_ovl10_01_80047808;
 
 /* the first .data: its initializers */
 void func_ovl10_01_80043900(void) {
@@ -1029,7 +1029,7 @@ void func_ovl10_01_800432DC(void) {
 void func_ovl10_01_80043204(void) {
     func_ovl10_01_800431FC();
     D_ovl10_01_80047808 = func_ovl10_01_80045E68();
-    if (*D_ovl10_01_80047808 & 2) {
+    if (D_ovl10_01_80047808->unk0 & 2) {
         func_ovl10_01_80046868(func_ovl10_01_80043DA4, 0, 0, 0, 0x130);
         func_ovl10_01_80046868(func_ovl10_01_80043D60, 0, 0, 0, 0x130);
         func_ovl10_01_800465C0(0xF);
@@ -1073,14 +1073,14 @@ static void func_ovl10_01_800430F0(void) {
 
 void func_ovl10_01_800430A8(void) {
     D_ovl10_01_80047808 = func_ovl10_01_80045E68();
-    if (*D_ovl10_01_80047808 & 2) {
+    if (D_ovl10_01_80047808->unk0 & 2) {
         func_ovl10_01_80046F70();
     }
 }
 
 void func_ovl10_01_80043060(void) {
     D_ovl10_01_80047808 = func_ovl10_01_80045E68();
-    if (*D_ovl10_01_80047808 & 2) {
+    if (D_ovl10_01_80047808->unk0 & 2) {
         func_ovl10_01_80046F70();
     }
 }

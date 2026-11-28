@@ -169,7 +169,7 @@ s32 func_80238FDC(void);
 PORT_RET(s32, void) func_80239094(void);
 PORT_IP(s32) func_802391F0(void);
 void func_80239430(void);
-s32 * func_8023A840(void);
+UnkStruct_802AC610 *func_8023A840(void);
 s32 func_8026D7D8(s32, s32, s32);
 u8 func_8026DC74(s32);
 void func_8026DCAC(f32, f32, f32, void *, s32);
@@ -2314,7 +2314,7 @@ s32 func_8022E884(UnkStructA *arg0, UnkStructA *arg1) {
 void func_8022DE6C() {
     s32 i;
 
-    if (!(*func_8023A840() & 2)) {
+    if (!(func_8023A840()->unk0 & 2)) {
         D_800A7F28 = func_8026CE28(0x34E);
         for (i = 0; i < 8; i++) {
             D_800A7F08[i] = func_8022A6C4(D_800A7F28, 0x40);
@@ -2331,7 +2331,7 @@ void func_8022DE6C() {
 void func_8022DE00() {
     s32 i;
 
-    if (!(*func_8023A840() & 2)) {
+    if (!(func_8023A840()->unk0 & 2)) {
         for (i = 0; i < 8; i++) {
             func_8022A1E8(D_800A7F08[i]);
         }

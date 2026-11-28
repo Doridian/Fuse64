@@ -139,7 +139,7 @@ typedef struct {
 
 void func_ovl0B_03_800478B0(s32, s32, s32);
 s32 func_ovl0B_03_800478B8(void);
-s32 *func_ovl0B_03_80047908(void);
+UnkStruct_802AC610 *func_ovl0B_03_80047908(void);
 UnkStruct_8023A834 *func_ovl0B_03_80047938(void);
 void func_ovl0B_03_80047960(s32, s32, s32);
 UnkStructA_40 *func_ovl0B_03_80047E98(s32, s32);
@@ -761,7 +761,7 @@ void func_ovl0B_03_8004386C(void) {
     s32 v3C;
     s32 max;
     s32 h;
-    s32 *p;
+    UnkStruct_802AC610 *p;
     UnkStruct_8027F0C4 spCC[6] = { { 71, 87, 0, 2, 0, 0 }, { 71, 117, 1, 3, 0, 0 }, { 71, 147, 2, 4, 0, 0 }, { 71, 177, 3, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 } };
     UnkStruct_8027F0C4 spA4[5] = { { 172, 78, 0, 2, 0, 0 }, { 172, 108, 1, 3, 0, 0 }, { 172, 138, 2, 4, 0, 0 }, { 172, 168, 3, 5, 0, 0 }, { 172, 198, 4, 0, 0, 0 } };
     s32 i;
@@ -781,10 +781,10 @@ void func_ovl0B_03_8004386C(void) {
     D_ovl0B_03_8004A328 = 0;
     p = func_ovl0B_03_80047908();
     max = 5;
-    if ((func_ovl0B_03_800489F8(2) != 0) || (M2C_FIELD(p, s32 *, 0x44) != 0)) {
+    if ((func_ovl0B_03_800489F8(2) != 0) || (p->unk44 != 0)) {
         max = 7;
     }
-    if ((func_ovl0B_03_800489F8(1) != 0) || (M2C_FIELD(p, s32 *, 0x44) != 0)) {
+    if ((func_ovl0B_03_800489F8(1) != 0) || (p->unk44 != 0)) {
         max = 9;
     }
     state = next;

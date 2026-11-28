@@ -22,7 +22,7 @@ PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 PORT_IP(s32) func_802391F0(void);
 void func_80239430(void);
-s32 *func_8023A840(void);
+UnkStruct_802AC610 *func_8023A840(void);
 s32 func_80243DDC(void);
 void func_80250338(s32, f32 *);
 PORT_RET(void, s32) func_8026C630(s32, f32 *);
@@ -177,7 +177,7 @@ void func_802341C8(void) {
 
 /* flags is declared first: its stack slot is above the arrays' */
 void func_80233E3C(void) {
-    s32 *flags;
+    UnkStruct_802AC610 *flags;
     f32 pos[3];
     f32 pos2[3];
     f32 step[3];
@@ -188,7 +188,7 @@ void func_80233E3C(void) {
     f32 accel;
 
     flags = func_8023A840();
-    if (func_8028A36C(0xA4) == 0 || (*flags & 2)) {
+    if (func_8028A36C(0xA4) == 0 || (flags->unk0 & 2)) {
         func_80250338(func_80243DDC(), pos);
         obj = func_80231274(0x328, 0x01000000, 0xD0, NULL);
         func_80229E38(obj->unk40, 0x16, 0);
@@ -264,9 +264,9 @@ void func_80233D7C(void) {
 }
 
 void func_80233C80(f32 *arg0) {
-    s32 *flags = func_8023A840();
+    UnkStruct_802AC610 *flags = func_8023A840();
 
-    if (D_802A5A30 < 4 && D_8029FE90 != 0 && !(*flags & 2)) {
+    if (D_802A5A30 < 4 && D_8029FE90 != 0 && !(flags->unk0 & 2)) {
         D_802A5A38[D_802A5A30] = func_80233C30();
         D_802A5A38[D_802A5A30]->unk10 = arg0[0];
         D_802A5A38[D_802A5A30]->unk14 = arg0[1];
@@ -333,10 +333,10 @@ void func_80233A04(void) {
 }
 
 void func_802339A0(void) {
-    s32 *flags = func_8023A840();
+    UnkStruct_802AC610 *flags = func_8023A840();
 
     if (func_8028A36C(0xA4) != 0) {
-        if (!(*flags & 2)) {
+        if (!(flags->unk0 & 2)) {
             func_80238A10(func_80233830, 0, 0, 0, 0x150);
         }
     }

@@ -13,7 +13,7 @@ PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 PORT_IP(s32) func_802391F0(void);
 void func_80239430(void);
-s32 *func_8023A840(void);
+UnkStruct_802AC610 *func_8023A840(void);
 void func_8026C454(s32, f32, f32, f32);
 s32 func_8026C51C(s32, f32, f32, f32);
 
@@ -106,7 +106,7 @@ void *D_8029FD40[] = {
 };
 
 void func_8022DDB4(PORT_IP(s32) arg0) {
-    if (!(*func_8023A840() & 2)) {
+    if (!(func_8023A840()->unk0 & 2)) {
         func_80238A10(func_8022DD6C, arg0, 0, 0, 0x150);
     }
 }

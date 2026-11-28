@@ -75,7 +75,7 @@ void func_ovl10_06_80049690(s32, s32, s32);
 void func_ovl10_06_800496B8(void);
 void func_ovl10_06_800496D0(void (*)(UnkStructA *));
 s32 func_ovl10_06_800496D8();
-s32 *func_ovl10_06_800496E8(void);
+UnkStruct_802AC610 *func_ovl10_06_800496E8(void);
 void func_ovl10_06_80049700(s32);
 void func_ovl10_06_80049708(s32);
 void func_ovl10_06_80049748(void);
@@ -305,7 +305,7 @@ s32 D_ovl10_06_8004ABA8[64]; /* M2C_UNK */
 s32 D_ovl10_06_8004ACA8;
 void (*D_ovl10_06_8004ACB0[64])(void);
 UnkStruct_802B0260 * D_ovl10_06_8004ADB0;
-s32 * D_ovl10_06_8004ADB4;
+UnkStruct_802AC610 *D_ovl10_06_8004ADB4;
 UnkStructA * D_ovl10_06_8004ADB8;
 UnkStructA * D_ovl10_06_8004ADBC;
 UnkStructA *D_ovl10_06_8004ADC0[4];
@@ -1629,7 +1629,7 @@ void func_ovl10_06_80045458(s32 arg0) {
     D_ovl10_06_8004B270[arg0] = -1;
     D_ovl10_06_8004B240[arg0] = 1;
     D_ovl10_06_8004ADB4 = func_ovl10_06_800496E8();
-    flag = D_ovl10_06_8004ADB4[4];
+    flag = D_ovl10_06_8004ADB4->unk10;
     if (flag != 0) {
         D_ovl10_06_8004B240[arg0] += 2;
     }
@@ -1646,7 +1646,7 @@ void func_ovl10_06_800453A0(void) {
     func_ovl10_06_800495D0(0x2A, 1, 0x10, 1);
     func_ovl10_06_80049708(0);
     D_ovl10_06_8004ADB4 = func_ovl10_06_800496E8();
-        if (!(*D_ovl10_06_8004ADB4 & 2)) {
+        if (!(D_ovl10_06_8004ADB4->unk0 & 2)) {
         func_ovl10_06_80049788(0);
         func_ovl10_06_80049700(1);
         return;
@@ -1831,7 +1831,7 @@ void func_ovl10_06_80044920(void) {
     D_ovl10_06_8004ACB0[D_ovl10_06_8004ACA8] = NULL;
     D_ovl10_06_8004ADB4 = func_ovl10_06_800496E8();
     func_ovl10_06_80049708(0);
-    if (!(*D_ovl10_06_8004ADB4 & 2)) {
+    if (!(D_ovl10_06_8004ADB4->unk0 & 2)) {
         func_ovl10_06_80049788(0);
         func_ovl10_06_80049700(1);
     } else {
@@ -1879,7 +1879,7 @@ void func_ovl10_06_800446D0(void) {
     D_ovl10_06_8004ACB0[D_ovl10_06_8004ACA8] = NULL;
     D_ovl10_06_8004ADB4 = func_ovl10_06_800496E8();
     func_ovl10_06_80049708(0);
-    if (!(*D_ovl10_06_8004ADB4 & 2)) {
+    if (!(D_ovl10_06_8004ADB4->unk0 & 2)) {
         func_ovl10_06_80049788(0);
         func_ovl10_06_80049700(1);
     } else {
@@ -1991,7 +1991,7 @@ void func_ovl10_06_80043FF8(void) {
         func_ovl10_06_80049FB0(D_ovl10_06_8004AF18);
         D_ovl10_06_8004AF18 = NULL;
         D_ovl10_06_8004ADB4 = func_ovl10_06_800496E8();
-        if (!(*D_ovl10_06_8004ADB4 & 2)) {
+        if (!(D_ovl10_06_8004ADB4->unk0 & 2)) {
             func_ovl10_06_80049788(0);
             func_ovl10_06_80049700(1);
         }
@@ -2015,7 +2015,7 @@ void func_ovl10_06_80043F50(void) {
     s32 *temp_v0;
 
     D_ovl10_06_8004ADB4 = func_ovl10_06_800496E8();
-        if (!(*D_ovl10_06_8004ADB4 & 2)) {
+        if (!(D_ovl10_06_8004ADB4->unk0 & 2)) {
         func_ovl10_06_80049788(0);
     }
     D_ovl10_06_8004ACB0[D_ovl10_06_8004ACA8] = NULL;
@@ -2080,7 +2080,7 @@ void func_ovl10_06_80043B94(void) {
     s32 *temp_v0;
 
     D_ovl10_06_8004ADB4 = func_ovl10_06_800496E8();
-        if (!(*D_ovl10_06_8004ADB4 & 2)) {
+        if (!(D_ovl10_06_8004ADB4->unk0 & 2)) {
         if (func_ovl10_06_8004A350(0xA4) != 0) {
             func_ovl10_06_80049D00(0x291, 1);
         } else {
@@ -2188,7 +2188,7 @@ void func_ovl10_06_80043820(s32 arg0) {
         break;
     case 0x1:
         D_ovl10_06_8004ADB4 = func_ovl10_06_800496E8();
-                if (*D_ovl10_06_8004ADB4 & 2) {
+                if (D_ovl10_06_8004ADB4->unk0 & 2) {
             func_ovl10_06_8004A7F0();
         }
         break;
@@ -2296,7 +2296,7 @@ static void func_ovl10_06_80043330(void) {
 void func_ovl10_06_80043338(void) {
     func_ovl10_06_80043330();
     D_ovl10_06_8004ADB4 = func_ovl10_06_800496E8();
-    if (*D_ovl10_06_8004ADB4 & 2) {
+    if (D_ovl10_06_8004ADB4->unk0 & 2) {
         func_ovl10_06_8004A0E8(func_ovl10_06_80048EA0, 0, 0, 0, 0x130);
         func_ovl10_06_8004A0E8(func_ovl10_06_80048E64, 0, 0, 0, 0x130);
         func_ovl10_06_80049E40(15);
@@ -2368,7 +2368,7 @@ void func_ovl10_06_80043120(void) {
 /* ovl_10_12's 80043018 */
 void func_ovl10_06_80043060(void) {
     D_ovl10_06_8004ADB4 = func_ovl10_06_800496E8();
-    if (*D_ovl10_06_8004ADB4 & 2) {
+    if (D_ovl10_06_8004ADB4->unk0 & 2) {
         func_ovl10_06_8004A7F0();
     }
 }
@@ -2376,7 +2376,7 @@ void func_ovl10_06_80043060(void) {
 /* ovl_10_12's 80043018 */
 void func_ovl10_06_80043018(void) {
     D_ovl10_06_8004ADB4 = func_ovl10_06_800496E8();
-    if (*D_ovl10_06_8004ADB4 & 2) {
+    if (D_ovl10_06_8004ADB4->unk0 & 2) {
         func_ovl10_06_8004A7F0();
     }
 }

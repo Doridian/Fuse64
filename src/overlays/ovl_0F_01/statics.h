@@ -77,7 +77,7 @@ static void func_ovl0F_01_80045FB0(u32 (*p)[3], s32 count) {
             func_ovl0F_01_80047C00(0x407);
             func_ovl0F_01_80047918(40.0f);
             func_ovl0F_01_80047920(30);
-            if (*D_ovl0F_01_80048790 & 4) {
+            if (D_ovl0F_01_80048790->unk0 & 4) {
                 func_ovl0F_01_80047698(135.0f, 32768.0f, 32768.0f);
                 func_ovl0F_01_80047988(func_ovl0F_01_80043298, NULL, 0, 0, 0x130);
                 func_ovl0F_01_800476E0(0xF);
@@ -143,7 +143,7 @@ static void func_ovl0F_01_80045FB0(u32 (*p)[3], s32 count) {
                 func_ovl0F_01_80047990(D_ovl0F_01_80048430);
                 D_ovl0F_01_80048430 = -1;
             }
-            if (*D_ovl0F_01_80048790 & 4) {
+            if (D_ovl0F_01_80048790->unk0 & 4) {
                 PORT_ONLY(if (func_ovl0F_01_800480D8(2)->unkC != NULL)) func_ovl0F_01_800480D8(2)->unkC->unkC |= 1; /* NULL: a demo left early (docs/PORT.md, "Reads through NULL") */
                 func_ovl0F_01_80047CD8(0, 0, 0);
                 func_ovl0F_01_800480C8();

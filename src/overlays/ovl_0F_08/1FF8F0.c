@@ -40,7 +40,7 @@ void func_ovl0F_08_80044908(void (*)(UnkStructA *), s32);
 void func_ovl0F_08_80044910(void (*)(UnkStructA *));
 void func_ovl0F_08_80044920(s32, s32, s32);
 s32 func_ovl0F_08_80044928(void);
-s32 *func_ovl0F_08_80044978(void);
+UnkStruct_802AC610 *func_ovl0F_08_80044978(void);
 void func_ovl0F_08_80044990(s32);
 void func_ovl0F_08_80044998(s32);
 void func_ovl0F_08_800449D8(void);

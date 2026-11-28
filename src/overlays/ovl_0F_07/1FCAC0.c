@@ -32,7 +32,7 @@ void func_ovl0F_07_80044900(void (*)(UnkStructA *));
 void func_ovl0F_07_80044910(s32, s32, s32);
 s32 func_ovl0F_07_80044918(void);
 void func_ovl0F_07_80044938(void);
-s32 *func_ovl0F_07_80044968(void);
+UnkStruct_802AC610 *func_ovl0F_07_80044968(void);
 void func_ovl0F_07_80044990(s32);
 void func_ovl0F_07_800449C8(void);
 void func_ovl0F_07_800449D0(s32, s32, s32);
@@ -464,7 +464,7 @@ static void func_ovl0F_07_8004309C(f32 arg0, f32 arg1) {
 }
 
 static void func_ovl0F_07_800430A4(void) {
-    if (func_ovl0F_07_80044968()[4] == 0) {
+    if (func_ovl0F_07_80044968()->unk10 == 0) {
         func_ovl0F_07_8004309C(0.3f, 0.5f);
     } else {
         func_ovl0F_07_8004309C(0.12f, 0.15f);

@@ -608,7 +608,7 @@ void func_ovl0C_06_80043354(UnkStruct_ovl0C_01_8004A3BC *arg0, UnkStruct_ovl0C_0
     func_ovl0C_06_80048710(sparks);
     func_ovl0C_06_80048728(0x3C);
     func_ovl0C_06_80047D28(0);
-    if (*func_ovl0C_06_80047D08() & 2) {
+    if (func_ovl0C_06_80047D08()->unk0 & 2) {
         func_ovl0C_06_80047DA8(1);
     }
 }

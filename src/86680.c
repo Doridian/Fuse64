@@ -12,7 +12,7 @@ void func_8022FEAC(Vec3f *, Vec3f *);
 void func_8022FF58(Vec3f *, Vec3f *, Vec3f *);
 void func_80234858(f32 *, f32 *, f32 *);
 void func_802351DC(Vec3f *);
-s32 *func_8023A840(void);
+UnkStruct_802AC610 *func_8023A840(void);
 void func_80265DD8(s8);
 void func_80266118(s8);
 void func_80266510(s16, s8);
@@ -204,7 +204,7 @@ s32 func_8026C51C(s32 arg0, f32 x, f32 y, f32 z) {
 static s32 func_8026C494(s32 id) {
     s32 idx;
 
-    if (!(*func_8023A840() & 0xA)) {
+    if (!(func_8023A840()->unk0 & 0xA)) {
         switch (id) {
             case 0x26:
                 idx = 0;

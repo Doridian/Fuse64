@@ -249,6 +249,17 @@ typedef struct {
     /* 0x14 */ void *unk14;
 } UnkStruct_802A5330; /* size 0x18 */
 
+/* D_802ACF08 (5E3F0's .bss, one per player): what func_80243D7C returns (the
+ * overlays' ZeroJump stub 0F_05 80045110) and 6BBE0 keeps in its records'
+ * unk9C. */
+typedef struct {
+    /* 0x00 */ f32 unk0;
+    /* 0x04 */ f32 unk4;
+    /* 0x08 */ f32 unk8;
+    /* 0x0C */ u16 unkC;
+    /* 0x0E */ u16 unkE;
+} UnkStruct_802ACF08;
+
 #ifdef TARGET_PC
 /* the game's objects as the port lays them out where another file's C
    reaches them by offset (port/include/port_types.h) */

@@ -217,7 +217,6 @@
 typedef struct { s32 n; f32 f4; s32 unk8; f32 fC; } SeqA; /* 0x10 */
 typedef struct { s32 n; u16 v; } SeqB; /* 0x8 */
 typedef struct { s32 len[3]; s32 idx[3]; s32 cnt[3]; SeqA *a; SeqB *b; SeqB *c; } Seq;
-typedef struct { f32 f0; f32 f4; f32 f8; u16 vC; u16 vE; } SeqOut;
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 #define FDIFF(a, b) ((a) < (b) ? -((a) - (b)) : ((a) - (b)))
@@ -225,7 +224,7 @@ typedef struct { f32 f0; f32 f4; f32 f8; u16 vC; u16 vE; } SeqOut;
 #define M2C_BITWISE(type, expr) ((type)(expr))
 
 extern UnkStruct_800AEDF0 D_800AEDF0[5];
-extern u8 D_802ACF08[PORT_SIZE(5)][0x10];
+extern UnkStruct_802ACF08 D_802ACF08[PORT_SIZE(5)];
 
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -695,7 +694,7 @@ void func_8025DC60(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     func_802512C0(arg2, arg3, arg4);
     func_8024585C(0);
     p = D_800BCFE8 + arg0 * PORT_HOST(0x128, sizeof(Port_800BCFE8));
-    PORT_FIELD(p, u8 **, 0x9C, Port_800BCFE8, unk9C) = D_802ACF08[arg0];
+    PORT_FIELD(p, UnkStruct_802ACF08 **, 0x9C, Port_800BCFE8, unk9C) = &D_802ACF08[arg0];
     M2C_FIELD(p, s32 *, 0) = 1;
     PORT_FIELD(p, PORT_IP(s32) *, 0x98, Port_800BCFE8, unk98) = 0;
     M2C_FIELD(p, s32 *, 0xC) = arg0;
@@ -4183,17 +4182,17 @@ static s32 func_80252EA4(f32 *arg0) {
         } else if (p->len[0] != p->idx[0]) {
             f = p->a[p->idx[0]].fC;
             PORT_FIELD(arg0, f32 *, 0x7C, Port_800BCFE8, unk20[92]) = f;
-            PORT_FIELD(arg0, SeqOut **, 0x9C, Port_800BCFE8, unk9C)->f8 = f;
+            PORT_FIELD(arg0, UnkStruct_802ACF08 **, 0x9C, Port_800BCFE8, unk9C)->unk8 = f;
             f = p->a[p->idx[0]].f4;
             PORT_FIELD(arg0, f32 *, 0x74, Port_800BCFE8, unk20[84]) = f;
-            PORT_FIELD(arg0, SeqOut **, 0x9C, Port_800BCFE8, unk9C)->f0 = f;
+            PORT_FIELD(arg0, UnkStruct_802ACF08 **, 0x9C, Port_800BCFE8, unk9C)->unk0 = f;
             p->cnt[0] = p->a[p->idx[0]].n;
             p->idx[0]++;
             p->cnt[0]--;
         } else {
             PORT_FIELD(arg0, f32 *, 0x7C, Port_800BCFE8, unk20[92]) = 0.0f;
             a = 1;
-            PORT_FIELD(arg0, SeqOut **, 0x9C, Port_800BCFE8, unk9C)->f8 = 0.0f;
+            PORT_FIELD(arg0, UnkStruct_802ACF08 **, 0x9C, Port_800BCFE8, unk9C)->unk8 = 0.0f;
         }
     }
     if (p->len[1] != 0) {
@@ -4201,13 +4200,13 @@ static s32 func_80252EA4(f32 *arg0) {
         if (p->cnt[1] != 0) {
             p->cnt[1]--;
         } else if (p->len[1] != p->idx[1]) {
-            PORT_FIELD(arg0, SeqOut **, 0x9C, Port_800BCFE8, unk9C)->vC = p->b[p->idx[1]].v;
+            PORT_FIELD(arg0, UnkStruct_802ACF08 **, 0x9C, Port_800BCFE8, unk9C)->unkC = p->b[p->idx[1]].v;
             p->cnt[1] = p->b[p->idx[1]].n;
             p->idx[1]++;
             p->cnt[1]--;
         } else {
             b = 1;
-            PORT_FIELD(arg0, SeqOut **, 0x9C, Port_800BCFE8, unk9C)->vC = 0;
+            PORT_FIELD(arg0, UnkStruct_802ACF08 **, 0x9C, Port_800BCFE8, unk9C)->unkC = 0;
         }
     }
     if (p->len[2] != 0) {
@@ -4215,13 +4214,13 @@ static s32 func_80252EA4(f32 *arg0) {
         if (p->cnt[2] != 0) {
             p->cnt[2]--;
         } else if (p->len[2] != p->idx[2]) {
-            PORT_FIELD(arg0, SeqOut **, 0x9C, Port_800BCFE8, unk9C)->vE = p->c[p->idx[2]].v;
+            PORT_FIELD(arg0, UnkStruct_802ACF08 **, 0x9C, Port_800BCFE8, unk9C)->unkE = p->c[p->idx[2]].v;
             p->cnt[2] = p->c[p->idx[2]].n;
             p->idx[2]++;
             p->cnt[2]--;
         } else {
             c = 1;
-            PORT_FIELD(arg0, SeqOut **, 0x9C, Port_800BCFE8, unk9C)->vE = 0;
+            PORT_FIELD(arg0, UnkStruct_802ACF08 **, 0x9C, Port_800BCFE8, unk9C)->unkE = 0;
         }
     }
     if (a == 1 && b == 1 && c == 1) {
@@ -4685,7 +4684,7 @@ void func_80251804(s32 arg0) {
     sp40 = func_8023A834();
     temp_s4 = (f32 *)((arg0 * PORT_HOST(0x128, sizeof(Port_800BCFE8))) + D_800BCFE8);
     M2C_FIELD(temp_s4, s32 *, 0xC) = arg0;
-    PORT_FIELD(temp_s4, u8 **, 0x9C, Port_800BCFE8, unk9C) = D_802ACF08[arg0];
+    PORT_FIELD(temp_s4, UnkStruct_802ACF08 **, 0x9C, Port_800BCFE8, unk9C) = &D_802ACF08[arg0];
     M2C_FIELD(temp_s4, s32 *, 0) = 1;
     do {
         temp_v0 = func_80251708(arg0);

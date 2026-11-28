@@ -47,15 +47,6 @@
  * the handler and the three tasks are its own.
  */
 
-/* what func_ovl0F_05_80045110 returns (the camera?) */
-typedef struct {
-    /* 0x00 */ f32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ u16 unkC;
-    /* 0x0E */ u16 unkE;
-} UnkStruct_ovl0F_05_80045110;
-
 /* as ovl_12_06's */
 #define ANGLE_SUB(a, d) \
     (a) = ((a) - (d) >= 360.0f) ? (a) - (d) - 360.0f : ((a) < (d)) ? (a) - (d) + 360.0f : (a) - (d)
@@ -75,7 +66,7 @@ void func_ovl0F_05_80045048(s32);
 UnkStructA *func_ovl0F_05_80045098(s32);
 UnkStructA *func_ovl0F_05_800450D8(s32);
 void func_ovl0F_05_800450E0(s32, s32);
-UnkStruct_ovl0F_05_80045110 *func_ovl0F_05_80045110(s32);
+UnkStruct_802ACF08 *func_ovl0F_05_80045110(s32);
 UnkStructA_40 *func_ovl0F_05_80045538(s32, s32);
 void func_ovl0F_05_80045540(UnkStructA_40 *);
 void func_ovl0F_05_80045550(UnkStructA_40 *, s32);

@@ -196,14 +196,6 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ f32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ u16 unkC;
-    /* 0x0E */ u16 unkE;
-} PadState;
-
-typedef struct {
-    /* 0x00 */ f32 unk0;
     /* 0x04 */ s32 unk4;
     /* 0x08 */ s32 unk8;
     /* 0x0C */ f32 unkC;
@@ -404,7 +396,7 @@ f32 D_802ACEC0;
 f32 D_802ACEC4;
 s32 D_802ACEC8[5][3];
 void *D_802ACF04;
-PadState D_802ACF08[5];
+UnkStruct_802ACF08 D_802ACF08[5];
 UnkStructA **D_802ACF58;
 void *D_802ACF5C;
 s32 * D_802ACF60;
@@ -414,7 +406,7 @@ void func_80243BF0(void);
 void func_80243D20(s32 arg0);
 s32 func_80243D2C(s32 arg0);
 s32 *func_80243D54(s32 arg0);
-void *func_80243D7C(s32 arg0);
+UnkStruct_802ACF08 *func_80243D7C(s32 arg0);
 void func_80243D90(s32 arg0, s32 arg1, s32 arg2);
 s32 func_80243DDC(void);
 void func_80243DEC(s32 arg0);
@@ -5188,7 +5180,7 @@ void func_80243D90(s32 arg0, s32 arg1, s32 arg2) {
     D_800AEDF0[arg0].unk68 = v;
 }
 
-void *func_80243D7C(s32 arg0) {
+UnkStruct_802ACF08 *func_80243D7C(s32 arg0) {
     return &D_802ACF08[arg0];
 }
 

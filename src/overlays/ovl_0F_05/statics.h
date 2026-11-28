@@ -63,7 +63,7 @@ static void func_ovl0F_05_80043B6C(void) {
 }
 
 void func_ovl0F_05_80043B74(void) {
-    UnkStruct_ovl0F_05_80045110 *cam;
+    UnkStruct_802ACF08 *cam;
     s32 i;
     s32 task;
     s32 j;

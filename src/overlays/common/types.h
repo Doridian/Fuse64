@@ -411,4 +411,14 @@ typedef struct {
     /* 0x10 */ s32 unk10;
 } UnkStruct_ovl10_01_80046830;
 
+/* What func_ovl10_01_800468F0 returns. */
+typedef struct {
+    /* 0x00 */ u8 unk0[0x18];
+    /* 0x18 */ f32 unk18;
+    /* 0x1C */ f32 unk1C;
+    /* 0x20 */ u8 unk20[0x20];
+    /* 0x40 */ f32 unk40;
+    /* 0x44 */ f32 unk44;
+} UnkStruct_ovl10_01_80047540;
+
 #endif

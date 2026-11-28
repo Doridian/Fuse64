@@ -14,16 +14,6 @@
  * places. 80044288 is defined just below 800442A4, which inlines it.
  */
 
-/* What func_ovl10_05_800465E0 returns. */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x18];
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ u8 unk20[0x20];
-    /* 0x40 */ f32 unk40;
-    /* 0x44 */ f32 unk44;
-} UnkStruct_ovl10_05_80047130;
-
 void func_ovl10_05_800456C8(const char *, ...);
 void func_ovl10_05_80045A08(s32);
 void func_ovl10_05_80045A10(s32, f32, f32, f32, s32, s32);
@@ -70,11 +60,11 @@ void func_ovl10_05_80046558(void (*)(void), s32, PORT_IP(s32), s32, s32);
 void func_ovl10_05_80046578(s32);
 void func_ovl10_05_800465A0(void);
 #ifdef TARGET_PC
-UnkStruct_ovl10_05_80047130 *func_ovl10_05_800465E0(s32 arg0); /* ZeroJump 0x1A00, func_80287DC0 */
+UnkStruct_ovl10_01_80047540 *func_ovl10_05_800465E0(s32 arg0); /* ZeroJump 0x1A00, func_80287DC0 */
 #else
-UnkStruct_ovl10_05_80047130 *func_ovl10_05_800465E0(void);
+UnkStruct_ovl10_01_80047540 *func_ovl10_05_800465E0(void);
 #endif
-void func_ovl10_05_800465F0(UnkStruct_ovl10_05_80047130 *, s32);
+void func_ovl10_05_800465F0(UnkStruct_ovl10_01_80047540 *, s32);
 f32 func_ovl10_05_80046700(f32);
 f32 func_ovl10_05_80046708(f32);
 s32 func_ovl10_05_80046718(s32);
@@ -153,7 +143,7 @@ s32 D_ovl10_05_80046F20;
 s32 D_ovl10_05_80046F28[64];
 s32 D_ovl10_05_80047028; /* the running task */
 void (*D_ovl10_05_80047030[64])(void);
-UnkStruct_ovl10_05_80047130 *D_ovl10_05_80047130;
+UnkStruct_ovl10_01_80047540 *D_ovl10_05_80047130;
 UnkStructA *D_ovl10_05_80047138[8];
 UnkStructA *D_ovl10_05_80047158[8];
 void *D_ovl10_05_80047178[8];

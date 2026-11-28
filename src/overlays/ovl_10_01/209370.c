@@ -21,16 +21,6 @@
  * 80044154 and 80044A10 have an unused local for the original's frame.
  */
 
-/* What func_ovl10_01_800468F0 returns. */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x18];
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ u8 unk20[0x20];
-    /* 0x40 */ f32 unk40;
-    /* 0x44 */ f32 unk44;
-} UnkStruct_ovl10_01_80047540;
-
 void func_ovl10_01_800459D8(const char *, ...);
 void func_ovl10_01_80045D18(s32);
 void func_ovl10_01_80045D20(s32, f32, f32, f32, s32, s32);

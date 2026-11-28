@@ -8,16 +8,6 @@
  * failed" and "task_entry>%d:%s") are in every one of bank 0x10's overlays.
  */
 
-/* What func_ovl10_02_800454C0 returns. */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x18];
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ u8 unk20[0x20];
-    /* 0x40 */ f32 unk40;
-    /* 0x44 */ f32 unk44;
-} UnkStruct_ovl10_02_80045F80;
-
 void func_ovl10_02_800445A8(const char *, ...);
 void func_ovl10_02_800448E8(s32);
 void func_ovl10_02_800448F0(s32, f32, f32, f32, s32, s32);
@@ -56,8 +46,8 @@ UnkStruct_ovl10_01_80046830 *func_ovl10_02_80045400(UnkStructA *, s32);
 void func_ovl10_02_80045438(void (*)(void), s32, PORT_IP(s32), s32, s32);
 void func_ovl10_02_80045458(s32);
 void func_ovl10_02_80045480(void);
-UnkStruct_ovl10_02_80045F80 *func_ovl10_02_800454C0(void);
-void func_ovl10_02_800454D0(UnkStruct_ovl10_02_80045F80 *, s32);
+UnkStruct_ovl10_01_80047540 *func_ovl10_02_800454C0(void);
+void func_ovl10_02_800454D0(UnkStruct_ovl10_01_80047540 *, s32);
 f32 func_ovl10_02_800455E0(f32);
 s32 func_ovl10_02_800455F8(s32);
 s32 *func_ovl10_02_800456D0(void);
@@ -123,7 +113,7 @@ s32 D_ovl10_02_80045D70;
 s32 D_ovl10_02_80045D78[64];
 s32 D_ovl10_02_80045E78; /* the running task */
 void (*D_ovl10_02_80045E80[64])(void);
-UnkStruct_ovl10_02_80045F80 *D_ovl10_02_80045F80;
+UnkStruct_ovl10_01_80047540 *D_ovl10_02_80045F80;
 UnkStructA *D_ovl10_02_80045F88[8];
 void *D_ovl10_02_80045FA8[8];
 s32 D_ovl10_02_80045FC8;

@@ -17,16 +17,6 @@
  * unused local for the original's frame.
  */
 
-/* What func_ovl10_03_800466A0 returns. */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x18];
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ u8 unk20[0x20];
-    /* 0x40 */ f32 unk40;
-    /* 0x44 */ f32 unk44;
-} UnkStruct_ovl10_03_80047200;
-
 void func_ovl10_03_80045788(const char *, ...);
 void func_ovl10_03_80045AC8(s32);
 void func_ovl10_03_80045AD0(s32, f32, f32, f32, s32, s32);
@@ -65,8 +55,8 @@ UnkStruct_ovl10_01_80046830 *func_ovl10_03_800465E0(UnkStructA *, s32);
 void func_ovl10_03_80046618(void (*)(void), s32, PORT_IP(s32), s32, s32);
 void func_ovl10_03_80046638(s32);
 void func_ovl10_03_80046660(void);
-UnkStruct_ovl10_03_80047200 *func_ovl10_03_800466A0(void);
-void func_ovl10_03_800466B0(UnkStruct_ovl10_03_80047200 *, s32);
+UnkStruct_ovl10_01_80047540 *func_ovl10_03_800466A0(void);
+void func_ovl10_03_800466B0(UnkStruct_ovl10_01_80047540 *, s32);
 f32 func_ovl10_03_800467C0(f32);
 s32 func_ovl10_03_800467D8(s32);
 s32 *func_ovl10_03_800468B0(void);
@@ -154,7 +144,7 @@ s32 D_ovl10_03_80046FF0;
 s32 D_ovl10_03_80046FF8[64];
 s32 D_ovl10_03_800470F8; /* the running task */
 void (*D_ovl10_03_80047100[64])(void);
-UnkStruct_ovl10_03_80047200 *D_ovl10_03_80047200;
+UnkStruct_ovl10_01_80047540 *D_ovl10_03_80047200;
 UnkStructA *D_ovl10_03_80047208[8];
 UnkStructA *D_ovl10_03_80047228[8];
 void *D_ovl10_03_80047248[8];

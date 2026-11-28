@@ -33,16 +33,7 @@
  */
 
 #include "common.h"
-
-/* What func_ovl10_10_80046850 returns. */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x18];
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ u8 unk20[0x20];
-    /* 0x40 */ f32 unk40;
-    /* 0x44 */ f32 unk44;
-} UnkStruct_ovl10_10_80046850;
+#include "overlays/common/types.h"
 
 void func_ovl10_10_80045938(const char *, ...);
 void func_ovl10_10_80045C78(s32);
@@ -94,8 +85,8 @@ void func_ovl10_10_800467C8(void (*)(void), s32, PORT_IP(s32), s32, s32);
 void func_ovl10_10_800467E8(s32);
 void func_ovl10_10_80046810(void);
 void func_ovl10_10_80046840(s32, s32);
-UnkStruct_ovl10_10_80046850 *func_ovl10_10_80046850(void);
-void func_ovl10_10_80046860(UnkStruct_ovl10_10_80046850 *, s32);
+UnkStruct_ovl10_01_80047540 *func_ovl10_10_80046850(void);
+void func_ovl10_10_80046860(UnkStruct_ovl10_01_80047540 *, s32);
 f64 func_ovl10_10_80046980(void);
 s32 func_ovl10_10_80046988(s32);
 void func_ovl10_10_80046A40(s32);
@@ -183,7 +174,7 @@ s32 D_ovl10_10_800470E4;
 s32 D_ovl10_10_800470E8[64];
 s32 D_ovl10_10_800471E8; /* the running task */
 void (*D_ovl10_10_800471F0[64])(void);
-UnkStruct_ovl10_10_80046850 *D_ovl10_10_800472F0;
+UnkStruct_ovl10_01_80047540 *D_ovl10_10_800472F0;
 s32 D_ovl10_10_800472F8[4][3];
 UnkStructA *D_ovl10_10_80047328[4];
 s32 D_ovl10_10_80047338;

@@ -385,4 +385,18 @@ typedef struct {
     /* 0x10 */ s32 unk10;
 } UnkStruct_ovl0F_01_80048798; /* size 0x14 */
 
+/* the movers' script (D_ovl0F_01_80048938) */
+typedef struct {
+    /* 0x00 */ UnkStructA *unk0;
+    /* 0x04 */ UnkStructA **unk4;
+    /* 0x08 */ f32 unk8;
+    /* 0x0C */ s32 unkC;
+    /* 0x10 */ s32 unk10;
+    /* 0x14 */ u16 unk14;
+    /* 0x16 */ s16 unk16;
+    /* 0x18 */ u16 (*unk18)[2];
+    /* 0x1C */ s32 unk1C;
+    /* 0x20 */ void (*unk20)(s32, s32);
+} UnkStruct_ovl0F_01_80048938; /* size 0x24 */
+
 #endif

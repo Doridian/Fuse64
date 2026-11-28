@@ -210,20 +210,6 @@ typedef struct {
     /* 0x04 */ f32 unk4;
 } UnkStruct_ovl0F_04_800484BC; /* size 0x8 */
 
-/* the movers' script (D_ovl0F_04_80048C90) */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ UnkStructA **unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ u16 unk14;
-    /* 0x16 */ s16 unk16;
-    /* 0x18 */ u16 (*unk18)[2];
-    /* 0x1C */ s32 unk1C;
-    /* 0x20 */ void (*unk20)(s32, s32);
-} UnkStruct_ovl0F_04_80048C90; /* 0x24, but the original's .bss (0x240) ends at 0x20: unk20 is past it */
-
 /* what func_ovl0F_04_800472C8 returns */
 typedef struct {
     /* 0x00 */ u8 unk0[0x10];
@@ -403,7 +389,7 @@ u8 D_ovl0F_04_80048AE8[0x8];
 UnkStruct_ovl0F_01_80048798 D_ovl0F_04_80048AF0[20];
 Vec3f D_ovl0F_04_80048C80;
 UnkStructA *D_ovl0F_04_80048C8C;
-UnkStruct_ovl0F_04_80048C90 D_ovl0F_04_80048C90;
+UnkStruct_ovl0F_01_80048938 D_ovl0F_04_80048C90;
 
 /* .data */
 UnkStruct_ovl0F_01_80048130 *D_ovl0F_04_80048470 = NULL;

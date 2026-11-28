@@ -20,7 +20,7 @@ ptr-int src/overlays/ovl_13_02/2697F0.c func_ovl13_02_80049400 func_ovl13_02_800
 ptr-int src/overlays/ovl_13_02/2697F0.c func_ovl13_02_8004BD28 func_ovl13_02_8004D2E0:func_8026C93C 0 1 1 1  # the task's argument, a sound id
 ptr-int src/overlays/ovl_14_01/274480.c func_ovl14_01_8004B9CC func_ovl14_01_8004CF80:func_8026C93C 0 1 1 1  # the task's argument, a sound id
 ptr-int src/overlays/ovl_14_02/27E920.c func_ovl14_02_8004E6EC func_ovl14_02_8004FCF0:func_8026C93C 0 1 1 1  # the task's argument, a sound id
-ptr-int src/overlays/ovl_14_02/statics.h func_ovl14_02_8004D640 func_ovl14_02_8004EE48:func_802443F4 0 1 1 1  # func_80243DDC's index, kept in an UnkStructA *
+ptr-int src/overlays/ovl_14_02/statics.h func_ovl14_02_8004D640 func_ovl14_02_8004EE48:func_802443F4 0 0 1 1  # func_80243DDC's index, kept in an UnkStructA *
 ptr-int src/overlays/ovl_15_01/28BB90.c func_ovl15_01_8004B2A0 func_ovl15_01_8004DAC0:func_8026C93C 0 1 1 1  # the task's argument, a sound id
 ptr-int src/overlays/ovl_15_02/296AC0.c func_ovl15_02_8004F6E8 func_ovl15_02_80050CA0:func_8026C93C 0 1 1 1  # the task's argument, a sound id
 wide-narrow src/libmalloc/gmalloc.c bm64_calloc func_80225C7C 2 1 1 1  # a size
@@ -38,19 +38,19 @@ fnptr src/54E40.c func_8023CECC func_80241590 0:ptr-int 1 1 1  # a draw function
 fnptr src/54E40.c func_8023CECC func_80241BB0 0:ptr-int 1 1 1  # a draw function, arg0 unused
 fnptr src/54E40.c func_8023D0F8 func_80242270 0:ptr-int 1 1 1  # a draw function, arg0 unused
 fnptr src/6BBE0.c func_8025E16C func_8025E100 0:ptr-int 1 1 1  # osCreateThread's entry, its argument NULL and unused
-fnptr src/87730.c func_8026CFF4 func_8026D2C4 0:ptr-int 1 1 1  # a draw function, arg0 unused
-fnptr src/9BFD0.c func_802817F8 func_80282034 0:ptr-int 1 1 1  # a draw function, arg0 unused
-fnptr src/9BFD0.c func_80282144 func_802820BC 0:ptr-int 1 1 1  # a draw function, arg0 unused
-fnptr src/overlays/ovl_0B_03/14FAB0.c func_ovl0B_03_800433BC func_ovl0B_03_80047064 0:ptr-int 1 1 1  # a draw function, arg0 unused
-fnptr src/overlays/ovl_0B_03/14FAB0.c func_ovl0B_03_8004386C func_ovl0B_03_80046918 0:ptr-int 2 2 2  # a draw function, arg0 unused
-fnptr src/overlays/ovl_0B_04/155D90.c func_ovl0B_04_8004401C func_ovl0B_04_80043CD0 0:ptr-int 1 1 1  # a draw function, arg0 unused
-fnptr src/overlays/ovl_0B_04/155D90.c func_ovl0B_04_800450C0 func_ovl0B_04_80043CD0 0:ptr-int 1 1 1  # a draw function, arg0 unused
-fnptr src/overlays/ovl_0B_07/167D70.c func_ovl0B_07_800435FC func_ovl0B_07_800450D0 0:ptr-int 1 1 1  # a draw function, arg0 unused
-fnptr src/overlays/ovl_0F_01/statics.h func_ovl0F_01_80045FB8 func_ovl0F_01_8004540C 0:ptr-int 1 1 1  # a draw function, arg0 unused
-fnptr src/overlays/ovl_0F_02/1E84A0.c func_ovl0F_02_80046178 func_ovl0F_02_800454E8 0:ptr-int 1 1 1  # a draw function, arg0 unused
-fnptr src/overlays/ovl_0F_03/statics.h func_ovl0F_03_80043434 func_ovl0F_03_80044258 0:ptr-int 1 1 1  # a draw function, arg0 unused
-fnptr src/overlays/ovl_0F_04/1F2230.c func_ovl0F_04_800460CC func_ovl0F_04_8004544C 0:ptr-int 1 1 1  # a draw function, arg0 unused
-fnptr src/overlays/ovl_17_09/statics.h func_ovl17_09_80043290 func_ovl17_09_80043750 0:ptr-int 1 1 1  # a draw function, arg0 unused
+fnptr src/87730.c func_8026CFF4 func_8026D2C4 0:ptr-int 0 1 1  # a draw function, arg0 unused
+fnptr src/9BFD0.c func_802817F8 func_80282034 0:ptr-int 0 1 1  # a draw function, arg0 unused
+fnptr src/9BFD0.c func_80282144 func_802820BC 0:ptr-int 0 1 1  # a draw function, arg0 unused
+fnptr src/overlays/ovl_0B_03/14FAB0.c func_ovl0B_03_800433BC func_ovl0B_03_80047064 0:ptr-int 0 1 1  # a draw function, arg0 unused
+fnptr src/overlays/ovl_0B_03/14FAB0.c func_ovl0B_03_8004386C func_ovl0B_03_80046918 0:ptr-int 0 2 2  # a draw function, arg0 unused
+fnptr src/overlays/ovl_0B_04/155D90.c func_ovl0B_04_8004401C func_ovl0B_04_80043CD0 0:ptr-int 0 1 1  # a draw function, arg0 unused
+fnptr src/overlays/ovl_0B_04/155D90.c func_ovl0B_04_800450C0 func_ovl0B_04_80043CD0 0:ptr-int 0 1 1  # a draw function, arg0 unused
+fnptr src/overlays/ovl_0B_07/167D70.c func_ovl0B_07_800435FC func_ovl0B_07_800450D0 0:ptr-int 0 1 1  # a draw function, arg0 unused
+fnptr src/overlays/ovl_0F_01/statics.h func_ovl0F_01_80045FB8 func_ovl0F_01_8004540C 0:ptr-int 0 1 1  # a draw function, arg0 unused
+fnptr src/overlays/ovl_0F_02/1E84A0.c func_ovl0F_02_80046178 func_ovl0F_02_800454E8 0:ptr-int 0 1 1  # a draw function, arg0 unused
+fnptr src/overlays/ovl_0F_03/statics.h func_ovl0F_03_80043434 func_ovl0F_03_80044258 0:ptr-int 0 1 1  # a draw function, arg0 unused
+fnptr src/overlays/ovl_0F_04/1F2230.c func_ovl0F_04_800460CC func_ovl0F_04_8004544C 0:ptr-int 0 1 1  # a draw function, arg0 unused
+fnptr src/overlays/ovl_17_09/statics.h func_ovl17_09_80043290 func_ovl17_09_80043750 0:ptr-int 0 1 1  # a draw function, arg0 unused
 indirect port/libaudio/cseqplayer.c handler - 0,1 2 2 2  # libaudio's own handlers
 indirect port/libaudio/cseqplayer.c note_on - 0,1 2 2 2  # libaudio's own handlers
 indirect port/libaudio/cseqplayer.c note_stop_osc - 0 1 1 1  # libaudio's own handlers
@@ -58,6 +58,7 @@ indirect port/libaudio/synth.c alAudioFrame - 0 1 1 1  # libaudio's own handlers
 indirect port/libaudio/voice.c al_voice_init - 0 1 1 1  # 85A10.c's DMA functions, typed
 indirect port/libaudio/voice.c fetch - 2 1 1 1  # 85A10.c's DMA functions, typed
 indirect port/libaudio/voice.c pull_raw - 2 1 1 1  # 85A10.c's DMA functions, typed
+indirect port/src/memory.c port_image_each - 0 1 1 1  # the image's callback: a host buffer and its length (gl_cmp/digest dumps), not the game's
 indirect src/13F0.c func_8000083C - 0 1 1 1  # main_code's entry (void *)
 indirect src/426E0.c func_802289C0 - 0,1 1 1 1  # func_8022A328's SINKS entry
 indirect src/54E40.c func_8024364C - 0 1 1 1  # func_8024368C's typed parameter
@@ -70,4 +71,3 @@ indirect src/libmalloc/gmalloc.c bm64_free - 0 1 1 1  # the hooks, never set
 indirect src/libmalloc/gmalloc.c bm64_realloc - 0 1 1 1  # the hooks, never set
 indirect src/main_code_entry.c func_80225800 - 0 1 1 1  # func_80225840, typed
 indirect src/overlays/ovl_0B_04/155D90.c func_ovl0B_04_80043ADC - 0 1 1 1  # a typed field
-indirect port/src/memory.c port_image_each - 0 1 1 1  # the image's callback: a host buffer and its length (gl_cmp/digest dumps), not the game's

@@ -60,29 +60,6 @@
 #define ANGLE_ADD(a, d) \
     (a) = ((a) + (d) >= 360.0f) ? (a) + (d) - 360.0f : ((a) + (d) < 0.0f) ? (a) + (d) + 360.0f : (a) + (d)
 
-/* What func_ovl12_05_8004A840 returns: a player. */
-typedef struct {
-    /* 0x000 */ s32 unk0;
-    /* 0x004 */ PORT_RET(u8 unk4[0x18];, u8 unk4[0x14]; void *unk18;) /* (6BBE0.c's D_800BCFE8[i], Port_800BCFE8: pointers at 0x18, 0x1C, 0x98, 0x9C) */
-    /* 0x01C */ UnkStructA *unk1C;
-    /* 0x020 */ u8 unk20[0xC];
-    /* 0x02C */ Vec3f unk2C;
-    /* 0x038 */ u8 unk38[0x50];
-    /* 0x088 */ s32 unk88;
-    /* 0x08C */ u8 unk8C[4];
-    /* 0x090 */ s32 unk90;
-    /* 0x094 */ PORT_RET(u8 unk94[0xC];, u8 unk94[4]; void *unk98; void *unk9C;)
-    /* 0x0A0 */ union {
-        s32 w;
-        struct {
-            PORT_HALVES(u16 hi, u16 lo)
-            /* (the task id's halves in the host's order) */
-        } h;
-    } unkA0;
-    /* 0x0A4 */ u8 unkA4[0x80];
-    /* 0x124 */ s32 unk124;
-} UnkStruct_ovl12_05_8004A840;
-
 void func_ovl12_05_800496C0(s32);
 void func_ovl12_05_800496D8(f32);
 void func_ovl12_05_80049730(UnkStructA_40 *, f32 *, f32 *);
@@ -171,7 +148,7 @@ void func_ovl12_05_8004A7E0(s32);
 void func_ovl12_05_8004A810(UnkStructA_40 *, s32, s32, s32, f32);
 void func_ovl12_05_8004A820(UnkStructA_40 *);
 void func_ovl12_05_8004A828(s32, s32, s32, s32, s32);
-UnkStruct_ovl12_05_8004A840 *func_ovl12_05_8004A840(s32);
+UnkStruct_ovl10_13_8004A770 *func_ovl12_05_8004A840(s32);
 void func_ovl12_05_8004A848(s32);
 void func_ovl12_05_8004A8F8(void);
 void func_ovl12_05_8004A900(void);
@@ -530,7 +507,7 @@ void func_ovl12_05_800485A0(void) {
 }
 
 void func_ovl12_05_80047F94(void) {
-    UnkStruct_ovl12_05_8004A840 *player;
+    UnkStruct_ovl10_13_8004A770 *player;
     UnkStructA *sp0;
     UnkStructA *sp1;
     f32 dist;
@@ -1261,7 +1238,7 @@ static void func_ovl12_05_80044534(void) {
     UnkStructA_40 *e0;
     UnkStructA_40 *e1;
     s32 i;
-    UnkStruct_ovl12_05_8004A840 *player;
+    UnkStruct_ovl10_13_8004A770 *player;
     s32 j;
     f32 dx;
     f32 dz;
@@ -1593,7 +1570,7 @@ static void func_ovl12_05_800434C8(void) {
     UnkStructA *sp2;
     UnkStructA_40 *sp7C[6];
     UnkStruct_ovl10_13_80049728 *s;
-    UnkStruct_ovl12_05_8004A840 *player;
+    UnkStruct_ovl10_13_8004A770 *player;
     f32 x;
     f32 y;
     f32 z;
@@ -1915,13 +1892,13 @@ void func_ovl12_05_80045D3C(s32 arg0) {
     s32 pad0; /* fake: unused, frame space the original has (no source for it found) */
     s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
     s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
-    UnkStruct_ovl12_05_8004A840 *spC0;
+    UnkStruct_ovl10_13_8004A770 *spC0;
     UnkStruct_ovl10_13_80049728 *spBC;
     Vec3f spB0;
     s32 pad3; /* fake: unused, frame space the original has (no source for it found) */
     s32 pad4; /* fake: unused, frame space the original has (no source for it found) */
     s32 pad5; /* fake: unused, frame space the original has (no source for it found) */
-    UnkStruct_ovl12_05_8004A840 *spA0;
+    UnkStruct_ovl10_13_8004A770 *spA0;
     UnkStruct_ovl10_13_80049728 *sp9C;
     Vec3f sp90;
     s32 pad6; /* fake: unused, frame space the original has (cases 18 and 19 as blocks {player, s, pos, +3 words} under 3 function-level words match: the 3+3+3 words are unexplained) */

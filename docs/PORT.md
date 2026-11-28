@@ -23,7 +23,7 @@ As of 2026-11-21:
 | Linux x86-64 | yes | the four scenarios are Linux i386's, in us, eu and jp ("Where pointers are 8 bytes"); under ASan and UBSan too, with the arena and with the host's malloc, in us, eu and jp: the seven scenarios and the 77 stage runs |
 | Windows x64 (zig `x86_64-windows-gnu`, under wine) | yes | the four scenarios are Linux i386's, in us, eu and jp; us's seven |
 | aarch64 (zig, qemu-user) | yes | the four scenarios are Linux i386's, in us, eu and jp |
-| macOS | not tried | ("What's left") |
+| macOS (zig `aarch64-macos`, `x86_64-macos`) | cross-built, headless | not run: there is no Mac here ("Packages"); CI's `macos` job builds the app on one |
 
 `port/tools/matrix.py` runs the ten hosts with the three versions and the
 four scenarios ("The matrix"). Its last runs: the seven 32-bit hosts on
@@ -81,7 +81,8 @@ button").
 
 `port/tools/cross-<arch>.cmake` (ppc, mips, mipsel, armhf, aarch64)
 cross-compile with zig cc into static musl executables that qemu-user
-runs (`cross-zig.cmake` has how to get zig without root):
+runs (`cross-macos.cmake`: a macOS Mach-O, which nothing here runs:
+"Packages") (`cross-zig.cmake` has how to get zig without root):
 
 ```
 cmake -S port -B build-port-mips -G Ninja -DCMAKE_TOOLCHAIN_FILE=port/tools/cross-mips.cmake
@@ -218,6 +219,55 @@ there) links SDL2's static library and libepoxy's (`EPOXY_PUBLIC` made
 `extern` for it), and MinGW's runtime is static already. `--help` (every
 build) names the release, `-DPORT_RELEASE=<tag>` ("Releases").
 
+**macOS** (arm64; **not run on a Mac yet**): CI's `macos` job makes
+`Fuse64.app` in a `.dmg`, as DozerEncore's: `port/res/Info.plist`
+(`@VERSION@` the tag's, macOS 11 or later), the icon made from
+`fuse64.png` by `sips` and `iconutil`, SDL2 built from source and linked
+in (`PORT_STATIC`; Homebrew's `sdl2` is sdl2-compat, which loads SDL3 at
+run time), Homebrew's libepoxy in `Contents/Frameworks` (dylibbundler),
+the licenses in `Contents/Resources/licenses`, signed ad hoc, not
+notarized (Gatekeeper asks the first time: right-click, Open). What macOS
+changes in the build:
+
+- **The overlays' sections** (port_ovl_section.h, gen_overlays.py): a
+  Mach-O section's name is 16 bytes at most and in a segment, so there
+  they are `__DATA,f64d_BB_EE` and `__DATA,f64b_BB_EE`, their bounds the
+  linker's `section$start$`/`section$end$` names (`PORT_OVL_ID`, the
+  overlay's `BB_EE`, from CMakeLists.txt). With every overlay's two the
+  executable has about 206 sections; Mach-O's symbols number them in a
+  byte (255 at most), so SDL2's own (Objective-C's) still fit.
+- **No soft reset**: the threads are host threads (the pthread fibers:
+  ucontext is deprecated there, and not looked for), as on musl, and
+  port_reset_section.h stays ELF's (Mach-O has no weak undefined name in
+  an executable).
+- **OpenGL** only in the window: macOS has no EGL, and libepoxy no
+  `epoxy/egl.h` there (gfx_gl.c), so no headless `--renderer gl`; the
+  window's context is 4.1 core, forward-compatible (video.c), and the
+  renderer takes its fallbacks (no texture barrier: blits).
+- **The ROM** (romfind.c): osascript's `choose file`, the kept path and
+  the save in `~/Library/Application Support/Fuse64` (SDL's).
+- libepoxy is the runner's Homebrew bottle, built for that macOS (26):
+  macOS 11 is what our code and SDL2 are built for, not tried.
+
+Checked from Linux (2026-11-27), with zig 0.17 (`port/tools/cross-macos.cmake`:
+zig carries macOS's libc headers and libSystem's stubs): the headless
+build (`PORT_SDL=OFF`, no Apple frameworks here) links for
+`aarch64-macos` and `x86_64-macos` (zig's linker; ld64.lld links the same
+objects too), and `rom_free_check.py --max 0` finds nothing in either or
+in the two as one universal file ("The ROM's data"); with SDL2
+2.32.10's headers (its `SDL_config_macosx.h`) and libepoxy's, every object
+compiles with `PORT_HAVE_SDL` and `PORT_HAVE_GL`, and linked with
+ld64.lld against libSystem's stubs nothing is undefined but SDL's and
+libepoxy's names. Not checked: Apple's clang (cdata.py runs its AST and,
+as the i386 probe, an ELF compile with it), ld64, the app, its window,
+sound and dialog.
+
+```
+cmake -S port -B build-port-macos -G Ninja -DCMAKE_TOOLCHAIN_FILE=$PWD/port/tools/cross-macos.cmake
+cmake --build build-port-macos            # (-DPORT_ZIG_TARGET=x86_64-macos.11.0 for Intel)
+port/tools/rom_free_check.py build-port-macos/fuse64 --objects build-port-macos/CMakeFiles --max 0
+```
+
 **The ROM** (`port/host/romfind.c`, DozerEncore's): a package is
 started from its icon, with no arguments and no telling what the working
 directory is. With no ROM on the command line, none by the default's
@@ -311,10 +361,10 @@ the snapshot alone (no ROM, none in any artifact):
 |---|---|---|
 | `linux` | `ubuntu-22.04`, `ubuntu-22.04-arm` | apt.llvm.org's clang 18 and lld (`port/tools/ci/linux.Containerfile` is the same), then `appimage.py`: `fuse64-x86_64.AppImage`, `fuse64-aarch64.AppImage` |
 | `windows` | `windows-latest`, MSYS2 CLANG64 | `PORT_STATIC` (SDL2 and libepoxy linked in), checked to need no CLANG64 DLL and to start (`--help`): `fuse64-windows-x86_64.exe`, and `fuse64-licenses.zip` (LICENSE, NOTICES.md, SDL2's, libepoxy's and winpthreads' licenses) |
-| `macos` | `macos-26` | DozerEncore's app in a dmg; off (`vars.FUSE64_MACOS`): there is no `port/res/Info.plist` yet (the ROM's data is out of a macOS build as of any other, but `rom_free_check.py` can't read a Mach-O) |
+| `macos` | `macos-26` | DozerEncore's app in a dmg ("Packages"): SDL2 2.32.10 built from source and linked in, Homebrew's libepoxy in the bundle (dylibbundler), signed ad hoc, not notarized; checked to have SDL and OpenGL and to start (`--help`): `fuse64-macos-arm64.dmg` |
 | `web` | `ubuntu-24.04`, emsdk `EMSDK_VERSION` | the page (`PORT_WASM_TARGET=web`): `fuse64-web.zip`, and on `main` the Pages artifact (`fuse64.html` as `index.html`, `.js`, `.wasm`) |
 | `pages` | | on a push to `main`: deploys the page to GitHub Pages (the repository's Pages source must be GitHub Actions) |
-| `release` | | on a `v*` tag, once the others pass (macos skipped): creates the tag's release if there is none (`gh release create --verify-tag --generate-notes`) and uploads every artifact to it (`--clobber`, so a re-run replaces them) |
+| `release` | | on a `v*` tag, once the others pass: creates the tag's release if there is none (`gh release create --verify-tag --generate-notes`) and uploads every artifact to it (`--clobber`, so a re-run replaces them) |
 
 A release is a tag: `git tag v0.1.0 && git push origin v0.1.0`. On a tag,
 every build gets `-DPORT_RELEASE=<tag>` (CMake checks it is a tag's name),
@@ -330,6 +380,13 @@ errors; SC2086 notes as in DozerEncore's), the linux job's build in
 with emsdk 6.0.10 (the page's three files). Not run: the workflow on GitHub itself, the
 Windows job (MSYS2; the zig cross build stands in for it), the arm64
 runner's build (zig's aarch64 cross build stands in for it), the Pages deploy and the release upload.
+The macos job's steps are DozerEncore's, which pass on `macos-26` there
+(its run of 2026-11-16: the SDL2 build, `sips`/`iconutil`, dylibbundler,
+`codesign`, `hdiutil`); what is Fuse64's own was checked from Linux as far
+as that goes ("Packages", macOS): the Mach-O build (zig), its host code
+against SDL2 2.32.10's macOS headers, `Info.plist` (plistlib). Not run:
+Apple's clang on the port (cdata.py's AST and i386 probe with it
+included), ld64, the app itself.
 
 ## Testing
 
@@ -1461,10 +1518,12 @@ data that is still asm and boot_code's VI modes), and the overlays' `.data`
 and `.rodata`. The archives (the pictures, the models, the sound) were
 never in it: the game reads them from the ROM at run time.
 
-**The check.** `port/tools/rom_free_check.py BINARY` (an ELF, a `.exe`
-or the `.wasm`) scans the binary's initialized data (an ELF's allocated
-PROGBITS sections that aren't code, a PE's initialized data sections, a
-`.wasm`'s memory as its data segments make it) for the ROM's code image
+**The check.** `port/tools/rom_free_check.py BINARY` (an ELF, a `.exe`,
+a Mach-O, universal too, or the `.wasm`) scans the binary's initialized
+data (an ELF's allocated PROGBITS sections that aren't code, a PE's
+initialized data sections, a Mach-O's sections that are in the file and
+aren't code, every slice's, a `.wasm`'s memory as its data segments make
+it) for the ROM's code image
 (tools/layout.py's: the ROM below 0x120000, every overlay inflated;
 `--assets` adds the asset archive's members). A run is a stretch of 4-byte
 chunks each equal to the ROM's chunk at the same distance in one of the
@@ -1609,8 +1668,12 @@ Not counted, and so left:
 - **Coincidences with the assets**: `--assets` finds one 32-byte run, a
   texture load's commands (`E8000000 ... F0000000 073FC000`, the gbi
   macros' bytes) that every model in bank 0x18 has too.
-- **macOS**: the data is out as on every host (it is the C's), but the
-  check has no Mach-O reader, so a macOS build isn't checked.
+- **macOS**: checked on zig's cross builds ("Packages"), arm64 and
+  x86-64 and the two as one universal file: nothing, with `--objects`
+  (the build's Mach-O objects) and `--all`; the same build with
+  `PORT_ROM_FREE=OFF` shows 53,654 bytes, by section and symbol, as an
+  ELF does. Apple's own clang and ld64 (CI's) are not checked: CI has no
+  ROM, and builds from the snapshot.
 - **Windows** ran under wine only, not on Windows itself.
 - **A library's tables**: `--objects` lists apart what isn't the build's
   objects' data; the `.wasm`'s memory has a library's 01 02 03 ... 30
@@ -2155,7 +2218,8 @@ func_80003190, func_80042000, WatchLo, the long long helpers).
 
 Every overlay is linked in (their names carry the bank and entry). Each
 overlay file's variables go to sections of their own
-(port_ovl_section.h: fuse64d_/fuse64b_ on ELF), and loading an overlay
+(port_ovl_section.h: fuse64d_/fuse64b_ on ELF, `__DATA,f64d_`/`f64b_`
+on Mach-O, fuse64o_ in WebAssembly), and loading an overlay
 (40FB0.c's loader, port/src/overlay.c) puts them back as they were at
 startup, then calls its entry. Inflating it gave that .data on the N64,
 but not that .bss: the slot keeps what was there past the image, and
@@ -2189,7 +2253,7 @@ what IPL3 and the loaders overwrite.
   stacks dropped (taken from the first again), port_alloc's arena emptied, and the renderer, VI, AI and audio microcode state put
   back as at startup (`host_*_reset`); then `port_boot()` again (the
   same with `PORT_THREADS=pthread`). Where the coroutines are host
-  threads (no ucontext: musl) they can't be dropped mid-run, and the
+  threads (no ucontext: musl, macOS) they can't be dropped mid-run, and the
   scattered layout has no sections, so there the run ends at the NMI as
   before.
 - **Checked**: after the reset, every picture (`--vi-raw`) and the digest
@@ -3195,7 +3259,8 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
 
 ## What's left
 
-- **64-bit, the rest**: macOS (not tried). PORT_WARP's runs ("Every
+- **64-bit, the rest**: macOS (cross-built, never run: "Packages").
+  PORT_WARP's runs ("Every
   stage") reach every stage, boss and battle stage, but a stage's later
   rooms only as their first, five thousand retraces each with a fixed
   walk, so about half of each overlay is still unreached (the coverage
@@ -3281,9 +3346,11 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   fill them from the player's ROM ("The ROM's data"); the AppImage is
   built and tried, the ROM finder is in ("Packages"), the port builds
   from the snapshot without the ROM ("The snapshot") and CI builds and
-  releases the packages ("Releases"). Left there: the workflow's first
-  run on GitHub; macOS's app (and a Mach-O reader for the check); the
-  shorter runs.
+  releases the packages ("Releases"), macOS's app too (cross-built and
+  checked from Linux, "Packages"). Left there: the workflow's first run
+  on GitHub, the macos job's included; the app on a Mac (Apple's clang
+  through cdata.py, ld64, the window, sound and ROM dialog, the scenarios
+  against the references); notarizing it; the shorter runs.
 - **Renderer**: checked task by task against angrylion and the game's
   microcode ("Graphics": `gfx_ref.py`); the microcode runs on the port's
   RSP interpreter, so every task's RDP commands are the N64's, and with

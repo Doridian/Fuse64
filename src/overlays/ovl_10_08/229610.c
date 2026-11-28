@@ -1412,8 +1412,6 @@ void func_ovl10_08_80044188(void) {
 void func_ovl10_08_80043F34(s32 arg0, s32 arg1) {
     s32 j;
     s32 v;
-    s32 id;
-    s32 *p; /* the tile row held: a guess (any held value fills this word) */
 
     if (arg1 != (D_ovl10_08_800497E8[arg0] & 1)) {
         if (arg1 != 0) {
@@ -1426,27 +1424,20 @@ void func_ovl10_08_80043F34(s32 arg0, s32 arg1) {
             if (arg1 != 0) {
                 v = 9;
                 D_ovl10_08_800497E8[arg0] |= 2;
-                /* func_ovl10_08_80043EBC(arg0), written out */
-                id = func_ovl10_08_80043150(func_ovl10_08_80046038);
-                D_ovl10_08_80049818[id] = arg0;
-                D_ovl10_08_80049950[arg0] = 0;
+                func_ovl10_08_80043EBC(arg0);
             } else {
                 D_ovl10_08_800497E8[arg0] &= ~2;
                 func_ovl10_08_80043E8C(arg0);
                 v = 1;
                 func_ovl10_08_80043DDC(arg0);
             }
-            /* fake: nothing, but it keeps arg0 in v1 for the loops (pass 10: a debug range check of arg0 here matches too, but mid-function; pass 12: still needed with the row held in p) */
-            if (arg0) {
-            }
-            p = D_ovl10_08_80049730[arg0];
             if (D_ovl10_08_800497B8[arg0] & 1) {
                 for (j = 0; j < D_ovl10_08_800499B0[arg0]; j++) {
-                    func_ovl10_08_80047F20(p[0] + j, p[1], p[2], v);
+                    func_ovl10_08_80047F20(D_ovl10_08_80049730[arg0][0] + j, D_ovl10_08_80049730[arg0][1], D_ovl10_08_80049730[arg0][2], v);
                 }
             } else {
                 for (j = 0; j < D_ovl10_08_800499B0[arg0]; j++) {
-                    func_ovl10_08_80047F20(p[0], p[1], p[2] + j, v);
+                    func_ovl10_08_80047F20(D_ovl10_08_80049730[arg0][0], D_ovl10_08_80049730[arg0][1], D_ovl10_08_80049730[arg0][2] + j, v);
                 }
             }
         }
@@ -1465,7 +1456,10 @@ void func_ovl10_08_80043F04(s32 arg0) {
 }
 
 void func_ovl10_08_80043EBC(s32 arg0) {
-    D_ovl10_08_80049818[func_ovl10_08_80043150(func_ovl10_08_80046038)] = arg0;
+    s32 id;
+
+    id = func_ovl10_08_80043150(func_ovl10_08_80046038);
+    D_ovl10_08_80049818[id] = arg0;
     D_ovl10_08_80049950[arg0] = 0;
 }
 

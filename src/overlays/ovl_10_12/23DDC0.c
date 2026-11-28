@@ -21,11 +21,9 @@
  * 80044A58-80044C68 and 80045158-80046828 are its own (as ovl_10_08,
  * ovl_10_09 and ovl_10_13 have them, none of which is C yet).
  *
- * func_ovl10_12_80043F14's loops: the original keeps arg0 in v1
- * from the ends of both arms of `if (arg1 != 0)` into the loops. An empty `if (arg0) {}` where the arms
- * meet does it (found by the permuter; 95 words to 0). `arg0 * 0` in a
- * loop's indices gets most of the way (72 words): what matters is a use of
- * arg0 that IDO removes late.
+ * func_ovl10_12_80043F14 calls 80043E9C (inlined once it holds its
+ * slot in a local id; written out, it took an empty `if (arg0) {}` and
+ * a held tile row to keep arg0 in v1 and fill the frame).
  */
 
 #include "common.h"
@@ -1236,8 +1234,6 @@ void func_ovl10_12_80044168(void) {
 void func_ovl10_12_80043F14(s32 arg0, s32 arg1) {
     s32 j;
     s32 v;
-    s32 id;
-    s32 *p; /* the tile row held: a guess (any held value fills this word) */
 
     if (arg1 != (D_ovl10_12_80048D58[arg0] & 1)) {
         if (arg1 != 0) {
@@ -1250,27 +1246,20 @@ void func_ovl10_12_80043F14(s32 arg0, s32 arg1) {
             if (arg1 != 0) {
                 v = 9;
                 D_ovl10_12_80048D58[arg0] |= 2;
-                /* func_ovl10_12_80043E9C(arg0), written out */
-                id = func_ovl10_12_80043150(func_ovl10_12_80045924);
-                D_ovl10_12_80048D88[id] = arg0;
-                D_ovl10_12_80048EC0[arg0] = 0;
+                func_ovl10_12_80043E9C(arg0);
             } else {
                 D_ovl10_12_80048D58[arg0] &= ~2;
                 func_ovl10_12_80043E6C(arg0);
                 v = 1;
                 func_ovl10_12_80043DBC(arg0);
             }
-            /* fake: nothing, but it keeps arg0 in v1 for the loops (pass 10: a debug range check of arg0 here matches too, but mid-function; pass 12: still needed with the row held in p) */
-            if (arg0) {
-            }
-            p = D_ovl10_12_80048CA0[arg0];
             if (D_ovl10_12_80048D28[arg0] & 1) {
                 for (j = 0; j < D_ovl10_12_80048F20[arg0]; j++) {
-                    func_ovl10_12_800475C0(p[0] + j, p[1], p[2], v);
+                    func_ovl10_12_800475C0(D_ovl10_12_80048CA0[arg0][0] + j, D_ovl10_12_80048CA0[arg0][1], D_ovl10_12_80048CA0[arg0][2], v);
                 }
             } else {
                 for (j = 0; j < D_ovl10_12_80048F20[arg0]; j++) {
-                    func_ovl10_12_800475C0(p[0], p[1], p[2] + j, v);
+                    func_ovl10_12_800475C0(D_ovl10_12_80048CA0[arg0][0], D_ovl10_12_80048CA0[arg0][1], D_ovl10_12_80048CA0[arg0][2] + j, v);
                 }
             }
         }
@@ -1289,7 +1278,10 @@ void func_ovl10_12_80043EE4(s32 arg0) {
 }
 
 void func_ovl10_12_80043E9C(s32 arg0) {
-    D_ovl10_12_80048D88[func_ovl10_12_80043150(func_ovl10_12_80045924)] = arg0;
+    s32 id;
+
+    id = func_ovl10_12_80043150(func_ovl10_12_80045924);
+    D_ovl10_12_80048D88[id] = arg0;
     D_ovl10_12_80048EC0[arg0] = 0;
 }
 

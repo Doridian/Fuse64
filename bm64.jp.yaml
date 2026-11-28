@@ -444,7 +444,7 @@ segments:
       - [0xB9760, .data, 45170]
       - [0xB9770, .data, 46300]
       - [0xB97A0, .data, 47A80]
-      - [0xB9C20, data]
+      - [0xB9C20, .data, 48300]
       - [0xB9D10, .data, 4DE50]
       - [0xB9D20, .data, 4E030]
       - [0xB9D80, .data, 4ED50]

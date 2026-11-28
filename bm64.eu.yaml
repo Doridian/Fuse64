@@ -443,7 +443,7 @@ segments:
       - [0xBA080, .data, 45170]
       - [0xBA090, .data, 46300]
       - [0xBA0C0, .data, 47A80]
-      - [0xBA540, data]
+      - [0xBA540, .data, 48300]
       - [0xBA630, .data, 4DE50]
       - [0xBA640, .data, 4E030]
       - [0xBA6A0, .data, 4ED50]

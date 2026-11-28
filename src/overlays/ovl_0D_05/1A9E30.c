@@ -250,7 +250,7 @@ void func_ovl0D_05_80044290(void) {
     f32 ang;
 #endif
     Vec3f tgt;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad; /* fake: unused, frame space the original has (no source for it found; pass 13: ang a Vec3f, as 0x1803 writes three floats, leaves one scalar too many for the slots above timer, with cnt or r anywhere or r block-local) */
     s32 timer;
 
     idx = (PORT_IP(s32)) func_ovl0D_05_80045770();
@@ -718,7 +718,7 @@ void func_ovl0D_05_80043018(void) {
     s32 j;
 
     if (func_ovl0D_05_800459D0(0x409) != 0) {
-        /* fake: (see the top) */
+        /* fake: (see the top; pass 13: the empty 80043010 as the stub of a statics.h static returning j inlined here fits the stub and the frame, but the D_80046170 loads move: 6 words) */
 #define STATICS_PART 2
 #include "overlays/ovl_0D_05/statics.h"
 #undef STATICS_PART

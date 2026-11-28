@@ -12,19 +12,28 @@ typedef struct {
     /* 0x40 */ UnkStruct_80265C20_Inner *unk40;
 } UnkStruct_80265C20;
 
-typedef struct {
-    f32 x, y, z;
-} Vec3f_802AD110;
-
 void func_80299170(s32, s32, s32, s32);
 void func_802988E0(f32 *, f32 *, f32 *);
 void func_802988D8(f32, f32, f32);
 void func_802988B8(f32, f32, f32);
 void func_80298BE8(s32);
 
-extern Vec3f_802AD110 D_802AD110;
-extern s32 D_802AD104;
-extern s32 D_802AD108;
+/* .data: 40040's init clears D_802A1230, D_802A1234 and D_802A123C;
+ * nothing names D_802A1238 or D_802A1240 (zeros; at least its first word
+ * is the file's, since 80580's .data starts at 0x802A1250 and IDO pads
+ * only to 16). */
+s32 D_802A1230 = 1;
+s32 D_802A1234 = 2;
+s32 D_802A1238 = 0;
+s32 D_802A123C = 1;
+u8 D_802A1240[0x10] = { 0 };
+
+/* .bss: nothing names D_802AD0E0 or D_802AD10C. */
+u8 D_802AD0E0[0x24];
+s32 D_802AD104;
+s32 D_802AD108;
+u8 D_802AD10C[4];
+Vec3f D_802AD110;
 
 void func_80265C20(s32 arg0, UnkStruct_80265C20 *arg1) {
     UnkStruct_80265C20_Inner *p;

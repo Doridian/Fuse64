@@ -122,6 +122,7 @@ main_code 78F60 0 0x20 0
 main_code 7B2D0 0 0 0
 main_code 7C4D0 0 0x20 0
 main_code 7D840 0x80 0x10 0x10
+main_code 80420 0x20 0 0x40
 
 # Game objects after the cut that own their .rodata (constants, jump tables,
 # strings), placed where the ROM has it; their .data and .bss stay asm

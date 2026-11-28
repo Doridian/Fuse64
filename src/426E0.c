@@ -15,8 +15,9 @@
  * Data: the statics put the .bss in the C, so the file defines all of
  * it (0x40: D_802A5460..70, the statics, and D_802A5490, defined after
  * them, above its first user func_802290CC, then the pad to 16). Its
- * .rodata is the 0.001f at D_802A2D20 and pad. Both are placed in
- * data_split.txt; its .data (up to D_8029F858's table) stays asm, extern.
+ * .rodata is the 0.001f at D_802A2D20 and pad. Its .data is six words and
+ * D_8029F858's table (the pad to 16 after it). All three are placed in
+ * data_split.txt.
  *
  * The code is the same in every version.
  *
@@ -299,13 +300,13 @@ extern s32 D_8029F7E8;
 extern s32 D_8029F7EC;
 extern s32 D_8029F7F0;
 extern s32 D_8029F7F4;
-extern s32 D_8029F840;
-extern s32 D_8029F844;
-extern s32 D_8029F848;
-extern s32 D_8029F84C;
-extern s32 D_8029F850;
-extern s32 D_8029F854;
-extern s32 D_8029F858[8];
+s32 D_8029F840 = -1;
+s32 D_8029F844 = 0;
+s32 D_8029F848 = 0;
+s32 D_8029F84C = 0;
+s32 D_8029F850 = 2;
+s32 D_8029F854 = 0;
+s32 D_8029F858[8] = { 0x410, 0x400, 0x490, 0x480, 0x0, 0x80, 0x10, 0x90 };
 extern s32 D_802A5368;
 extern UnkStruct_802A538C *D_802A538C;
 s32 D_802A5460;

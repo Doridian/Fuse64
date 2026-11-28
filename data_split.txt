@@ -85,10 +85,10 @@ main_code 41FD0 0x60 0 0x90
 # stores into it a `lui` each.)
 # So does 54E40 for D_802AC7A0[10] (and the two words after it, which end
 # that run on a 16-byte boundary); the rest of its .bss stays asm.
-main_code 426E0 0 0x10 0x40
-main_code @us 426E0 rodata=0x802A2D20 bss=0x802A5460
-main_code @eu 426E0 rodata=0x802A2D20 bss=0x802A5450
-main_code @jp 426E0 rodata=0x802A1F60 bss=0x802A4690
+main_code 426E0 0x40 0x10 0x40
+main_code @us 426E0 data=0x8029F840 rodata=0x802A2D20 bss=0x802A5460
+main_code @eu 426E0 data=0x8029F840 rodata=0x802A2D20 bss=0x802A5450
+main_code @jp 426E0 data=0x8029EF20 rodata=0x802A1F60 bss=0x802A4690
 main_code 45170 0x10 0 0x30
 main_code @us 45170 data=0x8029F880 bss=0x802A54A0
 main_code @eu 45170 data=0x8029F880 bss=0x802A5490

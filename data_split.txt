@@ -136,10 +136,18 @@ main_code 86680 0x50 0x10 0x10
 main_code @us 86680 data=0x802A1380 rodata=0x802A3B50 bss=0x802AFC20
 main_code @eu 86680 data=0x802A1380 rodata=0x802A3B40 bss=0x802AFC10
 main_code @jp 86680 data=0x802A09E0 rodata=0x802A2D80 bss=0x802AEE50
-main_code 87D80 0 0xE0 0
-main_code @us 87D80 rodata=0x802A3B60
-main_code @eu 87D80 rodata=0x802A3B50
-main_code @jp 87D80 rodata=0x802A2D90
+main_code 87190 0x10 0 0x10
+main_code @us 87190 data=0x802A13D0 bss=0x802AFC30
+main_code @eu 87190 data=0x802A13D0 bss=0x802AFC20
+main_code @jp 87190 data=0x802A0A30 bss=0x802AEE60
+main_code 87730 0x70 0 0x10
+main_code @us 87730 data=0x802A13E0 bss=0x802AFC40
+main_code @eu 87730 data=0x802A13E0 bss=0x802AFC30
+main_code @jp 87730 data=0x802A0A40 bss=0x802AEE70
+main_code 87D80 0xA0 0xE0 0x20
+main_code @us 87D80 data=0x802A1450 rodata=0x802A3B60 bss=0x802AFC50
+main_code @eu 87D80 data=0x802A1450 rodata=0x802A3B50 bss=0x802AFC40
+main_code @jp 87D80 data=0x802A0AB0 rodata=0x802A2D90 bss=0x802AEE80
 main_code 8A7A0 0 0x1B0 0
 main_code @us 8A7A0 rodata=0x802A3C40
 main_code @eu 8A7A0 rodata=0x802A3C30

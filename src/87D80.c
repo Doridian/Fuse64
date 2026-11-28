@@ -197,22 +197,11 @@ extern s32 D_800AEE0C;
 extern u8 D_800AEE0E[];
 extern s32 D_800AEE10;
 extern UnkStruct_800B15D8 D_800B15D8[];
-extern u8 D_802A1450[];
-extern s16 D_802A14B4;
-extern u8 D_802A14B8[];
 extern s16 D_802A14F0;
 extern u8 D_802A5578[];
 extern s32 D_802AC5D0;
 extern s32 D_802AC89C;
 extern s32 D_802AC8A0;
-extern s32 D_802AFC50;
-extern s32 D_802AFC54;
-extern s32 D_802AFC58;
-extern f32 D_802AFC5C;
-extern f32 D_802AFC60;
-extern f32 D_802AFC64;
-extern f32 D_802AFC68;
-extern void *D_802AFC6C;
 extern s32 D_802AFC70;
 extern s32 D_802AFC74;
 extern u8 D_802AFC78[PORT_SIZE(6 * 0x12)];
@@ -322,6 +311,45 @@ s32 func_80273AD4(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
 void func_80273E2C(s16 arg0);
 void func_80273F0C(void);
 void func_8027723C(void);
+
+/* 8A7A0's (its module's table only here) */
+PORT_RET(void, PORT_IP(s32)) func_80274F8C(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4);
+void func_80277D20(s16 arg0, s16 arg1);
+void func_80277AF8(s16 arg0, s16 arg1);
+void func_80277484();
+void *func_80277CE0();
+void func_802775D8(f32 *arg0);
+s16 func_80277CC0(u8 *arg0);
+
+/* .bss (0x802AFC50-802AFC70), before the first function and in address
+ * order, as IDO lays it out (the order it numbers them). */
+s32 D_802AFC50;
+s32 D_802AFC54;
+s32 D_802AFC58;
+f32 D_802AFC5C;
+f32 D_802AFC60;
+f32 D_802AFC64;
+f32 D_802AFC68;
+void *D_802AFC6C;
+
+/* .data (0x802A1450-802A14F0): ZeroJump module 13's table
+ * (func_8026D580), then D_802A14B4 and module 0x27's table, which only
+ * 8A7A0 uses (func_80277B54 registers it). They follow D_802A1450 with no
+ * 16-byte boundary between, so this object holds them: 8A7A0 has no
+ * .data of its own. The zeros after each table's functions end it. */
+void *D_802A1450[] = {
+    func_8026FF64, func_8026F068, func_8026E8B8, func_8026ECE8, func_8026D620, func_8026DA2C,
+    func_8026DB88, func_8026DA1C, func_8026DCAC, func_8026E338, func_8026DC74, func_8026D7D8,
+    func_8026FC08, func_8026F8B0, func_8026E6E4, func_8026DF74, func_8026E8C8, func_8026E2B0,
+    func_8026D92C, func_8026D6C0, func_8026D5B4, func_8026E938, func_8026FF94, NULL,
+    NULL,
+};
+s16 D_802A14B4 = 0;
+void *D_802A14B8[] = {
+    func_80274F8C, func_802734BC, func_80277D20, func_80277AF8, func_80277484, func_80277CE0,
+    func_802775D8, func_80277CC0, func_80270B4C, func_80270714, func_80270770, NULL,
+    NULL,          NULL,
+};
 
 static const char D_802A3B60[] = "atrpos>remain=100\n";
 

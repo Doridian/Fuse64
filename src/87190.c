@@ -11,8 +11,12 @@ void free(void *);
 void *malloc(s32);
 
 extern UnkStruct_800A7F30 D_800A7F30[100];
-extern u8 D_802A13D0[];
-extern s32 D_802AFC30;
+/* ZeroJump module 20's table (func_8026C990). The zeros after the
+   functions end it, as 87D80's tables' do (there they can't be padding),
+   though here they also fill the section to 16. */
+void *D_802A13D0[] = { func_8026CE28, func_8026CCBC, NULL, NULL };
+
+s32 D_802AFC30;
 
 void func_8026C990(void) {
     s32 i;

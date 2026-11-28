@@ -97,8 +97,10 @@ main_code 926A0
 # The data agree: 87D80's .rodata ends with func_8026FC08's float at
 # 0x802A3C3C and 8A7A0's starts on 16 at 0x802A3C40 (func_802700EC's);
 # 87D80's .bss (D_802AFC50..D_802AFC6C) ends at 0x802AFC70, where the
-# second half's references start; and its only .data, D_802A1450, is
-# func_8026D580's alone (8A7A0 has none).
+# second half's references start. Its .data is module 13's table
+# D_802A1450 (func_8026D580's), then, with no 16-byte boundary after it,
+# D_802A14B4 and module 0x27's table D_802A14B8, which only 8A7A0 uses:
+# 87D80's object holds them (src/87D80.c), and 8A7A0 has no .data.
 main_code 8A7A0
 
 # A1EA0 (func_802876A0..func_80287FD4) is a second object after 9CAB0:

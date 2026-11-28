@@ -245,10 +245,7 @@ PORT_RET(s32, void) func_8022979C(PORT_RET(s32, void *), s32, s32);
 void * func_8022A328(void *, s32, s32, s32, s32);
 PORT_RET(s32, void *) func_8022F550(PORT_RET(s32, void *), s32);
 s32 func_8022FC90(void *);
-void func_80230914(void *);
 void * func_80231274(s32, s32, s32, void *);
-void func_802313DC(void *, s32);
-void func_80231408(void *, s32);
 s32 func_80232D18(void *, s32);
 s32 func_80234DD4(f32, f32, f32, void *);
 s32 func_80238A10(void *, PORT_UP(u32), PORT_RET(s32, void *), s32, s32);
@@ -1851,8 +1848,8 @@ void func_8023FD08() {
     }
     func_8023903C(0x1E);
     D_802AC610.unk0 &= ~8;
-    func_802313DC(obj, 0x08000000);
-    func_80231408(obj, 0x04000000);
+    func_802313DC((UnkStructA *) obj, 0x08000000);
+    func_80231408((UnkStructA *) obj, 0x04000000);
     M2C_FIELD(PORT_FIELD(obj, u8 **, 0x40, UnkStructA, unk40), s32 *, 0xC) &= ~0x4000;
     func_80229E38(PORT_FIELD(obj, void **, 0x40, UnkStructA, unk40), 0x16, 0);
     func_80229E38(PORT_FIELD(obj, void **, 0x40, UnkStructA, unk40), -1, 1);
@@ -2129,7 +2126,7 @@ loop_5:
     if (temp_v1_2 != 0) {
         func_8027F858((PORT_IP(s32)) temp_v0, temp_v1_2 >> 0xA);
     }
-    func_80230914(temp_v0);
+    func_80230914((UnkStructA *) temp_v0);
     func_802909FC(temp_v0, func_80245150);
     temp_v1 = PORT_FIELD(temp_v0, void **, 0x40, UnkStructA, unk40);
     PORT_FIELD(temp_v0, f32 *, 0x58, UnkStructA, unk58) = (f32) M2C_FIELD(temp_v1, f32 *, 0x10);
@@ -2172,7 +2169,7 @@ void func_8023F26C() {
         obj = func_802443F4(0);
         id = 0;
     }
-    func_802313DC(obj, 0x7FFFF);
+    func_802313DC((UnkStructA *) obj, 0x7FFFF);
     ((s32 *) D_802AC868)[id] = mode;
     switch (mode) {
     case 3:
@@ -2228,9 +2225,9 @@ void func_8023F26C() {
         break;
     }
     if (D_802AC5D0 & 4) {
-        func_802313DC(obj, 0x0507FFFF);
+        func_802313DC((UnkStructA *) obj, 0x0507FFFF);
         if (D_802AC660.unk0 == 0) {
-            func_802313DC(obj, 0x01000000);
+            func_802313DC((UnkStructA *) obj, 0x01000000);
             func_8023903C(2);
             if ((D_802AC660.unk4[id] == 1) && (D_802AC660.unk40[id] == 1)) {
                 entry = D_802AC660.unkE8[id];
@@ -2262,7 +2259,7 @@ void func_8023F26C() {
                 func_8022FC90(model);
             }
         } else {
-            func_802313DC(obj, 0x01000000);
+            func_802313DC((UnkStructA *) obj, 0x01000000);
             func_8023903C(2);
             if ((D_802AC660.unk4[id] == 1) && (D_802AC660.unk40[id] == 1)) {
                 func_80227EE0(D_802AC660.unkE8[id]);
@@ -2313,7 +2310,7 @@ static void func_8023EF38(u8 *arg0) {
     s32 i;
     u8 *temp_v0;
 
-    func_802313DC(arg0, 0x0C000000);
+    func_802313DC((UnkStructA *) arg0, 0x0C000000);
     temp_v0 = PORT_FIELD(arg0, void **, 0x40, UnkStructA, unk40);
     M2C_FIELD(temp_v0, s32 *, 0xC) = (s32) (M2C_FIELD(temp_v0, s32 *, 0xC) & ~0x4000);
     func_80229E38(PORT_FIELD(arg0, void **, 0x40, UnkStructA, unk40), 0x14, 0);
@@ -2333,7 +2330,7 @@ static void func_8023EF38(u8 *arg0) {
     func_8022979C((PORT_RET(s32, void *)) PORT_FIELD(arg0, void **, 0x40, UnkStructA, unk40), 5, 0xD);
     func_8029279C(PORT_FIELD(arg0, void **, 0x40, UnkStructA, unk40), 0, 0, 0, 0.7f);
     func_80239094();
-    func_80231408(arg0, 0x04000000);
+    func_80231408((UnkStructA *) arg0, 0x04000000);
     PORT_FIELD(arg0, f32 *, 0x68, UnkStructA, unk68) = 13.0f;
     i = 0;
     PORT_FIELD(arg0, f32 *, 0x70, UnkStructA, unk70) = 0.40833336f;
@@ -2409,7 +2406,7 @@ static void func_8023ECF4(u8 *arg0) {
 static void func_8023ECEC(u8 *arg0) {
     u8 *temp_v0;
 
-    func_802313DC(arg0, 0x08000000);
+    func_802313DC((UnkStructA *) arg0, 0x08000000);
     temp_v0 = PORT_FIELD(arg0, void **, 0x40, UnkStructA, unk40);
     M2C_FIELD(temp_v0, s32 *, 0xC) = (s32) (M2C_FIELD(temp_v0, s32 *, 0xC) & ~0x4000);
     func_80229E38(PORT_FIELD(arg0, void **, 0x40, UnkStructA, unk40), 0x13, 0);
@@ -3697,7 +3694,7 @@ s32 func_8023A870(s32 arg0, s32 arg1) {
     *func_8028A060(1) = D_802AC610.unk38;
     if ((D_802AC5D0 & 4) || ((D_802AC5D0 & 8) && (arg0 != 0))) {
         ((s32 *) D_802AC714)[arg0] = 2;
-        func_802313DC(obj, 0x7FFFF);
+        func_802313DC((UnkStructA *) obj, 0x7FFFF);
         func_8023A858(0);
     } else {
         if (D_802A01BC != 0) {

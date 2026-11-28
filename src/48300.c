@@ -24,18 +24,13 @@ void func_8022FEAC(f32 *arg0, f32 *arg1);
 s32 func_80232D18(f32 *arg0, s32 arg1);
 void func_80232AA8(u8 *arg0);
 void func_80232AC8(u8 *arg0, u8 *arg1);
-void func_80231408(u8 *arg0, s32 arg1);
-void func_802313DC(u8 *arg0, s32 arg1);
 s32 func_8022FC90(UnkStructA *arg0);
 PORT_RET(void, PORT_IP(s32)) func_80231274(s32 arg0, s32 arg1, s32 arg2, PORT_IP(s32) arg3);
-void *func_802311E8(u8 *arg0);
 PORT_RET(void, PORT_IP(s32)) func_80230E6C(s32 arg0, PORT_IP(s32) arg1);
-void func_80230914(u8 *arg0);
 PORT_RET(void, PORT_IP(s32)) func_802308B8(f32 *arg0, s32 arg1);
 void func_8022F808(f32 *arg0, f32 *arg1);
 void func_80232BA0(u8 *arg0, u8 *arg1);
 PORT_RET(void, PORT_IP(s32)) func_8022FA88(f32 *arg0, s32 arg1, f32 *arg2);
-void func_80232DB4(f32 *arg0);
 UnkStructA *func_8022F550(UnkStructA *arg0, s32 arg1);
 PORT_IP(s32) func_8022F698(PORT_IP(s32) arg0, f32 *arg1, f32 *arg2, UnkStructA **arg3, s32 arg4);
 

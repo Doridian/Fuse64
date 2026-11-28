@@ -21,9 +21,8 @@
 #include "A4860.h"
 #include "530C0.h"
 #include "86680.h"
+#include "48600.h"
 
-void func_802313DC(UnkStructA *, s32);
-void func_80231408(UnkStructA *, s32);
 void func_80270354(s32 *, s32);
 void func_8027036C(s32 *, s32);
 PORT_RET(s32, s16) func_802712A8(s32 *, s32);
@@ -53,7 +52,6 @@ void func_8027AFB8(s16 arg0);
 
 extern UnkStruct_800BA8A0 D_800BA8A0[PORT_SIZE(5)];
 
-PORT_RET(s32, void *) func_802311E8(UnkStructA *);
 UnkStructA *func_80231274(s32, s32, s32, void *);
 s32 func_80238A10(void (*)(void), PORT_IP(s32), void *, s32, s32);
 void func_8027A264(UnkStruct_800BB4A8 *arg0, s16 arg1);

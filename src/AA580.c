@@ -195,6 +195,7 @@
 #include "4E030.h"
 #include "87D80.h"
 #include "AA580.h"
+#include "48600.h"
 
 typedef struct {
     /* 0x0 */ s32 unk0;
@@ -230,7 +231,6 @@ typedef struct {
 
 extern UnkStruct_800B15D8 D_800B15D8[];
 
-void func_80230914(UnkStructA *);
 void func_80239094(void);
 void func_8026E6E4(UnkStructA_40 *, f32 *, f32 *);
 f32 func_8026E938(void *);

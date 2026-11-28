@@ -10,6 +10,7 @@
 #include "426E0.h"
 #include "530C0.h"
 #include "86680.h"
+#include "48600.h"
 
 typedef struct {
     /* 0x00 */ s16 unk0;
@@ -30,8 +31,6 @@ typedef struct {
 PORT_RET(void, s32) func_8022FC90(UnkStructA *);
 void func_8022FF58(f32 *, f32 *, f32 *);
 UnkStructA *func_80231274(s32, s32, s32, PORT_IP(s32));
-void func_802313DC(UnkStructA *, s32);
-void func_80231408(UnkStructA *, s32);
 s32 func_80232D18(UnkStructA *, s32);
 s32 func_80238A10(void (*)(void), PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_8023903C(s32);

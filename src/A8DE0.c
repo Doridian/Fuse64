@@ -20,13 +20,11 @@
 #include "530C0.h"
 #include "78CA0.h"
 #include "86680.h"
+#include "48600.h"
 
 PORT_RET(void, s32) func_8022FC90(UnkStructA *);
 UnkStructA *func_80230E6C(s32, PORT_IP(s32));
-UnkStructA *func_802311E8(UnkStructA *);
 UnkStructA *func_80231274(s32, s32, s32, UnkStructA *);
-void func_80231408(UnkStructA *, s32);
-void func_80232DB4(UnkStructA *);
 s32 func_80238A10(void *, void *, PORT_RET(s32, void *), s32, s32);
 void func_80239094(void);
 s32 func_8026C630(s32, f32 *);

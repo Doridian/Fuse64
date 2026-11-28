@@ -8,6 +8,7 @@
 #include "A4860.h"
 #include "426E0.h"
 #include "86680.h"
+#include "48600.h"
 
 /* -O3 (the Makefile's O3_C_FILES), so written last function first: IDO
  * 5.3 -O3 emits a file's functions in reverse, a callee from the file
@@ -19,7 +20,6 @@ void func_8022F808(UnkStructA *, f32 *);
 PORT_RET(void, s32) func_8022FC90(UnkStructA *);
 void func_8022FEAC(f32 *, f32 *);
 void func_8022FF58(f32 *, f32 *, f32 *);
-PORT_RET(void, void *) func_802311E8(UnkStructA *);
 UnkStructA *func_80231274(s32, s32, s32, UnkStructA *);
 void func_80232BA0(f32 *, UnkStructA *);
 PORT_RET(void, s32) func_80238A10(void (*)(), PORT_IP(s32), PORT_RET(s32, void *), s32, s32);

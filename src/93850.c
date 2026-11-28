@@ -28,10 +28,9 @@
 #include "A4860.h"
 #include "949A0.h"
 #include "86680.h"
+#include "48600.h"
 
 PORT_RET(void, s32) func_8022FC90(UnkStructA *);
-void func_802313DC(UnkStructA *, s32);
-void func_80231408(UnkStructA *, s32);
 UnkStructA *func_802308B8(UnkStructA *, s32);
 void func_80239094(void);
 void func_80270354(s32 *, s32);

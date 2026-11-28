@@ -1,18 +1,6 @@
 #include "common.h"
 
-typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-} UnkStruct_80265C20_Inner;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0x40];
-    /* 0x40 */ UnkStruct_80265C20_Inner *unk40;
-} UnkStruct_80265C20;
-
-void func_80299170(s32, s32, s32, s32);
+void func_80299170(s32, f32, f32, f32); /* 0x2B04 (the overlays' CORE_ZJ_2B04) */
 void func_802988E0(f32 *, f32 *, f32 *);
 void func_802988D8(f32, f32, f32);
 void func_802988B8(f32, f32, f32);
@@ -35,8 +23,8 @@ s32 D_802AD108;
 u8 D_802AD10C[4];
 Vec3f D_802AD110;
 
-void func_80265C20(s32 arg0, UnkStruct_80265C20 *arg1) {
-    UnkStruct_80265C20_Inner *p;
+void func_80265C20(s32 arg0, UnkStructA *arg1) {
+    UnkStructA_40 *p;
 
     p = arg1->unk40;
     /* A check around compiled-out debug output: the test's block keeps

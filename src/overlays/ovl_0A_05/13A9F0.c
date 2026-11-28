@@ -111,18 +111,6 @@ typedef struct {
 } UnkStruct_ovl0A_05_80049518;
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-} UnkStruct_ovl0A_05_B04_Inner;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0x40];
-    /* 0x40 */ UnkStruct_ovl0A_05_B04_Inner *unk40;
-} UnkStruct_ovl0A_05_B04;
-
-typedef struct {
     f32 x, y, z;
 } Vec3f_ovl0A_05;
 

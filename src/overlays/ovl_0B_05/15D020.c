@@ -84,18 +84,6 @@ typedef struct {
 } UnkStruct_ovl0B_05_80045EE0;
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-} UnkStruct_ovl0B_05_80044E78_Inner;
-
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[0x40];, u8 unk0[0x20]; void *unk20; void *unk24; u8 unk28[0x14]; void *unk3C;) /* (structs.h's UnkStructA: pointers at 0x20, 0x24, 0x3C, 0x40, 0x44) */
-    /* 0x40 */ UnkStruct_ovl0B_05_80044E78_Inner *unk40;
-} UnkStruct_ovl0B_05_80044E78;
-
-typedef struct {
     f32 x, y, z;
 } Vec3f_ovl0B_05_800466F0;
 

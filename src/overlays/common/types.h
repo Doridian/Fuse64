@@ -497,8 +497,9 @@ typedef struct {
     /* 0x24 */ s32 unk24;
 } UnkStruct_ovl17_04_80044D84;
 
-/* a list of these ends at the one whose unk2 is 0; unk20 points into
- * another list */
+/* a crumbling block (func_ovl0C_06_8004696C's task): a list of these ends at
+ * the one whose unk2 is 0; unk20 points into a list of switches; the second
+ * parameter of 0C_01's 80044878 and its copies (0C_01/02/06) */
 typedef struct {
     /* 0x00 */ s16 unk0;
     /* 0x02 */ s16 unk2;
@@ -516,8 +517,8 @@ typedef struct {
     /* 0x26 */ s16 unk26;
 } UnkStruct_ovl0C_01_8004A2A4;
 
-/* the door func_ovl0F_02_80045024 runs as a task: two models and what to
- * call once it is open */
+/* the door func_ovl0F_02_80045024 and its copies run as a task: two models
+ * and what to call once it is open (0F_02/03/04) */
 typedef struct {
     /* 0x00 */ UnkStruct_ovl0F_01_80048264 unk0[2];
     /* 0x58 */ void (*unk58)(void);

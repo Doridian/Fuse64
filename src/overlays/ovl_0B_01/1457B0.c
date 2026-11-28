@@ -76,18 +76,6 @@ typedef struct {
     /* 0x44 */ s32 unk44;
 } UnkStruct_ovl0B_01_80044C58;
 
-typedef struct {
-    /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-} UnkStruct_ovl0B_01_B04_Inner;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0x40];
-    /* 0x40 */ UnkStruct_ovl0B_01_B04_Inner *unk40;
-} UnkStruct_ovl0B_01_B04;
-
 void func_ovl0B_01_80044C00(s32, s32, s32); /* 0xF00 */
 s32 func_ovl0B_01_80044C08(void); /* 0xF01 */
 s32 func_ovl0B_01_80044C18(void); /* 0xF03 */

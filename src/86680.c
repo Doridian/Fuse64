@@ -4,20 +4,14 @@ typedef struct {
     /* 0x00 */ f32 unk0;
     /* 0x04 */ f32 unk4;
     /* 0x08 */ f32 unk8;
-} UnkStruct_8026C0A8; /* size 0xC */
-
-typedef struct {
-    /* 0x00 */ f32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
     /* 0x0C */ s32 unkC;
     /* 0x10 */ s32 unk10;
 } UnkStruct_800BD778; /* size 0x14 */
 
-void func_8022FEAC(UnkStruct_8026C0A8 *, UnkStruct_8026C0A8 *);
-void func_8022FF58(UnkStruct_8026C0A8 *, UnkStruct_8026C0A8 *, UnkStruct_8026C0A8 *);
+void func_8022FEAC(Vec3f *, Vec3f *);
+void func_8022FF58(Vec3f *, Vec3f *, Vec3f *);
 void func_80234858(f32 *, f32 *, f32 *);
-void func_802351DC(UnkStruct_8026C0A8 *);
+void func_802351DC(Vec3f *);
 s32 *func_8023A840(void);
 void func_80265DD8(s8);
 void func_80266118(s8);
@@ -39,7 +33,7 @@ PORT_RET(void, s32) func_80268F94(s16);
 PORT_RET(s32, s16) func_8026A754(s32, s32, void *, void *, s32);
 f32 sqrtf(f32);
 
-static void func_8026C0A8(UnkStruct_8026C0A8 *pos, f32 *angle, f32 *dist);
+static void func_8026C0A8(Vec3f *pos, f32 *angle, f32 *dist);
 static s32 func_8026C494(s32 id);
 static void func_8026C774(void);
 s32 func_8026C51C(s32 arg0, f32 x, f32 y, f32 z);
@@ -65,11 +59,11 @@ s32 func_8026C660(s32 arg0);
 void func_8026C964(void);
 void func_8026C93C(s32 arg0);
 void func_8026C8E8(void);
-s32 func_8026C630(s32 arg0, UnkStruct_8026C0A8 *arg1);
+s32 func_8026C630(s32 arg0, Vec3f *arg1);
 void func_8026BF90(s8 arg0);
 void func_8026BF68(s8 arg0);
 void func_8026C454(s32 arg0, f32 x, f32 y, f32 z);
-void func_8026C40C(s32 arg0, UnkStruct_8026C0A8 *arg1);
+void func_8026C40C(s32 arg0, Vec3f *arg1);
 void func_8026BF28(s8 arg0);
 void func_8026C894(void);
 
@@ -179,20 +173,20 @@ s32 func_8026C660(s32 arg0) {
     return -1;
 }
 
-s32 func_8026C630(s32 arg0, UnkStruct_8026C0A8 *arg1) {
-    return func_8026C51C(arg0, arg1->unk0, arg1->unk4, arg1->unk8);
+s32 func_8026C630(s32 arg0, Vec3f *arg1) {
+    return func_8026C51C(arg0, arg1->x, arg1->y, arg1->z);
 }
 
 s32 func_8026C51C(s32 arg0, f32 x, f32 y, f32 z) {
     f32 dist;
     f32 angle;
     s32 idx;
-    UnkStruct_8026C0A8 pos;
+    Vec3f pos;
 
     if (func_8026C494(arg0) != 0) {
-        pos.unk0 = x;
-        pos.unk4 = y;
-        pos.unk8 = z;
+        pos.x = x;
+        pos.y = y;
+        pos.z = z;
         func_8026C0A8(&pos, &angle, &dist);
         idx = func_802675F4(arg0, angle, dist);
         if (idx != -1) {
@@ -238,11 +232,11 @@ void func_8026C454(s32 arg0, f32 x, f32 y, f32 z) {
     }
 }
 
-void func_8026C40C(s32 arg0, UnkStruct_8026C0A8 *arg1) {
+void func_8026C40C(s32 arg0, Vec3f *arg1) {
     if (arg0 != -1) {
-        D_800BD778[arg0].unk0 = arg1->unk0;
-        D_800BD778[arg0].unk4 = arg1->unk4;
-        D_800BD778[arg0].unk8 = arg1->unk8;
+        D_800BD778[arg0].unk0 = arg1->x;
+        D_800BD778[arg0].unk4 = arg1->y;
+        D_800BD778[arg0].unk8 = arg1->z;
     }
 }
 
@@ -274,7 +268,7 @@ void func_8026C208(void) {
             if (func_80266CD4(id) == 0) {
                 D_800BD778[i].unk10 = -1;
             } else if (i == D_802A13C0 && D_800BD778[i].unkC != 0) {
-                func_8026C0A8((UnkStruct_8026C0A8 *) &D_800BD778[i], &angle, &dist);
+                func_8026C0A8((Vec3f *) &D_800BD778[i], &angle, &dist);
                 func_80266644(id, angle, dist);
             }
         }
@@ -295,10 +289,10 @@ void func_8026C208(void) {
  * expression itself: through a temporary, the result goes to $f2 by a
  * `mov.s`. */
 #define WRAP(x) ((x) >= 360.0f ? (x) - 360.0f : (x) < 0.0f ? (x) + 360.0f : (x))
-static void func_8026C0A8(UnkStruct_8026C0A8 *pos, f32 *angle, f32 *dist) {
-    UnkStruct_8026C0A8 sp54;
-    UnkStruct_8026C0A8 sp48;
-    UnkStruct_8026C0A8 sp3C;
+static void func_8026C0A8(Vec3f *pos, f32 *angle, f32 *dist) {
+    Vec3f sp54;
+    Vec3f sp48;
+    Vec3f sp3C;
     f32 dx;
     f32 dy;
     f32 dz;
@@ -308,22 +302,22 @@ static void func_8026C0A8(UnkStruct_8026C0A8 *pos, f32 *angle, f32 *dist) {
 
     func_802351DC(&sp54);
     func_80234858(&sp2C, &sp28, &sp24);
-    sp3C.unk0 = sp2C;
-    sp3C.unk4 = 0.0f;
-    sp3C.unk8 = 300.0f;
+    sp3C.x = sp2C;
+    sp3C.y = 0.0f;
+    sp3C.z = 300.0f;
     func_8022FEAC(&sp3C, &sp48);
-    sp54.unk0 += sp48.unk0;
-    sp54.unk4 += sp48.unk4 - 100.0f;
-    sp54.unk8 += sp48.unk8;
+    sp54.x += sp48.x;
+    sp54.y += sp48.y - 100.0f;
+    sp54.z += sp48.z;
     func_8022FF58(&sp54, pos, &sp3C);
-    dx = pos->unk0 - sp54.unk0;
-    dy = pos->unk4 - sp54.unk4;
-    dz = pos->unk8 - sp54.unk8;
+    dx = pos->x - sp54.x;
+    dy = pos->y - sp54.y;
+    dz = pos->z - sp54.z;
     *dist = sqrtf(dx * dx + dy * dy + dz * dz);
     if (*dist > D_802AFC28) {
         *dist = D_802AFC28;
     }
-    *angle = WRAP(270.0f - sp3C.unk0 + sp2C);
+    *angle = WRAP(270.0f - sp3C.x + sp2C);
 }
 
 void func_8026C00C(s8 arg0) {

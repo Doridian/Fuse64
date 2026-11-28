@@ -149,11 +149,13 @@ extern Vec3f D_8008F3D8;
 void func_80235D7C(void);
 void func_80236D30(void);
 s32 func_80236BA8(Vec3f *);
+/* func_80237664's local: the Vec3f func_80250338 fills and a word nothing
+ * reads, which the frame has room for. */
 typedef struct {
     /* 0x0 */ Vec3f pos;
     /* 0xC */ s32 unkC;
 } UnkStruct_80250338;
-void func_80250338(s32, UnkStruct_80250338 *);
+void func_80250338(s32, Vec3f *);
 void func_80234550(void);
 void func_802362B8(s32);
 void func_80236048(f32, f32);
@@ -188,7 +190,7 @@ void func_80237664(void) {
 
     func_802350F8(1);
     func_80234F6C(1);
-    func_80250338(func_80243DDC(), &sp8C);
+    func_80250338(func_80243DDC(), &sp8C.pos);
     func_802346C8(sp8C.pos.x, sp8C.pos.y, sp8C.pos.z);
     func_80234778(32768.0f, 45.0f, 32768.0f);
     func_802362B8(0x7F);

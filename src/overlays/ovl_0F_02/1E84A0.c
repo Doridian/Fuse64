@@ -1501,7 +1501,7 @@ static void func_ovl0F_02_80043020(s32 count, UnkStruct_ovl0F_01_80048264 *p) {
 }
 
 static void func_ovl0F_02_800462F8_inl2(void) {
-    /* held values (frame space the original has; which: a guess) */
+    /* fake: held values (frame space the original has; which: a guess) */
     s32 flag = 0x406;
     s32 other = 0x407;
     char *script = (char *) D_ovl0F_02_80048BF8;

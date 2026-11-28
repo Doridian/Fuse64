@@ -574,7 +574,7 @@ static void func_ovl0F_04_80046244(UnkStruct_ovl0F_02_800489F4 *door) {
  * is 80043398, among the handler's) */
 static s32 func_ovl0F_04_80043398(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStruct_ovl0F_02_80048918 *flags) {
     s32 i;
-    s32 none; /* -1 held for the return (a guess: any held value fills this word) */
+    s32 none; /* fake: -1 held for the return (a guess: any held value fills this word) */
 
     none = -1;
     for (i = 0; i < n; i++) {

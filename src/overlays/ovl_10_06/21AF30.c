@@ -741,7 +741,7 @@ void func_ovl10_06_80048110(void) {
 
 void func_ovl10_06_80047E10(void) {
     s32 j;
-    f32 max; /* the speed limit held: a guess (8004ADD0[0] held before its use fits too) */
+    f32 max; /* fake: the speed limit held: a guess (8004ADD0[0] held before its use fits too) */
     Vec3f player;
     Vec3f pos;
     Vec3f sp3C;
@@ -1493,7 +1493,7 @@ s32 func_ovl10_06_80045C20(void (*arg0)()) {
 void func_ovl10_06_80045888(void) {
     s32 i;
     s32 r;
-    s32 e; /* the effect held: a guess (the only place a held effects[r] fits; any held f32 constant fits too) */
+    s32 e; /* fake: the effect held: a guess (the only place a held effects[r] fits; any held f32 constant fits too) */
     s32 effects[10] = { 12, 13, 14, 15, 16, 19, 20, 22, 23, 24 };
     Vec3f ang;
     Vec3f pos;

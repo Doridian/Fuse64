@@ -1370,7 +1370,7 @@ void func_ovl10_08_80044448(s32 arg0, s32 arg1) {
 /* opens (arg1 1) or closes the gate */
 void func_ovl10_08_80044238(s32 arg0, s32 arg1) {
     s32 id;
-    f32 dist; /* the gate travel held: a guess (held, it fits only here or above the outer tests) */
+    f32 dist; /* fake: the gate travel held: a guess (held, it fits only here or above the outer tests) */
     Vec3f pos;
 
     if (arg1 != D_ovl10_08_8004A004[arg0]) {

@@ -49,7 +49,7 @@ void func_8022691C(s32 arg0) {
     struct UnkStruct_80225CC0 *file;
     s32 size;
     s32 id;
-    void *ovl = (void *) 0x80043000; /* where every overlay runs (its frame slot; a guess among held values) */
+    void *ovl = (void *) 0x80043000; /* fake: where every overlay runs (its frame slot; a guess among held values) */
 
     if (D_802A5328 != arg0) {
         D_802A5328 = arg0;

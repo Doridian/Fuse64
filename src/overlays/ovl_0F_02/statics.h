@@ -68,7 +68,7 @@ static void func_ovl0F_02_800462F8_inl4(void) {
 
 /* case 0x52's, on the switch at (0x12, 0xA): the camera and script */
 static void func_ovl0F_02_800462F8_inl1(void) {
-    /* held values (frame space the original has; which: a guess) */
+    /* fake: held values (frame space the original has; which: a guess) */
     f32 dist = 0.0f;
     s32 flag = 0x406;
     s32 other = 0x407;

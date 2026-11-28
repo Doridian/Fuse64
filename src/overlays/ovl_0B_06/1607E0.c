@@ -1342,7 +1342,7 @@ static s32 ERASE_ASK(s32 slot, Col_ovl0B_06 *off, Col_ovl0B_06 *on) {
     s32 held;
     s32 pressed;
     s32 i;
-    s32 ret; /* 80049390's result, held (any held value fills this slot: a guess) */
+    s32 ret; /* fake: 80049390's result, held (any held value fills this slot: a guess) */
 
     keep = 1;
     side = 1;

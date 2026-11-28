@@ -521,7 +521,7 @@ void func_ovl10_01_80044EDC(s32 arg0) {
 void func_ovl10_01_80044C84(void) {
     s32 i;
     UnkStructA *p;
-    f32 lim; /* a guess: any float held for the loop fills this slot (42.5f, 34.0f too) */
+    f32 lim; /* fake: a guess: any float held for the loop fills this slot (42.5f, 34.0f too) */
     f32 x;
 
     lim = 5600.0f;

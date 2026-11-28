@@ -1196,7 +1196,7 @@ static void func_ovl0D_01_800434BC(UnkStruct_ovl0C_01_8004A54C *arg0) {
 void func_ovl0D_01_80043134(void) {
     s32 i;
     s32 n;
-    f32 frames; /* the fade's length held: a guess (any float held here fills its word, which puts pos at sp+96) */
+    f32 frames; /* fake: the fade's length held: a guess (any float held here fills its word, which puts pos at sp+96) */
     Vec3f pos;
 
     while (TRUE) {

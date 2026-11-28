@@ -455,7 +455,7 @@ void func_ovl15_02_80049784(UnkStructA *obj);
 void func_ovl15_02_8004B14C(void);
 static void func_ovl15_02_80049A04(void) {
     static s32 D_ovl15_02_80051530;
-    f32 dist; /* the push-off distance held (a guess: any held value fills this word) */
+    f32 dist; /* fake: the push-off distance held (a guess: any held value fills this word) */
     Vec3f v;
     Vec3f d;
     s32 ok;
@@ -1468,7 +1468,7 @@ void func_ovl15_02_8004D818() {
 }
 
 void func_ovl15_02_8004D660() {
-    /* pos, mode, speed, on and set are held values (fakes pass 14; guesses: any
+    /* fake: pos, mode, speed, on and set are held values (fakes pass 14; guesses: any
      * held local fills these frame words, but these each have a role) */
     f32 *pos;
     s32 mode;
@@ -1958,7 +1958,7 @@ void func_ovl15_02_8004BE64() {
 }
 
 void func_ovl15_02_8004BC88() {
-    f32 frames; /* the swell's length held (a guess: any held value fills this word) */
+    f32 frames; /* fake: the swell's length held (a guess: any held value fills this word) */
     Vec3f pos;
     UnkStructA *obj;
     f32 sx;
@@ -2714,7 +2714,7 @@ void func_ovl15_02_8004928C() {
     UnkStructA *self;
     s32 i;
     UnkStructA *objs[10];
-    /* last, wait, id and flags are held values (fakes pass 14; guesses: any held local fills these words) */
+    /* fake: last, wait, id and flags are held values (fakes pass 14; guesses: any held local fills these words) */
     UnkStructA *last;
     s32 wait;
     s32 id;
@@ -2964,7 +2964,7 @@ void func_ovl15_02_80048630() {
 }
 
 void func_ovl15_02_800481A0() {
-    f32 n1; /* the two moves' frame counts held (a guess: any held values fill these words) */
+    f32 n1; /* fake: the two moves' frame counts held (a guess: any held values fill these words) */
     f32 n2;
     s32 *flag;
     s32 i;
@@ -3470,7 +3470,7 @@ void func_ovl15_02_80046D3C(void) {
 }
 
 void func_ovl15_02_80046AEC(UnkStructA *arg0, f32 *arg1) {
-    /* p and k0 are held values (fakes pass 14; guesses: any held local fills these words) */
+    /* fake: p and k0 are held values (fakes pass 14; guesses: any held local fills these words) */
     Vec3f *p;
     f32 k0;
     Vec3f d;
@@ -3874,7 +3874,7 @@ void func_ovl15_02_80045330(void) {
     UnkStructA *obj;
     UnkStructA *obj2;
     f32 step;
-    /* speed and ground are held values (fakes pass 14; guesses: any held local fills these words) */
+    /* fake: speed and ground are held values (fakes pass 14; guesses: any held local fills these words) */
     f32 speed;
     f32 ground;
     f32 pos[3];
@@ -4189,7 +4189,7 @@ s16 arg2;
 
 void func_ovl15_02_800443AC(void) {
     s32 n;
-    /* period and frames are held values (fakes pass 14; guesses: any held local fills these words) */
+    /* fake: period and frames are held values (fakes pass 14; guesses: any held local fills these words) */
     s32 period;
     f32 frames;
     s32 alpha;
@@ -4354,7 +4354,7 @@ void func_ovl15_02_80043E38() {
 
 void func_ovl15_02_80043688(void) {
     UnkStructA *obj;
-    f32 size; /* the start size held (fakes pass 14; a guess: any held value fills this word) */
+    f32 size; /* fake: the start size held (fakes pass 14; a guess: any held value fills this word) */
     f32 m;
     f32 u;
     s32 i;

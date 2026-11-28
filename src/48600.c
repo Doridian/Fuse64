@@ -174,9 +174,9 @@ s32 func_8026D7D8(s32, s32, s32);
 u8 func_8026DC74(s32);
 void func_8026DCAC(f32, f32, f32, void *, s32);
 
-void func_8026E6E4(void *, f32 *, f32 *);
+void func_8026E6E4(UnkStructA_40 *, f32 *, f32 *);
 f32 func_8026E8B8(void);
-f32 func_8026E938(void *);
+f32 func_8026E938(UnkStructA_40 *);
 void func_8029C8D0(f32 m[4][4], f32, f32, f32);
 void func_8029CA80(f32 m[4][4], f32, f32, f32);
 f32 func_8029CB40(f32);

@@ -267,7 +267,7 @@ void func_80239094(void);
 s32 *func_802391F0(void);
 void * func_8023A834(void);
 void * func_802443F4(s32);
-f32 func_8026E938(void *);
+f32 func_8026E938(UnkStructA_40 *arg0);
 PORT_IP(s32) func_80270770(s16, s16);
 PORT_RET(s32, void) func_80271F74(PORT_RET(s32, void *));
 PORT_RET(f32, void) func_80277484(void);

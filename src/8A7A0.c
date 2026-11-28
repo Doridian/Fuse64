@@ -169,7 +169,7 @@ extern void *D_802AFC6C;
 extern s16 D_802AFE70;
 
 u8 func_8026DC74(s32 arg0);
-f32 func_8026E938(u8 *arg0);
+f32 func_8026E938(UnkStructA_40 *arg0);
 s32 func_802702BC(s16 arg0);
 void func_802702EC(s16 arg0);
 void func_80270354(s16 *arg0, s16 arg1);
@@ -1700,10 +1700,10 @@ s32 func_80274994(s16 arg0) {
     OBJ_DD8->unk40->unk10 = obj->unk40->unk10 + base.x;
     OBJ_DD8->unk40->unk14 = obj->unk40->unk14 + 100.0f;
     OBJ_DD8->unk40->unk18 = obj->unk40->unk18 + base.y;
-    cur.y = func_8026E938((u8 *) OBJ_DD8->unk40);
+    cur.y = func_8026E938(OBJ_DD8->unk40);
     t = spB8 & 0xF;
     if (t == 3 || t == 4 || t == 5 || t == 6) {
-        cur.y = func_8026E938((u8 *) OBJ_DD8->unk40);
+        cur.y = func_8026E938(OBJ_DD8->unk40);
         if (func_80270FC0((u8 *) obj) + obj->unk40->unk14 <= cur.y) {
             return 0;
         }
@@ -1802,7 +1802,7 @@ void func_802741D8(s16 arg0) {
     case 4:
     case 5:
     case 6:
-        cur.y = func_8026E938((u8 *) OBJ_DD8->unk40);
+        cur.y = func_8026E938(OBJ_DD8->unk40);
         if (func_80270FC0((u8 *) obj) + obj->unk40->unk14 <= cur.y) {
             return;
         }
@@ -2087,7 +2087,7 @@ void func_802731A4(UnkStructA *arg0, s16 arg1) {
     if (SLOTS[arg1].unk10 <= 0) {
         return;
     }
-    y = func_8026E938((u8 *) arg0->unk40);
+    y = func_8026E938(arg0->unk40);
     func_80272FC0(arg0, arg1);
     done = 0;
     func_80231434(arg0);

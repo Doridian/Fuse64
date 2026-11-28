@@ -1010,7 +1010,7 @@ void func_ovl0B_02_80045C30(void) {
 }
 
 void func_ovl0B_02_800454F0(void) {
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad; /* fake: unused, frame space the original has (no source for it found; fakes-0B tried the sparks' x/y as locals, a second float counter for the 60-frame loop, k for the star's loops, the star test held in a flag, an inlined call of the empty static 800443D4: none gives these four slots) */
     UnkStructA_40 *model;
     UnkStructA_40 *star;
     s32 pad1; /* fake: unused, frame space the original has (no source for it found) */

@@ -2067,7 +2067,10 @@ static void func_ovl0B_04_80045540(u8 item, u16 buttons, u8 *ret) {
      * which as1 drops, uses up the temporary the original's t-registers
      * are one ahead by, and it keeps unk0's own (u8) value, so c stays in
      * $a0. The cursor check after it (a compiled-out DEBUG_PRINT, p13; p2
-     * had a dead read) gives the base its s0. */
+     * had a dead read) gives the base its s0. fakes-0B: c read on the
+     * next line (also after the unk1 store, or through a pointer to the
+     * slot) is 2 words off, read before the if or in its declaration far
+     * more. */
     if (buttons & 2) { c = D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0];
         D_ovl0B_04_8004A490.unk1 = 0;
         D_ovl0B_04_8004A290[D_ovl0B_04_8004A490.unk0][0] = 0;

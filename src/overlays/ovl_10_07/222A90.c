@@ -1131,7 +1131,7 @@ void func_ovl10_07_80045758(s32 *arg0) {
         D_ovl10_07_8004A410[i] = arg0[6];
         /* fake: an empty loop, a uopt block boundary (no code): the table addresses below are then
          * computed in the loop (pass 12: an `if` with a DEBUG_PRINT body, any condition, even 0, matches,
-         * here only; the four tables as one [4][6] in a 4-pass loop, while/for loops: no) */
+         * here only; the four tables as one [4][6] in a 4-pass loop, while/for loops: no; pass 13: either group of stores as an inlined static, (i, arg0) or (arg0, i), no) */
         do {} while (0);
         D_ovl10_07_8004A448[i] = arg0[7];
         D_ovl10_07_8004A460[i] = arg0[8];
@@ -1226,7 +1226,7 @@ void func_ovl10_07_800452A8(s32 *arg0) {
             D_ovl10_07_8004A4D8[i]->unk34 = 50.0f;
             D_ovl10_07_8004A4D8[i]->unk38 = 50.0f;
             if (D_ovl10_07_8004A4DC[i] != 0) {
-                if (!arg0 && !arg0) {} /* fake: keeps arg0 in s3 (the permuter) */
+                if (!arg0 && !arg0) {} /* fake: keeps arg0 in s3 (the permuter; pass 13: v's if/else reordered, as a ternary or v = 15 first: no) */
                 v = 1;
                 D_ovl10_07_8004A4D4[i]->unk40->unk18 -= 100.0f;
                 D_ovl10_07_8004A4D8[i]->unk40->unk18 += 100.0f;
@@ -1277,7 +1277,7 @@ void func_ovl10_07_80044FD8(s32 *arg0) {
             D_ovl10_07_80049CA8[i] = 0;
             if (D_ovl10_07_80049C78[i] & 1) {
                 for (j = 0; j < D_ovl10_07_80049E70[i]; j++) {
-                    if (arg0) {} /* fake: keeps arg0 in s4 (the permuter) */
+                    if (arg0) {} /* fake: keeps arg0 in s4 (the permuter; pass 13: flags dropped, arg0 += 5 at the end, a while loop: no) */
                     func_ovl10_07_80048660(D_ovl10_07_80049BF0[i][0] + j, D_ovl10_07_80049BF0[i][1], D_ovl10_07_80049BF0[i][2], 1);
                 }
             } else {
@@ -1853,7 +1853,7 @@ void func_ovl10_07_80043254(void) {
     func_ovl10_07_80048818(1);
     func_ovl10_07_8004316C(D_ovl10_07_8004A354, D_ovl10_07_8004A4B0, D_ovl10_07_8004A4B4, off);
     func_ovl10_07_80049198(0x78);
-    /* fake: (the permuter) a, and the test of D_ovl10_07_8004A3DC, on a's line */
+    /* fake: (the permuter) a, and the test of D_ovl10_07_8004A3DC, on a's line (pass 13: the frame word is an inlined call's too: a call of the empty global 80043010 instead of a, or locals a and b for both loads, give the frame, but the loads of the two globals stay a0 first with sw a1 in the jal's delay slot (6 words), whatever the order, chaining or lines; an inlined static (a, b) costs 16 bytes) */
     a = D_ovl10_07_8004A3D8; if (D_ovl10_07_8004A3DC && D_ovl10_07_8004A3DC && D_ovl10_07_8004A3DC) {}
     D_ovl10_07_80049BA4 = a;
     D_ovl10_07_80049BA8 = D_ovl10_07_8004A3DC;

@@ -886,7 +886,7 @@ void func_ovl10_06_80047B0C(void) {
 
 void func_ovl10_06_80047A50(void) {
     s32 i;
-    s32 pad; /* fake: unused, frame space the original has (no source for it found; pass 12: the count, the object or 8004A640's result held: no) */
+    s32 pad; /* fake: unused, frame space the original has (no source for it found; pass 13: any local declared between i and pos fills it, e.g. one for 8004A640's result, which is only a held value; no inlined callee fits: a call costs 8 bytes) */
     Vec3f pos;
 
     while (TRUE) {

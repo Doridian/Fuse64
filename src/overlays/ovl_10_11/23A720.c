@@ -751,7 +751,7 @@ void func_ovl10_11_800431AC(void) {
     func_ovl10_11_80045398(1);
     func_ovl10_11_800430C4(D_ovl10_11_80046974, D_ovl10_11_80046AD0, D_ovl10_11_80046AD4, off);
     func_ovl10_11_80045D18(0x78);
-    /* fake: (the permuter) a, and the test of D_ovl10_11_800469FC, on a's line */
+    /* fake: (the permuter) a, and the test of D_ovl10_11_800469FC, on a's line (pass 13: the frame word is an inlined call's too: a call of the empty global 80043010 instead of a, or locals a and b for both loads, give the frame, but the loads of the two globals stay a0 first with sw a1 in the jal's delay slot (6 words), whatever the order, chaining or lines; an inlined static (a, b) costs 16 bytes) */
     a = D_ovl10_11_800469F8; if (D_ovl10_11_800469FC && D_ovl10_11_800469FC && D_ovl10_11_800469FC) {}
     D_ovl10_11_800466C4 = a;
     D_ovl10_11_800466C8 = D_ovl10_11_800469FC;

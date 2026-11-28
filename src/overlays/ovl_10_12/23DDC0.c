@@ -923,7 +923,7 @@ void func_ovl10_12_80044FEC(s32 *arg0) {
         D_ovl10_12_800494A0[i] = arg0[6];
         /* fake: an empty loop, a uopt block boundary (no code): the table addresses below are then
          * computed in the loop (pass 12: an `if` with a DEBUG_PRINT body, any condition, even 0, matches,
-         * here only; the four tables as one [4][6] in a 4-pass loop, while/for loops: no) */
+         * here only; the four tables as one [4][6] in a 4-pass loop, while/for loops: no; pass 13: either group of stores as an inlined static, (i, arg0) or (arg0, i), no) */
         do {} while (0);
         D_ovl10_12_800494D8[i] = arg0[7];
         D_ovl10_12_800494F0[i] = arg0[8];
@@ -993,7 +993,7 @@ void func_ovl10_12_80044C68(s32 *arg0) {
             D_ovl10_12_80048D58[i] = 0;
             if (D_ovl10_12_80048D28[i] & 1) {
                 for (j = 0; j < D_ovl10_12_80048F20[i]; j++) {
-                    if (arg0) {} /* fake: keeps arg0 in s4 (the permuter) */
+                    if (arg0) {} /* fake: keeps arg0 in s4 (the permuter; pass 13: flags dropped, arg0 += 5 at the end, a while loop: no) */
                     func_ovl10_12_800475C0(D_ovl10_12_80048CA0[i][0] + j, D_ovl10_12_80048CA0[i][1], D_ovl10_12_80048CA0[i][2], 1);
                 }
             } else {
@@ -1492,7 +1492,7 @@ void func_ovl10_12_800432B0(void) {
     func_ovl10_12_80047778(1);
     func_ovl10_12_800431C8(D_ovl10_12_800493E4, D_ovl10_12_80049540, D_ovl10_12_80049544, off);
     func_ovl10_12_800480F8(0x78);
-    /* fake: (the permuter) a, and the test of D_ovl10_12_8004946C, on a's line */
+    /* fake: (the permuter) a, and the test of D_ovl10_12_8004946C, on a's line (pass 13: the frame word is an inlined call's too: a call of the empty global 80043010 instead of a, or locals a and b for both loads, give the frame, but the loads of the two globals stay a0 first with sw a1 in the jal's delay slot (6 words), whatever the order, chaining or lines; an inlined static (a, b) costs 16 bytes) */
     a = D_ovl10_12_80049468; if (D_ovl10_12_8004946C && D_ovl10_12_8004946C && D_ovl10_12_8004946C) {}
     D_ovl10_12_80048C54 = a;
     D_ovl10_12_80048C58 = D_ovl10_12_8004946C;

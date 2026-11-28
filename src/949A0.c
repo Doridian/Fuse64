@@ -22,6 +22,7 @@
 #include "530C0.h"
 #include "86680.h"
 #include "48600.h"
+#include "404C0.h"
 
 void func_80270354(s32 *, s32);
 void func_8027036C(s32 *, s32);

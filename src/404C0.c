@@ -16,6 +16,7 @@
  */
 #include "common.h"
 #include "404C0.h"
+#include "40300.h"
 
 void func_80297ED0(s32, s32, uintptr_t);
 void func_80225E2C(s32);

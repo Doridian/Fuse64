@@ -1,6 +1,7 @@
 #include "common.h"
 #include "gfx.h"
 #include "41FD0.h"
+#include "40300.h"
 
 /* gbi.h's Light: col, colc and dir */
 typedef struct {

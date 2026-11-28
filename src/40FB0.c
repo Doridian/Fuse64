@@ -1,5 +1,7 @@
 #include "common.h"
 #include "40FB0.h"
+#include "404C0.h"
+#include "AD3D0.h"
 
 typedef struct {
     /* 0x00 */ u8 unk0;

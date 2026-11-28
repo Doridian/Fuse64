@@ -1,5 +1,7 @@
 #include "common.h"
 #include "404C0.h"
+#include "40300.h"
+#include "AD3D0.h"
 
 /* Hudson's LZSS decoder (docs/COMPRESSION.md) for a file opened with
  * func_80226604: a 0x400-byte ring buffer filled from 0x3BE, flag bits

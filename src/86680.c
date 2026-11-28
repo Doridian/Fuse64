@@ -3,6 +3,8 @@
 #include "54E40.h"
 #include "80580.h"
 #include "86680.h"
+#include "404C0.h"
+#include "40FB0.h"
 
 typedef struct {
     /* 0x00 */ f32 unk0;

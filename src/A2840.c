@@ -39,6 +39,7 @@
 #include "86680.h"
 #include "A8DE0.h"
 #include "48600.h"
+#include "404C0.h"
 
 /* A record of the table read from file 0x10B (func_802883B0). */
 typedef struct {

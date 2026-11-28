@@ -6,6 +6,7 @@
 
 #include "common.h"
 
+void *func_80225C44(void *dst, void *src, s32 n);
 void *func_80225C7C(void *dst, s32 c, s32 n);
 void func_80225CA8(void);
 

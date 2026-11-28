@@ -6,6 +6,7 @@
 
 #include "common.h"
 
+void func_802267E0(s32 arg0);
 void func_80226860(void);
 void func_8022691C(s32 arg0);
 

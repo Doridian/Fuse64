@@ -9,7 +9,5 @@
 void func_8026C990(void);
 void func_8026CB2C(void);
 void func_8026CBD4(void *arg0);
-void func_8026CCBC(s32 arg0);
-void *func_8026CE28(s32 arg0);
 
 #endif

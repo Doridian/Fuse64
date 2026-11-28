@@ -33,8 +33,9 @@ Targets (the sets):
   artefact), and `attract` (the boot with no input, 30000 retraces).
 - `ovl`: the overlays no other set loads (docs/PORT.md, "Every room"):
   20:16 (ovl_09_01, the boot's nominal scene, never loaded in play), the
-  menu routes from the power-on (`menu:R`, the pads in ROUTES, us's
-  timing, from story.<v>.eep): `pak` holds START through the boot's
+  menu routes from the power-on (`menu:R`, the pads routes(v) gives, by
+  the emulator's retraces: us's and eu's the same, jp's 180 sooner; from
+  story.<v>.eep): `pak` holds START through the boot's
   first read (54BE0.c loads ovl_0A_06, the Controller Pak menu, in place
   of the title), `options` and `custom` pick the title menu's fourth and
   third entries (ovl_0B_05, the options; through the file select
@@ -91,13 +92,14 @@ TAS_ROUTE = ["seg:56:16:541:73577=150000"]
 OVLS = ["20:16=6000", "menu:pak=3000", "menu:options=4000", "menu:options@m1=8000", "menu:options@m2=8000",
         "menu:custom=4000", "menu:custom@m1=8000", "menu:custom@m2=8000",
         "37:16", "37:16@m1", "38:16", "38:16@m1"]
-# controller 1 by the emulator's retrace from the power-on, us's timing:
-# START and A in turn every 30 from 300 (warp.<v>.txt's), the title
-# (27:16) from 421, the logo (32:17) from 541, whose menu START at 660
-# opens; it takes the stick
-_TITLE = [(f + d, w if d == 0 else 0) for i, f in enumerate(range(300, 661, 30))
-          for w in [0x10 if i % 2 == 0 else 0x80] for d in (0, 4)]
+# controller 1 by the emulator's retrace from the power-on: START and A
+# in turn every 30 from 300 (warp.<v>.txt's), the title (27:16) from 421,
+# the logo (32:17) from 541, whose menu START at 660 opens; it takes the
+# stick.  us's and eu's timing (eu's scenes come at the same retraces);
+# jp's title comes 180 retraces sooner (27:16 from 224, 32:17 from 361),
+# and so does all that follows (JP)
 _DOWN = 0xB0000000
+JP = -180
 
 
 def _taps(t0, t1):
@@ -105,19 +107,32 @@ def _taps(t0, t1):
     return [(f, w) for t in range(t0, t1, 120) for f, w in ((t, 0x80), (t + 4, 0), (t + 60, _DOWN), (t + 66, 0))]
 
 
-ROUTES = {
-    # START held through the boot's first read (40040.c's func_8023A22C,
-    # before 54BE0.c's func_8023A3E0 picks the overlay): ovl_0A_06; then A
-    "pak": [(0, 0x10), (200, 0)] + [(f, w) for t in range(400, 3000, 300) for f, w in ((t, 0x80), (t + 4, 0))],
-    # Options (ovl_0B_05, 38:16) from 963
-    "options": _TITLE + [(760, _DOWN), (766, 0), (810, _DOWN), (816, 0), (860, _DOWN), (866, 0),
-                         (960, 0x80), (964, 0)] + _taps(1200, 4000),
-    # Custom: the file select (31:17) from 963, its first file, the name
-    # entry (ovl_0B_04, 37:16) from 1317
-    "custom": _TITLE + [(760, _DOWN), (766, 0), (810, _DOWN), (816, 0), (960, 0x80), (964, 0),
-                        (1300, 0x80), (1304, 0)] + _taps(1500, 4000),
-}
-ROUTE_END = {"pak": 400, "options": 1200, "custom": 1500}   # where @mK's random input starts
+def routes(v):
+    """{route: [(retrace, pad)]}, the version's timing"""
+    d = JP if v == "jp" else 0
+    title = [(f + e, w if e == 0 else 0) for i, f in enumerate(range(300, 661 + d, 30))
+             for w in [0x10 if i % 2 == 0 else 0x80] for e in (0, 4)]
+
+    def at(steps):
+        return [(f + d, w) for f, w in steps]
+    return {
+        # START held through the boot's first read (40040.c's
+        # func_8023A22C, before 54BE0.c's func_8023A3E0 picks the
+        # overlay): ovl_0A_06; then A
+        "pak": [(0, 0x10), (200, 0)] + [(f, w) for t in range(400, 3000, 300) for f, w in ((t, 0x80), (t + 4, 0))],
+        # Options (ovl_0B_05, 38:16) from 963
+        "options": title + at([(760, _DOWN), (766, 0), (810, _DOWN), (816, 0), (860, _DOWN), (866, 0),
+                               (960, 0x80), (964, 0)] + _taps(1200, 4000)),
+        # Custom: the file select (31:17) from 963, its first file, the
+        # name entry (ovl_0B_04, 37:16) from 1317
+        "custom": title + at([(760, _DOWN), (766, 0), (810, _DOWN), (816, 0), (960, 0x80), (964, 0),
+                              (1300, 0x80), (1304, 0)] + _taps(1500, 4000)),
+    }
+
+
+def route_end(v, route):
+    """where @mK's random input starts"""
+    return {"pak": 400, "options": 1200, "custom": 1500}[route] + (JP if v == "jp" and route != "pak" else 0)
 
 
 def body(src, name):
@@ -258,8 +273,6 @@ def one(a, tok):
     if tok == "attract":
         warp = None
     elif warp.startswith("menu:"):
-        if v != "us":
-            raise ValueError("the menu routes have us's timing")
         route, warp = warp[5:], None
     emu, port = os.path.join(a.out, tag + ".emu.txt"), os.path.join(a.out, tag + ".port.txt")
     battle = warp is not None and int(warp.split(":")[0]) in BATTLE
@@ -273,12 +286,14 @@ def one(a, tok):
     frames = int(nframes) if nframes else 10000 if kind[:1] == "b" else 8000 if battle or kind else 5000
     inp = base if warp else None
     if route:
+        # the route's targets run at once: each reads a whole file
         base = inp = os.path.join(a.out, "menu_%s.route.txt" % route)
-        with open(base, "w") as f:
-            f.write("".join("%d %X\n" % fw for fw in sorted(ROUTES[route])))
+        with open(base + "." + tag, "w") as f:
+            f.write("".join("%d %X\n" % fw for fw in sorted(routes(v)[route])))
+        os.replace(base + "." + tag, base)
     if kind and not seg:
         inp = os.path.join(a.out, tag + ".input.txt")
-        start = 1300 if battle else ROUTE_END[route] if route else (920 if v == "jp" else 1100)
+        start = 1300 if battle else route_end(v, route) if route else (920 if v == "jp" else 1100)
         if kind[0] == "b":          # from the battle setup's first screen: the first A there and 50
             start = min(int(l.split()[0]) for l in open(base)
                         if l.strip() and not l.startswith("#") and int(l.split()[1], 16) == 0x80) + 50

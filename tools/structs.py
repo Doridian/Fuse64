@@ -77,8 +77,6 @@ ALLOW_E = {
     ("func_802391F0", "ret"): "the running task's argument, as in ALLOW_B",
     ("func_8026437C", "param 0"): "7D840 includes gbi.h (Gfx), 426E0 has Gfx_80225840: one type on the port "
                                   "(docs/DECOMPILING.md, \"Types\")",
-    ("func_8026D4B0", "param 0"): "to do: the draw callbacks are typed with each overlay's own copy of "
-                                  "Gfx_80225840 (Gfx_ovl0B_01, Gfx0B04, ...)",
 }
 
 

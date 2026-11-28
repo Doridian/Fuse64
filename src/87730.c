@@ -18,11 +18,7 @@ typedef struct {
     /* 0x04 */ void *unk4;
 } UnkStruct_800BCDE8; /* size 0x8 */
 
-/* A display list command (gbi.h's Gfx, as two words) */
-typedef struct {
-    /* 0x00 */ PORT_UP(u32) w0;
-    /* 0x04 */ PORT_UP(u32) w1;
-} UnkStruct_8026D2C4; /* size 0x8 */
+#include "gfx.h"
 
 void *func_8022A328(void *, s32, s32, s32, s32);
 PORT_RET(void, s32) func_8023903C(s32);
@@ -33,14 +29,14 @@ void func_8023A864(s32);
 void func_80243698(s32);
 PORT_RET(void, s32) func_8026C660(s32);
 void func_8026CBD4(void *);
-void func_8026D2C4(s32, UnkStruct_8026D2C4 **);
+void func_8026D2C4(UnkStructA_40 *, Gfx_80225840 **);
 
 extern u8 D_1000000[];
 extern UnkStruct_800BCDE8 D_800BCDE8[64];
 void func_8026D518(s32 arg0, s32 arg1);
 void func_8026D3AC(void *arg0);
 void func_8026D354(void *arg0);
-PORT_RET(void, PORT_IP(s32)) func_8026D4B0(void *arg0, s32 arg1);
+PORT_RET(void, PORT_IP(s32)) func_8026D4B0(void (*arg0)(UnkStructA_40 *, Gfx_80225840 **), s32 arg1);
 void func_8026D2A4(s32 arg0, s32 arg1);
 void func_8026CFF4(s32 arg0, s32 arg1, s32 arg2);
 /* 426E0's (in its table only here; UnkObj is 426E0.c's) */
@@ -166,16 +162,16 @@ void func_8026D2A4(s32 arg0, s32 arg1) {
     func_8026CFF4(arg0, arg1, 0);
 }
 
-void func_8026D2C4(s32 arg0, UnkStruct_8026D2C4 **arg1) {
-    UnkStruct_8026D2C4 *gfx = *arg1;
+void func_8026D2C4(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
+    Gfx_80225840 *gfx = *arg1;
 
     /* one line per command, as gbi.h's macros expand: IDO allocates
      * temporaries per source line */
-    { UnkStruct_8026D2C4 *g = gfx++; g->w0 = 0xFA000000; g->w1 = 0x80; }
-    { UnkStruct_8026D2C4 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFDF6FB; }
-    { UnkStruct_8026D2C4 *g = gfx++; g->w0 = 0xFF10013F; g->w1 = (PORT_UP(u32)) D_1000000; }
-    { UnkStruct_8026D2C4 *g = gfx++; g->w0 = 0xF7000000; g->w1 = 0x10001; }
-    { UnkStruct_8026D2C4 *g = gfx++; g->w0 = 0xF648C384; g->w1 = 0x702A8; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xFA000000; g->w1 = 0x80; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFDF6FB; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xFF10013F; g->w1 = (PORT_UP(u32)) D_1000000; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xF7000000; g->w1 = 0x10001; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xF648C384; g->w1 = 0x702A8; }
     *arg1 = gfx;
 }
 
@@ -218,11 +214,11 @@ s32 func_8026D428(void) {
     return -1;
 }
 
-PORT_RET(void, PORT_IP(s32)) func_8026D4B0(void *arg0, s32 arg1) {
+PORT_RET(void, PORT_IP(s32)) func_8026D4B0(void (*arg0)(UnkStructA_40 *, Gfx_80225840 **), s32 arg1) {
     s32 i = func_8026D428();
 
     D_800BCDE8[i].unk0 = -1;
-    PORT_V0(D_800BCDE8[i].unk4 = func_8022A328(arg0, arg1 + 0x40, 1, 0, 0));
+    PORT_V0(D_800BCDE8[i].unk4 = func_8022A328((void *) arg0, arg1 + 0x40, 1, 0, 0));
 PORT_ONLY(return (intptr_t)port_v0;) }
 
 void func_8026D518(s32 arg0, s32 arg1) {

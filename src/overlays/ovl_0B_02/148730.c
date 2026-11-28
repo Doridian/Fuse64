@@ -79,10 +79,7 @@
     (a) = ((a) - (d) >= 360.0f) ? (a) - (d) - 360.0f : ((a) < (d)) ? (a) - (d) + 360.0f : (a) - (d)
 #define WRAP(x) ((x) >= 360.0f ? (x) - 360.0f : (x) < 0.0f ? (x) + 360.0f : (x))
 
-typedef struct {
-    PORT_UP(u32) w0;
-    PORT_UP(u32) w1;
-} Gfx_ovl0B_02;
+#include "gfx.h"
 
 /* A box: its centre, its size, its scale, the model and frame, and the
  * object drawing it. */
@@ -134,7 +131,7 @@ void func_ovl0B_02_80048D00(s32); /* 0x1401 */
 UnkStructA_40 *func_ovl0B_02_80048D08(s32, s32); /* 0x1500 */
 void func_ovl0B_02_80048D10(UnkStructA_40 *); /* 0x1501 */
 f32 func_ovl0B_02_80048D68(UnkStructA_40 *, s32); /* 0x150C */
-UnkStructA_40 *func_ovl0B_02_80048D88(void (*)(UnkStructA_40 *, Gfx_ovl0B_02 **), s32); /* 0x1510 */
+UnkStructA_40 *func_ovl0B_02_80048D88(void (*)(UnkStructA_40 *, Gfx_80225840 **), s32); /* 0x1510 */
 s32 func_ovl0B_02_80048D98(UnkStructA_40 *, s32); /* 0x1512 */
 void func_ovl0B_02_80048DA0(s32, s32, s32); /* 0x1513 */
 void func_ovl0B_02_80048DA8(s32); /* 0x1514 */
@@ -242,7 +239,7 @@ void func_ovl0B_02_8004686C(void);
 void func_ovl0B_02_800468C4(void);
 void func_ovl0B_02_800469C8(void);
 void func_ovl0B_02_80046B8C(void);
-void func_ovl0B_02_80046EFC(UnkStructA_40 *arg0, Gfx_ovl0B_02 **arg1);
+void func_ovl0B_02_80046EFC(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 void func_ovl0B_02_80047020(void);
 void func_ovl0B_02_800470B0(void);
 void func_ovl0B_02_800471A8(void);
@@ -724,20 +721,20 @@ void func_ovl0B_02_80047020(void) {
 }
 
 /* A piece's display list (the callback of the objects 80043FC4 makes). */
-void func_ovl0B_02_80046EFC(UnkStructA_40 *arg0, Gfx_ovl0B_02 **arg1) {
-    Gfx_ovl0B_02 *gfx = *arg1;
+void func_ovl0B_02_80046EFC(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
+    Gfx_80225840 *gfx = *arg1;
     Piece_ovl0B_02 *p = PORT_FIELD(arg0, Piece_ovl0B_02 **, 0x40, UnkStructA_40, unk40);
     u32 *e = (u32 *) (p->unk14 + p->unk18 * 12 + 12);
 
-    { Gfx_ovl0B_02 *g = gfx++; g->w0 = 0xBC000806; g->w1 = p->unk14; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xBC000806; g->w1 = p->unk14; }
     if (arg0->unkC & 0x80) {
-        { Gfx_ovl0B_02 *g = gfx++; g->w0 = 0xB900031D; g->w1 = 0x055079F8; }
-        { Gfx_ovl0B_02 *g = gfx++; g->w0 = 0xF8000000; g->w1 = (arg0->unk36 & 0xFF) | ~0xFF; }
+        { Gfx_80225840 *g = gfx++; g->w0 = 0xB900031D; g->w1 = 0x055079F8; }
+        { Gfx_80225840 *g = gfx++; g->w0 = 0xF8000000; g->w1 = (arg0->unk36 & 0xFF) | ~0xFF; }
     } else {
-        { Gfx_ovl0B_02 *g = gfx++; g->w0 = 0xB900031D; g->w1 = 0xF5005178; }
-        { Gfx_ovl0B_02 *g = gfx++; g->w0 = 0xF8000000; g->w1 = ((p->unk1C & 0xFF) << 24) | ((p->unk20 & 0xFF) << 16) | ((p->unk24 & 0xFF) << 8) | (arg0->unk36 & 0xFF); }
+        { Gfx_80225840 *g = gfx++; g->w0 = 0xB900031D; g->w1 = 0xF5005178; }
+        { Gfx_80225840 *g = gfx++; g->w0 = 0xF8000000; g->w1 = ((p->unk1C & 0xFF) << 24) | ((p->unk20 & 0xFF) << 16) | ((p->unk24 & 0xFF) << 8) | (arg0->unk36 & 0xFF); }
     }
-    { Gfx_ovl0B_02 *g = gfx++; g->w0 = 0x06000000; g->w1 = e[2] + p->unk14; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0x06000000; g->w1 = e[2] + p->unk14; }
     *arg1 = gfx;
 }
 

@@ -199,10 +199,7 @@
 #include "common.h"
 #include "overlays/common/types.h"
 
-typedef struct {
-    PORT_UP(u32) w0;
-    PORT_UP(u32) w1;
-} Gfx0B04;
+#include "gfx.h"
 
 /* A line of text: string, position, scale and its two colours. */
 typedef struct {
@@ -272,7 +269,7 @@ void func_ovl0B_04_80047E00(UnkStructA_40 *, s32); /* 0x1505 */
 void func_ovl0B_04_80047E08(UnkStructA_40 *, s32, s32, s32); /* 0x1506 */
 void func_ovl0B_04_80047E20(UnkStructA_40 *, s32, s32); /* 0x1509 */
 s32 func_ovl0B_04_80047E28(UnkStructA_40 *, s32); /* 0x150A */
-UnkStructA_40 *func_ovl0B_04_80047E58(void (*)(s32, Gfx0B04 **), s32); /* 0x1510 */
+UnkStructA_40 *func_ovl0B_04_80047E58(void (*)(UnkStructA_40 *, Gfx_80225840 **), s32); /* 0x1510 */
 s32 func_ovl0B_04_80047E68(UnkStructA_40 *, s32); /* 0x1512 */
 void func_ovl0B_04_80047E70(s32, s32, s32); /* 0x1513 */
 void func_ovl0B_04_80047E78(s32); /* 0x1514 */
@@ -1266,7 +1263,7 @@ static void func_ovl0B_04_80043A24(s32 n, s32 *ids, Item *items);
 #if !VERSION_JP
 static void func_ovl0B_04_80043A7C(s32 n, s32 *ids, Item *items);
 #endif
-void func_ovl0B_04_80043CD0(s32 arg0, Gfx0B04 **arg1);
+void func_ovl0B_04_80043CD0(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 static void func_ovl0B_04_80043FA4(u8 *ret, s32 page, s32 item, s32 mode);
 static void func_ovl0B_04_8004401C(Fade *f);
 static void func_ovl0B_04_800440C8(Fade *f);
@@ -2675,13 +2672,13 @@ void func_ovl0B_04_80043ADC(void) {
 }
 
 /* The fade's display list (ovl_0B_05's 80044DD8). */
-void func_ovl0B_04_80043CD0(s32 arg0, Gfx0B04 **arg1) {
-    Gfx0B04 *gfx = *arg1;
+void func_ovl0B_04_80043CD0(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
+    Gfx_80225840 *gfx = *arg1;
 
-    { Gfx0B04 *g = gfx++; g->w0 = 0xFA000000; g->w1 = ((D_ovl0B_04_8004A3E4->unk4 & 0xFF) << 24) | ((D_ovl0B_04_8004A3E4->unk8 & 0xFF) << 16) | ((D_ovl0B_04_8004A3E4->unkC & 0xFF) << 8) | (D_ovl0B_04_8004A3E4->unk10 & 0xFF); }
-    { Gfx0B04 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFDF6FB; }
-    { Gfx0B04 *g = gfx++; g->w0 = 0xF7000000; g->w1 = 0x10001; }
-    { Gfx0B04 *g = gfx++; g->w0 = 0xF6000000 | (((D_ovl0B_04_8004A3E4->unk2C + (s32) D_ovl0B_04_8004A3E4->unk34) & 0x3FF) << 14) | (((D_ovl0B_04_8004A3E4->unk30 + (s32) (D_ovl0B_04_8004A3E4->unk34 * D_ovl0B_04_8004A3E4->unk20)) & 0x3FF) << 2); g->w1 = (((D_ovl0B_04_8004A3E4->unk2C - (s32) D_ovl0B_04_8004A3E4->unk34) & 0x3FF) << 14) | (((D_ovl0B_04_8004A3E4->unk30 - (s32) (D_ovl0B_04_8004A3E4->unk34 * D_ovl0B_04_8004A3E4->unk20)) & 0x3FF) << 2); }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xFA000000; g->w1 = ((D_ovl0B_04_8004A3E4->unk4 & 0xFF) << 24) | ((D_ovl0B_04_8004A3E4->unk8 & 0xFF) << 16) | ((D_ovl0B_04_8004A3E4->unkC & 0xFF) << 8) | (D_ovl0B_04_8004A3E4->unk10 & 0xFF); }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFDF6FB; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xF7000000; g->w1 = 0x10001; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xF6000000 | (((D_ovl0B_04_8004A3E4->unk2C + (s32) D_ovl0B_04_8004A3E4->unk34) & 0x3FF) << 14) | (((D_ovl0B_04_8004A3E4->unk30 + (s32) (D_ovl0B_04_8004A3E4->unk34 * D_ovl0B_04_8004A3E4->unk20)) & 0x3FF) << 2); g->w1 = (((D_ovl0B_04_8004A3E4->unk2C - (s32) D_ovl0B_04_8004A3E4->unk34) & 0x3FF) << 14) | (((D_ovl0B_04_8004A3E4->unk30 - (s32) (D_ovl0B_04_8004A3E4->unk34 * D_ovl0B_04_8004A3E4->unk20)) & 0x3FF) << 2); }
     *arg1 = gfx;
     if (0) { func_ovl0B_04_80043ADC(); } /* fake: a dead call: 80043ADC comes out before 80043CD0 (header). Fakes p9: without it 80043CD0 comes out after 800436C8; defined before 80043ADC, the indirect call pulls it in front of 80043ADC */
 }

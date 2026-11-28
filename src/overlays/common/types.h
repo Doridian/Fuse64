@@ -9,6 +9,8 @@
  * code's headers here do; the comment says which others use it.
  */
 
+#include "gfx.h"
+
 /* the handler's state, one in .bss (0C_01..10, 0E_01..15, 12_01..05) */
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -511,5 +513,28 @@ typedef struct {
     /* 0x0C */ f32 unkC;
     /* 0x10 */ f32 unk10;
 } UnkStruct_ovl0B_04_80049D40; /* size = 0x14 */
+
+/* a fade or box drawn by a display-list callback (unk40): its model object,
+ * colour, and the rectangle its display list fills (0B_01's and 0B_05's
+ * fade, 0B_06's boxes) */
+typedef struct {
+    /* 0x00 */ UnkStructA_40 *unk0;
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ s32 unk8;
+    /* 0x0C */ s32 unkC;
+    /* 0x10 */ s32 unk10;
+    /* 0x14 */ f32 unk14;
+    /* 0x18 */ f32 unk18;
+    /* 0x1C */ f32 unk1C;
+    /* 0x20 */ f32 unk20;
+    /* 0x24 */ s32 unk24;
+    /* 0x28 */ s32 unk28;
+    /* 0x2C */ s32 unk2C;
+    /* 0x30 */ s32 unk30;
+    /* 0x34 */ f32 unk34;
+    /* 0x38 */ s32 unk38;
+    /* 0x3C */ s32 unk3C;
+    /* 0x40 */ void (*unk40)(UnkStructA_40 *, Gfx_80225840 **);
+} UnkStruct_ovl0B_01_80045E34; /* size 0x44 */
 
 #endif

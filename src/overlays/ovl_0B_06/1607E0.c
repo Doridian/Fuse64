@@ -441,10 +441,7 @@
 #include "common.h"
 #include "overlays/common/types.h"
 
-typedef struct {
-    PORT_UP(u32) w0;
-    PORT_UP(u32) w1;
-} Gfx_ovl0B_06;
+#include "gfx.h"
 
 /* D_ovl0B_06_80049930 */
 typedef struct {
@@ -470,27 +467,6 @@ typedef struct {
     /* 0x14 */ u8 unk14;
     /* 0x18 */ UnkStructA_40 *unk18;
 } Label_ovl0B_06; /* size = 0x1C */
-
-/* A box drawn by a display-list callback */
-typedef struct {
-    /* 0x00 */ UnkStructA_40 *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ s32 unk2C;
-    /* 0x30 */ s32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ s32 unk38;
-    /* 0x3C */ s32 unk3C;
-    /* 0x40 */ void (*unk40)(s32, Gfx_ovl0B_06 **);
-} Box_ovl0B_06; /* size = 0x44 */
 
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -538,7 +514,7 @@ void func_ovl0B_06_80048840(UnkStructA_40 *); /* 0x1501 */
 void func_ovl0B_06_80048860(UnkStructA_40 *, s32); /* 0x1505 */
 void func_ovl0B_06_80048868(UnkStructA_40 *, s32, s32, s32); /* 0x1506 */
 s32 func_ovl0B_06_80048888(UnkStructA_40 *, s32); /* 0x150A */
-UnkStructA_40 *func_ovl0B_06_800488B8(void (*)(s32, Gfx_ovl0B_06 **), s32); /* 0x1510 */
+UnkStructA_40 *func_ovl0B_06_800488B8(void (*)(UnkStructA_40 *, Gfx_80225840 **), s32); /* 0x1510 */
 s32 func_ovl0B_06_800488C8(UnkStructA_40 *, s32); /* 0x1512 */
 void func_ovl0B_06_800488D8(s32); /* 0x1514 */
 void func_ovl0B_06_80048978(s32); /* 0x1700 */
@@ -646,10 +622,10 @@ static void func_ovl0B_06_80043C40(void);
 static void NAMES(void);
 static void LABELS(void);
 static void LABELS_0(void);
-static void OPEN_A(s32 n, Box_ovl0B_06 *box);
-static void OPEN_B(s32 n, Box_ovl0B_06 *box);
-static void CLOSE_A(s32 n, Box_ovl0B_06 *box);
-static void CLOSE_B(s32 n, Box_ovl0B_06 *box);
+static void OPEN_A(s32 n, UnkStruct_ovl0B_01_80045E34 *box);
+static void OPEN_B(s32 n, UnkStruct_ovl0B_01_80045E34 *box);
+static void CLOSE_A(s32 n, UnkStruct_ovl0B_01_80045E34 *box);
+static void CLOSE_B(s32 n, UnkStruct_ovl0B_01_80045E34 *box);
 
 void func_ovl0B_06_80043C48(s32 arg0);
 void MSG_TASK(void);
@@ -713,16 +689,16 @@ static void func_ovl0B_06_80047B78(void);
 static void func_ovl0B_06_80047B80(void);
 static void func_ovl0B_06_80047B88(void);
 static void func_ovl0B_06_80047B90(void);
-static void func_ovl0B_06_80047B98(s32 x, Gfx_ovl0B_06 **arg0, Box_ovl0B_06 *box);
+static void func_ovl0B_06_80047B98(UnkStructA_40 *x, Gfx_80225840 **arg0, UnkStruct_ovl0B_01_80045E34 *box);
 #if !VERSION_JP
 static void func_ovl0B_06_80047D00(void);
 #endif
-static void func_ovl0B_06_80047D08(s32 arg0, Gfx_ovl0B_06 **arg1);
-static void func_ovl0B_06_80047D34(s32 arg0, Gfx_ovl0B_06 **arg1);
-static void func_ovl0B_06_80047D60(s32 arg0, Gfx_ovl0B_06 **arg1);
-static void func_ovl0B_06_80047D8C(s32 arg0, Gfx_ovl0B_06 **arg1);
-static void func_ovl0B_06_80047DB8(s32 arg0, Gfx_ovl0B_06 **arg1);
-static void func_ovl0B_06_80047DE4(s32 arg0, Gfx_ovl0B_06 **arg1);
+static void func_ovl0B_06_80047D08(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static void func_ovl0B_06_80047D34(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static void func_ovl0B_06_80047D60(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static void func_ovl0B_06_80047D8C(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static void func_ovl0B_06_80047DB8(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static void func_ovl0B_06_80047DE4(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 
 /*
  * Labels are drawn through ZeroJump 0x250C in us and eu, 0x2501 in jp, and
@@ -872,7 +848,7 @@ Label_ovl0B_06 D_ovl0B_06_80049B94[10] = {
     { D_ovl0B_06_80049558 + 0x12, 0, 0xCA, 0x90, 0.8f, 0.8f, 7, NULL }
 };
 #endif
-Box_ovl0B_06 D_ovl0B_06_80049CAC[6] = {
+UnkStruct_ovl0B_01_80045E34 D_ovl0B_06_80049CAC[6] = {
     { NULL, 0, 0xB4, 0, 0x78, 0.0f, 130.0f, 1.0f, 0.15f, 0x82, 0x82, 0xA0, 0x43, 0.0f, 0, 0x480, func_ovl0B_06_80047D08 },
     { NULL, 0, 0xB4, 0, 0x78, 0.0f, 130.0f, 1.0f, 0.15f, 0x82, 0x82, 0xA0, 0x6B, 0.0f, 0, 0x480, func_ovl0B_06_80047D34 },
     { NULL, 0, 0xB4, 0, 0x78, 0.0f, 130.0f, 1.0f, 0.15f, 0x82, 0x82, 0xA0, 0x93, 0.0f, 0, 0x480, func_ovl0B_06_80047D60 },
@@ -1075,18 +1051,18 @@ static void func_ovl0B_06_80047B90(void) {
 }
 
 /* @80047B98 */
-static void func_ovl0B_06_80047B98(s32 x, Gfx_ovl0B_06 **arg0, Box_ovl0B_06 *box) {
-    Gfx_ovl0B_06 *gfx = *arg0;
+static void func_ovl0B_06_80047B98(UnkStructA_40 *x, Gfx_80225840 **arg0, UnkStruct_ovl0B_01_80045E34 *box) {
+    Gfx_80225840 *gfx = *arg0;
 
-    { Gfx_ovl0B_06 *g = gfx++; g->w0 = 0xFA000000; g->w1 = ((box->unk4 & 0xFF) << 24) | ((box->unk8 & 0xFF) << 16) | ((box->unkC & 0xFF) << 8) | (box->unk10 & 0xFF); }
-    { Gfx_ovl0B_06 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFDF6FB; }
-    { Gfx_ovl0B_06 *g = gfx++; g->w0 = 0xF7000000; g->w1 = 0x10001; }
-    { Gfx_ovl0B_06 *g = gfx++; g->w0 = 0xF6000000 | (((box->unk2C + (s32) box->unk34) & 0x3FF) << 14) | (((box->unk30 + (s32) (box->unk34 * box->unk20)) & 0x3FF) << 2); g->w1 = (((box->unk2C - (s32) box->unk34) & 0x3FF) << 14) | (((box->unk30 - (s32) (box->unk34 * box->unk20)) & 0x3FF) << 2); }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xFA000000; g->w1 = ((box->unk4 & 0xFF) << 24) | ((box->unk8 & 0xFF) << 16) | ((box->unkC & 0xFF) << 8) | (box->unk10 & 0xFF); }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFDF6FB; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xF7000000; g->w1 = 0x10001; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xF6000000 | (((box->unk2C + (s32) box->unk34) & 0x3FF) << 14) | (((box->unk30 + (s32) (box->unk34 * box->unk20)) & 0x3FF) << 2); g->w1 = (((box->unk2C - (s32) box->unk34) & 0x3FF) << 14) | (((box->unk30 - (s32) (box->unk34 * box->unk20)) & 0x3FF) << 2); }
     *arg0 = gfx;
 }
 
 /* @80047D08 */
-static void func_ovl0B_06_80047D08(s32 arg0, Gfx_ovl0B_06 **arg1) {
+static void func_ovl0B_06_80047D08(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
 #if !VERSION_JP
     func_ovl0B_06_80047D00();
 #endif
@@ -1094,27 +1070,27 @@ static void func_ovl0B_06_80047D08(s32 arg0, Gfx_ovl0B_06 **arg1) {
 }
 
 /* @80047D34 */
-static void func_ovl0B_06_80047D34(s32 arg0, Gfx_ovl0B_06 **arg1) {
+static void func_ovl0B_06_80047D34(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[1]);
 }
 
 /* @80047D60 */
-static void func_ovl0B_06_80047D60(s32 arg0, Gfx_ovl0B_06 **arg1) {
+static void func_ovl0B_06_80047D60(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[2]);
 }
 
 /* @80047D8C */
-static void func_ovl0B_06_80047D8C(s32 arg0, Gfx_ovl0B_06 **arg1) {
+static void func_ovl0B_06_80047D8C(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[3]);
 }
 
 /* @80047DB8 */
-static void func_ovl0B_06_80047DB8(s32 arg0, Gfx_ovl0B_06 **arg1) {
+static void func_ovl0B_06_80047DB8(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[4]);
 }
 
 /* @80047DE4 */
-static void func_ovl0B_06_80047DE4(s32 arg0, Gfx_ovl0B_06 **arg1) {
+static void func_ovl0B_06_80047DE4(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     func_ovl0B_06_80047B98(arg0, arg1, &D_ovl0B_06_80049CAC[5]);
 }
 
@@ -2500,7 +2476,7 @@ static void func_ovl0B_06_80044BE4(s32 arg0) {
 
 /* @80044BA0 */
 static void func_ovl0B_06_80044BA0(s32 arg0, Col_ovl0B_06 *col) {
-    Box_ovl0B_06 *box = &D_ovl0B_06_80049CAC[arg0];
+    UnkStruct_ovl0B_01_80045E34 *box = &D_ovl0B_06_80049CAC[arg0];
 
     func_ovl0B_06_80044B98();
     box->unk4 = col->unk0;
@@ -2867,7 +2843,7 @@ static void LABELS(void) {
 }
 #endif
 
-static void OPEN_A(s32 n, Box_ovl0B_06 *box) {
+static void OPEN_A(s32 n, UnkStruct_ovl0B_01_80045E34 *box) {
     s32 i;
     f32 step;
     s32 a;
@@ -2883,7 +2859,7 @@ static void OPEN_A(s32 n, Box_ovl0B_06 *box) {
     }
 }
 
-static void CLOSE_A(s32 n, Box_ovl0B_06 *box) {
+static void CLOSE_A(s32 n, UnkStruct_ovl0B_01_80045E34 *box) {
     s32 i;
     for (i = 0; i < n; i++, box++) {
         for (box->unk34 = box->unk24; box->unk34 > 0.0f; box->unk34 -= box->unk28) {
@@ -2895,7 +2871,7 @@ static void CLOSE_A(s32 n, Box_ovl0B_06 *box) {
 }
 
 
-static void CLOSE_B(s32 n, Box_ovl0B_06 *box) {
+static void CLOSE_B(s32 n, UnkStruct_ovl0B_01_80045E34 *box) {
     s32 i;
 #if VERSION_JP
     volatile s32 k[15]; /* fake: unused, 64 bytes of frame at the bottom (volatile keeps its slot) */
@@ -3179,8 +3155,8 @@ static void func_ovl0B_06_80043018(void) {
  * two; tried: the start index as a parameter (jp's n home moves), OPEN_B
  * in a statics.h (jp swaps). The number is the call's line minus 5, so a
  * line added or removed above the handler changes it. */
-#line 2724
-static void OPEN_B(s32 n, Box_ovl0B_06 *box) {
+#line 2700
+static void OPEN_B(s32 n, UnkStruct_ovl0B_01_80045E34 *box) {
     s32 i;
     f32 step;
     s32 a;

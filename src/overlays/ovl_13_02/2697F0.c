@@ -46,10 +46,7 @@
 #define A180(v) (((v) >= 0.0f && (v) <= 180.0f) ? (v) : (360.0f - (v)) * -1.0f)
 #define W360(v) (((v) >= 360.0f) ? (v) - 360.0f : ((v) < 0.0f) ? (v) + 360.0f : (v))
 
-typedef struct {
-    PORT_UP(u32) w0;
-    PORT_UP(u32) w1;
-} Gfx_ovl13_02;
+#include "gfx.h"
 
 /* D_ovl13_02_8004DE80, DE98 and DEB0. */
 typedef struct {

@@ -73,7 +73,7 @@ typedef struct {
     /* 0x00 */ UnkStructA_40 *unk0;
     /* 0x04 */ s32 *unk4[4];
     /* 0x14 */ s32 unk14;
-    /* 0x18 */ void (*unk18)(s32, Gfx_80225840 **);
+    /* 0x18 */ void (*unk18)(UnkStructA_40 *, Gfx_80225840 **);
 } UnkStruct_ovl0A_01_Entry2;
 
 void func_ovl0A_01_800470F0(const char *); /* 0x100 */
@@ -89,7 +89,7 @@ void func_ovl0A_01_80047B48(UnkStructA_40 *, s32, s32, s32); /* 0x1506 */
 void func_ovl0A_01_80047B58(UnkStructA_40 *, s32); /* 0x1508 */
 void func_ovl0A_01_80047B60(UnkStructA_40 *, s32, s32); /* 0x1509 */
 f32 func_ovl0A_01_80047B78(UnkStructA_40 *, s32); /* 0x150C */
-UnkStructA_40 *func_ovl0A_01_80047B98(void (*)(s32, Gfx_80225840 **), s32); /* 0x1510 */
+UnkStructA_40 *func_ovl0A_01_80047B98(void (*)(UnkStructA_40 *, Gfx_80225840 **), s32); /* 0x1510 */
 s32 func_ovl0A_01_80047BA8(UnkStructA_40 *, s32); /* 0x1512 */
 void func_ovl0A_01_80047BB0(s32, s32, s32); /* 0x1513 */
 void func_ovl0A_01_80047BC0(s32, s32, s32); /* 0x1515 */
@@ -138,7 +138,7 @@ UnkStruct_802AC610 *D_ovl0A_01_80048D20;
 UnkStruct_802B0260 *D_ovl0A_01_80048D24;
 u8 D_ovl0A_01_80048D28[8];
 
-static void func_ovl0A_01_80046F10(s32 arg0, Gfx_80225840 **arg1);
+static void func_ovl0A_01_80046F10(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 
 /* .data */
 Vtx_ovl0A_01 D_ovl0A_01_80048730[4] = {
@@ -483,7 +483,7 @@ static void func_ovl0A_01_80046EB0(void) {
 /* Draws the light's quad: D_ovl0A_01_80048A48[0]'s draw callback. */
 #define RGBA(c) ((((c)[0] & 0xFF) << 24) | (((c)[1] & 0xFF) << 16) | (((c)[2] & 0xFF) << 8) | ((c)[3] & 0xFF))
 /* Draws the light's quad: D_ovl0A_01_80048A48's draw callback. */
-static void func_ovl0A_01_80046F10(s32 arg0, Gfx_80225840 **arg1) {
+static void func_ovl0A_01_80046F10(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     Gfx_80225840 *gfx;
     s32 i;
 

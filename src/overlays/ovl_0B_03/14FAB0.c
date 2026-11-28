@@ -158,7 +158,7 @@ void func_ovl0B_03_80047EC0(UnkStructA_40 *, s32);
 void func_ovl0B_03_80047EC8(UnkStructA_40 *, s32, s32, s32);
 void func_ovl0B_03_80047ED8(UnkStructA_40 *, s32);
 void func_ovl0B_03_80047EE0(UnkStructA_40 *, s32, s32);
-UnkStructA_40 *func_ovl0B_03_80047F18(void (*)(s32, Gfx_80225840 **), s32); /* 0x1510 */
+UnkStructA_40 *func_ovl0B_03_80047F18(void (*)(UnkStructA_40 *, Gfx_80225840 **), s32); /* 0x1510 */
 s32 func_ovl0B_03_80047F28(UnkStructA_40 *, s32);
 void func_ovl0B_03_80047FD8(s32);
 void func_ovl0B_03_80047FE8(s32);
@@ -211,14 +211,14 @@ void func_ovl0B_03_8004386C(void);
 static void func_ovl0B_03_800464B0(UnkStruct_ovl0B_02_80049A50 *models, s32 n);
 void func_ovl0B_03_80046510(void);
 s32 func_ovl0B_03_80046850(u8 arg0, u16 arg1);
-void func_ovl0B_03_80046918(s32 arg0, Gfx_80225840 **arg1);
+void func_ovl0B_03_80046918(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 void func_ovl0B_03_800469B4(void);
 void func_ovl0B_03_80046AE8(void);
 void func_ovl0B_03_80046C20(void);
 void func_ovl0B_03_80046D54(void);
 void func_ovl0B_03_80046E8C(void);
 void func_ovl0B_03_80046F78(void);
-void func_ovl0B_03_80047064(s32 arg0, Gfx_80225840 **arg1);
+void func_ovl0B_03_80047064(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 void func_ovl0B_03_80047188(void);
 static void func_ovl0B_03_80047190(UnkStruct_ovl0B_02_80049A50 *models, s32 n);
 void func_ovl0B_03_80047198(s32 arg0);
@@ -536,7 +536,7 @@ void func_ovl0B_03_80047188(void) {
 
 }
 
-void func_ovl0B_03_80047064(s32 arg0, Gfx_80225840 **arg1) {
+void func_ovl0B_03_80047064(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     Gfx_80225840 *g;
 
     g = *arg1;
@@ -619,7 +619,7 @@ void func_ovl0B_03_800469B4(void) {
     func_ovl0B_03_80048318();
 }
 
-void func_ovl0B_03_80046918(s32 arg0, Gfx_80225840 **arg1) {
+void func_ovl0B_03_80046918(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     Gfx_80225840 *g;
 
     g = *arg1;

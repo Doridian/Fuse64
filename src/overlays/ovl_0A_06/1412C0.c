@@ -68,12 +68,6 @@
 #include "common.h"
 #include "gfx.h"
 
-/* A display list command (gbi.h's Gfx, as two words) */
-typedef struct {
-    /* 0x00 */ PORT_UP(u32) w0;
-    /* 0x04 */ PORT_UP(u32) w1;
-} UnkStruct_ovl0A_06_800452B8;
-
 /* a rectangle: x, y, width, height */
 typedef struct {
     /* 0x00 */ u32 unk0;
@@ -92,7 +86,7 @@ typedef struct {
     /* 0x10 */ s32 *unk10;
     /* 0x14 */ UnkStruct_ovl0A_06_80047330 unk14;
     /* 0x24 */ s32 unk24;
-    /* 0x28 */ void (*unk28)(s32, UnkStruct_ovl0A_06_800452B8 **);
+    /* 0x28 */ void (*unk28)(UnkStructA_40 *, Gfx_80225840 **);
 } UnkStruct_ovl0A_06_80047178; /* size 0x2C */
 
 s32 func_ovl0A_06_800456D0(u8 *, const char *, s32); /* 0x101 */
@@ -101,7 +95,7 @@ u16 func_ovl0A_06_80045B18(void); /* 0xF03 */
 void func_ovl0A_06_80045B70(s32); /* 0xF0E */
 UnkStructA_40 *func_ovl0A_06_800460E8(s32, s32); /* 0x1500 */
 void func_ovl0A_06_800460F0(UnkStructA_40 *); /* 0x1501 */
-UnkStructA_40 *func_ovl0A_06_80046168(void (*)(s32, UnkStruct_ovl0A_06_800452B8 **), s32); /* 0x1510 */
+UnkStructA_40 *func_ovl0A_06_80046168(void (*)(UnkStructA_40 *, Gfx_80225840 **), s32); /* 0x1510 */
 void func_ovl0A_06_80046248(f32, f32, f32); /* 0x1704 */
 void func_ovl0A_06_80046268(f32, f32, f32); /* 0x1708 */
 void func_ovl0A_06_80046270(f32 *, f32 *, f32 *); /* 0x1709 */
@@ -132,16 +126,16 @@ void func_ovl0A_06_80046AE0(s32); /* 0x2B00 */
 s32 func_ovl0A_06_80046B00(s32, f32, f32, f32); /* 0x2B04 */
 s32 func_ovl0A_06_80046C50(); /* 0x2F10 */
 
-static void func_ovl0A_06_80045524(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1);
-static void func_ovl0A_06_8004554C(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1);
-static void func_ovl0A_06_80045574(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1);
-static void func_ovl0A_06_8004559C(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1);
-static void func_ovl0A_06_800455C4(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1);
-static void func_ovl0A_06_800455EC(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1);
-static void func_ovl0A_06_80045614(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1);
-static void func_ovl0A_06_8004563C(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1);
-static void func_ovl0A_06_80045664(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1);
-static void func_ovl0A_06_8004568C(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1);
+static void func_ovl0A_06_80045524(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static void func_ovl0A_06_8004554C(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static void func_ovl0A_06_80045574(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static void func_ovl0A_06_8004559C(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static void func_ovl0A_06_800455C4(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static void func_ovl0A_06_800455EC(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static void func_ovl0A_06_80045614(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static void func_ovl0A_06_8004563C(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static void func_ovl0A_06_80045664(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+static void func_ovl0A_06_8004568C(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 
 /* A sound and a wait: the wait comes out of a switch, so IDO keeps it in a
  * register rather than as an immediate (as the original does). */
@@ -529,7 +523,7 @@ static void func_ovl0A_06_80045298(void);
 static void func_ovl0A_06_800452A0(void);
 static void func_ovl0A_06_800452A8(void);
 static void func_ovl0A_06_800452B0(void);
-static void func_ovl0A_06_800452B8(s32 arg0, UnkStruct_ovl0A_06_80047178 *tbl, UnkStruct_ovl0A_06_800452B8 **arg1);
+static void func_ovl0A_06_800452B8(UnkStructA_40 *arg0, UnkStruct_ovl0A_06_80047178 *tbl, Gfx_80225840 **arg1);
 
 static void func_ovl0A_06_80043020(s32 sfx, s32 sel);
 static s32 func_ovl0A_06_8004311C(void);
@@ -574,7 +568,7 @@ static void func_ovl0A_06_80045298(void);
 static void func_ovl0A_06_800452A0(void);
 static void func_ovl0A_06_800452A8(void);
 static void func_ovl0A_06_800452B0(void);
-static void func_ovl0A_06_800452B8(s32 arg0, UnkStruct_ovl0A_06_80047178 *tbl, UnkStruct_ovl0A_06_800452B8 **arg1);
+static void func_ovl0A_06_800452B8(UnkStructA_40 *arg0, UnkStruct_ovl0A_06_80047178 *tbl, Gfx_80225840 **arg1);
 
 static void func_ovl0A_06_80043020(s32 sfx, s32 sel);
 static s32 func_ovl0A_06_8004311C(void);
@@ -619,7 +613,7 @@ static void func_ovl0A_06_80045298(void);
 static void func_ovl0A_06_800452A0(void);
 static void func_ovl0A_06_800452A8(void);
 static void func_ovl0A_06_800452B0(void);
-static void func_ovl0A_06_800452B8(s32 arg0, UnkStruct_ovl0A_06_80047178 *tbl, UnkStruct_ovl0A_06_800452B8 **arg1);
+static void func_ovl0A_06_800452B8(UnkStructA_40 *arg0, UnkStruct_ovl0A_06_80047178 *tbl, Gfx_80225840 **arg1);
 
 static void func_ovl0A_06_80043020(s32 sfx, s32 sel);
 static s32 func_ovl0A_06_8004311C(void);
@@ -664,7 +658,7 @@ static void func_ovl0A_06_80045298(void);
 static void func_ovl0A_06_800452A0(void);
 static void func_ovl0A_06_800452A8(void);
 static void func_ovl0A_06_800452B0(void);
-static void func_ovl0A_06_800452B8(s32 arg0, UnkStruct_ovl0A_06_80047178 *tbl, UnkStruct_ovl0A_06_800452B8 **arg1);
+static void func_ovl0A_06_800452B8(UnkStructA_40 *arg0, UnkStruct_ovl0A_06_80047178 *tbl, Gfx_80225840 **arg1);
 
 /* The tail: statics nothing in the code reaches, which IDO -O3 emits last,
  * in definition order. 80045258-800452B0 are unused (bodies dropped; the
@@ -713,62 +707,62 @@ static void func_ovl0A_06_800452A8(void) {
 static void func_ovl0A_06_800452B0(void) {
 }
 
-static void func_ovl0A_06_800452B8(s32 arg0, UnkStruct_ovl0A_06_80047178 *tbl, UnkStruct_ovl0A_06_800452B8 **arg1) {
-    UnkStruct_ovl0A_06_800452B8 *gfx = *arg1;
+static void func_ovl0A_06_800452B8(UnkStructA_40 *arg0, UnkStruct_ovl0A_06_80047178 *tbl, Gfx_80225840 **arg1) {
+    Gfx_80225840 *gfx = *arg1;
     s32 i;
 
-    { UnkStruct_ovl0A_06_800452B8 *_g = (UnkStruct_ovl0A_06_800452B8 *) (gfx++); _g->w0 = 0x0400103F; _g->w1 = (PORT_UP(u32)) D_ovl0A_06_80047028; }
+    { Gfx_80225840 *_g = (Gfx_80225840 *) (gfx++); _g->w0 = 0x0400103F; _g->w1 = (PORT_UP(u32)) D_ovl0A_06_80047028; }
     for (i = 0; i < 4; i++) {
-        UnkStruct_ovl0A_06_800452B8 *_g = (UnkStruct_ovl0A_06_800452B8 *) (gfx++);
+        Gfx_80225840 *_g = (Gfx_80225840 *) (gfx++);
         _g->w0 = 0xB2100000 | (i * 2);
         _g->w1 = (((&tbl->unk4)[i][0] & 0xFF) << 24) | (((&tbl->unk4)[i][1] & 0xFF) << 16) | (((&tbl->unk4)[i][2] & 0xFF) << 8) | ((&tbl->unk4)[i][3] & 0xFF);
     }
-    { UnkStruct_ovl0A_06_800452B8 *_g = (UnkStruct_ovl0A_06_800452B8 *) (gfx++); _g->w0 = 0xB2180000; _g->w1 = ((tbl->unk14.unk0 & 0x1FFF) << 18) | ((tbl->unk14.unk4 & 0x1FFF) << 2); }
-    { UnkStruct_ovl0A_06_800452B8 *_g = (UnkStruct_ovl0A_06_800452B8 *) (gfx++); _g->w0 = 0xB2180002; _g->w1 = ((tbl->unk14.unk0 & 0x1FFF) << 18) | (((tbl->unk14.unk4 + tbl->unk14.unkC) & 0x1FFF) << 2); }
-    { UnkStruct_ovl0A_06_800452B8 *_g = (UnkStruct_ovl0A_06_800452B8 *) (gfx++); _g->w0 = 0xB2180004; _g->w1 = (((tbl->unk14.unk0 + tbl->unk14.unk8) & 0x1FFF) << 18) | ((tbl->unk14.unk4 & 0x1FFF) << 2); }
-    { UnkStruct_ovl0A_06_800452B8 *_g = (UnkStruct_ovl0A_06_800452B8 *) (gfx++); _g->w0 = 0xB2180006; _g->w1 = (((tbl->unk14.unk0 + tbl->unk14.unk8) & 0x1FFF) << 18) | (((tbl->unk14.unk4 + tbl->unk14.unkC) & 0x1FFF) << 2); }
-    { UnkStruct_ovl0A_06_800452B8 *_g = (UnkStruct_ovl0A_06_800452B8 *) (gfx++); _g->w0 = 0xBF000000; _g->w1 = 0x204; }
-    { UnkStruct_ovl0A_06_800452B8 *_g = (UnkStruct_ovl0A_06_800452B8 *) (gfx++); _g->w0 = 0xBF000000; _g->w1 = 0x40206; }
+    { Gfx_80225840 *_g = (Gfx_80225840 *) (gfx++); _g->w0 = 0xB2180000; _g->w1 = ((tbl->unk14.unk0 & 0x1FFF) << 18) | ((tbl->unk14.unk4 & 0x1FFF) << 2); }
+    { Gfx_80225840 *_g = (Gfx_80225840 *) (gfx++); _g->w0 = 0xB2180002; _g->w1 = ((tbl->unk14.unk0 & 0x1FFF) << 18) | (((tbl->unk14.unk4 + tbl->unk14.unkC) & 0x1FFF) << 2); }
+    { Gfx_80225840 *_g = (Gfx_80225840 *) (gfx++); _g->w0 = 0xB2180004; _g->w1 = (((tbl->unk14.unk0 + tbl->unk14.unk8) & 0x1FFF) << 18) | ((tbl->unk14.unk4 & 0x1FFF) << 2); }
+    { Gfx_80225840 *_g = (Gfx_80225840 *) (gfx++); _g->w0 = 0xB2180006; _g->w1 = (((tbl->unk14.unk0 + tbl->unk14.unk8) & 0x1FFF) << 18) | (((tbl->unk14.unk4 + tbl->unk14.unkC) & 0x1FFF) << 2); }
+    { Gfx_80225840 *_g = (Gfx_80225840 *) (gfx++); _g->w0 = 0xBF000000; _g->w1 = 0x204; }
+    { Gfx_80225840 *_g = (Gfx_80225840 *) (gfx++); _g->w0 = 0xBF000000; _g->w1 = 0x40206; }
     *arg1 = gfx;
 }
 
-static void func_ovl0A_06_80045524(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1) {
+static void func_ovl0A_06_80045524(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     func_ovl0A_06_800452B8(arg0, &D_ovl0A_06_80047178[0], arg1);
 }
 
-static void func_ovl0A_06_8004554C(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1) {
+static void func_ovl0A_06_8004554C(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     func_ovl0A_06_800452B8(arg0, &D_ovl0A_06_80047178[1], arg1);
 }
 
-static void func_ovl0A_06_80045574(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1) {
+static void func_ovl0A_06_80045574(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     func_ovl0A_06_800452B8(arg0, &D_ovl0A_06_80047178[2], arg1);
 }
 
-static void func_ovl0A_06_8004559C(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1) {
+static void func_ovl0A_06_8004559C(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     func_ovl0A_06_800452B8(arg0, &D_ovl0A_06_80047178[3], arg1);
 }
 
-static void func_ovl0A_06_800455C4(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1) {
+static void func_ovl0A_06_800455C4(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     func_ovl0A_06_800452B8(arg0, &D_ovl0A_06_80047178[4], arg1);
 }
 
-static void func_ovl0A_06_800455EC(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1) {
+static void func_ovl0A_06_800455EC(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     func_ovl0A_06_800452B8(arg0, &D_ovl0A_06_80047178[5], arg1);
 }
 
-static void func_ovl0A_06_80045614(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1) {
+static void func_ovl0A_06_80045614(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     func_ovl0A_06_800452B8(arg0, &D_ovl0A_06_80047178[6], arg1);
 }
 
-static void func_ovl0A_06_8004563C(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1) {
+static void func_ovl0A_06_8004563C(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     func_ovl0A_06_800452B8(arg0, &D_ovl0A_06_80047178[7], arg1);
 }
 
-static void func_ovl0A_06_80045664(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1) {
+static void func_ovl0A_06_80045664(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     func_ovl0A_06_800452B8(arg0, &D_ovl0A_06_80047178[8], arg1);
 }
 
-static void func_ovl0A_06_8004568C(s32 arg0, UnkStruct_ovl0A_06_800452B8 **arg1) {
+static void func_ovl0A_06_8004568C(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     func_ovl0A_06_800452B8(arg0, &D_ovl0A_06_80047178[9], arg1);
 }
 
@@ -1612,9 +1606,9 @@ static s32 func_ovl0A_06_8004311C(void) {
             D_ovl0A_06_80047018 = 1;
             func_ovl0A_06_80043020(0, 1);
         } else if ((pressed & 0x8000) || (pressed & 0x1000)) {
-#line 1658 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1652 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             ret = 1;
-#line 1634 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1628 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             if (D_ovl0A_06_80047018 == 0) {
                 /* SE(1, 1) with `ret = 2` between its wait and its call */
                 switch (1) {
@@ -1631,9 +1625,9 @@ static s32 func_ovl0A_06_8004311C(void) {
                 SE(2, 2);
             }
         } else if (pressed & 0x4000) {
-#line 1658 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1652 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             ret = 1;
-#line 1653 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1647 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             SE(2, 2);
         }
         func_ovl0A_06_800465A0();

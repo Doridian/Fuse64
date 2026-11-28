@@ -34,32 +34,9 @@
  */
 #include "common.h"
 
-typedef struct {
-    PORT_UP(u32) w0;
-    PORT_UP(u32) w1;
-} Gfx_ovl0B_01;
+#include "gfx.h"
 
-/* The fade at D_ovl0B_01_80045E34: its object, colour, and the rectangle
- * its display list fills. */
-typedef struct {
-    /* 0x00 */ UnkStructA_40 *unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ s32 unk2C;
-    /* 0x30 */ s32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ s32 unk38;
-    /* 0x3C */ s32 unk3C;
-    /* 0x40 */ void (*unk40)(s32, Gfx_ovl0B_01 **);
-} UnkStruct_ovl0B_01_80045E34;
+#include "overlays/common/types.h"
 
 /* The copyright line 80043448 copies to its stack. */
 typedef struct {
@@ -77,7 +54,7 @@ s32 func_ovl0B_01_80044C18(void); /* 0xF03 */
 UnkStruct_802AC610 *func_ovl0B_01_80044C58(void); /* 0xF0B */
 UnkStructA_40 *func_ovl0B_01_800451E8(s32, s32); /* 0x1500 */
 void func_ovl0B_01_800451F0(UnkStructA_40 *); /* 0x1501 */
-UnkStructA_40 *func_ovl0B_01_80045268(void (*)(s32, Gfx_ovl0B_01 **), s32); /* 0x1510 */
+UnkStructA_40 *func_ovl0B_01_80045268(void (*)(UnkStructA_40 *, Gfx_80225840 **), s32); /* 0x1510 */
 void func_ovl0B_01_80045328(s32); /* 0x1700 */
 void func_ovl0B_01_80045338(s32); /* 0x1702 */
 void func_ovl0B_01_80045348(f32, f32, f32); /* 0x1704 */
@@ -131,7 +108,7 @@ UnkStructA_40 *D_ovl0B_01_80045FE0;
 UnkStructA_40 *D_ovl0B_01_80045FE4;
 #endif
 
-static void func_ovl0B_01_8004464C(s32 arg0, Gfx_ovl0B_01 **arg1);
+static void func_ovl0B_01_8004464C(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 static void func_ovl0B_01_800430A4(UnkStruct_ovl0B_01_80045E34 *arg0);
 
 /* .data */
@@ -225,7 +202,7 @@ static void func_ovl0B_01_800445D4(void) {
     D_ovl0B_01_80045F80[0] = 0;
 }
 
-static void func_ovl0B_01_8004464C(s32 arg0, Gfx_ovl0B_01 **arg1) {
+static void func_ovl0B_01_8004464C(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     func_ovl0B_01_80044644(&D_ovl0B_01_80045E34, arg1);
 }
 

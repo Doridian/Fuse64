@@ -8,14 +8,11 @@ typedef struct {
     /* 0x36 */ s16 unk36;
 } UnkStruct_802A1A80;
 
-/* A display list command (gbi.h's Gfx, as two words).  The commands are
- * written as gbi.h's macros expand, one per line; the colour's first
- * component is masked like the others (_SHIFTL), which sets its
- * registers. */
-typedef struct {
-    /* 0x00 */ PORT_UP(u32) w0;
-    /* 0x04 */ PORT_UP(u32) w1;
-} UnkStruct_80281FA0; /* size 0x8 */
+#include "gfx.h"
+
+/* The display list commands are written as gbi.h's macros expand, one per
+ * line; the colour's first component is masked like the others (_SHIFTL),
+ * which sets its registers. */
 
 void *func_8022A328(void *, s32, s32, s32, s32);
 s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
@@ -25,14 +22,14 @@ void func_80239094(void);
 void func_80239430(void);
 void func_802817F8(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, void (*arg5)(void));
 void func_80281B10(void);
-static void func_80281FA0(s32 arg0, UnkStruct_80281FA0 **arg1);
+static void func_80281FA0(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 void func_80281C00(void);
 void func_80281CF0(void);
 void func_80281DD8(void);
 void func_80281E70(void);
 void func_80281F0C(void);
-void func_80282034(s32 arg0, UnkStruct_80281FA0 **arg1);
-void func_802820BC(s32 arg0, UnkStruct_80281FA0 **arg1);
+void func_80282034(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
+void func_802820BC(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 void func_80282144(s32 arg0, s32 arg1, s32 arg2, f32 arg3);
 void func_80281AE0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void func_80281AB4(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
@@ -89,18 +86,18 @@ void func_80282144(s32 arg0, s32 arg1, s32 arg2, f32 arg3) {
     D_802B024C = arg2;
 }
 
-void func_802820BC(s32 arg0, UnkStruct_80281FA0 **arg1) {
-    UnkStruct_80281FA0 *gfx = *arg1;
+void func_802820BC(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
+    Gfx_80225840 *gfx = *arg1;
 
-    { UnkStruct_80281FA0 *g = gfx++; g->w0 = 0xFA000000; g->w1 = ((D_802B0244 & 0xFF) << 24) | ((D_802B0248 & 0xFF) << 16) | ((D_802B024C & 0xFF) << 8) | 0xFF; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xFA000000; g->w1 = ((D_802B0244 & 0xFF) << 24) | ((D_802B0248 & 0xFF) << 16) | ((D_802B024C & 0xFF) << 8) | 0xFF; }
     func_80281FA0(arg0, &gfx);
     *arg1 = gfx;
 }
 
-void func_80282034(s32 arg0, UnkStruct_80281FA0 **arg1) {
-    UnkStruct_80281FA0 *gfx = *arg1;
+void func_80282034(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
+    Gfx_80225840 *gfx = *arg1;
 
-    { UnkStruct_80281FA0 *g = gfx++; g->w0 = 0xFA000000; g->w1 = ((D_802B0230 & 0xFF) << 24) | ((D_802B0234 & 0xFF) << 16) | ((D_802B0238 & 0xFF) << 8) | 0xFF; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xFA000000; g->w1 = ((D_802B0230 & 0xFF) << 24) | ((D_802B0234 & 0xFF) << 16) | ((D_802B0238 & 0xFF) << 8) | 0xFF; }
     func_80281FA0(arg0, &gfx);
     *arg1 = gfx;
 }
@@ -108,15 +105,15 @@ void func_80282034(s32 arg0, UnkStruct_80281FA0 **arg1) {
 /* static, and taking the callers' unused arg0: IDO -O3 passes that in its
  * home slot (the callers' `sw $a0, 0($sp)`) and the display list in $a0,
  * and the callers keep their arg1 in $t2 across the call. */
-static void func_80281FA0(s32 arg0, UnkStruct_80281FA0 **arg1) {
-    UnkStruct_80281FA0 *gfx = *arg1;
+static void func_80281FA0(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
+    Gfx_80225840 *gfx = *arg1;
 
-    { UnkStruct_80281FA0 *g = gfx++; g->w0 = 0xB9000401; g->w1 = 0; }
-    { UnkStruct_80281FA0 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFDF6FB; }
-    { UnkStruct_80281FA0 *g = gfx++; g->w0 = 0xFF10013F; g->w1 = (PORT_UP(u32)) D_1000000; }
-    { UnkStruct_80281FA0 *g = gfx++; g->w0 = 0xF7000000; g->w1 = 0x10001; }
-    { UnkStruct_80281FA0 *g = gfx++; g->w0 = 0xF64FC3BC; g->w1 = 0; }
-    { UnkStruct_80281FA0 *g = gfx++; g->w0 = 0xB9000401; g->w1 = 0x10; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xB9000401; g->w1 = 0; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xFCFFFFFF; g->w1 = 0xFFFDF6FB; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xFF10013F; g->w1 = (PORT_UP(u32)) D_1000000; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xF7000000; g->w1 = 0x10001; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xF64FC3BC; g->w1 = 0; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xB9000401; g->w1 = 0x10; }
     *arg1 = gfx;
 }
 

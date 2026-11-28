@@ -2,11 +2,13 @@
 """The OpenGL renderer against the software one (docs/PORT.md, "The OpenGL
 renderer").
 
-  gl_cmp.py BUILD [--scenario NAME ...] [--every N] [--vi-raw] [--out DIR]
-            [--gl RENDERER] [--ref RENDERER] [--frames N] [--keep]
+  gl_cmp.py BUILD [--scenario NAME ...] [--every N] [--rdram-every N] [--vi-raw]
+            [--out DIR] [--gl RENDERER] [--ref RENDERER] [--frames N] [--keep]
 
 Runs each scenario (test.py's: its input, warp and save, headless and
-deterministic) twice, with --renderer soft and --renderer gl, takes a
+deterministic; or "attract", 3000 retraces without input: the first attract
+demo and its screen captures; or "reset", menus with the reset button at
+retrace 1500) twice, with --renderer soft and --renderer gl, takes a
 screenshot of the picture shown every N retraces (the VI's, or with
 --vi-raw the color image) and compares each pair:
 
@@ -15,10 +17,13 @@ screenshot of the picture shown every N retraces (the VI's, or with
 
 (the owner's thresholds, docs/PORT.md: mean under 3, >24 under 0.1%).  And
 what the game did, which mustn't depend on the renderer: the gameplay
-digest (PORT_DIGEST) of the two runs, and RDRAM at the last retrace
-(PORT_DUMP_RDRAM) outside the color and z images (--images, N64 offsets:
-the two framebuffers and the z image by default, "The GBI census"), and
-how many bytes differ with them.  The runs are without address
+digest (PORT_DIGEST) of the two runs, and RDRAM (PORT_DUMP_RDRAM) every
+--rdram-every retraces and at the last, outside the color and z images
+(--images, N64 offsets: the two framebuffers and the z image by default,
+"The GBI census") and with them.  The OpenGL renderer keeps the images on
+the GPU and makes RDRAM the same where something reads it (docs/PORT.md,
+"The OpenGL renderer"): a dump is such a reader, and so is a screenshot,
+so the images are compared as the game, the VI or a dump sees them.  The runs are without address
 randomization (setarch -R), so that the host pointers the game's
 structures hold are the same; the words that still differ are listed.
 --out writes the worst picture's pair and difference as PNGs; --keep
@@ -40,6 +45,12 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import test  # noqa: E402
 
 IMAGES = "100000:14B000,200000:225800"
+
+# gl_cmp's own scenarios: (retraces, input, warp, save) and the environment
+SCENARIOS = dict(test.SCENARIOS)
+SCENARIOS["attract"] = (3000, None)
+SCENARIOS["reset"] = (3000, "tools/inputs/menus.txt")
+SCENARIO_ENV = {"reset": {"PORT_RESET": "1500"}}
 
 
 def bmp(path):
@@ -64,24 +75,35 @@ def png(path, a):
                            chunk(b"IDAT", zlib.compress(raw, 6)) + chunk(b"IEND", b""))
 
 
-def play(build, name, renderer, every, vi_raw, tmp, timeout, upto=None):
-    """one run: its screenshots' directory, digest and RDRAM dump"""
-    ver = test.cache_value(build, "PORT_VERSION") or "us"
-    frames, script = test.SCENARIOS[name][:2]
+def points(name, upto, rdram_every):
+    """the retraces RDRAM is compared at"""
+    frames = SCENARIOS[name][0]
     if upto:
         frames = min(frames, upto)
-    warp, save = (test.SCENARIOS[name][2:] + (None, None))[:2]
+    return sorted(set(list(range(rdram_every, frames, rdram_every)) + [frames])) if rdram_every else [frames]
+
+
+def play(build, name, renderer, every, vi_raw, tmp, timeout, upto=None, rdram_every=0):
+    """one run: its screenshots' directory, digest and RDRAM dumps"""
+    ver = test.cache_value(build, "PORT_VERSION") or "us"
+    frames, script = SCENARIOS[name][:2]
+    if upto:
+        frames = min(frames, upto)
+    warp, save = (SCENARIOS[name][2:] + (None, None))[:2]
     d = os.path.join(tmp, renderer)
     os.makedirs(d)
     env = dict(os.environ)
     env.pop("PORT_WARP", None)
     env.pop("PORT_MONKEY", None)
+    env.pop("PORT_RESET", None)
+    env.update(SCENARIO_ENV.get(name, {}))
     if warp is not None:
         env["PORT_WARP"] = str(warp)
     if save:
         shutil.copy(os.path.join(test.ROOT, save.format(v=ver)), os.path.join(d, "fuse64.%s.eep" % ver))
     env["PORT_DIGEST"] = os.path.join(d, "digest.txt")
-    env["PORT_DUMP_RDRAM"] = "%d:%s" % (frames, os.path.join(d, "rdram.bin"))
+    env["PORT_DUMP_RDRAM"] = "%s,0:%s" % (",".join(map(str, points(name, upto, rdram_every))),
+                                            os.path.join(d, "rdram.bin"))
     # (without address randomization, so that the host's pointers the game
     # keeps in RDRAM are the same in both runs)
     cmd = ["nice", "-n", "10"] + (["setarch", "-R"] if shutil.which("setarch") else []) + [os.path.join(build, "fuse64"), "--headless", "--deterministic", "--frames", str(frames),
@@ -112,8 +134,9 @@ def rdram_diff(a, b, images):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("build")
-    ap.add_argument("--scenario", action="append", choices=sorted(test.SCENARIOS))
+    ap.add_argument("--scenario", action="append", choices=sorted(SCENARIOS))
     ap.add_argument("--every", type=int, default=50)
+    ap.add_argument("--rdram-every", type=int, default=1000, help="RDRAM compared every N retraces too (0: the last)")
     ap.add_argument("--vi-raw", action="store_true", help="compare the color images, not the VI's pictures")
     ap.add_argument("--gl", default="gl", help="the renderer compared (default gl)")
     ap.add_argument("--ref", default="soft", help="the reference (default soft)")
@@ -129,8 +152,8 @@ def main():
         tmp = tempfile.mkdtemp(prefix="fuse64-glcmp-")
         try:
             with ThreadPoolExecutor(2) as ex:
-                fa = ex.submit(play, a.build, name, a.ref, a.every, a.vi_raw, tmp, a.timeout, a.frames)
-                fb = ex.submit(play, a.build, name, a.gl, a.every, a.vi_raw, tmp, a.timeout, a.frames)
+                fa = ex.submit(play, a.build, name, a.ref, a.every, a.vi_raw, tmp, a.timeout, a.frames, a.rdram_every)
+                fb = ex.submit(play, a.build, name, a.gl, a.every, a.vi_raw, tmp, a.timeout, a.frames, a.rdram_every)
                 (ver, da), (_, db) = fa.result(), fb.result()
             shots = sorted(f for f in os.listdir(da) if f.startswith("s_") and f.endswith(".bmp"))
             means, fracs, worst, same = [], [], None, 0
@@ -150,23 +173,36 @@ def main():
                 fails += 1
                 continue
             same_digest = open(os.path.join(da, "digest.txt"), "rb").read() == open(os.path.join(db, "digest.txt"), "rb").read()
-            idx = rdram_diff(os.path.join(da, "rdram.bin"), os.path.join(db, "rdram.bin"), images)
-            whole = len(rdram_diff(os.path.join(da, "rdram.bin"), os.path.join(db, "rdram.bin"), []))
+            pts = points(name, a.frames, a.rdram_every)
+            idx, whole, same_pts, last = [], 0, 0, None
+            for n in pts:
+                fx, fy = (os.path.join(dd, "rdram.bin.%d" % n) for dd in (da, db))
+                i = rdram_diff(fx, fy, images)
+                w = len(rdram_diff(fx, fy, []))
+                same_pts += not w
+                if n == pts[-1]:
+                    whole = w
+                    if not len(idx):
+                        idx, last = i, (fx, fy)
+                elif len(i) and not len(idx):
+                    idx, last = i, (fx, fy)
             over = [f for f, m, fr in zip(shots, means, fracs) if m >= 3 or fr >= 0.001]
             print("%s/%s: %d pictures (%d the same); mean %.2f (worst %.2f), >24 %.3f%% (worst %.3f%%, %s); %d over a threshold; "
-                  "digest %s; RDRAM outside the images %s (with them: %d bytes differ)" % (
+                  "digest %s; RDRAM at %d retraces, all of it the same at %d; outside the images %s (at the last, "
+                  "with them: %d bytes differ)" % (
                       ver, name, len(shots), same, float(np.mean(means)), max(means), 100 * float(np.mean(fracs)),
                       100 * worst[1], worst[0][2:-4].lstrip("0"), len(over), "the same" if same_digest else "DIFFERS",
+                      len(pts), same_pts,
                       "the same" if not len(idx) else "DIFFERS in %d bytes (first %06X)" % (len(idx), idx[0]), whole))
             if len(idx):
                 # (the words, as the host keeps them: the game's structures
                 # hold host pointers, little-endian, where the N64 had its own)
-                ra = open(os.path.join(da, "rdram.bin"), "rb").read()
-                rb = open(os.path.join(db, "rdram.bin"), "rb").read()
+                ra = open(last[0], "rb").read()
+                rb = open(last[1], "rb").read()
                 words = sorted(set(int(i) & ~3 for i in idx))
                 print("  %d words, from: %s" % (len(words), ", ".join(
                     "%06X %s/%s" % (w, ra[w:w + 4][::-1].hex(), rb[w:w + 4][::-1].hex()) for w in words[:4])))
-            fails += bool(over) or not same_digest or bool(len(idx))
+            fails += bool(over) or not same_digest or bool(len(idx)) or same_pts != len(pts)
             if a.out:
                 os.makedirs(a.out, exist_ok=True)
                 f, fr, m, x, y, d = worst

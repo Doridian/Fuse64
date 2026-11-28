@@ -34,6 +34,7 @@ uint32_t host_frame_hash(void) {
         const uint8_t *fb = host_vi_raw_fb();
         if (!fb)
             return 0;
+        host_gfx_sync();
         for (size_t i = 0; i < 320 * 240 * 2; i++)
             h = (h ^ fb[i]) * 16777619u;
         return h;

@@ -56,6 +56,7 @@ void host_input_frame(void);            /* once a retrace: the script's next lin
 int host_gfx_renderer(const char *name);    /* --renderer: 0 if there is none of that name */
 int host_gfx_gl(void);                      /* whether the renderer has a GL context (gfx_gl.c) */
 void host_gfx_init(void);
+void host_gfx_retrace(void);                /* each retrace (main.c) */
 /* gfx_soft.c: RDRAM's hidden bits, a byte a halfword (HB_CLEAN: never
    written by the RDP, its hidden bits its low bit twice) */
 #define HB_CLEAN 4

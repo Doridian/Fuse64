@@ -27,6 +27,7 @@
 #ifndef GFX_H
 #define GFX_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 /* ---- the RDP's state (gfx_rdp.c) ------------------------------------------------------ */
@@ -114,6 +115,11 @@ typedef struct {
     /* (may be NULL) a task's end; a TMEM load from gs.timg about to be done */
     void (*task_end)(void);
     void (*texture_source)(const uint8_t *timg);
+    /* (may be NULL) RDRAM made what the RDP left there, for what reads it
+       outside the tasks (host_gfx_sync: n bytes at p, or with p NULL all of
+       it); a retrace (host_gfx_retrace) */
+    void (*sync)(const uint8_t *p, size_t n);
+    void (*retrace)(void);
 } GfxBackend;
 
 extern const GfxBackend gfx_soft;       /* gfx_soft.c */
@@ -125,6 +131,9 @@ extern const GfxBackend gfx_gl;         /* gfx_gl.c */
    end's copy of the color image) */
 int gfx_soft_cvg(const uint8_t *p);
 void gfx_soft_set_cvg(uint8_t *p, int cvg);
+/* the hidden bits' byte of the halfword at p (HB_CLEAN or its two bits);
+   an image's are consecutive */
+uint8_t *gfx_soft_hb(const uint8_t *p);
 
 /* ---- the HLE front end (gfx_hle.c) ------------------------------------------------------------ */
 

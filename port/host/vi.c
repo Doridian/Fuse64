@@ -308,6 +308,21 @@ static void make(const uint32_t *r, uint32_t *out, int *w, int *h) {
     for (int i = 0; i < 4; i++)
         srcs[i].line = -1;
     int lerping = aa_mode != 3;
+    /* what it reads (the lines around, the columns the filters reach) as the
+       RDP left it (a GPU renderer's images: gfx_gl.c) */
+#ifdef PORT_SCATTER_LAYOUT
+    host_gfx_sync();
+#else
+    {
+        int64_t first = (int64_t)img_base + ((int64_t)(y_start >> 10) - 1) * img_w + col_s0 - SRC_PAD;
+        int64_t last = (int64_t)img_base + ((int64_t)((y_start + (uint32_t)(vres - 1) * y_add) >> 10) + 2) * img_w +
+                       col_s1 + SRC_PAD;
+        if (first >= 0 && first <= last && last < HALVES)
+            host_gfx_sync_range(port_rdram + (size_t)first * 2, (size_t)(last - first + 1) * 2);
+        else
+            host_gfx_sync();            /* (RDRAM wraps) */
+    }
+#endif
 
     for (int y = 0; y < vres; y++) {
         uint32_t cy = y_start + (uint32_t)y * y_add;
@@ -363,6 +378,8 @@ const uint32_t *host_vi_picture(int *w, int *h) {
     if (!pic_valid) {
         gamma_init();
         if (host_vi_raw) {
+            if (raw_fb)
+                host_gfx_sync_range(raw_fb, 320 * 240 * 2);
             make_raw(pic);
             pic_w = 320;
             pic_h = 240;
@@ -402,6 +419,7 @@ void host_vi_frame(void) {
     if (host_vi_count < from || host_vi_count > to)
         return;
     uint32_t r[PORT_VI_NREGS];
+    host_gfx_sync();
     memcpy(r, regs, sizeof r);
     r[PORT_VI_CONTROL] &= ~4u;
     static uint32_t px[PIC_W * PIC_H];

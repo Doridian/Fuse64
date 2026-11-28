@@ -514,6 +514,7 @@ static void xr_begin(const void *dl) {
     xr.on = host_vi_count >= from && host_vi_count <= to;
     if (!xr.on)
         return;
+    host_gfx_sync();
     if (!xr.img)
         xr.img = malloc(0x1000000);
     if (!xr.img)
@@ -625,6 +626,7 @@ static void xr_begin(const void *dl) {
 static void xr_end(void) {
     if (!xr.on)
         return;
+    host_gfx_sync();
     char path[1100];
     snprintf(path, sizeof path, "%s/r%06u_t%u.out", xr_dir, host_vi_count, xr_task);
     xr_write(path, port_rdram, PORT_RDRAM_SIZE, NULL, 0);
@@ -1382,6 +1384,21 @@ void host_gfx_init(void) {
     host_fbw_init();
 }
 
+void host_gfx_sync(void) {
+    if (be->sync)
+        be->sync(NULL, 0);
+}
+
+void host_gfx_sync_range(const void *p, size_t n) {
+    if (be->sync)
+        be->sync(p, n);
+}
+
+void host_gfx_retrace(void) {
+    if (be->retrace)
+        be->retrace();
+}
+
 int host_gfx_task(const void *dl, uint32_t size) {
     static int no_draw = -1;
     if (no_draw < 0) {
@@ -1409,8 +1426,10 @@ int host_gfx_task(const void *dl, uint32_t size) {
         be->task_end();
     xr_end();
     xr_task++;
-    if (host_fbw_on)
+    if (host_fbw_on) {
+        host_gfx_sync();
         host_fbw_task(0);
+    }
     if (dl_on)
         fflush(dl_out);
     return full_sync;

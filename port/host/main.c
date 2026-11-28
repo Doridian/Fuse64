@@ -241,6 +241,7 @@ static void soft_reset(void) {
     }
     if (host_verbose)
         host_log("%u: the NMI\n", host_vi_count);
+    host_gfx_sync();            /* (RDRAM keeps what the RDP drew) */
     npending = 0;
     host_threads_reset();
     port_coro_reset();
@@ -327,26 +328,41 @@ EM_ASYNC_JS(void, wait_display, (void), {
 static double last_yield;
 #endif
 
-/* PORT_DUMP_RDRAM=N:FILE writes the RDRAM buffer (the work area, the
-   regions) at retrace N, to compare two hosts' runs (a debugging aid) */
+/* PORT_DUMP_RDRAM=N[,N...]:FILE writes the RDRAM buffer (the work area,
+   the regions) at retrace N (several: FILE.N each), to compare two hosts'
+   or renderers' runs (a debugging aid; a GPU renderer's images synced
+   first, as for anything that reads RDRAM) */
 extern uint8_t port_rdram[];
 static void dump_rdram(void) {
-    static int at = -2;
-    static const char *path;
-    if (at == -2) {
+    static int init, many;
+    static const char *list, *path;
+    if (!init) {
         const char *e = getenv("PORT_DUMP_RDRAM");
-        at = -1;
+        init = 1;
         if (e && strchr(e, ':')) {
-            at = atoi(e);
+            list = e;
             path = strchr(e, ':') + 1;
+            many = strchr(e, ',') && strchr(e, ',') < path;
         }
     }
-    if (at >= 0 && (int)host_vi_count == at) {
-        FILE *f = fopen(path, "wb");
-        if (f) {
-            fwrite(port_rdram, 1, 8 << 20, f);
-            fclose(f);
+    for (const char *p = list; p;) {
+        char *end;
+        unsigned long n = strtoul(p, &end, 10);
+        if (end == p)
+            break;
+        if (n == host_vi_count) {
+            char name[1100];
+            snprintf(name, sizeof name, many ? "%s.%u" : "%s", path, host_vi_count);
+            host_gfx_sync();
+            FILE *f = fopen(name, "wb");
+            if (f) {
+                fwrite(port_rdram, 1, 8 << 20, f);
+                fclose(f);
+            }
         }
+        if (*end != ',')
+            break;
+        p = end + 1;
     }
 }
 
@@ -441,6 +457,7 @@ int main(int argc, char **argv) {
             if (!deterministic && now > next_vi + 4 * vi_period)
                 next_vi = now + vi_period;      /* fell behind: don't catch up */
             host_vi_count++;
+            host_gfx_retrace();
             dump_rdram();
             host_input_frame();
             host_video_frame();

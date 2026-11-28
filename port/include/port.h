@@ -153,6 +153,11 @@ void host_raise(int event);                 /* an event for the loop to deliver 
 /* the RCP */
 /* a graphics task: returns 1 if its list ended in a full sync */
 int host_gfx_task(const void *dl, uint32_t size);
+/* RDRAM's images as the RDP left them, before something outside the tasks
+   reads them (a GPU renderer keeps them until then: docs/PORT.md, "The
+   OpenGL renderer") */
+void host_gfx_sync(void);
+void host_gfx_sync_range(const void *p, size_t n);     /* n bytes at p */
 /* the task's microcode (its boot, text and data, for PORT_GFX_REF) and
    the size of its matrix stack in RDRAM */
 void host_gfx_ucode(const void *boot, uint32_t boot_size, const void *text, uint32_t text_size, const void *data,

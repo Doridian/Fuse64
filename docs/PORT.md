@@ -2315,14 +2315,32 @@ for deterministic runs and replays.
 It isn't an approximation of the RDP but gfx_soft.c's pixel in GLSL
 integers:
 
-- The game's 320-wide RGBA16 color image is a texture (RGBA8: each
+- The game's 320-wide RGBA16 color images are textures (RGBA8: each
   channel's five bits << 3, the coverage in alpha), and its z image another
-  (R32UI: the halfword << 2 and its two hidden bits). Both are uploaded
-  from RDRAM when a task first draws, and read back into it, the hidden
-  bits too, at the task's end, before a texture load from the color image
-  (the screen captures, the after-image), and before the z image is
-  cleared (fill mode on it: gfx_soft.c clears it in memory). Other images
-  would go to gfx_soft.c ("The GBI census": the game has none).
+  (R32UI: the halfword << 2 and its two hidden bits); the z image's clear
+  (fill mode with it the color image) is drawn into its texture too. Other
+  images would go to gfx_soft.c ("The GBI census": the game has none).
+- The images stay the GPU's. RDRAM is made what was drawn (its bytes and
+  the hidden bits, read back) only where something reads it outside the
+  RDP's commands, `host_gfx_sync`: the VI's picture (the lines it reads,
+  when a picture is made: `--hash`, `--screenshot`, a window), the screen
+  captures (412F0.c's func_80226E4C, which the three capture sites read
+  the shown image through: "The framebuffer's other users"), RDRAM's dumps
+  (`PORT_DUMP_RDRAM`, `PORT_GFX_REF`, `PORT_VI_REF`, `PORT_FB_WATCH`), the
+  NMI (before IPL3's writes: RDRAM keeps what was drawn); and in the tasks
+  before a texture load from one (the after-image) and before gfx_soft.c
+  draws. An image no task has drawn to for 30 retraces is read back too:
+  fbwatch's census found nothing else touching the images' pages within
+  60 retraces of a task drawing there, so a reader the census missed would
+  have to come later, and finds RDRAM as soft leaves it. Headless without
+  pictures, a battle reads back nothing; with `--hash` or a window, the
+  shown color image once a frame (not the z image), started into a pixel
+  buffer at the task's end so that it is mostly done by the retrace.
+- Each image keeps a copy of RDRAM (bytes and hidden bits) as they last
+  agreed. When a task first draws to it, RDRAM is compared with the copy,
+  and what the CPU wrote since is uploaded (over what the GPU drew before
+  it); at a read-back, a pixel that the CPU changed since the last task
+  drew keeps the CPU's value. (None did in any run: the counts, `-v`.)
 - A primitive (a triangle command, a rectangle as the triangle soft makes
   of it, a fill or copy rectangle) is one instance of a quad over its
   bounding box, carrying its command decoded: the edges and the eight
@@ -2337,55 +2355,83 @@ integers:
   the slopes, the four z modes, interpenetration's coverage), coverage
   times alpha, the blender with its divider, the dither, CVG_DST.
 - What the RDP reads from memory, the color image's pixel and coverage
-  (IMAGE_READ) and the z image's (a z compare), comes from copies of the
-  two images: a batch that reads them gets the images as the batches
-  before it left them (a blit of its box), and no two of its primitives
-  may cover the same cell of 8×8 pixels, or the later would read the
-  memory before the earlier drew there: a new batch then. GL's blend and
-  depth test aren't used.
+  (IMAGE_READ) and the z image's (a z compare), is read in the shader: the
+  framebuffer fetched (EXT_shader_framebuffer_fetch, coherent, where the
+  driver has it: Mesa's llvmpipe here, `LIBGL_ALWAYS_SOFTWARE=1`), else the
+  images themselves after a texture barrier (ARB_texture_barrier:
+  radeonsi), else a copy of them. With barriers or copies, the primitives
+  between two flushes (a task, mostly) are drawn in layers: each one's layer
+  is one more than the highest of the primitives before it that may touch
+  its pixels (their boxes, in cells of 8×8 pixels), so a layer's primitives
+  touch no pixel in common and come after everything they read or
+  overwrite. A layer is drawn after a barrier (or with its box copied), its
+  primitives grouped by draw state, a draw each. Every pixel sees the
+  primitives before it in the RDP's order, as soft's does. With the fetch
+  the draws keep the commands' order (a draw is a draw state's run).
+  `PORT_GL_MEM=fetch|barrier|copy` picks a weaker one than the driver's
+  best, to check them. GL's blend and depth test aren't used.
 
-`port/tools/gl_cmp.py BUILD` runs test.py's scenarios with soft and gl
-side by side (headless, `setarch -R`), compares the VI's pictures every N
-retraces (the mean channel difference of 255, the share of pixels more
-than 24 off: the bars are under 3 and under 0.1%), the gameplay digest,
-and RDRAM at the last retrace outside the images and with them, and
-writes the worst pair as PNGs (`--out`). Measured 2026-11-27 (us every 50
-retraces, eu and jp's battle every 100; RDRAM again once the host's blocks
-had arenas, eu's not since):
+`port/tools/gl_cmp.py BUILD` runs test.py's scenarios (and its own:
+`attract`, 3000 retraces without input, through the first attract demo's
+screen captures; `reset`, menus with the reset button at 1500) with soft
+and gl side by side (headless, `setarch -R`), compares the VI's pictures
+every N retraces (the mean channel difference of 255, the share of pixels
+more than 24 off: the bars are under 3 and under 0.1%), the gameplay
+digest, and RDRAM every 1000 retraces (`--rdram-every`) and at the last,
+outside the images and with them, and writes the worst pair as PNGs
+(`--out`). With the images on the GPU, RDRAM is compared where it is read:
+a dump syncs the images, as every reader does, and between the readers
+the images in RDRAM are stale by design (nothing reads them there).
+Measured 2026-11-27 (us every 50 retraces, warp-boss and warp-stage every
+100, attract and reset every 1000 with RDRAM every 250, eu and jp's
+battle every 100):
 
-| | pictures the same | mean, >24 | digest | RDRAM: the images | RDRAM outside them |
-|---|---|---|---|---|---|
-| us legal | 6 of 6 | 0, 0% | the same | the same | the same |
-| us menus | 60 of 60 | 0, 0% | the same | the same | the same (19 words differed) |
-| us battle | 120 of 120 | 0, 0% | the same | the same | the same (16 words differed) |
-| eu battle | 60 of 60 | 0, 0% | the same | the same | 20 words differed |
-| jp battle | 60 of 60 | 0, 0% | the same | the same | the same (16 words differed) |
+| | pictures the same | mean, >24 | digest | RDRAM, all of it |
+|---|---|---|---|---|
+| us legal | 6 of 6 | 0, 0% | the same | the same (1 point) |
+| us menus | 60 of 60 | 0, 0% | the same | the same (3 of 3) |
+| us battle | 120 of 120 | 0, 0% | the same | the same (6 of 6) |
+| us attract (the captures) | 3 of 3 | 0, 0% | the same | the same (12 of 12) |
+| us reset | 3 of 3 | 0, 0% | the same | the same (12 of 12) |
+| us warp-boss (the after-image) | 50 of 50 | 0, 0% | the same | the same (5 of 5) |
+| us warp-stage | 50 of 50 | 0, 0% | the same | the same (5 of 5) |
 
 test.py's legal, menus and battle with `--renderer gl` give soft's
-references (every retrace's picture, the sound, the save, the digest). The
-words that differed are host pointers the game's structures keep where the
-N64 had its own: the tasks' saved stack pointers in their buffers
-(coro.c's stacks, from malloc) and 80580.c's sound records (port_alloc,
-the host's calloc). Where those were depended on the host's heap, which
-the GL driver uses too, from its threads as well (two gl runs differed
-there). They are in arenas of their own now ("The host's blocks the game
-keeps"), and all of RDRAM is the same: us's legal, menus and battle and
-jp's battle, soft against gl, and two gl runs of us's menus.
+references (every retrace's picture, the sound, the save, the digest),
+with each of the three ways of reading the memory (barriers on radeonsi,
+copies with `PORT_GL_MEM=copy`, the fetch on llvmpipe). RDRAM outside the
+images once differed in host pointers the game's structures keep (the
+tasks' saved stack pointers, 80580.c's sound records), which depended on
+the host's heap the GL driver shares; they are in arenas of their own
+("The host's blocks the game keeps").
 
-Battle's 6000 retraces headless take 27 s with gl, 58 s with hle-sw
-and 78 s with soft (i386, a Radeon RX 7900 XTX with Mesa's radeonsi,
-on a busy machine). Almost every batch reads the memory (the game's
-antialiasing reads the coverage), and neighbouring triangles share their
-edges' cells, so a batch is about 1.2 primitives (1.25 million batches
-for 1.52 million primitives), each with its blit. `-v` logs the counts; `PORT_GL_CHECK=1`
-checks GL's errors after each flush.
+Headless (i386, a Radeon RX 7900 XTX with Mesa's radeonsi, a busy
+machine, 2026-11-27), before this (every image read back at every task's
+end, a copy per batch) and now:
+
+| | soft | hle-sw | gl before | gl now |
+|---|---|---|---|---|
+| battle, 6000 retraces | 78 s | 58 s | 27-31 s | 4.0-4.1 s |
+| battle with `--hash` (vi.c's picture every retrace) | | | 42-43 s | 20.7-20.9 s |
+| menus, 3000 retraces | | | 15.8-15.9 s | 2.7 s |
+| menus with `--hash` | | | 23.9-24.2 s | 11.9-12.2 s |
+
+Almost every primitive reads the memory (the game's antialiasing reads
+the coverage), and neighbouring triangles share their edges' pixels, so
+batches in the commands' order were 1.2 primitives (1.25 million, each
+with its copy, for battle's 1.52 million primitives). In layers, battle
+has 413,000 (2.7 primitives each; 4×4 cells gave 387,000, no faster), with
+408,000 barriers and 1.01 million draws. The GPU's share is now small:
+with the GL calls left out battle took as long (4.1 s), with the triangles left out (the HLE
+front end alone) 2.9 s. With `--hash` the rest is vi.c's filters (about
+14 s of the 21) and waiting for the GPU before each picture. `-v` logs the
+counts; `PORT_GL_CHECK=1` checks GL's errors after each flush.
 
 What it doesn't do yet (the later steps): scaling, or anything but 1x;
-the enhancements; read-backs only where the game reads (now the whole
-image at each task's end); fewer batches (the framebuffer read in the
-shader, interlock or a texture barrier, where the GPU has them);
-WebGL2 (the z image's write mask is `glColorMaski`, which GLES 3.0
-lacks, and the context is EGL's).
+the enhancements; the VI on the GPU (with a window or `--hash` the shown
+image is still read back each frame for vi.c's picture, whose filters
+cost more than the drawing); WebGL2 (the z image's write mask is
+`glColorMaski`, which GLES 3.0 lacks, and the context is EGL's).
 
 The RDP's side is in integers, as the RDP computes it. A triangle is
 drawn from its command as the RDP walks it (`rdp_tri` in gfx_soft.c, after
@@ -2906,8 +2952,9 @@ port's exact against. What differs, and the port now does as 2.0I:
 - `PORT_GFX_TRACE=X,Y` logs every write to that pixel of a color image
   (the color, the othermode, the tile, the texture image and its offset in
   RDRAM, the sample's s and t; with `-v -v` TMEM and the palette), and
-  `PORT_DUMP_RDRAM=N:FILE` writes the RDRAM buffer at retrace N: together
-  they found the big-endian hosts' difference ("Byte order").
+  `PORT_DUMP_RDRAM=N[,N...]:FILE` writes the RDRAM buffer at retrace N
+  (FILE.N each with several): together they found the big-endian hosts'
+  difference ("Byte order").
 - `PORT_DUMP_DL=FROM:TO[:FILE]` writes the display lists of retraces FROM
   to TO as text ("Testing").
 

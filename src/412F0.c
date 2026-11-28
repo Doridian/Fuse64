@@ -292,7 +292,16 @@ void func_80226E84(UnkStruct_80226E84 *gfx) {
     D_8029F600++;
 }
 
+#ifdef TARGET_PC
+void host_gfx_sync(void);
+#endif
+
 u16 *func_80226E4C(s32 arg0) {
+#ifdef TARGET_PC
+    /* (the screen captures read the image through this: a GPU renderer's
+     * images into RDRAM first; docs/PORT.md, "The OpenGL renderer") */
+    host_gfx_sync();
+#endif
     return D_80100000[D_802A5388 ^ arg0];
 }
 

@@ -9,16 +9,17 @@
  * front end's, word for word the microcode's), and draws them with the
  * GPU at the N64's resolution (1x):
  *
- * - The color image.  A 320-wide RGBA16 image the game draws to is a GL
+ * - The images.  A 320-wide RGBA16 image the game draws to is a GL
  *   texture (RGBA8: each channel's 5 bits << 3, the coverage in alpha),
  *   and the z image beside it another (R32UI: each halfword << 2 with its
- *   two hidden bits).  They are uploaded from the game's memory when a task
- *   first draws to the color image and read back into it (the hidden bits
- *   too, for the VI) at the task's end, before a texture load from the
- *   color image, or when the z image is cleared (by gfx_soft.c, in memory):
- *   so the VI, the screen captures and the after-image see them in memory,
- *   as with the software renderer.  Other images (none in this game: "The
- *   GBI census") are drawn by gfx_soft.c.
+ *   two hidden bits), the z image's clear too.  They stay the GPU's, and
+ *   are read back into RDRAM (the hidden bits too) only where something
+ *   reads it there: the VI's picture, the screen captures, a texture load
+ *   from one (the after-image), RDRAM's dumps, the NMI, the software back
+ *   end, an image left undrawn for a while (img_sync, host_gfx_sync).  So
+ *   whatever reads them sees what the software renderer would have left.
+ *   Other images (none in this game: "The GBI census") are drawn by
+ *   gfx_soft.c.
  * - A primitive is a quad over its bounding box, one instance each with
  *   its command decoded (the edges, the attributes' coefficients); the
  *   fragment shader is the software back end's pixel, in integers: the
@@ -29,12 +30,14 @@
  *   TMEM by gfx_texel), the combiner, alpha compare, the z test, coverage
  *   times alpha, the blender and its divider, the dither, CVG_DST.
  * - The memory (the color image's pixel and coverage with IMAGE_READ, the
- *   z image's with a z compare) is read from copies of the images: a batch
- *   that reads it gets them as the batches before it left them (a blit of
- *   its box), and none of its primitives covers a cell of 8x8 pixels that
- *   another of them may (or it would read the memory before that one drew
- *   there): a new batch then.  So each pixel sees what the RDP's would,
- *   and the GL blend and depth test aren't used.
+ *   z image's with a z compare) is the framebuffer fetched in the shader
+ *   where the driver has it coherent, or else the images themselves after
+ *   a texture barrier (or copies of them): the primitives are drawn in
+ *   layers, none of a layer's touching a cell of 8x8 pixels another of it
+ *   may, each primitive in the layer after the last that may touch its
+ *   pixels, and a layer reads what the layers before it left.  So each
+ *   pixel sees what the RDP's would, and the GL blend and depth test
+ *   aren't used.
  *
  * Its context is offscreen (EGL, surfaceless): what is shown is still the
  * VI's picture of the color image (vi.c, video.c).
@@ -50,7 +53,6 @@
 #include "gfx.h"
 #include "host.h"
 
-#define GLSL_VERSION "#version 330 core\n"
 #define TW 320
 #define TH 240
 
@@ -97,36 +99,239 @@ static int egl_up(void) {
     return 1;
 }
 
-/* ---- the target: the color image's copy ------------------------------------------------------ */
+/* ---- the images: the GPU's copies, read back where something reads ----------------------------- */
 
-static GLuint fbo, color_tex, z_tex, vao, ibo, prog;
-static GLuint snap_fbo, snap_tex, snap_z;       /* the memory a batch reads: a copy of both images */
+/* A 320-wide RGBA16 color image the game draws to is a texture (RGBA8:
+   each channel's five bits << 3, the coverage in alpha), and its z image
+   another (R32UI: the halfword << 2 and its two hidden bits).  They stay
+   the GPU's: RDRAM is made the same (img_sync) only where something reads
+   it outside the RDP's commands (host_gfx_sync: the VI's picture, the
+   screen captures, RDRAM's dumps, the NMI), before a TMEM load from one,
+   before the software back end draws (another kind of image), and when an
+   image hasn't been drawn to for IDLE_SYNC retraces (what fbwatch.c's
+   census watched: nothing but those reads touches the images' pages
+   within 60 retraces of a task drawing there; docs/PORT.md, "The
+   framebuffer's other users").  So whatever reads RDRAM finds what the
+   software back end would have left there.
+   Each image keeps a copy of RDRAM (its bytes and hidden bits) as it was
+   when they were last the same: before an image is drawn to again in a
+   task, RDRAM is compared with it, and what the CPU wrote since is
+   uploaded (and kept over what the GPU drew before it); at a read-back,
+   pixels the CPU wrote since the last task drew keep the CPU's. */
+#define NIMG 4
+#define IDLE_SYNC 30
+typedef struct {
+    uint8_t *addr;              /* in RDRAM; NULL: free */
+    int z;                      /* the z image (R32UI), or a color image (RGBA8) */
+    GLuint tex, pbo;
+    GLsync fence;               /* a read-back into pbo under way (of what tex has now) */
+    int valid;                  /* tex holds the image (RDRAM as shadow has it, and what was drawn since) */
+    int newer;                  /* drawn since RDRAM was made the same */
+    int checked;                /* compared with RDRAM in this task */
+    int drawn;                  /* drawn in this task */
+    unsigned drawn_vi;          /* the retrace a task last drew to it */
+    uint8_t shadow[TW * TH * 3];        /* RDRAM's bytes, then the hidden bits' (gfx_soft_hb) */
+} Img;
+static Img imgs[NIMG];
+static Img *cur_c, *cur_z;      /* the images fbo draws to (NULL: none, scratch_c or scratch_z) */
+static GLuint fbo, rd_fbo, scratch_c, scratch_z, vao, ibo, prog;
+static GLuint snap_fbo, snap_tex, snap_z;       /* the memory a batch reads (MEM_BLIT): a copy of both images */
 static GLint u_st, u_tex0, u_tex1, u_mem, u_zmem;
-static uint8_t *tgt;                    /* the color image the texture holds (NULL: none) */
-static uint8_t *ztgt;                   /* the z image z_tex holds (NULL: none) */
-static int tgt_dirty, z_dirty;          /* drawn since they were uploaded */
 static uint8_t rb_buf[TW * TH * 4];
-static uint32_t zb_buf[TW * TH];
-static unsigned long long st_tasks, st_prims, st_batches, st_tex_decoded, st_readbacks, st_snaps;
+static int prefetch;            /* tasks to start the color image's read-back at their end */
+static unsigned long long st_tasks, st_prims, st_batches, st_tex_decoded, st_readbacks, st_uploads, st_snaps,
+    st_barriers, st_kept, st_membatches, st_layers;
 static uint32_t frame_seed;
+static int ninst;
+
+/* How a primitive reads the memory (the images as the primitives before it
+   left them): MEM_FETCH, the framebuffer fetched in the shader, coherent
+   (EXT_shader_framebuffer_fetch, e.g. Mesa's llvmpipe; a draw is a
+   draw state's run); MEM_BARRIER, the images themselves after a texture
+   barrier (ARB_texture_barrier: radeonsi), and MEM_BLIT, a copy of each
+   (both by layers: flush) */
+enum { MEM_BLIT, MEM_BARRIER, MEM_FETCH };
+static int mem_how;
 
 static void flush(void);
 
-/* the image into the texture: each channel's 5 bits << 3 (as the RDP reads
-   memory), the coverage as alpha (0..7 of 255) */
-static void upload(uint8_t *img) {
-    for (int i = 0; i < TW * TH; i++) {
-        const uint8_t *p = img + 2 * i;
-        uint16_t c = port_be16(p);
-        uint8_t *o = rb_buf + 4 * i;
-        o[0] = (uint8_t)(((c >> 11) & 31) << 3);
-        o[1] = (uint8_t)(((c >> 6) & 31) << 3);
-        o[2] = (uint8_t)(((c >> 1) & 31) << 3);
-        o[3] = (uint8_t)((gfx_soft_cvg(p) * 255 + 3) / 7);
+static uint8_t *img_hb(const Img *m) { return gfx_soft_hb(m->addr); }
+
+static void img_keep(Img *m) {
+    memcpy(m->shadow, m->addr, TW * TH * 2);
+    memcpy(m->shadow + TW * TH * 2, img_hb(m), TW * TH);
+}
+
+static int img_same(const Img *m) {
+    return !memcmp(m->addr, m->shadow, TW * TH * 2) && !memcmp(img_hb(m), m->shadow + TW * TH * 2, TW * TH);
+}
+
+static void img_drop_read(Img *m) {
+    if (m->fence)
+        glDeleteSync(m->fence);
+    m->fence = NULL;
+}
+
+/* RDRAM (and the hidden bits) into the texture */
+static void img_upload(Img *m) {
+    const uint8_t *hb = img_hb(m);
+    img_drop_read(m);
+    glBindTexture(GL_TEXTURE_2D, m->tex);
+    if (!m->z) {
+        for (int i = 0; i < TW * TH; i++) {
+            const uint8_t *p = m->addr + 2 * i;
+            uint16_t c = port_be16(p);
+            int h = hb[i] & HB_CLEAN ? (c & 1) * 3 : hb[i];
+            uint8_t *o = rb_buf + 4 * i;
+            o[0] = (uint8_t)(((c >> 11) & 31) << 3);
+            o[1] = (uint8_t)(((c >> 6) & 31) << 3);
+            o[2] = (uint8_t)(((c >> 1) & 31) << 3);
+            o[3] = (uint8_t)((((c & 1) << 2 | h) * 255 + 3) / 7);
+        }
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, TW, TH, GL_RGBA, GL_UNSIGNED_BYTE, rb_buf);
+    } else {
+        uint32_t *o = (uint32_t *)rb_buf;
+        for (int i = 0; i < TW * TH; i++) {
+            const uint8_t *p = m->addr + 2 * i;
+            uint16_t c = port_be16(p);
+            int h = hb[i] & HB_CLEAN ? (c & 1) * 3 : hb[i];
+            o[i] = (uint32_t)c << 2 | (uint32_t)h;
+        }
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, TW, TH, GL_RED_INTEGER, GL_UNSIGNED_INT, rb_buf);
     }
-    glBindTexture(GL_TEXTURE_2D, color_tex);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, TW, TH, GL_RGBA, GL_UNSIGNED_BYTE, rb_buf);
+    img_keep(m);
+    m->valid = 1;
+    m->newer = 0;
+    st_uploads++;
+}
+
+/* the read-back of what the texture holds now, into its buffer */
+static void img_start_read(Img *m) {
+    img_drop_read(m);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, rd_fbo);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m->tex, 0);
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, m->pbo);
+    glPixelStorei(GL_PACK_ALIGNMENT, 4);
+    if (!m->z)
+        glReadPixels(0, 0, TW, TH, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    else
+        glReadPixels(0, 0, TW, TH, GL_RED_INTEGER, GL_UNSIGNED_INT, NULL);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+    m->fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+}
+
+/* RDRAM made what the GPU drew: each pixel's halfword and hidden bits, but
+   where the CPU wrote since the last task drew there (RDRAM isn't its
+   shadow), which keeps the CPU's */
+static void img_sync(Img *m) {
+    if (!m->addr || !m->newer)
+        return;
+    if (ninst)
+        flush();
+    if (!m->fence)
+        img_start_read(m);
+    glClientWaitSync(m->fence, GL_SYNC_FLUSH_COMMANDS_BIT, 10000000000ull);
+    img_drop_read(m);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, m->pbo);
+    const uint8_t *src = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, (GLsizeiptr)TW * TH * 4, GL_MAP_READ_BIT);
+    if (!src)
+        host_fatal("gl: can't map the read-back");
+    uint8_t *hb = img_hb(m);
+    const uint8_t *sh = m->shadow, *shb = m->shadow + TW * TH * 2;
+    int all = img_same(m);
+    unsigned long long kept = 0;
+    for (int i = 0; i < TW * TH; i++) {
+        uint8_t *p = m->addr + 2 * i;
+        if (!all && (p[0] != sh[2 * i] || p[1] != sh[2 * i + 1] || hb[i] != shb[i])) {
+            kept++;
+            continue;
+        }
+        if (!m->z) {
+            const uint8_t *s = src + 4 * i;
+            int cvg = (s[3] * 7 + 127) / 255;
+            port_wbe16(p, (uint16_t)((s[0] >> 3) << 11 | (s[1] >> 3) << 6 | (s[2] >> 3) << 1 | cvg >> 2));
+            hb[i] = (uint8_t)(cvg & 3);
+        } else {
+            uint32_t v;
+            memcpy(&v, src + 4 * i, 4);
+            port_wbe16(p, (uint16_t)(v >> 2));
+            hb[i] = (uint8_t)(v & 3);
+        }
+    }
+    glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    img_keep(m);
+    m->newer = 0;
+    if (kept) {
+        m->valid = 0;           /* (the texture lacks what the CPU wrote: uploaded at the next use) */
+        st_kept += kept;
+    }
+    st_readbacks++;
+}
+
+static void sync_all(void) {
+    for (int i = 0; i < NIMG; i++)
+        img_sync(&imgs[i]);
+}
+
+/* the image at img (z: the z image), the GPU's from now in this task:
+   RDRAM compared with its copy, and what the CPU wrote uploaded */
+static Img *img_use(uint8_t *img, int z, const Img *keep) {
+    Img *m = NULL, *fr = NULL;
+    for (int i = 0; i < NIMG; i++) {
+        if (imgs[i].addr == img && imgs[i].z == z)
+            m = &imgs[i];
+        else if (!fr && !imgs[i].addr)
+            fr = &imgs[i];
+    }
+    if (!m) {
+        if (!fr) {
+            /* (the one drawn to longest ago, not drawn to now) */
+            for (int i = 0; i < NIMG; i++)
+                if (&imgs[i] != cur_c && &imgs[i] != cur_z && &imgs[i] != keep && (!fr || imgs[i].drawn_vi < fr->drawn_vi))
+                    fr = &imgs[i];
+            img_sync(fr);
+            img_drop_read(fr);
+        }
+        m = fr;
+        m->addr = img;
+        m->z = z;
+        m->valid = m->newer = m->checked = m->drawn = 0;
+        m->drawn_vi = host_vi_count;
+        glBindTexture(GL_TEXTURE_2D, m->tex);
+        if (z)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, TW, TH, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, NULL);
+        else
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, TW, TH, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    }
+    if (!m->checked) {
+        if (!m->valid)
+            img_upload(m);
+        else if (!img_same(m)) {
+            img_sync(m);
+            img_upload(m);
+        }
+        m->checked = 1;
+    }
+    return m;
+}
+
+/* the images fbo draws to (and the memory reads) */
+static void attach(Img *c, Img *z) {
+    if (c == cur_c && z == cur_z)
+        return;
+    flush();
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    if (c != cur_c)
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, c ? c->tex : scratch_c, 0);
+    if (z != cur_z)
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, z ? z->tex : scratch_z, 0);
+    cur_c = c;
+    cur_z = z;
 }
 
 /* the z image (as the color image: 320 wide, in RDRAM)?  NULL if not */
@@ -137,73 +342,39 @@ static uint8_t *z_image(void) {
     return z;
 }
 
-/* the z image into z_tex: each halfword << 2 with its hidden bits (dz's
-   low two), as the RDP reads it */
-static void upload_z(uint8_t *img) {
-    for (int i = 0; i < TW * TH; i++) {
-        const uint8_t *p = img + 2 * i;
-        zb_buf[i] = (uint32_t)port_be16(p) << 2 | (uint32_t)(gfx_soft_cvg(p) & 3);
-    }
-    glBindTexture(GL_TEXTURE_2D, z_tex);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, TW, TH, GL_RED_INTEGER, GL_UNSIGNED_INT, zb_buf);
+/* before the software back end draws: RDRAM made the same, and compared
+   again where the GPU draws next */
+static void soft_turn(void) {
+    attach(NULL, NULL);
+    sync_all();
+    for (int i = 0; i < NIMG; i++)
+        imgs[i].checked = 0;
 }
 
-static void read_back_z(void) {
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
-    glReadBuffer(GL_COLOR_ATTACHMENT1);
-    glPixelStorei(GL_PACK_ALIGNMENT, 4);
-    glReadPixels(0, 0, TW, TH, GL_RED_INTEGER, GL_UNSIGNED_INT, zb_buf);
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
-    for (int i = 0; i < TW * TH; i++) {
-        uint8_t *p = ztgt + 2 * i;
-        port_wbe16(p, (uint16_t)(zb_buf[i] >> 2));
-        gfx_soft_set_cvg(p, (int)(zb_buf[i] & 3));
-    }
-}
-
-/* the texture back into the image (and its coverage into the hidden bits) */
-static void read_back(void) {
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels(0, 0, TW, TH, GL_RGBA, GL_UNSIGNED_BYTE, rb_buf);
-    for (int i = 0; i < TW * TH; i++) {
-        const uint8_t *s = rb_buf + 4 * i;
-        uint8_t *p = tgt + 2 * i;
-        int cvg = (s[3] * 7 + 127) / 255;
-        port_wbe16(p, (uint16_t)((s[0] >> 3) << 11 | (s[1] >> 3) << 6 | (s[2] >> 3) << 1 | cvg >> 2));
-        gfx_soft_set_cvg(p, cvg);
-    }
-    st_readbacks++;
-}
-
-static void release(void) {
-    flush();
-    if (tgt && tgt_dirty)
-        read_back();
-    if (tgt && ztgt && z_dirty)
-        read_back_z();
-    tgt = ztgt = NULL;
-    tgt_dirty = z_dirty = 0;
-}
-
-/* is the color image the GPU's (uploading it if it wasn't)? */
+/* is the color image the GPU's? (else the software back end draws) */
 static int target(void) {
     uint8_t *img = gs.cimg;
-    if (!img || gs.cimg_siz != 2 || gs.cimg_fmt != 0 || gs.cimg_w != TW || img == gs.zimg) {
-        if (tgt)
-            release();
+    if (!img || gs.cimg_siz != 2 || gs.cimg_fmt != 0 || gs.cimg_w != TW || img == gs.zimg || img < port_rdram ||
+        img + TW * TH * 2 > port_rdram + PORT_RDRAM_SIZE) {
+        soft_turn();
         return 0;
     }
     uint8_t *z = z_image();
-    if (img != tgt || z != ztgt) {
-        release();
-        upload(img);
-        if (z)
-            upload_z(z);
-        tgt = img;
-        ztgt = z;
+    if (cur_c && img == cur_c->addr && (z ? cur_z && z == cur_z->addr : !cur_z))
+        return 1;
+    Img *c = img_use(img, 0, NULL);
+    attach(c, z ? img_use(z, 1, c) : NULL);
+    return 1;
+}
+
+/* the z image cleared (fill mode with it the color image): the GPU's too */
+static int z_target(void) {
+    uint8_t *z = z_image();
+    if (!z || gs.cimg != z || gs.cimg_siz != 2 || gs.cimg_w != TW)
+        return 0;
+    if (!cur_z || cur_z->addr != z) {
+        Img *m = img_use(z, 1, NULL);
+        attach(cur_c, m);
     }
     return 1;
 }
@@ -337,7 +508,6 @@ enum {
 enum { ST_MEM = 1, ST_TEX0 = 2, ST_TEX1 = 4, ST_NOISE = 8, ST_ZCMP = 16 };
 
 static const char *vs_src =
-    GLSL_VERSION
     "layout(location = 0) in ivec4 i_e0;\n"
     "layout(location = 1) in ivec4 i_e1;\n"
     "layout(location = 2) in ivec4 i_e2;\n"
@@ -361,14 +531,23 @@ static const char *vs_src =
 
 /* gfx_soft.c's pixel, line for line where it can be */
 static const char *fs_src =
-    GLSL_VERSION
     "flat in ivec4 v_e0, v_e1, v_e2, v_a0, v_a1, v_a2, v_a3, v_a4, v_a5, v_a6, v_a7;\n"
+    /* (MEM_FETCH: the memory is the outputs' values as the shader starts) */
+    "#ifdef MEM_FETCH\n"
+    "layout(location = 0) inout vec4 o_col;\n"
+    "layout(location = 1) inout highp uint o_z;\n"
+    "#define MEM_COL() fb_col\n"
+    "#define MEM_Z() fb_z\n"
+    "#else\n"
     "layout(location = 0) out vec4 o_col;\n"
-    "layout(location = 1) out uint o_z;\n"
-    "uniform highp usampler2D u_tex0;\n"
-    "uniform highp usampler2D u_tex1;\n"
+    "layout(location = 1) out highp uint o_z;\n"
     "uniform sampler2D u_mem;\n"
     "uniform highp usampler2D u_zmem;\n"
+    "#define MEM_COL() texelFetch(u_mem, ivec2(X, Y), 0)\n"
+    "#define MEM_Z() texelFetch(u_zmem, ivec2(X, Y), 0).r\n"
+    "#endif\n"
+    "uniform highp usampler2D u_tex0;\n"
+    "uniform highp usampler2D u_tex1;\n"
     "uniform ivec4 u_st[18];\n"
     "int sxt(int v, int b) { return (v << (32 - b)) >> (32 - b); }\n"
     "int clamp9(int v) { v &= 0x1FF; return (v & 0x180) == 0x180 ? 0 : (v & 0x100) != 0 ? 255 : v; }\n"
@@ -497,10 +676,17 @@ static const char *fs_src =
     "    int X = int(gl_FragCoord.x), Y = int(gl_FragCoord.y);\n"
     "    int omh = u_st[0].x, l = u_st[0].y, cyc = u_st[0].z, flags = u_st[0].w;\n"
     "    nstate = uint(X * 1973 + Y * 9277 + u_st[17].x * 26699) | 1u;\n"
+    "#ifdef MEM_FETCH\n"
+    "    vec4 fb_col = o_col;\n"
+    "    uint fb_z = o_z;\n"
+    "#else\n"
     "    o_z = 0u;\n"
-    /* fill mode: the fill color's halfword */
-    "    if (cyc == 3) {\n"
+    "#endif\n"
+    /* fill mode: the fill color's halfword (4: into the z image, its
+       hidden bits its low bit twice, as gfx_soft.c's fill_px) */
+    "    if (cyc >= 3) {\n"
     "        int c = (X & 1) != 0 ? u_st[9].w & 0xFFFF : (u_st[9].w >> 16) & 0xFFFF;\n"
+    "        if (cyc == 4) { o_z = uint(c << 2 | ((c & 1) != 0 ? 3 : 0)); return; }\n"
     "        o_col = vec4(vec3(((c >> 11) & 31) << 3, ((c >> 6) & 31) << 3, ((c >> 1) & 31) << 3) / 255.0,\n"
     "                     (c & 1) != 0 ? 1.0 : 0.0);\n"
     "        return;\n"
@@ -631,7 +817,7 @@ static const char *fs_src =
     "    ivec3 memc = ivec3(0);\n"
     "    int memcvg = 7;\n"
     "    if (mem) {\n"
-    "        vec4 m = texelFetch(u_mem, ivec2(X, Y), 0);\n"
+    "        vec4 m = MEM_COL();\n"
     "        memc = ivec3(m.rgb * 255.0 + 0.5);\n"
     "        if ((l & 0x40) != 0) memcvg = int(m.a * 7.0 + 0.5);\n"
     "    }\n"
@@ -645,7 +831,7 @@ static const char *fs_src =
     "        bsh = ivec2(0, dzenc < 11 ? 4 : 15 - dzenc);\n"
     "        blend = force != 0 || (!wrap && aa != 0);\n"
     "    } else {\n"
-    "        int zr = int(texelFetch(u_zmem, ivec2(X, Y), 0).r);\n"
+    "        int zr = int(MEM_Z());\n"
     "        int zv = zr >> 2, oz = z_dec(zv);\n"
     "        int memenc = (zv & 3) << 2 | (zr & 3);\n"
     "        int dzmem = 1 << memenc;\n"
@@ -710,9 +896,15 @@ static const char *fs_src =
     "    o_col = vec4(vec3((outi >> 3) << 3) / 255.0, float(fcvg) / 7.0);\n"
     "}\n";
 
+/* a shader, after the version and how the memory is read */
 static GLuint compile(GLenum type, const char *src) {
     GLuint s = glCreateShader(type);
-    glShaderSource(s, 1, &src, NULL);
+    const char *head = "#version 330 core\n";
+    const char *fetch = type == GL_FRAGMENT_SHADER && mem_how == MEM_FETCH
+                            ? "#extension GL_EXT_shader_framebuffer_fetch : require\n#define MEM_FETCH 1\n"
+                            : "";
+    const char *srcs[3] = { head, fetch, src };
+    glShaderSource(s, 3, srcs, NULL);
     glCompileShader(s);
     GLint ok;
     glGetShaderiv(s, GL_COMPILE_STATUS, &ok);
@@ -729,29 +921,38 @@ static GLuint compile(GLenum type, const char *src) {
 typedef struct {
     int32_t st[S_N][4];
     GLuint tex[2];
-    int zmask, amask;
-    int mem;                    /* it reads the memory: a copy of the image before it */
+    int cmask, amask, zmask;    /* what it writes: the color, the coverage, the z image */
+    int mem;                    /* it reads the memory (the images as the batches before it left them) */
 } DrawState;
 
+/* The primitives since the last flush, each tagged with its draw state and
+   its layer.  A primitive that reads the memory must see what every
+   primitive before it drew there, and a write must come after the earlier
+   reads and writes of its pixels: so each primitive's layer is one more
+   than the highest of those before it that may touch its pixels (their
+   boxes, in cells of CELL x CELL pixels), the primitives of a layer touch
+   no pixel in common, and the layers are drawn in order, each after a
+   texture barrier (MEM_BARRIER) or with a copy of the images as the
+   layers before left them (MEM_BLIT), its primitives in any order: by draw
+   state, a draw each.  The pixels see what the RDP's would, in the RDP's
+   order.  MEM_FETCH reads what the primitives before drew in the draw's own
+   order, and keeps the commands' order: a draw is a draw state's run. */
+#define CELL 8
+#define MAX_INST 60000
 typedef struct {
-    DrawState d;
-    int first, count;
-    int box[4];                 /* the pixels it may cover */
-} Batch;
-
-/* A batch that reads the memory gets a copy of the image as the batches
-   before it left it: none of its primitives may cover what another one of
-   them may (their boxes, in cells of 8x8 pixels), or it would read the
-   memory before that one drew there */
-static uint8_t mem_cells[TH / 8][TW / 8];
-static int mem_open;            /* the last batch reads the memory: its cells are marked */
-
-static Inst *insts;
-static int ninst, inst_cap;
-static Batch *batches;
-static int nbatches, batches_cap;
+    int layer, state, seq;
+} Tag;
+static Inst *insts, *insts_sorted;
+static Tag *tags;
+static int inst_cap;
+static DrawState *states;
+static uint64_t *state_hash;
+static int nstates, states_cap;
 static DrawState ds_cur;
-static int ds_valid;
+static uint64_t ds_hash;
+static int ds_idx = -1;                 /* ds_cur's index in states (-1: not looked up) */
+static uint16_t cell_layer[TH / CELL][TW / CELL];
+static int nlayers, last_state = -1;
 
 /* what a draw state is made of: when it doesn't change, neither does it */
 typedef struct {
@@ -767,59 +968,139 @@ typedef struct {
 static RawState raw_last;
 static int raw_valid;
 
-static void flush(void) {
-    if (!ninst) {
-        nbatches = 0;
-        return;
+static int base_instance;       /* glDrawArraysInstancedBaseInstance (ARB_base_instance) */
+static int bar_written, bar_read;       /* since the last texture barrier (MEM_BARRIER) */
+
+static int tag_cmp(const void *a, const void *b) {
+    const Tag *x = a, *y = b;
+    if (x->layer != y->layer)
+        return x->layer < y->layer ? -1 : 1;
+    if (x->state != y->state)
+        return x->state < y->state ? -1 : 1;
+    return x->seq < y->seq ? -1 : x->seq > y->seq;
+}
+
+static void set_state(const DrawState *d, const DrawState *last) {
+    if (!last || last->cmask != d->cmask || last->amask != d->amask) {
+        GLboolean c = d->cmask ? GL_TRUE : GL_FALSE;
+        glColorMaski(0, c, c, c, d->amask ? GL_TRUE : GL_FALSE);
     }
+    if (!last || last->zmask != d->zmask)
+        glColorMaski(1, d->zmask ? GL_TRUE : GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    if (!last || memcmp(last->st, d->st, sizeof d->st))
+        glUniform4iv(u_st, S_N, &d->st[0][0]);
+    if (!last || last->tex[0] != d->tex[0]) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, d->tex[0]);
+    }
+    if (!last || last->tex[1] != d->tex[1]) {
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, d->tex[1]);
+    }
+}
+
+/* the copy of the images a layer reads (MEM_BLIT): its box of each */
+static void snap(const int *box) {
+    static const GLenum a0[2] = { GL_COLOR_ATTACHMENT0, GL_NONE }, a1[2] = { GL_NONE, GL_COLOR_ATTACHMENT1 };
+    static const GLenum both[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, snap_fbo);
+    for (int k = 0; k < 2; k++) {
+        glReadBuffer(k ? GL_COLOR_ATTACHMENT1 : GL_COLOR_ATTACHMENT0);
+        glDrawBuffers(2, k ? a1 : a0);
+        glBlitFramebuffer(box[0], box[1], box[2], box[3], box[0], box[1], box[2], box[3], GL_COLOR_BUFFER_BIT,
+                          GL_NEAREST);
+    }
+    glDrawBuffers(2, both);
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    st_snaps++;
+}
+
+static void draw(int first, int count) {
+    if (base_instance)
+        glDrawArraysInstancedBaseInstance(GL_TRIANGLE_STRIP, 0, 4, count, (GLuint)first);
+    else {
+        for (int i = 0; i < I_N; i++)
+            glVertexAttribIPointer((GLuint)i, 4, GL_INT, sizeof(Inst),
+                                   (const void *)(uintptr_t)((size_t)first * sizeof(Inst) + (size_t)i * 16));
+        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, count);
+    }
+    st_batches++;
+}
+
+static void flush(void) {
+    if (!ninst)
+        return;
+    /* by layer, then draw state, then the commands' order */
+    qsort(tags, (size_t)ninst, sizeof *tags, tag_cmp);
+    for (int i = 0; i < ninst; i++)
+        insts_sorted[i] = insts[tags[i].seq];
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glViewport(0, 0, TW, TH);
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)ninst * (GLsizeiptr)sizeof(Inst), insts, GL_STREAM_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)ninst * (GLsizeiptr)sizeof(Inst), insts_sorted, GL_STREAM_DRAW);
     glUseProgram(prog);
-    for (int b = 0; b < nbatches; b++) {
-        const Batch *bt = &batches[b];
-        const DrawState *d = &bt->d;
-        if (d->mem) {
-            /* the memory: the images as the batches before left them (the
-               color image's copy and the z image's, one blit each) */
-            static const GLenum a0[2] = { GL_COLOR_ATTACHMENT0, GL_NONE }, a1[2] = { GL_NONE, GL_COLOR_ATTACHMENT1 };
-            glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
-            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, snap_fbo);
-            for (int k = 0; k < 2; k++) {
-                glReadBuffer(k ? GL_COLOR_ATTACHMENT1 : GL_COLOR_ATTACHMENT0);
-                glDrawBuffers(2, k ? a1 : a0);
-                glBlitFramebuffer(bt->box[0], bt->box[1], bt->box[2], bt->box[3], bt->box[0], bt->box[1], bt->box[2],
-                                  bt->box[3], GL_COLOR_BUFFER_BIT, GL_NEAREST);
-            }
-            glReadBuffer(GL_COLOR_ATTACHMENT0);
-            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-            st_snaps++;
-        }
-        glColorMaski(0, GL_TRUE, GL_TRUE, GL_TRUE, d->amask ? GL_TRUE : GL_FALSE);
-        glColorMaski(1, d->zmask ? GL_TRUE : GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        if (d->zmask)
-            z_dirty = 1;
-        glUniform4iv(u_st, S_N, &d->st[0][0]);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, d->tex[0]);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, d->tex[1]);
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, snap_tex);
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, snap_z);
+    if (base_instance)
         for (int i = 0; i < I_N; i++)
-            glVertexAttribIPointer((GLuint)i, 4, GL_INT, sizeof(Inst),
-                                   (const void *)(uintptr_t)((size_t)bt->first * sizeof(Inst) + (size_t)i * 16));
-        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, bt->count);
+            glVertexAttribIPointer((GLuint)i, 4, GL_INT, sizeof(Inst), (const void *)(uintptr_t)((size_t)i * 16));
+    if (mem_how != MEM_FETCH) {
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, mem_how == MEM_BLIT ? snap_tex : cur_c ? cur_c->tex : scratch_c);
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, mem_how == MEM_BLIT ? snap_z : cur_z ? cur_z->tex : scratch_z);
     }
-    st_batches += (unsigned long long)nbatches;
+    const DrawState *last = NULL;
+    for (int i = 0; i < ninst;) {
+        /* a layer: whether it reads the memory, and where */
+        int layer = tags[i].layer, end = i, mem = 0;
+        int box[4] = { TW, TH, 0, 0 };
+        while (end < ninst && tags[end].layer == layer) {
+            if (states[tags[end].state].mem) {
+                const int32_t *b = insts_sorted[end].v[I_BOX];
+                mem = 1;
+                for (int k = 0; k < 2; k++) {
+                    if (b[k] < box[k]) box[k] = b[k];
+                    if (b[k + 2] > box[k + 2]) box[k + 2] = b[k + 2];
+                }
+            }
+            end++;
+        }
+        if (mem_how == MEM_BLIT && mem)
+            snap(box);
+        else if (mem_how == MEM_BARRIER && (bar_read || (mem && bar_written))) {
+            /* the images themselves: what the layers before wrote made
+               visible to this one's reads (and its writes after their
+               reads), ARB_texture_barrier's rules */
+            glTextureBarrier();
+            bar_read = bar_written = 0;
+            st_barriers++;
+        }
+        st_layers++;
+        /* its draw states' runs */
+        while (i < end) {
+            int j = i;
+            while (j < end && tags[j].state == tags[i].state)
+                j++;
+            const DrawState *d = &states[tags[i].state];
+            if (d != last)
+                set_state(d, last);
+            last = d;
+            draw(i, j - i);
+            st_membatches += (unsigned long long)d->mem;
+            i = j;
+        }
+        bar_written = 1;
+        bar_read |= mem;
+    }
     ninst = 0;
-    nbatches = 0;
-    ds_valid = 0;
-    mem_open = 0;
+    nstates = 0;
+    ds_idx = -1;
+    last_state = -1;
+    if (nlayers)
+        memset(cell_layer, 0, sizeof cell_layer);
+    nlayers = 0;
     static int check = -1;
     if (check < 0) {
         const char *e = getenv("PORT_GL_CHECK");
@@ -832,7 +1113,7 @@ static void flush(void) {
     }
 }
 
-enum { K_TRI, K_FILL, K_COPY };
+enum { K_TRI, K_FILL, K_COPY, K_ZFILL };
 static GLuint dummy_tex;
 
 /* the draw state of a primitive of this kind with gs's state now */
@@ -887,7 +1168,7 @@ static void begin(int kind, int tile) {
             flags |= 8;
         d.st[S_MODE][0] = (int32_t)gs.om_h;
         d.st[S_MODE][1] = (int32_t)l;
-        d.st[S_MODE][2] = kind == K_FILL ? 3 : kind == K_COPY ? 2 : cyc;
+        d.st[S_MODE][2] = kind == K_ZFILL ? 4 : kind == K_FILL ? 3 : kind == K_COPY ? 2 : cyc;
         d.st[S_MODE][3] = flags;
         for (int c = 0; c < 2; c++)
             for (int k = 0; k < 4; k++) {
@@ -922,68 +1203,87 @@ static void begin(int kind, int tile) {
         d.st[S_SEED][0] = (int32_t)(frame_seed % 997);
         /* the z image: compared (from its copy, as the memory is), updated */
         int zcmp = (l >> 4) & 1, zupd = (l >> 5) & 1;
-        if (kind == K_TRI && ztgt && zcmp) {
+        if (kind == K_TRI && cur_z && zcmp) {
             d.st[S_MODE][3] |= ST_ZCMP | ST_MEM;
             flags |= ST_MEM;
         }
-        d.zmask = kind == K_TRI && ztgt && zupd;
+        d.zmask = kind == K_ZFILL || (kind == K_TRI && cur_z && zupd);
         d.mem = flags & 1;
+        d.cmask = kind != K_ZFILL;
         /* (CVG_DST save without the memory: its coverage kept) */
-        d.amask = d.mem || !(kind == K_TRI && cvd == 3);
+        d.amask = kind != K_ZFILL && (d.mem || !(kind == K_TRI && cvd == 3));
         ds_cur = d;
+        ds_hash = hash_bytes(0xCBF29CE484222325ull, &d, sizeof d);
+        ds_idx = -1;
     }
 }
 
-/* a new batch for the next primitive (box: the pixels it may cover) if
-   the last one isn't of its state, or reads the memory where the box is */
-static void batch_for(const int *box) {
-    int cx0 = box[0] / 8, cy0 = box[1] / 8, cx1 = (box[2] + 7) / 8, cy1 = (box[3] + 7) / 8;
-    int clash = 0;
-    if (ds_cur.mem && mem_open && nbatches && ds_valid)
-        for (int y = cy0; y < cy1 && !clash; y++)
-            for (int x = cx0; x < cx1; x++)
-                if (mem_cells[y][x]) {
-                    clash = 1;
-                    break;
-                }
-    if (clash || !nbatches || !ds_valid || memcmp(&batches[nbatches - 1].d, &ds_cur, sizeof ds_cur)) {
-        if (nbatches == batches_cap) {
-            batches_cap = batches_cap ? batches_cap * 2 : 1024;
-            batches = realloc(batches, (size_t)batches_cap * sizeof *batches);
-            if (!batches)
-                host_fatal("gl: no memory");
-        }
-        Batch *b = &batches[nbatches++];
-        b->d = ds_cur;
-        b->first = ninst;
-        b->count = 0;
-        b->box[0] = b->box[1] = 1 << 30;
-        b->box[2] = b->box[3] = -1;
-        ds_valid = 1;
-        mem_open = ds_cur.mem;
-        if (mem_open)
-            memset(mem_cells, 0, sizeof mem_cells);
-    }
-    Batch *b = &batches[nbatches - 1];
-    for (int k = 0; k < 2; k++) {
-        if (box[k] < b->box[k]) b->box[k] = box[k];
-        if (box[k + 2] > b->box[k + 2]) b->box[k + 2] = box[k + 2];
-    }
-    if (mem_open)
-        for (int y = cy0; y < cy1; y++)
-            memset(&mem_cells[y][cx0], 1, (size_t)(cx1 - cx0));
-}
-
+/* the next primitive (box: the pixels it may cover), with ds_cur: its
+   draw state's index and its layer */
 static Inst *push(const int *box) {
-    batch_for(box);
+    if (ninst == MAX_INST)
+        flush();
     if (ninst == inst_cap) {
         inst_cap = inst_cap ? inst_cap * 2 : 8192;
         insts = realloc(insts, (size_t)inst_cap * sizeof *insts);
-        if (!insts)
+        insts_sorted = realloc(insts_sorted, (size_t)inst_cap * sizeof *insts_sorted);
+        tags = realloc(tags, (size_t)inst_cap * sizeof *tags);
+        if (!insts || !insts_sorted || !tags)
             host_fatal("gl: no memory");
     }
-    batches[nbatches - 1].count++;
+    if (ds_idx < 0) {
+        for (int i = nstates - 1; i >= 0 && ds_idx < 0; i--)
+            if (state_hash[i] == ds_hash && !memcmp(&states[i], &ds_cur, sizeof ds_cur))
+                ds_idx = i;
+        if (ds_idx < 0) {
+            if (nstates == states_cap) {
+                states_cap = states_cap ? states_cap * 2 : 256;
+                states = realloc(states, (size_t)states_cap * sizeof *states);
+                state_hash = realloc(state_hash, (size_t)states_cap * sizeof *state_hash);
+                if (!states || !state_hash)
+                    host_fatal("gl: no memory");
+            }
+            states[nstates] = ds_cur;
+            state_hash[nstates] = ds_hash;
+            ds_idx = nstates++;
+        }
+    }
+    int layer;
+    if (mem_how == MEM_FETCH) {
+        if (ds_idx != last_state)
+            nlayers++;
+        layer = nlayers;
+    } else {
+        int cx0 = box[0] / CELL, cy0 = box[1] / CELL, cx1 = (box[2] + CELL - 1) / CELL,
+            cy1 = (box[3] + CELL - 1) / CELL;
+        layer = 0;
+        for (int y = cy0; y < cy1; y++)
+            for (int x = cx0; x < cx1; x++)
+                if (cell_layer[y][x] > layer)
+                    layer = cell_layer[y][x];
+        layer++;
+        for (int y = cy0; y < cy1; y++)
+            for (int x = cx0; x < cx1; x++)
+                cell_layer[y][x] = (uint16_t)layer;
+        if (layer > nlayers)
+            nlayers = layer;
+    }
+    last_state = ds_idx;
+    tags[ninst].layer = layer;
+    tags[ninst].state = ds_idx;
+    tags[ninst].seq = ninst;
     st_prims++;
+    /* (what it draws to: newer than RDRAM, and a read-back started before
+       stale) */
+    Img *w[2] = { ds_cur.cmask ? cur_c : NULL, ds_cur.zmask ? cur_z : NULL };
+    for (int k = 0; k < 2; k++)
+        if (w[k]) {
+            w[k]->newer = 1;
+            if (!w[k]->drawn) {
+                w[k]->drawn = 1;
+                img_drop_read(w[k]);
+            }
+        }
     Inst *in = &insts[ninst++];
     memset(in, 0, sizeof *in);
     return in;
@@ -1112,7 +1412,6 @@ static void gl_tri(const uint32_t *w) {
         in->v[I_A0 + k][3] = ay[k];
     }
     in->v[I_BOX][0] = x0; in->v[I_BOX][1] = y0; in->v[I_BOX][2] = x1; in->v[I_BOX][3] = y1;
-    tgt_dirty = 1;
 }
 
 /* a rectangle in one or two cycles: the triangle command the RDP makes of
@@ -1151,6 +1450,15 @@ static int whole_box(int xh, int yh, int xl, int yl, int *b) {
 
 static void gl_fill_rect(uint32_t w0, uint32_t w1) {
     int cyc = (gs.om_h >> 20) & 3;
+    int b[4];
+    if (cyc == 3 && z_target()) {
+        if (!whole_box((w1 >> 12) & 0xFFF, w1 & 0xFFF, (w0 >> 12) & 0xFFF, w0 & 0xFFF, b))
+            return;
+        begin(K_ZFILL, 0);
+        Inst *in = push(b);
+        memcpy(in->v[I_BOX], b, sizeof b);
+        return;
+    }
     if (!target()) {
         gfx_soft.fill_rect(w0, w1);
         return;
@@ -1159,13 +1467,11 @@ static void gl_fill_rect(uint32_t w0, uint32_t w1) {
         rect_tri((w0 >> 12) & 0xFFF, w0 & 0xFFF, (w1 >> 12) & 0xFFF, w1 & 0xFFF, 0, NULL);
         return;
     }
-    int b[4];
     if (cyc != 3 || !whole_box((w1 >> 12) & 0xFFF, w1 & 0xFFF, (w0 >> 12) & 0xFFF, w0 & 0xFFF, b))
         return;
     begin(K_FILL, 0);
     Inst *in = push(b);
     memcpy(in->v[I_BOX], b, sizeof b);
-    tgt_dirty = 1;
 }
 
 static void gl_tex_rect(uint32_t w0, uint32_t w1, uint32_t h1, uint32_t h2, int flip) {
@@ -1192,34 +1498,102 @@ static void gl_tex_rect(uint32_t w0, uint32_t w1, uint32_t h1, uint32_t h2, int 
     in->v[I_A0][0] = xh >> 2; in->v[I_A0][1] = yh >> 2; in->v[I_A0][2] = s0; in->v[I_A0][3] = t0;
     in->v[I_A0 + 1][0] = dsdx >> 2; in->v[I_A0 + 1][1] = dtdy; in->v[I_A0 + 1][2] = flip;
     memcpy(in->v[I_BOX], b, sizeof b);
-    tgt_dirty = 1;
 }
 
 /* ---- the back end ---------------------------------------------------------------------------- */
 
+/* A task's end: its batches drawn; RDRAM stays as it was (read back where
+   something reads, img_sync).  When the color image's read-backs are
+   being waited for (the VI's picture each retrace: --hash, a window), the
+   next is started now, to be ready by then. */
 static void gl_task_end(void) {
-    release();
+    flush();
+    if (prefetch > 0)
+        prefetch--;
+    for (int i = 0; i < NIMG; i++) {
+        Img *m = &imgs[i];
+        if (m->drawn) {
+            m->drawn_vi = host_vi_count;
+            if (prefetch && !m->z && m->newer)
+                img_start_read(m);
+        }
+        m->checked = m->drawn = 0;
+    }
+    attach(NULL, NULL);
     raw_valid = 0;
     frame_seed++;
     st_tasks++;
     if (host_verbose && st_tasks % 300 == 0)
-        host_log("gl: %llu tasks, %llu primitives in %llu batches (%llu read the memory), %llu textures decoded, "
-                 "%llu read-backs\n", st_tasks, st_prims, st_batches, st_snaps, st_tex_decoded, st_readbacks);
+        host_log("gl: %llu tasks, %llu primitives in %llu draws (%llu read the memory) in %llu layers, %llu barriers, "
+                 "%llu copies, %llu textures decoded, %llu read-backs (%llu pixels kept), %llu uploads\n",
+                 st_tasks, st_prims, st_batches, st_membatches, st_layers, st_barriers, st_snaps, st_tex_decoded,
+                 st_readbacks, st_kept, st_uploads);
 }
 
-/* a TMEM load from the image the GPU has drawn to: it is read back first */
+/* a TMEM load from an image the GPU has drawn to: it is read back first */
 static void gl_texture_source(const uint8_t *timg) {
-    if (tgt && tgt_dirty && timg >= tgt && timg < tgt + TW * TH * 2) {
-        flush();
-        read_back();
-        tgt_dirty = 0;
+    for (int i = 0; i < NIMG; i++) {
+        Img *m = &imgs[i];
+        if (m->addr && m->newer && timg >= m->addr && timg < m->addr + TW * TH * 2) {
+            if (!m->z)
+                prefetch = 4;   /* (the after-image: the next frame's too) */
+            img_sync(m);
+        }
     }
+}
+
+/* what reads RDRAM outside the tasks (host_gfx_sync): the images in n
+   bytes at p (p NULL: every image) */
+static void gl_sync(const uint8_t *p, size_t n) {
+    for (int i = 0; i < NIMG; i++)
+        if (imgs[i].addr && imgs[i].newer &&
+            (!p || (p < imgs[i].addr + TW * TH * 2 && imgs[i].addr < p + n))) {
+            if (!imgs[i].z)
+                prefetch = 4;
+            img_sync(&imgs[i]);
+        }
+}
+
+/* a retrace: an image not drawn to for IDLE_SYNC retraces into RDRAM */
+static void gl_retrace(void) {
+    for (int i = 0; i < NIMG; i++)
+        if (imgs[i].addr && imgs[i].newer && host_vi_count - imgs[i].drawn_vi >= IDLE_SYNC)
+            img_sync(&imgs[i]);
+}
+
+static GLuint new_tex(GLint ifmt, GLenum fmt, GLenum type) {
+    GLuint t;
+    glGenTextures(1, &t);
+    glBindTexture(GL_TEXTURE_2D, t);
+    glTexImage2D(GL_TEXTURE_2D, 0, ifmt, TW, TH, 0, fmt, type, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+    return t;
 }
 
 static void gl_init(void) {
     gfx_soft.init();
     if (!egl_up())
         host_fatal("--renderer gl: no OpenGL (an EGL display with OpenGL 3.3 core, surfaceless)");
+    /* how the memory is read: the best the driver has, or PORT_GL_MEM's */
+    mem_how = epoxy_has_gl_extension("GL_EXT_shader_framebuffer_fetch")                          ? MEM_FETCH
+              : epoxy_gl_version() >= 45 || epoxy_has_gl_extension("GL_ARB_texture_barrier") ||
+                      epoxy_has_gl_extension("GL_NV_texture_barrier")
+                  ? MEM_BARRIER
+                  : MEM_BLIT;
+    const char *e = getenv("PORT_GL_MEM");
+    if (e && *e) {
+        int want = !strcmp(e, "fetch") ? MEM_FETCH : !strcmp(e, "barrier") ? MEM_BARRIER : MEM_BLIT;
+        if (want == MEM_BLIT && strcmp(e, "copy"))
+            host_fatal("PORT_GL_MEM=%s: fetch, barrier or copy", e);
+        if (want > mem_how)
+            host_fatal("PORT_GL_MEM=%s: the driver can't", e);
+        mem_how = want;
+    }
+    base_instance = epoxy_gl_version() >= 42 || epoxy_has_gl_extension("GL_ARB_base_instance");
+    host_log("gl: the memory read by %s\n", mem_how == MEM_FETCH ? "framebuffer fetch" :
+                                            mem_how == MEM_BARRIER ? "texture barriers" : "copies");
     GLuint vs = compile(GL_VERTEX_SHADER, vs_src), fs = compile(GL_FRAGMENT_SHADER, fs_src);
     prog = glCreateProgram();
     glAttachShader(prog, vs);
@@ -1238,12 +1612,14 @@ static void gl_init(void) {
     u_tex0 = glGetUniformLocation(prog, "u_tex0");
     u_tex1 = glGetUniformLocation(prog, "u_tex1");
     u_mem = glGetUniformLocation(prog, "u_mem");
+    u_zmem = glGetUniformLocation(prog, "u_zmem");
     glUseProgram(prog);
     glUniform1i(u_tex0, 0);
     glUniform1i(u_tex1, 1);
-    glUniform1i(u_mem, 2);
-    u_zmem = glGetUniformLocation(prog, "u_zmem");
-    glUniform1i(u_zmem, 3);
+    if (u_mem >= 0)
+        glUniform1i(u_mem, 2);
+    if (u_zmem >= 0)
+        glUniform1i(u_zmem, 3);
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     glGenBuffers(1, &ibo);
@@ -1252,30 +1628,22 @@ static void gl_init(void) {
         glEnableVertexAttribArray((GLuint)i);
         glVertexAttribDivisor((GLuint)i, 1);
     }
-    glGenTextures(1, &color_tex);
-    glBindTexture(GL_TEXTURE_2D, color_tex);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, TW, TH, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    /* the z image: its halfword << 2 and hidden bits, unsigned */
-    glGenTextures(1, &z_tex);
-    glBindTexture(GL_TEXTURE_2D, z_tex);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, TW, TH, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    /* the copies a batch reading the memory reads */
-    glGenTextures(1, &snap_tex);
-    glBindTexture(GL_TEXTURE_2D, snap_tex);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, TW, TH, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glGenTextures(1, &snap_z);
-    glBindTexture(GL_TEXTURE_2D, snap_z);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, TW, TH, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    /* the images' textures and read-back buffers; what fbo draws to
+       without one (scratch_c, scratch_z: masked) */
+    for (int i = 0; i < NIMG; i++) {
+        imgs[i].tex = new_tex(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);
+        glGenBuffers(1, &imgs[i].pbo);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, imgs[i].pbo);
+        glBufferData(GL_PIXEL_PACK_BUFFER, TW * TH * 4, NULL, GL_STREAM_READ);
+    }
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    scratch_c = new_tex(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);
+    scratch_z = new_tex(GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT);
+    /* the copies a batch reading the memory reads (MEM_BLIT) */
+    snap_tex = new_tex(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);
+    snap_z = new_tex(GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT);
     static const GLenum both[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-    GLuint tex[2][2] = { { color_tex, z_tex }, { snap_tex, snap_z } };
+    GLuint tex[2][2] = { { scratch_c, scratch_z }, { snap_tex, snap_z } };
     GLuint *fb[2] = { &fbo, &snap_fbo };
     for (int k = 0; k < 2; k++) {
         glGenFramebuffers(1, fb[k]);
@@ -1286,6 +1654,7 @@ static void gl_init(void) {
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             host_fatal("gl: framebuffer incomplete");
     }
+    glGenFramebuffers(1, &rd_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     static const uint8_t zero[4];
     glGenTextures(1, &dummy_tex);
@@ -1297,19 +1666,25 @@ static void gl_init(void) {
         host_fatal("gl: setting up failed");
 }
 
-/* the NMI: the hidden bits as gfx_soft.c resets them; nothing drawn is kept */
+/* the NMI (main.c synced RDRAM first: it keeps what was drawn): the hidden
+   bits as gfx_soft.c resets them; the GPU's images are dropped */
 static void gl_reset(uint32_t clean) {
-    ninst = nbatches = 0;
-    ds_valid = 0;
-    mem_open = 0;
+    ninst = nstates = nlayers = 0;
+    ds_idx = last_state = -1;
+    memset(cell_layer, 0, sizeof cell_layer);
     raw_valid = 0;
-    tgt = ztgt = NULL;
-    tgt_dirty = z_dirty = 0;
+    attach(NULL, NULL);
+    for (int i = 0; i < NIMG; i++) {
+        img_drop_read(&imgs[i]);
+        imgs[i].addr = NULL;
+        imgs[i].valid = imgs[i].newer = imgs[i].checked = imgs[i].drawn = 0;
+    }
+    prefetch = 0;
     tc_sweep();
     gfx_soft.reset(clean);
 }
 
 const GfxBackend gfx_gl = { "gl", gl_init, gl_reset, gl_tri, gl_fill_rect, gl_tex_rect, gl_task_end,
-                            gl_texture_source };
+                            gl_texture_source, gl_sync, gl_retrace };
 
 #endif

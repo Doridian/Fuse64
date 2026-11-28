@@ -334,13 +334,15 @@ docs/PORT.md), for accuracy and fidelity alike:
 - [ ] **No dependency on the N64's layout**: every past-end, alias and
       unset read fixed (the scattered check reports nothing), then an
       ordinary C program under ASan and UBSan.
-      What still stands in the way (2026-11-22): by DozerEncore's
-      standard the default build is an ordinary C program whose fixed
-      buffers are arrays of their own. Fuse64's default build still
-      keeps the fixed-address names inside the 8 MiB `port_rdram` laid
-      out as RDRAM, and each asm data file is one packed struct with its
-      labels inside; only the check build (`PORT_SCATTER`) separates
-      them. The runs that find what depends on the layout now cover
+      By DozerEncore's standard the default build is an ordinary C
+      program whose fixed buffers are arrays of their own. Since
+      2026-11-27 Fuse64's default build makes each fixed-address name
+      and each asm data label an object of its own, with no 8 MiB
+      `port_rdram` (the N64's layout is `-DPORT_LAYOUT=n64`; docs/PORT.md,
+      "The default layout"); left there: the objects as typed C
+      definitions reached without gen_inner.py's pointers, their
+      declared sizes rather than the N64's room, the asm data as C.
+      The runs that find what depends on the layout now cover
       every room's entry (us, seed 1, 2026-11-27: three findings fixed,
       nothing left), 65.5% of the lines; seeds 2-3, eu and jp over every
       room, and what each room's progress unlocks, are left

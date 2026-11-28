@@ -1518,11 +1518,13 @@ F3DEX's macros added) and `-include port_game.h`; gmalloc as the Makefile
 does; and four generated files:
 
 - `asm_data.c` (port/tools/asm2c.py): main_code's data that is still asm,
-  and boot_code's VI modes, as packed structs at their N64 offsets, each
-  label an alias.
+  and boot_code's VI modes, each label a struct of its own ("The default
+  layout"; with `-DPORT_LAYOUT=n64` each file one packed struct at its N64
+  offsets, each label an alias).
 - `zerojump.c` (gen_zerojump.py): every ZeroJump stub as a C function that
   calls its target ("ZeroJump").
-- `regions.c` (gen_regions.py): the fixed addresses ("Memory").
+- `regions.c` (gen_regions.py): the fixed addresses, each an array of its
+  own ("Memory", "The default layout").
 - `overlays.c` (gen_overlays.py): the overlays' table.
 
 The game's C is compiled through `tools/cdata.py`, which takes the ROM's
@@ -1705,8 +1707,9 @@ Not counted, and so left:
 
 The fixed-address names (`undefined_syms_auto.txt`: the work area from
 0x80063000, the framebuffers, the archive's buffers, the audio heap, the
-sbrk arena at 0x80300000) are aliases into one 8 MiB buffer laid out as
-RDRAM (`port_rdram`), since the C clears and indexes across them.
+sbrk arena at 0x80300000) are each an array of its own ("The default
+layout"); with `-DPORT_LAYOUT=n64` they are aliases into one 8 MiB buffer
+laid out as RDRAM (`port_rdram`), as they were until 2026-11-27.
 `port_addr()` (port/src/memory.c) turns what the game hands the hardware
 (a KSEG0/1 address, a physical one, a segment address, a host pointer)
 into a host pointer. Where pointers are 4 bytes the game's structures have
@@ -1740,16 +1743,123 @@ whatever the renderer and however the host's heap went:
 All three are bss: only the pages used cost memory. Their addresses are
 the image's, as the game's variables are (the same each run without
 address randomization: `setarch -R`, as gl_cmp.py runs). The game's own
-heap is gmalloc's arena in `port_rdram` (with `PORT_HOST_MALLOC`, a
+heap is gmalloc's arena, the sbrk arena's `D_80300000` (with `PORT_HOST_MALLOC`, a
 checking build, the host's, which isn't deterministic). What else the
 port allocates (the overlays' and the reset's copies, the renderers'
 buffers, the input script, the digest's) the game never sees.
 
+### The default layout
+
+DozerEncore's default build is an ordinary C program, its fixed buffers
+arrays of their own. Until 2026-11-27 Fuse64's kept the N64's RDRAM: the
+fixed-address names as aliases into the 8 MiB `port_rdram` at their RDRAM
+offsets, and each asm data file one packed struct with its labels inside;
+only the scattered check build ("The scattered layout") made them objects
+of their own. That is now `-DPORT_LAYOUT=n64` (`PORT_LAYOUT_N64`), and the
+default (`PORT_LAYOUT=objects`) has no `port_rdram`.
+
+**What needed the N64's RDRAM** (the inventory, us, 2026-11-27, before the
+change):
+
+| what | where | how it used RDRAM |
+|---|---|---|
+| the fixed-address names (313 in `undefined_syms_auto.txt`) | gen_regions.py, `regions.c` | aliases into `port_rdram`: the work area 0x80063000-0x800BEA60 (cleared as one range: `port_clear_work_area`), the framebuffers (`D_80100000`, 0x4B000), the depth buffer (`D_200000`, physical), the archive's buffers, the audio heap, the sbrk arena (`D_80300000`, gmalloc's heap) |
+| the asm data (main_code's data still asm, boot_code's VI modes) | asm2c.py, `asm_data.c` | one packed struct per file, the labels aliases at their N64 offsets; the ROM's fill (`port_asmfill`) by the struct's offsets |
+| numbers the game hands the hardware | memory.c `port_addr` | a physical, KSEG0 or KSEG1 address as `port_rdram` + offset |
+| N64 addresses of names | memory.c `port_n64_address`, `port_n64_host` | `port_rdram`'s offset: 9CAB0.c's stack byte, the VI's origin (ultra.c), the VI's fetch (vi.c, gfx_gl.c) |
+| the RDP's hidden bits | gfx_soft.c | an array over `port_rdram`, by offset; the z image only inside `port_rdram` |
+| the OpenGL renderer's images | gfx_gl.c | a color or z image is the GPU's only inside `port_rdram`; the VI's halfwords |
+| the VI | vi.c | the fetch from `port_rdram` + offset, the GPU sync of a range of it |
+| the soft reset | reset.c | `port_rdram` below 0x80100400 zeroed (what IPL3 writes) |
+| the RSP's DRAM addresses | asp_lle.c, aspmain.c | an address in `port_rdram` is its offset (RESAMPLE's state in DMEM, the DMAs), cxd4's reference image a copy of it |
+| the dumps and references | digest.c (`PORT_DIGEST_DUMP`, rdram_cmp.py), main.c (`PORT_DUMP_RDRAM`, gl_cmp.py), gfx.c (`PORT_GFX_REF`, `PORT_DUMP_DL`, `PORT_GFX_CENSUS`), vi.c (`PORT_VI_REF`), fbwatch.c, widthcheck.c | `port_rdram` written as it is, a pointer named by its offset in it |
+
+Not on the list: the digest (it reads the game's names; its pools'
+layouts are decls.py's types, not addresses), rooms.py (the digest
+against the emulator's), the segment table and the display lists (host
+pointers), the boot's DMAs and the overlays (linked in, an overlay slot of
+its own: "Overlays"), save states (the port has none; the EEPROM is a
+file). The scattered layout already ran without `port_rdram`: everything
+on the list had a second path for it (`PORT_SCATTER_LAYOUT`).
+
+**The design.** Nothing of the game's memory is RDRAM-shaped any more; what
+keeps N64 offsets is a numbering, used where something outside the game
+names memory by number (the RSP and the RDP of the references, the audio
+microcode's DRAM, the dumps):
+
+- Each fixed-address name the C declares, and that isn't inside another
+  (a typed name's members and elements, or inside the one before by that
+  one's declared size), is an array of its own, `port_o_NAME`
+  (gen_regions.py): from its place in the N64 layout to the next such
+  name's, so never less than its declared size (decls.py's, which the
+  build now makes where pointers are 4 bytes too: `--sizes`), SIZES's
+  where that is less, the sbrk arena `PORT_SBRK_SIZE`. A name the C
+  doesn't declare (the asm data's words or nothing name it) is inside the
+  one before, as in the scattered layout. Each keeps its offset modulo 16
+  (4 KB for 4 KB or more: a pad before it), and the name is an alias at
+  that offset, so gen_inner.py's pointers (`port_p_NAME`) reach it as
+  before. 114 objects (us; three of x86-64's were already objects of
+  their own, `port_region_*`).
+- Each asm data label is a struct of its own, `port_o_LABEL`, from its
+  place in its file's struct to the next one's (asm2c.py), by the same
+  rule (325 in us); the fill writes into it (`port_asmfill`'s runs split
+  at the labels, the same bytes in the same order, so the checksum and the
+  snapshot are unchanged).
+- One table of the objects (`port_region_objs`, `port_asm_objs`: place,
+  size, N64 address, offset in the N64 layout's `port_rdram`) is the map
+  (memory.c, sorted indexes built at the first use): `port_obj_of`,
+  `port_n64_address`, `port_n64_host`, and the **image**: `port_image_off`
+  (a pointer's offset in the N64 layout's RDRAM), `port_image_host`,
+  `port_image_room`, `port_image_each`, `port_image_copy` (the 8 MiB as
+  the N64 layout had them, zeros where no object is) and
+  `port_image_zero`. In the N64 layout these are `port_rdram` itself; the
+  scattered layout's gen_scatter.py writes the same table for its arena,
+  so the host has one path for both.
+- The list's users take the image: the hidden bits are indexed by image
+  offset, the z and color images are the GPU's when they lie in one
+  object, the VI fetches by N64 address and syncs each object's part of
+  its range, the reset zeroes each object's part below 0x80100400, the
+  RSP's DRAM address is the image offset, the dumps and the references
+  write `port_image_copy`'s image and name pointers by image offset. So
+  every file they write is the same file as before.
+- `port_addr` of a number resolves it through the table; a number no
+  object has reads a page of zeroes (logged once per address with `-v`:
+  `port_addr: the N64's address ... is in no fixed-address name`). The
+  native builds reach none; the WebAssembly build reaches 0x80010000
+  once, before the first frame (412F0.c's `func_80227678` makes 0x10000
+  a segment base), which the N64 layout read as RDRAM's zeroes too.
+
+**Checked** (us, 2026-11-27): the N64 layout's build
+(`-DPORT_LAYOUT=n64`, x86-64) writes the same RDRAM dumps as the
+commit before, byte for byte (`PORT_DUMP_RDRAM` at retraces 300,
+1500 and 2999 of menus), and the default build the same but the host
+pointers the game keeps (8-byte words of the image's 0x5555... and
+the host heap's). test.py's seven scenarios give the references
+on i386 and x86-64. `rooms.py census` (286 targets, i386) against
+the commit before's: the same result lines and the same digests,
+file for file. jp's 4908M (`test.py tas`, i386, the soft reset's
+`port_image_zero` with it): part 0's 317 and part 1's 73,577 frames
+the same as the emulator's, the digest's hashes and the save the
+reference's. `snapshot.py --check` (linux-x86_64, windows-x86_64,
+wasm32): the same binaries, the snapshot unchanged, `rom_free_check.py`
+0 in each; the Windows build's `legal` under wine and the WebAssembly
+build's under node give the references. The scattered check build
+(seed 1) gives the references for `legal`, `menus` and `battle` with an
+empty `PORT_SCATTER_OUT` (it was configured with `-DPORT_ROM_FREE=OFF`:
+its post-link check finds 72 bytes in its shuffled `.rodata`, a table
+that happens to sit next to strings as in the ROM). (One thing went wrong on the way: the table's
+index was first allocated with the game's malloc, pc_names.h's, which
+moved every block of gmalloc's heap by three 4 KB blocks; the dumps
+showed it, the scenarios' hashes didn't. It is the host's malloc now.)
+
 ### The scattered layout
 
-The default build keeps the N64's neighbours: the fixed-address names in
-`port_rdram` at their RDRAM offsets, each asm data file one struct with its
-labels inside, the overlays' variables in their files' order. So a read
+The N64 layout (`-DPORT_LAYOUT=n64`, the default until 2026-11-27) keeps
+the N64's neighbours: the fixed-address names in `port_rdram` at their
+RDRAM offsets, each asm data file one struct with its labels inside, the
+overlays' variables in their files' order; the default layout ("The
+default layout") separates the names but gives each the N64's room up to
+the next one the C declares. So a read
 past an object's end, before its start, or from one name into the next
 reaches what the N64 has there, and nothing shows it. The goal, as in
 DozerEncore, is a port that doesn't depend on that. The scattered builds
@@ -3465,12 +3575,38 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
     monkey on seeds 2 and 3; the
     rest of each room is behind its progress (switches, doors, the
     bosses' later phases), which a fixed walk doesn't reach.
-  - The default build itself: the fixed-address names are still aliases
-    into the 8 MiB `port_rdram` laid out as RDRAM, and each asm data file
-    one packed struct with its labels inside ("Memory"); only the check
-    build makes them objects of their own. DozerEncore's default build
-    is an ordinary C program with its fixed buffers as arrays of their
-    own.
+  - The default build itself ("The default layout", 2026-11-27): each
+    fixed-address name and each asm data label is an object of its own
+    and there is no `port_rdram` (the N64's layout is
+    `-DPORT_LAYOUT=n64`). Left before it is DozerEncore's ordinary C
+    program:
+    - Each object is a byte array (a struct of bytes and words for a
+      label) named by an alias at its offset, and the game's C reaches
+      every such name through gen_inner.py's pointer (`port_p_NAME`), as
+      before. Next: each name defined once with its C type (decls.py has
+      them), and the pointers only for the names inside another (an
+      element's or a member's own name), so that the compiler sees
+      ordinary globals (its code changes: test.py, the census and the
+      TAS again).
+    - Each object has the N64's room up to the next declared name, not
+      its declared size, so a read past the declared end still reaches
+      what the N64 has there (the check build, with declared sizes and
+      padding, is what shows such reads; it reports none in the runs
+      above). Then the declared sizes, and an ordinary ASan build
+      (redzones round every global) would see what the check build sees.
+    - The asm data as C: each label's initializer from the ROM (the
+      fill) is a C definition of its type, and asm2c.py goes.
+    - The image (the N64 layout's offsets) stays as the numbering of what
+      the references, the audio microcode's DRAM and the dumps name by
+      number; the default build was checked on Linux i386 and x86-64,
+      the snapshot's x86-64, Windows x64 (zig) and WebAssembly builds
+      (`snapshot.py --check`, `legal`), and jp's 4908M on i386; eu,
+      macOS, and gfx_ref.py's and gl_cmp.py's comparisons (which take
+      the image) not yet.
+    - The scattered check build's post-link `rom_free_check.py` finds
+      72 bytes of the ROM in its shuffled `.rodata` (seed 1): a
+      coincidence of order, but the check builds need `-DPORT_ROM_FREE=OFF`
+      until it learns to ignore it or the shuffle avoids it.
 - **Packages** (an AppImage, the `.exe` with SDL, a macOS app; Blast
   Corps' "Packages") and a hosted page: after 64-bit, with SDL in the
   Windows cross build. Their first step is done: the executable and the

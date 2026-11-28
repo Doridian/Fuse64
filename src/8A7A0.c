@@ -411,7 +411,9 @@ s32 func_80273AD4(s16 arg0, f32 arg1, f32 arg2, f32 arg3) {
         return 0;
     }
     pl = &PLAYERS[arg0];
-    cnt = ((s16 *) &pl->unk1C)[1]; /* unk1C's low half */
+    /* the bomb count, which func_80277E1C stores as an s32 and IDO's code
+       reads the low half of (the host the word) */
+    cnt = PORT_HOST(((s16 *) &pl->unk1C)[1], pl->unk1C);
     e = ENT_HEAD;
     n = e->next;
     while (n != NULL) {

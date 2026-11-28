@@ -516,7 +516,7 @@ typedef struct {
 } UnkStruct_ovl0F_02_800489F4; /* size 0x60 */
 
 /* how func_ovl0B_04_80043050 and func_ovl0B_06_80043040 make an object
- * (through ZeroJump 0x1500): its place, model id and flags (D_ovl0B_04_80049C38,
+ * (through ZeroJump 0x1500, into an UnkStruct_ovl0B_04_80049D40): its place, model id and flags (D_ovl0B_04_80049C38,
  * D_ovl0B_06_8004A0C4; 0B_04/06) */
 typedef struct {
     /* 0x00 */ f32 unk0;
@@ -542,5 +542,15 @@ typedef struct {
 typedef struct {
     f32 x, y, z, w;
 } Vec4f_0D01;
+
+/* an object made from an UnkStruct_ovl0B_04_80049C38 and its rectangle
+ * (D_ovl0B_04_80049D40, D_ovl0B_06_80049E44; 0B_04/06) */
+typedef struct {
+    /* 0x00 */ UnkStructA_40 *unk0;
+    /* 0x04 */ f32 unk4;
+    /* 0x08 */ f32 unk8;
+    /* 0x0C */ f32 unkC;
+    /* 0x10 */ f32 unk10;
+} UnkStruct_ovl0B_04_80049D40; /* size = 0x14 */
 
 #endif

@@ -493,14 +493,6 @@ typedef struct {
 } Box_ovl0B_06; /* size = 0x44 */
 
 typedef struct {
-    /* 0x00 */ UnkStructA_40 *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-} Rect_ovl0B_06; /* size = 0x14 */
-
-typedef struct {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ s32 unk4;
     /* 0x08 */ s32 unk8;
@@ -629,7 +621,7 @@ static void func_ovl0B_06_80043030(void);
 static void func_ovl0B_06_80043028(void);
 static void func_ovl0B_06_80043020(void);
 static void func_ovl0B_06_80043018(void);
-static void func_ovl0B_06_80043040(Rect_ovl0B_06 *rect, UnkStruct_ovl0B_04_80049C38 *spr, f32 dy);
+static void func_ovl0B_06_80043040(UnkStruct_ovl0B_04_80049D40 *rect, UnkStruct_ovl0B_04_80049C38 *spr, f32 dy);
 static void func_ovl0B_06_800430F0(s32 arg0);
 static void func_ovl0B_06_80043218(void);
 void func_ovl0B_06_80043220(void);
@@ -888,7 +880,7 @@ Box_ovl0B_06 D_ovl0B_06_80049CAC[6] = {
     { NULL, 0x1E, 0x1E, 0x1E, 0xB4, 0.0f, 160.0f, 1.0f, 0.75f, 0xA0, 0xA0, 0xA0, 0x78, 0.0f, 0, 0x81, func_ovl0B_06_80047DB8 },
     { NULL, 0, 0xB4, 0, 0x78, 0.0f, 50.0f, 1.0f, 0.49f, 0x32, 0x32, 0xDA, 0xC0, 0.0f, 0, 0x480, func_ovl0B_06_80047DE4 }
 };
-Rect_ovl0B_06 D_ovl0B_06_80049E44[11] = {
+UnkStruct_ovl0B_04_80049D40 D_ovl0B_06_80049E44[11] = {
     { NULL, 34.0f, 171.0f, 66.0f, 203.0f },
     { NULL, 68.0f, 177.0f, 92.0f, 195.0f },
     { NULL, 94.0f, 171.0f, 126.0f, 203.0f },
@@ -901,7 +893,7 @@ Rect_ovl0B_06 D_ovl0B_06_80049E44[11] = {
     { NULL, 206.0f, 177.0f, 230.0f, 195.0f },
     { NULL, 232.0f, 171.0f, 264.0f, 203.0f }
 };
-Rect_ovl0B_06 D_ovl0B_06_80049F20[3][7] = {
+UnkStruct_ovl0B_04_80049D40 D_ovl0B_06_80049F20[3][7] = {
     {
         { NULL, 250.0f, 55.0f, 274.0f, 79.0f },
         { NULL, 122.0f, 61.0f, 132.0f, 71.0f },
@@ -948,7 +940,7 @@ UnkStruct_ovl0B_04_80049C38 D_ovl0B_06_8004A0C4[15] = {
     { 32.0f, 32.0f, 0x45, 6, 0, 0x200 }
 };
 UnkStruct_ovl0B_04_80049C38 * D_ovl0B_06_8004A22C[3] = { &D_ovl0B_06_8004A0C4[1], &D_ovl0B_06_8004A0C4[0], &D_ovl0B_06_8004A0C4[2] };
-Rect_ovl0B_06 * D_ovl0B_06_8004A238[3] = { &D_ovl0B_06_80049E44[0], &D_ovl0B_06_80049E44[1], &D_ovl0B_06_80049E44[2] };
+UnkStruct_ovl0B_04_80049D40 * D_ovl0B_06_8004A238[3] = { &D_ovl0B_06_80049E44[0], &D_ovl0B_06_80049E44[1], &D_ovl0B_06_80049E44[2] };
 Col_ovl0B_06 D_ovl0B_06_8004A244 = { 0, 0xB4, 0, 0x78 };
 Col_ovl0B_06 D_ovl0B_06_8004A254 = { 0xFA, 0xFA, 0, 0x78 };
 Col_ovl0B_06 D_ovl0B_06_8004A264 = { 0xC8, 0, 0, 0x78 };
@@ -2967,7 +2959,7 @@ static void func_ovl0B_06_80043450(s32 n, Label_ovl0B_06 *p) {
 static void func_ovl0B_06_80043480(s32 arg0) {
     Unk24_ovl0B_06 *p;
     Label_ovl0B_06 *label;
-    Rect_ovl0B_06 *r;
+    UnkStruct_ovl0B_04_80049D40 *r;
     s32 state;
     s32 kind;
     f32 d;
@@ -3120,7 +3112,7 @@ static void func_ovl0B_06_80043278(void) {
 
 static void func_ovl0B_06_800430F0(s32 arg0) {
     s32 i;
-    Rect_ovl0B_06 *r;
+    UnkStruct_ovl0B_04_80049D40 *r;
 
     switch (arg0) {
         case 0:
@@ -3149,7 +3141,7 @@ static void func_ovl0B_06_800430F0(s32 arg0) {
 
 
 /* @80043040 */
-static void func_ovl0B_06_80043040(Rect_ovl0B_06 *rect, UnkStruct_ovl0B_04_80049C38 *spr, f32 dy) {
+static void func_ovl0B_06_80043040(UnkStruct_ovl0B_04_80049D40 *rect, UnkStruct_ovl0B_04_80049C38 *spr, f32 dy) {
     func_ovl0B_06_80043030();
     func_ovl0B_06_80043028();
     func_ovl0B_06_80043020();
@@ -3187,7 +3179,7 @@ static void func_ovl0B_06_80043018(void) {
  * two; tried: the start index as a parameter (jp's n home moves), OPEN_B
  * in a statics.h (jp swaps). The number is the call's line minus 5, so a
  * line added or removed above the handler changes it. */
-#line 2732
+#line 2724
 static void OPEN_B(s32 n, Box_ovl0B_06 *box) {
     s32 i;
     f32 step;

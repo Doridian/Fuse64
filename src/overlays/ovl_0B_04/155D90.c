@@ -256,14 +256,6 @@ typedef struct {
 } Fade; /* size = 0x38 */
 
 typedef struct {
-    /* 0x00 */ UnkStructA_40 *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-} Entry0B04; /* size = 0x14 */
-
-typedef struct {
     /* 0x00 */ u8 unk0; /* cursor in the name */
     /* 0x01 */ u8 unk1; /* character */
     /* 0x02 */ u8 unk2; /* character set (page) */
@@ -1170,7 +1162,7 @@ UnkStruct_ovl0B_04_80049C38 D_ovl0B_04_80049C38[11] = {
     { 20.0f, 20.0f, 57, 2, 0, 0 },
     { 18.0f, 24.0f, 67, 8, 0, 0 },
 };
-Entry0B04 D_ovl0B_04_80049D40[20] = {
+UnkStruct_ovl0B_04_80049D40 D_ovl0B_04_80049D40[20] = {
     { NULL, 0.0f, 0.0f, 64.0f, 60.0f },
     { NULL, 64.0f, 0.0f, 128.0f, 60.0f },
     { NULL, 128.0f, 0.0f, 192.0f, 60.0f },
@@ -1192,7 +1184,7 @@ Entry0B04 D_ovl0B_04_80049D40[20] = {
     { NULL, 192.0f, 180.0f, 256.0f, 240.0f },
     { NULL, 256.0f, 180.0f, 320.0f, 240.0f },
 };
-Entry0B04 D_ovl0B_04_80049ED0[20] = {
+UnkStruct_ovl0B_04_80049D40 D_ovl0B_04_80049ED0[20] = {
     { NULL, 0.0f, 10.0f, 64.0f, 21.0f },
     { NULL, 64.0f, 42.0f, 128.0f, 53.0f },
     { NULL, 128.0f, 10.0f, 192.0f, 21.0f },
@@ -1215,7 +1207,7 @@ Entry0B04 D_ovl0B_04_80049ED0[20] = {
     { NULL, 256.0f, 202.0f, 320.0f, 213.0f },
 };
 #if VERSION_JP
-Entry0B04 D_ovl0B_04_8004A060[13] = {
+UnkStruct_ovl0B_04_80049D40 D_ovl0B_04_8004A060[13] = {
     { NULL, 50.0f, 192.0f, 74.0f, 216.0f },
     { NULL, 150.0f, 25.0f, 164.0f, 39.0f },
     { NULL, 230.0f, 162.0f, 274.0f, 186.0f },
@@ -1231,7 +1223,7 @@ Entry0B04 D_ovl0B_04_8004A060[13] = {
     { NULL, 24.0f, 20.0f, 300.0f, 220.0f },
 };
 #else
-Entry0B04 D_ovl0B_04_8004A060[13] = {
+UnkStruct_ovl0B_04_80049D40 D_ovl0B_04_8004A060[13] = {
     { NULL, 50.0f, 192.0f, 74.0f, 216.0f },
     { NULL, 205.0f, 25.0f, 219.0f, 39.0f },
     { NULL, 220.0f, 162.0f, 264.0f, 186.0f },
@@ -1267,8 +1259,8 @@ extern s32 D_ovl0B_04_8004A1A4; /* defined after 800447DC, whose static is A1A0 
 extern s32 D_ovl0B_04_8004A1A8;
 extern s32 D_ovl0B_04_8004A1AC[14];
 
-static void func_ovl0B_04_80043050(Entry0B04 *e, UnkStruct_ovl0B_04_80049C38 *d);
-static void func_ovl0B_04_80043010(s32 n, Entry0B04 *e, UnkStruct_ovl0B_04_80049C38 *d);
+static void func_ovl0B_04_80043050(UnkStruct_ovl0B_04_80049D40 *e, UnkStruct_ovl0B_04_80049C38 *d);
+static void func_ovl0B_04_80043010(s32 n, UnkStruct_ovl0B_04_80049D40 *e, UnkStruct_ovl0B_04_80049C38 *d);
 static void func_ovl0B_04_800438FC(s32 id, u32 mode, Item *it);
 static void func_ovl0B_04_80043A24(s32 n, s32 *ids, Item *items);
 #if !VERSION_JP
@@ -1335,7 +1327,7 @@ static void func_ovl0B_04_80043AD4(s32 *ids, s32 n) {
 /* The objects of a run of entries, and their removal (inlined). */
 /* n first: its home is at the top of the inlined copy's slots, as in the
  * original's 80043110 (with (e, n, d) it sits 4 bytes higher). */
-static void func_ovl0B_04_MakeEntries(s32 n, Entry0B04 *e, UnkStruct_ovl0B_04_80049C38 *d) {
+static void func_ovl0B_04_MakeEntries(s32 n, UnkStruct_ovl0B_04_80049D40 *e, UnkStruct_ovl0B_04_80049C38 *d) {
     s32 i;
 
     for (i = 0; i < n; i++) {
@@ -1348,7 +1340,7 @@ static void func_ovl0B_04_MakeEntries(s32 n, Entry0B04 *e, UnkStruct_ovl0B_04_80
  * made the run with): the third parameter's home is part of the frame
  * (80043110's FreeEntries n homes at the original's 80 and 64; 16-byte
  * areas). */
-static void func_ovl0B_04_80043010(s32 n, Entry0B04 *e, UnkStruct_ovl0B_04_80049C38 *d) {
+static void func_ovl0B_04_80043010(s32 n, UnkStruct_ovl0B_04_80049D40 *e, UnkStruct_ovl0B_04_80049C38 *d) {
     s32 i;
 
     for (i = 0; i < n; i++) {
@@ -1619,7 +1611,7 @@ static void func_ovl0B_04_8004456C(void) {
 }
 
 /* An entry's object back at its place (inlined). */
-static void func_ovl0B_04_800445BC(Entry0B04 *e) {
+static void func_ovl0B_04_800445BC(UnkStruct_ovl0B_04_80049D40 *e) {
     e->unk0->unk18 = e->unk4;
     e->unk0->unk1C = e->unk8;
 }
@@ -1634,7 +1626,7 @@ static void func_ovl0B_04_800445C4(void) {
 }
 
 /* An entry's object at its other place (inlined). */
-static void func_ovl0B_04_8004461C(Entry0B04 *e) {
+static void func_ovl0B_04_8004461C(UnkStruct_ovl0B_04_80049D40 *e) {
     e->unk0->unk18 = e->unkC;
     e->unk0->unk1C = e->unk10;
 }
@@ -2918,7 +2910,7 @@ static void func_ovl0B_04_H5(void) {
 }
 
 /* One entry's object freed (inlined). */
-static void func_ovl0B_04_FreeEntry(Entry0B04 *e, s32 i) {
+static void func_ovl0B_04_FreeEntry(UnkStruct_ovl0B_04_80049D40 *e, s32 i) {
     func_ovl0B_04_80047DE0(e[i].unk0);
 }
 
@@ -2966,7 +2958,7 @@ void func_ovl0B_04_80043110(s32 arg0) {
 }
 
 /* An entry's object made as its UnkStruct_ovl0B_04_80049C38 says. */
-static void func_ovl0B_04_80043050(Entry0B04 *e, UnkStruct_ovl0B_04_80049C38 *d) {
+static void func_ovl0B_04_80043050(UnkStruct_ovl0B_04_80049D40 *e, UnkStruct_ovl0B_04_80049C38 *d) {
     e->unk0 = func_ovl0B_04_80047DD8(d->unk8, d->unk10);
     e->unk0->unk38 = d->unkC;
     e->unk0->unk28 = d->unk0;

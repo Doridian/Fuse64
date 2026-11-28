@@ -250,11 +250,6 @@ static void func_ovl0B_05_80044F4C(void) {
 #define CORE_BSS_A0 D_ovl0B_05_800467E4
 #define CORE_BSS_A1 D_ovl0B_05_800467E8
 #define CORE_BSS_B D_ovl0B_05_800467F0
-#define CORE_ZJ_1704 func_ovl0B_05_80045AE8
-#define CORE_ZJ_1708 func_ovl0B_05_80045B08
-#define CORE_ZJ_1709 func_ovl0B_05_80045B10
-#define CORE_ZJ_1904 func_ovl0B_05_80045E18
-#define CORE_ZJ_2B04 func_ovl0B_05_800463A0
 #include "overlays/common/core.h"
 
 void func_ovl0B_05_800448C8(UnkStructA **arg0, s32 *arg1, UnkStructA **arg2, s32 *arg3, UnkStructA **arg4, s32 *arg5, s32 arg6) {

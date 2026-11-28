@@ -282,11 +282,6 @@ static void func_ovl0B_07_800454AC(void) {
 #define CORE_BSS_A0 D_ovl0B_07_80046E14
 #define CORE_BSS_A1 D_ovl0B_07_80046E18
 #define CORE_BSS_B D_ovl0B_07_80046E20
-#define CORE_ZJ_1704 func_ovl0B_07_80046098
-#define CORE_ZJ_1708 func_ovl0B_07_800460B8
-#define CORE_ZJ_1709 func_ovl0B_07_800460C0
-#define CORE_ZJ_1904 func_ovl0B_07_800463C8
-#define CORE_ZJ_2B04 func_ovl0B_07_80046950
 #include "overlays/common/core.h"
 
 /* The confetti's display list: a square in a random colour. */

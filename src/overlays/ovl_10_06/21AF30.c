@@ -433,11 +433,6 @@ static void func_ovl10_06_80049208(void) {
 #define CORE_BSS_A0 D_ovl10_06_8004AB84
 #define CORE_BSS_A1 D_ovl10_06_8004AB88
 #define CORE_BSS_B D_ovl10_06_8004AB90
-#define CORE_ZJ_1704 func_ovl10_06_80049DD8
-#define CORE_ZJ_1708 func_ovl10_06_80049DF8
-#define CORE_ZJ_1709 func_ovl10_06_80049E00
-#define CORE_ZJ_1904 func_ovl10_06_8004A108
-#define CORE_ZJ_2B04 func_ovl10_06_8004A690
 #include "overlays/common/core.h"
 
 /* ovl_17_09's 80044B14 */

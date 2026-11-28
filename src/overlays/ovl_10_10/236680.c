@@ -272,11 +272,6 @@ static void func_ovl10_10_800458E8(void) {
 #define CORE_BSS_A0 D_ovl10_10_800470C4
 #define CORE_BSS_A1 D_ovl10_10_800470C8
 #define CORE_BSS_B D_ovl10_10_800470D0
-#define CORE_ZJ_1704 func_ovl10_10_800464B8
-#define CORE_ZJ_1708 func_ovl10_10_800464D8
-#define CORE_ZJ_1709 func_ovl10_10_800464E0
-#define CORE_ZJ_1904 func_ovl10_10_800467E8
-#define CORE_ZJ_2B04 func_ovl10_10_80046D70
 #include "overlays/common/core.h"
 
 /* runs the tasks, one frame each time round */

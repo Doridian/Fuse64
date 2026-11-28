@@ -367,11 +367,6 @@ static void func_ovl0C_01_80048A28(void) {
 #define CORE_BSS_A0 D_ovl0C_01_8004A9A4
 #define CORE_BSS_A1 D_ovl0C_01_8004A9A8
 #define CORE_BSS_B D_ovl0C_01_8004A9B0
-#define CORE_ZJ_1704 func_ovl0C_01_800495F8
-#define CORE_ZJ_1708 func_ovl0C_01_80049618
-#define CORE_ZJ_1709 func_ovl0C_01_80049620
-#define CORE_ZJ_1904 func_ovl0C_01_80049928
-#define CORE_ZJ_2B04 func_ovl0C_01_80049EB0
 #include "overlays/common/core.h"
 
 /* the names src/overlays/common/core_0c.h's code has here */

@@ -189,11 +189,6 @@ void func_ovl0F_07_80044460(void) {
 #define CORE_BSS_A0 D_ovl0F_07_80045E74
 #define CORE_BSS_A1 D_ovl0F_07_80045E78
 #define CORE_BSS_B D_ovl0F_07_80045E80
-#define CORE_ZJ_1704 func_ovl0F_07_80045058
-#define CORE_ZJ_1708 func_ovl0F_07_80045078
-#define CORE_ZJ_1709 func_ovl0F_07_80045080
-#define CORE_ZJ_1904 func_ovl0F_07_80045388
-#define CORE_ZJ_2B04 func_ovl0F_07_80045910
 #include "overlays/common/core.h"
 
 

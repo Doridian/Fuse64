@@ -518,10 +518,6 @@ static void func_ovl13_02_8004BEA8(void) {
 #define CORE_BSS_A0 D_ovl13_02_8004DCB4
 #define CORE_BSS_A1 D_ovl13_02_8004DCB8
 #define CORE_BSS_B D_ovl13_02_8004DCC0
-#define CORE_ZJ_1704 func_ovl13_02_8004CA38
-#define CORE_ZJ_1708 func_ovl13_02_8004CA58
-#define CORE_ZJ_1709 func_ovl13_02_8004CA60
-#define CORE_ZJ_1904 func_ovl13_02_8004CD68
 /* its own CORE_FUNC_D (below, with a fake) */
 #define CORE_D_LATE
 #include "overlays/common/core.h"

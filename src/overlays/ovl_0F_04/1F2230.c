@@ -520,11 +520,6 @@ static void func_ovl0F_04_80046D14(void) {
 #define CORE_BSS_A0 D_ovl0F_04_80048ACC
 #define CORE_BSS_A1 D_ovl0F_04_80048AD0
 #define CORE_BSS_B D_ovl0F_04_80048AD8
-#define CORE_ZJ_1704 func_ovl0F_04_800479B8
-#define CORE_ZJ_1708 func_ovl0F_04_800479D8
-#define CORE_ZJ_1709 func_ovl0F_04_800479E0
-#define CORE_ZJ_1904 func_ovl0F_04_80047CE8
-#define CORE_ZJ_2B04 func_ovl0F_04_80048270
 #include "overlays/common/core.h"
 
 static void func_ovl0F_04_800460B4(void) {

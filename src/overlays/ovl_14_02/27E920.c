@@ -671,11 +671,6 @@ static void func_ovl14_02_8004E8AC(void) {
 #define CORE_BSS_A0 D_ovl14_02_80050294
 #define CORE_BSS_A1 D_ovl14_02_80050298
 #define CORE_BSS_B D_ovl14_02_800502A0
-#define CORE_ZJ_1704 func_ovl14_02_8004F448
-#define CORE_ZJ_1708 func_ovl14_02_8004F468
-#define CORE_ZJ_1709 func_ovl14_02_8004F470
-#define CORE_ZJ_1904 func_ovl14_02_8004F778
-#define CORE_ZJ_2B04 func_ovl14_02_8004FD00
 #include "overlays/common/core.h"
 
 

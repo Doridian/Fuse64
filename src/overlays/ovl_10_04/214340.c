@@ -174,11 +174,6 @@ static void func_ovl10_04_80044528(void) {
 #define CORE_BSS_A0 D_ovl10_04_80045D34
 #define CORE_BSS_A1 D_ovl10_04_80045D38
 #define CORE_BSS_B D_ovl10_04_80045D40
-#define CORE_ZJ_1704 func_ovl10_04_80045108
-#define CORE_ZJ_1708 func_ovl10_04_80045128
-#define CORE_ZJ_1709 func_ovl10_04_80045130
-#define CORE_ZJ_1904 func_ovl10_04_80045438
-#define CORE_ZJ_2B04 func_ovl10_04_800459C0
 #include "overlays/common/core.h"
 
 /* runs the tasks, one frame each time round */

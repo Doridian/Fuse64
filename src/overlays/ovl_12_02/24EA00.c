@@ -156,11 +156,6 @@ void func_ovl12_02_80043A20(void) {
 #define CORE_BSS_A0 D_ovl12_02_80045194
 #define CORE_BSS_A1 D_ovl12_02_80045198
 #define CORE_BSS_B D_ovl12_02_800451A0
-#define CORE_ZJ_1704 func_ovl12_02_800445F8
-#define CORE_ZJ_1708 func_ovl12_02_80044618
-#define CORE_ZJ_1709 func_ovl12_02_80044620
-#define CORE_ZJ_1904 func_ovl12_02_80044928
-#define CORE_ZJ_2B04 func_ovl12_02_80044EB0
 #include "overlays/common/core.h"
 
 void func_ovl12_02_80043900(UnkStructA *arg0) {

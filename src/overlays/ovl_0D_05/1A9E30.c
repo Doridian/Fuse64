@@ -228,11 +228,6 @@ static void func_ovl0D_05_80044870(void) {
 #define CORE_BSS_A0 D_ovl0D_05_80046154
 #define CORE_BSS_A1 D_ovl0D_05_80046158
 #define CORE_BSS_B D_ovl0D_05_80046160
-#define CORE_ZJ_1704 func_ovl0D_05_80045438
-#define CORE_ZJ_1708 func_ovl0D_05_80045458
-#define CORE_ZJ_1709 func_ovl0D_05_80045460
-#define CORE_ZJ_1904 func_ovl0D_05_80045768
-#define CORE_ZJ_2B04 func_ovl0D_05_80045CF0
 #include "overlays/common/core.h"
 
 /* the task of each of D_ovl0D_05_80045FD4 (its index is the argument) */

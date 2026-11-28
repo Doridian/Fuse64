@@ -370,7 +370,6 @@ void func_ovl0E_07_80043B04(UnkStructA *arg0) {
 }
 
 #define CORE_FUNC_D func_ovl0E_07_80043B9C
-#define CORE_ZJ_2B04 func_ovl0E_07_800450D0
 #include "overlays/common/core_d.h"
 
 void func_ovl0E_07_80043BD0(f32 arg0, f32 arg1, f32 arg2) {

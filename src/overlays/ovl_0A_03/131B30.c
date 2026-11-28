@@ -96,6 +96,9 @@ void func_ovl0A_03_80047F68(PORT_IP(s32)); /* 0x1904, kept: a PORT_IP(s32) param
 #define ZJ_3001 func_ovl0A_03_80048650
 #define ZJ_3002 func_ovl0A_03_80048658
 #include "overlays/common/zerojump.h"
+/* core.h calls 0x1904 by its ZJ_ name; defined after the include, as its
+ * declaration is the one kept above */
+#define ZJ_1904 func_ovl0A_03_80047F68
 
 /* .bss */
 u8 D_ovl0A_03_80048800[0x24];
@@ -221,11 +224,6 @@ void func_ovl0A_03_80047060(void) {
 #define CORE_BSS_A0 D_ovl0A_03_80048824
 #define CORE_BSS_A1 D_ovl0A_03_80048828
 #define CORE_BSS_B D_ovl0A_03_80048830
-#define CORE_ZJ_1704 func_ovl0A_03_80047C38
-#define CORE_ZJ_1708 func_ovl0A_03_80047C58
-#define CORE_ZJ_1709 func_ovl0A_03_80047C60
-#define CORE_ZJ_1904 func_ovl0A_03_80047F68
-#define CORE_ZJ_2B04 func_ovl0A_03_800484F0
 #include "overlays/common/core.h"
 
 void func_ovl0A_03_80046D9C(void) {

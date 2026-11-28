@@ -328,11 +328,6 @@ static void func_ovl0F_03_800456BC(void) {
 #define CORE_BSS_A0 D_ovl0F_03_800470CC
 #define CORE_BSS_A1 D_ovl0F_03_800470D0
 #define CORE_BSS_B D_ovl0F_03_800470D8
-#define CORE_ZJ_1704 func_ovl0F_03_80046338
-#define CORE_ZJ_1708 func_ovl0F_03_80046358
-#define CORE_ZJ_1709 func_ovl0F_03_80046360
-#define CORE_ZJ_1904 func_ovl0F_03_80046668
-#define CORE_ZJ_2B04 func_ovl0F_03_80046BF0
 #include "overlays/common/core.h"
 
 /* a task: the door's switch, pressed a number of times */

@@ -88,11 +88,6 @@ static void func_ovl09_03_800432CC(void) {
 #define CORE_BSS_A0 D_ovl09_03_80044A74
 #define CORE_BSS_A1 D_ovl09_03_80044A78
 #define CORE_BSS_B D_ovl09_03_80044A80
-#define CORE_ZJ_1704 func_ovl09_03_80043EB8
-#define CORE_ZJ_1708 func_ovl09_03_80043ED8
-#define CORE_ZJ_1709 func_ovl09_03_80043EE0
-#define CORE_ZJ_1904 func_ovl09_03_800441E8
-#define CORE_ZJ_2B04 func_ovl09_03_80044770
 #include "overlays/common/core.h"
 
 /* The overlay's handler: the entry returns it to the loader.  Cases 1 and

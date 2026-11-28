@@ -758,11 +758,6 @@ static void func_ovl15_02_8004F868(void) {
 #define CORE_BSS_A0 D_ovl15_02_8005134C
 #define CORE_BSS_A1 D_ovl15_02_80051350
 #define CORE_BSS_B D_ovl15_02_80051358
-#define CORE_ZJ_1704 func_ovl15_02_800503F8
-#define CORE_ZJ_1708 func_ovl15_02_80050418
-#define CORE_ZJ_1709 func_ovl15_02_80050420
-#define CORE_ZJ_1904 func_ovl15_02_80050728
-#define CORE_ZJ_2B04 func_ovl15_02_80050CB0
 #include "overlays/common/core.h"
 
 void func_ovl15_02_8004F1D4(void) {

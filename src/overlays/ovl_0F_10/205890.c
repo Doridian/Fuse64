@@ -263,11 +263,6 @@ void func_ovl0F_10_80044FE8(void) {
 #define CORE_BSS_A0 D_ovl0F_10_80046B1C
 #define CORE_BSS_A1 D_ovl0F_10_80046B20
 #define CORE_BSS_B D_ovl0F_10_80046B28
-#define CORE_ZJ_1704 func_ovl0F_10_80045BF8
-#define CORE_ZJ_1708 func_ovl0F_10_80045C18
-#define CORE_ZJ_1709 func_ovl0F_10_80045C20
-#define CORE_ZJ_1904 func_ovl0F_10_80045F28
-#define CORE_ZJ_2B04 func_ovl0F_10_800464B0
 #include "overlays/common/core.h"
 
 void func_ovl0F_10_80044D3C(void) {

@@ -4,7 +4,7 @@
  * last to first), the same bytes (but for relocations) in all nine: an
  * object (0x183) grown over 20 frames at another's position, its per-frame
  * scale, the task that starts it, and an object handler.  They include this
- * after core.h, whose ZeroJump names it uses too; the other names are
+ * after core.h, and call the overlay's ZJ_<id> stubs too; the other names are
  * ovl_0C_01's addresses (CORE0C_<addr>), mapped before the include.
  */
 
@@ -17,7 +17,7 @@ void CORE0C_80048870(void) {
     s32 count;
 
     src = CORE0C_80049930();
-    CORE_ZJ_2B04(0xB3, src->unk40->unk10, src->unk40->unk14, src->unk40->unk18);
+    ZJ_2B04(0xB3, src->unk40->unk10, src->unk40->unk14, src->unk40->unk18);
     obj = CORE0C_800497E0(0x183, 0x11080000, 0xD0, 0);
     obj->unk40->unk10 = src->unk40->unk10;
     obj->unk40->unk14 = src->unk40->unk14;
@@ -45,7 +45,7 @@ void CORE0C_80048754(UnkStructA *arg0) {
 }
 
 void CORE0C_80048694(UnkStructA *arg0) {
-    CORE_ZJ_1904(10);
+    ZJ_1904(10);
     CORE0C_80048E40(arg0->unk40, &arg0->unk40->unk1C, &arg0->unk40->unk20);
     arg0->unk40->unk28 *= 2.0f;
     arg0->unk40->unk30 *= 2.0f;
@@ -53,5 +53,5 @@ void CORE0C_80048694(UnkStructA *arg0) {
     arg0->unk40->unk14 += 20.0f;
     arg0->unk6C = 0.0f;
     arg0->unk70 = 0.0f;
-    CORE_ZJ_1904(60);
+    ZJ_1904(60);
 }

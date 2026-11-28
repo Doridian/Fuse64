@@ -1,6 +1,6 @@
 #include "common.h"
 
-void func_80299170(s32, f32, f32, f32); /* 0x2B04 (the overlays' CORE_ZJ_2B04) */
+void func_80299170(s32, f32, f32, f32); /* 0x2B04 (the overlays' ZJ_2B04) */
 void func_802988E0(f32 *, f32 *, f32 *);
 void func_802988D8(f32, f32, f32);
 void func_802988B8(f32, f32, f32);

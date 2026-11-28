@@ -16,5 +16,5 @@ s32 CORE_FUNC_D(s32 arg0, void *arg1) {
     if (p == NULL) {
         DEBUG_PRINT(("p == NULL\n"));
     }
-    return CORE_ZJ_2B04(arg0, p->unk10, p->unk14, p->unk18);
+    return ZJ_2B04(arg0, p->unk10, p->unk14, p->unk18);
 }

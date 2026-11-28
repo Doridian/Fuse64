@@ -248,11 +248,6 @@ s32 D_ovl10_13_8004ADE4;
 #define CORE_BSS_A0 D_ovl10_13_8004AB74
 #define CORE_BSS_A1 D_ovl10_13_8004AB78
 #define CORE_BSS_B D_ovl10_13_8004AB80
-#define CORE_ZJ_1704 func_ovl10_13_80049E18
-#define CORE_ZJ_1708 func_ovl10_13_80049E38
-#define CORE_ZJ_1709 func_ovl10_13_80049E40
-#define CORE_ZJ_1904 func_ovl10_13_8004A148
-#define CORE_ZJ_2B04 func_ovl10_13_8004A6D0
 #include "overlays/common/core.h"
 
 void func_ovl10_13_80049044(void) {

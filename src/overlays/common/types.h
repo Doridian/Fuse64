@@ -403,7 +403,7 @@ typedef struct {
     /* 0x20 */ void (*unk20)(s32, s32);
 } UnkStruct_ovl0F_01_80048938; /* size 0x24 */
 
-/* What func_ovl10_01_80046830 returns. */
+/* what func_ovl10_01_80046830 and its copies return (10_01..05) */
 typedef struct {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ s32 unk8;
@@ -411,7 +411,7 @@ typedef struct {
     /* 0x10 */ s32 unk10;
 } UnkStruct_ovl10_01_80046830;
 
-/* What func_ovl10_01_800468F0 returns. */
+/* what func_ovl10_01_800468F0 and its copies return (10_01..05, 10_07..12) */
 typedef struct {
     /* 0x00 */ u8 unk0[0x18];
     /* 0x18 */ f32 unk18;
@@ -421,7 +421,7 @@ typedef struct {
     /* 0x44 */ f32 unk44;
 } UnkStruct_ovl10_01_80047540;
 
-/* What func_ovl10_13_80049728 returns. */
+/* what func_ovl10_13_80049728 and func_ovl12_05_800497F8 return */
 typedef struct {
     /* 0x00 */ u8 unk0[0x10];
     /* 0x10 */ s32 unk10;
@@ -431,7 +431,7 @@ typedef struct {
     /* 0x30 */ s32 unk30;
 } UnkStruct_ovl10_13_80049728;
 
-/* What func_ovl10_13_8004A770 returns: a player. */
+/* what func_ovl10_13_8004A770 and func_ovl12_05_8004A840 return: a player */
 typedef struct {
     /* 0x000 */ s32 unk0;
     /* 0x004 */ PORT_RET(u8 unk4[0x18];, u8 unk4[0x14]; void *unk18;) /* (6BBE0.c's D_800BCFE8[i], Port_800BCFE8: pointers at 0x18, 0x1C, 0x98, 0x9C) */
@@ -454,6 +454,7 @@ typedef struct {
     /* 0x124 */ s32 unk124;
 } UnkStruct_ovl10_13_8004A770;
 
+/* an object, its position and an id (D_ovl12_01_80046318; 12_01/03) */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
     /* 0x04 */ f32 unk4;
@@ -462,7 +463,8 @@ typedef struct {
     /* 0x10 */ s32 unk10;
 } UnkStruct_ovl12_01_80046318;
 
-/* the argument of func_ovl17_01_80043CB4's tasks */
+/* the argument of func_ovl17_01_80043CB4's tasks and its copies' (17_01/06/
+ * 08/10) */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
     /* 0x04 */ s16 unk4;
@@ -471,6 +473,7 @@ typedef struct {
     /* 0x0C */ f32 unkC;
 } UnkStruct_ovl17_01_80045858; /* size 0x10 */
 
+/* D_ovl17_02_80044D54 (17_02/03) */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
     /* 0x04 */ s32 unk4;
@@ -480,6 +483,7 @@ typedef struct {
     /* 0x14 */ f32 unk14;
 } UnkStruct_ovl17_02_80044D54;
 
+/* D_ovl17_04_80044D84's records (17_04/05) */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
     /* 0x04 */ s32 unk4;

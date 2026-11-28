@@ -71,7 +71,6 @@ static void func_ovl0D_06_80044414(UnkStruct_ovl0C_01_8004A54C *e) {
     y1 = grid[1] + 2;
     switch (func_ovl0D_06_8004440C(e)) {
         case 0:
-            /* fake: (see the top) */
             x0 = grid[0] - 1;
             x1 = x0 + 4;
             z1 = grid[2] + len;

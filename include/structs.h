@@ -48,7 +48,7 @@ typedef struct UnkStructA_40 {
     /* 0x34 */ s16 unk34;
     /* 0x36 */ s16 unk36;
     /* 0x38 */ s32 unk38;
-    /* 0x3C */ void *unk3C;
+    /* 0x3C */ struct UnkModel *unk3C;
     /* 0x40 */ struct UnkSkel *unk40;
     /* 0x44 */ struct UnkInst *unk44;
     /* 0x48 */ UnkStructA_40_48 *unk48;

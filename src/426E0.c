@@ -138,29 +138,6 @@ void free(void *);
 void *realloc(void *, u32);
 
 /* An object's texture slots (unk4C). */
-typedef struct {
-    /* 0x00 */ void *unk0;
-    /* 0x04 */ s32 unk4;
-} UnkTexSlot; /* size 8 */
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-} UnkTexFrame; /* size 8 */
-
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ UnkTexFrame *unkC;
-} UnkTexAnim; /* size 0x10 */
-
-typedef struct UnkTexSlots {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ UnkTexSlot *unk4;
-    /* 0x08 */ UnkTexAnim *unk8;
-} UnkTexSlots;
-
 #define _SHIFTL(v, s, w) ((u32)(((u32)(v) & ((0x01 << (w)) - 1)) << (s)))
 #define gW(pkt, a, b)                \
     {                                \

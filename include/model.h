@@ -15,12 +15,37 @@ typedef struct {
     /* 0x08 */ s32 unk8;
 } UnkChunk; /* size 0xC */
 
-typedef struct {
+typedef struct UnkModel {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ u32 unk4;
     /* 0x08 */ s32 unk8;
     /* 0x0C */ UnkChunk unkC[1];
 } UnkModel;
+
+typedef struct {
+    /* 0x00 */ UnkModel *unk0;
+    /* 0x04 */ s32 unk4;
+} UnkTexSlot; /* size 8 */
+
+typedef struct {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 unk4;
+} UnkTexFrame; /* size 8 */
+
+typedef struct {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ s32 unk8;
+    /* 0x0C */ UnkTexFrame *unkC;
+} UnkTexAnim; /* size 0x10 */
+
+/* A model object's textures (UnkStructA_40's unk4C, 426E0's func_8022984C):
+ * models of their own (UnkTexSlot's unk0) and their animations. */
+typedef struct UnkTexSlots {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ UnkTexSlot *unk4;
+    /* 0x08 */ UnkTexAnim *unk8;
+} UnkTexSlots;
 
 /* A joint of chunk 1 (0x30 bytes). */
 typedef struct {

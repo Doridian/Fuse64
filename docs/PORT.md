@@ -1008,7 +1008,8 @@ of them on i386:
   `s32` parameter cut; func_80284B20 then gave the cut pointer (its
   0x68) to func_802727D8. The parameter is `PORT_IP` now, as its
   siblings func_8027A1F4's and func_80244F34's are (a call through an
-  unprototyped declaration is one ptrcast_scan.py can't see).
+  unprototyped declaration is one ptrcast_scan.py can't see;
+  proto_check.py does now: "Where pointers are 8 bytes").
 
 us's extras: 21, 22 and 23 the same; 24 and 155 stop on both; 28:17
 (the ending and its credits) the same to its end (frame 68,659), the
@@ -1747,7 +1748,7 @@ same build-port32 build-port64`; "The matrix").
   pass a pointer (gen_zerojump.py makes their parameters `int`:
   ovl_10_06, 13_02, 15_01, 15_02; ovl_0B_02's `s32 (*f(s32))[4]`, which
   host_check.py read as returning an int). gen_zerojump.py's
-  `zerojump_narrow.txt` lists what is left (98 in us; those looked at
+  `zerojump_narrow.txt` lists what is left (97 in us; those looked at
   are numbers in pointer-wide parameters, sound and task ids: not all
   are read yet).
 - **m2c's field accesses.** `M2C_FIELD(expr, type, offset)` after a
@@ -1763,6 +1764,25 @@ same build-port32 build-port64`; "The matrix").
   can't place ("no known struct": none left in us) and a pointer read
   where the struct has bytes ("disagree"). `port_types.txt` (gen_port_types.py)
   has the objects no file has a type for, as pointers between N64 bytes.
+- **Declarations that aren't the definition's.** A file declares another's
+  function itself, often without a prototype (IDO's C), and a call
+  through such a declaration passes what it is given: a pointer to an
+  `s32` parameter is cut (9CAB0.c's func_802870A8, us's battle 146:16).
+  `proto_check.py` (the checks, below) compares every call with the
+  definition; what it found besides: 530C0.c's func_802390F0 took the
+  message queue and the message slot as `s32` (`PORT_IP` now, as its
+  call of osRecvMesg's stub); ovl_0F_01 took func_8022F77C's object as an
+  `s32` (only tested against 0; `PORT_IP`); the game's `void
+  *malloc(u32)` (or `s32`) against gmalloc's size_t, where a 64-bit callee
+  may read the register's high half, which the caller needn't have set:
+  under `TARGET_PC` the game's malloc and realloc are
+  `bm64_malloc32`/`bm64_realloc32` (port/src/malloc32.c, pc_names.h),
+  which widen the size; and four stubs that pass a float's bits in an
+  integer (80420.c's func_80265C20, ovl_0D_02's and 0D_03's tile
+  position, ovl_15_02's `*(s32 *) &pos.y`), which gen_zerojump.py
+  converted as numbers: past the first argument that isn't a float the
+  N64 has both in `$a1`-`$a3`, so the stub passes the bits
+  (`port_zj_f32`).
 - **Memory.** gen_regions.py lays out the fixed-address names by their
   host types (a name with pointers takes its host size, the ones after it
   move up, never less than the N64's room to the next name), asm2c.py the
@@ -1792,6 +1812,23 @@ same build-port32 build-port64`; "The matrix").
   against `port/tools/ptrcast_allow.txt` (90 in us, each read: numbers in
   pointer fields, task arguments that are numbers, differences of
   addresses; the file's header says which);
+- `port/tools/proto_check.py BUILD --version V` (a build of V: its
+  ZeroJump stubs): what those conversions don't see, a call whose
+  in-scope declaration isn't the definition's. From clang's AST, each
+  call's arguments as they are passed (after the declaration's
+  conversions, or none where it has no prototype) and the type its value
+  is taken as, against the definition's parameters and value (a ZeroJump
+  stub's call against its target's): a pointer to a narrower integer
+  (8A7A0.c's calls of func_802870A8, us's battle 146:16), a 32-bit integer
+  to a pointer or an intptr_t, an intptr_t to an `s32`, a float to an
+  integer; a function converted to a function pointer type, or passed to
+  where it is called as one (a parameter of that type, the `void *` ones
+  in its SINKS, and the parameters passed on to those), that differs from
+  its definition so; and each call through a pointer that passes one
+  (what it reaches is read by hand). Against `port/tools/proto_allow.txt`
+  (58, the same in us, eu and jp; each read: task arguments that are
+  numbers, sizes, draw functions whose unused first parameter is an
+  `s32`, calls through typed tables);
 - `port/tools/m2c_port.py build/gen/decls.json FILE...`: 0 to rewrite, 0
   unknown, 0 disagree;
 - `port/tools/views.py BUILD --check`: the views of a structure linked by
@@ -2707,9 +2744,13 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   The room sweep ("Every room") on x86-64 is i386's in us's four sets
   and eu's and jp's census; eu's and jp's monkey, battle setup and
   extras, and the TAS route on any set, haven't run there yet.
-  Calls through a declaration without a prototype that pass a pointer
-  to an integer parameter (func_802870A8's) no static check sees.
-  `ptrcast_scan.py`'s allow-list, m2c_port.py's "no known struct" list
+  `proto_check.py` sees the calls through a declaration that isn't the
+  definition's (func_802870A8's); left to it: a call through a pointer
+  is read by hand (23 sites), and a `void *` that keeps a function to
+  call is known only where SINKS names it. jp's ovl_0A_06 calls the
+  stub 0x250D as `(s32, u8 *, s32)`, whose target in jp is func_802872E0
+  `(s32, f32, f32, f32)` (gen_zerojump.py's narrow list: not read yet).
+  `ptrcast_scan.py`'s allow-list, `proto_check.py`'s, m2c_port.py's "no known struct" list
   and gen_zerojump.py's narrow list are the static side ("Where pointers
   are 8 bytes"); a run that crashes or differs from i386 the dynamic one.
   The sanitizers have run on x86-64 (us, eu, jp) and i386 (us only;

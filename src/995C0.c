@@ -38,10 +38,27 @@ static void func_8027F0BC(UnkStruct_8027F0C4 *entry, u16 dir);
 static void *func_8027F4B0(u16 arg0);
 static void func_8027F420(void);
 
-extern UnkStruct_802A15C0 D_802A15C0;
-extern s32 D_802A15D8;
-extern u8 D_802A15DC[];
-extern s16 D_802A1608[PORT_SIZE(4)];
+void func_8027F658(s32 (*arg0)(u8, u16), UnkStruct_8027F0C4 *arg1, u16 arg2, u16 arg3, u16 arg4);
+void func_8027F64C(s32 arg0);
+void func_8027F63C(u8 arg0);
+void func_8027F5A8(u16 arg0, u16 arg1, u16 arg2);
+void func_8027F498(UnkStruct_8027F0C4 *arg0);
+void func_8027F428(void);
+void func_8027F400(void);
+UnkStruct_8027EFD8 *func_8027EFC8(void);
+PORT_RET(void, s32) func_8027EFA8(void);
+
+/* .data: the selection state func_8027F658 sets up, the sound
+   func_8027F64C sets, ZeroJump module 0x24's table (func_8027F6B4) and
+   the four controllers' stick repeat counters (func_8027EDC8) */
+UnkStruct_802A15C0 D_802A15C0 = { 0 };
+s32 D_802A15D8 = 0;
+void *D_802A15DC[] = {
+    func_8027F658, func_8027F5A8, func_8027F498, func_8027F428,
+    func_8027F400, func_8027F63C, func_8027EFA8, func_8027EFC8,
+    func_8027F64C, func_8027EDC8, func_8027F0C4,
+};
+s16 D_802A1608[4] = { 0 };
 
 void func_8027F6B4(void) {
     func_80297D30(0x24, D_802A15DC);

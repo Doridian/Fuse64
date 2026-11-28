@@ -203,10 +203,10 @@ main_code 96540 0x50 0x80 0x210
 main_code @us 96540 data=0x802A1520 rodata=0x802A3FC0 bss=0x802AFF70
 main_code @eu 96540 data=0x802A1520 rodata=0x802A3FB0 bss=0x802AFF60
 main_code @jp 96540 data=0x802A0B80 rodata=0x802A31F0 bss=0x802AF1A0
-main_code 995C0 0 0x10 0
-main_code @us 995C0 rodata=0x802A4040
-main_code @eu 995C0 rodata=0x802A4030
-main_code @jp 995C0 rodata=0x802A3270
+main_code 995C0 0x50 0x10 0
+main_code @us 995C0 data=0x802A15C0 rodata=0x802A4040
+main_code @eu 995C0 data=0x802A15C0 rodata=0x802A4030
+main_code @jp 995C0 data=0x802A0C20 rodata=0x802A3270
 # 99F40 defines its .bss: with the callback table extern, as1 gives the
 # stores into its first two entries a `lui` each.  Its .data is module
 # 14's table.

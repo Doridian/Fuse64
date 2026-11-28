@@ -62,16 +62,19 @@ static void func_8023A310(void);
 void func_8023A3AC(void);
 
 extern void *D_802A015C[];
-extern u8 D_802AC3E0[];
-extern u8 D_802AC3F8[];
-extern UnkStruct_802AC400 D_802AC400[4];
-extern UnkStruct_802AC410 D_802AC410[4];
-extern UnkStruct_802AC428 D_802AC428[4][16];
-extern s32 D_802AC5A8[4];
-extern s32 D_802AC5B8;
+/* .bss (0x802AC3E0-0x802AC5C0): the controllers' message queue (AD5B0's
+ * EEPROM reads and writes use it too) and its buffer (one message used),
+ * their status and reads, the rings of inputs */
+UnkStruct_802A5330 D_802AC3E0;
+void *D_802AC3F8[2];
+UnkStruct_802AC400 D_802AC400[4];
+UnkStruct_802AC410 D_802AC410[4];
+UnkStruct_802AC428 D_802AC428[4][16];
+s32 D_802AC5A8[4];
+s32 D_802AC5B8;
 
 void func_8023A3AC(void) {
-    func_80298048(D_802AC3E0, D_802AC400);
+    func_80298048(&D_802AC3E0, D_802AC400);
 }
 
 void func_8023A318(void) {
@@ -82,10 +85,10 @@ void func_8023A318(void) {
     func_8027BD40();
     func_8023A26C();
     D_802AC5B8 = 3;
-    func_80297D80(D_802AC3E0, D_802AC3F8, 1);
-    func_80297D88(5, D_802AC3E0, 0);
-    func_80298030(D_802AC3E0, &sp1F, D_802AC400);
-    func_8027CDA4(D_802AC3E0);
+    func_80297D80(&D_802AC3E0, D_802AC3F8, 1);
+    func_80297D88(5, &D_802AC3E0, 0);
+    func_80298030(&D_802AC3E0, &sp1F, D_802AC400);
+    func_8027CDA4(&D_802AC3E0);
 }
 
 /* A static function IDO -O3 inlined into func_8023A318.  It still emits
@@ -117,12 +120,12 @@ void func_8023A258(UnkStruct_802AC428 *arg0) {
 }
 
 void func_8023A22C(void) {
-    func_80298038(D_802AC3E0);
+    func_80298038(&D_802AC3E0);
     func_8023A104();
 }
 
 void func_8023A208(void) {
-    func_80298038(D_802AC3E0);
+    func_80298038(&D_802AC3E0);
 }
 
 void func_8023A104(void) {
@@ -130,7 +133,7 @@ void func_8023A104(void) {
     UnkStruct_802AC428 *prev;
     UnkStruct_802AC428 *e;
 
-    func_80297D90(D_802AC3E0, NULL, 1);
+    func_80297D90(&D_802AC3E0, NULL, 1);
     for (i = 0; i < 4; i++) {
         D_802AC410[i].unk0 = 0;
         D_802AC410[i].unk2 = 0;
@@ -158,8 +161,8 @@ s32 func_8023A0E4(s32 arg0) {
 }
 
 void func_8023A0A0(void) {
-    func_80298050(D_802AC3E0);
-    func_80297D90(D_802AC3E0, NULL, 1);
+    func_80298050(&D_802AC3E0);
+    func_80297D90(&D_802AC3E0, NULL, 1);
     func_80298060(D_802AC400);
 }
 

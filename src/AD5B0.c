@@ -72,7 +72,7 @@ static s32 func_80292DB8(u8 addr, u8 *buf, u8 n);
 extern u8 D_80063000[PORT_SIZE(0x1B8)]; /* the save: its header, three slots of 0x90 */
 extern u8 D_800631B8[PORT_SIZE(0x1B8)]; /* the save read back, to compare */
 extern s32 D_80063004;
-extern u8 D_802AC3E0[];
+extern UnkStruct_802A5330 D_802AC3E0;
 
 #define SLOT(i) (&D_80063000[(i) * 0x90 + 8])
 
@@ -187,7 +187,7 @@ s32 func_80294E54(void) {
 
     D_802A1DB8 = 0;
     D_802A1DA0 = 0;
-    D_802A1DA4 = func_80297E60(D_802AC3E0);
+    D_802A1DA4 = func_80297E60(&D_802AC3E0);
     if (D_802A1DA4 == 0) {
         func_80294DC0();
         return -1;
@@ -898,9 +898,9 @@ static s32 func_80292E90(u8 addr, u8 *buf, u8 n) {
     func_80297D60(buf, size);
     for (i = 0; i != 3; i++) {
         if (n == 1) {
-            ret = func_80297E70(D_802AC3E0, addr, buf);
+            ret = func_80297E70(&D_802AC3E0, addr, buf);
         } else {
-            ret = func_80297E80(D_802AC3E0, addr, buf, size);
+            ret = func_80297E80(&D_802AC3E0, addr, buf, size);
         }
         if (ret == 0) {
             if (func_80292E88(addr, n) == 0) {
@@ -942,9 +942,9 @@ static s32 func_80292DB8(u8 addr, u8 *buf, u8 n) {
     i = 0;
     while (ret != 0 && i++ < 3) {
         if (n == 1) {
-            ret = func_80297E68(D_802AC3E0, addr, buf);
+            ret = func_80297E68(&D_802AC3E0, addr, buf);
         } else {
-            ret = func_80297E78(D_802AC3E0, addr, buf, size);
+            ret = func_80297E78(&D_802AC3E0, addr, buf, size);
         }
     }
     return ret;

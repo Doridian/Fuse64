@@ -99,6 +99,9 @@ main_code 52270 0 0 0x57A0
 # 530C0: the cooperative scheduler's lists and jmp_buf; its .data the
 # function table (a static local)
 main_code 530C0 0x50 0x60 0x11E0
+# 53D70: the controllers' queue, status, reads and input rings; .data its
+# local pattern and function table
+main_code 53D70 0x60 0x10 0x1E0
 
 # Game objects after the cut that own their .rodata (constants, jump tables,
 # strings), placed where the ROM has it; their .data and .bss stay asm
@@ -107,10 +110,6 @@ main_code 530C0 0x50 0x60 0x11E0
 # and tables, jp's 0x80 shorter: its text).
 # So does 54E40 for D_802AC7A0[10] (and the two words after it, which end
 # that run on a 16-byte boundary); the rest of its .bss stays asm.
-main_code 53D70 0x60 0x10 0
-main_code @us 53D70 data=0x802A0150 rodata=0x802A2EE0
-main_code @eu 53D70 data=0x802A0150 rodata=0x802A2EE0
-main_code @jp 53D70 data=0x8029F830 rodata=0x802A2120
 main_code 54BE0 0 0x10 0
 main_code @us 54BE0 rodata=0x802A2EF0
 main_code @eu 54BE0 rodata=0x802A2EF0

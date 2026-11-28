@@ -534,7 +534,8 @@ segments:
       - {type: .bss, vram: 0x802A5A40, name: 4ED50}
       - {type: .bss, vram: 0x802A5A50, name: 52270}
       - {type: .bss, vram: 0x802AB1F0, name: 530C0}
-      - {type: bss, vram: 0x802AC3D0}
+      - {type: .bss, vram: 0x802AC3D0, name: 53D70}
+      - {type: bss, vram: 0x802AC5B0}
       - {type: .bss, vram: 0x802AC790, name: 54E40}
       - {type: bss, vram: 0x802AC7C0, name: bss_802AC7C0}
       - {type: .bss, vram: 0x802ACFA0, name: 6BBE0}

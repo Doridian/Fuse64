@@ -14,15 +14,6 @@ typedef struct {
     /* 0x06 */ s16 unk6;
 } UnkStruct_ovl17_08_80045CA0; /* size 0x8 */
 
-/* the argument of func_ovl17_08_800440F4's tasks */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s16 unk4;
-    /* 0x06 */ s16 unk6;
-    /* 0x08 */ s16 unk8;
-    /* 0x0C */ f32 unkC;
-} UnkStruct_ovl17_08_80045CB8; /* size 0x10 */
-
 void func_ovl17_08_80044778(s32);
 void func_ovl17_08_80044790(s32);
 f32 func_ovl17_08_800447A0(void);
@@ -76,7 +67,7 @@ s32 D_ovl17_08_80045C84;
 s32 D_ovl17_08_80045C88;
 Vec3f D_ovl17_08_80045C90;
 UnkStruct_ovl17_08_80045CA0 D_ovl17_08_80045CA0[3];
-UnkStruct_ovl17_08_80045CB8 D_ovl17_08_80045CB8[3];
+UnkStruct_ovl17_01_80045858 D_ovl17_08_80045CB8[3];
 f32 D_ovl17_08_80045CE8;
 f32 D_ovl17_08_80045CEC;
 f32 D_ovl17_08_80045CF0;
@@ -163,7 +154,7 @@ void func_ovl17_08_800440F4(void) {
     s16 alpha;
     f32 scale;
     s32 step;
-    UnkStruct_ovl17_08_80045CB8 *arg;
+    UnkStruct_ovl17_01_80045858 *arg;
 
     arg = func_ovl17_08_800452F0();
     obj = func_ovl17_08_800451C0(0x11A, 0x20, arg->unk4, arg->unk6, arg->unk8);
@@ -240,7 +231,7 @@ void func_ovl17_08_80043DCC(void) {
 }
 
 void func_ovl17_08_80043CE8(f32 arg0, f32 arg1, f32 arg2, f32 arg3) {
-    UnkStruct_ovl17_08_80045CB8 *p;
+    UnkStruct_ovl17_01_80045858 *p;
     s32 i;
 
     for (i = 0; i < 3; i++) {

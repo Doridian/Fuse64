@@ -33,15 +33,6 @@ typedef struct {
     /* 0x08 */ s16 unk8;
 } UnkStruct_ovl17_10_80046628; /* size 0xC */
 
-/* the argument of func_ovl17_10_80044AC8's tasks */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s16 unk4;
-    /* 0x06 */ s16 unk6;
-    /* 0x08 */ s16 unk8;
-    /* 0x0C */ f32 unkC;
-} UnkStruct_ovl17_10_80046748; /* size 0x10 */
-
 void func_ovl17_10_80045198(s32);
 void func_ovl17_10_800451B0(s32);
 f32 func_ovl17_10_800451C0(void);
@@ -109,7 +100,7 @@ s32 D_ovl17_10_80046714;
 s32 D_ovl17_10_80046718;
 Vec3f D_ovl17_10_80046720;
 UnkStruct_ovl17_10_80046730 D_ovl17_10_80046730[3];
-UnkStruct_ovl17_10_80046748 D_ovl17_10_80046748[3];
+UnkStruct_ovl17_01_80045858 D_ovl17_10_80046748[3];
 
 /* .data */
 f32 D_ovl17_10_80046490 = 0.01f;
@@ -230,7 +221,7 @@ void func_ovl17_10_80044AC8(void) {
     s16 alpha;
     f32 scale;
     s32 step;
-    UnkStruct_ovl17_10_80046748 *arg;
+    UnkStruct_ovl17_01_80045858 *arg;
 
     arg = func_ovl17_10_80045D10();
     obj = func_ovl17_10_80045BE0(0x11A, 0x20, arg->unk4, arg->unk6, arg->unk8);
@@ -392,7 +383,7 @@ void func_ovl17_10_8004455C(UnkStructA *arg0) {
 }
 
 void func_ovl17_10_80044048(f32 arg0, f32 arg1, f32 arg2, f32 arg3) {
-    UnkStruct_ovl17_10_80046748 *p;
+    UnkStruct_ovl17_01_80045858 *p;
     s32 i;
 
     for (i = 0; i < 3; i++) {

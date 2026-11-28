@@ -14,15 +14,6 @@ typedef struct {
     /* 0x06 */ s16 unk6;
 } UnkStruct_ovl17_01_80045840; /* size 0x8 */
 
-/* the argument of func_ovl17_01_80043CB4's tasks */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ s16 unk4;
-    /* 0x06 */ s16 unk6;
-    /* 0x08 */ s16 unk8;
-    /* 0x0C */ f32 unkC;
-} UnkStruct_ovl17_01_80045858; /* size 0x10 */
-
 void func_ovl17_01_80044338(s32);
 void func_ovl17_01_80044350(s32);
 f32 func_ovl17_01_80044360(void);

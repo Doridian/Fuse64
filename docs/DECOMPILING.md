@@ -1146,7 +1146,7 @@ Cut so far (the same in us, eu and jp):
 | module | objects | .data/.rodata boundary |
 |---|---|---|
 | ovl_09_01 | all: `ovl_09_01_entry`, `120010` (.data 0x30, .rodata 0x50: the handler's jump table, .bss 0x50) | 0x80044990 (the compiler's) |
-| main_code | `main_code_entry`, `40040` (.data 0x30: two tables), `40300` (.data 0x10: the bump pointer), `404C0` (.data 0x20, .bss 0x20), `40FB0` (.data 0x10, .bss 0x10), `412F0` (.data 0x200: the graphics tasks and display lists, .bss 0xA0), `41FD0` (.data 0x60, .bss 0x90) after the RSP code at 0x8029D250-0x8029F570 | not shown yet: none of them has .rodata |
+| main_code | `main_code_entry` (.rodata 0x20: the build date), `40040` (.data 0x30: two tables), `40300` (.data 0x10: the bump pointer), `404C0` (.data 0x20, .bss 0x20), `40FB0` (.data 0x10, .bss 0x10), `412F0` (.data 0x200: the graphics tasks and display lists, .bss 0xA0), `41FD0` (.data 0x60, .bss 0x90), `426E0`, `45170`, `46300`, `479D0` (none), `47A80`, after the RSP code at 0x8029D250-0x8029F570 | 0x802A2D00 (jp 0x802A1F40): the build date, after the libraries' .data |
 | boot_code | all of the game's C from the first object after the entry: `1050` (.data 0x10, .bss 0x400), `10D0` (.bss 0x80), `13F0` (.data 0x10), `14B0` (the scheduler: .data 0x20, .rodata 0x130: its assert strings and a jump table, .bss 0x70), `2350` (.data 0x3A0, jp 0x390: the jp table is an entry shorter; .bss 0x8470); the entry and 2630 are hasm and skipped | 0x8001B640 (jp 0x8001B620): 14B0's strings, after the libraries' .data |
 
 The sizes are the same in every version as long as the C is. Where a
@@ -1221,9 +1221,8 @@ jump table, no `static` or initialized globals. Check with
 and `.bss` must be empty. Their variables are `extern`, named
 `D_<us address>`, and defined by the asm blocks.
 
-The next candidate that extends a cut is main_code's `426E0` (placed
-already), which needs the .data/.rodata boundary: see "What's left of
-the data".
+The next object that extends main_code's cut is `48300`: see "What's
+left of the data".
 
 **Objects placed on their own.** A library object after the game's code
 can't join the cut, so data_split.txt can place its sections where the
@@ -1288,9 +1287,8 @@ from 5E3F0's and its .bss 0x10 lower; jp's lower by 0x920 and more past
 |---|---|---|---|
 | zerojump `.rodata` 0x800420A0 | ZeroJump's two error strings | zerojump (handwritten, `hasm`) | not C: its code is asm and reads them at their mapped address (`D_A0`, `D_E2`); they would go with a source `.s` of zerojump |
 | main_code `.data` 0x8029D250-0x8029F570 | rspboot (0xD0), F3DEX's text (0x1430), aspMain's text (0xE20) | the SDK's microcode, linked before the game's `.data` | binary, not C (data_split.txt's `data=` starts the objects after it) |
-| main_code `.rodata` 0x802A4830-0x802A5000 | `__libm_qnan_f` (0x10), F3DEX's data (`D_802A4840`, 0x7C0) | libultra `libc/libm_vals` (no code), the microcode | libm_vals could be placed like vitbl.c; the microcode data is binary |
+| main_code `.rodata` 0x802A4840-0x802A5000 | F3DEX's data (`D_802A4840`, 0x7C0) | the microcode | binary (`__libm_qnan_f` before it is ultralib's `gu/libm_vals.s`, placed) |
 | main_code_persist `.rodata` 0x802A5000-0x802A5300 | F3DEX's data's tail (`D_802A5000`), aspMain's data (`D_802A5040`, 0x2C0) | the microcode | binary |
-| main_code `.rodata` 0x802A2D00-0x802A2D20 | "SAT SEP  6 14:57:59 JST 1997", nothing refers to it | one of the objects before 426E0 (all without other .rodata) | which one owns it isn't known; until it is, the cut can't give the .data/.rodata boundary, which 426E0 (the next object, .rodata 0x10) needs to join it |
 | `.data` 0x8029FD40-0x8029FE30 | ZeroJump module 0x18's table and the rest | 48300 (48600 has none of its own known) | 48300's C defines none of it yet (placing it would do, as for 426E0) |
 | `.data` 0x802A0D50-0x802A0D60 | ZeroJump module 12's table | 5E090 | as above |
 | `.data` 0x802A1230-0x802A1250 | three words 40040 uses | 80420 (between 7D840 and 80580) | a label another object uses: 80420 must define it, 40040 keeps the extern |
@@ -1306,6 +1304,26 @@ for each owner, `tools/data_c.py` on its run, the definitions in its
 file (in address order, `.bss` before the first function), and a
 `data=`/`bss=` placement (`tools/data_split.py <v> --place`), as 426E0
 and the overlays did; an object's run ends where the next owner's first
-label (or 16-byte padding) is. Once the date string has an owner, the
-cut can take main_code's objects in order instead. The microcode blocks
-stay asm (or become binary objects); they aren't the game's C.
+label (or 16-byte padding) is. Where the cut reaches the owner, it
+needs no placement: list it in data_split.txt in order. The microcode
+blocks stay asm (or become binary objects); they aren't the game's C.
+
+**The build date.** main_code's .rodata starts at 0x802A2D00 with
+`"SAT SEP  6 14:57:59 JST 1997"` (eu `"MON SEP  8 12:04:49 JST 1997"`, jp
+`"FRI AUG  8 17:45:39 JST 1997"`: each build stamps its own), 0x1D bytes
+padded to 0x20, and nothing refers to it. It is the only such string in
+the ROM (boot_code and the overlays have none). Being first in .rodata,
+it belongs to an object linked no later than 426E0, the first with other
+.rodata: the entry, 40040 ... 41FD0, or an object with no code among
+them, which .text can't show. Nothing in the layout tells these apart
+(each pads its .rodata to 16 alike, and Bomberhackers/bm64's splat.yaml
+leaves 0xBD500 as one `data` block), so it goes to the most defensible
+one: `main_code_entry.c`, as `const char D_802A2D00[]` under `#if
+VERSION_EU`/`VERSION_JP`. The entry is the module's first object and
+the only one before 426E0 with no data of its own; it is built apart
+from the game's `-O2`/`-O3` sources (`-g`), and a date that changes with
+every build suits a file the build treats specially, linked first. A
+generated object with no code, linked first, would put the same bytes in
+the same place; the entry stands for it. With an owner, the cut gives
+main_code's .data/.rodata boundary (`rodata=` on its `@us`/`@eu`/`@jp`
+line), and 426E0, 45170, 46300, 479D0 and 47A80 joined it.

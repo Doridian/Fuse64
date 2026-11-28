@@ -291,8 +291,10 @@ which was `D_8001A3B0`), `vimodes/vimodepallan1.c`, `vimodempallan1.c`,
 reduces to `__osThreadSave` (exceptasm.s's). All are ultralib's files
 unchanged; their sizes and places are in data_split.txt. boot_code's
 addresses are the same in us and eu (the 0x60 gap is in the text) and
-0x20 lower in jp. main_code's `__libm_qnan_f` (`libc/libm_vals`, no code
-either) is still asm.
+0x20 lower in jp. main_code's `__libm_qnan_f` is ultralib's
+`gu/libm_vals.s` (no code either), placed by its .rodata; with no `hasm`
+sibling to name its object, `tools/split.py` has splat link it as a
+`hasm` would be (`asm/libultra/gu/libm_vals.s`, built from src/libultra).
 
 ## libaudio
 

@@ -63,49 +63,36 @@ ovl_0A_06 1412C0 0x700 0xF0 0x270
 ovl_0A_06 @jp 1412C0 sizes=0x620,0xE0,0x270
 
 # main_code: RSP code (0x2320 bytes, rspboot and microcode) comes first, as
-# asm data; the objects' .data start after it.  The .data/.rodata boundary
-# isn't shown yet: none of the objects cut so far has .rodata (426E0, the
-# next, has: "SAT SEP  6..." at 0x802A2D00 needs an owner first).
-main_code @us data=0x8029F570
-main_code @eu data=0x8029F570
-main_code @jp data=0x8029EC50
-main_code main_code_entry 0 0 0
+# asm data; the objects' .data start after it.  .rodata starts with the
+# build date (the entry's, each version's own: docs/DECOMPILING.md, "What's
+# left of the data"), after the libraries' .data.
+main_code @us data=0x8029F570 rodata=0x802A2D00
+main_code @eu data=0x8029F570 rodata=0x802A2D00
+main_code @jp data=0x8029EC50 rodata=0x802A1F40
+main_code main_code_entry 0 0x20 0
 main_code 40040 0x30 0 0
 main_code 40300 0x10 0 0
 main_code 404C0 0x20 0 0x20
 main_code 40FB0 0x10 0 0x10
 main_code 412F0 0x200 0 0xA0
 main_code 41FD0 0x60 0 0x90
+main_code 426E0 0x40 0x10 0x40
+main_code 45170 0x10 0 0x30
+main_code 46300 0x30 0x20 0x40
+main_code 479D0 0 0 0
+# 47A80 owns all three: .data the highlight texture, two flags and the
+# display list that loads it (its last 8 bytes the section's padding, up to
+# the function table 48300 uses), .rodata the Hilite, .bss its matrix and
+# list state up to 48600's.
+main_code 47A80 0x480 0x10 0x50
 
 # Game objects after the cut that own their .rodata (constants, jump tables,
 # strings), placed where the ROM has it; their .data and .bss stay asm
 # until the cut reaches them (unless all of an object's .data is its own:
 # 53D70's local pattern and its function table; 54E40's strings, text items
-# and tables, jp's 0x80 shorter: its text).  (412F0 defined its .bss
-# before the cut reached it: with the variables extern, as1 gives two
-# stores into it a `lui` each.)
+# and tables, jp's 0x80 shorter: its text).
 # So does 54E40 for D_802AC7A0[10] (and the two words after it, which end
 # that run on a 16-byte boundary); the rest of its .bss stays asm.
-main_code 426E0 0x40 0x10 0x40
-main_code @us 426E0 data=0x8029F840 rodata=0x802A2D20 bss=0x802A5460
-main_code @eu 426E0 data=0x8029F840 rodata=0x802A2D20 bss=0x802A5450
-main_code @jp 426E0 data=0x8029EF20 rodata=0x802A1F60 bss=0x802A4690
-main_code 45170 0x10 0 0x30
-main_code @us 45170 data=0x8029F880 bss=0x802A54A0
-main_code @eu 45170 data=0x8029F880 bss=0x802A5490
-main_code @jp 45170 data=0x8029EF60 bss=0x802A46D0
-main_code 46300 0x30 0x20 0x40
-main_code @us 46300 data=0x8029F890 rodata=0x802A2D30 bss=0x802A54D0
-main_code @eu 46300 data=0x8029F890 rodata=0x802A2D30 bss=0x802A54C0
-main_code @jp 46300 data=0x8029EF70 rodata=0x802A1F70 bss=0x802A4700
-# 47A80 owns all three: .data the highlight texture, two flags and the
-# display list that loads it (its last 8 bytes the section's padding, up to
-# the function table 48300 uses), .rodata the Hilite, .bss its matrix and
-# list state up to 48600's.  48300, between them in .text, has none.
-main_code 47A80 0x480 0x10 0x50
-main_code @us 47A80 data=0x8029F8C0 rodata=0x802A2D50 bss=0x802A5510
-main_code @eu 47A80 data=0x8029F8C0 rodata=0x802A2D50 bss=0x802A5500
-main_code @jp 47A80 data=0x8029EFA0 rodata=0x802A1F90 bss=0x802A4740
 # 48600 owns its .rodata and all of its .bss (D_802A5560..D_802A5A24, the
 # list heads, its shapes and func_80230604's and the other functions'
 # statics): IDO lays the statics out among the globals, so all of it is C.
@@ -309,6 +296,11 @@ main_code libultra/gu/cosf 0 0x50 0
 main_code @us libultra/gu/cosf rodata=0x802A47E0
 main_code @eu libultra/gu/cosf rodata=0x802A47D0
 main_code @jp libultra/gu/cosf rodata=0x802A3A10
+# libm_vals.s (no code): __libm_qnan_f, which sinf and cosf return
+main_code libultra/gu/libm_vals 0 0x10 0
+main_code @us libultra/gu/libm_vals rodata=0x802A4830
+main_code @eu libultra/gu/libm_vals rodata=0x802A4820
+main_code @jp libultra/gu/libm_vals rodata=0x802A3A60
 
 # boot_code: the game's objects from the first after the entry (handwritten,
 # no data); the cut passes over 2630 (handwritten, hasm) and stops after

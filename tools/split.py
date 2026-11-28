@@ -24,8 +24,29 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 
 
+def asm_libultra_data():
+    """A library object with no code whose source is asm (libultra's
+    gu/libm_vals.s, __libm_qnan_f) is placed by its .rodata alone
+    (tools/layout.py), with no `hasm` sibling to name its object: splat
+    would imply a C file.  It is linked as a `hasm` would be,
+    asm/libultra/<object>.s, which the Makefile builds from src/libultra."""
+    from splat.segtypes.common.data import CommonSegData
+    from splat.util import options
+    orig = CommonSegData.out_path
+
+    def out_path(self):
+        if self.type.startswith(".") and not self.sibling \
+                and self.name.startswith("libultra/") \
+                and not (ROOT / "src" / self.dir / f"{self.name}.c").exists() \
+                and (ROOT / "src" / self.dir / f"{self.name}.s").exists():
+            return options.opts.asm_path / self.dir / f"{self.name}.s"
+        return orig(self)
+    CommonSegData.out_path = out_path
+
+
 def main():
     version = sys.argv[1]
+    asm_libultra_data()
     if version != "us":
         import vermap
         from splat.segtypes.common.c import CommonSegC

@@ -118,7 +118,7 @@ thing: a `D_` symbol's (pointee or element) type, or a `func_`'s
 parameter or return type, named differently in different files, with
 how their layouts compare; (c) one name defined with different layouts
 (sizes, or fields' offsets and types); (d) different names with the same
-layout (0x10 bytes and three fields or more), whatever uses them; (e)
+layout (any structure of two fields or more), whatever uses them; (e)
 one function declared with different types in different files (its
 return, a parameter, how many parameters), a ZeroJump stub's
 declarations counting as its target's (below).
@@ -126,9 +126,12 @@ declarations counting as its target's (below).
 different types for a reason goes in `ALLOW_B` with the reason: so far
 only `func_802391F0`'s return, the running task's argument (530C0.c),
 which each task reads as its own. A (d) of different things that happen
-to share a layout goes in `ALLOW_D` with the reason: so far 7D840's
-`RectF` and `RectI` and the four-float and four-word types that share
-theirs. `--version eu`/`jp` parses with that version's `#if`s. (b) misses
+to share a layout goes in `ALLOW_D` with the reason: 7D840's `RectF`
+and `RectI` and the four-float and four-word types that share theirs,
+gfx.h's `Gfx_80225840` and 85A10's `Acmd` (two words), and the generic
+pairs, triples and quadruples of unrelated things (a model object and two
+words, two or three words, two or four halfwords: a glyph's extent, a
+cache page, a texture frame, a mesh entry, a task's tile). `--version eu`/`jp` parses with that version's `#if`s. (b) misses
 a view that comes through a cast (8A7A0's was `#define PLAYERS ((Player87 *)
 D_800AEDF0)`) or a file's own type for a pointer field, so a merge is
 worth a look at the files' other local types of the same object. The
@@ -140,11 +143,8 @@ id from `asm/*_zerojmp.s` (or `port/snapshot/us` without an extract),
 and the module tables and their registration (`func_80297D30(0x2C,
 D_802A1D70)`) from the C, so a stub without its id in a comment counts
 too. A position where two or more structure types meet fails `--check`
-unless it is in `ALLOW_E` with the reason: the task's argument, 7D840's
-`Gfx` for 426E0's `Gfx_80225840`, and the views not merged yet (each
-"to do": 0x0119, 0x183A, 0x1834, 0x1836, 0x2D03, and 0x1510's draw
-callbacks, typed with the overlays' own copies of `Gfx_80225840`). The
-other differences (an `s32` for a `u32` or a pointer, a `void *` for a
+unless it is in `ALLOW_E` with the reason: the task's argument and
+7D840's `Gfx` for 426E0's `Gfx_80225840`. The other differences (an `s32` for a `u32` or a pointer, a `void *` for a
 structure's pointer, a `void` return for an `s32`, fewer parameters:
 about 400) are counted and listed with `-v`; several are what a match or
 the port needs (PORT_RET, a halfword argument), and proto_check.py
@@ -174,7 +174,8 @@ to func_80232B04, ZeroJump 0x180E); `UnkStruct_802B0260`, a sprite slot
 and seven overlay views); `UnkStruct_802ACF08` (D_802ACF08's rows, also
 6BBE0's `SeqOut`); `UnkStruct_802AC610` (D_802AC610, what
 func_8023A840, ZeroJump 0x0F0B, returns: it was `UnkStruct_8023A840`, 12
-overlays' views and 20 files' `s32 *`; 20 more still take an `s32 *`); `UnkStruct_802363BC` (a camera
+overlays' views and 40 files' `s32 *`, `void *` or `void`, whose `*f()`,
+`p[4]` and M2C_FIELD reads are its fields by name); `UnkStruct_802363BC` (a camera
 move, ZeroJump 0x170B's argument; 0D_01's, 0D_03's, 0D_06's, 13_01's and
 13_02's views); `PakDir`/`PakFile` (what ZeroJump 0x1C05 fills in);
 `UnkStruct_802B03C0` (B11F0's pictures, ZeroJump 0x3106);
@@ -209,6 +210,26 @@ of a player's unk1C). The overlays reach the pool object, the model
 object and its slots through structs.h's types (their own views, `Obj`,
 `Obj_0D02`, `Inner`, `Anim2` and the rest, are gone; a 0x18 slot pair's
 second half is `unk4[1]`, a view's `f32 unk58[3]` is `(&o->unk58)`).
+Later merges: os.h's `OSMesgQueue` for the game's queues (412F0, 52270,
+53D70, 80580, 85A10; what func_80001480, ZeroJump 0x0119, returns;
+structs.h's `UnkStruct_802A5330` is left only for AD5B0's extern);
+`UnkStruct_8022DBBC`, ZeroJump 0x183A's task argument (a model object, a
+sound and its count; five overlays' views), with 48300's `Rect40` a
+model object (`UnkStructA_40`); 0x1834's return and 0x1836's list are
+pool objects (`UnkStructA`, 10_01..06's views gone); `UnkStruct_800BCFE8`,
+a player's state (6BBE0's D_800BCFE8 entry, what func_8025E0DC, ZeroJump
+0x2D03, returns; 0D_07's, 10_13's, 12_05's and 12_06's views); every
+overlay's and 87730's, 9BFD0's and B11F0's copy of the display-list
+command is `Gfx_80225840`, and the draw callbacks (func_8026D4B0, 0x1510,
+and func_8022A328) take the model object 426E0's func_802289C0 calls
+them with; `UnkStruct_8014B008` (404C0's cache page, what func_8022638C
+fills in: 926A0's `Info926`); 6BBE0's `Unk6BBE0_8` is its `SeqB`; 0B_03's
+and 0B_05's menu tables are 995C0's `UnkStruct_8027F0C4` (0B_01's and
+0B_02's are still `u16` arrays). types.h has the overlays' fade/box
+(0B_01, 0B_05, 0B_06), the 0D set-up table entry (`Trio_0D01`), 0F_02's
+and 0F_04's switch state, 0F_01/02/04's route step, the 0E and 17 tasks'
+tile argument, 0F_07's and 0F_10's task argument and 17_07's and 17_10's
+model.
 
 ## NON_MATCHING drafts
 

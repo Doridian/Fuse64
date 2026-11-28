@@ -1,9 +1,9 @@
 #include "common.h"
 #include "gfx.h"
 
-void func_80225CC0(void);
-void func_80225CCC(void);
-void func_80225FB8(void);
+u32 func_80225CC0(UnkStruct_80225CC0 *);
+s32 func_80225CCC(UnkStruct_80225CC0 *, s32, s32);
+s32 func_80225FB8(void *, s32, s32, UnkStruct_80225CC0 *);
 void func_80226860(void);
 void func_80226D80(void);
 void func_80226E84(Gfx_80225840 *);

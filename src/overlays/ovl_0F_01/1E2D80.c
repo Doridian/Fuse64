@@ -113,12 +113,6 @@ typedef struct {
     /* 0x04 */ f32 unk4;
 } UnkStruct_ovl0F_01_8004815C; /* size 0x8 */
 
-/* what func_ovl0F_01_800480D8 returns */
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[0xC];, void *unk0; u8 unk4[0x8];)
-    /* 0x0C */ UnkStructA *unkC;
-} UnkStruct_ovl0F_01_800480D8;
-
 /* A display list command (gbi.h's Gfx, as two words) */
 typedef struct {
     /* 0x00 */ PORT_UP(u32) w0;
@@ -160,13 +154,13 @@ void func_ovl0F_01_80047080(s32);
 void func_ovl0F_01_800470D8(s32);
 UnkStruct_ovl0F_01_80048130 *func_ovl0F_01_80047508(s32);
 void func_ovl0F_01_80047510(s32);
-void func_ovl0F_01_80047520(UnkStructA *);
-void func_ovl0F_01_80047528(UnkStructA *);
+void func_ovl0F_01_80047520(UnkStructA_40 *);
+void func_ovl0F_01_80047528(UnkStructA_40 *);
 void func_ovl0F_01_80047540(UnkStructA_40 *, s32);
 void func_ovl0F_01_80047548(UnkStructA_40 *, s32, s32, s32);
 f32 func_ovl0F_01_80047578(UnkStructA_40 *, s32);
 s32 func_ovl0F_01_80047580(UnkStructA_40 *, s32, s32, s32, s32, s32);
-UnkStructA *func_ovl0F_01_80047598(void (*)(s32, UnkStruct_ovl0F_01_Gfx **), s32);
+UnkStructA_40 *func_ovl0F_01_80047598(void (*)(s32, UnkStruct_ovl0F_01_Gfx **), s32);
 void func_ovl0F_01_800475A0(s32, s32);
 void func_ovl0F_01_80047560(UnkStructA_40 *, s32, s32);
 void func_ovl0F_01_80047590(UnkStructA_40 *, s32, s32);
@@ -232,7 +226,7 @@ void func_ovl0F_01_80047F38(s32, f32 *);
 void func_ovl0F_01_800480C0(s32);
 void func_ovl0F_01_800480C8(void);
 s32 func_ovl0F_01_800480D0(void);
-UnkStruct_ovl0F_01_800480D8 *func_ovl0F_01_800480D8(s32);
+UnkStruct_802B03C0 *func_ovl0F_01_800480D8(s32);
 void func_ovl0F_01_800480E8(s32);
 void func_ovl0F_01_800480F0(void);
 void func_ovl0F_01_800480F8(void);
@@ -330,7 +324,7 @@ u8 D_ovl0F_01_80048770[0x4];
 s32 D_ovl0F_01_80048774;
 s32 D_ovl0F_01_80048778;
 Vec3f D_ovl0F_01_80048780;
-UnkStructA *D_ovl0F_01_8004878C;
+UnkStructA_40 *D_ovl0F_01_8004878C;
 s32 *D_ovl0F_01_80048790;
 UnkStruct_ovl0F_01_80048798 D_ovl0F_01_80048798[20];
 Vec3f D_ovl0F_01_80048928;
@@ -1172,7 +1166,7 @@ void func_ovl0F_01_80043B0C(void) {
     func_ovl0F_01_80047760(50.0f, 50.0f, 50.0f);
     func_ovl0F_01_80047750(20);
     D_ovl0F_01_80048420 = 2;
-#line 1161 /* fake: renumbers the lines (as1 orders a block partly by .loc line); the loop as one of the list-only stubs (80043AEC, i its local) orders it, but its area is 16 bytes: x/sv 8/16 off */
+#line 1155 /* fake: renumbers the lines (as1 orders a block partly by .loc line); the loop as one of the list-only stubs (80043AEC, i its local) orders it, but its area is 16 bytes: x/sv 8/16 off */
     for (i = 0; i < 3; i++) {
         D_ovl0F_01_80048738[i]->unkC = 0;
         func_ovl0F_01_80047840(D_ovl0F_01_80048738[i], 0x01000030);
@@ -1447,8 +1441,8 @@ static void func_ovl0F_01_80043018(s32 count, UnkStruct_ovl0F_01_80048264 *p) {
 
 /* The overlay's handler: the entry returns it to the loader. */
 void func_ovl0F_01_80045FB8(s32 arg0) {
-    UnkStructA *obj;
-    UnkStruct_ovl0F_01_800480D8 *q;
+    UnkStructA_40 *obj;
+    UnkStruct_802B03C0 *q;
 
     switch (arg0) {
         case 2:

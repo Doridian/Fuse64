@@ -234,7 +234,7 @@ s32 func_ovl0F_04_80047E88(s32);
 s32 func_ovl0F_04_80047F50(s32);
 UnkStructA *func_ovl0F_04_800473B8(s32);
 UnkStructA *func_ovl0F_04_800473F8(s32);
-UnkStructA *func_ovl0F_04_800478D8(void (*)(s32, UnkStruct_ovl0F_04_Gfx **), s32);
+UnkStructA_40 *func_ovl0F_04_800478D8(void (*)(s32, UnkStruct_ovl0F_04_Gfx **), s32);
 UnkStructA *func_ovl0F_04_80047BA0(s32, s32, s32, PORT_IP(s32));
 UnkStructA *func_ovl0F_04_80047BE8(s32, s32);
 void *func_ovl0F_04_80047CF0(void);
@@ -259,7 +259,7 @@ void func_ovl0F_04_80047388(void);
 void func_ovl0F_04_800473C0(s32);
 void func_ovl0F_04_80047418(s32);
 s32 func_ovl0F_04_80047850(s32);
-void func_ovl0F_04_80047868(UnkStructA *);
+void func_ovl0F_04_80047868(UnkStructA_40 *);
 void func_ovl0F_04_800479A8(s32);
 void func_ovl0F_04_800479B8(f32, f32, f32);
 void func_ovl0F_04_800479D8(f32, f32, f32);
@@ -374,7 +374,7 @@ s32 D_ovl0F_04_80048AE4;
 u8 D_ovl0F_04_80048AE8[0x8];
 UnkStruct_ovl0F_01_80048798 D_ovl0F_04_80048AF0[20];
 Vec3f D_ovl0F_04_80048C80;
-UnkStructA *D_ovl0F_04_80048C8C;
+UnkStructA_40 *D_ovl0F_04_80048C8C;
 UnkStruct_ovl0F_01_80048938 D_ovl0F_04_80048C90;
 
 /* .data */
@@ -612,7 +612,7 @@ static s32 func_ovl0F_04_80043398(s32 n, UnkStruct_ovl0F_01_80048264 *p, UnkStru
 /* case 2's: the wind, the blocks' callbacks and the particles */
 static void func_ovl0F_04_800460CC(s32 n1, s32 n2) {
     s32 i;
-    UnkStructA *obj;
+    UnkStructA_40 *obj;
 
     func_ovl0F_04_800460B4();
     func_ovl0F_04_800460BC();

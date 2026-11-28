@@ -125,8 +125,8 @@ void func_ovl0F_03_80045D40(s32);
 UnkStructA *func_ovl0F_03_80045D78(s32);
 UnkStruct_ovl0F_01_80048130 *func_ovl0F_03_800461C8(s32);
 void func_ovl0F_03_800461D0(s32);
-void func_ovl0F_03_800461E8(UnkStructA *);
-UnkStructA *func_ovl0F_03_80046258(void (*)(s32, UnkStruct_ovl0F_03_Gfx **), s32);
+void func_ovl0F_03_800461E8(UnkStructA_40 *);
+UnkStructA_40 *func_ovl0F_03_80046258(void (*)(s32, UnkStruct_ovl0F_03_Gfx **), s32);
 void func_ovl0F_03_80046260(s32, s32);
 void func_ovl0F_03_80046338(f32, f32, f32);
 void func_ovl0F_03_80046358(f32, f32, f32);
@@ -236,7 +236,7 @@ s32 D_ovl0F_03_800470D0;
 Vec3f D_ovl0F_03_800470D8;
 UnkStruct_ovl0F_01_80048798 D_ovl0F_03_800470E8[20];
 Vec3f D_ovl0F_03_80047278;
-UnkStructA *D_ovl0F_03_80047284;
+UnkStructA_40 *D_ovl0F_03_80047284;
 
 /* .data */
 UnkStruct_ovl0F_01_80048130 *D_ovl0F_03_80046DF0 = NULL;

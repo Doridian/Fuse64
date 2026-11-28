@@ -19,7 +19,7 @@ static void func_ovl0F_03_8004348C(UnkStructA *arg0, f32 *pos) {
 
 /* case 4's: the particles' texture and display list */
 static void func_ovl0F_03_80043434(void) {
-    UnkStructA *obj;
+    UnkStructA_40 *obj;
 
     if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
         func_ovl0F_03_80046648(func_ovl0F_03_80044C20, NULL, 0, 0, 0);

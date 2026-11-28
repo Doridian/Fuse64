@@ -72,7 +72,7 @@ void func_ovl17_09_80043290(s32 arg0) {
     s32 t;
     f32 step;
     UnkStruct_8023A834 *b;
-    UnkStructA *obj;
+    UnkStructA_40 *obj;
 
     switch (arg0) {
         case 2:

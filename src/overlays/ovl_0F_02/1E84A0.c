@@ -169,11 +169,11 @@ UnkStructA *func_ovl0F_02_80047568(s32);
 void func_ovl0F_02_80047588(s32);
 UnkStruct_ovl0F_01_80048130 *func_ovl0F_02_800479B8(s32);
 void func_ovl0F_02_800479C0(s32);
-void func_ovl0F_02_800479D8(UnkStructA *);
+void func_ovl0F_02_800479D8(UnkStructA_40 *);
 void func_ovl0F_02_80047A10(UnkStructA_40 *, s32, s32);
 f32 func_ovl0F_02_80047A28(UnkStructA_40 *, s32);
 void func_ovl0F_02_80047A40(UnkStructA_40 *, s32, s32);
-UnkStructA *func_ovl0F_02_80047A48(void (*)(s32, UnkStruct_ovl0F_02_Gfx **), s32);
+UnkStructA_40 *func_ovl0F_02_80047A48(void (*)(s32, UnkStruct_ovl0F_02_Gfx **), s32);
 void func_ovl0F_02_80047B18(s32);
 void func_ovl0F_02_80047B28(f32, f32, f32);
 void func_ovl0F_02_80047B38(f32, f32, f32);
@@ -311,7 +311,7 @@ u8 D_ovl0F_02_80048D78[0x4];
 s32 D_ovl0F_02_80048D7C;
 UnkStruct_ovl0F_01_80048798 D_ovl0F_02_80048D80[20];
 Vec3f D_ovl0F_02_80048F10;
-UnkStructA *D_ovl0F_02_80048F1C;
+UnkStructA_40 *D_ovl0F_02_80048F1C;
 UnkStruct_ovl0F_02_80048F20 D_ovl0F_02_80048F20;
 
 /* .data */
@@ -551,7 +551,7 @@ static void func_ovl0F_02_80046160(UnkStruct_ovl0F_02_800489F4 *door) {
 /* case 2's: the wind, the blocks' callbacks and the particles */
 static void func_ovl0F_02_80046178(s32 n1, s32 n2) {
     s32 i;
-    UnkStructA *obj;
+    UnkStructA_40 *obj;
 
     func_ovl0F_02_80046170();
     func_ovl0F_02_80046168();

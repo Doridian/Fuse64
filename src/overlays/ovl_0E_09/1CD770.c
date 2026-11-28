@@ -6,12 +6,6 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-/* what func_ovl0E_09_80045D28 returns */
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[0xC];, void *unk0; u8 unk4[0x8];)
-    /* 0x0C */ PORT_IP(s32) unkC;
-} UnkStruct_ovl0E_09_80045D28;
-
 void func_ovl0E_09_80044A88(s32);
 void func_ovl0E_09_80044AA0(s32);
 f32 func_ovl0E_09_80044AB0(void);
@@ -33,7 +27,7 @@ void func_ovl0E_09_80044C88(s32, s32, f32, s32, s32, s32, s32);
 void func_ovl0E_09_80044C90(const char *);
 void func_ovl0E_09_80044C98(void);
 void func_ovl0E_09_80044CD0(s32);
-void func_ovl0E_09_80045170(PORT_IP(s32));
+void func_ovl0E_09_80045170(UnkStructA_40 *);
 void func_ovl0E_09_800451D0(UnkStructA_40 *, s32, s32, s32, s32, s32);
 void func_ovl0E_09_800452C8(f32, f32, f32);
 void func_ovl0E_09_800452E8(f32, f32, f32);
@@ -68,7 +62,7 @@ void func_ovl0E_09_80045B88(s32, f32 *);
 void func_ovl0E_09_80045D10(s32);
 void func_ovl0E_09_80045D18(void);
 s32 func_ovl0E_09_80045D20(void);
-UnkStruct_ovl0E_09_80045D28 *func_ovl0E_09_80045D28(s32);
+UnkStruct_802B03C0 *func_ovl0E_09_80045D28(s32);
 void func_ovl0E_09_80045D38(s32);
 void func_ovl0E_09_80045D40(void);
 void func_ovl0E_09_80045D48(void);
@@ -669,16 +663,16 @@ void func_ovl0E_09_80043094(void) {
 }
 
 void func_ovl0E_09_80043018(void) {
-    UnkStruct_ovl0E_09_80045D28 *p;
+    UnkStruct_802B03C0 *p;
 
-    PORT_ONLY(if (func_ovl0E_09_80045D28(1)->unkC != NULL)) ((UnkStructA_40 *) func_ovl0E_09_80045D28(1)->unkC)->unkC |= 1; /* NULL: a demo left early (docs/PORT.md, "Reads through NULL") */
+    PORT_ONLY(if (func_ovl0E_09_80045D28(1)->unkC != NULL)) func_ovl0E_09_80045D28(1)->unkC->unkC |= 1; /* NULL: a demo left early (docs/PORT.md, "Reads through NULL") */
     func_ovl0E_09_80045928(0, 0, 0);
     func_ovl0E_09_80045D18();
     p = func_ovl0E_09_80045D28(4);
     if (p->unkC != 0) {
         func_ovl0E_09_80045170(p->unkC);
     }
-    p->unkC = 0;
+    p->unkC = NULL;
     func_ovl0E_09_80045D48();
 }
 

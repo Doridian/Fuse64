@@ -14,9 +14,11 @@
  *   first in the function after it (as in ovl_0C_07); 8004508C's call is
  *   in 80045094.
  * - 800455DC calls 80046200(1, ...) (inlined: the frame's 16 bytes),
- *   800458D8's `vol = 0x7F;` shares the loop's line, 80045BA0 has 8 bytes
- *   of unused locals, 800446FC reads the state twice, 80044F44's loop runs
- *   once, 80043820 has its three statements on their own lines.
+ *   800458D8's `vol = 0x7F;` is its loop's for-init (so that the store
+ *   comes after the first test), 80045BA0 has 8 bytes of unused locals and
+ *   drops its object with 8004394C, 800446FC reads the state twice,
+ *   80044F44's loop runs once, 80043820 has its three statements on their
+ *   own lines.
  * - 8004510C's last call is in statics.h (a fake `#line`, to the end of
  *   the file): its `.file` keeps the store out of the jal's delay slot.
  * - func_ovl0C_06_80048750 returns s32 (as ovl_0C_07's), which gives
@@ -757,7 +759,7 @@ void func_ovl0C_06_80045F44(void) {
 /* mover 0: swings its object round on a circle, drops limit 0's object
  * on the way */
 void func_ovl0C_06_80045BA0(void) {
-    f32 pad[2]; /* fake: unused; the original's frame is 8 bytes bigger */
+    f32 pad[2]; /* fake: unused; the original's frame has two more words above obj (as ovl_0C_09's 80044BA4; calling 80046200(1, ...) instead of 8004394C makes it 16 bytes smaller and moves 80046200's body) */
     UnkStructA *obj;
     UnkStructA *other;
     f32 lim;
@@ -793,11 +795,7 @@ void func_ovl0C_06_80045BA0(void) {
             dropped = 1;
             func_ovl0C_06_80048C90(0x4C);
             other = D_ovl0C_06_80048FD0[0].unk0;
-            func_ovl0C_06_80048598(obj, other);
-            func_ovl0C_06_800485B8(other, 0x200000);
-            other->unk4C = 0.0f;
-            other->unk50 = lim;
-            other->unk54 = 0.0f;
+            func_ovl0C_06_8004394C(obj, other, lim);
         }
         obj->unk40->unk10 = func_ovl0C_06_800488B0(a) * 1200.0f + cx;
         obj->unk40->unk18 = func_ovl0C_06_800488B8(a) * 1200.0f + cz;
@@ -853,8 +851,7 @@ void func_ovl0C_06_800458D8(void) {
     D_ovl0C_06_80048FD0[1].unk0->unk6C = 0.0f;
     func_ovl0C_06_80048C90(0x4C);
     func_ovl0C_06_80045874(D_ovl0C_06_80048FD0[1].unk0);
-    vol = 0x7F; while (obj->unk40->unk10 < 5000.0f) {
-
+    for (vol = 0x7F; obj->unk40->unk10 < 5000.0f;) {
         obj->unk40->unk10 += 7.0f;
         obj->unk40->unk14 += 10.0f;
         obj->unk40->unk18 -= 7.0f;

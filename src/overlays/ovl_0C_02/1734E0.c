@@ -618,7 +618,7 @@ void func_ovl0C_02_800477B0(UnkStructA *arg0) {
 void func_ovl0C_02_800475BC(UnkStructA *arg0) {
     UnkStructA_40 *p;
     s32 moved;
-    s32 pad2; /* fake: unused, frame space the original has (no source for it found; p matches in this slot as well) */
+    s32 pad2; /* fake: unused, frame space the original has (p matches in this slot as well; so do held values: a `mask = 0x10` for the two calls, as the twin above has it, or a speed local for the 12.0f/3.0f calls; no unreferenced callee to inline accounts for it) */
     f32 x;
     f32 y;
     f32 z;
@@ -713,7 +713,7 @@ void func_ovl0C_02_80047410(void) {
 }
 
 void func_ovl0C_02_80046DD0(void) {
-    s32 pad[5]; /* fake: unused, frame space the original has (no source for it found) */
+    s32 pad[5]; /* fake: unused, 20 bytes above pos the original has (no source found; calling the unreferenced 800468EC and 80046B30 for the two tasks below inlines them, but their 8 bytes each go below the locals) */
     f32 pos[3];
     UnkStructA *obj;
     UnkStructA *fade;

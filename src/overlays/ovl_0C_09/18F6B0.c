@@ -14,8 +14,6 @@
  *   (&D_ovl0C_09_80047B10 in s1, 100.0f in fs0, the count in s2): the
  *   `.file` ugen emits where the inlined body starts is it.  The fakes it
  *   needed before (`!count && !count`, the body as a one-line macro) go.
- * - func_ovl0C_09_80044BA4: `hit = FALSE` shares its line with the while,
- *   which keeps it after the lw of obj->unk40.
  */
 #include "common.h"
 #include "overlays/common/types.h"
@@ -591,7 +589,7 @@ void func_ovl0C_09_80044DC4(void) {
 }
 
 void func_ovl0C_09_80044BA4(void) {
-    s32 pad[2]; /* fake: unused; the original's frame is 8 bytes bigger */
+    s32 pad[2]; /* fake: unused; the original's frame has two more words above obj (an f32 for the z both loop tests read and a local for the object passed to 8004455C match as well, but nothing shows them; a param on the inlined 80044B6C or a local for &D_ovl0C_09_80047818 does not) */
     UnkStructA *obj;
     UnkStructA_40 *p;
     s32 hit;
@@ -607,7 +605,7 @@ void func_ovl0C_09_80044BA4(void) {
     snd.unk8 = 60;
     func_ovl0C_09_80047020(&snd);
     p->unk48->unk4[0].unk4 = func_ovl0C_09_80046C18(p, 0) - 0.01f;
-    hit = FALSE; while (obj->unk40->unk18 > 800.0f) {
+    for (hit = FALSE; obj->unk40->unk18 > 800.0f; obj->unk40->unk18 -= 20.0f) {
         if (obj->unk40->unk18 < 1500.0f && hit == FALSE) {
             func_ovl0C_09_800475B0(0x168);
             hit = TRUE;
@@ -617,7 +615,6 @@ void func_ovl0C_09_80044BA4(void) {
             func_ovl0C_09_80044B6C();
         }
         func_ovl0C_09_80047070();
-        obj->unk40->unk18 -= 20.0f;
     }
     func_ovl0C_09_80046EE0(obj, 0x01000000);
     func_ovl0C_09_80047038();

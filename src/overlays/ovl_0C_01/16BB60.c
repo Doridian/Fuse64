@@ -30,6 +30,9 @@
  *   0x413 block; 800464F8 and 800463E0 are ovl_0C_02's plain `for` loops.
  * - func_ovl0C_01_80049950 returns s32 (80048068's v1, as in ovl_0C_07).
  * - 800459FC declares obj before pos.
+ * - 800439C0 and 800444DC end with a call to 80043894 (which nothing else
+ *   calls), inlined: an inlined callee costs its caller 8 bytes of frame,
+ *   below its locals, which then have 800441D4's order.
  */
 #include "common.h"
 #include "overlays/common/types.h"
@@ -568,7 +571,7 @@ void func_ovl0C_01_80047E9C(UnkStructA *arg0) {
 void func_ovl0C_01_80047CA8(UnkStructA *arg0) {
     UnkStructA_40 *p;
     s32 moved;
-    s32 pad2; /* fake: unused, frame space the original has (no source for it found; p matches in this slot as well) */
+    s32 pad2; /* fake: unused, frame space the original has (p matches in this slot as well; so do held values: a `mask = 0x10` for the two calls, as the twin above has it, or a speed local for the 12.0f/3.0f calls; no unreferenced callee to inline accounts for it) */
     f32 x;
     f32 y;
     f32 z;
@@ -1749,12 +1752,10 @@ void func_ovl0C_01_800446F8(s32 arg0) {
 }
 
 void func_ovl0C_01_800444DC(void) {
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
-    UnkStructA *obj;
-    s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
-    UnkStruct_8022DBBC snd;
-    UnkStructA_40 *p;
     f32 end;
+    UnkStructA *obj;
+    UnkStructA_40 *p;
+    UnkStruct_8022DBBC snd;
 
     if (D_ovl0C_01_8004A9C0 == 3) {
         func_ovl0C_01_80049000(1);
@@ -1782,14 +1783,7 @@ void func_ovl0C_01_800444DC(void) {
         func_ovl0C_01_800497C0(obj, 0x01000000);
         func_ovl0C_01_800438E8();
         D_ovl0C_01_8004A9C4 = D_ovl0C_01_8004A9C0;
-        switch (D_ovl0C_01_8004A9C0) {
-        case 3:
-            func_ovl0C_01_800436A0();
-            break;
-        case 4:
-            func_ovl0C_01_8004333C();
-            break;
-        }
+        func_ovl0C_01_80043894();
         func_ovl0C_01_80049000(0);
     }
 }
@@ -1954,12 +1948,10 @@ void func_ovl0C_01_80043BC0(void) {
 }
 
 void func_ovl0C_01_800439C0(void) {
-    s32 pad; /* fake: unused, frame space the original has (no source for it found) */
-    UnkStructA *obj;
-    s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
-    UnkStruct_8022DBBC snd;
-    UnkStructA_40 *p;
     f32 end;
+    UnkStructA *obj;
+    UnkStructA_40 *p;
+    UnkStruct_8022DBBC snd;
 
     func_ovl0C_01_80049000(1);
     obj = D_ovl0C_01_8004A5B4[0].unk0;
@@ -1987,14 +1979,7 @@ void func_ovl0C_01_800439C0(void) {
     func_ovl0C_01_80049B80(0x412);
     func_ovl0C_01_800438E8();
     D_ovl0C_01_8004A9C4 = D_ovl0C_01_8004A9C0;
-    switch (D_ovl0C_01_8004A9C0) {
-    case 3:
-        func_ovl0C_01_800436A0();
-        break;
-    case 4:
-        func_ovl0C_01_8004333C();
-        break;
-    }
+    func_ovl0C_01_80043894();
     func_ovl0C_01_80049000(0);
 }
 

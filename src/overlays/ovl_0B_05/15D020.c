@@ -214,8 +214,9 @@ static void func_ovl0B_05_80044D80(void) {
 static void func_ovl0B_05_80044D78(void) {
 }
 
-/* fake: a second (dead) caller keeps each fade from being inlined into
- * its only real one */
+/* A second caller keeps each fade from being inlined into its other
+ * caller (they are calls there); unused, they leave the original's stubs
+ * at 80044D68/80044D70 (as in ovl_0F_03/05/08/09/10). */
 static void func_ovl0B_05_80044D70(void) {
     func_ovl0B_05_80043904(&D_ovl0B_05_8004669C);
 }

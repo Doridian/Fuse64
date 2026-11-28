@@ -110,6 +110,7 @@ UnkStructA_40 *D_ovl0B_01_80045FE4;
 
 static void func_ovl0B_01_8004464C(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 static void func_ovl0B_01_800430A4(UnkStruct_ovl0B_01_80045E34 *arg0);
+static void func_ovl0B_01_8004309C(void);
 
 /* .data */
 #if VERSION_JP
@@ -190,8 +191,9 @@ static void func_ovl0B_01_800445F4(void) {
 static void func_ovl0B_01_800445EC(void) {
 }
 
-/* fake: a second (dead) caller keeps func_ovl0B_01_800430A4 from being
- * inlined into its only real one */
+/* A second caller keeps func_ovl0B_01_800430A4 from being inlined into
+ * 80043148 (it is a call there); unused, it leaves the original's stub at
+ * 800445DC (as in ovl_0F_03/05/08/09/10). */
 static void func_ovl0B_01_800445DC(void) {
     func_ovl0B_01_800430A4(&D_ovl0B_01_80045E34);
 }
@@ -505,13 +507,16 @@ static void func_ovl0B_01_8004376C(s32 *ids, s32 mode) {
     }
 }
 
+/* It calls the empty static 8004309C first, as 800430A4 does: an inlined
+ * call gives every local a home (presses, idle and t above state's), and
+ * the stub stays 800430A4's. */
 void func_ovl0B_01_80043660(void) {
-    s32 pad[3]; /* fake: unused; the original's frame has the slots */
-    UnkStruct_802AC610 *state;
     s32 presses;
     s32 idle;
     s32 t;
+    UnkStruct_802AC610 *state;
 
+    func_ovl0B_01_8004309C();
     state = func_ovl0B_01_80044C58();
     if (state->unk44 != 0) {
         func_ovl0B_01_800456A0();

@@ -164,7 +164,7 @@ typedef struct {
 void func_ovl0B_03_800478B0(s32, s32, s32);
 s32 func_ovl0B_03_800478B8(void);
 s32 *func_ovl0B_03_80047908(void);
-UnkStructB *func_ovl0B_03_80047938(void);
+UnkStruct_8023A834 *func_ovl0B_03_80047938(void);
 void func_ovl0B_03_80047960(s32, s32, s32);
 UnkStructA_40 *func_ovl0B_03_80047E98(s32, s32);
 void func_ovl0B_03_80047EA0(UnkStructA_40 *);
@@ -420,7 +420,7 @@ Vec3f D_ovl0B_03_80049310;
 s32 D_ovl0B_03_8004931C;
 u8 D_ovl0B_03_80049320[0x1000];
 s32 D_ovl0B_03_8004A320;
-UnkStructB *D_ovl0B_03_8004A324;
+UnkStruct_8023A834 *D_ovl0B_03_8004A324;
 s32 D_ovl0B_03_8004A328;
 s32 D_ovl0B_03_8004A32C;
 s32 D_ovl0B_03_8004A330;

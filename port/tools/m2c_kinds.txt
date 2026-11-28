@@ -149,7 +149,7 @@ src/8A7A0.c func_80270384 arg0 Ent88
 
 # ovl_0B_03: the boxes' and models' objects (UnkStructA_40 below 0x3C), the
 # game settings (54E40.c's UnkStruct_802AC610, func_8023A840's: numbers),
-# the battle setup (UnkStructB: numbers), and the two boxes D_80048E6C[]
+# the battle setup (UnkStruct_8023A834: numbers), and the two boxes D_80048E6C[]
 src/overlays/ovl_0B_03/14FAB0.c * D_ovl0B_03_80048D08[1].unk10 -
 src/overlays/ovl_0B_03/14FAB0.c * D_ovl0B_03_8004A340[i][j].unk0 -
 src/overlays/ovl_0B_03/14FAB0.c * a->unk0 -

@@ -1,15 +1,5 @@
 #include "common.h"
-
-/* A display list command (gbi.h's Gfx, as two words) */
-typedef struct {
-    /* 0x00 */ PORT_UP(u32) w0;
-    /* 0x04 */ PORT_UP(u32) w1;
-} UnkStruct_8022787C; /* size 0x8 */
-
-/* gbi.h's Mtx */
-typedef struct {
-    /* 0x00 */ s32 m[16];
-} UnkStruct_802A53D8; /* size 0x40 */
+#include "gfx.h"
 
 /* gbi.h's Light: col, colc and dir */
 typedef struct {
@@ -45,14 +35,6 @@ typedef struct {
     /* 0x68 */ f32 unk68;
     /* 0x6C */ s32 unk6C;
 } UnkStruct_800BD5B0; /* size 0x70 */
-
-/* one frame's buffers (D_8014C8D0[2]): matrices, the 412F0 areas
- * func_80227678 hands out, the display list */
-typedef struct {
-    /* 0x00000 */ UnkStruct_802A53D8 mtx[0x400];
-    /* 0x10000 */ u8 unk10000[4][PORT_GFX_BYTES(0x5000)];
-    /* 0x24000 */ UnkStruct_8022787C gfx[0x600];
-} UnkStruct_802A538C; /* size 0x27000 */
 
 void *func_80227678(s32);
 void guPerspective(UnkStruct_802A53D8 *, u16 *, f32, f32, f32, f32, f32);
@@ -144,25 +126,25 @@ void func_80227BAC(s8 x, s8 y, s8 z) {
     D_8029F7F8.l[0].dir[2] = D_8029F7F8.l[1].dir[2];
 }
 
-void func_8022787C(UnkStruct_8022787C **arg0) {
-    UnkStruct_8022787C *gfx = *arg0;
+void func_8022787C(Gfx_80225840 **arg0) {
+    Gfx_80225840 *gfx = *arg0;
     UnkStruct_800BD5B0 *p;
     s32 i;
 
-    { UnkStruct_8022787C *g = gfx++; g->w0 = 0xBC000002; g->w1 = 0x80000060; } { UnkStruct_8022787C *g = gfx++; g->w0 = 0x03860010; g->w1 = (PORT_UP(u32)) &D_8029F7F8.l[0]; } { UnkStruct_8022787C *g = gfx++; g->w0 = 0x03880010; g->w1 = (PORT_UP(u32)) &D_8029F7F8.l[1]; } { UnkStruct_8022787C *g = gfx++; g->w0 = 0x038A0010; g->w1 = (PORT_UP(u32)) &D_8029F7F8; }
-    { UnkStruct_8022787C *g = gfx++; g->w0 = 0xBC00000E; g->w1 = D_802A53D0; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xBC000002; g->w1 = 0x80000060; } { Gfx_80225840 *g = gfx++; g->w0 = 0x03860010; g->w1 = (PORT_UP(u32)) &D_8029F7F8.l[0]; } { Gfx_80225840 *g = gfx++; g->w0 = 0x03880010; g->w1 = (PORT_UP(u32)) &D_8029F7F8.l[1]; } { Gfx_80225840 *g = gfx++; g->w0 = 0x038A0010; g->w1 = (PORT_UP(u32)) &D_8029F7F8; }
+    { Gfx_80225840 *g = gfx++; g->w0 = 0xBC00000E; g->w1 = D_802A53D0; }
     for (i = 0; i < 4; i++) {
         p = &D_800BD5B0[i];
         if (p->unk10 != 0 && p->unk58 != NULL) {
             func_80225C44(&D_802A538C->mtx[D_802A5368], &D_802A53D8, 0x40);
-            { UnkStruct_8022787C *g = gfx++; g->w0 = 0x01030040; g->w1 = (PORT_UP(u32)) &D_802A538C->mtx[D_802A5368]; }
+            { Gfx_80225840 *g = gfx++; g->w0 = 0x01030040; g->w1 = (PORT_UP(u32)) &D_802A538C->mtx[D_802A5368]; }
             D_802A5368++;
-            { UnkStruct_8022787C *g = gfx++; g->w0 = 0x03800010; g->w1 = (PORT_UP(u32)) p; }
+            { Gfx_80225840 *g = gfx++; g->w0 = 0x03800010; g->w1 = (PORT_UP(u32)) p; }
             func_80225C44(&D_802A538C->mtx[D_802A5368], &p->unk18, 0x40);
-            { UnkStruct_8022787C *g = gfx++; g->w0 = 0x01010040; g->w1 = (PORT_UP(u32)) &D_802A538C->mtx[D_802A5368]; }
+            { Gfx_80225840 *g = gfx++; g->w0 = 0x01010040; g->w1 = (PORT_UP(u32)) &D_802A538C->mtx[D_802A5368]; }
             D_802A5368++;
-            { UnkStruct_8022787C *g = gfx++; g->w0 = 0xED000000 | (((s32) (p->unk5C * 4.0f) & 0xFFF) << 12) | ((s32) (p->unk60 * 4.0f) & 0xFFF); g->w1 = (((s32) (p->unk64 * 4.0f) & 0xFFF) << 12) | ((s32) (p->unk68 * 4.0f) & 0xFFF); }
-            { UnkStruct_8022787C *g = gfx++; g->w0 = 0x06000000; g->w1 = (PORT_UP(u32)) func_80227678(p->unk14); }
+            { Gfx_80225840 *g = gfx++; g->w0 = 0xED000000 | (((s32) (p->unk5C * 4.0f) & 0xFFF) << 12) | ((s32) (p->unk60 * 4.0f) & 0xFFF); g->w1 = (((s32) (p->unk64 * 4.0f) & 0xFFF) << 12) | ((s32) (p->unk68 * 4.0f) & 0xFFF); }
+            { Gfx_80225840 *g = gfx++; g->w0 = 0x06000000; g->w1 = (PORT_UP(u32)) func_80227678(p->unk14); }
         }
     }
     *arg0 = gfx;

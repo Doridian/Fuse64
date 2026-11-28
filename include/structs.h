@@ -110,14 +110,15 @@ typedef struct {
 #endif
 } UnkStructA;
 
-/* What the main_code function behind the overlays' ZeroJump stub at
- * 0x80043BE8 (ovl_17_04) returns. */
+/* What func_8023A834 returns (per controller pak, four values and a name);
+ * the overlays call it through ZeroJump id 0xF11 (ovl_17_04's stub at
+ * 0x80043BE8). */
 typedef struct {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ s32 unk4[4];
     /* 0x14 */ u8 unk14[0x10];
     /* 0x24 */ s32 unk24;
-    /* 0x28 */ u8 unk28[4];
+    /* 0x28 */ s32 unk28;
     /* 0x2C */ s32 unk2C;
     /* 0x30 */ s32 unk30;
     /* 0x34 */ u8 unk34[4];
@@ -130,7 +131,7 @@ typedef struct {
     /* 0xA4 */ s32 unkA4[4];
     /* 0xB4 */ u8 unkB4[0x10];
     /* 0xC4 */ u8 unkC4[4][9];
-} UnkStructB;
+} UnkStruct_8023A834;
 
 /* What the main_code function behind the overlays' ZeroJump stub at
  * 0x80044690 (ovl_17_03) returns. */
@@ -168,6 +169,64 @@ typedef struct {
 #else
 #define S16_LO(w) (*(s16 *)((u8 *)&(w) + 2))
 #endif
+
+/* An open file: 8 of them at D_8014B808. */
+typedef struct UnkStruct_80225CC0 {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ u32 unk8;
+    /* 0x0C */ u32 unkC;
+    /* 0x10 */ s32 unk10;
+} UnkStruct_80225CC0; /* size 0x14 */
+
+/* A menu cursor position and the entries up, down, left and right of it
+ * (995C0's func_8027F658). */
+typedef struct {
+    /* 0x00 */ u16 unk0;
+    /* 0x02 */ u16 unk2;
+    /* 0x04 */ u8 unk4;
+    /* 0x05 */ u8 unk5;
+    /* 0x06 */ u8 unk6;
+    /* 0x07 */ u8 unk7;
+} UnkStruct_8027F0C4; /* size 0x8 */
+
+/* A screen rectangle (0x40 bytes from func_8022A6C4). */
+typedef struct {
+    /* 0x00 */ u8 pad0[0x10];
+    /* 0x10 */ f32 x0;
+    /* 0x14 */ f32 y0;
+    /* 0x18 */ f32 x1;
+    /* 0x1C */ f32 y1;
+    /* 0x20 */ f32 unk20;
+    /* 0x24 */ f32 unk24;
+} Rect40;
+
+/* An effect: a task (D_802A1C40[kind]) drawing one model (16 of them, D_800BC528). */
+typedef struct {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ s32 unk8;
+    /* 0x0C */ s32 unkC;
+    /* 0x10 */ f32 unk10;
+    /* 0x14 */ f32 unk14;
+    /* 0x18 */ f32 unk18;
+    /* 0x1C */ PORT_IP(s32) unk1C;
+    /* 0x20 */ UnkStructA *unk20;
+} UnkStruct_800BC528; /* size 0x24 */
+
+/* An object moved by the D_802A1D08 functions (16 of them, D_800BC770). */
+typedef struct {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ UnkStructA *unk4;
+    /* 0x08 */ UnkStructA *unk8;
+    /* 0x0C */ s32 unkC;
+    /* 0x10 */ s32 unk10;
+    /* 0x14 */ s32 unk14;
+    /* 0x18 */ s32 unk18;
+    /* 0x1C */ f32 unk1C;
+    /* 0x20 */ f32 unk20;
+    /* 0x24 */ f32 unk24;
+} UnkStruct_800BC770; /* size 0x28 */
 
 #ifdef TARGET_PC
 /* the game's objects as the port lays them out where another file's C

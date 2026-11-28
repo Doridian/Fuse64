@@ -27,7 +27,7 @@ void func_ovl17_04_80043A80(s32);
 void func_ovl17_04_80043AB0(s32, s32, s32, s32, s32, s32, s32);
 void func_ovl17_04_80043B48(void (*)(UnkStructA *), s32);
 void func_ovl17_04_80043BE0(s32);
-UnkStructB *func_ovl17_04_80043BE8(void);
+UnkStruct_8023A834 *func_ovl17_04_80043BE8(void);
 void func_ovl17_04_80043C18(void);
 UnkStructA *func_ovl17_04_80043CA8(s32);
 void func_ovl17_04_80044288(s32);
@@ -65,7 +65,7 @@ UnkStruct_ovl17_04_80044D84 D_ovl17_04_80044D84[] = {
 };
 
 void func_ovl17_04_80043010(void) {
-    UnkStructB *b;
+    UnkStruct_8023A834 *b;
     s32 i;
 
     b = func_ovl17_04_80043BE8();
@@ -168,7 +168,7 @@ void func_ovl17_04_80043290(UnkStructA *arg0) {
 
 void func_ovl17_04_80043388(void) {
     UnkStruct_ovl17_04_80044D84 *rec;
-    UnkStructB *b;
+    UnkStruct_8023A834 *b;
     f32 acc;
     f32 step;
     s32 n;

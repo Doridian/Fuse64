@@ -71,7 +71,7 @@ void func_ovl17_09_80043290(s32 arg0) {
     s32 i;
     s32 t;
     f32 step;
-    UnkStructB *b;
+    UnkStruct_8023A834 *b;
     UnkStructA *obj;
 
     switch (arg0) {

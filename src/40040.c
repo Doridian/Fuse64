@@ -1,10 +1,5 @@
 #include "common.h"
-
-/* A display list command, two words (gbi.h's Gfx, not in include/ yet). */
-typedef struct {
-    PORT_UP(u32) w0;
-    PORT_UP(u32) w1;
-} Gfx_80225840;
+#include "gfx.h"
 
 void func_80225CC0(void);
 void func_80225CCC(void);

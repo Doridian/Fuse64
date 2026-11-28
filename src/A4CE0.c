@@ -49,33 +49,6 @@
  */
 #include "common.h"
 
-/* An effect: a task (D_802A1C40[kind]) drawing one model (16 of them, D_800BC528). */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ PORT_IP(s32) unk1C;
-    /* 0x20 */ UnkStructA *unk20;
-} UnkStruct_800BC528; /* size 0x24 */
-
-/* An object moved by the D_802A1D08 functions (16 of them, D_800BC770). */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ UnkStructA *unk4;
-    /* 0x08 */ UnkStructA *unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-} UnkStruct_800BC770; /* size 0x28 */
-
 PORT_RET(s32, void) func_8022979C(UnkStructA_40 *, s32, s32);
 void func_802297B8(UnkStructA_40 *, s32, s32, s32);
 PORT_RET(s32, void) func_8022984C(UnkStructA_40 *, s32);

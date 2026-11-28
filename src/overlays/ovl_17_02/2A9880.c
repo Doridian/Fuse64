@@ -24,7 +24,7 @@ f32 func_ovl17_02_80043A60(void);
 void func_ovl17_02_80043A68(f32);
 void func_ovl17_02_80043B20(void (*)(UnkStructA *));
 void func_ovl17_02_80043BB0(s32);
-UnkStructB *func_ovl17_02_80043BB8(void);
+UnkStruct_8023A834 *func_ovl17_02_80043BB8(void);
 void func_ovl17_02_80043BE8(void);
 void func_ovl17_02_80044258(s32);
 void func_ovl17_02_80044268(s32);
@@ -60,7 +60,7 @@ u32 D_ovl17_02_80044D30[][3] = {
 UnkStruct_ovl17_02_80044D54 D_ovl17_02_80044D54 = { NULL, 0x204, 0.0f, 0.0f, 0.0f, 800.0f };
 
 void func_ovl17_02_80043010(void) {
-    UnkStructB *b;
+    UnkStruct_8023A834 *b;
 
     b = func_ovl17_02_80043BB8();
     if (b->unk38 == 1 && b->unk0 == 0) {
@@ -175,7 +175,7 @@ void func_ovl17_02_80043398(void) {
 }
 
 void func_ovl17_02_80043490(void) {
-    UnkStructB *b;
+    UnkStruct_8023A834 *b;
     f32 base;
     f32 acc;
     f32 step;

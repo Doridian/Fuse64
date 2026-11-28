@@ -64,14 +64,6 @@ typedef struct {
     /* 0x1D */ u8 unk1D[0x73];
 } SaveSlot96540; /* size 0x90 */
 
-/* What func_8023A834 returns: per controller pak, four values and a name. */
-typedef struct {
-    /* 0x00 */ u8 unk0[0x50];
-    /* 0x50 */ s32 unk50[4][4];
-    /* 0x90 */ u8 unk90[0x34];
-    /* 0xC4 */ u8 unkC4[4][9];
-} UnkStruct_8023A834;
-
 UnkStruct_8023A834 *func_8023A834(void);
 
 extern SaveSlot96540 D_80063000[];

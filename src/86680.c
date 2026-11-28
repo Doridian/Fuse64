@@ -14,11 +14,6 @@ typedef struct {
     /* 0x10 */ s32 unk10;
 } UnkStruct_800BD778; /* size 0x14 */
 
-typedef struct UnkStruct_80225CC0 {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-} UnkStruct_80225CC0;
-
 void func_8022FEAC(UnkStruct_8026C0A8 *, UnkStruct_8026C0A8 *);
 void func_8022FF58(UnkStruct_8026C0A8 *, UnkStruct_8026C0A8 *, UnkStruct_8026C0A8 *);
 void func_80234858(f32 *, f32 *, f32 *);

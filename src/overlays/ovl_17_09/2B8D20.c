@@ -119,7 +119,7 @@ f32 func_ovl17_09_80045048(UnkStructA_40 *);
 void func_ovl17_09_80045068(void (*)(UnkStructA *), s32);
 UnkStruct_ovl17_09_800450D8 *func_ovl17_09_800450D8(void);
 void func_ovl17_09_80045100(s32);
-UnkStructB *func_ovl17_09_80045108(void);
+UnkStruct_8023A834 *func_ovl17_09_80045108(void);
 void func_ovl17_09_80045138(void);
 UnkStructA *func_ovl17_09_800451C8(s32);
 UnkStructA *func_ovl17_09_80045208(s32);
@@ -431,7 +431,7 @@ static void func_ovl17_09_8004412C(UnkStruct_ovl17_09_800462DC *rec) {
 }
 
 void func_ovl17_09_80044198(void) {
-    UnkStructB *b;
+    UnkStruct_8023A834 *b;
     s32 i;
     s32 pad[4]; /* fake: unused, frame space the original has (no source for it found) */
     s32 cell;

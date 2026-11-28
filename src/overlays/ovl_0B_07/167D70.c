@@ -83,7 +83,7 @@ typedef union {
 
 void func_ovl0B_07_80045950(s32, s32, s32); /* 0x0F00 */
 s32 func_ovl0B_07_80045958(void); /* 0x0F01 */
-UnkStructB *func_ovl0B_07_800459D8(void); /* 0x0F11 */
+UnkStruct_8023A834 *func_ovl0B_07_800459D8(void); /* 0x0F11 */
 void func_ovl0B_07_80045A00(s32, s32, s32); /* 0x0F16 */
 UnkStructA_40 *func_ovl0B_07_80045F38(s32, s32); /* 0x1500 */
 void func_ovl0B_07_80045F40(UnkStructA_40 *); /* 0x1501 */
@@ -155,7 +155,7 @@ s32 D_ovl0B_07_80046E2C;
 UnkStructA_40 *D_ovl0B_07_80046E30[4][5];
 UnkStructA_40 *D_ovl0B_07_80046E80[6];
 UnkStructA_40 *D_ovl0B_07_80046E98[32];
-UnkStructB *D_ovl0B_07_80046F18;
+UnkStruct_8023A834 *D_ovl0B_07_80046F18;
 s32 D_ovl0B_07_80046F1C;
 s32 D_ovl0B_07_80046F20[4];
 s32 D_ovl0B_07_80046F30;

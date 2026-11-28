@@ -52,13 +52,6 @@ typedef struct {
     /* 0x40 */ UnkStruct_8027CE10_C *unk40;
 } UnkStruct_802B01D0;
 
-typedef struct {
-    /* 0x00 */ u8 unk0[0x28];
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ s32 unk2C;
-    /* 0x30 */ s32 unk30;
-} UnkStruct_8023A834;
-
 void func_8022946C(UnkStruct_8027CE10_C *, s32);
 PORT_RET(void, s32) func_8022FC90(UnkStruct_802B01D0 *);
 void func_8022FF58(f32 *, f32 *, f32 *);

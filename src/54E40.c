@@ -294,17 +294,6 @@ typedef struct {
     /* 0x10 */ s32 yh;
 } Rect54E40; /* size 0x14 */
 
-/* A menu cursor position and the entries up, down, left and right of it
- * (995C0's func_8027F658). */
-typedef struct {
-    /* 0x00 */ u16 unk0;
-    /* 0x02 */ u16 unk2;
-    /* 0x04 */ u8 unk4;
-    /* 0x05 */ u8 unk5;
-    /* 0x06 */ u8 unk6;
-    /* 0x07 */ u8 unk7;
-} UnkStruct_8027F0C4; /* size 0x8 */
-
 s32 func_802810A0(u8 *, u16, u16, f32, f32, u8);
 
 void func_802268F4(s32);

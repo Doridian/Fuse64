@@ -15,7 +15,7 @@ typedef struct {
 
 void func_ovl17_05_800433A8(void);
 void func_ovl17_05_80043AD0(s32, s32, s32, s32, s32, s32, s32);
-UnkStructB *func_ovl17_05_80043C08(void);
+UnkStruct_8023A834 *func_ovl17_05_80043C08(void);
 UnkStructA *func_ovl17_05_80043CC8(s32);
 void func_ovl17_05_800442C8(f32, f32, f32);
 void func_ovl17_05_800442E8(f32, f32, f32);
@@ -66,7 +66,7 @@ UnkStruct_ovl17_05_80044DA4 D_ovl17_05_80044DA4[] = {
 };
 
 void func_ovl17_05_80043010(void) {
-    UnkStructB *b;
+    UnkStruct_8023A834 *b;
     s32 i;
 
     b = func_ovl17_05_80043C08();
@@ -175,7 +175,7 @@ void func_ovl17_05_800432B0(UnkStructA *arg0) {
 
 void func_ovl17_05_800433A8(void) {
     UnkStruct_ovl17_05_80044DA4 *rec;
-    UnkStructB *b;
+    UnkStruct_8023A834 *b;
     f32 acc;
     f32 step;
     s32 n;

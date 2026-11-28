@@ -201,17 +201,6 @@ typedef struct UnkStructA80 {
     /* 0x7C */ struct UnkStructA80 *unk7C;
 } UnkStructA80; /* size 0x80 */
 
-/* A screen rectangle (0x40 bytes from func_8022A6C4). */
-typedef struct {
-    /* 0x00 */ u8 pad0[0x10];
-    /* 0x10 */ f32 x0;
-    /* 0x14 */ f32 y0;
-    /* 0x18 */ f32 x1;
-    /* 0x1C */ f32 y1;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-} Rect40;
-
 
 
 

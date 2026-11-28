@@ -130,6 +130,7 @@
  */
 #include "common.h"
 #include "model.h"
+#include "gfx.h"
 
 void *malloc(u32);
 void free(void *);
@@ -196,20 +197,10 @@ typedef struct {
     /* 0x4C */ UnkTexSlots *unk4C;
 } UnkObj; /* size 0x50 */
 
-/* A display list command, two words (gbi.h's Gfx, not in include/ yet). */
-typedef struct {
-    PORT_UP(u32) w0;
-    PORT_UP(u32) w1;
-} UnkGfx;
-
-typedef struct {
-    s32 m[4][4];
-} UnkMtx;
-
 #define _SHIFTL(v, s, w) ((u32)(((u32)(v) & ((0x01 << (w)) - 1)) << (s)))
 #define gW(pkt, a, b)                \
     {                                \
-        UnkGfx *_g = (UnkGfx *)(pkt); \
+        Gfx_80225840 *_g = (Gfx_80225840 *)(pkt); \
         _g->w0 = (a);                \
         _g->w1 = (b);                \
     }
@@ -282,17 +273,17 @@ extern UnkTrack *D_802A5504;
 void func_8026CBD4(void *);
 void *func_80227678(s32);
 s32 func_8022769C(s32);
-void func_8022D58C(UnkGfx **, PORT_IP(s32), s32);
-void func_8022DAB0(UnkInst *, UnkGfx **, PORT_IP(s32));
+void func_8022D58C(Gfx_80225840 **, PORT_IP(s32), s32);
+void func_8022DAB0(UnkInst *, Gfx_80225840 **, PORT_IP(s32));
 void func_80237478(f32 *, f32 *);
-void func_8026437C(UnkGfx **, void *, f32, f32, f32, f32, f32, f32, f32, f32, s32);
+void func_8026437C(Gfx_80225840 **, void *, f32, f32, f32, f32, f32, f32, f32, f32, s32);
 void func_802926EC(void *);
 void func_8029C7A8(f32 m[4][4], f32, f32, f32);
 void func_8029C8D0(f32 m[4][4], f32, f32, f32);
 void func_8029CA00(f32 m[4][4], f32, f32, f32);
 void func_8029CA80(f32 m[4][4], f32, f32, f32);
 void guMtxCatF(f32 mf[4][4], f32 nf[4][4], f32 res[4][4]);
-void guMtxF2L(f32 mf[4][4], UnkMtx *m);
+void guMtxF2L(f32 mf[4][4], UnkStruct_802A53D8 *m);
 void guMtxIdentF(f32 mf[4][4]);
 
 extern UnkTexOwner D_80098C18[5];
@@ -316,14 +307,7 @@ extern s32 D_8029F850;
 extern s32 D_8029F854;
 extern s32 D_8029F858[8];
 extern s32 D_802A5368;
-/* One frame's buffers (D_8014C8D0[2], as in 41FD0.c). */
-typedef struct {
-    /* 0x00000 */ UnkMtx mtx[0x400];
-    /* 0x10000 */ u8 unk10000[4][PORT_GFX_BYTES(0x5000)];
-    /* 0x24000 */ UnkGfx gfx[0x600];
-} UnkFrame; /* size 0x27000 */
-
-extern UnkFrame *D_802A538C;
+extern UnkStruct_802A538C *D_802A538C;
 s32 D_802A5460;
 s32 D_802A5464;
 f32 D_802A5468;
@@ -339,11 +323,11 @@ void func_80228008(s32 arg0, s32 arg1, s32 arg2);
 static s32 func_802280EC(void);
 s32 func_802280F4(UnkObj *arg0, s32 arg1);
 static void func_8022827C(UnkObj *arg0);
-static void func_802284F0(UnkObj *arg0, UnkGfx **arg1);
-static s32 func_802284F8(UnkObj *arg0, UnkGfx **arg1);
-static void func_80228500(UnkObj *arg0, UnkGfx **arg1);
+static void func_802284F0(UnkObj *arg0, Gfx_80225840 **arg1);
+static s32 func_802284F8(UnkObj *arg0, Gfx_80225840 **arg1);
+static void func_80228500(UnkObj *arg0, Gfx_80225840 **arg1);
 static s32 func_802289B8(UnkObj *arg0);
-void func_802289C0(UnkObj *arg0, UnkGfx **arg1);
+void func_802289C0(UnkObj *arg0, Gfx_80225840 **arg1);
 void func_802290CC(void);
 void func_80229280(s32 arg0);
 void func_8022928C(f32 arg0[4][4], f32 arg1[4][4]);
@@ -702,7 +686,7 @@ int port_narrow_dl(const void *p);
 u32 func_80229C10(UnkObj *arg0, PORT_IP(s32) arg1, UnkVtx **arg2) {
     UnkModel *model;
     UnkChunk *chunks;
-    UnkGfx *dl;
+    Gfx_80225840 *dl;
     PORT_UP(u32) first;
     s32 i;
 
@@ -717,9 +701,9 @@ u32 func_80229C10(UnkObj *arg0, PORT_IP(s32) arg1, UnkVtx **arg2) {
     if (!chunks) {
         DEBUG_PRINT(("chunks == NULL\n"));
     }
-    dl = (UnkGfx *)((u8 *)model + chunks[arg1].unk8);
+    dl = (Gfx_80225840 *)((u8 *)model + chunks[arg1].unk8);
 #ifdef TARGET_PC
-    if (sizeof(UnkGfx) != 8 && port_narrow_dl(dl)) {
+    if (sizeof(Gfx_80225840) != 8 && port_narrow_dl(dl)) {
         /* (a model's display list as the ROM has it, 8-byte commands, where
            the host's are wider: port/src/native.c) */
         u32 *n = (u32 *) dl;
@@ -967,7 +951,7 @@ s32 D_802A5490;
 
 void func_802290CC(void) {
     s32 i;
-    UnkGfx *dls[4];
+    Gfx_80225840 *dls[4];
     UnkObj *obj;
 
     D_802A5470 = -1;
@@ -1000,8 +984,8 @@ void func_802290CC(void) {
 }
 
 
-static void func_80228500(UnkObj *arg0, UnkGfx **arg1) {
-    UnkGfx *gfx;
+static void func_80228500(UnkObj *arg0, Gfx_80225840 **arg1) {
+    Gfx_80225840 *gfx;
 
     gfx = *arg1;
     if (D_802A5490 != arg0->unk34 || (arg0->unkC & 2)) {
@@ -1068,8 +1052,8 @@ static void func_80228500(UnkObj *arg0, UnkGfx **arg1) {
     *arg1 = gfx;
 }
 
-static s32 func_802284F8(UnkObj *arg0, UnkGfx **arg1) {
-    UnkGfx *gfx;
+static s32 func_802284F8(UnkObj *arg0, Gfx_80225840 **arg1) {
+    Gfx_80225840 *gfx;
     f32 mf[4][4];
     s32 pushed;
     f32 rx;
@@ -1109,10 +1093,10 @@ static s32 func_802284F8(UnkObj *arg0, UnkGfx **arg1) {
     return pushed;
 }
 
-static void func_802284F0(UnkObj *arg0, UnkGfx **arg1) {
-    UnkGfx *gfx;
+static void func_802284F0(UnkObj *arg0, Gfx_80225840 **arg1) {
+    Gfx_80225840 *gfx;
     s32 i;
-    UnkGfx *g;
+    Gfx_80225840 *g;
     UnkTexAnim *anim;
     UnkModel *model;
     s32 idx;
@@ -1207,11 +1191,11 @@ static void func_8022827C(UnkObj *arg0) {
     D_8029F854++;
 }
 
-void func_802289C0(UnkObj *arg0, UnkGfx **arg1) {
-    UnkGfx *gfx;
+void func_802289C0(UnkObj *arg0, Gfx_80225840 **arg1) {
+    Gfx_80225840 *gfx;
     UnkInst *t1;
     s32 pushed;
-    void (*fn)(UnkObj *, UnkGfx **);
+    void (*fn)(UnkObj *, Gfx_80225840 **);
 
     if (arg0->unkC & 1) {
         return;
@@ -1230,7 +1214,7 @@ void func_802289C0(UnkObj *arg0, UnkGfx **arg1) {
     }
     if (arg0->unkC & 2) {
         D_802A5470 = -1;
-        fn = (void (*)(UnkObj *, UnkGfx **))arg0->unk3C;
+        fn = (void (*)(UnkObj *, Gfx_80225840 **))arg0->unk3C;
         fn(arg0, &gfx);
     } else if ((arg0->unkC & 4) && (arg0->unkC & 8)) {
         if (D_8029F84C == 0 || (arg0->unkC & 0x100)) {

@@ -16,15 +16,6 @@
  */
 #include "common.h"
 
-/* An open file: 8 of them at D_8014B808. */
-typedef struct UnkStruct_80225CC0 {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ u32 unk8;
-    /* 0x0C */ u32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_80225CC0; /* size 0x14 */
-
 typedef struct {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ s32 unk4;

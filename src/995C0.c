@@ -10,15 +10,6 @@ typedef struct {
 } UnkStruct_8027EFD8;
 
 typedef struct {
-    /* 0x00 */ u16 unk0;
-    /* 0x02 */ u16 unk2;
-    /* 0x04 */ u8 unk4;
-    /* 0x05 */ u8 unk5;
-    /* 0x06 */ u8 unk6;
-    /* 0x07 */ u8 unk7;
-} UnkStruct_8027F0C4; /* size 0x8 */
-
-typedef struct {
     /* 0x00 */ UnkStruct_8027EFD8 *unk0;
     /* 0x04 */ UnkStruct_8027F0C4 *unk4;
     /* 0x08 */ void *unk8;

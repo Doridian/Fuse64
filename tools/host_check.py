@@ -349,6 +349,15 @@ def cmd_decls(a):
 
 def zerojump_stubs():
     stubs, unnamed = {}, {}
+    # eu's and jp's addresses are their own, not us's: an unlabelled stub's
+    # address name goes through vermap like a label's (an address of jp's
+    # can be us's name of another stub: jp's ovl_0A_06 0x2A07 at 800469A0,
+    # us's 0x250D there), and is `..._jp` where us has no such stub
+    ver = open(".version").read().strip() if os.path.exists(".version") else "us"
+    rename = None
+    if ver != "us":
+        import vermap
+        rename = vermap.Renamer(vermap.read_map(vermap.map_file(ver)), ver).text
     for f in glob.glob("asm/*_zerojmp.s") + glob.glob("asm/overlays/*/*_zerojmp.s"):
         mod = os.path.basename(f)[:-len("_zerojmp.s")]
         prefix = "func_" if mod == "main_code" else "func_ovl%s_" % mod[4:]
@@ -369,7 +378,8 @@ def zerojump_stubs():
                 else:
                     # an unlabelled stub: its address, unless a label (another
                     # version's name, vermap) already has that name
-                    unnamed[prefix + m.group(1)] = sid
+                    n = prefix + m.group(1)
+                    unnamed[rename(n) if rename else n] = sid
                 label = None
     for n, sid in unnamed.items():
         stubs.setdefault(n, sid)

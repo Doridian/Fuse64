@@ -2149,6 +2149,16 @@ its target's; where the caller declares it another way (a value from a
 `void` function, a pointer for an int), the stub converts, and a `void`
 target whose caller uses a value gives it `port_v0`: the last value a
 `PORT_V0(...)` in the game's C saved, which is what `$v0` held on the N64.
+A stub is known by its label in the asm (eu's and jp's carry us's
+names, `tools/vermap.py`) or, where nothing in the ROM calls it, by its
+address, which in eu and jp goes through vermap as a label's does (us's
+name of that stub, or `..._jp` where us has none): taken as it is, a jp
+address could be us's name of another stub (jp has no 0x1208 or
+0x250B-0x250D, so its ovl_0A_06 stub at 800469A0 is 0x2A07, us's
+0x250D there), and the declaration of us's stub, under an `#if
+!VERSION_JP` call, got jp's 0x2A07 (in jp 13 such stubs of us's
+missing ids and 19 bound to another id than us's, every one only
+declared there: no jp object calls them; eu had none).
 boot.c has the handwritten asm's replacements (ROADMAP's list:
 func_80003190, func_80042000, WatchLo, the long long helpers).
 
@@ -3161,9 +3171,12 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   `proto_check.py` sees the calls through a declaration that isn't the
   definition's (func_802870A8's); left to it: a call through a pointer
   is read by hand (23 sites), and a `void *` that keeps a function to
-  call is known only where SINKS names it. jp's ovl_0A_06 calls the
-  stub 0x250D as `(s32, u8 *, s32)`, whose target in jp is func_802872E0
-  `(s32, f32, f32, f32)` (gen_zerojump.py's narrow list: not read yet).
+  call is known only where SINKS names it. jp's ovl_0A_06 "calling
+  0x250D as `(s32, u8 *, s32)`, func_802872E0 `(s32, f32, f32, f32)`"
+  was a name: jp has no 0x250D (its C calls 0x2503 there, as the ROM),
+  and host_check.py gave us's name of 0x250D to jp's 0x2A07, at that
+  address in jp ("ZeroJump"); with vermap's names jp's narrow list lost
+  it and six more of the kind (97 left, as in us and eu).
   `ptrcast_scan.py`'s allow-list, `proto_check.py`'s, m2c_port.py's "no known struct" list
   and gen_zerojump.py's narrow list are the static side ("Where pointers
   are 8 bytes"); a run that crashes or differs from i386 the dynamic one.

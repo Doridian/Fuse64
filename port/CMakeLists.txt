@@ -312,7 +312,7 @@ add_custom_command(OUTPUT ${GEN}/asm_data.c ${GEN}/asm_data_fill.c
 add_custom_command(OUTPUT ${GEN}/zerojump.c
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_zerojump.py ${SNAP_ARG} ${PORT_VERSION}
             ${GEN}/zerojump.c
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_zerojump.py ${ROOT}/tools/host_check.py ${ZJ_S} ${GAME_C} ${OVL_C}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_zerojump.py ${ROOT}/tools/host_check.py ${ROOT}/tools/vermap.py ${ZJ_S} ${GAME_C} ${OVL_C}
     VERBATIM)
 add_custom_command(OUTPUT ${GEN}/regions.c
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_regions.py ${DECLS_ARG} ${SCATTER_ARG}

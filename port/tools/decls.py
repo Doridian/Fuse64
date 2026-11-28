@@ -127,6 +127,12 @@ def tus(build, version):
         if "-o" in argv:
             i = argv.index("-o")
             del argv[i:i + 2]
+        # (the source as the command spells it: on Windows CMake writes it
+        # with backslashes where "file" has slashes)
+        def same(a, d=e["directory"], f=os.path.normcase(os.path.abspath(src))):
+            return not a.startswith("-") and \
+                os.path.normcase(os.path.abspath(os.path.join(d, a))) == f
+        argv = [argv[0]] + [a for a in argv[1:] if not same(a)]
         argv = [a for a in argv if a not in ("-c", src) and not a.startswith("-Werror")
                 and a not in ("-m32", "-m64") and not a.startswith("-fsanitize")
                 and a not in ("-msse2", "-mfpmath=sse", "-malign-double", "-DPORT_INNER")]

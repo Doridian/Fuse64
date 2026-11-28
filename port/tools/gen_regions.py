@@ -2,14 +2,15 @@
 """The fixed addresses the game's C names (docs/PORT.md, "Addresses outside
 every section"), as names in the port's RDRAM.
 
-  gen_regions.py [--decls DECLS.json] [--scatter] OUT.c
+  gen_regions.py [--decls DECLS.json] [--scatter] [--syms FILE] OUT.c
 
 The N64 game uses RAM no section has by address: the work area from
 0x80063000, the framebuffers at 0x80100000, the archive's buffers, the
 audio heap, the sbrk arena at 0x80300000.  The port keeps that memory as
 one buffer laid out as the N64's RDRAM (port_rdram, 8 MiB: what the C
 clears or indexes across names stays together), and each name the
-extract lists in undefined_syms_auto.txt is an alias into it (module-level
+extract lists in undefined_syms_auto.txt (--syms: another copy, the
+snapshot's) is an alias into it (module-level
 asm `.set`).  The names below 0x80000000 are segment and physical
 addresses (D_1000000 is segment 1's base, D_200000 a physical address):
 absolute symbols with their number, which the renderer reads as the RSP
@@ -82,9 +83,14 @@ def main():
     scatter = "--scatter" in args
     if scatter:
         args.remove("--scatter")
+    syms = os.path.join(ROOT, "undefined_syms_auto.txt")
+    if "--syms" in args:
+        i = args.index("--syms")
+        syms = args[i + 1]
+        del args[i:i + 2]
     out = args[0]
     names = {}
-    for line in open(os.path.join(ROOT, "undefined_syms_auto.txt")):
+    for line in open(syms):
         m = re.match(r"\s*(D_[0-9A-F]+)\s*=\s*(0x[0-9A-Fa-f]+)\s*;", line)
         if m:
             names[m.group(1)] = int(m.group(2), 16) | (0x80000000 if m.group(1) in PHYS else 0)

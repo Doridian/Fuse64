@@ -208,6 +208,55 @@ static uint8_t *at(unsigned char *table, int32_t delta) {
 #define NO_ASAN
 #endif
 
+/* The asm data's bytes (asm2c.py's gen/asm_data_fill.c): every datum of
+   main_code's data that is still asm and of boot_code's VI modes is 0 in
+   the C, and port_asmfill says where each run of them goes, where in the
+   code image it comes from and its kind: bytes, big-endian halves,
+   big-endian words, or big-endian words into pointer-wide slots. */
+struct PortAsmFill {
+    uint8_t *dst;
+    uint32_t src, count, kind;
+};
+extern const struct PortAsmFill port_asmfill[];
+extern const uint32_t port_asmfill_count, port_asmfill_image_size;
+extern const uint64_t port_asmfill_sum;
+
+/* 1 if the image's bytes the asm data takes are the ones the build was made
+   from (their FNV-1a); with WRITE, they are put in place too */
+static int asm_fill(const uint8_t *img, int write) {
+    static const uint32_t width[4] = {1, 2, 4, 4};
+    uint64_t sum = 0xCBF29CE484222325ull;
+    uint32_t i, c, n;
+    for (i = 0; i < port_asmfill_count; i++) {
+        const struct PortAsmFill *e = &port_asmfill[i];
+        const uint8_t *s = img + e->src;
+        uint8_t *d = e->dst;
+        if (e->kind > 3 || e->src > port_asmfill_image_size ||
+            e->count > (port_asmfill_image_size - e->src) / width[e->kind])
+            return 0;
+        n = e->count * width[e->kind];
+        for (c = 0; c < n; c++)
+            sum = (sum ^ s[c]) * 0x100000001B3ull;
+        if (!write)
+            continue;
+        for (c = 0; c < e->count; c++) {
+            if (e->kind == 0) {
+                d[c] = s[c];
+            } else if (e->kind == 1) {
+                uint16_t v = (uint16_t)(s[2 * c] << 8 | s[2 * c + 1]);
+                memcpy(d + 2 * c, &v, 2);
+            } else if (e->kind == 2) {
+                uint32_t v = be32(s + 4 * c);
+                memcpy(d + 4 * c, &v, 4);
+            } else {
+                uintptr_t v = be32(s + 4 * c);
+                memcpy(d + sizeof v * c, &v, sizeof v);
+            }
+        }
+    }
+    return sum == port_asmfill_sum;
+}
+
 NO_ASAN void host_rom_fill(const uint8_t *rom, uint32_t rom_size) {
     unsigned char *table = port_romfill;
     const struct RomFillHeader *h;
@@ -216,21 +265,29 @@ NO_ASAN void host_rom_fill(const uint8_t *rom, uint32_t rom_size) {
     uint8_t *img;
     uint64_t sum = 0xCBF29CE484222325ull;
     uint32_t i, w, k = 0;
+    int stripped;
     /* (the compiler knows nothing of what the strip wrote) */
     __asm__ volatile("" : "+r"(table));
     h = (const struct RomFillHeader *)table;
     /* (the magic is for the strip to find the table by: no copy of it
        elsewhere in the program) */
-    if (h->format == 0xA5A5A5A5u || h->nruns == 0)
-        return;         /* not stripped */
-    if (h->format != 1 || h->capacity != ROMFILL_CAP)
+    stripped = h->format != 0xA5A5A5A5u && h->nruns != 0;
+    if (stripped && (h->format != 1 || h->capacity != ROMFILL_CAP || h->image_size != port_asmfill_image_size))
         host_fatal("the ROM's data: the executable's table is not this build's");
-    runs = (const struct RomFillRun *)(table + sizeof *h);
-    orders = (const uint8_t *)(runs + h->nruns);
-    img = code_image(rom, rom_size, h->image_size);
+    img = code_image(rom, rom_size, port_asmfill_image_size);
     if (!img)
         host_fatal("the ROM's data: this ROM's code isn't the one this build was made from (give the %s ROM)",
                    ROM_NAME);
+    if (!asm_fill(img, 0))
+        host_fatal("the ROM's data: this ROM's data isn't what this build was made from (give the %s ROM)",
+                   ROM_NAME);
+    asm_fill(img, 1);
+    if (!stripped) {
+        free(img);
+        return;
+    }
+    runs = (const struct RomFillRun *)(table + sizeof *h);
+    orders = (const uint8_t *)(runs + h->nruns);
     for (i = 0; i < h->nruns; i++)
         if (runs[i].words >> 31)
             protect(at(table, runs[i].delta), (runs[i].words & 0x7FFFFFFF) * 4, 1);
@@ -260,8 +317,8 @@ NO_ASAN void host_rom_fill(const uint8_t *rom, uint32_t rom_size) {
         host_log("the ROM's data: %u bytes in %u runs\n", (unsigned)k * 4, (unsigned)h->nruns);
 }
 
-/* 1 if ROM is the one this build's data comes from (the bytes the strip
-   took out, by their checksum), or if the build isn't stripped; nothing is
+/* 1 if ROM is the one this build's data comes from (the bytes the asm
+   data takes and the strip took out, by their checksums); nothing is
    written (romfind.c: a ROM the player picks, before it is used) */
 NO_ASAN int host_rom_fill_check(const uint8_t *rom, uint32_t rom_size) {
     unsigned char *table = port_romfill;
@@ -274,15 +331,23 @@ NO_ASAN int host_rom_fill_check(const uint8_t *rom, uint32_t rom_size) {
     int ok = 1;
     __asm__ volatile("" : "+r"(table));
     h = (const struct RomFillHeader *)table;
-    if (h->format == 0xA5A5A5A5u || h->nruns == 0)
-        return 1;
-    if (h->format != 1 || h->capacity != ROMFILL_CAP)
-        return 0;
-    runs = (const struct RomFillRun *)(table + sizeof *h);
-    orders = (const uint8_t *)(runs + h->nruns);
-    img = code_image(rom, rom_size, h->image_size);
+    img = code_image(rom, rom_size, port_asmfill_image_size);
     if (!img)
         return 0;
+    if (!asm_fill(img, 0)) {
+        free(img);
+        return 0;
+    }
+    if (h->format == 0xA5A5A5A5u || h->nruns == 0) {
+        free(img);
+        return 1;
+    }
+    if (h->format != 1 || h->capacity != ROMFILL_CAP || h->image_size != port_asmfill_image_size) {
+        free(img);
+        return 0;
+    }
+    runs = (const struct RomFillRun *)(table + sizeof *h);
+    orders = (const uint8_t *)(runs + h->nruns);
     for (i = 0; ok && i < h->nruns; i++) {
         const uint8_t *s = img + runs[i].src;
         uint32_t n = runs[i].words & 0x7FFFFFFF;

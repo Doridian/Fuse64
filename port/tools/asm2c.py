@@ -2,7 +2,7 @@
 """The data the game's C names that is still asm (docs/PORT.md, "The asm
 data as C"), as C for the port.
 
-  asm2c.py [--decls DECLS.json] [--scatter] OUT.c
+  asm2c.py [--decls DECLS.json] [--scatter] [--snapshot DIR] OUT.c
 
 Reads the extracted asm/data/*.s (main_code's .data, .rodata and .bss that
 no C object defines yet, and boot_code's VI modes) and the code image
@@ -16,6 +16,17 @@ LAYOUTS below, which gives the widths the C reads it at.  A symbolic word
 is a pointer: to a function, to a label (`+ n`), or into the fixed-address
 memory (port_rdram, for D_8xxxxxxx names that are in no section); a
 D_ name below 0x80000000 (a segment or physical address) is its number.
+
+The ROM's bytes aren't in the C (docs/PORT.md, "The ROM's data"): every
+datum but the symbolic words is 0 there, and OUT's _fill.c lists where
+each one goes, where in the code image it comes from and its width
+(port_asmfill), which host_rom_fill (port/host/romfill.c) copies from the
+player's ROM at startup, with a checksum of those bytes.  OUT's
+_snapshot.json is what of asm/data this reads, without the ROM's bytes
+(the labels, their directives and symbolic words; port/tools/snapshot.py
+keeps it in port/snapshot/<v>/); --snapshot DIR reads that instead of asm/
+and the code image (the ROM-free build: docs/PORT.md, "The snapshot"),
+the same C out.
 
 Where pointers are 8 bytes OUT's _objects.json lists every label (its N64
 address, where it is here, its object's size, the label it is inside of)
@@ -165,28 +176,11 @@ def ctype_of(width):
     return {1: "uint8_t", 2: "uint16_t", 4: "uint32_t"}[width]
 
 
-def main():
-    args = sys.argv[1:]
-    decls = None
-    if "--decls" in args:
-        i = args.index("--decls")
-        decls = args[i + 1]
-        del args[i:i + 2]
-    scatter = "--scatter" in args
-    if scatter:
-        args.remove("--scatter")
-    out = os.path.abspath(args[0])
-    os.chdir(ROOT)
-    lay = full = None
-    if decls:
-        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-        import json
-        full = json.load(open(decls))
-        lay = layouts.Layouts(full)
-    psize = 8 if lay else 4
+def load_extract():
+    """[(file, labels, section)] from asm/data, the code image, and each
+    label's izero (all its numeric words 0: the pointer tables' test)"""
     img = open("assets/code.bin", "rb").read()
     files = sorted(f for f in os.listdir("asm/data") if f.endswith(".s"))
-    labelset = {}
     parsed = []
     for f in files:
         boot = any("dlabel %s\n" % l in open(os.path.join("asm/data", f)).read() for l in BOOT_LABELS)
@@ -196,8 +190,98 @@ def main():
             if not labels:
                 continue
             parsed.append((f, labels, sect))
-            for l in labels:
-                labelset[l[0]] = l[1]
+    izero = {}
+    for f, labels, sect in parsed:
+        for name, vram, rom, items in labels:
+            izero[name] = rom is None or all(int.from_bytes(img[rom + o_:rom + o_ + 4], "big") == 0
+                                             for o_, k, s, a in items if k == "I")
+    return parsed, img, izero
+
+
+def snapshot_json(parsed, img, izero):
+    """What of asm/data the C is made from, without the ROM's bytes: each
+    label's directives (runs of the same kind and size as one), its
+    symbolic words, and izero."""
+    files = []
+    for f, labels, sect in parsed:
+        ls = []
+        for name, vram, rom, items in labels:
+            rle = []
+            for o_, k, s, a in items:
+                if k == "P":
+                    rle.append([o_, k, s, a])
+                    continue
+                last = rle[-1] if rle else None
+                if last and last[1] == k and last[2] == s and last[0] + last[2] * last[3] == o_:
+                    last[3] += 1
+                else:
+                    rle.append([o_, k, s, 1])
+            ls.append([name, vram, rom, rle, int(izero[name])])
+        files.append([f, sect, ls])
+    return {"image_size": len(img), "files": files}
+
+
+def load_snapshot(path):
+    snap = json.load(open(path))
+    parsed, izero = [], {}
+    for f, sect, ls in snap["files"]:
+        labels = []
+        for name, vram, rom, rle, iz in ls:
+            items = []
+            for o_, k, s, c in rle:
+                if k == "P":
+                    items.append((o_, k, s, c))
+                else:
+                    items += [(o_ + s * i, k, s, None) for i in range(c)]
+            labels.append([name, vram, rom, items])
+            izero[name] = bool(iz)
+        parsed.append((f, labels, sect))
+    return parsed, snap, izero
+
+
+# the fill's kinds (port/host/romfill.c): (code, the image's bytes per
+# datum) for bytes, a big-endian half, a big-endian word, and a big-endian
+# word into a pointer-wide slot
+FILL_KINDS = {"B": (0, 1), "H": (1, 2), "I": (2, 4), "W": (3, 4)}
+
+
+def main():
+    args = sys.argv[1:]
+    decls = None
+    if "--decls" in args:
+        i = args.index("--decls")
+        decls = args[i + 1]
+        del args[i:i + 2]
+    snapdir = None
+    if "--snapshot" in args:
+        i = args.index("--snapshot")
+        snapdir = os.path.abspath(args[i + 1])
+        del args[i:i + 2]
+    scatter = "--scatter" in args
+    if scatter:
+        args.remove("--scatter")
+    out = os.path.abspath(args[0])
+    os.chdir(ROOT)
+    lay = full = None
+    if decls:
+        full = json.load(open(decls))
+        lay = layouts.Layouts(full)
+    psize = 8 if lay else 4
+    snap = None
+    if snapdir:
+        parsed, snap, izero = load_snapshot(os.path.join(snapdir, "asm_data.json"))
+        img = None
+        image_size = snap["image_size"]
+        if str(psize) not in snap.get("sums", {}):
+            sys.exit("asm2c: %s has no checksum for %d-byte pointers (port/tools/snapshot.py)" % (snapdir, psize))
+    else:
+        parsed, img, izero = load_extract()
+        image_size = len(img)
+    labelset = {}
+    for f, labels, sect in parsed:
+        for l in labels:
+            labelset[l[0]] = l[1]
+    fills = []      # (base, host offset, image offset, kind, count)
     o = ["/* Generated by port/tools/asm2c.py from asm/data (docs/PORT.md, \"The asm data as C\"). */",
          "#include <stdint.h>", "#include \"port_game.h\"", "",
          "extern uint8_t port_rdram[];", ""]
@@ -261,9 +345,8 @@ def main():
                 continue
             cover = None
             lt = label_type(name, size) if lay else None
-            if lay and lt is None and not bss and items and \
-                    all(k == "P" or (k == "I" and int.from_bytes(img[rom + o_:rom + o_ + 4], "big") == 0)
-                        for o_, k, s, a in items) and any(k == "P" for o_, k, s, a in items) \
+            if lay and lt is None and not bss and items and izero[name] and \
+                    all(k in ("P", "I") for o_, k, s, a in items) and any(k == "P" for o_, k, s, a in items) \
                     and name not in LAYOUTS:
                 lt = ("ptrs", None, None)
             if lt and lt[0] == "bytes":
@@ -311,14 +394,17 @@ def main():
             hpos = lh + hsize
             if bss or size == 0:
                 continue
-            data = img[rom:rom + size]
 
-            def put(r, decl, init, width):
+            def put(r, decl, init, width, fill=None, count=1):
+                """a field; fill: its value is the ROM's (a FILL_KINDS
+                kind, COUNT of them), 0 in the C"""
                 h = hmap(r)
                 if h is None:
                     report.append("%s+0x%X: no host offset" % (name, r))
                     return
                 fields[lh + h] = (decl % ("f%x" % (lh + h)), init, width)
+                if fill:
+                    fills.append((base, lh + h, rom + r, fill, count))
 
             lay_ = LAYOUTS.get(name)
             if lay_:
@@ -330,7 +416,7 @@ def main():
                         w = {"B": 1, "H": 2, "I": 4}[c]
                         if i + w > size:
                             w = 1
-                        put(i, ctype_of(w) + " %s;", "0x%X" % int.from_bytes(data[i:i + w], "big"), w)
+                        put(i, ctype_of(w) + " %s;", "0", w, {1: "B", 2: "H", 4: "I"}[w])
                         i += w
                 continue
             kinds = {o_: (k, s, a) for (o_, k, s, a) in items}
@@ -340,14 +426,13 @@ def main():
                 if i in ptrs:
                     # a pointer slot: 4 bytes of the N64's, a pointer here
                     if k and k[0] == "P":
-                        init = ptr_init(k[2])
+                        init, fill = ptr_init(k[2]), None
                     else:
-                        v = int.from_bytes(data[i:i + 4], "big")
-                        init = "(void *)0x%Xu" % v if v else "0"
+                        init, fill = "0", "W"
                     if wide:
-                        put(i, "uintptr_t %s;", "(uintptr_t)" + init, psize)
+                        put(i, "uintptr_t %s;", "(uintptr_t)" + init, psize, fill)
                     else:
-                        put(i, "void *%s;", init, psize)
+                        put(i, "void *%s;", init, psize, fill)
                     i += 4
                     continue
                 if k is None or k[0] in ("S", "Z", "B"):
@@ -358,11 +443,10 @@ def main():
                     j = min(j, size)
                     # (byte runs one at a time where the host moves them apart)
                     if lt is None or all(hmap(i + x) == hmap(i) + x for x in range(j - i)):
-                        put(i, "uint8_t %%s[%d];" % (j - i), "{" + ",".join("0x%02X" % b for b in data[i:j]) + "}",
-                            j - i)
+                        put(i, "uint8_t %%s[%d];" % (j - i), "{0}", j - i, "B", j - i)
                     else:
                         for x in range(i, j):
-                            put(x, "uint8_t %s;", "0x%02X" % data[x], 1)
+                            put(x, "uint8_t %s;", "0", 1, "B")
                     i = j
                     continue
                 kind, s, a = k
@@ -373,13 +457,12 @@ def main():
                     if lay and lt is None:
                         report.append("%s+0x%X: a pointer (%s) in a label of no pointer type" % (name, i, a))
                 elif kind == "I":
-                    v = int.from_bytes(data[i:i + 4], "big")
                     if wide:
-                        put(i, "uintptr_t %s;", "0x%Xu" % v, psize)
+                        put(i, "uintptr_t %s;", "0", psize, "W")
                     else:
-                        put(i, "uint32_t %s;", "0x%Xu" % v, 4)
+                        put(i, "uint32_t %s;", "0", 4, "I")
                 elif kind == "H":
-                    put(i, "uint16_t %s;", "0x%X" % int.from_bytes(data[i:i + 2], "big"), 2)
+                    put(i, "uint16_t %s;", "0", 2, "H")
                 i += s
         total = hpos
         if not lay:
@@ -425,8 +508,50 @@ def main():
     os.replace(tmp, out)
     rep = out[:-2] + "_report.txt"
     open(rep, "w").write("".join(x + "\n" for x in report))
+    write_fill(out[:-2] + "_fill.c", fills, psize, image_size, img, snap)
+    if not snapdir:
+        js = snapshot_json(parsed, img, izero)
+        open(out[:-2] + "_snapshot.json", "w").write(json.dumps(js, separators=(",", ":")) + "\n")
     if lay:
         json.dump({"objects": objs, "bases": bases}, open(out[:-2] + "_objects.json", "w"), indent=0)
+
+
+def write_fill(path, fills, psize, image_size, img, snap):
+    """port_asmfill: the asm data's runs of the ROM's bytes, merged where
+    one goes on in the same kind, and the FNV-1a of the image's bytes they
+    read (the snapshot's, without the image)"""
+    ents = []
+    for base, h, src, kind, count in sorted(fills, key=lambda x: (x[0], x[1])):
+        sw = FILL_KINDS[kind][1]
+        hw = psize if kind == "W" else sw
+        if ents:
+            e = ents[-1]
+            if e[0] == base and e[3] == kind and e[1] + e[4] * hw == h and e[2] + e[4] * sw == src:
+                e[4] += count
+                continue
+        ents.append([base, h, src, kind, count])
+    if img is not None:
+        sumv = 0xCBF29CE484222325
+        for base, h, src, kind, count in ents:
+            for b in img[src:src + count * FILL_KINDS[kind][1]]:
+                sumv = ((sumv ^ b) * 0x100000001B3) & 0xFFFFFFFFFFFFFFFF
+    else:
+        sumv = int(snap["sums"][str(psize)], 16)
+    o = ["/* Generated by port/tools/asm2c.py: where the asm data's bytes come from in the code image",
+         "   (docs/PORT.md, \"The ROM's data\"; port/host/romfill.c copies them). */",
+         "#include <stdint.h>", "",
+         "struct PortAsmFill { uint8_t *dst; uint32_t src, count, kind; };"]
+    o += ["extern uint8_t %s[];" % b for b in sorted({e[0] for e in ents})]
+    o.append("const struct PortAsmFill port_asmfill[] = {")
+    o += ["    {%s + 0x%X, 0x%X, %d, %d}," % (base, h, src, count, FILL_KINDS[kind][0])
+          for base, h, src, kind, count in ents]
+    o += ["};",
+          "const uint32_t port_asmfill_count = %d;" % len(ents),
+          "const uint32_t port_asmfill_image_size = 0x%X;" % image_size,
+          "const uint64_t port_asmfill_sum = 0x%016XULL;" % sumv, ""]
+    tmp = path + ".tmp"
+    open(tmp, "w").write("\n".join(o))
+    os.replace(tmp, path)
 
 
 if __name__ == "__main__":

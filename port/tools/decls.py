@@ -28,6 +28,7 @@ import shlex
 import subprocess
 import sys
 import tempfile
+import threading
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 WORK = os.path.join(ROOT, "build", "port_decls")
@@ -36,6 +37,59 @@ SDK_TYPES = ["OSMesgQueue", "OSThread", "OSSched", "OSScClient", "OSIoMesg", "OS
              "OSContStatus", "OSPiHandle", "OSTask", "OSScTask", "ALHeap", "ALCSeqMarker", "ALCSeq", "ALCSPlayer",
              "ALSndPlayer", "ALSeqFile", "ALBankFile", "ALSynConfig", "ALSeqpConfig", "OSViMode",
              "Mtx", "Vtx", "Gfx", "Lights1", "Vp"]
+
+# The 32-bit layouts come from -m32, which needs a 32-bit C library's
+# headers.  A host without them (CI's x86-64 one, an arm64 or a CLANG64 one)
+# lays them out as i386 (an x86-64 host's -m32), freestanding: clang's own
+# headers, and these stand-ins for the C library's that the probed files
+# include (only the layouts are wanted; what the system's headers declare
+# is left without its 32-bit layout)
+LIBC32 = {
+    "stdlib.h": "#include <stddef.h>\nvoid *malloc(size_t); void *calloc(size_t, size_t);\n"
+                "void *realloc(void *, size_t); void free(void *); void abort(void); void exit(int);\n"
+                "char *getenv(const char *); int atoi(const char *); long strtol(const char *, char **, int);\n"
+                "unsigned long strtoul(const char *, char **, int);\n"
+                "void qsort(void *, size_t, size_t, int (*)(const void *, const void *));\n",
+    "setjmp.h": "typedef long jmp_buf[64];\nint setjmp(jmp_buf); void longjmp(jmp_buf, int);\n",
+    "string.h": "#include <stddef.h>\nvoid *memcpy(void *, const void *, size_t);\n"
+                "void *memmove(void *, const void *, size_t); void *memset(void *, int, size_t);\n"
+                "int memcmp(const void *, const void *, size_t); size_t strlen(const char *);\n"
+                "int strcmp(const char *, const char *); int strncmp(const char *, const char *, size_t);\n"
+                "char *strcpy(char *, const char *); char *strncpy(char *, const char *, size_t);\n"
+                "char *strchr(const char *, int); char *strrchr(const char *, int);\n"
+                "char *strstr(const char *, const char *); char *strcat(char *, const char *);\n",
+    "stdio.h": "#include <stddef.h>\n#include <stdarg.h>\ntypedef struct _FILE FILE;\n"
+               "extern FILE *stdin, *stdout, *stderr;\nint printf(const char *, ...);\n"
+               "int fprintf(FILE *, const char *, ...); int sprintf(char *, const char *, ...);\n"
+               "int snprintf(char *, size_t, const char *, ...);\n"
+               "int vsnprintf(char *, size_t, const char *, va_list);\n"
+               "int vfprintf(FILE *, const char *, va_list); FILE *fopen(const char *, const char *);\n"
+               "int fclose(FILE *); size_t fread(void *, size_t, size_t, FILE *);\n"
+               "size_t fwrite(const void *, size_t, size_t, FILE *); int fflush(FILE *);\n"
+               "int fputs(const char *, FILE *); int puts(const char *); int putchar(int);\n",
+    "assert.h": "#define assert(x) ((void)0)\n",
+    "unistd.h": "#include <stddef.h>\n",
+}
+
+
+LIBC32_LOCK = threading.Lock()
+LIBC32_DIR = []
+
+
+def libc32():
+    """the stand-ins' directory (written once)"""
+    with LIBC32_LOCK:
+        if not LIBC32_DIR:
+            d = os.path.join(WORK, "libc32")
+            os.makedirs(d, exist_ok=True)
+            for name, text in LIBC32.items():
+                p = os.path.join(d, name)
+                if not os.path.exists(p) or open(p).read() != text:
+                    tmp = "%s.%d" % (p, os.getpid())
+                    open(tmp, "w").write(text)
+                    os.replace(tmp, p)
+            LIBC32_DIR.append(d)
+        return LIBC32_DIR[0]
 
 
 def tus(build, version):
@@ -120,7 +174,11 @@ def one(u):
                 pl = place(dd["id"])
                 if pl:
                     f0 = os.path.relpath(pl[0], ROOT) if pl[0].startswith(ROOT) else pl[0]
-                    key = "%s@%s:%d" % (dqt(d).split()[0], f0, pl[1])
+                    # (struct or union: clang 18's desugared type is the
+                    # typedef's bare name, its type `struct V` as newer ones)
+                    tag = next((w for w in qt(d).split()[:1] + dqt(d).split()[:1] if w in ("struct", "union")),
+                               "struct")
+                    key = "%s@%s:%d" % (tag, f0, pl[1])
             typedefs[name] = key
         if d.get("kind") == "VarDecl" and re.match(r"D_[0-9A-Fa-f]", name):
             # (a definition has an initializer or no extern)
@@ -153,9 +211,17 @@ def one(u):
     try:
         for arch in ("-m32", "-m64"):
             obj = probe[:-2] + arch + ".o"
-            r = subprocess.run(argv + [arch, "-O0", "-w", "-c", probe, "-o", obj, "-Xclang",
-                                       "-fdump-record-layouts-complete", "-Xclang", "-fdump-record-layouts"],
-                               capture_output=True, text=True, cwd=cwd)
+            flags = ["-O0", "-w", "-c", probe, "-o", obj, "-Xclang", "-fdump-record-layouts-complete",
+                     "-Xclang", "-fdump-record-layouts"]
+            r = None
+            if arch == "-m64" or not os.environ.get("FUSE64_DECLS_FREESTANDING"):
+                r = subprocess.run(argv + [arch] + flags, capture_output=True, text=True, cwd=cwd)
+            if arch == "-m32" and (r is None or r.returncode):
+                # (no 32-bit C library's headers here: LIBC32)
+                r = subprocess.run(argv + ["--target=i386-linux-gnu", "-ffreestanding", "-nostdlibinc",
+                                           "-isystem", libc32(), "-Wno-error=implicit-function-declaration",
+                                           "-Wno-error=int-conversion"] + flags,
+                                   capture_output=True, text=True, cwd=cwd)
             if r.returncode:
                 return src, None, r.stderr[-2000:]
             for key, size, fields in parse_layouts(r.stdout):
@@ -191,9 +257,11 @@ def one(u):
 
 
 def reckey(t):
-    """a record type's key: `struct X` / `union X`, or its place for an unnamed one"""
+    """a record type's key: `struct X` / `union X`, or its place for an unnamed one
+    (clang 18 names it `union (unnamed at F:L:C)`, newer ones by what holds
+    it too, `union X::(unnamed at F:L:C)`)"""
     t = t.strip()
-    m = re.match(r"(struct|union) \(unnamed at (.*?):(\d+):(\d+)\)$", t)
+    m = re.match(r"(struct|union) (?:.*::)?\(unnamed at (.*?):(\d+):(\d+)\)$", t)
     if m:
         f = os.path.relpath(m.group(2), ROOT) if m.group(2).startswith(ROOT) else m.group(2)
         return "%s@%s:%s" % (m.group(1), f, m.group(3))

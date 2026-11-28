@@ -7,7 +7,10 @@ A type is a C type string as clang prints it, in the context of one file
 (its typedefs and records: an unnamed struct is the one at its place).
 """
 import json
+import os
 import re
+
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 SCALARS = {
     "char": 1, "signed char": 1, "unsigned char": 1, "s8": 1, "u8": 1, "_Bool": 1,
@@ -67,6 +70,15 @@ class Layouts:
         k = self.typedefs.get(f, {}).get(t)
         if k in recs:
             return k
+        # an unnamed one, by its place (decls.reckey)
+        m = re.search(r"\(unnamed at (.*?):(\d+):\d+\)$", t)
+        if m:
+            p = m.group(1)
+            if p.startswith(ROOT + os.sep):
+                p = os.path.relpath(p, ROOT)
+            for pre in ("struct", "union"):
+                if "%s@%s:%s" % (pre, p, m.group(2)) in recs:
+                    return "%s@%s:%s" % (pre, p, m.group(2))
         return None
 
     def size(self, f, t, arch):

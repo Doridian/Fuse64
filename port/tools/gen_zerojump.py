@@ -2,7 +2,7 @@
 """ZeroJump for the port (docs/PORT.md, "ZeroJump"): every stub the C calls,
 bound to the function its id reaches.
 
-  gen_zerojump.py VERSION OUT.c
+  gen_zerojump.py [--snapshot DIR] VERSION OUT.c
 
 On the N64 a stub is `jr $zero; li $t0, id`: the dispatcher at virtual 0
 looks the id's high byte up in the module tables registered with
@@ -16,8 +16,12 @@ are passed as `void *` and integers as their own types, so the file needs
 none of the game's headers.
 
 The resolution and the prototypes are host_check.py's (clang's AST of every
-game file, cached in build/host_check).
+game file, cached in build/host_check).  What it reads of the extract (the
+stubs in asm/*_zerojmp.s, the tables of symbolic words in asm/data) it also
+writes to OUT's _snapshot.json, and --snapshot DIR reads DIR/zerojump.json
+(port/snapshot/<v>: docs/PORT.md, "The snapshot") instead.
 """
+import json
 import os
 import re
 import sys
@@ -81,15 +85,85 @@ def proto(ret, params):
     return ctype(ret), [ctype(p) for p in (params or [])]
 
 
+def stubs_encode(stubs):
+    """The stubs {name: id} for the snapshot: each module's (its names'
+    prefix) a run of 8-byte stubs from an address, with the same ids as
+    another module's where they are (every module has the same table),
+    and the names that aren't so as they are."""
+    mods, other = {}, {}
+    for n, sid in stubs.items():
+        m = re.match(r"(func_(?:ovl[0-9A-F]{2}_\d\d_)?)([0-9A-F]{8})$", n)
+        if m:
+            mods.setdefault(m.group(1), []).append((int(m.group(2), 16), sid))
+        else:
+            other[n] = sid
+    ids, runs = [], {}
+    for pre, lst in sorted(mods.items()):
+        lst.sort()
+        start = lst[0][0]
+        if any(a != start + 8 * i for i, (a, _) in enumerate(lst)):
+            other.update(("%s%08X" % (pre, a), sid) for a, sid in lst)
+            continue
+        seq = [sid for _, sid in lst]
+        if seq not in ids:
+            ids.append(seq)
+        runs[pre] = ["%08X" % start, ids.index(seq)]
+    enc = {"ids": ids, "runs": runs, "other": other}
+    assert stubs_decode(enc) == stubs
+    return enc
+
+
+def stubs_decode(enc):
+    stubs = dict(enc["other"])
+    for pre, (start, k) in enc["runs"].items():
+        for i, sid in enumerate(enc["ids"][k]):
+            stubs["%s%08X" % (pre, int(start, 16) + 8 * i)] = sid
+    return stubs
+
+
+def read_asm_tables():
+    """[(label, [word...])] of asm/data's labels with symbolic words, in
+    the files' order: a number is "0" (no stub's target, and no ROM's bytes
+    in the snapshot's copy of this)"""
+    out = []
+    for p in sorted(hc.glob.glob("asm/data/**/*.s", recursive=True)):
+        cur, ents = None, []
+        for line in open(p):
+            m = re.match(r"\s*dlabel\s+(\w+)", line)
+            if m:
+                if cur and ents:
+                    out.append((cur, ents))
+                cur, ents = m.group(1), []
+                continue
+            m = re.search(r"\.word\s+(\w+)\s*$", line)
+            if m and cur:
+                ents.append("0" if re.match(r"\d", m.group(1)) else m.group(1))
+        if cur and ents:
+            out.append((cur, ents))
+    return [[c, e] for c, e in out if any(x != "0" for x in e)]
+
+
 def main():
-    ver, out = sys.argv[1], sys.argv[2]
+    args = sys.argv[1:]
+    snapdir = None
+    if "--snapshot" in args:
+        i = args.index("--snapshot")
+        snapdir = os.path.abspath(args[i + 1])
+        del args[i:i + 2]
+    ver, out = args[0], os.path.abspath(args[1])
     os.chdir(ROOT)
     hc.os.makedirs(hc.WORK, exist_ok=True)
     hc.make_shim()
     cache = os.path.join(hc.WORK, "ast-%s.json" % ver)
     funcs, calls = hc.ast(ver)
     gd, sd = hc.definitions(funcs)
-    stubs = hc.zerojump_stubs()
+    if snapdir:
+        snap = json.load(open(os.path.join(snapdir, "zerojump.json")))
+        stubs, asm_tables = stubs_decode(snap["stubs"]), snap["tables"]
+    else:
+        stubs, asm_tables = hc.zerojump_stubs(), read_asm_tables()
+        json.dump({"stubs": stubs_encode(stubs), "tables": asm_tables}, open(out[:-2] + "_snapshot.json", "w"),
+                  separators=(",", ":"), sort_keys=True)
     reg = {"func_80001A30"} | {s for s, i in stubs.items() if i == 0}
     # module 0: boot_code's own table, set by 1050.c's func_80000450 directly
     regs_0 = {0: {"D_80019F80"}}
@@ -105,20 +179,8 @@ def main():
         for m in re.finditer(r"\b(func_\w+)\(\s*(0x[0-9A-Fa-f]+|\d+)\s*,\s*&?(D_\w+)\s*\)", text):
             if m.group(1) in reg:
                 regs.setdefault(int(m.group(2), 0), set()).add(m.group(3))
-    for p in hc.glob.glob("asm/data/**/*.s", recursive=True):
-        cur, ents = None, []
-        for line in open(p):
-            m = re.match(r"\s*dlabel\s+(\w+)", line)
-            if m:
-                if cur and ents:
-                    tables.setdefault(cur, ents)
-                cur, ents = m.group(1), []
-                continue
-            m = re.search(r"\.word\s+(\w+)\s*$", line)
-            if m and cur:
-                ents.append(m.group(1))
-        if cur and ents:
-            tables.setdefault(cur, ents)
+    for cur, ents in asm_tables:
+        tables.setdefault(cur, ents)
     for k, v in regs_0.items():
         regs.setdefault(k, set()).update(v)
     # the void functions that leave their last call's value for their

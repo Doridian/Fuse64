@@ -281,8 +281,14 @@ static void deliver_pending(void) {
 
 /* ---- the program ----------------------------------------------------------------- */
 
+/* the release (CMake's PORT_RELEASE: CI's v* tag), or a build of no release */
+#ifndef FUSE64_VERSION
+#define FUSE64_VERSION "(no release)"
+#endif
+
 static void usage(const char *argv0) {
     fprintf(stderr,
+            "Fuse64 " FUSE64_VERSION ", a port of Bomberman 64\n"
             "usage: %s [options] [ROM]   (default ROM: %s; with a window and none there, it asks)\n"
             "  --headless          no window and no sound (implies --deterministic)\n"
             "  --deterministic     a virtual clock: the same run every time\n"

@@ -1,7 +1,8 @@
 # Fuse64, the PC port of Bomberman 64 (Hudson, 1997) built from this decompilation.  See docs/PORT.md.
 #
 # Needs the version's extract (make VERSION=us extract: asm/ and
-# assets/code.bin, which the generators read), then
+# assets/code.bin, which the generators read), or for us nothing but the
+# repository (port/snapshot/us, docs/PORT.md "The snapshot"), then
 #   cmake -S port -B build/port -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_C_FLAGS=-m32
 #   cmake --build build/port
 #   build/port/fuse64 baserom.us.z64
@@ -32,13 +33,41 @@ find_package(Python3 REQUIRED COMPONENTS Interpreter)
 if(NOT CMAKE_C_COMPILER_ID MATCHES "Clang")
     message(FATAL_ERROR "the port needs clang (the overlays' sections: port/include/port_ovl_section.h)")
 endif()
-if(NOT EXISTS ${ROOT}/.version)
-    message(FATAL_ERROR "no extract: make VERSION=${PORT_VERSION} extract first")
+# the ROM-free build (docs/PORT.md, "The snapshot"): what the generators
+# read of the extract (asm/, assets/code.bin, undefined_syms_auto.txt) and
+# what the strip finds by the ROM's bytes, from port/snapshot/<version>
+# (port/tools/snapshot.py makes it, with the ROM).  AUTO: the snapshot
+# when there is no extract.
+set(PORT_SNAPSHOT AUTO CACHE STRING "build from port/snapshot/<version>, without the extract: ON, OFF or AUTO")
+set_property(CACHE PORT_SNAPSHOT PROPERTY STRINGS AUTO ON OFF)
+set(SNAP ${ROOT}/port/snapshot/${PORT_VERSION})
+if(PORT_SNAPSHOT STREQUAL "AUTO")
+    if(EXISTS ${ROOT}/.version)
+        set(USE_SNAPSHOT OFF)
+    else()
+        set(USE_SNAPSHOT ON)
+    endif()
+elseif(PORT_SNAPSHOT)
+    set(USE_SNAPSHOT ON)
+else()
+    set(USE_SNAPSHOT OFF)
 endif()
-file(READ ${ROOT}/.version EXTRACTED)
-string(STRIP "${EXTRACTED}" EXTRACTED)
-if(NOT EXTRACTED STREQUAL PORT_VERSION)
-    message(FATAL_ERROR "asm/ is extracted for ${EXTRACTED}, not ${PORT_VERSION}")
+if(USE_SNAPSHOT)
+    if(NOT EXISTS ${SNAP}/asm_data.json)
+        message(FATAL_ERROR "no extract and no ${SNAP}: make VERSION=${PORT_VERSION} extract first (the snapshot is us's)")
+    endif()
+    message(STATUS "${PORT_VERSION} from the snapshot (port/snapshot/${PORT_VERSION}), no extract")
+    set(SNAP_ARG --snapshot ${SNAP})
+else()
+    if(NOT EXISTS ${ROOT}/.version)
+        message(FATAL_ERROR "no extract: make VERSION=${PORT_VERSION} extract first")
+    endif()
+    file(READ ${ROOT}/.version EXTRACTED)
+    string(STRIP "${EXTRACTED}" EXTRACTED)
+    if(NOT EXTRACTED STREQUAL PORT_VERSION)
+        message(FATAL_ERROR "asm/ is extracted for ${EXTRACTED}, not ${PORT_VERSION}")
+    endif()
+    set(SNAP_ARG)
 endif()
 if(EMSCRIPTEN)
     # node: headless, the files the host's (the tests); web: a page
@@ -249,8 +278,17 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86|i.86|AMD64|x86_64)" AND NOT EMSCRIPTEN)
 endif()
 
 # ---- generated: the asm data, ZeroJump, the fixed addresses, the overlays ----------
-file(GLOB DATA_S ${ROOT}/asm/data/*.s)
-file(GLOB ZJ_S ${ROOT}/asm/*_zerojmp.s ${ROOT}/asm/overlays/*/*_zerojmp.s)
+if(USE_SNAPSHOT)
+    set(DATA_S ${SNAP}/asm_data.json)
+    set(ZJ_S ${SNAP}/zerojump.json)
+    set(CODE_BIN)
+    set(UNDEF_SYMS ${SNAP}/undefined_syms.txt)
+else()
+    file(GLOB DATA_S ${ROOT}/asm/data/*.s)
+    file(GLOB ZJ_S ${ROOT}/asm/*_zerojmp.s ${ROOT}/asm/overlays/*/*_zerojmp.s)
+    set(CODE_BIN ${ROOT}/assets/code.bin)
+    set(UNDEF_SYMS ${ROOT}/undefined_syms_auto.txt)
+endif()
 # where pointers are 8 bytes, the asm data's labels and the fixed addresses
 # are laid out by the types the game's C declares them with (decls.py: the
 # declarations and the layouts, from this build's compile commands;
@@ -267,17 +305,19 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(DECLS_ARG --decls ${GEN}/decls.json)
     set(DECLS_DEP ${GEN}/decls.json ${CMAKE_CURRENT_SOURCE_DIR}/tools/layouts.py)
 endif()
-add_custom_command(OUTPUT ${GEN}/asm_data.c
-    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/asm2c.py ${DECLS_ARG} ${SCATTER_ARG} ${GEN}/asm_data.c
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/asm2c.py ${DATA_S} ${ROOT}/assets/code.bin ${DECLS_DEP} VERBATIM)
+add_custom_command(OUTPUT ${GEN}/asm_data.c ${GEN}/asm_data_fill.c
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/asm2c.py ${DECLS_ARG} ${SCATTER_ARG} ${SNAP_ARG}
+            ${GEN}/asm_data.c
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/asm2c.py ${DATA_S} ${CODE_BIN} ${DECLS_DEP} VERBATIM)
 add_custom_command(OUTPUT ${GEN}/zerojump.c
-    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_zerojump.py ${PORT_VERSION} ${GEN}/zerojump.c
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_zerojump.py ${SNAP_ARG} ${PORT_VERSION}
+            ${GEN}/zerojump.c
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_zerojump.py ${ROOT}/tools/host_check.py ${ZJ_S} ${GAME_C} ${OVL_C}
     VERBATIM)
 add_custom_command(OUTPUT ${GEN}/regions.c
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_regions.py ${DECLS_ARG} ${SCATTER_ARG}
-            ${GEN}/regions.c
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_regions.py ${ROOT}/undefined_syms_auto.txt ${DECLS_DEP} VERBATIM)
+            --syms ${UNDEF_SYMS} ${GEN}/regions.c
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_regions.py ${UNDEF_SYMS} ${DECLS_DEP} VERBATIM)
 set(SCATTER_C)
 if(NOT PORT_SCATTER STREQUAL "")
     set(SCATTER_C ${GEN}/scatter.c)
@@ -347,7 +387,7 @@ endif()
 # startup copies, RDRAM, the generated tables, and the files with no
 # variables, whose declarations a wrapper's `#define const` would break)
 set(NO_RESET_C ${CMAKE_CURRENT_SOURCE_DIR}/src/overlay.c ${CMAKE_CURRENT_SOURCE_DIR}/src/reset.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/heapcheck.c ${CMAKE_CURRENT_SOURCE_DIR}/src/memory.c)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/heapcheck.c ${CMAKE_CURRENT_SOURCE_DIR}/src/memory.c ${GEN}/asm_data_fill.c)
 if(NOT PORT_LIBAUDIO_ORIGINAL)
     list(APPEND NO_RESET_C ${CMAKE_CURRENT_SOURCE_DIR}/libaudio/extra.c)
 endif()
@@ -414,6 +454,15 @@ if(PORT_AUDIO_RECORD)
     target_link_options(fuse64 PRIVATE ${AUDIO_RECORD_LINK})
 endif()
 target_compile_definitions(fuse64 PRIVATE ${PORT_VERSION_DEFINE} _GNU_SOURCE)
+# the release's name, which --help shows (CI: the v* tag; docs/PORT.md, "Releases")
+set(PORT_RELEASE "" CACHE STRING "the release's name for --help (a v* tag); empty: none")
+if(PORT_RELEASE)
+    if(NOT PORT_RELEASE MATCHES "^[A-Za-z0-9._+-]+$")
+        message(FATAL_ERROR "PORT_RELEASE is a tag's name, not ${PORT_RELEASE}")
+    endif()
+    set_property(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/host/main.c APPEND PROPERTY COMPILE_DEFINITIONS
+        FUSE64_VERSION="${PORT_RELEASE}")
+endif()
 target_compile_options(fuse64 PRIVATE ${HOST_FLAGS})
 include(CheckSymbolExists)
 check_symbol_exists(swapcontext "ucontext.h" HAVE_SWAPCONTEXT)
@@ -432,9 +481,15 @@ endif()
 if(WIN32)
     # Windows: the game's threads and 530C0's tasks are Windows fibers
     # (fiber_win32.c, coro.c); the image above 8 MiB, as on Linux (no N64
-    # physical address there), and nothing of MinGW's runtime as a DLL
+    # physical address there), and nothing of MinGW's runtime as a DLL; no
+    # link time in the headers, so that a build is the same file every time
+    # (zig's linker has no such option: port/tools/snapshot.py --check
+    # leaves its time out)
     target_compile_definitions(fuse64 PRIVATE PORT_HAVE_WIN32_FIBERS)
     target_link_options(fuse64 PRIVATE -Wl,--image-base=0x10000000 -static)
+    if(NOT PORT_ZIG_TARGET)
+        target_link_options(fuse64 PRIVATE -Wl,--no-insert-timestamp)
+    endif()
     target_link_libraries(fuse64 PRIVATE m)
 elseif(EMSCRIPTEN)
     # WebAssembly (emcmake cmake ...): headless under node.  The game's
@@ -480,11 +535,22 @@ endif()
 # the OpenGL renderer (--renderer gl, host/gfx_gl.c): an offscreen OpenGL
 # 3.3 core context through EGL, its functions through libepoxy
 option(PORT_GL "the OpenGL renderer (--renderer gl): libepoxy and EGL" ON)
+# PORT_STATIC: SDL2 and libepoxy linked into the executable, which is then
+# the one file (the default on Windows, where there is no system SDL2:
+# docs/PORT.md, "Packages")
+option(PORT_STATIC "SDL2 and libepoxy linked statically" ${WIN32})
 if(PORT_GL AND NOT EMSCRIPTEN)
     find_path(EPOXY_INCLUDE_DIR epoxy/gl.h)
-    find_library(EPOXY_LIBRARY epoxy)
+    if(PORT_STATIC)
+        find_library(EPOXY_LIBRARY NAMES libepoxy.a epoxy)
+    else()
+        find_library(EPOXY_LIBRARY epoxy)
+    endif()
     if(EPOXY_INCLUDE_DIR AND EPOXY_LIBRARY)
         target_compile_definitions(fuse64 PRIVATE PORT_HAVE_GL)
+        if(PORT_STATIC)
+            target_compile_definitions(fuse64 PRIVATE EPOXY_PUBLIC=extern)   # (not dllimport)
+        endif()
         target_include_directories(fuse64 PRIVATE ${EPOXY_INCLUDE_DIR})
         target_link_libraries(fuse64 PRIVATE ${EPOXY_LIBRARY})
     else()
@@ -495,7 +561,11 @@ if(PORT_SDL)
     find_package(SDL2 CONFIG)
     if(SDL2_FOUND)
         target_compile_definitions(fuse64 PRIVATE PORT_HAVE_SDL)
-        target_link_libraries(fuse64 PRIVATE SDL2::SDL2)
+        if(PORT_STATIC AND TARGET SDL2::SDL2-static)
+            target_link_libraries(fuse64 PRIVATE SDL2::SDL2-static)
+        else()
+            target_link_libraries(fuse64 PRIVATE SDL2::SDL2)
+        endif()
     else()
         message(STATUS "no SDL2: a headless build")
     endif()
@@ -506,17 +576,51 @@ endif()
 # (host/romfill.c), which fills them from the player's ROM at startup
 # (ELF, PE and WebAssembly: not yet a Mach-O, so not on macOS)
 option(PORT_ROM_FREE "take the ROM's data out of the executable after the link (rom_strip.py)" ON)
+if(PORT_ROM_FREE AND APPLE)
+    message(FATAL_ERROR "rom_strip.py can't read a Mach-O yet, so the ROM's data would stay in the executable: "
+        "-DPORT_ROM_FREE=OFF for a build of your own (not one to give away)")
+endif()
 if(PORT_ROM_FREE AND NOT APPLE)
     if(EMSCRIPTEN)
         set(ROM_STRIP_FILE $<TARGET_FILE_DIR:fuse64>/fuse64.wasm)
     else()
         set(ROM_STRIP_FILE $<TARGET_FILE:fuse64>)
     endif()
-    add_custom_command(TARGET fuse64 POST_BUILD
-        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/rom_strip.py ${ROM_STRIP_FILE}
-            --image ${ROOT}/assets/code.bin --version ${PORT_VERSION} --objects ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles
-            --max 0
-        VERBATIM)
+    if(USE_SNAPSHOT)
+        # (no ROM: the snapshot's units for this target, found by their
+        # hashes: port/tools/snapshot.py's targets)
+        string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" UNITS_ARCH)
+        if(UNITS_ARCH MATCHES "^(x86_64|amd64)$")
+            set(UNITS_ARCH x86_64)
+        elseif(UNITS_ARCH MATCHES "^(aarch64|arm64)$")
+            set(UNITS_ARCH aarch64)
+        endif()
+        if(EMSCRIPTEN)
+            set(UNITS_TARGET wasm32)
+        elseif(WIN32)
+            set(UNITS_TARGET windows-${UNITS_ARCH})
+        else()
+            string(TOLOWER "${CMAKE_SYSTEM_NAME}-${UNITS_ARCH}" UNITS_TARGET)
+        endif()
+        set(STRIP_UNITS ${SNAP}/strip_units.${UNITS_TARGET}.json)
+        if(NOT EXISTS ${STRIP_UNITS})
+            message(FATAL_ERROR "the snapshot has no strip units for ${UNITS_TARGET} (port/tools/snapshot.py's "
+                "targets), so the ROM's data can't be taken out: build from the extract, or -DPORT_ROM_FREE=OFF "
+                "for a build of your own")
+        endif()
+        add_custom_command(TARGET fuse64 POST_BUILD
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/rom_strip.py ${ROM_STRIP_FILE}
+                --units ${STRIP_UNITS} --version ${PORT_VERSION}
+            VERBATIM)
+        set_property(TARGET fuse64 APPEND PROPERTY LINK_DEPENDS ${STRIP_UNITS})
+    else()
+        # (and what it took as units, for port/tools/snapshot.py)
+        add_custom_command(TARGET fuse64 POST_BUILD
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/rom_strip.py ${ROM_STRIP_FILE}
+                --image ${ROOT}/assets/code.bin --version ${PORT_VERSION} --objects ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles
+                --max 0 --units-out ${GEN}/strip_units.json
+            VERBATIM)
+    endif()
 endif()
 # the Linux package (docs/PORT.md, "Packages"): `cmake --build BUILD --target
 # appimage` makes BUILD/fuse64-<version>-<arch>.AppImage (tools/appimage.py:

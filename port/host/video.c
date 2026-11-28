@@ -80,6 +80,9 @@ void host_video_init(void) {
 #ifdef PORT_HAVE_SDL
     if (host_headless)
         return;
+    /* (main is the program's own, not SDL_main: SDL2 on Windows refuses to
+       start without this) */
+    SDL_SetMainReady();
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS) != 0) {
         host_log("SDL: %s: running headless\n", SDL_GetError());
         host_headless = 1;

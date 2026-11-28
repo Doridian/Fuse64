@@ -131,6 +131,9 @@ static char *ask(int *none) {
    2's message box needs zenity or the X server's core fonts too).  The
    file dropped (malloc'd); NULL: no window (closing it quits). */
 static char *drop(const char *err) {
+    /* (main is the program's own, not SDL_main: SDL2 on Windows refuses to
+       start without this) */
+    SDL_SetMainReady();
     if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
         host_log("no file dialog, and no window either: %s\n", SDL_GetError());
         return NULL;

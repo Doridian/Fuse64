@@ -152,6 +152,8 @@ class Binary:
         self.relocs = []        # (address, size)
         self.symbols = []       # (address, size, name), sorted
         self.locals = []        # (address, the file's name): an ELF's local data symbols, sorted
+        self.globals = []       # (address, name): an ELF's global data symbols, sorted
+        self.global_addrs = []
         self.endian = "<"
         self.word = 4
         self.segments = None    # ELF: (vaddr, memsz, flags) of each PT_LOAD
@@ -286,7 +288,11 @@ class Binary:
                     fname = name(stab, nm)
                 elif info & 0xF == 1 and info >> 4 == 0 and val and fname:
                     self.locals.append((val, fname))
+                elif info & 0xF == 1 and info >> 4 in (1, 2) and val:   # GLOBAL, WEAK OBJECT
+                    self.globals.append((val, name(stab, nm)))
         self.symbols.sort()
+        self.globals.sort()
+        self.global_addrs = [s[0] for s in self.globals]
 
     def _wasm(self):
         d = self.data
@@ -417,14 +423,25 @@ class Binary:
             return None
         return r[3] + off - r[1]
 
-    def owner(self, off):
+    def owner(self, off, globals_of=None):
         """The file of the nearest local data symbol at or before OFF in its
-        section (an ELF's symbol table), or None."""
+        section (an ELF's symbol table), or None.  With globals_of ({a
+        global data symbol's name: its object's file}), a global one of the
+        objects' between that local one and OFF says instead (an object
+        whose data has no local symbol follows another's: crtbegin's, then
+        the game's)."""
         a = self.address(off)
         reg = self.region_of(off)
         if a is None or reg is None or not self.locals:
             return None
         i = bisect.bisect_right(self.local_addrs, a) - 1
+        if globals_of is not None:
+            # (only the objects' own: a library's global, crt1's
+            # _IO_stdin_used, comes before the game's unnamed constants)
+            j = bisect.bisect_right(self.global_addrs, a) - 1
+            if j >= 0 and self.globals[j][0] >= reg[3] and (i < 0 or self.globals[j][0] > self.locals[i][0]) \
+                    and self.globals[j][1] in globals_of:
+                return globals_of[self.globals[j][1]]
         if i < 0 or self.locals[i][0] < reg[3]:
             return None
         return self.locals[i][1]
@@ -606,17 +623,60 @@ def file_key(name):
     return n
 
 
+def object_globals(path):
+    """The global data symbols an ELF relocatable defines (COMMON too)"""
+    f = open(path, "rb").read()
+    if f[:4] != b"\x7fELF":
+        return []
+    e = "<" if f[5] == 1 else ">"
+    is64 = f[4] == 2
+    if is64:
+        shoff, = struct.unpack_from(e + "Q", f, 0x28)
+        shentsize, shnum = struct.unpack_from(e + "HH", f, 0x3A)
+    else:
+        shoff, = struct.unpack_from(e + "I", f, 0x20)
+        shentsize, shnum = struct.unpack_from(e + "HH", f, 0x2E)
+    secs = []
+    for i in range(shnum):
+        h = shoff + i * shentsize
+        if is64:
+            _, stype, _, _, off, size, link, _, _, entsize = struct.unpack_from(e + "IIQQQQIIQQ", f, h)
+        else:
+            _, stype, _, _, off, size, link, _, _, entsize = struct.unpack_from(e + "IIIIIIIIII", f, h)
+        secs.append((stype, off, size, link, entsize))
+    out = []
+    for stype, off, size, link, entsize in secs:
+        if stype != 2 or not entsize:       # SYMTAB
+            continue
+        stroff = secs[link][1]
+        for k in range(off, off + size, entsize):
+            if is64:
+                nm, info, _, shndx = struct.unpack_from(e + "IBBH", f, k)
+            else:
+                nm, _, _, info, _, shndx = struct.unpack_from(e + "IIIBBH", f, k)
+            if info & 0xF == 1 and info >> 4 in (1, 2) and shndx != 0:
+                out.append(f[stroff + nm:f.index(b"\0", stroff + nm)].decode("latin-1"))
+    return out
+
+
 def build_objects(dirs):
     """(the data of every object, *.o and *.obj, under DIRS as one bytes,
-    their sources' names)"""
-    parts, names = [], set()
+    their sources' names, {each global data symbol they define: its
+    source's name})"""
+    parts, names, globals_of = [], set(), {}
     for d in dirs:
         for root, _, files in os.walk(d):
             for n in sorted(files):
                 if n.endswith((".o", ".obj")):
-                    parts += object_data(os.path.join(root, n))
+                    p = os.path.join(root, n)
+                    parts += object_data(p)
                     names.add(file_key(n))
-    return b"\xA5\x5A\xC3\x3C".join(parts), names
+                    for g in object_globals(p):
+                        globals_of.setdefault(g, file_key(n))
+    return b"\xA5\x5A\xC3\x3C".join(parts), names, globals_of
+
+
+TEXT = frozenset(b"\0\t\n" + bytes(range(0x20, 0x7F)))
 
 
 def split_ours(binary, view, runs, objects, window=8):
@@ -628,12 +688,15 @@ def split_ours(binary, view, runs, objects, window=8):
     run) is in the objects' data, so that a run over two objects' data, or
     over two variables the linker put side by side in another order than
     their object's (wasm-ld), is ours on both sides."""
-    blob, names = objects
+    blob, names, globals_of = objects
     ours, theirs = [], []
     for s, si, r, perms in runs:
         n = 4 * len(perms)
-        o = binary.owner(s)
-        if o is not None and file_key(o) not in names:
+        o = binary.owner(s, globals_of)
+        # (not for text: the linker merges every object's strings into one
+        # pool, where the game's can follow a library's string symbol)
+        text = sum(1 for c in view[s:s + n] if c in TEXT) * 4 >= n * 3
+        if o is not None and file_key(o) not in names and not text:
             theirs.append((s, si, r, perms))
             continue
         if view[s:s + n] in blob:

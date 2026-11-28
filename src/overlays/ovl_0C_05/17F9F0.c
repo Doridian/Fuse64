@@ -216,7 +216,7 @@ void func_ovl0C_05_80043EB0(void) {
 void func_ovl0C_05_80043CE4(UnkStructA *arg0) {
     UnkStructA_40 *p;
     s32 hit;
-    s32 mask; /* a guess: any value held here fills the slot (12.0f too) */
+    s32 mask; /* fake: a guess: any value held here fills the slot (12.0f too) */
     f32 x;
     f32 y;
     f32 z;
@@ -280,7 +280,7 @@ void func_ovl0C_05_80043CE4(UnkStructA *arg0) {
 void func_ovl0C_05_80043B18(UnkStructA *arg0) {
     UnkStructA_40 *p;
     s32 hit;
-    s32 mask; /* a guess: any value held here fills the slot (12.0f too) */
+    s32 mask; /* fake: a guess: any value held here fills the slot (12.0f too) */
     f32 x;
     f32 y;
     f32 z;

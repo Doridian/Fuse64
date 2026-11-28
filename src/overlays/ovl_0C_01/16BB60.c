@@ -515,7 +515,7 @@ void func_ovl0C_01_80048068(void) {
 void func_ovl0C_01_80047E9C(UnkStructA *arg0) {
     UnkStructA_40 *p;
     s32 moved;
-    s32 mask; /* a guess: any value held here fills the slot (12.0f too) */
+    s32 mask; /* fake: a guess: any value held here fills the slot (12.0f too) */
     f32 x;
     f32 y;
     f32 z;

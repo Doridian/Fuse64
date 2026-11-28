@@ -2307,11 +2307,11 @@ commands, word for word, which the OpenGL back end takes:
 commands with the GPU, at the N64's resolution (port/host/gfx_gl.c,
 after DozerEncore's gfx_gl.c: its GL state cache, texture cache, batches
 and the image's upload and read-back, AGPL-3.0-or-later; NOTICES.md). Its
-context is offscreen, EGL without a surface (Mesa's surfaceless platform,
-through libepoxy), OpenGL 3.3 core: it runs headless as well as with a
-window, where the VI's picture of the color image is shown as before
-(SDL's software renderer presents it then, since the port's context is
-current on the same thread behind SDL's back; not tried yet). It
+context is OpenGL 3.3 core, through libepoxy: headless, EGL's without a
+surface (Mesa's surfaceless platform); with a window, the window's (SDL's,
+video.c), which shows the VI's picture the GPU made (below). Where SDL
+can't give the window such a context, the renderer's is EGL's as headless
+and the picture is read back for SDL's software renderer. It
 is built where libepoxy is found (`-DPORT_GL=OFF` leaves it out; not the
 WebAssembly build yet). `--renderer soft` stays the default, and the one
 for deterministic runs and replays.
@@ -2326,20 +2326,37 @@ integers:
   images would go to gfx_soft.c ("The GBI census": the game has none).
 - The images stay the GPU's. RDRAM is made what was drawn (its bytes and
   the hidden bits, read back) only where something reads it outside the
-  RDP's commands, `host_gfx_sync`: the VI's picture (the lines it reads,
-  when a picture is made: `--hash`, `--screenshot`, a window), the screen
-  captures (412F0.c's func_80226E4C, which the three capture sites read
-  the shown image through: "The framebuffer's other users"), RDRAM's dumps
+  RDP's commands, `host_gfx_sync`: the screen captures (412F0.c's
+  func_80226E4C, which the three capture sites read the shown image
+  through: "The framebuffer's other users"), RDRAM's dumps
   (`PORT_DUMP_RDRAM`, `PORT_GFX_REF`, `PORT_VI_REF`, `PORT_FB_WATCH`), the
-  NMI (before IPL3's writes: RDRAM keeps what was drawn); and in the tasks
-  before a texture load from one (the after-image) and before gfx_soft.c
-  draws. An image no task has drawn to for 30 retraces is read back too:
-  fbwatch's census found nothing else touching the images' pages within
-  60 retraces of a task drawing there, so a reader the census missed would
-  have to come later, and finds RDRAM as soft leaves it. Headless without
-  pictures, a battle reads back nothing; with `--hash` or a window, the
-  shown color image once a frame (not the z image), started into a pixel
-  buffer at the task's end so that it is mostly done by the retrace.
+  NMI (before IPL3's writes: RDRAM keeps what was drawn), the VI's picture
+  where vi.c makes it (below); and in the tasks before a texture load from
+  one (the after-image) and before gfx_soft.c draws. An image no task has
+  drawn to for 30 retraces is read back too: fbwatch's census found
+  nothing else touching the images' pages within 60 retraces of a task
+  drawing there, so a reader the census missed would have to come later,
+  and finds RDRAM as soft leaves it. A battle reads back nothing, headless
+  or with `--hash` or a window.
+- The VI's picture ("The VI") is the GPU's too, vi.c's filters in two
+  fragment shaders (`gfx_gl_vi_make`): one over the columns and lines the
+  picture reads makes each pixel's fetch from the color image's texture
+  (its 5-bit channels and coverage, as RDRAM would have them after a
+  read-back: the antialiasing filter of a partly covered pixel, the dither
+  filter's restore of a fully covered one), the other the picture, 640 by
+  240 or 288 (the divot filter, the scale, the gamma or its dither), in
+  vi.c's integer arithmetic. With a window it is shown as it is (a blit
+  to the window at 4:3); for `--hash` and screenshots only the picture is
+  read back. Where the last retrace's picture was asked for, the next is
+  made when the VI's registers are set, a retrace ahead, its read-back
+  started then and taken at the retrace if no task has drawn to the image
+  and the CPU hasn't written to it since (else made again). Where the
+  picture would read RDRAM outside one of the GPU's color images (none of
+  the game's modes does: the lines and columns its shown pixels need are
+  the image's), or with `--vi-raw`, vi.c makes it as before, from RDRAM
+  read back. `PORT_VI_GPU=0` leaves the picture to vi.c; `PORT_VI_CHECK=1`
+  makes each of the GPU's pictures with vi.c too (RDRAM read back) and
+  logs those that differ.
 - Each image keeps a copy of RDRAM (bytes and hidden bits) as they last
   agreed. When a task first draws to it, RDRAM is compared with the copy,
   and what the CPU wrote since is uploaded (over what the GPU drew before
@@ -2415,12 +2432,12 @@ Headless (i386, a Radeon RX 7900 XTX with Mesa's radeonsi, a busy
 machine, 2026-11-27), before this (every image read back at every task's
 end, a copy per batch) and now:
 
-| | soft | hle-sw | gl before | gl now |
-|---|---|---|---|---|
-| battle, 6000 retraces | 78 s | 58 s | 27-31 s | 4.0-4.1 s |
-| battle with `--hash` (vi.c's picture every retrace) | | | 42-43 s | 20.7-20.9 s |
-| menus, 3000 retraces | | | 15.8-15.9 s | 2.7 s |
-| menus with `--hash` | | | 23.9-24.2 s | 11.9-12.2 s |
+| | soft | hle-sw | gl before | gl now | the VI on the GPU |
+|---|---|---|---|---|---|
+| battle, 6000 retraces | 78 s | 58 s | 27-31 s | 4.0-4.1 s | 4.1-4.4 s |
+| battle with `--hash` (the picture every retrace) | | | 42-43 s | 20.7-20.9 s | 5.6-6.3 s |
+| menus, 3000 retraces | | | 15.8-15.9 s | 2.7 s | 2.7-2.9 s |
+| menus with `--hash` | | | 23.9-24.2 s | 11.9-12.2 s | 3.5-3.9 s |
 
 Almost every primitive reads the memory (the game's antialiasing reads
 the coverage), and neighbouring triangles share their edges' pixels, so
@@ -2429,14 +2446,32 @@ with its copy, for battle's 1.52 million primitives). In layers, battle
 has 413,000 (2.7 primitives each; 4×4 cells gave 387,000, no faster), with
 408,000 barriers and 1.01 million draws. The GPU's share is now small:
 with the GL calls left out battle took as long (4.1 s), with the triangles left out (the HLE
-front end alone) 2.9 s. With `--hash` the rest is vi.c's filters (about
-14 s of the 21) and waiting for the GPU before each picture. `-v` logs the
-counts; `PORT_GL_CHECK=1` checks GL's errors after each flush.
+front end alone) 2.9 s. With `--hash` the rest was vi.c's filters (about
+14 s of the 21) and waiting for the GPU before each picture; with the
+picture the GPU's, made in step with the drawing a retrace ahead and read
+back asynchronously, it is 1.5 s more than without pictures (made when
+asked for and read back at once, battle took 11.9 s: the wait for the GPU,
+6.3 s of it). `-v` logs the counts; `PORT_GL_CHECK=1` checks GL's errors
+after each flush.
+
+The VI on the GPU (2026-11-27): with `PORT_VI_CHECK=1` every picture of
+us's menus (600 retraces, radeonsi and llvmpipe), battle (6000, i386 and
+x86-64) and eu's battle (6000: PAL's 288 lines) is vi.c's, pixel for
+pixel, none made by vi.c instead; test.py's legal, menus and battle with
+`--renderer gl` give soft's references in us (barriers, copies, x86-64;
+legal and menus on llvmpipe) and eu, story, warp-stage, warp-boss and
+warp-battle as before (story's pictures differed from retrace 4500 at the
+latest before it too, and with `PORT_VI_GPU=0`); gl_cmp.py's us table
+above is the same again; `gfx_ref.py run --renderer gl`'s 20 screens are
+angrylion's VI's pictures exactly. With a window, SDL's offscreen video
+driver (EGL) gave the renderer the window's context, and the picture shown
+was the one hashed (read from the window's back buffer, scaled to it with
+the nearest pixel); SDL's dummy driver has no OpenGL, and the picture went
+to SDL's software renderer as before. A window on a display (GLX or EGL
+on X11, Wayland, Windows, macOS) and its vsync are untried.
 
 What it doesn't do yet (the later steps): scaling, or anything but 1x;
-the enhancements; the VI on the GPU (with a window or `--hash` the shown
-image is still read back each frame for vi.c's picture, whose filters
-cost more than the drawing); WebGL2 (the z image's write mask is
+the enhancements; WebGL2 (the z image's write mask is
 `glColorMaski`, which GLES 3.0 lacks, and the context is EGL's).
 
 The RDP's side is in integers, as the RDP computes it. A triangle is
@@ -2632,7 +2667,10 @@ dither filter's restore, not the top bits repeated). The picture is
 made only when it is shown, hashed or written; with `--hash` (test.py)
 that is every retrace: us's battle, 6000 retraces, 153 s against 139 s
 with `--vi-raw` (i386, the two at once on a very busy machine), about
-2.5 ms a picture there.
+2.5 ms a picture there. With `--renderer gl` the GPU makes the same
+picture ("The OpenGL renderer"), and `PORT_VI_REF` writes the GPU's: with
+it, too, every screen of the 20 in us is the reference's picture exactly
+(2026-11-27).
 
 **The GBI census.** What a renderer other than the microcode's (a GPU's,
 from the display lists) must do, counted over the runs:

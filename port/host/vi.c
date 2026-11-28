@@ -40,6 +40,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "gfx.h"
 #include "host.h"
 
 int host_vi_raw;
@@ -52,11 +53,16 @@ static uint32_t regs[PORT_VI_NREGS];
 static const uint8_t *raw_fb;
 static uint32_t pic[PIC_W * PIC_H];
 static int pic_w, pic_h, pic_valid;
+/* the OpenGL renderer's picture (below): made (1), can't be (-1), not
+   tried (0); vi.c's uploaded for the window */
+static int gpu, shown_up;
+static void prepare(void);
 
 void host_vi_set_regs(const uint32_t r[PORT_VI_NREGS], const void *fb) {
     memcpy(regs, r, sizeof regs);
     raw_fb = fb;
-    pic_valid = 0;
+    pic_valid = gpu = shown_up = 0;
+    prepare();
 }
 
 const uint8_t *host_vi_raw_fb(void) { return raw_fb; }
@@ -66,7 +72,7 @@ const uint8_t *host_vi_raw_fb(void) { return raw_fb; }
 void host_vi_reset(void) {
     memset(regs, 0, sizeof regs);
     raw_fb = NULL;
-    pic_valid = 0;
+    pic_valid = gpu = shown_up = 0;
 }
 
 /* ---- the fetch: a pixel of the color image, filtered ---------------------------------- */
@@ -243,8 +249,8 @@ static void gamma_init(void) {
 /* the gamma dither's noise: a hash of the pixel and the retrace (the
    N64's is a pseudo-random sequence; this keeps a run the same however
    often its picture is made) */
-static inline uint32_t noise(int x, int y) {
-    uint32_t h = (uint32_t)x * 0x9E3779B1u ^ (uint32_t)y * 0x85EBCA77u ^ host_vi_count * 0xC2B2AE3Du;
+static inline uint32_t noise(int x, int y, uint32_t seed) {
+    uint32_t h = (uint32_t)x * 0x9E3779B1u ^ (uint32_t)y * 0x85EBCA77u ^ seed * 0xC2B2AE3Du;
     h ^= h >> 15;
     h *= 0x2C1B3C6Du;
     h ^= h >> 12;
@@ -252,23 +258,28 @@ static inline uint32_t noise(int x, int y) {
     return h ^ h >> 15;
 }
 
-/* the picture from the registers r into out (PIC_W by *h) */
-static void make(const uint32_t *r, uint32_t *out, int *w, int *h) {
+/* what the registers r ask for (gfx.h's ViSetup): 0 if the picture is
+   black (blank, or none of the image on the screen) */
+static int setup(const uint32_t *r, ViSetup *v) {
     uint32_t ctrl = r[PORT_VI_CONTROL];
     int pal = (int)(r[PORT_VI_V_SYNC] & 0x3FF) > 525 + 25;
-    *w = PIC_W;
-    *h = pal ? 288 : 240;
-    memset(out, 0, sizeof(uint32_t) * PIC_W * (size_t)*h);
+    memset(v, 0, sizeof *v);
+    v->w = PIC_W;
+    v->h = pal ? 288 : 240;
+    v->seed = host_vi_count;
     if ((ctrl & 3) != 2) {              /* blank (or 32-bit: not modelled) */
         static int told;
         if ((ctrl & 3) == 3 && !told++)
             host_log("vi: a 32-bit framebuffer isn't modelled\n");
-        return;
+        return 0;
     }
-    int gamma = ctrl >> 3 & 1, gamma_dither = ctrl >> 2 & 1, aa_mode = ctrl >> 8 & 3;
-    divot = ctrl >> 4 & 1;
-    dither_filter = ctrl >> 16 & 1;
-    aa_on = aa_mode <= 1;
+    int aa_mode = ctrl >> 8 & 3;
+    v->gamma = ctrl >> 3 & 1;
+    v->gamma_dither = ctrl >> 2 & 1;
+    v->divot = ctrl >> 4 & 1;
+    v->dither_filter = ctrl >> 16 & 1;
+    v->aa_on = aa_mode <= 1;
+    v->lerping = aa_mode != 3;
 
     int h_start = r[PORT_VI_H_START] >> 16 & 0x3FF, h_end = r[PORT_VI_H_START] & 0x3FF;
     int v_start = r[PORT_VI_V_START] >> 16 & 0x3FF, v_end = r[PORT_VI_V_START] & 0x3FF;
@@ -292,22 +303,53 @@ static void make(const uint32_t *r, uint32_t *out, int *w, int *h) {
         hres = PIC_W - h_start;
         right_clamp = 1;
     }
-    if (vres + v_start > *h)
-        vres = *h - v_start;
+    if (vres + v_start > v->h)
+        vres = v->h - v_start;
     if (hres <= 0 || vres <= 0 || h_start >= PIC_W)
-        return;
-    int x_lo = left_clamp ? 0 : 8, x_hi = right_clamp ? hres : hres - 7;
+        return 0;
+    v->x_lo = left_clamp ? 0 : 8;
+    v->x_hi = right_clamp ? hres : hres - 7;
+    if (v->x_lo >= v->x_hi)
+        return 0;
+    v->h_start = h_start;
+    v->v_start = v_start;
+    v->vres = vres;
+    v->x_start = x_start;
+    v->x_add = x_add;
+    v->y_start = y_start;
+    v->y_add = y_add;
+    v->img_w = r[PORT_VI_WIDTH] & 0xFFF;
+    v->img_base = (r[PORT_VI_ORIGIN] & 0xFFFFFF) >> 1;
+    v->col_s0 = (int)(x_start >> 10);
+    v->col_s1 = (int)((x_start + (uint32_t)(hres - 1) * x_add) >> 10) + 1;
+    if (v->col_s1 - v->col_s0 + 3 > ROW_MAX)
+        v->col_s1 = v->col_s0 + ROW_MAX - 3;
+    return 1;
+}
 
-    img_w = r[PORT_VI_WIDTH] & 0xFFF;
-    img_base = (r[PORT_VI_ORIGIN] & 0xFFFFFF) >> 1;
-    col_s0 = (int)(x_start >> 10);
-    col_s1 = (int)((x_start + (uint32_t)(hres - 1) * x_add) >> 10) + 1;
-    if (col_s1 - col_s0 + 3 > ROW_MAX)
-        col_s1 = col_s0 + ROW_MAX - 3;
+/* the picture from the registers r into out (PIC_W by *h), in C */
+static void make(const uint32_t *r, uint32_t *out, int *w, int *h, uint32_t seed) {
+    ViSetup v;
+    int shown = setup(r, &v);
+    v.seed = seed;
+    *w = v.w;
+    *h = v.h;
+    memset(out, 0, sizeof(uint32_t) * PIC_W * (size_t)*h);
+    if (!shown)
+        return;
+    int gamma = v.gamma, gamma_dither = v.gamma_dither, lerping = v.lerping;
+    divot = v.divot;
+    dither_filter = v.dither_filter;
+    aa_on = v.aa_on;
+    int h_start = v.h_start, v_start = v.v_start, vres = v.vres, x_lo = v.x_lo, x_hi = v.x_hi;
+    uint32_t x_start = v.x_start, x_add = v.x_add, y_start = v.y_start, y_add = v.y_add;
+    img_w = v.img_w;
+    img_base = v.img_base;
+    col_s0 = v.col_s0;
+    col_s1 = v.col_s1;
     rows[0].line = rows[1].line = -1;
     for (int i = 0; i < 4; i++)
         srcs[i].line = -1;
-    int lerping = aa_mode != 3;
     /* what it reads (the lines around, the columns the filters reach) as the
        RDP left it (a GPU renderer's images: gfx_gl.c) */
 #ifdef PORT_SCATTER_LAYOUT
@@ -346,11 +388,11 @@ static void make(const uint32_t *r, uint32_t *out, int *w, int *h) {
                 lerp(&p, &q, xfrac);
             }
             if (gamma) {
-                uint32_t n = gamma_dither ? noise(x, y) : 0;
+                uint32_t n = gamma_dither ? noise(x, y, v.seed) : 0;
                 for (int k = 0; k < 3; k++)
                     p.c[k] = gamma_tab[p.c[k] << 6 | (n >> (6 * k) & 63)];
             } else if (gamma_dither) {
-                uint32_t n = noise(x, y);
+                uint32_t n = noise(x, y, v.seed);
                 for (int k = 0; k < 3; k++)
                     if (p.c[k] < 255)
                         p.c[k] += n >> k & 1;
@@ -374,7 +416,103 @@ static void make_raw(uint32_t *out) {
         }
 }
 
+/* ---- the picture on the GPU ------------------------------------------------------------------ */
+
+/* The OpenGL renderer makes the picture itself from its copy of the color
+   image (gfx_gl.c, gfx_gl_vi_make: these filters in a shader, exactly), and
+   shows it as it is or reads back only the picture; where it can't (the
+   image isn't the GPU's, or what the picture shows reads past it), the
+   picture is made here.  PORT_VI_GPU=0 leaves it to vi.c; PORT_VI_CHECK=1
+   makes each of the GPU's pictures here too and compares them. */
+static uint32_t gpu_seed;               /* the gamma dither's retrace in the GPU's picture */
+#ifdef PORT_HAVE_GL
+static int gpu_off = -1, vi_check = -1;
+static unsigned long long chk_pics, chk_bad;
+
+static void check_report(void) {
+    host_log("vi: PORT_VI_CHECK: %llu of the GPU's pictures checked, %llu differ\n", chk_pics, chk_bad);
+}
+
+/* the GPU's picture against this file's, from the same registers */
+static void check(uint32_t seed) {
+    static uint32_t px[PIC_W * PIC_H];
+    int w, h;
+    host_gfx_sync();
+    make(regs, px, &w, &h, seed);
+    chk_pics++;
+    int bad = 0, first = -1;
+    if (w != pic_w || h != pic_h)
+        bad = -1;
+    else
+        for (int i = 0; i < w * h; i++)
+            if (px[i] != pic[i]) {
+                if (first < 0)
+                    first = i;
+                bad++;
+            }
+    if (bad) {
+        chk_bad++;
+        if (bad < 0)
+            host_log("vi: PORT_VI_CHECK: retrace %u: the GPU's picture is %dx%d, vi.c's %dx%d\n", host_vi_count,
+                     pic_w, pic_h, w, h);
+        else
+            host_log("vi: PORT_VI_CHECK: retrace %u: %d pixels differ, the first at (%d, %d): GPU %06x, vi.c %06x\n",
+                     host_vi_count, bad, first % w, first / w, pic[first], px[first]);
+    }
+}
+
+static int gpu_on(void) {
+    if (gpu_off < 0) {
+        const char *e = getenv("PORT_VI_GPU");
+        gpu_off = e && *e == '0';
+        e = getenv("PORT_VI_CHECK");
+        vi_check = e && *e && *e != '0';
+        if (vi_check)
+            atexit(check_report);
+    }
+    return !gpu_off && !host_vi_raw && host_gfx_gl();
+}
+#endif
+
+/* The picture of the next retrace is made when the registers are set, a
+   retrace before, where the last retrace's was asked for (read back, from
+   then on with the GPU's other work, or shown), and taken if the image is
+   still the same when it is asked for. */
+static unsigned asked_read = ~0u, asked_show = ~0u;     /* the retraces they were last asked for */
+
+static void prepare(void) {
+#ifdef PORT_HAVE_GL
+    int rd = asked_read == host_vi_count, sh = asked_show == host_vi_count;
+    if ((rd || sh) && gpu_on()) {
+        ViSetup v;
+        v.shown = setup(regs, &v);
+        v.seed = host_vi_count + 1;
+        if (gfx_gl_vi_make(&v, rd)) {
+            gpu = 1;
+            gpu_seed = v.seed;
+        }
+    }
+#endif
+}
+
+static int gpu_picture(void) {
+#ifdef PORT_HAVE_GL
+    if (gpu > 0 && (gpu_seed != host_vi_count || !gfx_gl_vi_current()))
+        gpu = 0;
+    if (!gpu) {
+        ViSetup v;
+        v.shown = setup(regs, &v);
+        gpu_seed = v.seed;
+        gpu = gpu_on() && gfx_gl_vi_make(&v, 0) ? 1 : -1;
+    }
+    return gpu > 0;
+#else
+    return 0;
+#endif
+}
+
 const uint32_t *host_vi_picture(int *w, int *h) {
+    asked_read = host_vi_count;
     if (!pic_valid) {
         gamma_init();
         if (host_vi_raw) {
@@ -383,13 +521,40 @@ const uint32_t *host_vi_picture(int *w, int *h) {
             make_raw(pic);
             pic_w = 320;
             pic_h = 240;
-        } else
-            make(regs, pic, &pic_w, &pic_h);
+        }
+#ifdef PORT_HAVE_GL
+        else if (gpu_picture()) {
+            gfx_gl_vi_read(pic, &pic_w, &pic_h);
+            if (vi_check)
+                check(gpu_seed);
+        }
+#endif
+        else
+            make(regs, pic, &pic_w, &pic_h, host_vi_count);
         pic_valid = 1;
     }
     *w = pic_w;
     *h = pic_h;
     return pic;
+}
+
+/* the picture to the window's drawable (dw by dh), with the OpenGL
+   renderer's context the window's (video.c): the GPU's picture as it is,
+   or vi.c's uploaded */
+void host_vi_show(int dw, int dh) {
+#ifdef PORT_HAVE_GL
+    asked_show = host_vi_count;
+    if (!gpu_picture() && !shown_up) {
+        int w, h;
+        const uint32_t *px = host_vi_picture(&w, &h);
+        gfx_gl_vi_upload(px, w, h);
+        shown_up = 1;
+    }
+    gfx_gl_vi_present(dw, dh);
+#else
+    (void)dw;
+    (void)dh;
+#endif
 }
 
 /* ---- PORT_VI_REF: the picture for a reference VI ------------------------------------------ */
@@ -425,7 +590,16 @@ void host_vi_frame(void) {
     static uint32_t px[PIC_W * PIC_H];
     int w, h;
     gamma_init();
-    make(r, px, &w, &h);
+#ifdef PORT_HAVE_GL
+    /* (the OpenGL renderer's picture, where it makes the one shown) */
+    ViSetup v;
+    v.shown = setup(r, &v);
+    if (gpu_on() && gfx_gl_vi_make(&v, 0)) {
+        gfx_gl_vi_read(px, &w, &h);
+        gpu = shown_up = 0;             /* (the shown one is made again) */
+    } else
+#endif
+        make(r, px, &w, &h, host_vi_count);
     char path[1100];
     snprintf(path, sizeof path, "%s/v%06u.in", dir, host_vi_count);
     FILE *f = fopen(path, "wb");

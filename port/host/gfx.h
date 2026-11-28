@@ -126,6 +126,31 @@ extern const GfxBackend gfx_soft;       /* gfx_soft.c */
 #ifdef PORT_HAVE_GL
 extern const GfxBackend gfx_gl;         /* gfx_gl.c */
 #endif
+/* The VI's picture as vi.c works it out from the registers (vi.c's make):
+   w by h pixels (640 by 240 or 288), black unless shown; the image's lines
+   from img_base (halfwords in RDRAM), img_w apart; the picture's pixels
+   x_lo to x_hi of vres lines, at h_start and v_start, from the columns and
+   lines x_start + x * x_add and y_start + y * y_add (10 bits of fraction);
+   the filters' switches; the gamma dither's retrace. */
+typedef struct {
+    int shown, w, h;
+    int gamma, gamma_dither, divot, dither_filter, aa_on, lerping;
+    int h_start, v_start, vres, x_lo, x_hi, col_s0, col_s1;
+    uint32_t x_start, x_add, y_start, y_add, img_base, img_w, seed;
+} ViSetup;
+
+#ifdef PORT_HAVE_GL
+/* gfx_gl.c: the VI's picture made by the GPU from its copy of the color
+   image, exactly as vi.c's (0 if it can't: the image isn't the GPU's, or
+   the picture reads past it); read back (XRGB, *w by *h); or vi.c's
+   uploaded instead; shown in the window's drawable, dw by dh, at 4:3 */
+int gfx_gl_vi_make(const ViSetup *v, int read);
+int gfx_gl_vi_current(void);
+void gfx_gl_vi_read(uint32_t *out, int *w, int *h);
+void gfx_gl_vi_upload(const uint32_t *px, int w, int h);
+void gfx_gl_vi_present(int dw, int dh);
+#endif
+
 /* gfx_soft.c: a 16-bit color pixel's coverage (0..7: its low bit and
    RDRAM's hidden bits), read and written as the RDP does (the OpenGL back
    end's copy of the color image) */

@@ -1,7 +1,9 @@
 /*
  * The VI's picture (vi.c) to a window (SDL) or, headless, to screenshots
- * and hashes.  The keyboard and game controllers come in through the
- * window's events.
+ * and hashes.  With the OpenGL renderer the window has an OpenGL context,
+ * the renderer's, and shows the picture the GPU made (vi.c, host_vi_show);
+ * else SDL's renderer shows it.  The keyboard and game controllers come in
+ * through the window's events.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +18,18 @@ static SDL_Renderer *ren;
 static SDL_Texture *tex;
 static int tex_w, tex_h;
 static SDL_GameController *pads[4];
+static SDL_GLContext glctx;             /* the OpenGL renderer's, the window's */
 #endif
+
+/* the OpenGL renderer draws with the window's context (gfx_gl.c), and the
+   VI's picture is shown from it (vi.c, host_vi_show) */
+int host_video_gl(void) {
+#ifdef PORT_HAVE_SDL
+    return glctx != NULL;
+#else
+    return 0;
+#endif
+}
 
 static int quit;
 
@@ -89,6 +102,39 @@ void host_video_init(void) {
         host_headless = 1;
         return;
     }
+#ifdef PORT_HAVE_GL
+    /* the OpenGL renderer: a window with an OpenGL 3.3 core context, which
+       the renderer draws with and the picture is shown from */
+    if (host_gfx_gl()) {
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+#ifdef __APPLE__
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+#endif
+        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
+        win = SDL_CreateWindow("Fuse64", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960, 720,
+                               SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+        if (win) {
+            glctx = SDL_GL_CreateContext(win);
+            if (glctx && SDL_GL_MakeCurrent(win, glctx) == 0) {
+                SDL_GL_SetSwapInterval(1);
+                return;
+            }
+        }
+        /* (else the renderer's own context, offscreen, and the picture read
+           back for SDL's software renderer, as without the window's) */
+        host_log("SDL: no window with an OpenGL 3.3 core context (%s): the picture is read back\n",
+                 SDL_GetError());
+        if (glctx)
+            SDL_GL_DeleteContext(glctx);
+        glctx = NULL;
+        if (win)
+            SDL_DestroyWindow(win);
+        win = NULL;
+    }
+#endif
     win = SDL_CreateWindow("Fuse64", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960, 720,
                            SDL_WINDOW_RESIZABLE);
     if (!win) {
@@ -96,8 +142,9 @@ void host_video_init(void) {
         host_headless = 1;
         return;
     }
-    /* (the OpenGL renderer's context is current on this thread, behind
-       SDL's back: SDL's renderer then mustn't be OpenGL's) */
+    /* (without the window's context, the OpenGL renderer's is current on
+       this thread behind SDL's back: SDL's renderer then mustn't be
+       OpenGL's) */
     if (host_gfx_gl())
         SDL_SetHint(SDL_HINT_RENDER_DRIVER, "software");
     ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_PRESENTVSYNC);
@@ -201,6 +248,13 @@ void host_video_frame(void) {
             host_reset_button();        /* the console's reset button (main.c) */
     }
     keyboard();
+    if (glctx) {
+        int dw, dh;
+        SDL_GL_GetDrawableSize(win, &dw, &dh);
+        host_vi_show(dw, dh);
+        SDL_GL_SwapWindow(win);
+        return;
+    }
     /* the picture at 4:3, whatever its pixels */
     int w, h;
     const uint32_t *px = host_vi_picture(&w, &h);
@@ -221,6 +275,8 @@ void host_video_frame(void) {
 void host_video_shutdown(void) {
 #ifdef PORT_HAVE_SDL
     if (win) {
+        if (glctx)
+            SDL_GL_DeleteContext(glctx);
         SDL_DestroyWindow(win);
         SDL_Quit();
     }

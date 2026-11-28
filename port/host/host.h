@@ -32,6 +32,9 @@ void host_video_shutdown(void);
 int host_quit_requested(void);
 uint32_t host_frame_hash(void);         /* FNV-1a of the shown picture */
 void host_frame_shot(const char *path); /* the shown picture to a BMP */
+/* the window's OpenGL context is current, the OpenGL renderer's (gfx_gl.c
+   then has no EGL context of its own) */
+int host_video_gl(void);
 
 /* vi.c: the VI's picture */
 extern int host_vi_raw;                 /* --vi-raw: the color image as it is, no VI */
@@ -41,6 +44,9 @@ const uint32_t *host_vi_picture(int *w, int *h);
 /* with --vi-raw: the framebuffer shown (big-endian RGBA5551) */
 const uint8_t *host_vi_raw_fb(void);
 void host_vi_frame(void);               /* at each retrace (PORT_VI_REF) */
+/* the picture to the window (its OpenGL context the renderer's: video.c),
+   its drawable dw by dh */
+void host_vi_show(int dw, int dh);
 
 /* audio.c */
 void host_audio_init(void);

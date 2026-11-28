@@ -14,9 +14,10 @@
  *   and the z image beside it another (R32UI: each halfword << 2 with its
  *   two hidden bits), the z image's clear too.  They stay the GPU's, and
  *   are read back into RDRAM (the hidden bits too) only where something
- *   reads it there: the VI's picture, the screen captures, a texture load
- *   from one (the after-image), RDRAM's dumps, the NMI, the software back
- *   end, an image left undrawn for a while (img_sync, host_gfx_sync).  So
+ *   reads it there: the screen captures, a texture load from one (the
+ *   after-image), RDRAM's dumps, the NMI, the software back end, the VI's
+ *   picture where vi.c makes it, an image left undrawn for a while
+ *   (img_sync, host_gfx_sync).  So
  *   whatever reads them sees what the software renderer would have left.
  *   Other images (none in this game: "The GBI census") are drawn by
  *   gfx_soft.c.
@@ -39,8 +40,12 @@
  *   pixel sees what the RDP's would, and the GL blend and depth test
  *   aren't used.
  *
- * Its context is offscreen (EGL, surfaceless): what is shown is still the
- * VI's picture of the color image (vi.c, video.c).
+ * - The VI's picture (vi.c's filters, exactly) is made from the color
+ *   image's texture in two passes (gfx_gl_vi_make, below), shown from it
+ *   or read back (the picture alone).
+ *
+ * Its context is offscreen (EGL, surfaceless), or the window's (video.c),
+ * where the picture is shown.
  */
 #ifdef PORT_HAVE_GL
 
@@ -105,8 +110,8 @@ static int egl_up(void) {
    each channel's five bits << 3, the coverage in alpha), and its z image
    another (R32UI: the halfword << 2 and its two hidden bits).  They stay
    the GPU's: RDRAM is made the same (img_sync) only where something reads
-   it outside the RDP's commands (host_gfx_sync: the VI's picture, the
-   screen captures, RDRAM's dumps, the NMI), before a TMEM load from one,
+   it outside the RDP's commands (host_gfx_sync: the screen captures,
+   RDRAM's dumps, the NMI, the VI's picture where vi.c makes it), before a TMEM load from one,
    before the software back end draws (another kind of image), and when an
    image hasn't been drawn to for IDLE_SYNC retraces (what fbwatch.c's
    census watched: nothing but those reads touches the images' pages
@@ -130,6 +135,7 @@ typedef struct {
     int checked;                /* compared with RDRAM in this task */
     int drawn;                  /* drawn in this task */
     unsigned drawn_vi;          /* the retrace a task last drew to it */
+    unsigned gen;               /* the tasks that drew to it (the VI's picture of it is still the same) */
     uint8_t shadow[TW * TH * 3];        /* RDRAM's bytes, then the hidden bits' (gfx_soft_hb) */
 } Img;
 static Img imgs[NIMG];
@@ -140,7 +146,7 @@ static GLint u_st, u_tex0, u_tex1, u_mem, u_zmem;
 static uint8_t rb_buf[TW * TH * 4];
 static int prefetch;            /* tasks to start the color image's read-back at their end */
 static unsigned long long st_tasks, st_prims, st_batches, st_tex_decoded, st_readbacks, st_uploads, st_snaps,
-    st_barriers, st_kept, st_membatches, st_layers;
+    st_barriers, st_kept, st_membatches, st_layers, st_vi_gpu, st_vi_cpu;
 static uint32_t frame_seed;
 static int ninst;
 
@@ -1504,8 +1510,8 @@ static void gl_tex_rect(uint32_t w0, uint32_t w1, uint32_t h1, uint32_t h2, int 
 
 /* A task's end: its batches drawn; RDRAM stays as it was (read back where
    something reads, img_sync).  When the color image's read-backs are
-   being waited for (the VI's picture each retrace: --hash, a window), the
-   next is started now, to be ready by then. */
+   being waited for (the after-image, a reader each retrace), the next is
+   started now, to be ready by then. */
 static void gl_task_end(void) {
     flush();
     if (prefetch > 0)
@@ -1514,6 +1520,7 @@ static void gl_task_end(void) {
         Img *m = &imgs[i];
         if (m->drawn) {
             m->drawn_vi = host_vi_count;
+            m->gen++;
             if (prefetch && !m->z && m->newer)
                 img_start_read(m);
         }
@@ -1525,9 +1532,10 @@ static void gl_task_end(void) {
     st_tasks++;
     if (host_verbose && st_tasks % 300 == 0)
         host_log("gl: %llu tasks, %llu primitives in %llu draws (%llu read the memory) in %llu layers, %llu barriers, "
-                 "%llu copies, %llu textures decoded, %llu read-backs (%llu pixels kept), %llu uploads\n",
+                 "%llu copies, %llu textures decoded, %llu read-backs (%llu pixels kept), %llu uploads; "
+                 "the VI's pictures: %llu the GPU's, %llu vi.c's\n",
                  st_tasks, st_prims, st_batches, st_membatches, st_layers, st_barriers, st_snaps, st_tex_decoded,
-                 st_readbacks, st_kept, st_uploads);
+                 st_readbacks, st_kept, st_uploads, st_vi_gpu, st_vi_cpu);
 }
 
 /* a TMEM load from an image the GPU has drawn to: it is read back first */
@@ -1574,7 +1582,11 @@ static GLuint new_tex(GLint ifmt, GLenum fmt, GLenum type) {
 
 static void gl_init(void) {
     gfx_soft.init();
-    if (!egl_up())
+    /* (the window's context, where there is a window: video.c) */
+    if (host_video_gl())
+        host_log("gl: %s, %s (the window's)\n", (const char *)glGetString(GL_RENDERER),
+                 (const char *)glGetString(GL_VERSION));
+    else if (!egl_up())
         host_fatal("--renderer gl: no OpenGL (an EGL display with OpenGL 3.3 core, surfaceless)");
     /* how the memory is read: the best the driver has, or PORT_GL_MEM's */
     mem_how = epoxy_has_gl_extension("GL_EXT_shader_framebuffer_fetch")                          ? MEM_FETCH
@@ -1682,6 +1694,407 @@ static void gl_reset(uint32_t clean) {
     prefetch = 0;
     tc_sweep();
     gfx_soft.reset(clean);
+}
+
+/* ---- the VI's picture ------------------------------------------------------------------------ */
+
+/* The VI's picture (vi.c's, exactly) made from the color image's texture,
+   so that it needn't be read back: a pass the size of the columns and
+   lines the picture reads makes each pixel's fetch (vi.c's fetch: the
+   antialiasing filter of a partly covered pixel from its fully covered
+   neighbours, the dither filter's restore of a fully covered one; RGB and
+   coverage, RGBA8UI), and a pass the picture's size (640 by 240 or 288,
+   RGBA8, line 0 the texture's row 0) the divot filter, the scale and the
+   gamma or its dither.  The texture is what RDRAM would be after a read-back
+   (each channel's 5 bits, the coverage from the low bit and the hidden
+   bits); vi.c's integer arithmetic is the shaders' (unsigned, wrapping as
+   its).  Then the picture is shown as it is (the window's context:
+   video.c) or read back, 600 KB, instead of the image and vi.c's filters. */
+static const char *vi_vs_src =
+    "void main() {\n"
+    "    gl_Position = vec4(float((gl_VertexID & 1) * 4 - 1), float((gl_VertexID >> 1) * 4 - 1), 0.0, 1.0);\n"
+    "}\n";
+
+static const char *vi_fetch_src =
+    "uniform sampler2D u_img;\n"
+    "uniform ivec4 u_a;     /* the first column and line, the image's width, line 0 column 0 in the texture */\n"
+    "uniform ivec2 u_f;     /* the coverage read (AA modes 0 and 1), the dither filter */\n"
+    "out uvec4 o_px;\n"
+    "ivec4 src(int line, int col) {\n"
+    "    int i = u_a.w + line * u_a.z + col;\n"
+    "    if (i < 0 || i >= 320 * 240) return ivec4(0);\n"
+    "    ivec4 b = ivec4(texelFetch(u_img, ivec2(i % 320, i / 320), 0) * 255.0 + 0.5);\n"
+    "    return ivec4(b.rgb >> 3, (b.a * 7 + 127) / 255);\n"
+    "}\n"
+    "const ivec2 aan[6] = ivec2[6](ivec2(-1, -1), ivec2(1, -1), ivec2(-2, 0), ivec2(2, 0), ivec2(-1, 1), ivec2(1, 1));\n"
+    "const ivec2 din[8] = ivec2[8](ivec2(-1, -1), ivec2(0, -1), ivec2(1, -1), ivec2(-1, 0), ivec2(1, 0),\n"
+    "                              ivec2(-1, 1), ivec2(0, 1), ivec2(1, 1));\n"
+    "void main() {\n"
+    "    int col = u_a.x + int(gl_FragCoord.x), line = u_a.y + int(gl_FragCoord.y);\n"
+    "    ivec4 m = src(line, col);\n"
+    "    uvec3 p = uvec3(m.rgb) << 3u;\n"
+    "    int cvg = u_f.x != 0 ? m.a : 7;\n"
+    "    if (cvg != 7) {\n"
+    "        uvec3 lo = p, hi = p, lo2 = p, hi2 = p;\n"
+    "        for (int n = 0; n < 6; n++) {\n"
+    "            ivec4 q = src(line + aan[n].y, col + aan[n].x);\n"
+    "            if (q.a != 7) continue;\n"
+    "            uvec3 v = uvec3(q.rgb) << 3u;\n"
+    "            lo2 = min(lo2, max(v, lo));\n"
+    "            hi2 = max(hi2, min(v, hi));\n"
+    "            lo = min(lo, v);\n"
+    "            hi = max(hi, v);\n"
+    "        }\n"
+    "        uint coeff = 7u - uint(cvg);\n"
+    "        p = (p + (((lo2 + hi2 - (p << 1u)) * coeff + 4u) >> 3u)) & 255u;\n"
+    "    } else if (u_f.y != 0) {\n"
+    "        ivec3 acc = ivec3(0);\n"
+    "        for (int n = 0; n < 8; n++) {\n"
+    "            ivec3 v = src(line + din[n].y, col + din[n].x).rgb;\n"
+    "            acc += ivec3(greaterThan(v, m.rgb)) - ivec3(lessThan(v, m.rgb));\n"
+    "        }\n"
+    "        p = uvec3((m.rgb << 3) + acc) & 255u;\n"
+    "    }\n"
+    "    o_px = uvec4(p, uint(cvg));\n"
+    "}\n";
+
+static const char *vi_out_src =
+    "uniform usampler2D u_fx;\n"
+    "uniform ivec4 u_b0;    /* h_start, v_start, vres, x_lo */\n"
+    "uniform ivec4 u_b1;    /* x_hi, the fetch's first column and line, the switches */\n"
+    "uniform uvec4 u_b2;    /* x_start, x_add, y_start, y_add */\n"
+    "uniform uint u_seed;\n"
+    "out vec4 o_col;\n"
+    "uvec4 fx(int line, int col) { return texelFetch(u_fx, ivec2(col - u_b1.y, line - u_b1.z), 0); }\n"
+    /* the divot filter's pixel */
+    "uvec3 px(int line, int col) {\n"
+    "    uvec4 c = fx(line, col);\n"
+    "    if ((u_b1.w & 2) != 0) {\n"
+    "        uvec4 l = fx(line, col - 1), r = fx(line, col + 1);\n"
+    "        if ((l.a & c.a & r.a) != 7u) c.rgb = clamp(c.rgb, min(l.rgb, r.rgb), max(l.rgb, r.rgb));\n"
+    "    }\n"
+    "    return c.rgb;\n"
+    "}\n"
+    "uvec3 lerp(uvec3 a, uvec3 b, uint f) {\n"
+    "    if (f == 0u) return a;\n"
+    "    return (a + (((b - a) * f + 16u) >> 5u)) & 255u;\n"
+    "}\n"
+    "uint noise(int x, int y) {\n"
+    "    uint h = uint(x) * 0x9E3779B1u ^ uint(y) * 0x85EBCA77u ^ u_seed * 0xC2B2AE3Du;\n"
+    "    h ^= h >> 15u;\n"
+    "    h *= 0x2C1B3C6Du;\n"
+    "    h ^= h >> 12u;\n"
+    "    h *= 0x297A2D39u;\n"
+    "    return h ^ (h >> 15u);\n"
+    "}\n"
+    "uint gamma2(uint i) {\n"
+    "    uint r = uint(sqrt(float(i)));\n"
+    "    while ((r + 1u) * (r + 1u) <= i) r++;\n"
+    "    while (r * r > i) r--;\n"
+    "    return r << 1u;\n"
+    "}\n"
+    "void main() {\n"
+    "    int x = int(gl_FragCoord.x) - u_b0.x, y = int(gl_FragCoord.y) - u_b0.y;\n"
+    "    if (y < 0 || y >= u_b0.z || x < u_b0.w || x >= u_b1.x) { o_col = vec4(0.0); return; }\n"
+    "    uint cy = u_b2.z + uint(y) * u_b2.w, cx = u_b2.x + uint(x) * u_b2.y;\n"
+    "    int line = int(cy >> 10u), col = int(cx >> 10u);\n"
+    "    uint yfrac = (cy >> 5u) & 31u, xfrac = (cx >> 5u) & 31u;\n"
+    "    uvec3 p = px(line, col);\n"
+    "    if ((u_b1.w & 1) != 0 && (xfrac != 0u || yfrac != 0u)) {\n"
+    "        uvec3 q = px(line, col + 1);\n"
+    "        if (yfrac != 0u) {\n"
+    "            p = lerp(p, px(line + 1, col), yfrac);\n"
+    "            q = lerp(q, px(line + 1, col + 1), yfrac);\n"
+    "        }\n"
+    "        p = lerp(p, q, xfrac);\n"
+    "    }\n"
+    "    if ((u_b1.w & 4) != 0) {\n"
+    "        uint n = (u_b1.w & 8) != 0 ? noise(x, y) : 0u;\n"
+    "        p = uvec3(gamma2(p.r << 6u | (n & 63u)), gamma2(p.g << 6u | (n >> 6u & 63u)),\n"
+    "                  gamma2(p.b << 6u | (n >> 12u & 63u)));\n"
+    "    } else if ((u_b1.w & 8) != 0) {\n"
+    "        uint n = noise(x, y);\n"
+    "        p += uvec3(lessThan(p, uvec3(255u))) * (uvec3(n, n >> 1u, n >> 2u) & 1u);\n"
+    "    }\n"
+    "    o_col = vec4(vec3(p) / 255.0, 0.0);\n"
+    "}\n";
+
+static GLuint vi_prog_fetch, vi_prog_out, vi_vao, vi_fx_fbo, vi_fx_tex, vi_pic_fbo, vi_pic_tex, vi_pbo;
+static GLsync vi_fence;                 /* the picture's read-back into vi_pbo under way */
+static const Img *vi_img;               /* what the picture was made of (NULL: black, or uploaded) */
+static const uint8_t *vi_img_addr;
+static unsigned vi_img_gen;
+static GLint vu_a, vu_f, vu_b0, vu_b1, vu_b2, vu_seed;
+static int vi_fx_w, vi_fx_h, vi_pic_w, vi_pic_h, vi_max_tex;
+
+static GLuint vi_link(const char *fs_src) {
+    GLuint vs = compile(GL_VERTEX_SHADER, vi_vs_src), fs = compile(GL_FRAGMENT_SHADER, fs_src);
+    GLuint p = glCreateProgram();
+    glAttachShader(p, vs);
+    glAttachShader(p, fs);
+    glLinkProgram(p);
+    GLint ok;
+    glGetProgramiv(p, GL_LINK_STATUS, &ok);
+    if (!ok) {
+        char log[4096];
+        glGetProgramInfoLog(p, sizeof log, NULL, log);
+        host_fatal("gl: link (the VI's): %s", log);
+    }
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+    return p;
+}
+
+static GLuint vi_fbo_of(GLuint tex) {
+    GLuint f;
+    glGenFramebuffers(1, &f);
+    glBindFramebuffer(GL_FRAMEBUFFER, f);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+    static const GLenum one[1] = { GL_COLOR_ATTACHMENT0 };
+    glDrawBuffers(1, one);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        host_fatal("gl: the VI's framebuffer is incomplete");
+    return f;
+}
+
+static GLuint vi_tex(GLint ifmt, int w, int h, GLenum fmt, GLenum type) {
+    GLuint t;
+    glGenTextures(1, &t);
+    glBindTexture(GL_TEXTURE_2D, t);
+    glTexImage2D(GL_TEXTURE_2D, 0, ifmt, w, h, 0, fmt, type, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+    return t;
+}
+
+static void vi_init(void) {
+    vi_prog_fetch = vi_link(vi_fetch_src);
+    vi_prog_out = vi_link(vi_out_src);
+    vu_a = glGetUniformLocation(vi_prog_fetch, "u_a");
+    vu_f = glGetUniformLocation(vi_prog_fetch, "u_f");
+    vu_b0 = glGetUniformLocation(vi_prog_out, "u_b0");
+    vu_b1 = glGetUniformLocation(vi_prog_out, "u_b1");
+    vu_b2 = glGetUniformLocation(vi_prog_out, "u_b2");
+    vu_seed = glGetUniformLocation(vi_prog_out, "u_seed");
+    glUseProgram(vi_prog_fetch);
+    glUniform1i(glGetUniformLocation(vi_prog_fetch, "u_img"), 4);
+    glUseProgram(vi_prog_out);
+    glUniform1i(glGetUniformLocation(vi_prog_out, "u_fx"), 4);
+    glGenVertexArrays(1, &vi_vao);
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &vi_max_tex);
+    glActiveTexture(GL_TEXTURE4);
+    vi_pic_tex = vi_tex(GL_RGBA8, 640, 288, GL_RGBA, GL_UNSIGNED_BYTE);
+    vi_pic_fbo = vi_fbo_of(vi_pic_tex);
+    vi_fx_w = 336;
+    vi_fx_h = 256;
+    vi_fx_tex = vi_tex(GL_RGBA8UI, vi_fx_w, vi_fx_h, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE);
+    vi_fx_fbo = vi_fbo_of(vi_fx_tex);
+    glGenBuffers(1, &vi_pbo);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, vi_pbo);
+    glBufferData(GL_PIXEL_PACK_BUFFER, 640 * 288 * 4, NULL, GL_STREAM_READ);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    if (glGetError() != GL_NO_ERROR)
+        host_fatal("gl: setting up the VI failed");
+}
+
+/* the halfword i of RDRAM (N64 offsets / 2) in the host's memory */
+static uint8_t *vi_host(int64_t i) {
+#ifdef PORT_SCATTER_LAYOUT
+    return port_n64_host(0x80000000u + (uint32_t)i * 2);
+#else
+    return port_rdram + i * 2;
+#endif
+}
+
+static void vi_drop_read(void) {
+    if (vi_fence)
+        glDeleteSync(vi_fence);
+    vi_fence = NULL;
+}
+
+int gfx_gl_vi_make(const ViSetup *v, int read) {
+    static int told;
+    if (!vi_prog_fetch)
+        vi_init();
+    if (ninst)
+        flush();
+    vi_drop_read();
+    vi_img = NULL;
+    Img *m = NULL;
+    int64_t first = 0, last = 0;
+    if (v->shown) {
+        /* what the shown pixels read: the columns and lines they take, and
+           the next ones where they are interpolated (vi.c reads those
+           without a fraction too, but scales them by 0); the divot's
+           neighbours; the fetch's (two columns to each side on the line,
+           one on the lines above and below) */
+        int64_t line0 = INT64_MAX, line1 = INT64_MIN, s0 = INT64_MAX, s1 = INT64_MIN;
+        for (int y = 0; y < v->vres; y++) {
+            uint32_t cy = v->y_start + (uint32_t)y * v->y_add;
+            int64_t l = cy >> 10, n = l + (v->lerping && (cy >> 5 & 31));
+            line0 = l < line0 ? l : line0;
+            line1 = n > line1 ? n : line1;
+        }
+        for (int x = v->x_lo; x < v->x_hi; x++) {
+            uint32_t cx = v->x_start + (uint32_t)x * v->x_add;
+            int64_t c = cx >> 10, n = c + (v->lerping && (cx >> 5 & 31));
+            s0 = c < s0 ? c : s0;
+            s1 = n > s1 ? n : s1;
+        }
+        first = (int64_t)v->img_base + (line0 - 1) * v->img_w + s0 - 2;
+        last = (int64_t)v->img_base + (line1 + 1) * v->img_w + s1 + 2;
+        if (last < (int64_t)v->img_base + line1 * v->img_w + s1 + 3)
+            last = (int64_t)v->img_base + line1 * v->img_w + s1 + 3;
+        int ncols = (int)(s1 - s0 + 3), nlines = (int)(line1 - line0 + 1);
+        uint8_t *pf = first >= 0 && last < PORT_RDRAM_SIZE / 2 ? vi_host(first) : NULL;
+        uint8_t *pl = pf ? vi_host(last) : NULL;
+        if (pl && pl - pf == 2 * (last - first) && ncols <= vi_max_tex && nlines <= vi_max_tex)
+            for (int i = 0; i < NIMG; i++)
+                if (imgs[i].addr && !imgs[i].z && pf >= imgs[i].addr && pl + 2 <= imgs[i].addr + TW * TH * 2)
+                    m = &imgs[i];
+        if (!m) {
+            if (!told++ && host_verbose)
+                host_log("gl: the VI reads RDRAM's halfwords %#llx to %#llx, not of one image of the GPU's: "
+                         "vi.c makes the picture (at retrace %u, and where it does again)\n",
+                         (unsigned long long)first, (unsigned long long)last, host_vi_count);
+            st_vi_cpu++;
+            return 0;
+        }
+        /* the texture what RDRAM would be after a read-back (what the CPU
+           wrote since the last task drew, as img_use takes it) */
+        if (!m->valid)
+            img_upload(m);
+        else if (!img_same(m)) {
+            img_sync(m);
+            img_upload(m);
+        }
+        if (ncols > vi_fx_w || nlines > vi_fx_h) {
+            vi_fx_w = ncols > vi_fx_w ? ncols : vi_fx_w;
+            vi_fx_h = nlines > vi_fx_h ? nlines : vi_fx_h;
+            glActiveTexture(GL_TEXTURE4);
+            glBindTexture(GL_TEXTURE_2D, vi_fx_tex);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8UI, vi_fx_w, vi_fx_h, 0, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE, NULL);
+        }
+        int c0 = (int)s0 - 1, l0 = (int)line0;
+        int off0 = (int)((int64_t)v->img_base - first + (pf - m->addr) / 2);
+        glBindVertexArray(vi_vao);
+        glColorMaski(0, GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        glActiveTexture(GL_TEXTURE4);
+        /* the fetch */
+        glBindFramebuffer(GL_FRAMEBUFFER, vi_fx_fbo);
+        glViewport(0, 0, ncols, nlines);
+        glUseProgram(vi_prog_fetch);
+        glUniform4i(vu_a, c0, l0, (GLint)v->img_w, off0);
+        glUniform2i(vu_f, v->aa_on, v->dither_filter);
+        glBindTexture(GL_TEXTURE_2D, m->tex);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        /* the picture */
+        glBindFramebuffer(GL_FRAMEBUFFER, vi_pic_fbo);
+        glViewport(0, 0, v->w, v->h);
+        glUseProgram(vi_prog_out);
+        glUniform4i(vu_b0, v->h_start, v->v_start, v->vres, v->x_lo);
+        glUniform4i(vu_b1, v->x_hi, c0, l0, v->lerping | v->divot << 1 | v->gamma << 2 | v->gamma_dither << 3);
+        glUniform4ui(vu_b2, v->x_start, v->x_add, v->y_start, v->y_add);
+        glUniform1ui(vu_seed, v->seed);
+        glBindTexture(GL_TEXTURE_2D, vi_fx_tex);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+    } else {
+        glBindFramebuffer(GL_FRAMEBUFFER, vi_pic_fbo);
+        glColorMaski(0, GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        glClearColor(0, 0, 0, 0);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+    vi_pic_w = v->w;
+    vi_pic_h = v->h;
+    if (m) {
+        vi_img = m;
+        vi_img_addr = m->addr;
+        vi_img_gen = m->gen;
+    }
+    if (read) {
+        /* (started now, waited for when it is read) */
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, vi_pic_fbo);
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, vi_pbo);
+        glPixelStorei(GL_PACK_ALIGNMENT, 4);
+        glReadPixels(0, 0, vi_pic_w, vi_pic_h, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+        vi_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+        glFlush();
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    st_vi_gpu++;
+    return 1;
+}
+
+/* the picture made is still what it would be made now: no task has drawn
+   to the image since, the CPU hasn't written to it */
+int gfx_gl_vi_current(void) {
+    const Img *m = vi_img;
+    return !m || (m->addr == vi_img_addr && m->gen == vi_img_gen && m->valid && img_same(m));
+}
+
+void gfx_gl_vi_read(uint32_t *out, int *w, int *h) {
+    if (vi_fence) {
+        glClientWaitSync(vi_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 10000000000ull);
+        vi_drop_read();
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, vi_pbo);
+        const void *src =
+            glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, (GLsizeiptr)vi_pic_w * vi_pic_h * 4, GL_MAP_READ_BIT);
+        if (!src)
+            host_fatal("gl: can't map the VI's read-back");
+        memcpy(out, src, (size_t)vi_pic_w * vi_pic_h * 4);
+        glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    } else {
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, vi_pic_fbo);
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        glPixelStorei(GL_PACK_ALIGNMENT, 4);
+        glReadPixels(0, 0, vi_pic_w, vi_pic_h, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, out);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    }
+    *w = vi_pic_w;
+    *h = vi_pic_h;
+}
+
+void gfx_gl_vi_upload(const uint32_t *px, int w, int h) {
+    if (!vi_prog_fetch)
+        vi_init();
+    if (w > 640 || h > 288)
+        return;
+    vi_drop_read();
+    vi_img = NULL;
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, vi_pic_tex);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, px);
+    vi_pic_w = w;
+    vi_pic_h = h;
+}
+
+void gfx_gl_vi_present(int dw, int dh) {
+    if (!vi_prog_fetch)
+        vi_init();
+    /* at 4:3, as large as fits; line 0 at the top */
+    int w = dw, h = dw * 3 / 4;
+    if (h > dh) {
+        h = dh;
+        w = dh * 4 / 3;
+    }
+    int x = (dw - w) / 2, y = (dh - h) / 2;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glColorMaski(0, GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glViewport(0, 0, dw, dh);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    if (vi_pic_w && vi_pic_h) {
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, vi_pic_fbo);
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        glBlitFramebuffer(0, 0, vi_pic_w, vi_pic_h, x, y + h, x + w, y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 }
 
 const GfxBackend gfx_gl = { "gl", gl_init, gl_reset, gl_tri, gl_fill_rect, gl_tex_rect, gl_task_end,

@@ -6,20 +6,21 @@
  * CORE_FUNC_D needed an `if (1)` fake to keep arg1 out of its stack home.
  */
 
-void func_ovl09_04_80043328(const char *);
-void func_ovl09_04_80043668(s32);
-void func_ovl09_04_80043680(s32);
-void func_ovl09_04_80043818(void);
-void func_ovl09_04_80043878(void);
-void func_ovl09_04_80043F08(s32);
-void func_ovl09_04_80043FD8(f32, f32);
-void func_ovl09_04_80044380(f32, f32);
-void func_ovl09_04_80044520(u32 (*)[3]);
-s32 func_ovl09_04_80044760(s32, f32, f32, f32);
-void func_ovl09_04_80043ED0(f32 *, f32 *, f32 *);
-void func_ovl09_04_80043EC8(f32, f32, f32);
-void func_ovl09_04_80043EA8(f32, f32, f32);
-void func_ovl09_04_800441D8(s32);
+#define ZJ_0100 func_ovl09_04_80043328
+#define ZJ_0C00 func_ovl09_04_80043668
+#define ZJ_0D00 func_ovl09_04_80043680
+#define ZJ_1000 func_ovl09_04_80043818
+#define ZJ_100C func_ovl09_04_80043878
+#define ZJ_1710 func_ovl09_04_80043F08
+#define ZJ_172A func_ovl09_04_80043FD8
+#define ZJ_1D04 func_ovl09_04_80044380
+#define ZJ_2300 func_ovl09_04_80044520
+#define ZJ_2B04 func_ovl09_04_80044760
+#define ZJ_1709 func_ovl09_04_80043ED0
+#define ZJ_1708 func_ovl09_04_80043EC8
+#define ZJ_1704 func_ovl09_04_80043EA8
+#define ZJ_1904 func_ovl09_04_800441D8
+#include "overlays/common/zerojump.h"
 
 /* .bss: IDO lays it out in the order it first sees each variable, so the
  * definitions come before the code (docs/DECOMPILING.md, "Data"). */

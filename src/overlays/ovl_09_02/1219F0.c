@@ -6,22 +6,23 @@
  * CORE_FUNC_D needed an `if (1)` fake to keep arg1 out of its stack home.
  */
 
-void func_ovl09_02_800433E8(const char *);
-void func_ovl09_02_80043728(s32);
-void func_ovl09_02_80043740(s32);
-void func_ovl09_02_80043808(void (*)(PORT_IP(s32)), s32);
-void func_ovl09_02_800438D8(void);
-void func_ovl09_02_800438E0(s32, s32, s32);
-void func_ovl09_02_80043938(void);
-void func_ovl09_02_80044020(f32, f32);
-void func_ovl09_02_80044440(f32, f32);
-void func_ovl09_02_80044778(PORT_IP(s32), s32, f32);
-s32 func_ovl09_02_800440D8(PORT_IP(s32), s32);
-s32 func_ovl09_02_80044820(s32, f32, f32, f32);
-void func_ovl09_02_80043F90(f32 *, f32 *, f32 *);
-void func_ovl09_02_80043F88(f32, f32, f32);
-void func_ovl09_02_80043F68(f32, f32, f32);
-void func_ovl09_02_80044298(s32);
+#define ZJ_0100 func_ovl09_02_800433E8
+#define ZJ_0C00 func_ovl09_02_80043728
+#define ZJ_0D00 func_ovl09_02_80043740
+void func_ovl09_02_80043808(void (*)(PORT_IP(s32)), s32); /* 0x0E02, kept: its callers pass a void (*)(PORT_IP(s32)) (the header's void (*)(UnkStructA *)) */
+#define ZJ_1000 func_ovl09_02_800438D8
+#define ZJ_1001 func_ovl09_02_800438E0
+#define ZJ_100C func_ovl09_02_80043938
+#define ZJ_171B func_ovl09_02_80044020
+#define ZJ_1D04 func_ovl09_02_80044440
+void func_ovl09_02_80044778(PORT_IP(s32), s32, f32); /* 0x2901, kept: its callers pass PORT_IP(s32) (the header's UnkStructA *) */
+s32 func_ovl09_02_800440D8(PORT_IP(s32), s32); /* 0x1807, kept: its callers pass PORT_IP(s32) (the header's UnkStructA *) */
+#define ZJ_2B04 func_ovl09_02_80044820
+#define ZJ_1709 func_ovl09_02_80043F90
+#define ZJ_1708 func_ovl09_02_80043F88
+#define ZJ_1704 func_ovl09_02_80043F68
+#define ZJ_1904 func_ovl09_02_80044298
+#include "overlays/common/zerojump.h"
 
 /* .bss: IDO lays it out in the order it first sees each variable, so the
  * definitions come before the code (docs/DECOMPILING.md, "Data"). */

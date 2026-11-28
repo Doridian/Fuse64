@@ -137,49 +137,50 @@ typedef struct {
 #define WRAPW_ovl0B_03(x) ((x) >= 360.0f ? (x) - 360.0f : (w = ((x) < 0.0f ? (x) + 360.0f : (x)), w))
 #define GFX_W_ovl0B_03(pkt, a, b) { Gfx_80225840 *_g = (pkt); _g->w0 = (a); _g->w1 = (b); }
 
-void func_ovl0B_03_800478B0(s32, s32, s32);
-s32 func_ovl0B_03_800478B8(void);
-UnkStruct_802AC610 *func_ovl0B_03_80047908(void);
-UnkStruct_8023A834 *func_ovl0B_03_80047938(void);
-void func_ovl0B_03_80047960(s32, s32, s32);
-UnkStructA_40 *func_ovl0B_03_80047E98(s32, s32);
-void func_ovl0B_03_80047EA0(UnkStructA_40 *);
-void func_ovl0B_03_80047EC0(UnkStructA_40 *, s32);
-void func_ovl0B_03_80047EC8(UnkStructA_40 *, s32, s32, s32);
-void func_ovl0B_03_80047ED8(UnkStructA_40 *, s32);
-void func_ovl0B_03_80047EE0(UnkStructA_40 *, s32, s32);
-UnkStructA_40 *func_ovl0B_03_80047F18(void (*)(UnkStructA_40 *, Gfx_80225840 **), s32); /* 0x1510 */
-s32 func_ovl0B_03_80047F28(UnkStructA_40 *, s32);
-void func_ovl0B_03_80047FD8(s32);
-void func_ovl0B_03_80047FE8(s32);
-void func_ovl0B_03_80047FF8(f32, f32, f32);
-void func_ovl0B_03_80048018(f32, f32, f32);
-void func_ovl0B_03_80048020(f32 *, f32 *, f32 *);
-void func_ovl0B_03_80048060(s32);
-s32 func_ovl0B_03_80048308(void (*)(void), void *, PORT_IP(s32), s32, s32);
-void func_ovl0B_03_80048318(void);
-void func_ovl0B_03_80048328(s32);
-void func_ovl0B_03_80048350(void);
-s32 func_ovl0B_03_800483B8();
-s32 func_ovl0B_03_800483C8();
-s32 func_ovl0B_03_800483D8(s32);
-s32 func_ovl0B_03_800483E8(s32);
-s32 func_ovl0B_03_80048448();
-s32 func_ovl0B_03_80048450(s32);
-f32 func_ovl0B_03_800484B8(f32);
-UnkStructA_40 *func_ovl0B_03_80048690(s32 (*)(u8, u16), void *, s32, s32, s32);
-void func_ovl0B_03_800486A8(void);
-s32 func_ovl0B_03_800486D8();
-s32 func_ovl0B_03_800486E0();
-void func_ovl0B_03_800486F8(s32);
-s32 func_ovl0B_03_800486F0(u8 *, u16, u16, f32, f32, s32); /* 0x2501 */
-s32 func_ovl0B_03_80048740(u8 *);
-s32 func_ovl0B_03_80048748(u8 *, u16, u16, f32, f32, s32);
-s32 func_ovl0B_03_80048890(s32);
-void func_ovl0B_03_800488A0(s32);
-void func_ovl0B_03_800488A8(void);
-s32 func_ovl0B_03_800488B0(s32, f32, f32, f32);
-s32 func_ovl0B_03_800489F8(s32);
+#define ZJ_0F00 func_ovl0B_03_800478B0
+#define ZJ_0F01 func_ovl0B_03_800478B8
+#define ZJ_0F0B func_ovl0B_03_80047908
+#define ZJ_0F11 func_ovl0B_03_80047938
+#define ZJ_0F16 func_ovl0B_03_80047960
+#define ZJ_1500 func_ovl0B_03_80047E98
+#define ZJ_1501 func_ovl0B_03_80047EA0
+#define ZJ_1505 func_ovl0B_03_80047EC0
+#define ZJ_1506 func_ovl0B_03_80047EC8
+#define ZJ_1508 func_ovl0B_03_80047ED8
+#define ZJ_1509 func_ovl0B_03_80047EE0
+#define ZJ_1510 func_ovl0B_03_80047F18
+#define ZJ_1512 func_ovl0B_03_80047F28
+#define ZJ_1700 func_ovl0B_03_80047FD8
+#define ZJ_1702 func_ovl0B_03_80047FE8
+#define ZJ_1704 func_ovl0B_03_80047FF8
+#define ZJ_1708 func_ovl0B_03_80048018
+#define ZJ_1709 func_ovl0B_03_80048020
+#define ZJ_1711 func_ovl0B_03_80048060
+#define ZJ_1900 func_ovl0B_03_80048308
+#define ZJ_1902 func_ovl0B_03_80048318
+#define ZJ_1904 func_ovl0B_03_80048328
+#define ZJ_1909 func_ovl0B_03_80048350
+#define ZJ_1B01 func_ovl0B_03_800483B8
+#define ZJ_1B03 func_ovl0B_03_800483C8
+#define ZJ_1B05 func_ovl0B_03_800483D8
+#define ZJ_1B07 func_ovl0B_03_800483E8
+#define ZJ_1C01 func_ovl0B_03_80048448
+#define ZJ_1C02 func_ovl0B_03_80048450
+#define ZJ_1D01 func_ovl0B_03_800484B8
+#define ZJ_2400 func_ovl0B_03_80048690
+#define ZJ_2403 func_ovl0B_03_800486A8
+#define ZJ_2409 func_ovl0B_03_800486D8
+#define ZJ_240A func_ovl0B_03_800486E0
+void func_ovl0B_03_800486F8(s32); /* 0x2502, kept: void: with the definition's s32 its jp code changes (the calls' value is unused) */
+#define ZJ_2501 func_ovl0B_03_800486F0
+#define ZJ_250B func_ovl0B_03_80048740
+#define ZJ_250C func_ovl0B_03_80048748
+#define ZJ_2B00 func_ovl0B_03_80048890
+#define ZJ_2B02 func_ovl0B_03_800488A0
+#define ZJ_2B03 func_ovl0B_03_800488A8
+#define ZJ_2B04 func_ovl0B_03_800488B0
+#define ZJ_2F0F func_ovl0B_03_800489F8
+#include "overlays/common/zerojump.h"
 
 static void func_ovl0B_03_80043010(void);
 void func_ovl0B_03_80043060(s32 arg0);

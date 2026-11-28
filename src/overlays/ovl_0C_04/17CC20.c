@@ -24,54 +24,55 @@
  * ovl_0C_03's 17A5B0 and ovl_0C_05's 17F9F0.
  */
 
-void func_ovl0C_04_80044918(s32);
-void func_ovl0C_04_80044930(s32);
-void func_ovl0C_04_80044958(s32, s32, s32, s32, s32, s32);
-void func_ovl0C_04_80044960(s32, s32, s32, s32, s32, s32, s32);
-void func_ovl0C_04_800449A0(UnkStructA_40 *, f32 *, f32 *);
-void func_ovl0C_04_80044A00(void (*)(UnkStructA *));
-void func_ovl0C_04_80044A10(s32, s32, s32);
-void func_ovl0C_04_80044A50(void (*)(UnkStructA *));
-void func_ovl0C_04_80044AA0(s32, s32);
-void func_ovl0C_04_80044AB8(s32);
-void func_ovl0C_04_80044AC8(void);
-void func_ovl0C_04_80044AD0(s32, s32, s32);
-void func_ovl0C_04_80044AD8(void *);
-s32 func_ovl0C_04_80044AE0(s32, s32, s32, s32);
-s32 func_ovl0C_04_80044AF8(void);
-void func_ovl0C_04_80044B00(s32, void *);
-void func_ovl0C_04_80044B08(s32);
-void func_ovl0C_04_80044B10(s32);
-void func_ovl0C_04_80044B18(s32, s32, f32, s32, s32, s32, s32);
-void func_ovl0C_04_80044B28(void);
-UnkStructA *func_ovl0C_04_80044B58(s32);
-void func_ovl0C_04_80044B60(s32);
-s32 func_ovl0C_04_80045060(UnkStructA_40 *, s32, s32, s32, s32, s32);
-void func_ovl0C_04_80045158(f32, f32, f32);
-void func_ovl0C_04_80045178(f32, f32, f32);
-void func_ovl0C_04_80045180(f32 *, f32 *, f32 *);
-void func_ovl0C_04_80045210(f32, f32);
-void func_ovl0C_04_80045318(UnkStructA *, s32);
-void func_ovl0C_04_80045320(UnkStructA *, s32);
-void func_ovl0C_04_80045330(UnkStructA *);
-UnkStructA *func_ovl0C_04_80045340(s32, s32, s32, PORT_IP(s32));
-UnkStructA *func_ovl0C_04_80045360(s32, s32, f32, f32, f32);
-void func_ovl0C_04_80045398(UnkStructA *);
-void func_ovl0C_04_80045468(void (*)(void), void *, PORT_IP(s32), s32, s32);
-void func_ovl0C_04_80045478(void);
-void func_ovl0C_04_80045488(s32);
-void *func_ovl0C_04_80045490(void);
+#define ZJ_0C00 func_ovl0C_04_80044918
+#define ZJ_0D00 func_ovl0C_04_80044930
+#define ZJ_0D05 func_ovl0C_04_80044958
+#define ZJ_0D06 func_ovl0C_04_80044960
+#define ZJ_0D0E func_ovl0C_04_800449A0
+#define ZJ_0E03 func_ovl0C_04_80044A00
+#define ZJ_0F00 func_ovl0C_04_80044A10
+#define ZJ_0F08 func_ovl0C_04_80044A50
+#define ZJ_0F12 func_ovl0C_04_80044AA0
+#define ZJ_0F15 func_ovl0C_04_80044AB8
+#define ZJ_1000 func_ovl0C_04_80044AC8
+#define ZJ_1001 func_ovl0C_04_80044AD0
+#define ZJ_1002 func_ovl0C_04_80044AD8
+#define ZJ_1003 func_ovl0C_04_80044AE0
+#define ZJ_1006 func_ovl0C_04_80044AF8
+#define ZJ_1007 func_ovl0C_04_80044B00
+#define ZJ_1008 func_ovl0C_04_80044B08
+#define ZJ_1009 func_ovl0C_04_80044B10
+#define ZJ_100A func_ovl0C_04_80044B18
+#define ZJ_100C func_ovl0C_04_80044B28
+#define ZJ_1012 func_ovl0C_04_80044B58
+#define ZJ_1013 func_ovl0C_04_80044B60
+#define ZJ_150D func_ovl0C_04_80045060
+#define ZJ_1704 func_ovl0C_04_80045158
+#define ZJ_1708 func_ovl0C_04_80045178
+#define ZJ_1709 func_ovl0C_04_80045180
+#define ZJ_171B func_ovl0C_04_80045210
+#define ZJ_1811 func_ovl0C_04_80045318
+#define ZJ_1812 func_ovl0C_04_80045320
+#define ZJ_1814 func_ovl0C_04_80045330
+#define ZJ_1816 func_ovl0C_04_80045340
+#define ZJ_181A func_ovl0C_04_80045360
+#define ZJ_1821 func_ovl0C_04_80045398
+#define ZJ_1900 func_ovl0C_04_80045468
+#define ZJ_1902 func_ovl0C_04_80045478
+#define ZJ_1904 func_ovl0C_04_80045488
+#define ZJ_1905 func_ovl0C_04_80045490
 /* returning a value: as void, 80043FC0's loop gets v0 where it has v1 */
-s32 func_ovl0C_04_800454B0(void);
-f32 func_ovl0C_04_80045610(f32);
-void func_ovl0C_04_800456E0(s32);
-void func_ovl0C_04_800456E8(s32);
-s32 func_ovl0C_04_800456F0(s32);
-void func_ovl0C_04_800457D0(u32 (*)[3]);
-void func_ovl0C_04_800458B8(s32, f32, f32, f32, PORT_IP(s32));
-void func_ovl0C_04_80045978(s32, s32, s32);
-void func_ovl0C_04_800459F0(s32);
-s32 func_ovl0C_04_80045A10(s32, f32, f32, f32);
+#define ZJ_1909 func_ovl0C_04_800454B0
+#define ZJ_1D00 func_ovl0C_04_80045610
+#define ZJ_1E06 func_ovl0C_04_800456E0
+#define ZJ_1E07 func_ovl0C_04_800456E8
+#define ZJ_1E08 func_ovl0C_04_800456F0
+#define ZJ_2300 func_ovl0C_04_800457D0
+#define ZJ_2600 func_ovl0C_04_800458B8
+#define ZJ_2A00 func_ovl0C_04_80045978
+#define ZJ_2B00 func_ovl0C_04_800459F0
+#define ZJ_2B04 func_ovl0C_04_80045A10
+#include "overlays/common/zerojump.h"
 
 void func_ovl0C_04_80043010(void);
 void func_ovl0C_04_80043020(void);

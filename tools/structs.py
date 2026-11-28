@@ -102,15 +102,17 @@ ALLOW_E = {
 }
 
 
-# (e)'s other differences: at most this many (lower it when they drop), per version.  Most are
-# a ZeroJump stub's declaration in an overlay against its target (the
-# overlays' stubs are declared in each overlay); the main_code ones left are
-# docs/DECOMPILING.md's "Prototypes": an s8/s16 parameter or a narrow return
-# whose callers read an int (the match needs the caller's view), a void
-# function whose callers read $v0, 48600's and 8A7A0's m2c objects (u8 *,
-# f32 *) that their callers hold as structures or integers, and the task's
-# argument (func_802391F0).
-E_OTHER_MAX = {"us": 309, "eu": 309, "jp": 306}
+# (e)'s other differences: at most this many (lower it when they drop), per version.  They
+# are docs/DECOMPILING.md's "Prototypes": an s8/s16 parameter or a narrow
+# return whose callers read an int (the match needs the caller's view), a
+# void function whose callers read $v0, 48600's and 8A7A0's m2c objects
+# (u8 *, f32 *) that their callers hold as structures or integers, and the
+# task's argument (func_802391F0); and the same for the overlays' ZeroJump
+# stubs: src/overlays/common/zerojump.h's views that aren't the target's
+# (each with its reason there) and the declarations an overlay keeps (each
+# with its reason: a Vec3f * where the others pass an f32 *, a stub called
+# without its argument, ...).
+E_OTHER_MAX = {"us": 279, "eu": 279, "jp": 276}
 
 
 def allowed_d(names):

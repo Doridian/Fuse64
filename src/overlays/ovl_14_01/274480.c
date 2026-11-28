@@ -1547,7 +1547,7 @@ void func_ovl14_01_80048ABC(UnkStructA **arg0, Step3C *arg1) {
     arg1->unk10 = 0.0f;
     arg1->unk8 = 0.0f;
     arg1->unk4 = 60.0f;
-    do {} while (0); /* fake: a uopt block boundary (no code); any test here works, none natural found (link store orders, chains, indexing, each link in its own do-while) */
+    if (arg1 == NULL) { DEBUG_PRINT(("no link\n")); } /* a compiled-out debug check (its block boundary is needed; guess: any test here matches) */
     arg1++;
     arg1->flags = 0x10002;
     arg1->unkC = 1.0f;

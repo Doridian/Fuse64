@@ -8,8 +8,8 @@
  * original's order. Its .data (D_802A1250-802A1370, the configs, the
  * reverb parameters, the ROM addresses and func_80266D8C's static
  * counter D_802A1368) and .rodata (802A3A70-802A3B50: constants and
- * jump tables) are its own and placed in data_split.txt; its .bss stays
- * asm. The static counter is why the .data is in C: as an extern it
+ * jump tables) are its own and placed in data_split.txt, and so is its
+ * .bss (D_802AD120-802AD680). The static counter is why the .data is in C: as an extern it
  * changes func_80266D8C's code. D_802A1288 is D_802A1278[4] and
  * D_802A12C0 a pair (the second word is the heap).
  *
@@ -378,43 +378,54 @@ void func_80298738(void *, u8);
 s32 func_80298740(void *);
 f32 sinf(f32);
 
-extern u8 D_802AD120[];
-extern u8 D_802AD130[];
-extern u8 D_802AD1F8[];
+/* .bss (D_802AD120-802AD680), in address order before the first function,
+ * as IDO lays it out (the order it numbers them). D_802AD3C8's elements
+ * are the oscillators' free list (func_8026A164 links them). */
+u8 D_802AD120[0x10];
+u8 D_802AD130[0xC8];
+u8 D_802AD1F8[0x18];
 #ifdef TARGET_PC
-extern u8 *D_802AD210; /* the heap's base */
+u8 *D_802AD210; /* the heap's base */
 #else
-extern s32 D_802AD210;
+s32 D_802AD210;
 #endif
-extern s32 D_802AD214;
-extern u8 D_802AD218;
-extern s32 D_802AD234;
-extern u32 D_802AD238;
-extern f32 D_802AD23C;
-extern f32 D_802AD240;
-extern s16 D_802AD244;
-extern s16 D_802AD246;
-extern s16 D_802AD248;
-extern s16 D_802AD24A;
-extern u8 D_802AD24C;
-extern u8 D_802AD250[];
-extern s16 D_802AD3C0;
-extern oscData D_802AD3DC;
-extern oscData D_802AD3F0;
-extern oscData D_802AD404;
-extern oscData ***D_802AD418;
-extern oscData **D_802AD42C;
-extern oscData *D_802AD440;
-extern oscData D_802AD454;
-extern s32 D_802AD660;
-extern f32 D_802AD664;
-extern f32 D_802AD668;
-extern s16 D_802AD66C;
-extern s16 D_802AD66E;
-extern s16 D_802AD670;
-extern s16 D_802AD672;
-extern u8 D_802AD674;
-extern u8 D_802AD675;
+s32 D_802AD214;
+u8 D_802AD218;
+SndBankFile *D_802AD21C;
+void *D_802AD220; /* ALCSPlayer */
+void *D_802AD224; /* the sequence */
+void *D_802AD228; /* ALCSeq */
+SeqFile *D_802AD22C;
+SeqInfo *D_802AD230;
+s32 D_802AD234;
+u32 D_802AD238;
+f32 D_802AD23C;
+f32 D_802AD240;
+s16 D_802AD244;
+s16 D_802AD246;
+s16 D_802AD248;
+s16 D_802AD24A;
+u8 D_802AD24C;
+u8 D_802AD250[0xF0];
+ChlState D_802AD340[16];
+s16 D_802AD3C0;
+oscData *D_802AD3C4;
+oscData D_802AD3C8[32];
+SndBankFile *D_802AD648;
+void *D_802AD64C; /* ALSndPlayer */
+SndTable *D_802AD650;
+Voice *D_802AD654;
+u16 **D_802AD658;
+VoiceScript *D_802AD65C;
+s32 D_802AD660;
+f32 D_802AD664;
+f32 D_802AD668;
+s16 D_802AD66C;
+s16 D_802AD66E;
+s16 D_802AD670;
+s16 D_802AD672;
+u8 D_802AD674;
+u8 D_802AD675;
 extern u8 D_802AD684[];
 static s16 func_80267A10(s16 num);
 static void func_802679B8(s16 *p, s16 hi);

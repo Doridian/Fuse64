@@ -544,10 +544,10 @@ segments:
       - {type: .bss, vram: 0x802ACFE0, name: 78CA0}
       - {type: .bss, vram: 0x802AD0D0, name: 7D840}
       - {type: .bss, vram: 0x802AD0E0, name: 80420}
-      - {type: bss, vram: 0x802AD120}
+      - {type: .bss, vram: 0x802AD120, name: 80580}
       - {type: .bss, vram: 0x802AD680, name: 85A10}
       - {type: .bss, vram: 0x802AFC20, name: 86680}
-      - {type: bss, vram: 0x802AFC30, name: bss_802AFC30}
+      - {type: bss, vram: 0x802AFC30}
       - {type: .bss, vram: 0x802AFE70, name: 926A0}
       - {type: .bss, vram: 0x802AFE80, name: 949A0}
       - {type: .bss, vram: 0x802AFF70, name: 96540}

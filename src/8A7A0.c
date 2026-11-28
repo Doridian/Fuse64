@@ -71,6 +71,11 @@
  * func_80270C24 reads the flags into a local `fl` declared last,
  * stores it and tests it (the original's `lw v1; sw v1` with no ugen
  * temporary for the load).
+ * func_80270770 and func_80270C24 set speed and height to an integer 0
+ * in their case 0: with 0.0f each store got its own mtc1 (the old
+ * empty `if (D_802AFC5C == 0.0f) {}` stood in for that).
+ * func_80273414 frees the node with func_80270B20 (inlined: its area
+ * is the frame the old pad[3] stood for).
  */
 #include "common.h"
 #include "m2c.h"
@@ -189,7 +194,6 @@ extern s32 D_802AC8A0;
 extern s32 D_802AFC50;
 extern s32 D_802AFC54;
 extern s32 D_802AFC58;
-extern f32 D_802AFC5C;
 extern f32 D_802AFC60;
 extern f32 D_802AFC64;
 extern f32 D_802AFC68;
@@ -989,7 +993,7 @@ void func_80276D68(Ent88 *arg0) {
     if (arg0->unk62 > 0) {
         arg0->unk62--;
     }
-    if (!(arg0->unk10 & 0x800) && (s16) ((g = arg0->unk64) & 0x80) == 0) {
+    if (!(arg0->unk10 & 0x800) && (g = arg0->unk64 & 0x80) == 0) {
         arg0->unk80 = 1.0f;
         arg0->unk7C = 0.9f;
         if (arg0->unk5C < 100) {
@@ -2101,17 +2105,13 @@ void func_802734BC(u8 *arg0) {
 void func_80273414(s16 *arg0) {
     Ent88 *e = (Ent88 *) arg0;
     s16 t1;
-    s32 pad[3]; /* fake: frame-tuned */
-    void *p;
 
     func_80270BA4((u8 *) e->obj);
-    t1 = func_802712A8(&e->unk64, 0x200);
+    t1 = e->unk64 & 0x200;
     if (t1) {
         func_8027036C(&e->unk64, 0x200);
         func_802313DC(e->obj, 0x20000);
-        p = e->unk38;
-        func_80270A80(p);
-        free(p);
+        func_80270B20(e->unk38);
     }
     if (e->unk8 != -1) {
         func_8028A4E0(e->unk8);
@@ -3004,10 +3004,8 @@ void func_80270C24(u8 *arg0, s16 arg1, s32 arg2) {
     }
     switch (arg2) {
         case 0:
-            r = 0.0f;
-            if (D_802AFC5C == 0.0f) {
-            }
-            h = 0.0f;
+            r = 0;
+            h = 0;
             break;
         case 1:
             r = 25.0f;
@@ -3129,10 +3127,8 @@ PORT_RET(void, s32) func_80270770(s16 arg0, s16 arg1) {
     obj = (UnkStructA *) func_80270714(arg0);
     switch (arg1) {
         case 0:
-            speed = 0.0f;
-            if (D_802AFC5C == 0.0f) { /* fake: lets speed's 0.0f serve h's store too */
-            }
-            h = 0.0f;
+            speed = 0;
+            h = 0;
             break;
         case 1:
             speed = 25.0f;

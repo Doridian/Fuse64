@@ -31,9 +31,11 @@ It reports
       asm/*_zerojmp.s, or port/snapshot/us without an extract).  Those
       where two or more structure types meet fail --check; the others
       (an s32 for a u32 or a pointer, a void * for a structure's, a void
-      return for an s32) are counted, -v lists them.
+      return for an s32) are counted, -v lists them, and --check fails
+      when there are more than E_OTHER_MAX of them.
 --check exits non-zero on (a), (b) not in ALLOW_B, (c), (d) not in
-ALLOW_D, or (e) not in ALLOW_E (each allowance with its reason).  --json
+ALLOW_D, (e) not in ALLOW_E (each allowance with its reason), or more
+(e)s of the other kind than E_OTHER_MAX.  --json
 writes everything found.
 """
 import argparse
@@ -98,6 +100,17 @@ ALLOW_E = {
     ("func_8026437C", "param 0"): "7D840 includes gbi.h (Gfx), 426E0 has Gfx_80225840: one type on the port "
                                   "(docs/DECOMPILING.md, \"Types\")",
 }
+
+
+# (e)'s other differences: at most this many (lower it when they drop), per version.  Most are
+# a ZeroJump stub's declaration in an overlay against its target (the
+# overlays' stubs are declared in each overlay); the main_code ones left are
+# docs/DECOMPILING.md's "Prototypes": an s8/s16 parameter or a narrow return
+# whose callers read an int (the match needs the caller's view), a void
+# function whose callers read $v0, 48600's and 8A7A0's m2c objects (u8 *,
+# f32 *) that their callers hold as structures or integers, and the task's
+# argument (func_802391F0).
+E_OTHER_MAX = {"us": 309, "eu": 309, "jp": 306}
 
 
 def allowed_d(names):
@@ -651,7 +664,11 @@ def main():
         json.dump(out, open(a.json, "w"), indent=1, sort_keys=True)
     if bad:
         return 2
-    if a.check and (dup_a or conf_c or open_b or open_d or open_e):
+    n_other = sum(1 for x in same_e if not x[4])
+    e_max = E_OTHER_MAX[a.version]
+    if n_other < e_max:
+        print("(e): %d other differences, fewer than E_OTHER_MAX's %d for %s: lower it" % (n_other, e_max, a.version))
+    if a.check and (dup_a or conf_c or open_b or open_d or open_e or n_other > e_max):
         return 1
     return 0
 

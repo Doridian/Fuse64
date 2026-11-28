@@ -12,50 +12,29 @@
 #include "common.h"
 #include "bonus.h"
 #include "player.h"
+#include "4E030.h"
+#include "54E40.h"
+#include "5E3F0.h"
+#include "8A7A0.h"
+#include "93850.h"
+#include "949A0.h"
+#include "A4860.h"
+#include "530C0.h"
+#include "86680.h"
+#include "48600.h"
+#include "404C0.h"
 
-void func_8022FC90(UnkStructA *);
-void func_802313DC(UnkStructA *, s32);
-void func_80231408(UnkStructA *, s32);
-UnkStructA *func_802308B8(UnkStructA *, s32);
-s32 func_80234248(s32);
-void func_80239094(void);
-UnkStruct_802AC610 *func_8023A840(void);
-void func_8024694C(s32, s32, s32);
-void func_80246C3C(s32, s32, s32);
-void func_80246D74(s32);
-void func_80246F00(s32, s32);
-void func_80248864(s32);
-void func_802488C0(s32);
-void func_802502BC(s32);
-void func_8026C660(s32);
-f32 func_8026E8B8(void);
 void func_80270354(s32 *, s32);
 void func_8027036C(s32 *, s32);
 PORT_RET(s32, s16) func_802712A8(s32 *, s32);
-s32 func_80272024(s16);
-void func_802727D8(PORT_RET(s32, void *));
-void func_802733C8(UnkStructA *);
-void func_80277D60(s32, s32);
-s32 func_8027B480(s32 arg0);
 void *malloc(s32);
 void free(void *);
-s16 func_8026FFA0(s16);
 void func_80270080(UnkStruct_8027A264 *);
 void func_80277DA8(s16, s32);
 UnkStructA *func_802443F4(s32);
 UnkStruct_800BB4A8 *func_8027AA74(s16, f32, f32, f32, s32, s32, s32);
-f32 func_80234434(f32);
 void func_8027A950(void);
 PORT_RET(void, s32) func_8028A81C(s32, f32, f32, f32, PORT_IP(s32));
-PORT_RET(void, s32) func_8029217C(UnkStructA *, s32, f32, void (*)());
-
-void func_802790E0(UnkStruct_800BB4A8 *arg0);
-void func_802797BC(UnkStructA *arg0, UnkStruct_800BB4A8 *arg1);
-void func_80279CA8(void);
-void func_80279D40(UnkStruct_800BB4A8 *arg0);
-s32 func_80279DC8(UnkStruct_800BB4A8 *arg0, f32 arg1);
-void func_80279F30(void);
-UnkStruct_800BB4A8 *func_8027A1A0(UnkStructA *arg0);
 
 #ifdef TARGET_PC
 /* the list's head is D_800BB4A0[0]'s link (its own name on the N64) */
@@ -68,28 +47,14 @@ extern UnkStruct_800AEDF0 D_800AEDF0[];
 extern UnkStruct_800BB4A8 D_800BB4A0[48];
 extern UnkStruct_800BB4A8 D_800BB4F8; /* [0] the list's head, [1] its sentinel, [2..47] the pool */
 
-void func_80270B20(PORT_RET(s32, void *));
 void func_80270BA4(UnkStructA *);
-PORT_RET(void, s32) func_80238EA8(s32);
-void func_8027404C(f32, f32, f32, f32 *, f32 *, f32 *);
 void func_80297D30(s32, void *);
 void func_8027AFB8(s16 arg0);
 
 extern UnkStruct_800BA8A0 D_800BA8A0[PORT_SIZE(5)];
 
-void func_80279628(s16 arg0, s16 arg1);
-PORT_RET(s32, void *) func_802311E8(UnkStructA *);
 UnkStructA *func_80231274(s32, s32, s32, void *);
 s32 func_80238A10(void (*)(void), PORT_IP(s32), void *, s32, s32);
-s32 func_80243DDC(void);
-s32 func_80243EF0(s32);
-void func_8024512C(s32, s32);
-PORT_RET(void, s32) func_8026C51C(s32, f32, f32, f32);
-void func_80277AF8(s16, s32);
-void func_80278E84(s16, s16);
-s32 func_8028A36C(s32);
-void func_8028A3D0(s32);
-void func_8027A144(void);
 void func_8027A264(UnkStruct_800BB4A8 *arg0, s16 arg1);
 s16 func_8027A4E8(s16 arg0);
 s16 func_8027A574(s16 arg0);
@@ -97,43 +62,27 @@ void func_8027A380(s16 arg0);
 void func_8027A478(UnkStruct_800BB4A8 *arg0);
 UnkStruct_800BB4A8 *func_8027A4A0(void);
 s16 func_8027AF70(void);
-s32 func_8027911C(s16 arg0);
-void func_802794FC(s16 arg0);
-void func_80279560(void);
-void func_80279780(s16 arg0, s32 arg1);
-void func_8027404C(f32, f32, f32, f32 *, f32 *, f32 *);
-void func_8027A640(void);
 extern u8 D_800BD818[PORT_SIZE(0x1000)]; /* a thread's stack */
 extern s32 D_802AC5D0;
 
 #define ABSF(x) ((x) < 0.0f ? -(x) : (x))
 
-void func_80279050(void);
-s32 func_802791C4(s16 arg0);
-void func_80279F10(UnkStruct_800BB4A8 *arg0);
 s32 func_8027A1F4(UnkStructA *arg0, PORT_IP(s32) arg1);
 UnkStruct_800BB4A8 *func_8027AA74(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg4, s32 arg5, s32 arg6);
 s32 func_8027B094(s16 arg0);
 void func_8027B0BC(s16 arg0);
-void func_8027B39C(s16 arg0, s16 arg1);
-void func_8027B440(UnkStructA *arg0);
 void func_8027B4B0(s16 arg0);
-s32 func_8027B5A8(UnkStructA *arg0);
 void func_8027B66C(s16 arg0, s16 arg1);
 void func_8027B6A4(UnkStruct_800BB4A8 *arg0, UnkStruct_800BB4A8 *arg1);
 void func_8027B6D4(UnkStruct_800BB4A8 *arg0, UnkStruct_800BB4A8 *arg1);
 void func_8027B70C(void);
 s32 func_8027B7C4(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
-s32 func_8027B828(s16 arg0, s16 arg1, s16 arg2, s16 arg3);
-s32 func_8027B8D4(s16 arg0, s16 arg1, s16 arg2, s16 arg3);
 s32 func_8027BA80(s16 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg4, s32 arg5);
 s32 func_8027BAE8(s16 arg0, f32 arg1, f32 arg2, f32 arg3);
 void func_8027BB48(void);
 void func_8027BB9C(void);
-void func_8027BBC4(void);
 void func_8027BC74(void);
 s32 func_8027BCD8(void);
-void func_8027BCE8(void);
 
 /* .data: ZeroJump module 0x28's table (func_8027BCE8); its last two words
    are zeros, taken here for the section's padding */

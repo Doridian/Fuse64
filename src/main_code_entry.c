@@ -1,6 +1,5 @@
 #include "common.h"
-
-void func_80225840(PORT_RET(s32, void *));
+#include "40040.h"
 
 /* The build's date, in `date`'s format, upper case: nothing refers to it.
  * It is main_code's first .rodata, so its owner comes before 426E0 (the

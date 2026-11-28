@@ -1,5 +1,6 @@
 #include "common.h"
 #include "grid.h"
+#include "5E090.h"
 
 typedef struct {
     /* 0x00 */ u8 unk0[0xC];
@@ -20,7 +21,6 @@ typedef struct {
 
 extern UnkStruct_800AED78 D_800AED78[];
 extern UnkStruct_800B15D8 D_800B15D8[];
-void func_802438BC(s32 *arg0);
 void func_80243A50(s32 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg4, s16 arg5);
 void func_80243BA8(s32 arg0);
 

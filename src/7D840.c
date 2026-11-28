@@ -46,6 +46,8 @@
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif
 #include "ultralib/PR/gbi.h"
+#include "4DE50.h"
+#include "7D840.h"
 
 typedef struct {
     f32 a;
@@ -98,10 +100,6 @@ typedef struct {
     /* 0x38 */ s32 dirX;
     /* 0x3C */ s32 dirY;
 } DrawI;
-
-s32 func_802337EC(f32);
-int func_802336E4(f32);
-int func_80233650(f32, f32);
 
 s32 D_802AD0D0;
 

@@ -1,5 +1,6 @@
 #include "common.h"
 #include "ultralib/ultra64.h"
+#include "52270.h"
 
 /* -O3 (the Makefile's O3_C_FILES), so written last function first.  Eight
  * threads, each with its queue and stack (D_802A5A60), and a thread
@@ -307,8 +308,6 @@ void func_80237F44(OSMesgQueue *arg0) {
 s32 func_80237F34(void) {
     return D_802A8954;
 }
-
-s32 func_80237E18(s32 arg0, s32 arg1);
 
 s32 func_80237F0C(s32 arg0, s32 arg1) {
     return func_80237E18(arg0, D_802A8928 + arg1);

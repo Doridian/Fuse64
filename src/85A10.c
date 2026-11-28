@@ -26,6 +26,8 @@
  */
 #include "common.h"
 #include "ultralib/ultra64.h"
+#include "80580.h"
+#include "85A10.h"
 
 /* audiomgr.c's DMABuffer (an ALLink first) */
 typedef struct UnkStruct_8026B804 {
@@ -183,10 +185,6 @@ void *func_802983D8(void *, s32, UnkStruct_802AF928 *, s32, s32);
 void func_80298490(void *, void *);
 void func_80298498(void *);
 UnkStruct_802AD6A0_0 *func_802984A0(UnkStruct_802AD6A0_0 *, s32 *, void *, s32);
-void func_80267754(void);
-void func_802686B8(void);
-void func_8026910C(void);
-void func_802691A8(void);
 
 extern u8 D_8029D250[PORT_SIZE(0xD0)]; /* rspboot */
 extern u8 D_8029D320[PORT_SIZE(0x1430)];
@@ -215,7 +213,6 @@ UnkStruct_802AF960 D_802AF960[0x18];
 UnkStruct_802AD868 D_802AFBA0;
 void *D_802AFBB8[0x18];
 
-void *func_8026B72C(s32 arg0);
 static void func_8026B584(void *arg);
 static PORT_IP(s32) func_8026B804(s32 addr, s32 len, void *state);
 static void *func_8026B210(UnkStruct_802AF930 **state);

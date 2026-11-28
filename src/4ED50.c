@@ -1,5 +1,12 @@
 #include "common.h"
 #include "grid.h"
+#include "4DE50.h"
+#include "4E030.h"
+#include "4ED50.h"
+#include "530C0.h"
+#include "5E3F0.h"
+#include "87D80.h"
+#include "53D70.h"
 
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -11,19 +18,15 @@ typedef struct {
 } UnkStruct_80090050;
 
 s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
-void func_80234F6C(s32);
 void func_80235114(Vec3f *);
 #ifdef TARGET_PC
 /* IDO: implicitly `int` (func_80236658 has why); it is void (530C0.c) */
 void func_80239094(void);
 #endif
 void func_80235178(Vec3f *);
-void func_80236218(s32);
 void func_80236658(void);
 void func_80237164(Vec3f *);
-s32 func_80234768(void);
 s32 func_802348A4(void);
-void func_802351DC(Vec3f *);
 void func_80235208(Vec3f *);
 u16 func_80235924(void);
 s32 func_80236208(void);
@@ -60,15 +63,9 @@ extern UnkStruct_80090050 D_80090050;
 
 void func_8022FEAC(Vec3f *, Vec3f *);
 void func_8022FF58(Vec3f *, Vec3f *, Vec3f *);
-s32 func_80233650(f32, f32);
-s32 func_802336E4(f32);
-s32 func_80233768(f32);
 UnkStructA *func_802443F4(s32);
-void func_80234778(f32, f32, f32);
-void func_80234858(f32 *, f32 *, f32 *);
 f32 func_80234D24(f32, f32, f32);
 s32 func_80234DD4(f32, f32, f32, UnkStructA_40 *);
-void func_802350F8(s32);
 f32 D_802A5A50;
 f32 D_802A5A54;
 f32 D_802A5A58;
@@ -83,13 +80,8 @@ s32 D_802A0038 = 0;
 extern f32 D_8008F430;
 #define ABS(x) ((x) < 0.0f ? -(x) : (x))
 
-void func_8026DCAC(f32, f32, f32, Unk8026DCAC *, s32);
-s32 func_8026EE18(f32);
-s32 func_8026D7D8(s32, s32, s32);
 void func_802358D0(UnkStruct_802363BC *, s32, s16);
-PORT_RET(s32, u16) func_802399AC(s32);
 extern UnkStructA *D_8009004C;
-s32 func_80243DDC(void);
 void func_80234578(Vec3f *, Vec3f *, Vec3f *);
 void func_8023494C(f32 *);
 void func_80235234(Vec3f *);
@@ -97,18 +89,13 @@ void func_80235934(Vec3f *, u16 *);
 extern Vec3f D_80090020;
 extern f32 D_8009002C;
 extern f32 D_80090030;
-void func_802346C8(f32, f32, f32);
 void func_80234718(f32, f32, f32);
 UnkStruct_802363BC *func_802391F0(void);
-void func_80239430(void);
-void func_802348B4(f32 *, f32 *, f32 *);
-void func_80234900(f32 *, f32 *, f32 *);
 void func_802362F0(UnkStruct_802363BC *, UnkStruct_802363BC *);
 void func_802363BC(UnkStruct_802363BC *);
 void func_8023646C(UnkStruct_802363BC *);
 void func_80236AEC(u16);
 void func_80236ACC(u16);
-s32 func_80234248(s32);
 void func_80227CD0(PORT_RET(s32, void *), f32, f32, f32, f32, f32, f32, f32, f32, f32);
 extern PORT_RET(s32, void *) D_802AC5C0;
 extern Vec3f D_8008F3D8;
@@ -121,9 +108,7 @@ typedef struct {
     /* 0x0 */ Vec3f pos;
     /* 0xC */ s32 unkC;
 } UnkStruct_80250338;
-void func_80250338(s32, Vec3f *);
 void func_80234550(void);
-void func_802362B8(s32);
 void func_80236048(f32, f32);
 void func_802361FC(f32);
 void func_802361F0(f32);
@@ -133,7 +118,6 @@ void func_80236180(Vec3f *);
 void func_80235FE4(f32, f32, f32, f32);
 void func_80235FD8(UnkStructA *);
 void func_802360D4(f32, f32, f32, f32);
-void func_80236B7C(void);
 void func_80237890(void) {
     func_80234550();
     func_802346C8(0.0f, 0.0f, 0.0f);

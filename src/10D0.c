@@ -8,6 +8,7 @@
  */
 #include "common.h"
 #include "ultralib/ultra64.h"
+#include "10D0.h"
 
 /* .bss: the PI manager's queue, a busy flag, and one DMA request and its
  * reply queue shared by every transfer */

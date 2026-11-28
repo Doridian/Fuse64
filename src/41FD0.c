@@ -1,5 +1,7 @@
 #include "common.h"
 #include "gfx.h"
+#include "41FD0.h"
+#include "40300.h"
 
 /* gbi.h's Light: col, colc and dir */
 typedef struct {
@@ -45,10 +47,8 @@ extern UnkStruct_800BD5B0 D_800BD5B0[4];
 extern s32 D_802A5368;
 extern UnkStruct_802A538C *D_802A538C;
 
-void func_80227C50(f32 fovy, f32 aspect, f32 near, f32 far, f32 scale);
 void func_80227BAC(s8 x, s8 y, s8 z);
 void func_80227BE8(u8 r, u8 g, u8 b);
-void func_80227870(void);
 void func_80227834(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 
 s32 D_8029F7E0 = 0;

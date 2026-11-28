@@ -16,17 +16,17 @@
  */
 #include "common.h"
 #include "player.h"
+#include "404C0.h"
+#include "4E030.h"
+#include "8A7A0.h"
+#include "926A0.h"
+#include "426E0.h"
+#include "48600.h"
 
 void *malloc(s32);
-void func_8022638C(u32, UnkStruct_8014B008 *);
-void func_802297B8(void *, s32, s32, s32);
 PORT_RET(s32, void) func_8022984C(void *, s32);
 PORT_RET(void, s32) func_8022FC90(void *);
 void *func_80231274(s32, s32, s32, void *);
-void func_802313DC(void *, s32);
-void func_80232DB4(void *);
-f32 func_80234408(f32);
-f32 func_80234434(f32);
 
 extern s32 D_8008E658;
 extern u8 D_800AEDF0[];
@@ -60,7 +60,6 @@ typedef struct {
 } Rec926; /* size 0x48 */
 
 PORT_RET(s32, u8) func_8026DC74(s32 arg0);
-void func_8027404C(f32 arg0, f32 arg1, f32 arg2, f32 *arg3, f32 *arg4, f32 *arg5);
 s32 func_80277EA0(s16 arg0);
 s16 func_80277F0C(Rec926 *arg0);
 s16 func_80277F74(void);
@@ -69,11 +68,9 @@ void func_80278740(Rec926 *arg0);
 void func_80278788(Rec926 *arg0);
 void func_802787E4(Rec926 *arg0);
 void func_80278D54(Rec926 *arg0);
-void func_80278DBC(void);
 void func_80278E28(s16 arg0, s16 arg1);
 void func_80278E84(s16 arg0, s16 arg1);
 void func_80278F00(s16 arg0);
-void func_80278F68(void);
 void func_80278FD8(u32 arg0, u8 **arg1);
 
 #define RECS ((Rec926 *) &D_8008E658)

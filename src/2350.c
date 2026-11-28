@@ -13,22 +13,15 @@
 #include "ultralib/ultra64.h"
 #include "ultralib/PR/sched.h"
 #include "ultralib/PR/libaudio.h"
+#include "1050.h"
+#include "10D0.h"
+#include "13F0.h"
+#include "2350.h"
+#include "14B0.h"
 
 /* boot_code's own functions in the tables */
-void func_80000450(void);
 void func_80000698(void *dst, u32 size, u32 rom);
-void func_80000794(void);
-void func_80000870(void);
-void func_8000083C(s32 seg, void *entry, void *arg);
 void func_80001A30(PORT_IP(s32) id, void **table);
-void func_800004D0();
-void func_80000524();
-void func_8000059C();
-void func_8000064C();
-void func_80000768();
-OSMesgQueue *func_80001480();
-void func_80001488();
-void func_80001698();
 void __d_to_ll();
 void __ll_to_d();
 void __ull_to_f();
@@ -40,7 +33,6 @@ void osPiRawReadIo();
 void osPiRawStartDma();
 void osPfsReSizeFile();
 
-void func_800018A8(char *expr, char *file, s32 line);
 s32 func_800018B8(f32 arg0);
 void func_800018C4(s32 arg0);
 void func_800018CC(char *fmt, ...);

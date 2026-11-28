@@ -15,31 +15,20 @@
  * function-local D_802A1D00 comes first in .data.
  */
 #include "common.h"
+#include "A8DE0.h"
+#include "426E0.h"
+#include "530C0.h"
+#include "78CA0.h"
+#include "86680.h"
+#include "48600.h"
 
-s32 func_8022979C(UnkStructA_40 *, s32, s32);
-void func_802297B8(UnkStructA_40 *, s32, s32, s32);
-s32 func_8022984C(UnkStructA_40 *, s32);
-f32 func_80229D3C(UnkStructA_40 *, s32);
 PORT_RET(void, s32) func_8022FC90(UnkStructA *);
-UnkStructA *func_80230CB4(s32, s32, s32, s32, PORT_RET(s32, void *));
 UnkStructA *func_80230E6C(s32, PORT_IP(s32));
-UnkStructA *func_802311E8(UnkStructA *);
 UnkStructA *func_80231274(s32, s32, s32, UnkStructA *);
-void func_80231408(UnkStructA *, s32);
-void func_80232DB4(UnkStructA *);
-s32 func_80234248(s32);
-f32 func_80234434(f32);
 s32 func_80238A10(void *, void *, PORT_RET(s32, void *), s32, s32);
-PORT_RET(void, s32) func_80238EA8(s32);
-void func_8023903C(s32);
 void func_80239094(void);
-void *func_802391F0(void);
-void func_80239430(void);
-f64 func_8025E63C(void);
-s32 func_8026C51C(s32, f32, f32, f32);
 s32 func_8026C630(s32, f32 *);
 f32 func_8026E938(UnkStructA_40 *);
-void func_80291944(UnkStructA *obj, s32 dir, f32 speed);
 void func_80297D30(s32, void *);
 s32 func_8029217C(UnkStructA *obj, s32 dir, f32 speed, s32 (*cb)(s32));
 
@@ -57,11 +46,9 @@ static void func_8028E614(void);
 static void func_8028E6BC();
 static s32 func_8028E6C4(void);
 s32 func_8028E6CC(s32 kind, f32 *pos, s32 dir);
-s32 func_8028E8A4(s32 kind, f32 x, f32 y, f32 z, s32 dir);
 void func_8028E8E0(void);
 void func_8028E97C(void);
 void func_8028E9B8(void);
-void func_8028E9E0(void);
 static s32 func_8028EAD8(UnkStructA *m, s32 dir, f32 speed, s32 (*cb)(s32));
 static s32 func_8028EB28(UnkStruct_800BC770 *o, f32 speed);
 static s32 func_8028EB70(UnkStruct_800BC770 *o, s32 limit, f32 speed);

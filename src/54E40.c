@@ -158,6 +158,36 @@
 #define _SHIFTL(v, s, w) ((unsigned int) (((unsigned int)(v) & ((0x01 << (w)) - 1)) << (s)))
 #define _SHIFTR(v, s, w) ((unsigned int)(((unsigned int)(v) >> (s)) & ((0x01 << (w)) - 1)))
 #include "ultralib/PR/gbi.h"
+#include "40FB0.h"
+#include "412F0.h"
+#include "41FD0.h"
+#include "426E0.h"
+#include "48600.h"
+#include "4ED50.h"
+#include "530C0.h"
+#include "54E40.h"
+#include "5E090.h"
+#include "5E3F0.h"
+#include "6BBE0.h"
+#include "86680.h"
+#include "87190.h"
+#include "87730.h"
+#include "87D80.h"
+#include "8A7A0.h"
+#include "949A0.h"
+#include "97610.h"
+#include "995C0.h"
+#include "99F40.h"
+#include "9A5F0.h"
+#include "9BFD0.h"
+#include "9CAB0.h"
+#include "A1EA0.h"
+#include "A4860.h"
+#include "A4CE0.h"
+#include "ACA00.h"
+#include "AD5B0.h"
+#include "53D70.h"
+#include "78CA0.h"
 
 /* gSPTextureRectangle with the y terms before the x terms in both words
  * (the order the original evaluates them in). */
@@ -210,151 +240,39 @@ typedef struct {
     /* 0x10 */ s32 yh;
 } Rect54E40; /* size 0x14 */
 
-s32 func_802810A0(u8 *, u16, u16, f32, f32, u8);
-
 void func_802268F4(s32);
-void func_8022691C(s32);
-void func_802276E0(s32, s32, s32);
-void func_802276FC(s32);
-void func_80227870(void);
-void func_80227C18(void);
-void func_80227EE0(s32);
-void func_80227F88(void);
-void func_80228008(s32, s32, s32);
-s32 func_802280F4(PORT_RET(s32, void *), s32);
-void func_80229280(s32);
 PORT_RET(s32, void) func_8022979C(PORT_RET(s32, void *), s32, s32);
-void func_80229E38(void *, s32, s32);
 void * func_8022A328(void *, s32, s32, s32, s32);
 PORT_RET(s32, void *) func_8022F550(PORT_RET(s32, void *), s32);
 s32 func_8022FC90(void *);
-void func_8022FDE8(void);
-void func_80230914(void *);
 void * func_80231274(s32, s32, s32, void *);
-void func_802313DC(void *, s32);
-void func_80231408(void *, s32);
 s32 func_80232D18(void *, s32);
-void func_802346C8(f32, f32, f32);
-void func_80234778(f32, f32, f32);
-void func_80234858(f32 *, f32 *, f32 *);
-void func_802348B4(f32 *, f32 *, f32 *);
 s32 func_80234DD4(f32, f32, f32, void *);
-void func_80234F6C(s32);
-void func_802350F8(s32);
-void func_80236218(s32);
-s32 func_802362A8(void);
-void func_802362B8(s32);
-void func_80236B7C(void);
 s32 func_80238A10(void *, PORT_UP(u32), PORT_RET(s32, void *), s32, s32);
-s32 func_80238CF8(s32, s32);
-s32 func_80238DFC(s32, s32, u32);
-PORT_RET(void, s32) func_80238EA8(s32);
-s32 func_80238F40(s32, s32);
 s32 func_8023903C(s32);
 PORT_RET(s32, void) func_80239094(void);
 PORT_IP(s32) func_802391F0(void);
-void func_80239430(void);
-PORT_RET(s32, u16) func_802399AC(s32);
-PORT_RET(s32, u16) func_80239FF8(s32);
-u8 func_8023A038(s32);
-void func_80243A30(void);
-s32 func_80243DDC(void);
-void func_80243E90(s32);
-s32 func_80243EF0(s32);
-s32 func_802441AC(void *);
 void * func_802443F4(s32);
-void func_802444B8(s32, s32);
-s32 func_80244BA4(s32, s32);
-void func_80244C30(s32, s32);
-void func_80245208(s32, s32);
-void func_80245280(s32);
-void func_802452E8(s32);
-void func_8024585C(s32);
-void func_80245868(void);
-void func_802459BC(s32);
-void func_80246D74(s16);
-void func_80247C50(s32);
-void func_80250338(s32, void *);
-void func_802510F0(void);
-void func_802513E0(void);
-void func_802514CC(void);
-void func_80251534(s32);
-void func_80251804(s32);
-void func_8025C590(s32);
-f64 func_8025E63C(void);
-void func_8026BF28(s8);
-void func_8026BF68(s8);
-void func_8026BF90(s8);
-void func_8026C394(void);
-s32 func_8026C660(s32);
-void func_8026C6D0(s32);
-void func_8026C894(void);
-void func_8026C8E8(void);
-void func_8026C93C(s32);
-void func_8026C964(void);
-void func_8026CB2C(void);
-void func_8026CF90(void);
-void func_8026D5B4(s32);
-s32 func_8026D7D8(s32, s32, s32);
-void func_8026DCAC(f32, f32, f32, void *, s32);
-void func_8026E338(f32, f32, f32, f32 *, s32);
-f32 func_8026E8B8(void);
 f32 func_8026E938(void *);
-void func_8026F02C(void);
 PORT_RET(s32, s32) func_80270770(s16, s16);
 void func_80277484(void);
-void func_8027783C(void);
 void func_80277AF8(s16, s16);
-void func_80277DF4(s16);
-void func_80277E1C(void);
 PORT_RET(s32, void) func_80278E84(s32, s32);
-void func_8027BBC4(void);
-void func_8027EBCC(void);
 u16 func_8027EFA8(void);
-void func_8027F400(void);
-void func_8027F428(void);
-void func_8027F658(void *, void *, u16, u16, u16);
-void func_8027F79C(void);
 void func_8027F820(void *);
 void func_8027F858(PORT_IP(s32), s32);
-void func_8027FC08(void);
 s32 func_80280C08(u8 *);
 s32 func_80280DB4(s32);
-void func_80280EB0(s32, u16, u16);
 s32 func_802811F0(u8 *, u16, u16, f32, f32, u8);
-void func_802814D8(s32, u16, u16);
-void func_80281A40(void);
-void func_80281A88(s32, s32, s32, s32);
-void func_80281AE0(s32, s32, s32, s32);
-void func_802822B0(s32);
 void func_80282430(void *, s32, s32);
 void * func_802867E4(s32, f32, f32, f32);
-void func_80286E60(void);
-void func_80286EF0(void);
 PORT_RET(s32, void) func_80286F04(void);
 PORT_RET(s32, void) func_80287008(s32, s32, s32);
-s32 func_802871D0(PORT_RET(s32, void *));
-s32 func_80287680(void);
-void func_8028785C(void);
-s32 * func_8028A060(PORT_IP(s32));
-void func_8028A0B4(void);
-s32 func_8028A36C(s32);
-void func_8028A3D0(s32);
-void func_8028A428(s32);
-s32 func_8028A4E0(s32);
-void func_8028A584(void);
 s32 func_8028A81C(s32, f32, f32, f32, PORT_IP(s32));
 PORT_RET(s32, void) func_8028E8E0(void);
 s32 func_802909FC(void *, void (*)());
 void func_80245150();
 void func_80291944(void *, s32, f32);
-void func_8029236C(void);
-void func_802923CC(void);
-s32 func_8029279C(void *, s32, s32, s32, f32);
-s32 func_802947AC(void);
-s32 func_80294CE8(s32);
-s32 func_80295330(s32);
-void func_80295384(void);
 
 extern u8 D_1000000[];
 extern u8 D_800AEBBC[];
@@ -479,24 +397,16 @@ extern u8 D_800BCFE8[];
 #endif
 
 void func_8023A640(void);
-void func_8023A68C(void);
 void func_8023A734(s32 arg0, s32 arg1, s32 arg2);
 s32 *func_8023A834(void);
-UnkStruct_802AC610 *func_8023A840(void);
 void func_8023A84C(s32 arg0);
 void func_8023A858(s32 arg0);
-void func_8023A864(s32 arg0);
-s32 func_8023A870(s32 arg0, s32 arg1);
-s32 func_8023AA60(s32 arg0);
-void func_8023AA78(s32 arg0);
 void func_8023AAE4(void);
 static void func_8023AB54(TextItem *items, s32 n);
 static void func_8023AB4C(TextItem *items, s32 n);
 static s32 func_8023AB90(void);
 static void func_8023AC38(void);
 void func_8023ADD4(s32 arg0);
-void func_8023AE6C(s32 arg0, s32 arg1, s32 arg2);
-void func_8023AED0(s32 arg0);
 s32 func_8023AEDC(s32 arg0);
 static void func_8023AF5C(f32 arg0, f32 arg1);
 static s32 func_8023B2AC(u8 *str, f32 scale);
@@ -521,7 +431,6 @@ static void func_8023D9FC(void);
 PORT_STATIC void func_8023DA04(s32 arg0);
 void func_8023DB0C(void);
 void func_8023E1D8(void);
-void func_8023E8AC(void);
 static void func_8023E8FC(f32 *arg0);
 static void *func_8023EB28(s32 arg0);
 static void func_8023ECEC(u8 *arg0);
@@ -545,8 +454,6 @@ void func_80242DA8(void);
 void func_80242FB4();
 void func_802434F8();
 void func_8024364C(u8 *arg0);
-void func_8024368C(PORT_RET(s32, void) (*arg0)(void *));
-void func_80243698(s32 arg0);
 void func_80243718(void);
 void func_80243790(void);
 s32 func_80243798(s32 arg0);
@@ -1941,8 +1848,8 @@ void func_8023FD08() {
     }
     func_8023903C(0x1E);
     D_802AC610.unk0 &= ~8;
-    func_802313DC(obj, 0x08000000);
-    func_80231408(obj, 0x04000000);
+    func_802313DC((UnkStructA *) obj, 0x08000000);
+    func_80231408((UnkStructA *) obj, 0x04000000);
     M2C_FIELD(PORT_FIELD(obj, u8 **, 0x40, UnkStructA, unk40), s32 *, 0xC) &= ~0x4000;
     func_80229E38(PORT_FIELD(obj, void **, 0x40, UnkStructA, unk40), 0x16, 0);
     func_80229E38(PORT_FIELD(obj, void **, 0x40, UnkStructA, unk40), -1, 1);
@@ -2219,7 +2126,7 @@ loop_5:
     if (temp_v1_2 != 0) {
         func_8027F858((PORT_IP(s32)) temp_v0, temp_v1_2 >> 0xA);
     }
-    func_80230914(temp_v0);
+    func_80230914((UnkStructA *) temp_v0);
     func_802909FC(temp_v0, func_80245150);
     temp_v1 = PORT_FIELD(temp_v0, void **, 0x40, UnkStructA, unk40);
     PORT_FIELD(temp_v0, f32 *, 0x58, UnkStructA, unk58) = (f32) M2C_FIELD(temp_v1, f32 *, 0x10);
@@ -2262,7 +2169,7 @@ void func_8023F26C() {
         obj = func_802443F4(0);
         id = 0;
     }
-    func_802313DC(obj, 0x7FFFF);
+    func_802313DC((UnkStructA *) obj, 0x7FFFF);
     ((s32 *) D_802AC868)[id] = mode;
     switch (mode) {
     case 3:
@@ -2318,9 +2225,9 @@ void func_8023F26C() {
         break;
     }
     if (D_802AC5D0 & 4) {
-        func_802313DC(obj, 0x0507FFFF);
+        func_802313DC((UnkStructA *) obj, 0x0507FFFF);
         if (D_802AC660.unk0 == 0) {
-            func_802313DC(obj, 0x01000000);
+            func_802313DC((UnkStructA *) obj, 0x01000000);
             func_8023903C(2);
             if ((D_802AC660.unk4[id] == 1) && (D_802AC660.unk40[id] == 1)) {
                 entry = D_802AC660.unkE8[id];
@@ -2352,7 +2259,7 @@ void func_8023F26C() {
                 func_8022FC90(model);
             }
         } else {
-            func_802313DC(obj, 0x01000000);
+            func_802313DC((UnkStructA *) obj, 0x01000000);
             func_8023903C(2);
             if ((D_802AC660.unk4[id] == 1) && (D_802AC660.unk40[id] == 1)) {
                 func_80227EE0(D_802AC660.unkE8[id]);
@@ -2403,7 +2310,7 @@ static void func_8023EF38(u8 *arg0) {
     s32 i;
     u8 *temp_v0;
 
-    func_802313DC(arg0, 0x0C000000);
+    func_802313DC((UnkStructA *) arg0, 0x0C000000);
     temp_v0 = PORT_FIELD(arg0, void **, 0x40, UnkStructA, unk40);
     M2C_FIELD(temp_v0, s32 *, 0xC) = (s32) (M2C_FIELD(temp_v0, s32 *, 0xC) & ~0x4000);
     func_80229E38(PORT_FIELD(arg0, void **, 0x40, UnkStructA, unk40), 0x14, 0);
@@ -2423,7 +2330,7 @@ static void func_8023EF38(u8 *arg0) {
     func_8022979C((PORT_RET(s32, void *)) PORT_FIELD(arg0, void **, 0x40, UnkStructA, unk40), 5, 0xD);
     func_8029279C(PORT_FIELD(arg0, void **, 0x40, UnkStructA, unk40), 0, 0, 0, 0.7f);
     func_80239094();
-    func_80231408(arg0, 0x04000000);
+    func_80231408((UnkStructA *) arg0, 0x04000000);
     PORT_FIELD(arg0, f32 *, 0x68, UnkStructA, unk68) = 13.0f;
     i = 0;
     PORT_FIELD(arg0, f32 *, 0x70, UnkStructA, unk70) = 0.40833336f;
@@ -2499,7 +2406,7 @@ static void func_8023ECF4(u8 *arg0) {
 static void func_8023ECEC(u8 *arg0) {
     u8 *temp_v0;
 
-    func_802313DC(arg0, 0x08000000);
+    func_802313DC((UnkStructA *) arg0, 0x08000000);
     temp_v0 = PORT_FIELD(arg0, void **, 0x40, UnkStructA, unk40);
     M2C_FIELD(temp_v0, s32 *, 0xC) = (s32) (M2C_FIELD(temp_v0, s32 *, 0xC) & ~0x4000);
     func_80229E38(PORT_FIELD(arg0, void **, 0x40, UnkStructA, unk40), 0x13, 0);
@@ -3787,7 +3694,7 @@ s32 func_8023A870(s32 arg0, s32 arg1) {
     *func_8028A060(1) = D_802AC610.unk38;
     if ((D_802AC5D0 & 4) || ((D_802AC5D0 & 8) && (arg0 != 0))) {
         ((s32 *) D_802AC714)[arg0] = 2;
-        func_802313DC(obj, 0x7FFFF);
+        func_802313DC((UnkStructA *) obj, 0x7FFFF);
         func_8023A858(0);
     } else {
         if (D_802A01BC != 0) {

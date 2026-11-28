@@ -1,5 +1,6 @@
 #include "common.h"
 #include "model.h"
+#include "ACA00.h"
 
 /* A saved palette: the entry, a copy of its colours, the blob. */
 typedef struct {
@@ -24,9 +25,6 @@ s32 func_80292418(UnkModel *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, f32 ar
 
 extern UnkStruct_80090080 D_80090080[64];
 extern UnkStruct_80090380 D_80090380[16];
-void func_802923CC(void);
-s32 func_8029279C(UnkStructA_40 *arg0, s32 arg1, s32 arg2, s32 arg3, f32 arg4);
-void func_802926EC(UnkStructA_40 *arg0);
 
 void *D_802A1D70[] = {
     func_80292418, func_802922A4, func_802923CC, func_8029279C, func_802922C4, func_802926EC, NULL,

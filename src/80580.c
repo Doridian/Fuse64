@@ -55,6 +55,8 @@
 #include "common.h"
 #include "ultralib/ultra64.h"
 #include "m2c.h"
+#include "80580.h"
+#include "85A10.h"
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 #define M2C_BITWISE(type, expr) ((type)(expr))
@@ -323,10 +325,7 @@ static void *func_80268438(s16 num);
 static void func_80268430(s16 idx, s16 script, s8 type);
 static s16 func_802699C0();
 static void func_80266928(s16 idx);
-void *func_8026B72C(s32);
 s32 *func_8026B79C(void);
-void func_8026B7A8(s32);
-void func_8026B7D4(void);
 s16 func_8026B9CC(void *, void *);
 void func_80297D50(void *, void *);
 void func_80297D80(void *, void *, s32);
@@ -447,13 +446,11 @@ s8 func_80265D80(void);
 s16 func_80265D90(void);
 u8 func_80265DA0(void);
 s8 func_80265DB0(void);
-void func_80265DD8(s8 arg0);
 void func_80265E7C(s16 arg0);
 void func_80265F1C(u8 arg0);
 static s16 func_80265FBC(s8 arg0);
 void func_80265FF8(s8 arg0);
 static void func_802660B4(void);
-void func_80266118(s8 arg0);
 static void func_80266154();
 void func_8026615C(s16 idx, s8 vol);
 static void func_80266298();
@@ -461,47 +458,28 @@ void func_802662A0(s16 idx, s16 pitch);
 static void func_802663D8();
 void func_802663E0(s16 idx, u8 pan);
 static void func_80266508();
-void func_80266510(s16 idx, s8 vol);
-void func_80266644(s16 arg0, s16 arg1, f32 arg2);
-void func_802668D4(s16 arg0);
-void func_80266930(s16 arg0);
-void func_80266B50(void);
 s16 func_80266CA0(void);
-u8 func_80266CD4(s16 arg0);
 s32 func_80266CFC(void);
 s16 func_80266D0C(s16 arg0);
 static s16 func_80266D8C(u8 prio, s32 arg1);
 static s16 func_80267064(s8 vol);
 static void func_8026706C(s16 num, SndDef *def);
-s16 func_8026724C(s16 num);
-s16 func_802675F4(s16 arg0, s16 arg1, f32 arg2);
 void func_80267654(s16 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4);
-void func_80267730(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void func_80267754(void);
 static void func_80267784(s16 arg0);
 static f32 func_802679C0(u8 depth);
 static s16 func_80267A10(s16 num);
 static void func_80267A18(s16 idx);
 static void func_80268440(s16 idx);
-void func_802686B8(void);
 void func_802689B4(s16 arg0);
 void func_80268A40(s16 arg0);
 s16 func_80268BB8(void);
 void func_80268C54(void);
 s8 func_80268D6C(void);
-void func_80268D94(s8 arg0);
 void func_80268E0C(s8 arg0);
-void func_80268E7C(s16 arg0);
-void func_80268EE4(void);
 s16 func_80268F3C(void);
 s32 func_80268F70(void);
-s32 func_80268F94(s16 arg0);
-void func_802690DC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
-void func_8026910C(void);
 static void func_80269144(PORT_IP(s32) rom, void *dst, s32 size);
-void func_802691A8(void);
 s16 *func_80269680(u32 arg0);
-void func_80269704(u8 arg0);
 s32 func_802697A0(void);
 s32 func_802697C0(void);
 s32 func_802697E0(void);

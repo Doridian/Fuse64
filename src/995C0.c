@@ -1,4 +1,7 @@
 #include "common.h"
+#include "995C0.h"
+#include "53D70.h"
+#include "86680.h"
 
 typedef struct {
     /* 0x00 */ UnkStructA_40 *unk0;
@@ -12,15 +15,11 @@ typedef struct {
 } UnkStruct_802A15C0;
 
 void func_80239094(void);
-PORT_RET(s32, u16) func_802399AC(s32);
-PORT_RET(s32, s8) func_80239EE8(s32);
 #ifdef TARGET_PC
 s8 func_80239F70(s32 arg0); /* 53D70.c */
 #else
 s32 func_80239F70(void);
 #endif
-PORT_RET(s32, u8) func_8023A038(s32);
-PORT_RET(void, s32) func_8026C660(s32);
 s32 func_8027EDC8(s32 arg0);
 static void func_8027EFD8(f32 arg0, f32 arg1);
 s32 func_8027F0C4(s32 arg0);
@@ -29,13 +28,10 @@ static void func_8027F0BC(UnkStruct_8027F0C4 *entry, u16 dir);
 static void *func_8027F4B0(u16 arg0);
 static void func_8027F420(void);
 
-void func_8027F658(s32 (*arg0)(u8, u16), UnkStruct_8027F0C4 *arg1, u16 arg2, u16 arg3, u16 arg4);
 void func_8027F64C(s32 arg0);
 void func_8027F63C(u8 arg0);
 void func_8027F5A8(u16 arg0, u16 arg1, u16 arg2);
 void func_8027F498(UnkStruct_8027F0C4 *arg0);
-void func_8027F428(void);
-void func_8027F400(void);
 UnkStructA_40 *func_8027EFC8(void);
 PORT_RET(void, s32) func_8027EFA8(void);
 

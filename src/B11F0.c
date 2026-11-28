@@ -37,41 +37,30 @@
 #endif
 #include "ultralib/PR/gbi.h"
 #include "gfx.h"
+#include "412F0.h"
+#include "41FD0.h"
+#include "4ED50.h"
+#include "530C0.h"
+#include "54E40.h"
+#include "5E3F0.h"
+#include "86680.h"
+#include "87730.h"
+#include "8A7A0.h"
+#include "9BFD0.h"
+#include "A4860.h"
+#include "B11F0.h"
+#include "426E0.h"
+#include "53D70.h"
 
-void func_80226E40(s32);
-u16 *func_80226E4C(s32);
-void func_8022946C(void *, s32);
 PORT_RET(void, s32) func_8023903C(s32);
-void func_8023AA78(s32);
-void func_8023AE6C(s32, s32, s32);
-void func_8023AED0(s32);
 s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 void func_80239094(void);
-void func_8026D3AC(void *);
 void *func_8026D4B0(void (*)(UnkStructA_40 *, Gfx_80225840 **), s32);
-void func_80282144(s32, s32, s32, f32);
-void func_8028A0B4(void);
 void *func_8022A328(void *, s32, s32, s32, s32);
 void free(void *);
 void *malloc(s32);
 void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
-void func_802276C8(s32);
-void func_802276D4(s32);
-void func_802276E0(s32, s32, s32);
-void func_802276FC(s32);
-void func_80227870(void);
-void func_802346C8(f32, f32, f32);
-void func_80234778(f32, f32, f32);
-void func_802362B8(s32);
-PORT_RET(void, s32) func_80238EA8(s32);
-void func_80239430(void);
-PORT_RET(s32, u16) func_80239FF8(s32);
-UnkStruct_802AC610 *func_8023A840(void);
-void func_80243DEC(s32);
 void func_80261CD0(void *, void *, s32, PORT_RET(s32, void *), s32, s32, s32, s32, s32, s32, s32);
-void func_8026BEB0(void);
-void func_8026C8E8(void);
-void func_80277E1C(void);
 
 /* a picture: its header, then 320x240 16-bit pixels */
 typedef struct {

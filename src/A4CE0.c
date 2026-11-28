@@ -48,33 +48,22 @@
  *   (a guess among held values).
  */
 #include "common.h"
+#include "4E030.h"
+#include "530C0.h"
+#include "A4CE0.h"
+#include "426E0.h"
+#include "48600.h"
 
 PORT_RET(s32, void) func_8022979C(UnkStructA_40 *, s32, s32);
-void func_802297B8(UnkStructA_40 *, s32, s32, s32);
 PORT_RET(s32, void) func_8022984C(UnkStructA_40 *, s32);
-f32 func_80229D3C(UnkStructA_40 *, s32);
 PORT_RET(void, s32) func_8022FC90(UnkStructA *);
-UnkStructA *func_80230CB4(s32, s32, s32, s32, PORT_RET(s32, void *));
 UnkStructA *func_80230E6C(s32, PORT_IP(s32));
-UnkStructA *func_802311E8(UnkStructA *);
-UnkStructA *func_80231274(s32, s32, s32, UnkStructA *);
-void func_80231408(UnkStructA *, s32);
-void func_80232DB4(UnkStructA *);
-s32 func_80234248(s32);
-f32 func_80234434(f32);
 s32 func_80238A10(void *, void *, PORT_RET(s32, void *), s32, s32);
-PORT_RET(void, s32) func_80238EA8(s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 void *func_802391F0(void);
-void func_80239430(void);
-f64 func_8025E63C(void);
-s32 func_8026C51C(s32, f32, f32, f32);
-s32 func_8026C630(s32, f32 *);
-f32 func_8026E938(UnkStructA_40 *);
 void func_80291944(UnkStructA *obj, s32 dir, f32 speed);
 void func_80297D30(s32, void *);
-s32 func_8029217C(UnkStructA *obj, s32 dir, f32 speed, s32 (*cb)(s32));
 
 extern UnkStruct_800BC528 D_800BC528[16];
 extern s32 D_800BC768;
@@ -86,14 +75,11 @@ extern UnkStruct_800BC770 D_800BC770[16];
 #define SPAWN1(n, k, x, y, z) { s32 kind; f32 px, py, pz; s32 pad[2]; f32 pos[3]; s32 pad2; if (pos == (f32 *) (n * n) || n == 5) {} func_8028A978(); kind = k; px = x; py = y; pz = z; pos[0] = px; pos[1] = py; pos[2] = pz; func_8028A5C4(func_8028A690(kind), kind, pos, 0, 1); do {} while (0); }
 #define SPAWN(k, x, y, z) { s32 kind; f32 px, py, pz; s32 pad[3]; f32 pos[3]; func_8028A978(); kind = k; px = x; py = y; pz = z; pos[0] = px; pos[1] = py; pos[2] = pz; func_8028A5C4(func_8028A690(kind), kind, pos, 0, 1); do {} while (0); }
 
-s32 func_8028A4E0(s32 arg0);
-void func_8028A584(void);
 static s32 func_8028A5C4(s32 slot, s32 kind, f32 *pos, PORT_IP(s32) arg4, s32 arg3);
 static s32 func_8028A690(s32 kind);
 PORT_RET(void, s32) func_8028A7CC(s32 kind, f32 *pos, PORT_IP(s32) arg2);
 PORT_RET(void, s32) func_8028A81C(s32 kind, f32 x, f32 y, f32 z, PORT_IP(s32) arg4);
 void func_8028A87C(void);
-void func_8028A8A4(void);
 static void func_8028A978();
 static void func_8028A980(UnkStructA *m, f32 d);
 static void func_8028A9CC(UnkStruct_800BC528 *e);

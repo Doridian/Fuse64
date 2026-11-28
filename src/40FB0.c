@@ -1,4 +1,7 @@
 #include "common.h"
+#include "40FB0.h"
+#include "404C0.h"
+#include "AD3D0.h"
 
 typedef struct {
     /* 0x00 */ u8 unk0;
@@ -25,7 +28,6 @@ void func_80297D58(void *, s32);
 
 extern UnkStruct_8019B0D0 D_8019B0D0[PORT_SIZE(0x800)]; /* ROM 0x30800's 0x1000 bytes */
 extern UnkStruct_8019C0D0 D_8019C0D0;
-void func_8022691C(s32 arg0);
 void func_802268F4(); /* (s32) on TARGET_PC, below */
 
 /* ZeroJump module 11's table (func_80226860); its .data's other two words

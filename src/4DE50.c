@@ -1,4 +1,5 @@
 #include "common.h"
+#include "4DE50.h"
 
 /* Float sign and tolerance compares.  -O3 (the Makefile's O3_C_FILES), so
  * written last function first: IDO 5.3 -O3 emits a file's functions in

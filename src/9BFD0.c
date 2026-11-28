@@ -1,4 +1,6 @@
 #include "common.h"
+#include "530C0.h"
+#include "9BFD0.h"
 
 typedef struct {
     /* 0x00 */ u8 unk0[0xC];
@@ -16,10 +18,8 @@ typedef struct {
 
 void *func_8022A328(void *, s32, s32, s32, s32);
 s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
-PORT_RET(void, s32) func_80238EA8(s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
-void func_80239430(void);
 void func_802817F8(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, void (*arg5)(void));
 void func_80281B10(void);
 static void func_80281FA0(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
@@ -30,11 +30,7 @@ void func_80281E70(void);
 void func_80281F0C(void);
 void func_80282034(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 void func_802820BC(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
-void func_80282144(s32 arg0, s32 arg1, s32 arg2, f32 arg3);
-void func_80281AE0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void func_80281AB4(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void func_80281A88(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void func_80281A40(void);
 void func_80281A00(s32 arg0);
 void func_80281994(s32 arg0);
 void func_8028192C(s32 arg0);

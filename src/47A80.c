@@ -24,6 +24,9 @@
 #include "common.h"
 #include "gfx.h"
 #include "model.h"
+#include "426E0.h"
+#include "47A80.h"
+#include "B6680.h"
 
 /* A model's display list, built from its joint tree: one matrix per joint
  * with a translation or rotation, a segment-6 display list per mesh. */
@@ -64,9 +67,6 @@ typedef struct {
 void guMtxIdentF(f32 mf[4][4]);
 void guMtxCatF(f32 mf[4][4], f32 nf[4][4], f32 res[4][4]);
 void guMtxF2L(f32 mf[4][4], void *m);
-void func_8029CA80(f32 m[4][4], f32, f32, f32);
-void func_8029C7A8(f32 m[4][4], f32, f32, f32);
-void func_8022928C(f32 m[4][4], f32 n[4][4]);
 
 extern UnkTexOwner D_80098C18[];
 extern f32 D_80098CF8[PORT_SIZE(0x200)][4][4];
@@ -174,9 +174,7 @@ PORT_IP(s32) D_802A5554;
 
 static void func_8022D280(Gfx_80225840 **gp, f32 *trans, f32 *rot, s32 *pushed);
 static void func_8022D414(Gfx_80225840 **gp, PORT_IP(s32) base, s32 joints, s32 idx);
-void func_8022D58C(Gfx_80225840 **gp, PORT_IP(s32) base, s32 idx);
 static void func_8022D980(UnkNode *node);
-void func_8022DAB0(UnkInst *model, Gfx_80225840 **gp, PORT_IP(s32) base);
 
 void func_8022DAB0(UnkInst *model, Gfx_80225840 **gp, PORT_IP(s32) base) {
     D_802A5550 = *gp;

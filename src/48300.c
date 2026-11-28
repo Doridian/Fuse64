@@ -1,4 +1,9 @@
 #include "common.h"
+#include "48300.h"
+#include "48600.h"
+#include "530C0.h"
+#include "54E40.h"
+#include "86680.h"
 
 /*
  * -O3, so written last function first. Five functions (us
@@ -12,73 +17,25 @@ s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 PORT_IP(s32) func_802391F0(void);
-void func_80239430(void);
-UnkStruct_802AC610 *func_8023A840(void);
-void func_8026C454(s32, f32, f32, f32);
-s32 func_8026C51C(s32, f32, f32, f32);
 
 /* 48600's, for ZeroJump module 0x18's table */
-void func_8022E3D4(f32 m[4][4], f32 *v);
-f32 func_8022E330(f32 *arg0, f32 *arg1);
-void func_8022E364(f32 *arg0, f32 *arg1, f32 *arg2);
 void func_8022FF58(f32 *arg0, f32 *arg1, f32 *arg2);
 void func_8022FEAC(f32 *arg0, f32 *arg1);
-void func_80231D88(u8 *arg0, u8 *arg1, f32 *arg2, f32 *arg3);
-f32 func_8022DF68(f32 *arg0, f32 *arg1);
 s32 func_80232D18(f32 *arg0, s32 arg1);
-s32 func_80232C74(f32 *arg0, s32 arg1);
-s32 func_80232BD0(f32 *arg0, s32 arg1);
-s32 func_8022E884(UnkStructA *arg0, UnkStructA *arg1);
-void func_80232A34(u8 *arg0, s32 arg1);
 void func_80232AA8(u8 *arg0);
 void func_80232AC8(u8 *arg0, u8 *arg1);
-void func_80232B04(u8 *arg0, u8 *arg1, PORT_IP(s32) arg2, s32 arg3);
-void func_80231D60(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
-void func_8022FC0C(s32 arg0);
-void func_80231408(u8 *arg0, s32 arg1);
-void func_802313DC(u8 *arg0, s32 arg1);
-void func_802313B0(u8 *arg0, s32 arg1);
 s32 func_8022FC90(UnkStructA *arg0);
-void *func_80230CB4(s32 arg0, s32 arg1, s32 arg2, s32 arg3, u8 *arg4);
 PORT_RET(void, PORT_IP(s32)) func_80231274(s32 arg0, s32 arg1, s32 arg2, PORT_IP(s32) arg3);
-void func_80231244(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void *func_802311E8(u8 *arg0);
-void *func_8023116C(s32 arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4);
-void *func_802310F4(s32 arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4);
-void func_8023101C(s32 arg0, s32 arg1, s32 arg2, u8 *arg3);
-void func_802310BC(s32 arg0, s32 arg1, u8 *arg2);
-void *func_80231048(s32 arg0, u8 *arg1, s32 arg2, f32 arg3, f32 arg4, f32 arg5);
-void *func_80230E9C(u8 *arg0);
 PORT_RET(void, PORT_IP(s32)) func_80230E6C(s32 arg0, PORT_IP(s32) arg1);
-void func_80230AA0(UnkStructA *arg0, PORT_IP(s32) arg1, PORT_IP(s32) arg2, PORT_IP(s32) arg3);
-void func_80230914(u8 *arg0);
 PORT_RET(void, PORT_IP(s32)) func_802308B8(f32 *arg0, s32 arg1);
-void func_8023085C(f32 *arg0, s32 arg1);
-void func_80230800(f32 *arg0, s32 arg1);
-void func_80230790(f32 *arg0, s32 arg1, f32 *arg2);
-void func_80230720(f32 *arg0, s32 arg1, f32 *arg2);
-void func_802306B0(f32 *arg0, s32 arg1, f32 *arg2);
-void func_80230440(f32 *arg0, s32 arg1, u8 *arg2);
-void func_802303C0(f32 *arg0, s32 arg1, u8 *arg2);
-void func_80230340(f32 *arg0, s32 arg1, u8 *arg2);
 void func_8022F808(f32 *arg0, f32 *arg1);
 void func_80232BA0(u8 *arg0, u8 *arg1);
-void func_8022FEA0(f32 arg0);
-void func_8022FE94(s32 arg0);
 PORT_RET(void, PORT_IP(s32)) func_8022FA88(f32 *arg0, s32 arg1, f32 *arg2);
-void func_8022FA10(f32 *arg0, s32 arg1, f32 *arg2);
-void func_8022F998(f32 *arg0, s32 arg1, f32 *arg2);
-PORT_IP(s32) func_8022F77C(s32 arg0, PORT_IP(s32) arg1, PORT_IP(s32) arg2);
-void func_80232DB4(f32 *arg0);
 UnkStructA *func_8022F550(UnkStructA *arg0, s32 arg1);
-UnkStructA *func_8022F4AC(UnkStructA *arg0, s32 arg1, UnkStructA *arg2);
 PORT_IP(s32) func_8022F698(PORT_IP(s32) arg0, f32 *arg1, f32 *arg2, UnkStructA **arg3, s32 arg4);
-void func_8022DE6C(void);
-void func_8022DE00(void);
 
 extern UnkStructA_40 *D_800A7F08[8];
 
-void func_8022DB00(void);
 static void func_8022DB28(void);
 void func_8022DBBC(UnkStruct_8022DBBC *arg0);
 static void func_8022DBF4(UnkStructA_40 **arg0, f32 arg1, f32 arg2, s32 *arg3, s32 arg4);

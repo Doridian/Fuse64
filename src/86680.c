@@ -1,4 +1,10 @@
 #include "common.h"
+#include "4ED50.h"
+#include "54E40.h"
+#include "80580.h"
+#include "86680.h"
+#include "404C0.h"
+#include "40FB0.h"
 
 typedef struct {
     /* 0x00 */ f32 unk0;
@@ -10,36 +16,13 @@ typedef struct {
 
 void func_8022FEAC(Vec3f *, Vec3f *);
 void func_8022FF58(Vec3f *, Vec3f *, Vec3f *);
-void func_80234858(f32 *, f32 *, f32 *);
-void func_802351DC(Vec3f *);
-UnkStruct_802AC610 *func_8023A840(void);
-void func_80265DD8(s8);
-void func_80266118(s8);
-void func_80266510(s16, s8);
-void func_80266644(s16, s16, f32);
-void func_802668D4(s16);
-void func_80266930(s16);
-void func_80266B50(void);
-PORT_RET(s32, u8) func_80266CD4(s16);
-PORT_RET(s32, s16) func_8026724C(s16);
-PORT_RET(s32, s16) func_802675F4(s16, s16, f32);
 void func_80267654(s32, f32, f32, f32, f32);
-void func_80267730(s32, s32, s32, s32);
-void func_802690DC(s32, s32, s32, s32, s32);
-void func_80268D94(s8);
-void func_80268E7C(s16);
-void func_80268EE4(void);
-PORT_RET(void, s32) func_80268F94(s16);
 PORT_RET(s32, s16) func_8026A754(s32, s32, void *, void *, s32);
 f32 sqrtf(f32);
 
 static void func_8026C0A8(Vec3f *pos, f32 *angle, f32 *dist);
 static s32 func_8026C494(s32 id);
 static void func_8026C774(void);
-s32 func_8026C51C(s32 arg0, f32 x, f32 y, f32 z);
-void func_8026C6D0(s32 arg0);
-void func_8026BE80(s32 arg0);
-void func_8026BEB0(void);
 void func_8026BFD0(s32 arg0, s8 arg1);
 
 extern s32 D_800BD770[PORT_SIZE(1)];
@@ -54,18 +37,8 @@ s32 D_802AFC20;
 s32 D_802AFC24;
 f32 D_802AFC28;
 
-void func_80269704(void);
-s32 func_8026C660(s32 arg0);
-void func_8026C964(void);
-void func_8026C93C(s32 arg0);
-void func_8026C8E8(void);
 s32 func_8026C630(s32 arg0, Vec3f *arg1);
-void func_8026BF90(s8 arg0);
-void func_8026BF68(s8 arg0);
-void func_8026C454(s32 arg0, f32 x, f32 y, f32 z);
 void func_8026C40C(s32 arg0, Vec3f *arg1);
-void func_8026BF28(s8 arg0);
-void func_8026C894(void);
 
 void *D_802A1380[] = {
     func_8026C660, func_8026C964, func_8026C93C, func_8026C8E8, func_8026C51C,

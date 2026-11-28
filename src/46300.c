@@ -28,6 +28,7 @@
  */
 #include "common.h"
 #include "model.h"
+#include "46300.h"
 
 void *malloc(u32);
 void free(void *);
@@ -39,7 +40,6 @@ Vec3f D_8029F8A8 = { 1.0f, 1.0f, 1.0f };
 s32 D_802A54D0;
 
 void func_8022BB00(UnkTree *arg0);
-void func_8022BB88(UnkAnim *arg0);
 void func_8022BC64(Vec3f *arg0, Vec3f *arg1, Vec3f *arg2, f32 arg3);
 void func_8022BCC8(UnkInst *arg0, PORT_IP(s32) arg1, f32 arg2);
 f32 func_8022BE48(UnkCurve *arg0, f32 arg1);
@@ -52,15 +52,10 @@ void func_8022C2A4(UnkTree *arg0, s32 arg1, s32 arg2, UnkInst *arg3);
 void func_8022C3EC(UnkInst *arg0, UnkNode *arg1);
 void func_8022C480(UnkInst *arg0, UnkNode *arg1);
 void func_8022C4FC(UnkInst *arg0);
-void func_8022C530(UnkAnim *arg0, f32 arg1, s32 arg2);
 UnkTree *func_8022C7EC(UnkNode *arg0);
-UnkAnim *func_8022C8B8(UnkInst *arg0, s32 arg1);
 void func_8022CD4C(Vec3f *arg0, Vec3f *arg1, Vec3f *arg2, f32 arg3);
 void func_8022CD98(UnkInst *arg0, s32 arg1, s32 arg2);
 void func_8022CEE4(UnkNode *arg0);
-void func_8022CF64(UnkInst *arg0);
-UnkNode *func_8022CFC8(UnkInst *arg0, UnkNode *arg1, s32 arg2);
-void func_8022D15C(Vec3f *arg0);
 
 void func_8022D15C(Vec3f *arg0) {
     arg0[0] = D_8029F890;

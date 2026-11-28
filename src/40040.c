@@ -1,53 +1,36 @@
 #include "common.h"
 #include "gfx.h"
+#include "40040.h"
+#include "40300.h"
+#include "404C0.h"
+#include "40FB0.h"
+#include "412F0.h"
+#include "41FD0.h"
+#include "426E0.h"
+#include "48600.h"
+#include "4E030.h"
+#include "4ED50.h"
+#include "52270.h"
+#include "530C0.h"
+#include "53D70.h"
+#include "54BE0.h"
+#include "6BBE0.h"
+#include "7D840.h"
+#include "86680.h"
+#include "9BFD0.h"
+#include "ACA00.h"
+#include "78CA0.h"
+#include "AD5B0.h"
 
-u32 func_80225CC0(UnkStruct_80225CC0 *);
-s32 func_80225CCC(UnkStruct_80225CC0 *, s32, s32);
-s32 func_80225FB8(void *, s32, s32, UnkStruct_80225CC0 *);
-void func_80226860(void);
-void func_80226D80(void);
-void func_80226E84(Gfx_80225840 *);
-Gfx_80225840 *func_80227464(void);
 PORT_UP(u32) func_80227678(s32);
-void func_80227708(s32, s32, s32, s32);
-s32 func_8022773C(void);
-void func_802277D0(void);
-void func_8022787C(Gfx_80225840 **);
 void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
-void func_802290CC(void);
-void func_8022A858(void);
-void func_80232E60(void);
-void func_802334CC(void);
-void func_802341C8(void);
-void func_80236F54(void);
-void func_80237890(void);
-void func_80238100(void);
-void func_802381F8(void);
-void func_8023876C(PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_80238A10(void (*)(void), PORT_IP(s32), void *, s32, s32);
-void func_802392F8(void);
-void func_8023946C(void);
-void func_8023A104(void);
-void func_8023A208(void);
-void func_8023A22C(void);
-void func_8023A318(void);
-void func_8023A3E0(void);
-void func_8025E16C(void);
 void func_8025E1D4(Gfx_80225840 **);
-void func_8025E6A4(u32);
-void func_80265C04(void);
-void func_8026C208(void);
-void func_8026C77C(void);
-void func_802817D0(void);
-void func_80292B54(void);
-PORT_RET(void, s32) func_80294E54(void);
 void func_80297D20(void);
 void func_80297D30(s32, void *);
 u64 func_80297E38(void);
 void func_80297F80(s32);
 void func_80297FA0(s32);
-void *func_80225C7C(void *, s32, s32);
-void func_80225CA8(void);
 void *malloc(u32);
 void free(void *);
 

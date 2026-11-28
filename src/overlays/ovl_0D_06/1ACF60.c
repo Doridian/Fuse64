@@ -33,9 +33,12 @@
  *   (the store is forwarded; no local n, which took v0). After the
  *   1700.0f camera call it passes D_ovl0D_06_80047364's model, not
  *   8004732C's (only the linked ROM showed it: one relocation).
- * - 800435FC: its address taken in an `if (0)` in 80043500 (a fake): as
- *   an address-taken static it uses t0-t5 for the 7-argument calls, as the
- *   original, and still comes out after 8004355C.
+ * - 800435FC is a global (t0-t5 for its 7-argument calls, as the
+ *   original), defined above 80043824: a global defined above its caller
+ *   is pulled out with the caller's statics, so it comes out after
+ *   8004355C (pass 13; it replaces a static whose address an `if (0)` in
+ *   80043500 took, a fake; defined below 80043824 the global came out at
+ *   its own turn, ahead of 8004355C).
  * - 8004305C (from 73 words): each array walked with i from 0, as
  *   `i = 0; f(A[i++].obj)` (a post-increment in a call's argument folds
  *   A[i] after it to a constant address; a separate i++ gives a run-time
@@ -192,7 +195,7 @@ static void func_ovl0D_06_800431D8(void);
 void func_ovl0D_06_80043318(s32, s32);
 static void func_ovl0D_06_800433B4(UnkStructA *);
 static void func_ovl0D_06_8004355C(s32, s32, s32, s32);
-static void func_ovl0D_06_800435FC(void);
+void func_ovl0D_06_800435FC(void);
 static void func_ovl0D_06_80043FA0(UnkStruct_ovl0C_01_8004A54C *);
 static void func_ovl0D_06_800440AC(UnkStruct_ovl0C_01_8004A54C *);
 static void func_ovl0D_06_80044398(s32, s32 *, s32 *);
@@ -918,6 +921,23 @@ void func_ovl0D_06_80043C98(void) {
     func_ovl0D_06_800468E8();
 }
 
+/* a global defined above 80043824, its first-processed caller: pulled out
+ * with 80043824's statics, after 8004355C (called later), as the original */
+void func_ovl0D_06_800435FC(void) {
+    func_ovl0D_06_80045DD0(0x11, 2, 0x11, 0x13, 2, 0x13, 0x11);
+    func_ovl0D_06_80045DD0(0x12, 2, 0x12, 0x12, 2, 0x12, 0x10);
+    func_ovl0D_06_80045DD0(0x11, 3, 0x11, 0x13, 3, 0x13, 0x10);
+    func_ovl0D_06_80045DD0(0x14, 0, 0x10, 0x1A, 1, 0x10, 0x1F);
+    func_ovl0D_06_80045DD0(0x14, 1, 0x10, 0x1A, 1, 0x10, 0x1F);
+    func_ovl0D_06_80045DD0(0x14, 2, 0x10, 0x17, 2, 0x10, 0x1F);
+    func_ovl0D_06_80045DD0(0x18, 2, 0x10, 0x19, 2, 0x10, 0x16);
+    func_ovl0D_06_80045DD0(0x1A, 2, 0x10, 0x1A, 2, 0x10, 0x11);
+    func_ovl0D_06_80045DD0(0x17, 2, 0x11, 0x1C, 2, 0x11, 0x11);
+    func_ovl0D_06_80045DD0(0x14, 3, 0x10, 0x17, 3, 0x10, 0x16);
+    func_ovl0D_06_80045DD0(0x18, 3, 0x10, 0x1A, 3, 0x10, 0x10);
+    func_ovl0D_06_80045DD0(0x17, 3, 0x11, 0x1C, 3, 0x11, 0x10);
+}
+
 void func_ovl0D_06_80043824(void) {
     UnkStructA *o;
     f32 y;
@@ -993,21 +1013,6 @@ void func_ovl0D_06_80043824(void) {
     func_ovl0D_06_80045F78(0);
 }
 
-static void func_ovl0D_06_800435FC(void) {
-    func_ovl0D_06_80045DD0(0x11, 2, 0x11, 0x13, 2, 0x13, 0x11);
-    func_ovl0D_06_80045DD0(0x12, 2, 0x12, 0x12, 2, 0x12, 0x10);
-    func_ovl0D_06_80045DD0(0x11, 3, 0x11, 0x13, 3, 0x13, 0x10);
-    func_ovl0D_06_80045DD0(0x14, 0, 0x10, 0x1A, 1, 0x10, 0x1F);
-    func_ovl0D_06_80045DD0(0x14, 1, 0x10, 0x1A, 1, 0x10, 0x1F);
-    func_ovl0D_06_80045DD0(0x14, 2, 0x10, 0x17, 2, 0x10, 0x1F);
-    func_ovl0D_06_80045DD0(0x18, 2, 0x10, 0x19, 2, 0x10, 0x16);
-    func_ovl0D_06_80045DD0(0x1A, 2, 0x10, 0x1A, 2, 0x10, 0x11);
-    func_ovl0D_06_80045DD0(0x17, 2, 0x11, 0x1C, 2, 0x11, 0x11);
-    func_ovl0D_06_80045DD0(0x14, 3, 0x10, 0x17, 3, 0x10, 0x16);
-    func_ovl0D_06_80045DD0(0x18, 3, 0x10, 0x1A, 3, 0x10, 0x10);
-    func_ovl0D_06_80045DD0(0x17, 3, 0x11, 0x1C, 3, 0x11, 0x10);
-}
-
 /* the camera: x tiles across, above the n rows' heights, z tiles down */
 static void func_ovl0D_06_8004355C(s32 id, s32 x, s32 n, s32 z) {
     s32 i;
@@ -1023,10 +1028,6 @@ static void func_ovl0D_06_8004355C(s32 id, s32 x, s32 n, s32 z) {
 }
 
 void func_ovl0D_06_80043500(f32 arg0, f32 arg1, f32 arg2) {
-    /* fake: (see the top): 800435FC's address taken (800435FC global: 195 words; no address: 56) */
-    if (0) {
-        func_ovl0D_06_800468D8(func_ovl0D_06_800435FC, NULL, 0, 0, 0);
-    }
     func_ovl0D_06_800465C8(D_ovl0D_06_800475E0.x, D_ovl0D_06_800475E0.y, D_ovl0D_06_800475E0.z);
     func_ovl0D_06_800465E8(arg0, arg1, arg2);
     func_ovl0D_06_800468F8(180);

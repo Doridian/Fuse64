@@ -5,7 +5,7 @@
 #   podman build -t fuse64-ci-linux -f port/tools/ci/linux.Containerfile port/tools/ci
 #   podman build --arch arm64 -t fuse64-ci-linux-arm64 -f port/tools/ci/linux.Containerfile port/tools/ci
 # Keep it the same as the linux job's "Install tools".
-FROM docker.io/library/ubuntu:22.04
+FROM docker.io/library/ubuntu:26.04
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y cmake ninja-build pkg-config \
         libsdl2-dev libepoxy-dev file python3 curl lsb-release wget software-properties-common gnupg
 RUN curl -sSLfo /llvm.sh https://apt.llvm.org/llvm.sh && bash /llvm.sh 18

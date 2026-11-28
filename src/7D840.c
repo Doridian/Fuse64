@@ -29,6 +29,17 @@
  * The dead float-to-int conversions are kept by `&&` tests (no frame
  * cost); `padA` (last local) keeps the frame at 344 for the call
  * `if (func_80263904(fw)) {}` they replace; `save = gfx++` puts save in v0.
+ * The dead conversions were most likely dead calls of func_80263904, as
+ * func_802639E4 has (`if (func_802336E4(func_80263904(t0)) == 0)
+ * func_80263904(t0);`: the inlined second call leaves just the fcsr
+ * pair, as here). Tried (fakes pass 3): one call, `func_80263904(fw);`
+ * (or fh's) in place of its `+` test, needs no padA (the inlined
+ * parameter takes that frame word) nor the `rects[0].a` dead test, and
+ * leaves only fw (fh) in $f2 for $f0, 6 words; nothing found moves it
+ * (3000+ random sets of dead tests and conversion forms, every
+ * declaration position of fw/fh, the call as statement, test, sum or
+ * assignment). A second call (fh's, or block 0's) takes 8 more bytes of
+ * frame, and calls in the intC/intD tests 40 more and 2 words.
  *
  * Data: .data is the two rects initializers (RectI[4] of -1 for
  * func_80265274, then RectF[4] of 32768.0f for func_8026437C), .rodata four 0.001f

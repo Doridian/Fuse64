@@ -346,7 +346,7 @@ void func_80296D4C(u16 *arg0, UnkStruct_80296D4C *arg1, UnkStructA_40 **arg2) {
     f32 ty = 72.0f;
     f32 tw = 148.0f;
     f32 th = 111.0f;
-    f32 steps = 40.0f;
+    f32 steps = 40.0f; /* fake: the held steps fill the frame's last word above x (a guess among held values: header) */
     f32 x = 8.0f;
     f32 y = 6.0f;
     f32 w = 304.0f;

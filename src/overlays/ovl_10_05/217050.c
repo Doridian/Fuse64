@@ -1,4 +1,5 @@
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_10_05's game object, IDO -O3: the functions are written last to first
@@ -12,14 +13,6 @@
  * come out where the original has them, which they don't at their own
  * places. 80044288 is defined just below 800442A4, which inlines it.
  */
-
-/* What func_ovl10_05_80046520 returns. */
-typedef struct {
-    /* 0x00 */ u8 unk0[8];
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ u8 unkC[4];
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl10_05_80046520;
 
 /* What func_ovl10_05_800465E0 returns. */
 typedef struct {
@@ -72,7 +65,7 @@ void func_ovl10_05_80046440(UnkStructA *);
 void *func_ovl10_05_80046460(s32, s32, UnkStructA *);
 void func_ovl10_05_80046488(UnkStructA *);
 void func_ovl10_05_800464D8(UnkStructA *, Vec3f *);
-UnkStruct_ovl10_05_80046520 *func_ovl10_05_80046520(UnkStructA *, s32);
+UnkStruct_ovl10_01_80046830 *func_ovl10_05_80046520(UnkStructA *, s32);
 void func_ovl10_05_80046558(void (*)(void), s32, PORT_IP(s32), s32, s32);
 void func_ovl10_05_80046578(s32);
 void func_ovl10_05_800465A0(void);
@@ -490,7 +483,7 @@ void func_ovl10_05_80044B88(s32 arg0) {
 
 void func_ovl10_05_80044930(void) {
     s32 i;
-    UnkStruct_ovl10_05_80046520 *p;
+    UnkStruct_ovl10_01_80046830 *p;
     f32 lim; /* a guess: any float held for the loop fills this slot (42.5f, 34.0f too) */
     f32 x;
 
@@ -577,7 +570,7 @@ void func_ovl10_05_800442A4(void) {
     Vec3f out;
     Vec3f pos;
     Vec3f dir;
-    UnkStruct_ovl10_05_80046520 *p;
+    UnkStruct_ovl10_01_80046830 *p;
     f32 x;
     f32 z;
 

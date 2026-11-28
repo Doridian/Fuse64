@@ -1,4 +1,5 @@
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_10_04's game object, IDO -O3: the functions are written last to first
@@ -9,14 +10,6 @@
  * strings "trap task:entry failed" and "task_entry>%d:%s") are in every one
  * of bank 0x10's overlays.
  */
-
-/* What func_ovl10_04_800453E0 returns. */
-typedef struct {
-    /* 0x00 */ u8 unk0[8];
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ u8 unkC[4];
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl10_04_800453E0;
 
 /* What func_ovl10_04_800454A0 returns. */
 typedef struct {
@@ -61,7 +54,7 @@ UnkStructA *func_ovl10_04_800452F0(s32, s32, s32, PORT_IP(s32));
 void *func_ovl10_04_80045320(s32, s32, UnkStructA *);
 void func_ovl10_04_80045348(UnkStructA *);
 void func_ovl10_04_80045398(UnkStructA *, Vec3f *);
-UnkStruct_ovl10_04_800453E0 *func_ovl10_04_800453E0(UnkStructA *, s32);
+UnkStruct_ovl10_01_80046830 *func_ovl10_04_800453E0(UnkStructA *, s32);
 void func_ovl10_04_80045418(void (*)(void), s32, PORT_IP(s32), s32, s32);
 void func_ovl10_04_80045438(s32);
 void func_ovl10_04_80045460(void);
@@ -389,7 +382,7 @@ void func_ovl10_04_80043998(s32 arg0) {
 
 void func_ovl10_04_80043740(void) {
     s32 i;
-    UnkStruct_ovl10_04_800453E0 *p;
+    UnkStruct_ovl10_01_80046830 *p;
     f32 lim; /* a guess: any float held for the loop fills this slot (42.5f, 34.0f too) */
     f32 x;
 

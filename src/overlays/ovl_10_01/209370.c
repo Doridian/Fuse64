@@ -1,4 +1,5 @@
 #include "common.h"
+#include "overlays/common/types.h"
 
 /*
  * ovl_10_01's game object, IDO -O3: the functions are written last to first
@@ -19,14 +20,6 @@
  * the handler's table D_ovl10_01_80047188 ends in one word, not a record.
  * 80044154 and 80044A10 have an unused local for the original's frame.
  */
-
-/* What func_ovl10_01_80046830 returns. */
-typedef struct {
-    /* 0x00 */ u8 unk0[8];
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ u8 unkC[4];
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl10_01_80046830;
 
 /* What func_ovl10_01_800468F0 returns. */
 typedef struct {

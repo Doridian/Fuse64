@@ -330,7 +330,8 @@ typedef struct {
     /* 0x24 */ f32 unk24;
 } UnkStruct_ovl0E_11_800463AC;
 
-/* what func_ovl0F_01_80047508 returns: offsets into itself */
+/* what func_ovl0F_01_80047508 and its copies return: offsets into itself
+ * (0F_01..04, 17_09) */
 typedef struct {
     /* 0x00 */ u8 unk0[0x14];
     /* 0x14 */ s32 unk14;
@@ -338,7 +339,8 @@ typedef struct {
     /* 0x20 */ s32 unk20;
 } UnkStruct_ovl0F_01_80048130;
 
-/* a mover (D_ovl0F_01_800481D4): direction, speed, acceleration, route */
+/* a mover (D_ovl0F_01_800481D4): direction, speed, acceleration, route
+ * (0F_01/02/04) */
 typedef struct {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ f32 unk4;
@@ -350,7 +352,7 @@ typedef struct {
     /* 0x14 */ s32 unk14;
 } UnkStruct_ovl0F_01_800481D4; /* size 0x18 */
 
-/* a model the stage places */
+/* a model the stage places (0F_01..05, 0F_07..10) */
 typedef struct {
     /* 0x00 */ UnkStructA **unk0;
     /* 0x04 */ s32 unk4;
@@ -365,7 +367,8 @@ typedef struct {
     /* 0x28 */ s32 unk28;
 } UnkStruct_ovl0F_01_80048264; /* size 0x2C */
 
-/* seven arguments of func_ovl0F_01_80047038 */
+/* seven arguments of func_ovl0F_01_80047038 and its copies (0F_01..04,
+ * 0F_07..10) */
 typedef struct {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ s32 unk4;
@@ -376,7 +379,8 @@ typedef struct {
     /* 0x18 */ s32 unk18;
 } UnkStruct_ovl0F_01_80048508; /* size 0x1C */
 
-/* one of the particles func_ovl0F_01_8004540C draws (D_ovl0F_01_80048798) */
+/* one of the particles func_ovl0F_01_8004540C and its copies draw
+ * (D_ovl0F_01_80048798; 0F_01..04, 17_09) */
 typedef struct {
     /* 0x00 */ f32 unk0;
     /* 0x04 */ f32 unk4;
@@ -385,7 +389,7 @@ typedef struct {
     /* 0x10 */ s32 unk10;
 } UnkStruct_ovl0F_01_80048798; /* size 0x14 */
 
-/* the movers' script (D_ovl0F_01_80048938) */
+/* the movers' script (D_ovl0F_01_80048938; 0F_01/04) */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
     /* 0x04 */ UnkStructA **unk4;
@@ -398,5 +402,13 @@ typedef struct {
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ void (*unk20)(s32, s32);
 } UnkStruct_ovl0F_01_80048938; /* size 0x24 */
+
+/* What func_ovl10_01_80046830 returns. */
+typedef struct {
+    /* 0x00 */ u8 unk0[8];
+    /* 0x08 */ s32 unk8;
+    /* 0x0C */ u8 unkC[4];
+    /* 0x10 */ s32 unk10;
+} UnkStruct_ovl10_01_80046830;
 
 #endif

@@ -5,8 +5,10 @@
  * fcmp counts a static with the global before it. In func_8022D414 the
  * call's joint address is `idx * 48 + bj` (the multiply first, so ugen
  * evaluates it first and gives it t8, and the add is t0,v1), while j is
- * `&((Joint *)bj)[idx]`; with bj a variable uopt doesn't reassociate the
- * sum. func_8022D58C's case 6 is gbi.h's gDPSetHilite1Tile on a Hilite
+ * `&((UnkJoint *)bj)[idx]`; with bj a variable uopt doesn't reassociate the
+ * sum. The joint's links (UnkJoint's unk28/unk2C, s32 for 46300) are
+ * added as u32 (`idx + (u32) j->unk2C`): a signed add puts idx first.
+ * func_8022D58C's case 6 is gbi.h's gDPSetHilite1Tile on a Hilite
  * (D_802A2D50, int fields), expanded exactly as the SDK does: its
  * `& 0xfff` arguments get a second `& 0xfff` from _SHIFTL, and the
  * redundant `and`s (each one ugen temp, deleted by as1) are what put
@@ -20,21 +22,16 @@
  * .text, has none).
  */
 #include "common.h"
+#include "gfx.h"
+#include "model.h"
 
 /* A model's display list, built from its joint tree: one matrix per joint
  * with a translation or rotation, a segment-6 display list per mesh. */
 
-/* a command's two words; in the port as wide as a pointer, as the port's
- * gbi.h has them (an address is a word) */
-typedef struct {
-    uintptr_t w0;
-    uintptr_t w1;
-} Gfx;
-
-#define GFX2(pkt, a, b) { Gfx *_g = (Gfx *) (pkt); _g->w0 = (a); _g->w1 = (b); }
+#define GFX2(pkt, a, b) { Gfx_80225840 *_g = (Gfx_80225840 *) (pkt); _g->w0 = (a); _g->w1 = (b); }
 
 /* gbi.h's Hilite and gDPSetHilite1Tile (through gDPSetTileSize and
- * gDPLoadTileGeneric, mbi.h's _SHIFTL), on this file's Gfx */
+ * gDPLoadTileGeneric, mbi.h's _SHIFTL), on this file's Gfx_80225840 */
 typedef struct {
     int x1, y1, x2, y2;
 } Hilite_t;
@@ -48,7 +45,7 @@ typedef union {
     ((unsigned int) (((unsigned int)(v) & ((0x01 << (w)) - 1)) << (s)))
 #define gDPLoadTileGeneric(pkt, c, tile, uls, ult, lrs, lrt) \
 { \
-    Gfx *_g = (Gfx *)(pkt); \
+    Gfx_80225840 *_g = (Gfx_80225840 *)(pkt); \
     _g->w0 = _SHIFTL(c, 24, 8) | _SHIFTL(uls, 12, 12) | _SHIFTL(ult, 0, 12); \
     _g->w1 = _SHIFTL(tile, 24, 3) | _SHIFTL(lrs, 12, 12) | _SHIFTL(lrt, 0, 12); \
 }
@@ -65,34 +62,11 @@ typedef struct {
 } MeshEntry; /* size 0xC; entry n is at the base + 0xC * (n + 1) */
 
 typedef struct {
-    /* 0x00 */ s32 mesh;
-    /* 0x04 */ f32 trans[3];
-    /* 0x10 */ f32 rot[3];
-    /* 0x1C */ u8 pad1C[0xC];
-    /* 0x28 */ u32 next;
-    /* 0x2C */ u32 child;
-} Joint; /* size 0x30 */
-
-typedef struct Node {
-    /* 0x00 */ s32 mesh;
-    /* 0x04 */ u8 pad4[8];
-    /* 0x0C */ struct Node **children;
-    /* 0x10 */ s32 count;
-    /* 0x14 */ f32 trans[3];
-    /* 0x20 */ f32 rot[3];
-} Node;
-
-typedef struct {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ void *unk4;
     /* 0x08 */ PORT_IP(s32) *bases;
     /* 0x0C */ s32 *meshes;
 } MeshOverride; /* size 0x10 */
-
-typedef struct {
-    /* 0x00 */ u8 pad0[0x28];
-    /* 0x28 */ Node *root;
-} Model;
 
 void guMtxIdentF(f32 mf[4][4]);
 void guMtxCatF(f32 mf[4][4], f32 nf[4][4], f32 res[4][4]);
@@ -182,7 +156,7 @@ s32 D_8029FCC4 = 0;
 
 /* gDPLoadTextureBlock of D_8029F8C0 (IA8, 32x32) with texture generation;
  * the section's padding to 16 follows the end */
-Gfx D_8029FCC8[] = {
+Gfx_80225840 D_8029FCC8[] = {
     { 0xBA000E02, 0x00000000 }, /* gDPSetTextureLUT(G_TT_NONE) */
     { 0xB7000000, 0x00040000 }, /* gSPSetGeometryMode(G_TEXTURE_GEN) */
     { 0xBB000001, 0x07C007C0 }, /* gSPTexture(0x07C0, 0x07C0, 0, 0, G_ON) */
@@ -202,33 +176,33 @@ Gfx D_8029FCC8[] = {
 const Hilite D_802A2D50 = { { 0x80, 0x80, 0x80, 0x80 } };
 
 f32 D_802A5510[4][4];
-Gfx *D_802A5550;
+Gfx_80225840 *D_802A5550;
 PORT_IP(s32) D_802A5554;
 
-static void func_8022D280(Gfx **gp, f32 *trans, f32 *rot, s32 *pushed);
-static void func_8022D414(Gfx **gp, PORT_IP(s32) base, s32 joints, s32 idx);
-void func_8022D58C(Gfx **gp, PORT_IP(s32) base, s32 idx);
-static void func_8022D980(Node *node);
-void func_8022DAB0(Model *model, Gfx **gp, PORT_IP(s32) base);
+static void func_8022D280(Gfx_80225840 **gp, f32 *trans, f32 *rot, s32 *pushed);
+static void func_8022D414(Gfx_80225840 **gp, PORT_IP(s32) base, s32 joints, s32 idx);
+void func_8022D58C(Gfx_80225840 **gp, PORT_IP(s32) base, s32 idx);
+static void func_8022D980(UnkNode *node);
+void func_8022DAB0(UnkInst *model, Gfx_80225840 **gp, PORT_IP(s32) base);
 
-void func_8022DAB0(Model *model, Gfx **gp, PORT_IP(s32) base) {
+void func_8022DAB0(UnkInst *model, Gfx_80225840 **gp, PORT_IP(s32) base) {
     D_802A5550 = *gp;
     D_802A5554 = base;
-    func_8022D980(model->root);
+    func_8022D980(model->unk28);
     *gp = D_802A5550;
 }
 
-static void func_8022D980(Node *node) {
+static void func_8022D980(UnkNode *node) {
     s32 i;
     s32 pushed;
 
-    func_8022D280(&D_802A5550, node->trans, node->rot, &pushed);
-    if (node->mesh >= 0) {
-        func_8022D58C(&D_802A5550, D_802A5554, node->mesh);
+    func_8022D280(&D_802A5550, &node->unk14.x, &node->unk20.x, &pushed);
+    if (node->unk0 >= 0) {
+        func_8022D58C(&D_802A5550, D_802A5554, node->unk0);
     }
-    if (node->count != 0) {
-        for (i = 0; i < node->count; i++) {
-            func_8022D980(node->children[i]);
+    if (node->unk10 != 0) {
+        for (i = 0; i < node->unk10; i++) {
+            func_8022D980(node->unkC[i]);
         }
     }
     if (pushed != 0) {
@@ -239,9 +213,9 @@ static void func_8022D980(Node *node) {
     }
 }
 
-void func_8022D58C(Gfx **gp, PORT_IP(s32) base, s32 idx) {
+void func_8022D58C(Gfx_80225840 **gp, PORT_IP(s32) base, s32 idx) {
     s32 load;
-    Gfx *g;
+    Gfx_80225840 *g;
     MeshEntry *m;
     s32 pushed;
     s32 type;
@@ -308,22 +282,22 @@ void func_8022D58C(Gfx **gp, PORT_IP(s32) base, s32 idx) {
     *gp = g;
 }
 
-static void func_8022D414(Gfx **gp, PORT_IP(s32) base, s32 joints, s32 idx) {
+static void func_8022D414(Gfx_80225840 **gp, PORT_IP(s32) base, s32 joints, s32 idx) {
     PORT_IP(s32) bj;
-    Gfx *g;
-    Joint *j;
+    Gfx_80225840 *g;
+    UnkJoint *j;
     s32 pushed;
 
     pushed = 0;
     g = *gp;
     bj = base + joints;
-    func_8022D280(&g, ((Joint *)(idx * 48 + bj))->trans, ((Joint *)(idx * 48 + bj))->rot, &pushed);
-    j = &((Joint *)bj)[idx];
-    if (j->mesh >= 0) {
-        func_8022D58C(&g, base, j->mesh);
+    func_8022D280(&g, &((UnkJoint *)(idx * 48 + bj))->unk4.x, &((UnkJoint *)(idx * 48 + bj))->unk10.x, &pushed);
+    j = &((UnkJoint *)bj)[idx];
+    if (j->unk0 >= 0) {
+        func_8022D58C(&g, base, j->unk0);
     }
-    if (j->child != 0) {
-        func_8022D414(&g, base, joints, idx + j->child);
+    if (j->unk2C != 0) {
+        func_8022D414(&g, base, joints, idx + (u32) j->unk2C);
     }
     if (pushed != 0) {
         GFX2(g++, 0xBD000000, 0);
@@ -331,14 +305,14 @@ static void func_8022D414(Gfx **gp, PORT_IP(s32) base, s32 joints, s32 idx) {
             D_800A0CF8--;
         }
     }
-    if (j->next != 0) {
-        func_8022D414(&g, base, joints, idx + j->next);
+    if (j->unk28 != 0) {
+        func_8022D414(&g, base, joints, idx + (u32) j->unk28);
     }
     *gp = g;
 }
 
-static void func_8022D280(Gfx **gp, f32 *trans, f32 *rot, s32 *pushed) {
-    Gfx *g;
+static void func_8022D280(Gfx_80225840 **gp, f32 *trans, f32 *rot, s32 *pushed) {
+    Gfx_80225840 *g;
     s32 n;
 
     g = *gp;

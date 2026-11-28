@@ -775,13 +775,13 @@ static f32 func_ovl0F_01_8004464C_inl0(UnkStruct_ovl0F_01_80048264 *p) {
 }
 
 static void func_ovl0F_01_8004464C_inl1(UnkStruct_ovl0F_01_80048264 *p) {
-    s32 padP; /* fake: unused; pos at sp+0xA8 */
+    s32 id = 0x168; /* the effect, held (a guess: it is the word above pos, 0xA8; as ovl_0F_04's) */
     f32 pos[3];
 
     pos[0] = (*p->unk0)->unk40->unk10;
     pos[1] = (*p->unk0)->unk40->unk14;
     pos[2] = (*p->unk0)->unk40->unk18;
-    func_ovl0F_01_80047F38(0x168, pos);
+    func_ovl0F_01_80047F38(id, pos);
     func_ovl0F_01_80047EF0(pos);
 }
 

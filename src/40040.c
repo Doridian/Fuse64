@@ -23,7 +23,6 @@
 #include "AD5B0.h"
 
 PORT_UP(u32) func_80227678(s32);
-void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
 PORT_RET(void, s32) func_80238A10(void (*)(void), PORT_IP(s32), void *, s32, s32);
 void func_8025E1D4(Gfx_80225840 **);
 void func_80297D20(void);
@@ -41,7 +40,7 @@ extern u8 D_800BEA60[];
 extern s32 D_802A1230;
 extern s32 D_802A1234;
 extern s32 D_802A123C;
-extern PORT_RET(s32, void *) D_802AC5C0;
+extern UnkStruct_800BD5B0 *D_802AC5C0;
 
 /* .data */
 void *D_8029F570[] = {

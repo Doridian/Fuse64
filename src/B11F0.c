@@ -60,7 +60,6 @@ void *func_8026D4B0(UnkCb_8026D4B0, s32);
 UnkStructA_40 *func_8022A328(UnkModel *arg0, s32 arg1, s32 arg2, u32 arg3, s32 arg4);
 void free(void *);
 void *malloc(s32);
-void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
 void func_80261CD0(void *, void *, s32, PORT_RET(s32, void *), s32, s32, s32, s32, s32, s32, s32);
 
 /* a picture: its header, then 320x240 16-bit pixels */
@@ -79,7 +78,7 @@ typedef struct {
 } UnkStruct_80296D4C;
 
 extern void *D_1000000;
-extern PORT_RET(s32, void *) D_802AC5C0;
+extern UnkStruct_800BD5B0 *D_802AC5C0;
 extern s32 D_802AC5D0;
 
 UnkStruct_802B03C0 *func_80296BEC(s32 arg0);

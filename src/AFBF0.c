@@ -54,7 +54,6 @@ u32 func_80225B90(char *str);
 #else
 u32 func_80225B90(void);
 #endif
-void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
 s32 func_80238A10(void *, PORT_IP(s32), void *, s32, u16);
 s32 func_8023903C(u32);
 void func_80239094(void);
@@ -84,7 +83,7 @@ extern u8 D_800AEDF0[];
 #undef D_800AEE04
 #define D_800AEE04 (*(s32 *) &((Port_800AEDF0 *) D_800AEDF0)[0].unk0[0x14])
 #endif
-extern PORT_RET(s32, void *) D_802AC5C0;
+extern UnkStruct_800BD5B0 *D_802AC5C0;
 extern s32 D_802AC5CC;
 
 UnkStruct_802B0320 D_802B0320[12];

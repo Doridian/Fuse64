@@ -8,6 +8,7 @@
 #include "87D80.h"
 #include "53D70.h"
 #include "48600.h"
+#include "41FD0.h"
 
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -95,8 +96,7 @@ void func_802363BC(UnkStruct_802363BC *);
 void func_8023646C(UnkStruct_802363BC *);
 void func_80236AEC(u16);
 void func_80236ACC(u16);
-void func_80227CD0(PORT_RET(s32, void *), f32, f32, f32, f32, f32, f32, f32, f32, f32);
-extern PORT_RET(s32, void *) D_802AC5C0;
+extern UnkStruct_800BD5B0 *D_802AC5C0;
 extern Vec3f D_8008F3D8;
 void func_80235D7C(void);
 void func_80236D30(void);

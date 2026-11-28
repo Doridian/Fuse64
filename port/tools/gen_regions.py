@@ -10,7 +10,7 @@ audio heap, the sbrk arena at 0x80300000.  Each name the extract lists in
 undefined_syms_auto.txt (--syms: another copy, the snapshot's) is placed
 as the N64 layout has it, an offset in the N64's RDRAM (below); the
 default layout (objects_layout: docs/PORT.md, "The default layout") then
-makes each one the C declares an array of its own.  With --layout n64 the
+makes each one the C declares a global of its own, of its declared size.  With --layout n64 the
 port keeps that memory as one buffer laid out as the N64's RDRAM
 (port_rdram, 8 MiB), each name an alias into it (module-level asm
 `.set`).  --sizes gives decls.py's sizes where pointers are 4 bytes (the
@@ -76,17 +76,21 @@ SIZES["D_80000000"] = 0x400
 
 def objects_layout(places, own, lp64, full):
     """The default layout (docs/PORT.md, "The default layout"): each name
-    the C declares, and that isn't inside another, is an array of its own,
-    port_o_NAME, from its place in the N64 layout to the next such name's
-    (so never less than its declared size: a name inside that is an alias
-    there, as one the C doesn't declare, which only the asm data's words
-    or nothing name: the scattered layout's rule), or SIZES's where that is
-    less, and the sbrk arena PORT_SBRK_SIZE.  It keeps its offset modulo
-    16 (4 KB for 4 KB or more), and the name is an alias at that offset
-    (so gen_inner.py's pointers reach it as before).  port_region_objs
-    lists them for port/src/memory.c: each one's place, size, N64 address
-    and offset in the N64 layout's port_rdram (the image the RDRAM dumps
-    and the references are made of; none for an object outside it).
+    the C declares, and that isn't inside another (by the one before's
+    declared size), is a global of its own, defined here (an array of
+    bytes, 16-aligned, 4 KB for 4 KB or more) and declared by the game's C
+    with its type, so that the compiler sees an ordinary global (gen_inner.py
+    makes pointers only for the names inside another).  Its size is its
+    declared size (decls.py's, of the host's pointer size; TYPES's where the
+    declarations disagree); where no declaration has one, or one is
+    `T x[]`, its room up to the next such name (the scattered layout's
+    rule); SIZES's; the sbrk arena PORT_SBRK_SIZE.  A name the C doesn't
+    declare (only the asm data's words or nothing name it) is an alias
+    inside the one before, and an end (ENDS, END_MARKERS) one past the
+    end of the one before, as the C's &x[N] is.  port_region_objs lists
+    them for port/src/memory.c: each one's place, size, N64 address and
+    offset in the N64 layout's port_rdram (the image the RDRAM dumps and
+    the references are made of; none for an object outside it).
     FULL: decls.py's declarations (the sizes, of the host's pointer size)."""
     o = ["", "/* the default layout: each name an object of its own */",
          "typedef struct { uint8_t *p; uint32_t size, n64, img; } PortObj;"]
@@ -100,50 +104,69 @@ def objects_layout(places, own, lp64, full):
         if n in TYPES:
             size = max(size, layouts.Layouts(full).size(TYPES[n][0], TYPES[n][1], 64 if lp64 else 32) or 0)
         return vs, size
+    def incomplete(n):
+        return n not in TYPES and any(d["type"].rstrip().endswith("[]") for d in declared(n)[0])
     cands = sorted((p for p in places if p[4] is None and p[2] == "port_rdram"), key=lambda p: p[3])
     top, inner = [], {}
     for p in cands:
         vs, size = declared(p[0])
-        if top and (not vs and p[0] not in SIZES or p[3] < top[-1][3] + top[-1][5]):
+        if top and (not vs and p[0] not in SIZES or p[0] in END_MARKERS or p[0] in ENDS
+                    or p[3] < top[-1][3] + top[-1][5]):
             inner[p[0]] = top[-1][0]
             continue
         top.append(p[:4] + (None, size))
     places = [p if p[0] not in inner else p[:4] + (inner[p[0]],) for p in places]
-    store = {}      # name -> (storage symbol, phase, host offset in the N64 layout)
+    store = {}      # name -> (its object, its host offset in the N64 layout, its size)
     table = []
-    for i, (n, a, base, hoff, _, _) in enumerate(top):
-        if n == "D_80300000":
-            size = 0x200000 if lp64 else 0x100000      # port_game.h's PORT_SBRK_SIZE
-        elif i + 1 < len(top):
-            size = top[i + 1][3] - hoff
-        else:
+    for i, (n, a, base, hoff, _, decl) in enumerate(top):
+        if i + 1 < len(top):
+            room = top[i + 1][3] - hoff
+        elif n != "D_80300000":
             sys.exit("gen_regions.py: %s, the last name, has no size" % n)
-        if n in SIZES:
-            size = min(size, SIZES[n])
+        if n == "D_80300000":
+            size = room = 0x200000 if lp64 else 0x100000      # port_game.h's PORT_SBRK_SIZE
+        elif n in SIZES:
+            size = min(room, SIZES[n])
+        elif decl and not incomplete(n):
+            size = decl
+        else:
+            # (no declaration has a size, or one is `T x[]`: up to the
+            # next name the C declares, the scattered layout's rule)
+            size = room
         if a < 0x80000400:
             # (the exception vectors and libultra's boot words end at
             # boot_code's entry: SIZES's D_80000000)
             size = min(size, 0x80000400 - a)
-        al =0x1000 if size >= 0x1000 else 16
-        ph = hoff % al
-        o.append("uint8_t port_o_%s[0x%X] __attribute__((aligned(0x%X)));" % (n, ph + size, al))
-        o.append("__asm__(\".globl \" PORT_ULP \"%s\\n.set \" PORT_ULP \"%s, \" PORT_ULP \"port_o_%s + 0x%X\\n\");"
-                 % (n, n, n, ph))
-        store[n] = ("port_o_" + n, ph, hoff)
-        table.append("    { port_o_%s + 0x%X, 0x%X, 0x%X, 0x%X }, /* %s */" % (n, ph, size, a, hoff, n))
+        # (16-aligned, as x86-64's ABI has an array of 16 bytes or more,
+        # which the compiler takes for granted; 4 KB for 4 KB or more)
+        al = 0x1000 if size >= 0x1000 else 16
+        o.append("uint8_t %s[0x%X] __attribute__((aligned(0x%X)));%s" % (
+            n, size, al, " /* the N64's room 0x%X */" % room if room != size else ""))
+        store[n] = (n, hoff, size)
+        table.append("    { %s, 0x%X, 0x%X, 0x%X }," % (n, size, a, hoff))
     for n, a, base, hoff, inside in places:
         while inside in inner:
             inside = inner[inside]
         if inside is not None and base == "port_rdram":
-            sym, ph, chost = store[inside]
+            sym, chost, csize = store[inside]
+            d = hoff - chost
+            if n in END_MARKERS or n in ENDS:
+                # (no object: one past the end of the one before, as the
+                # C's &x[N] is)
+                d = csize
+            elif d >= csize:
+                sys.exit("gen_regions.py: %s is past %s's 0x%X bytes" % (n, sym, csize))
             o.append("__asm__(\".globl \" PORT_ULP \"%s\\n.set \" PORT_ULP \"%s, \" PORT_ULP \"%s + 0x%X\\n\");"
-                     % (n, n, sym, ph + hoff - chost))
+                     % (n, n, sym, d))
+        elif base != "port_rdram" and inside is None:
+            # (an object of its own in either layout, outside port_rdram:
+            # where pointers are 8 bytes, a name past the work area that
+            # grew; gen_regions.py's main)
+            o.append("uint8_t %s[0x%X] __attribute__((aligned(16)));" % (n, own[base]))
+            table.append("    { %s, 0x%X, 0x%X, 0xFFFFFFFF }," % (n, own[base], a))
         elif base != "port_rdram":
-            # (an object of its own in either layout, outside port_rdram)
             o.append("__asm__(\".globl \" PORT_ULP \"%s\\n.set \" PORT_ULP \"%s, \" PORT_ULP \"%s + 0x%X\\n\");"
-                     % (n, n, base, hoff))
-            if inside is None:
-                table.append("    { %s, 0x%X, 0x%X, 0xFFFFFFFF }, /* %s */" % (base, own[base], a, n))
+                     % (n, n, inside, hoff))
     o.append("const PortObj port_region_objs[] = {")
     o += table
     o.append("};")
@@ -153,7 +176,7 @@ def objects_layout(places, own, lp64, full):
     o.append("void port_clear_work_area(void) {")
     for n, a, base, hoff, _, _ in top:
         if 0x80063000 <= a < 0x800BEA60:
-            o.append("    __builtin_memset(%s, 0, sizeof %s);" % (store[n][0], store[n][0]))
+            o.append("    __builtin_memset(%s, 0, sizeof %s);" % (n, n))
     o.append("}")
     return o
 
@@ -276,8 +299,9 @@ def main():
             continue
         o.append("__asm__(\".globl \" PORT_ULP \"%s\\n.set \" PORT_ULP \"%s, \" PORT_ULP \"%s + 0x%X\\n\");"
                  % (n, n, base, hoff))
-    for b, sz in own:
-        o.append("uint8_t %s[0x%X] __attribute__((aligned(16)));" % (b, sz))
+    if layout != "objects":
+        for b, sz in own:
+            o.append("uint8_t %s[0x%X] __attribute__((aligned(16)));" % (b, sz))
     if layout == "objects":
         o += objects_layout(places, dict(own), lay is not None, full)
     elif not scatter:

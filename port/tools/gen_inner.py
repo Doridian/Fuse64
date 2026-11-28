@@ -16,9 +16,14 @@ through: `extern s32 D_X;` declares `extern s32 (*port_p_D_X);`, and every
 use goes through it.  OUT.h has the macros (port_game.h includes it in the
 game's C), OUT.c the pointers.
 
-Every name of both kinds is one, but those whose address the C uses in a
-static initializer (which needs a constant: EXCLUDE) and the absolute
-ones (segment and physical addresses).
+In the default layout (gen_regions.py's objects_layout) a fixed-address
+name that is an object of its own is an ordinary global, defined in
+gen/regions.c: only the names inside another object (an alias there:
+a member's or an element's own name, an end) are such macros, and the asm
+data's labels.  In the N64 and scattered layouts every name of both kinds
+is one.  Not those whose address the C uses in a static initializer
+(which needs a constant: EXCLUDE) and the absolute ones (segment and
+physical addresses).
 """
 import re
 import sys
@@ -36,7 +41,7 @@ EXCLUDE = {
 def names(path):
     out = []
     for line in open(path):
-        m = re.search(r'\.set " PORT_ULP "(D_[0-9A-Za-z_]+), " PORT_ULP "(port_rdram|port_asm_|port_o_|port_scatter_arena)',
+        m = re.search(r'\.set " PORT_ULP "(D_[0-9A-Za-z_]+), " PORT_ULP "(port_rdram|port_asm_|port_o_|port_scatter_arena|D_)',
                       line)
         if m:
             out.append(m.group(1))

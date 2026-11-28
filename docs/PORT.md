@@ -1709,8 +1709,8 @@ Not counted, and so left:
 
 The fixed-address names (`undefined_syms_auto.txt`: the work area from
 0x80063000, the framebuffers, the archive's buffers, the audio heap, the
-sbrk arena at 0x80300000) are each an array of its own ("The default
-layout"); with `-DPORT_LAYOUT=n64` they are aliases into one 8 MiB buffer
+sbrk arena at 0x80300000) are each a global of its own, of its declared
+size ("The default layout"); with `-DPORT_LAYOUT=n64` they are aliases into one 8 MiB buffer
 laid out as RDRAM (`port_rdram`), as they were until 2026-11-27.
 `port_addr()` (port/src/memory.c) turns what the game hands the hardware
 (a KSEG0/1 address, a physical one, a segment address, a host pointer)
@@ -1791,20 +1791,23 @@ microcode's DRAM, the dumps):
 
 - Each fixed-address name the C declares, and that isn't inside another
   (a typed name's members and elements, or inside the one before by that
-  one's declared size), is an array of its own, `port_o_NAME`
-  (gen_regions.py): from its place in the N64 layout to the next such
-  name's, so never less than its declared size (decls.py's, which the
-  build now makes where pointers are 4 bytes too: `--sizes`), SIZES's
-  where that is less, the sbrk arena `PORT_SBRK_SIZE`. A name the C
-  doesn't declare (the asm data's words or nothing name it) is inside the
-  one before, as in the scattered layout. Each keeps its offset modulo 16
-  (4 KB for 4 KB or more: a pad before it), and the name is an alias at
-  that offset, so gen_inner.py's pointers (`port_p_NAME`) reach it as
-  before. 114 objects (us; three of x86-64's were already objects of
-  their own, `port_region_*`).
+  one's declared size), is a global of its own (gen_regions.py), defined
+  once in `regions.c` under its own name and declared by the game's C
+  with its type, so that the compiler sees an ordinary global
+  (2026-11-28, below). Its size is its declared size (decls.py's, which
+  the build makes where pointers are 4 bytes too: `--sizes`; gen_regions'
+  TYPES where the declarations disagree), or where no declaration has one
+  or one is `T x[]` its room up to the next such name (the scattered
+  layout's rule), SIZES's (the exception vectors, the depth buffer), the
+  sbrk arena `PORT_SBRK_SIZE`. A name the C doesn't declare (the asm
+  data's words or nothing name it) is an alias inside the one before, and
+  an end (`D_800A8570`, `&D_800A7F30[100]`; `D_800BEA60`, the work area's)
+  an alias one past the end of the one before. 109 objects (us; on x86-64
+  one of them, `D_8014C8D0`, grown past what follows it, outside the
+  image).
 - Each asm data label is a struct of its own, `port_o_LABEL`, from its
-  place in its file's struct to the next one's (asm2c.py), by the same
-  rule (325 in us); the fill writes into it (`port_asmfill`'s runs split
+  place in its file's struct to the next one's (asm2c.py: the N64's
+  room, as the fixed-address names had until 2026-11-28; 325 in us then); the fill writes into it (`port_asmfill`'s runs split
   at the labels, the same bytes in the same order, so the checksum and the
   snapshot are unchanged).
 - One table of the objects (`port_region_objs`, `port_asm_objs`: place,
@@ -1854,16 +1857,77 @@ index was first allocated with the game's malloc, pc_names.h's, which
 moved every block of gmalloc's heap by three 4 KB blocks; the dumps
 showed it, the scenarios' hashes didn't. It is the host's malloc now.)
 
+**Ordinary globals, declared sizes** (us, 2026-11-28). Until then each
+fixed-address name was a byte array `port_o_NAME` from its place to the
+next declared name's, padded so that it kept its N64 offset modulo 16
+(4 KB), the name an alias at that offset, and the game's C reached every
+name through gen_inner.py's pointer. Now each object is the name itself,
+a global `regions.c` defines once (`uint8_t NAME[size]`, 16-aligned, 4 KB
+for 4 KB or more) and the game's C declares with its type, used directly:
+gen_inner.py's macros are left for the names inside another object (110
+fewer: 146 in us, i386), the asm data's labels and the other layouts.
+The definition is bytes, not the C type: most of the types are a `.c`
+file's own (530C0.c's `UnkStruct_802AB200`, 87190.c's
+`UnkStruct_800A7F30`), which no
+other unit can name; what the type gives a definition, its size and
+alignment, decls.py gives, and the compiler of each unit sees its own
+declaration. And each object is its declared size: on i386 27 had more
+room (`D_80090440`'s 2,000 bytes had 0x87D8, `D_800A7F30`'s 1,600 0x6C8C,
+`D_801E56C0`'s yield buffer 0x1A940 for 0x10000, `D_8014B8A8` 0x1028 for
+0x400, 5E3F0.c's per-entry tables 0x400 for 0x3FC, a dozen words with the
+next name 8 bytes on...) and five were ends, not objects (`D_800AEBBC`,
+`D_800AED4C`, `D_800BD488`, the thread's stack top `D_800BEA58`, and
+`D_800BEA60`, the work area's end, which had the 0x415A0 bytes up to the
+framebuffers); x86-64 the same, 37 by its sizes. So an ordinary ASan
+build has a redzone after each, as the scattered
+check build has padding. Two things showed on the way:
+
+- x86-64's ABI aligns a global array of 16 bytes or more to 16, and clang
+  takes it for granted in the unit that only declares one: with each
+  object at its N64 alignment (8 for `D_800BA8E8`, 6 entries of 4 bytes),
+  func_80286F04's loop became one `movdqa` that faulted. The objects are
+  16-aligned, and so no longer keep the N64's offset modulo 16 (nothing
+  needed it: the image keeps the offsets).
+- Nothing reads past a declared size in the runs below, as the
+  scattered check had said (the scattered layout's sizes are the same
+  rule's).
+
+Checked: test.py's seven scenarios give the references on i386 and
+x86-64; `rooms.py census` (286 targets, i386) against the emulator's
+digests: 277 the same, and the 9 that differed before (41:29, 45:22,
+46:19, 48:19, 80:17, 80:22, 116:32, 126:32, 126:33, where the N64 stops)
+the same lines and the same port digests as the commit before's; an
+ASan and UBSan build (x86-64, `PORT_SANITIZE=address,undefined`; its
+post-link check finds gfx.c's two halves of the F3DEX name side by side
+in `.rodata`, ASan's redzones zeros between them, as before this change)
+gives the references for legal, menus, battle, warp-boss and
+warp-stage with no report; gfx_ref.py's 20 screens
+(i386) print the same table as the commit before's, every image and the
+VI the reference's; gl_cmp.py (x86-64, legal and menus) every picture,
+the digest and RDRAM with the images the same as soft's; `PORT_DUMP_RDRAM` (menus at 300, 1500, 2999, no
+address randomization) the same images but the host pointers the game
+keeps (each moved by one of a few distances: the objects' new places),
+the hidden bits byte for byte; `-DPORT_LAYOUT=n64` gives the references
+for legal and menus, and the scattered check build (seed 1, x86-64) for
+legal, menus and battle with an empty `PORT_SCATTER_OUT`.
+`snapshot.py --check` (linux-x86_64, wasm32, windows-x86_64): the same
+binaries from the snapshot, the snapshot unchanged, `rom_free_check.py`
+0 in each; the Windows build's `legal` under wine and the WebAssembly
+(node) build's give the references.
+
 ### The scattered layout
 
 The N64 layout (`-DPORT_LAYOUT=n64`, the default until 2026-11-27) keeps
 the N64's neighbours: the fixed-address names in `port_rdram` at their
 RDRAM offsets, each asm data file one struct with its labels inside, the
-overlays' variables in their files' order; the default layout ("The
-default layout") separates the names but gives each the N64's room up to
-the next one the C declares. So a read
+overlays' variables in their files' order. So a read
 past an object's end, before its start, or from one name into the next
-reaches what the N64 has there, and nothing shows it. The goal, as in
+reaches what the N64 has there, and nothing shows it. The default layout
+("The default layout") separates the fixed-address names, each of its
+declared size since 2026-11-28 (before that, the N64's room up to the
+next one the C declares), so an ordinary ASan build sees a read past
+one of them; it keeps the asm data's labels' rooms and the C globals'
+order. The goal, as in
 DozerEncore, is a port that doesn't depend on that. The scattered builds
 check it (64-bit Linux, clang and lld, off by default):
 
@@ -3583,31 +3647,28 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   - The default build itself ("The default layout", 2026-11-27): each
     fixed-address name and each asm data label is an object of its own
     and there is no `port_rdram` (the N64's layout is
-    `-DPORT_LAYOUT=n64`). Left before it is DozerEncore's ordinary C
-    program:
-    - Each object is a byte array (a struct of bytes and words for a
-      label) named by an alias at its offset, and the game's C reaches
-      every such name through gen_inner.py's pointer (`port_p_NAME`), as
-      before. Next: each name defined once with its C type (decls.py has
-      them), and the pointers only for the names inside another (an
-      element's or a member's own name), so that the compiler sees
-      ordinary globals (its code changes: test.py, the census and the
-      TAS again).
-    - Each object has the N64's room up to the next declared name, not
-      its declared size, so a read past the declared end still reaches
-      what the N64 has there (the check build, with declared sizes and
-      padding, is what shows such reads; it reports none in the runs
-      above). Then the declared sizes, and an ordinary ASan build
-      (redzones round every global) would see what the check build sees.
+    `-DPORT_LAYOUT=n64`); since 2026-11-28 each fixed-address name that
+    is an object is an ordinary global of its declared size, used
+    directly by the game's C, so an ASan build has a redzone after each
+    ("Ordinary globals, declared sizes"). Left before it is
+    DozerEncore's ordinary C program:
+    - The definitions are bytes (`regions.c`), not the C type, which is
+      often a `.c` file's own: a definition with its type would be in
+      the file that declares it (`#ifdef TARGET_PC`, with the N64 and
+      scattered layouts' aliases apart), or the types in headers.
+    - The names inside another object (an element's or a member's own
+      name, an end) are still gen_inner.py's pointers, and so are the
+      asm data's labels, each with the N64's room up to the next label.
     - The asm data as C: each label's initializer from the ROM (the
       fill) is a C definition of its type, and asm2c.py goes.
     - The image (the N64 layout's offsets) stays as the numbering of what
       the references, the audio microcode's DRAM and the dumps name by
       number; the default build was checked on Linux i386 and x86-64,
       the snapshot's x86-64, Windows x64 (zig) and WebAssembly builds
-      (`snapshot.py --check`, `legal`), and jp's 4908M on i386; eu,
-      macOS, and gfx_ref.py's and gl_cmp.py's comparisons (which take
-      the image) not yet.
+      (`snapshot.py --check`, `legal`), and jp's 4908M on i386, and
+      gfx_ref.py's and gl_cmp.py's comparisons (2026-11-28: gfx_ref's 20
+      screens on i386, gl_cmp's legal and menus on x86-64); eu and macOS
+      not yet.
     - The scattered check build's post-link `rom_free_check.py` finds
       72 bytes of the ROM in its shuffled `.rodata` (seed 1): a
       coincidence of order, but the check builds need `-DPORT_ROM_FREE=OFF`

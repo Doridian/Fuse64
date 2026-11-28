@@ -340,9 +340,12 @@ docs/PORT.md), for accuracy and fidelity alike:
       2026-11-27 Fuse64's default build makes each fixed-address name
       and each asm data label an object of its own, with no 8 MiB
       `port_rdram` (the N64's layout is `-DPORT_LAYOUT=n64`; docs/PORT.md,
-      "The default layout"); left there: the objects as typed C
-      definitions reached without gen_inner.py's pointers, their
-      declared sizes rather than the N64's room, the asm data as C.
+      "The default layout"); since 2026-11-28 each fixed-address object
+      is an ordinary global of its declared size that the game's C uses
+      directly (an ASan build has a redzone after each); left there:
+      definitions of the C type rather than bytes, the names inside
+      another object and the asm data's labels still reached through
+      gen_inner.py's pointers, the asm data as C.
       The runs that find what depends on the layout now cover
       every room's entry (us, seed 1, 2026-11-27: three findings fixed,
       nothing left), 65.5% of the lines; seeds 2-3, eu and jp over every

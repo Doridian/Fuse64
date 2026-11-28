@@ -34,21 +34,6 @@ typedef struct {
     /* 0x1E */ s16 unk1E;
 } UnkStruct_ovl0E_03_80046B78;
 
-/* the ten movers: each record is passed to its task */
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ UnkStructA *unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-} UnkStruct_ovl0E_03_80046758;
-
 /* the eight other movers: two sets of speeds, chosen by func_ovl0E_03_80045568()->unk10 */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
@@ -220,7 +205,7 @@ u32 D_ovl0E_03_80046734[][3] = {
     { 1, 0xD, 0xEB },
     { 2, 0x22, 0xE0 },
 };
-UnkStruct_ovl0E_03_80046758 D_ovl0E_03_80046758[10] = {
+UnkStruct_ovl0E_01_800469F8 D_ovl0E_03_80046758[10] = {
     { 0, -1, NULL, 650.0f, -3800.0f, 2450.0f, 93.0f, 93.0f, 93.0f, 1.6333334f, -3800.0f },
     { 1, -1, NULL, 750.0f, -3800.0f, 2650.0f, 93.0f, 92.0f, 93.0f, 1.6333334f, -3800.0f },
     { 2, -1, NULL, 650.0f, -3800.0f, 2850.0f, 93.0f, 93.0f, 93.0f, 1.6333334f, -3800.0f },
@@ -328,7 +313,7 @@ void func_ovl0E_03_80044E94(UnkStructA *arg0) {
 }
 
 void func_ovl0E_03_80044B78(void) {
-    UnkStruct_ovl0E_03_80046758 *rec;
+    UnkStruct_ovl0E_01_800469F8 *rec;
     s32 flag;
     f32 a[3];
     f32 b[3];
@@ -386,7 +371,7 @@ void func_ovl0E_03_80044B78(void) {
 }
 
 void func_ovl0E_03_80044B00(void) {
-    UnkStruct_ovl0E_03_80046758 *rec;
+    UnkStruct_ovl0E_01_800469F8 *rec;
     s16 i;
 
     for (i = 0, rec = D_ovl0E_03_80046758; i < 10; i++, rec++) {

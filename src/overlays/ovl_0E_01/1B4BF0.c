@@ -24,21 +24,6 @@ typedef struct {
     /* 0x1E */ s16 unk1E;
 } UnkStruct_ovl0E_01_80046B70;
 
-/* the six movers: each record is passed to its task */
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ UnkStructA *unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-} UnkStruct_ovl0E_01_800469F8;
-
 /* what func_ovl0E_01_80045808 returns */
 typedef struct {
     /* 0x00 */ u8 unk0[0x10];

@@ -24,21 +24,6 @@
  * camera set-up (func_ovl0E_04_8004399C).
  */
 
-/* the eight movers: each record is passed to its task */
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ UnkStructA *unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-} UnkStruct_ovl0E_04_80046A88;
-
 /* the other movers: two sets of speeds, chosen by func_ovl0E_04_80045898()->unk10 */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
@@ -239,7 +224,7 @@ u32 D_ovl0E_04_80046A64[][3] = {
     { 1, 0xD, 0xEB },
     { 2, 0x22, 0xE0 },
 };
-UnkStruct_ovl0E_04_80046A88 D_ovl0E_04_80046A88[8] = {
+UnkStruct_ovl0E_01_800469F8 D_ovl0E_04_80046A88[8] = {
     { 0, -1, NULL, 250.0f, -4100.0f, 1050.0f, 90.0f, 80.0f, 90.0f, 1.6333334f, -4100.0f },
     { 1, -1, NULL, 550.0f, -4100.0f, 950.0f, 90.0f, 80.0f, 90.0f, 1.6333334f, -4100.0f },
     { 2, -1, NULL, 650.0f, -4100.0f, 650.0f, 90.0f, 80.0f, 90.0f, 1.6333334f, -4100.0f },
@@ -331,7 +316,7 @@ void func_ovl0E_04_800451D4(UnkStructA *arg0) {
 }
 
 void func_ovl0E_04_80044EB4(void) {
-    UnkStruct_ovl0E_04_80046A88 *rec;
+    UnkStruct_ovl0E_01_800469F8 *rec;
     s32 flag;
     f32 a[3];
     f32 b[3];
@@ -395,7 +380,7 @@ void func_ovl0E_04_80043D9C(void) {
 }
 
 void func_ovl0E_04_80044E3C(void) {
-    UnkStruct_ovl0E_04_80046A88 *rec;
+    UnkStruct_ovl0E_01_800469F8 *rec;
     s16 i;
 
     for (i = 0, rec = D_ovl0E_04_80046A88; i < 8; i++, rec++) {

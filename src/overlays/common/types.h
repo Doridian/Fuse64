@@ -50,7 +50,9 @@ typedef struct {
     /* 0x0C */ f32 unkC;
 } UnkStruct_ovl0C_01_8004A3BC;
 
-/* a gate (ovl_0C_07's UnkStruct_ovl0C_07_80047590) */
+/* a gate: its object, its position, the trigger object's position and the
+ * arguments of its map changes (0C_07's task 80044B48 takes one; 0C_01/02/
+ * 06/07) */
 typedef struct {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ UnkStructA *unk4;
@@ -84,7 +86,8 @@ typedef struct {
     /* 0x74 */ s32 unk74;
 } UnkStruct_ovl0C_01_8004A104;
 
-/* objects at a position, each a task's (func_ovl0C_01_80047A60) */
+/* objects at a position, each a task's (func_ovl0C_01_80047A60,
+ * func_ovl0C_04_80043FC0; 0C_01/04) */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
     /* 0x04 */ f32 unk4;
@@ -99,7 +102,8 @@ typedef struct {
     /* 0x28 */ s32 unk28;
 } UnkStruct_ovl0C_01_8004A17C;
 
-/* a list of these ends at the one whose unk2 is 0 */
+/* a chain of records (unk2 is the next one's index, 0 ends it), each a
+ * task's (func_ovl0C_04_80043D3C; 0C_01/04) */
 typedef struct {
     /* 0x00 */ s16 unk0;
     /* 0x02 */ s16 unk2;
@@ -115,7 +119,9 @@ typedef struct {
     /* 0x28 */ s32 unk28;
 } UnkStruct_ovl0C_01_8004A1A8;
 
-/* a list of these ends at the one whose unk2 is 0; unk20 and unk22 count */
+/* a switch: a list of these ends at the one whose unk2 is 0; unk20 and
+ * unk22 count, unk24 is its flag (0C_06: the timer of its sparks); the
+ * third parameter of 0C_01's 80044878 and its copies (0C_01/02/06) */
 typedef struct {
     /* 0x00 */ s16 unk0;
     /* 0x02 */ s16 unk2;
@@ -133,6 +139,7 @@ typedef struct {
     /* 0x24 */ s32 unk24;
 } UnkStruct_ovl0C_01_8004A22C;
 
+/* D_ovl0C_01_8004A3CC's records (0C_01/02) */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
     /* 0x04 */ s32 unk4;
@@ -149,6 +156,7 @@ typedef struct {
     /* 0x2E */ s16 unk2E;
 } UnkStruct_ovl0C_01_8004A3CC;
 
+/* D_ovl0C_01_8004A584's records (0C_01/02) */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
     /* 0x04 */ f32 unk4;
@@ -158,7 +166,7 @@ typedef struct {
     /* 0x14 */ s32 unk14;
 } UnkStruct_ovl0C_01_8004A584;
 
-/* an object at a position, with three arguments */
+/* an object at a position, with three arguments (0C_01/02) */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
     /* 0x04 */ f32 unk4;
@@ -169,7 +177,7 @@ typedef struct {
     /* 0x18 */ s32 unk18;
 } UnkStruct_ovl0C_01_8004A5B4;
 
-/* three lifts, each the task func_ovl0C_07_80045694's */
+/* a lift, each the task func_ovl0C_07_80045694's (0C_06/07/09) */
 typedef struct {
     /* 0x00 */ s16 unk0;
     /* 0x02 */ s16 unk2;
@@ -196,7 +204,8 @@ typedef struct {
     /* 0x44 */ s32 unk44;
 } UnkStruct_ovl0C_06_80048F88;
 
-/* an object, its position and the limits the movers check it against */
+/* an object, its position and the limits the movers check it against
+ * (0C_06/07/09) */
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
     /* 0x04 */ f32 unk4;
@@ -209,7 +218,8 @@ typedef struct {
 } UnkStruct_ovl0C_06_80048FD0;
 
 /* a mover: the tasks func_ovl0C_07_80044CE0 and func_ovl0C_07_80044DC8
- * take one (unk0 indexes D_ovl0C_06_80048FD0) */
+ * take one (unk0 indexes the overlay's UnkStruct_ovl0C_06_80048FD0s;
+ * 0C_06/07/09) */
 typedef struct {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ UnkStructA *unk4;
@@ -229,5 +239,20 @@ typedef struct {
     /* 0x3C */ f32 unk3C;
     /* 0x40 */ f32 unk40;
 } UnkStruct_ovl0C_06_80049030;
+
+/* the six movers: each record is passed to its task */
+typedef struct {
+    /* 0x00 */ s16 unk0;
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ UnkStructA *unk8;
+    /* 0x0C */ f32 unkC;
+    /* 0x10 */ f32 unk10;
+    /* 0x14 */ f32 unk14;
+    /* 0x18 */ f32 unk18;
+    /* 0x1C */ f32 unk1C;
+    /* 0x20 */ f32 unk20;
+    /* 0x24 */ f32 unk24;
+    /* 0x28 */ f32 unk28;
+} UnkStruct_ovl0E_01_800469F8;
 
 #endif

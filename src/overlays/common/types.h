@@ -149,4 +149,13 @@ typedef struct {
     /* 0x2E */ s16 unk2E;
 } UnkStruct_ovl0C_01_8004A3CC;
 
+typedef struct {
+    /* 0x00 */ UnkStructA *unk0;
+    /* 0x04 */ f32 unk4;
+    /* 0x08 */ f32 unk8;
+    /* 0x0C */ f32 unkC;
+    /* 0x10 */ s32 unk10;
+    /* 0x14 */ s32 unk14;
+} UnkStruct_ovl0C_01_8004A584;
+
 #endif

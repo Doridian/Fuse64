@@ -48,15 +48,6 @@ typedef struct {
     /* 0x0C */ f32 unkC;
     /* 0x10 */ s32 unk10;
     /* 0x14 */ s32 unk14;
-} UnkStruct_ovl0C_02_80049B20;
-
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
     /* 0x18 */ s32 unk18;
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ s32 unk20;
@@ -215,7 +206,7 @@ static void func_ovl0C_02_80043C4C(void) {
 
 void func_ovl0C_02_80043B64(void);
 void func_ovl0C_02_80043C54(void);
-void func_ovl0C_02_80043E0C(UnkStruct_ovl0C_02_80049B20 *arg0);
+void func_ovl0C_02_80043E0C(UnkStruct_ovl0C_01_8004A584 *arg0);
 static void func_ovl0C_02_8004408C(void) {
 }
 
@@ -357,7 +348,7 @@ UnkStruct_ovl0C_02_80049AB0 D_ovl0C_02_80049AB0[4] = {
 #define D_ovl0C_02_80049ACC (D_ovl0C_02_80049AB0 + 1)
 #define D_ovl0C_02_80049AE8 (D_ovl0C_02_80049AB0 + 2)
 #define D_ovl0C_02_80049B04 (D_ovl0C_02_80049AB0 + 3)
-UnkStruct_ovl0C_02_80049B20 D_ovl0C_02_80049B20[2] = {
+UnkStruct_ovl0C_01_8004A584 D_ovl0C_02_80049B20[2] = {
     { NULL, 3000.0f, 600.0f, 2500.0f, 0x19, 0x418 },
     { NULL, 4100.0f, 400.0f, 900.0f, 0x1A, 0x419 },
 };
@@ -375,10 +366,10 @@ UnkStruct_ovl0C_02_80049AB0 D_ovl0C_02_80049AE8[] = {
 UnkStruct_ovl0C_02_80049AB0 D_ovl0C_02_80049B04[] = {
     { NULL, 2600.0f, 1200.0f, 1700.0f, 0x419, 0x29, 0x1C },
 };
-UnkStruct_ovl0C_02_80049B20 D_ovl0C_02_80049B20[] = {
+UnkStruct_ovl0C_01_8004A584 D_ovl0C_02_80049B20[] = {
     { NULL, 3000.0f, 600.0f, 2500.0f, 0x19, 0x418 },
 };
-UnkStruct_ovl0C_02_80049B20 D_ovl0C_02_80049B38[] = {
+UnkStruct_ovl0C_01_8004A584 D_ovl0C_02_80049B38[] = {
     { NULL, 4100.0f, 400.0f, 900.0f, 0x1A, 0x419 },
 };
 #endif
@@ -1343,7 +1334,7 @@ void func_ovl0C_02_80045780(void) {
 
 void func_ovl0C_02_80045668(void) {
     s16 i;
-    UnkStruct_ovl0C_02_80049B20 *p;
+    UnkStruct_ovl0C_01_8004A584 *p;
     UnkStructA *obj;
 
     for (i = 0; i < 2; i++) {
@@ -1819,7 +1810,7 @@ void func_ovl0C_02_80043FD8(void) {
     }
 }
 
-void func_ovl0C_02_80043E0C(UnkStruct_ovl0C_02_80049B20 *arg0) {
+void func_ovl0C_02_80043E0C(UnkStruct_ovl0C_01_8004A584 *arg0) {
     f32 base;
     s16 i;
     f32 t;

@@ -34,9 +34,29 @@
  * don't count). So func_8024364C is defined just below func_8023F26C (its
  * turn starts the run func_8023F26C .. func_802434F8), and
  * func_80243824, the first function in the file, holds dead references
- * that set that order; dead calls (seen by umerge, removed by uopt) pull
- * func_8023AB54 and func_8023AB4C into func_8023AB90, func_80242268
- * into func_80242270 and func_8023CC4C into func_8023CC54.
+ * that set that order (a fake). The order they give is the targets'
+ * definition order (descending address), but neither the definitions
+ * nor the prototypes count (reversing the prototype block changes
+ * nothing), and no target takes its own address in the ROM; without
+ * them the run follows the real spawn calls' order (func_8023FC00 first,
+ * func_80241180 last). Moving the spawners (the statics, and the
+ * address-taken globals, emitted in the indirect caller's turn) cannot
+ * give it either: func_802434F8's only spawn is in func_8023DB0C, which
+ * would have to come before func_8023C374's spawn of func_80241550, but
+ * func_8023C374 must be above func_8023DB0C for its tree's order.
+ * - The empty functions are called: func_80242268 (a global) by
+ *   func_80242270 and the static func_8023CC4C by func_8023CC54, which
+ *   emits each just before its caller (they were dead calls; where in
+ *   the caller the call sits is a guess: anywhere matches, at no frame
+ *   cost).
+ * - func_8023AB4C and func_8023AB54 are two copies of one handle loop;
+ *   func_8023AC38's calls name both (`AB54(.., 1)`, `AB54(.., 3)`,
+ *   `AB4C(.., 5)`), all inlined. A caller's callees come out last called
+ *   first, so its calls func_8023AB90, func_8023AB54, func_8023AB4C,
+ *   func_8023AAE4 give the ROM's run func_8023AAE4, AB4C (the stub),
+ *   AB54 (whole: func_8023FD08 calls it), AB90 (dead calls in
+ *   func_8023AB90 and func_8023AC38 did this). The 3 and 5 calls are
+ *   fixed by it; the 1 call may be either copy.
  * - The globals' places in the file are what their turns need: a global
  *   called only from func_8023DB0C's tree (func_8023C374, func_8023CC54,
  *   func_8023D848) is defined above func_8023DB0C, so that its
@@ -106,8 +126,10 @@
  *   body; a loop end against arr+N folded into one relocation is a
  *   compare with the next symbol (`r != (Rect54E40 *) D_802A079C`);
  *   calls m2c shows in both branches are both there (func_8023B8D0).
- *   func_8023AC38's dead call to func_8023AB90 keeps the order once
- *   func_8023AB54 is inlined.
+ * - func_8023E8FC's probe for func_8026E938 is a whole model object
+ *   (UnkStructA_40, 0x50 bytes; it was a 0x1C struct and two pads), with
+ *   no separate integer copies of x and z; its place among the locals
+ *   (after y) puts it at sp+68 in the 160-byte frame.
  * - func_8023E1D8's three handle loops (sltu against the end, pointer
  *   spilled across the call) index `items[i]` (an index used in an
  *   address gets SR+LFTR; a `p++` form keeps a counter). The first is
@@ -332,7 +354,7 @@ s32 D_802AC760[2]; /* one per player of two */
 PORT_RET(s32, void) (*D_802AC768)(void *); /* 6BBE0.c's func_8025D1AC and func_8025D008: void */
 #ifdef TARGET_PC
 s32 D_802AC770[10];
-#define D_802AC780 ((u8 *) &D_802AC770[4])
+#define D_802AC780 (&D_802AC770[4])
 #else
 /* func_80242270's ten digits run on from D_802AC770 into D_802AC780, which
  * func_8023CC54 fills with digits of its own: it reaches D_802AC780 by its
@@ -1453,9 +1475,7 @@ void func_80242270(s32 arg0, Gfx **gdl) {
         div /= 10;
         m++;
     } while (m != 2);
-    if (0) { /* fake: a dead call: the emission order (header) */
-        func_80242268();
-    }
+    func_80242268();
     gfx = *gdl;
     gDPSetRenderMode(gfx++, 0x553048, 0);
     gDPSetCombine(gfx++, 0xFFFFFF, 0xFFFCF279);
@@ -2450,37 +2470,28 @@ static void *func_8023EB28(s32 arg0) {
 
 static void func_8023E8FC(f32 *pos) {
     f32 h;
-    s32 padA[8]; /* fake: frame-tuned */
     f32 x;
     f32 y;
+    UnkStructA_40 s;
     f32 z;
-    s32 ix;
-    s32 iz;
     s32 a;
     s32 b;
-    struct {
-        s32 unk0[4];
-        f32 unk10[3];
-    } s;
-    s32 padB[2]; /* fake: frame-tuned */
 
     while (TRUE) {
         x = (s32) ((f32) func_8025E63C() * (D_802A0658[D_802AC660.unkA0 + 10][0] - D_802A0658[D_802AC660.unkA0][0])) + D_802A0658[D_802AC660.unkA0][0];
         y = D_802A0658[D_802AC660.unkA0][1];
         z = (s32) ((f32) func_8025E63C() * (D_802A0658[D_802AC660.unkA0 + 10][2] - D_802A0658[D_802AC660.unkA0][2])) + D_802A0658[D_802AC660.unkA0][2];
-        ix = x;
-        iz = z;
-        a = func_8026D7D8(ix, (s32) y, iz);
+        a = func_8026D7D8((s32) x, (s32) y, (s32) z);
         if ((D_802AC660.unkA0 == 0) || (D_802AC660.unkA0 == 6) || (D_802AC660.unkA0 == 7) ||
             (D_802AC660.unkA0 == 9)) {
-            b = func_8026D7D8(ix, 0, iz);
+            b = func_8026D7D8((s32) x, 0, (s32) z);
         } else {
             b = 0;
         }
         func_8026E338(x, y, z, pos, 0);
-        s.unk10[0] = pos[0];
-        s.unk10[1] = pos[1];
-        s.unk10[2] = pos[2];
+        s.unk10 = pos[0];
+        s.unk14 = pos[1];
+        s.unk18 = pos[2];
         if (a & 0x60) {
             continue;
         }
@@ -2719,15 +2730,13 @@ void func_8023CC54(s32 arg0) {
     s32 k;
     s32 t;
 
-    if (0) { /* fake: a dead call: the emission order */
-        func_8023CC4C();
-    }
+    func_8023CC4C();
     k = 0;
     for (i = 0; i < arg0; i++) {
         v = D_802AC660.unkA4[i];
         div = 1;
         for (j = 0; j < 1; j++) {
-            ((s32 *) D_802AC780)[k++] = v / div * 2;
+            D_802AC780[k++] = v / div * 2;
             t = v / div * div;
             if (v >= t) {
                 v -= t;
@@ -3607,7 +3616,7 @@ static void func_8023AC38(void) {
         if ((D_802AC75C == 0) || (func_8023AB90() == 0)) {
             func_8023AB54(D_802A0B1C, 3);
         } else {
-            func_8023AB54(D_802A0B1C, 5);
+            func_8023AB4C(D_802A0B1C, 5);
         }
         for (i = 0; i < 5; i++) {
             func_8022A1E8(D_802AC7F8[i]);
@@ -3616,9 +3625,6 @@ static void func_8023AC38(void) {
         func_80280DB4(D_802AC814);
         func_80280DB4(D_802AC7E4);
         func_80280DB4(D_802AC7E8);
-    }
-    if (0) { /* fake: a dead call keeps the order once func_8023AB54 is inlined (header) */
-        func_8023AB90();
     }
     if (!(D_802AC5D0 & 4)) {
         func_8023AAE4();
@@ -3637,10 +3643,6 @@ static s32 func_8023AB90(void) {
     s32 id;
     u8 *obj;
 
-    if (0) { /* fake: dead calls: the emission order (header) */
-        func_8023AB54(0, 0);
-        func_8023AB4C(0, 0);
-    }
     id = func_80243DDC();
     obj = func_802443F4(id);
     if ((PLAYERS[id].unk24 == 3) || (PORT_FIELD(obj, f32 *, 0x68, UnkStructA, unk68) != 0.0f) ||

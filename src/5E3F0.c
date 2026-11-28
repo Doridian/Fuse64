@@ -258,14 +258,11 @@ void func_802506B8(u8 *);
 PORT_RET(s32, u8) func_8026DC74(s32);
 f32 func_8026E938(void *);
 f32 func_8026EAF8(void *);
-PORT_RET(s32, void *) func_802700EC(PORT_RET(s32, void *), PORT_RET(s32, void *), s32, PORT_RET(s32, f32)); /* (the fourth is a float: 8.0f's bits below) */
 PORT_IP(s32) func_80270714(s32);
 PORT_IP(s32) func_80270770(s16, s16);
-void func_80270BA4(void *);
 PORT_RET(s32, s16) func_802712A8(s32 *, s32);
 PORT_RET(s32, void) func_802712C4(PORT_RET(s32, void *));
 PORT_RET(s32, void) func_80271BB8(s32);
-void func_802733C8(void *);
 PORT_RET(s32, void) func_802741D8(s16);
 PORT_RET(s32, s16) func_80274F64(s32);
 PORT_IP(s32) func_80274F8C(s16, f32, f32, f32, s32);
@@ -1575,7 +1572,7 @@ void func_8024E088(s32 arg0) {
                             spCC = EN->unkC;
                         }
                         spB0 = func_80243F50(spCC);
-                        EN->unk40 = PORT_INT(func_802700EC((PORT_RET(s32, void *)) obj, (PORT_RET(s32, void *)) sp74, spB0, PORT_RET(0x41000000, 8.0f)));
+                        EN->unk40 = (PORT_IP(s32)) func_802700EC(obj, sp74, spB0, 8.0f);
                         func_80244354(arg0, 0x2100, 0);
                         if (func_80244BA4(arg0, 0x80) || func_80244BA4(arg0, 0x40)) {
                             func_80244C30(arg0, 1);

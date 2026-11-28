@@ -46,24 +46,6 @@ typedef struct {
 } UnkStruct_802AFED0; /* size 0x1C */
 
 typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ UnkStructA *unk4;
-    /* 0x08 */ UnkStructA *unk8;
-    /* 0x0C */ UnkStructA *unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s16 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ s32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ f32 unk38;
-} UnkStruct_8027A264; /* size 0x3C */
-
-typedef struct {
     /* 0x00 */ s16 unk0;
     /* 0x02 */ s16 unk2;
     /* 0x04 */ s16 unk4;

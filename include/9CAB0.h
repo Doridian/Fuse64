@@ -17,6 +17,7 @@ s32 func_80286CA8(s32 arg0, f32 arg1, f32 arg2, f32 arg3);
 void func_80286E60(void);
 void func_80286EF0(void);
 void func_80286F98(void);
+s32 func_802870A8(UnkStructA *arg0, PORT_IP(s32) arg1);
 s32 func_802871D0(UnkStruct_80288040 *arg0);
 s32 func_802875B0(UnkStructA *arg0);
 s32 func_80287680(void);

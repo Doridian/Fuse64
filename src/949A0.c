@@ -29,7 +29,6 @@ void func_8027036C(s32 *, s32);
 PORT_RET(s32, s16) func_802712A8(s32 *, s32);
 void *malloc(s32);
 void free(void *);
-void func_80270080(UnkStruct_8027A264 *);
 void func_80277DA8(s16, s32);
 UnkStructA *func_802443F4(s32);
 UnkStruct_800BB4A8 *func_8027AA74(s16, f32, f32, f32, s32, s32, s32);
@@ -47,7 +46,6 @@ extern UnkStruct_800AEDF0 D_800AEDF0[];
 extern UnkStruct_800BB4A8 D_800BB4A0[48];
 extern UnkStruct_800BB4A8 D_800BB4F8; /* [0] the list's head, [1] its sentinel, [2..47] the pool */
 
-void func_80270BA4(UnkStructA *);
 void func_80297D30(s32, void *);
 void func_8027AFB8(s16 arg0);
 
@@ -883,11 +881,11 @@ void func_8027A380(s16 arg0) {
 
 void func_8027A264(UnkStruct_800BB4A8 *arg0, s16 arg1) {
     UnkStructA *obj = arg0->unk14;
-    UnkStruct_8027A264 *ptr;
+    Ctl87 *ptr;
 
     if (!(obj->unk8 & 0x20000)) {
-        ptr = malloc(sizeof(UnkStruct_8027A264));
-        ptr->unk4 = obj;
+        ptr = malloc(sizeof(Ctl87));
+        ptr->obj = obj;
         ptr->unk14 = func_8026FFA0(arg1);
         ptr->unk18 = 25.0f;
         ptr->unk1C = 7.7f;
@@ -900,7 +898,7 @@ void func_8027A264(UnkStruct_800BB4A8 *arg0, s16 arg1) {
         ptr->unk38 = obj->unk40->unk18;
         obj->unk68 = 25.0f;
         obj->unk6C = 1.0f;
-        ptr->unk10 = obj->unk8;
+        ptr->flags = obj->unk8;
         if (func_8027A1F4(obj, (PORT_IP(s32))ptr)) {
             func_80270080(ptr);
             func_80270354(&arg0->unk54, 0x20);

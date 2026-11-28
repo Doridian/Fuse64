@@ -12,6 +12,10 @@
  * unknown; several overlays' copies of these statics are the same code.
  */
 
+static void func_ovl0D_06_80044800(void) {
+    UNK_MACRO_ovl0D_06_80044808();
+}
+
 static void func_ovl0D_06_8004515C(void) {
     func_ovl0D_06_80046678(2400.0f, 1600.0f, 800.0f, 1600.0f);
     func_ovl0D_06_80046688(1600.0f, 1600.0f, 3200.0f, 1600.0f);

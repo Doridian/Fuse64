@@ -4,9 +4,12 @@
  * The sibling of ovl_0D_04 (src/overlays/ovl_0D_04): its gate code
  * (80044414, 80044808, 800440AC) and model tables are the same. The
  * gate 80044808 matches in us: as ovl_0D_04's 80044318, its loop calls the
- * per-gate static 800447F0 (Ent, flag), with a fake that reads
- * D_ovl0D_06_80047080 (not 800475EC: the compiler then hoists that
- * address into s6 and the prologue differs).
+ * per-gate static 800447F0 (Ent, flag). Its first call, the macro's
+ * static 80044800, is defined in another file (statics.h, as ovl_0D_01's
+ * 800448CC), which keeps it out of the prologue, with the setup 8004518C
+ * writing the macro itself so that 80044808 is the static's first inliner
+ * (pass 13, ovl_0D_01's form; it replaces an `if (!D && !D && !D) {}` fake
+ * reading D_ovl0D_06_80047080).
  *
  * What fixed what (from 552 words in jp, us not re-measured):
  * - ovl_0D_04's and ovl_0D_02's gate code ported: the clamp 80044398 is
@@ -448,7 +451,7 @@ void func_ovl0D_06_8004518C(void) {
     D_ovl0D_06_80047608 = func_ovl0D_06_80045ED8();
     func_ovl0D_06_80046C20(1);
     func_ovl0D_06_8004515C();
-    func_ovl0D_06_80044800();
+    UNK_MACRO_ovl0D_06_80044808();
     func_ovl0D_06_80045154();
     func_ovl0D_06_8004514C();
     D_ovl0D_06_800475F0 = 0;
@@ -698,18 +701,11 @@ void func_ovl0D_06_80044B14(void) {
 void func_ovl0D_06_80044808(void) {
     s32 i;
 
-    /* fake: (as in ovl_0D_02's 80043510): keeps the first call out of the prologue; 0D_02's form (80044800 defined in statics.h) misses here, as 8004518C inlines it first (the call moves into the prologue, 1416 words) */
-    if (!D_ovl0D_06_80047080 && !D_ovl0D_06_80047080 && !D_ovl0D_06_80047080) {
-    }
     func_ovl0D_06_80044800();
     func_ovl0D_06_800447F8();
     for (i = 0; i < 2; i++) {
         func_ovl0D_06_800447F0(&D_ovl0D_06_80047244[i], D_ovl0D_06_800472B4[i]);
     }
-}
-
-static void func_ovl0D_06_80044800(void) {
-    UNK_MACRO_ovl0D_06_80044808();
 }
 
 static void func_ovl0D_06_800447F8(void) {

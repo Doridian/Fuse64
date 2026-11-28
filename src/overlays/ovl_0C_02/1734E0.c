@@ -30,17 +30,6 @@
 #include "common.h"
 #include "overlays/common/types.h"
 
-/* an object at a position, with three arguments */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-} UnkStruct_ovl0C_02_80049AB0;
-
 typedef struct {
     /* 0x00 */ UnkStructA *unk0;
     /* 0x04 */ f32 unk4;
@@ -217,7 +206,7 @@ void func_ovl0C_02_80044150(void);
 void func_ovl0C_02_800442E0(void);
 void func_ovl0C_02_8004434C(void *arg0);
 void func_ovl0C_02_80044384(void);
-void func_ovl0C_02_800444D4(UnkStruct_ovl0C_02_80049AB0 *arg0);
+void func_ovl0C_02_800444D4(UnkStruct_ovl0C_01_8004A5B4 *arg0);
 void func_ovl0C_02_80044538(void);
 void func_ovl0C_02_80044580(void);
 void func_ovl0C_02_8004460C(void);
@@ -275,7 +264,7 @@ void func_ovl0C_02_800467D8(void);
 void func_ovl0C_02_800468EC(void);
 void func_ovl0C_02_80046924(void);
 void func_ovl0C_02_80046B30(void);
-UnkStructA *func_ovl0C_02_80046B68(UnkStruct_ovl0C_02_80049AB0 *arg0);
+UnkStructA *func_ovl0C_02_80046B68(UnkStruct_ovl0C_01_8004A5B4 *arg0);
 void func_ovl0C_02_80046DD0(void);
 void func_ovl0C_02_80047410(void);
 void func_ovl0C_02_80047538(void);
@@ -339,7 +328,7 @@ UnkStruct_ovl0C_01_8004A104 D_ovl0C_02_80049A38[] = {
 #ifdef TARGET_PC
 /* AB0..B04 are one array of four (80045780's loop) and B20, B38 one of
    two (80045668's): one object each on the host */
-UnkStruct_ovl0C_02_80049AB0 D_ovl0C_02_80049AB0[4] = {
+UnkStruct_ovl0C_01_8004A5B4 D_ovl0C_02_80049AB0[4] = {
     { NULL, 2100.0f, 1200.0f, 1200.0f, 0x416, 0x28, 0x15 },
     { NULL, 2100.0f, 1200.0f, 1700.0f, 0x417, 0x28, 0x16 },
     { NULL, 2600.0f, 1200.0f, 1200.0f, 0x418, 0x29, 0x1B },
@@ -354,16 +343,16 @@ UnkStruct_ovl0C_01_8004A584 D_ovl0C_02_80049B20[2] = {
 };
 #define D_ovl0C_02_80049B38 (D_ovl0C_02_80049B20 + 1)
 #else
-UnkStruct_ovl0C_02_80049AB0 D_ovl0C_02_80049AB0[] = {
+UnkStruct_ovl0C_01_8004A5B4 D_ovl0C_02_80049AB0[] = {
     { NULL, 2100.0f, 1200.0f, 1200.0f, 0x416, 0x28, 0x15 },
 };
-UnkStruct_ovl0C_02_80049AB0 D_ovl0C_02_80049ACC[] = {
+UnkStruct_ovl0C_01_8004A5B4 D_ovl0C_02_80049ACC[] = {
     { NULL, 2100.0f, 1200.0f, 1700.0f, 0x417, 0x28, 0x16 },
 };
-UnkStruct_ovl0C_02_80049AB0 D_ovl0C_02_80049AE8[] = {
+UnkStruct_ovl0C_01_8004A5B4 D_ovl0C_02_80049AE8[] = {
     { NULL, 2600.0f, 1200.0f, 1200.0f, 0x418, 0x29, 0x1B },
 };
-UnkStruct_ovl0C_02_80049AB0 D_ovl0C_02_80049B04[] = {
+UnkStruct_ovl0C_01_8004A5B4 D_ovl0C_02_80049B04[] = {
     { NULL, 2600.0f, 1200.0f, 1700.0f, 0x419, 0x29, 0x1C },
 };
 UnkStruct_ovl0C_01_8004A584 D_ovl0C_02_80049B20[] = {
@@ -421,7 +410,7 @@ UnkStruct_ovl0C_01_8004A3CC D_ovl0C_02_80049F24[] = {
     { NULL, 0x2AD, 3650.0f, 1000.0f, 150.0f, 0x24, 5, 1, 5, 5, 0x427, 0, 8 },
     { NULL, 0x2AD, 3850.0f, 1000.0f, 150.0f, 0x26, 5, 1, 5, 5, 0x428, 0, 8 },
 };
-UnkStruct_ovl0C_02_80049AB0 D_ovl0C_02_80049FE4[] = {
+UnkStruct_ovl0C_01_8004A5B4 D_ovl0C_02_80049FE4[] = {
     { NULL, 400.0f, 300.0f, 1500.0f, 0, 0, 0 },
 };
 
@@ -758,7 +747,7 @@ void func_ovl0C_02_80046DD0(void) {
     f32 pos[3];
     UnkStructA *obj;
     UnkStructA *fade;
-    UnkStruct_ovl0C_02_80049AB0 *rec;
+    UnkStruct_ovl0C_01_8004A5B4 *rec;
     f32 base;
     f32 amp;
     f32 angle;
@@ -870,7 +859,7 @@ void func_ovl0C_02_80046DD0(void) {
     }
 }
 
-UnkStructA *func_ovl0C_02_80046B68(UnkStruct_ovl0C_02_80049AB0 *arg0) {
+UnkStructA *func_ovl0C_02_80046B68(UnkStruct_ovl0C_01_8004A5B4 *arg0) {
     UnkStructA *obj;
     f32 s;
     f32 base;
@@ -1315,7 +1304,7 @@ void func_ovl0C_02_80045898(void) {
 
 void func_ovl0C_02_80045780(void) {
     s16 i;
-    UnkStruct_ovl0C_02_80049AB0 *p;
+    UnkStruct_ovl0C_01_8004A5B4 *p;
     UnkStructA *obj;
 
     for (i = 0; i < 4; i++) {
@@ -1695,7 +1684,7 @@ void func_ovl0C_02_80044538(void) {
     func_ovl0C_02_800488C8(D_ovl0C_02_8004A110.unk4, 3, 4.0f, D_ovl0C_02_8004A110.unk10, 0, 1, 1);
 }
 
-void func_ovl0C_02_800444D4(UnkStruct_ovl0C_02_80049AB0 *arg0) {
+void func_ovl0C_02_800444D4(UnkStruct_ovl0C_01_8004A5B4 *arg0) {
     func_ovl0C_02_80048838(1);
     func_ovl0C_02_80048830(0);
     func_ovl0C_02_800488B8(1);

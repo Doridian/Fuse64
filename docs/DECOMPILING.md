@@ -103,8 +103,8 @@ alike).
 
 ```
 tools/structs.py             # the definitions, the duplicates
-tools/structs.py --check     # non-zero on (a), (b) or (d) not allowed, or (c)
-tools/structs.py --json out.json -v   # everything, with each (b)'s files
+tools/structs.py --check     # non-zero on (a), (b), (d) or (e) not allowed, or (c)
+tools/structs.py --json out.json -v   # everything, with each (b)'s and (e)'s files
 ```
 
 It parses every C file of `src/` (not libultra's or libmalloc's) with
@@ -118,8 +118,11 @@ thing: a `D_` symbol's (pointee or element) type, or a `func_`'s
 parameter or return type, named differently in different files, with
 how their layouts compare; (c) one name defined with different layouts
 (sizes, or fields' offsets and types); (d) different names with the same
-layout (0x10 bytes and three fields or more), whatever uses them.
-`--check` fails on (a), (b), (c) and (d). A (b) that is one symbol of
+layout (0x10 bytes and three fields or more), whatever uses them; (e)
+one function declared with different types in different files (its
+return, a parameter, how many parameters), a ZeroJump stub's
+declarations counting as its target's (below).
+`--check` fails on (a), (b), (c), (d) and (e). A (b) that is one symbol of
 different types for a reason goes in `ALLOW_B` with the reason: so far
 only `func_802391F0`'s return, the running task's argument (530C0.c),
 which each task reads as its own. A (d) of different things that happen
@@ -129,12 +132,23 @@ theirs. `--version eu`/`jp` parses with that version's `#if`s. (b) misses
 a view that comes through a cast (8A7A0's was `#define PLAYERS ((Player87 *)
 D_800AEDF0)`) or a file's own type for a pointer field, so a merge is
 worth a look at the files' other local types of the same object. The
-overlays' ZeroJump stubs are the other way in: each declares its stub
-with the id in a comment (`/* 0x1811 */`), and one id is one main_code
+overlays' ZeroJump stubs are the other way in: one id is one main_code
 function (the port's `gen/zerojump.c` maps them: `/* 0x180E ->
 func_80232B04 */`), so the types the overlays give one id's parameters
-and return are views of one object (`scratch/structs3/zj.py` in the main
-checkout lists the ids whose pointer types still differ).
+and return are views of one object. (e) finds them: it reads each stub's
+id from `asm/*_zerojmp.s` (or `port/snapshot/us` without an extract),
+and the module tables and their registration (`func_80297D30(0x2C,
+D_802A1D70)`) from the C, so a stub without its id in a comment counts
+too. A position where two or more structure types meet fails `--check`
+unless it is in `ALLOW_E` with the reason: the task's argument, 7D840's
+`Gfx` for 426E0's `Gfx_80225840`, and the views not merged yet (each
+"to do": 0x0119, 0x183A, 0x1834, 0x1836, 0x2D03, and 0x1510's draw
+callbacks, typed with the overlays' own copies of `Gfx_80225840`). The
+other differences (an `s32` for a `u32` or a pointer, a `void *` for a
+structure's pointer, a `void` return for an `s32`, fewer parameters:
+about 400) are counted and listed with `-v`; several are what a match or
+the port needs (PORT_RET, a halfword argument), and proto_check.py
+checks the ones that matter where pointers are 8 bytes.
 
 The overlays' shared structures are in `src/overlays/common/types.h`,
 each under the name the first overlay that has it gave it (its address
@@ -158,7 +172,26 @@ cells); `Step3C`, a path step (UnkStructA's unk3C, what the overlays pass
 to func_80232B04, ZeroJump 0x180E); `UnkStruct_802B0260`, a sprite slot
 (what func_80287DC0, ZeroJump 0x1A00, returns; it was also `UnkStructC`
 and seven overlay views); `UnkStruct_802ACF08` (D_802ACF08's rows, also
-6BBE0's `SeqOut`); gfx.h's `Gfx_80225840` (47A80's Gfx; it stands for
+6BBE0's `SeqOut`); `UnkStruct_802AC610` (D_802AC610, what
+func_8023A840, ZeroJump 0x0F0B, returns: it was `UnkStruct_8023A840`, 12
+overlays' views and 20 files' `s32 *`; 20 more still take an `s32 *`); `UnkStruct_802363BC` (a camera
+move, ZeroJump 0x170B's argument; 0D_01's, 0D_03's, 0D_06's, 13_01's and
+13_02's views); `PakDir`/`PakFile` (what ZeroJump 0x1C05 fills in);
+`UnkStruct_802B03C0` (B11F0's pictures, ZeroJump 0x3106);
+`UnkStruct_80090440` (97610's list nodes, ZeroJump 0x2302); model.h's
+`UnkTexSlots`/`UnkTexSlot` (426E0's; UnkStructA_40's unk4C, ACA00's
+views) and `UnkModel` (now tagged: UnkStructA_40's unk3C). Several views
+were of `UnkStructA_40`: what func_8022A328 makes, and so what
+func_8022A6C4, func_8026D4B0 (ZeroJump 0x1510), func_80297804 (0x3100)
+and func_8027EFC8 (0x2407) return and func_8029279C (0x2C03) takes;
+0F_01..04 and 17_09 had 0x1510's as an `UnkStructA` (the same code: they
+only set its unkC). 0A_06's buffer for 0x1C05 was an array of 0x1C
+records read 4 bytes off (a file's fields at unk4..unk10, its name's
+last four in the next record); it is a PakDir in 0x1C0 bytes of its
+0x1C4, so a sixteenth file's name ends in D_ovl0A_06_80047700 on the N64
+(the port gives it a word more). No type has a second name (926A0's
+`Obj926`/`Sub926`, 0A_01's `Entry`/`Entry2`, 0B_03's `Inner` are gone).
+gfx.h's `Gfx_80225840` (47A80's Gfx; it stands for
 gbi.h's `Gfx`, which 7D840 uses) and `Vtx_ovl0A_01` (gbi.h's `Vtx_t`).
 The game's C keeps `Gfx_80225840` rather than gbi.h's `Gfx`: the SDK's
 is a union with a `long long` (8-aligned, which would move the .data and

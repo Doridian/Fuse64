@@ -24,8 +24,17 @@ It reports
       or field offsets and types; the field names don't count).
   (d) different names with the same layout (whatever uses them; only
       layouts of D_MIN_SIZE bytes and D_MIN_FIELDS fields or more).
---check exits non-zero on (a), (b) not in ALLOW_B, (c), or (d) not in
-ALLOW_D (each allowance with its reason).  --json writes everything found.
+  (e) one function declared with different types in different files: its
+      return, a parameter, or how many parameters (a ZeroJump stub's
+      declarations count as its target's: the id's entry in the module
+      table registered for it, read from the C; the stubs' ids from
+      asm/*_zerojmp.s, or port/snapshot/us without an extract).  Those
+      where two or more structure types meet fail --check; the others
+      (an s32 for a u32 or a pointer, a void * for a structure's, a void
+      return for an s32) are counted, -v lists them.
+--check exits non-zero on (a), (b) not in ALLOW_B, (c), (d) not in
+ALLOW_D, or (e) not in ALLOW_E (each allowance with its reason).  --json
+writes everything found.
 """
 import argparse
 import collections
@@ -60,6 +69,23 @@ ALLOW_D = [
      "settings (its fields named flags, maxDMAs, maxBuffers, maxCmds), and 0A_06's a table of "
      "its .data"),
 ]
+
+
+# (e)s of different structure types for a reason, or not merged yet ("to do"):
+# (function, role or None for all) -> why
+ALLOW_E = {
+    ("func_802391F0", "ret"): "the running task's argument, as in ALLOW_B",
+    ("func_8026437C", "param 0"): "7D840 includes gbi.h (Gfx), 426E0 has Gfx_80225840: one type on the port "
+                                  "(docs/DECOMPILING.md, \"Types\")",
+    ("func_8026D4B0", "param 0"): "to do: the draw callbacks are typed with each overlay's own copy of "
+                                  "Gfx_80225840 (Gfx_ovl0B_01, Gfx0B04, ...)",
+    ("func_80001480", "ret"): "to do: 14B0's OSMesgQueue, 52270's UnkStruct_802A5330",
+    ("func_8022DBBC", "param 0"): "to do: 0C_09's and 0C_10's views (48300 takes an s32)",
+    ("func_8022F550", "ret"): "to do: 10_01..05's and 10_06's views, 48300's and 48600's f32 *",
+    ("func_8022F698", "param 3"): "to do: 10_06's UnkStructA **, 15_01's and 15_02's Vec3f *, 48300's f32 **",
+    ("func_8025E0DC", "ret"): "to do: 0D_07's, types.h's (10_13, 12_05) and 12_06's views of a D_800BCFE8 "
+                              "entry (6BBE0's Port_800BCFE8)",
+}
 
 
 def allowed_d(names):
@@ -192,6 +218,128 @@ def sig(lay):
     return (size, align, tuple((o, ANON.sub("(anon)", t)) for o, t, _ in fields))
 
 
+def _strip(n):
+    """an expression's node through its casts and parentheses"""
+    while n.get("kind") in ("ImplicitCastExpr", "CStyleCastExpr", "ParenExpr") and n.get("inner"):
+        n = n["inner"][0]
+    return n
+
+
+def _ref(n):
+    """the name an initializer or argument names (`f`, `&D_x`, `D_x`), "0"
+    for a null one, else None"""
+    n = _strip(n)
+    if n.get("kind") == "UnaryOperator" and n.get("opcode") == "&" and n.get("inner"):
+        n = _strip(n["inner"][0])
+    if n.get("kind") == "DeclRefExpr":
+        return n.get("referencedDecl", {}).get("name")
+    if n.get("kind") == "IntegerLiteral" and n.get("value") == "0":
+        return "0"
+    return None
+
+
+def zj_tables(ast):
+    """the ZeroJump module tables a file defines ({D_ name: [entry...]}:
+    an array of functions and nulls) and its calls that may register one
+    ([(callee, id, D_ name)]: a function called with a number and a D_)"""
+    tables, regs = {}, []
+    for n in ast.get("inner", []):
+        if n.get("kind") == "VarDecl" and n.get("name", "").startswith("D_") and n.get("inner"):
+            init = n["inner"][-1]
+            if init.get("kind") == "InitListExpr":
+                ents = [_ref(e) for e in init.get("inner", [])]
+                if ents and None not in ents and any(e != "0" for e in ents):
+                    tables[n["name"]] = ents
+
+    def walk(n):
+        if isinstance(n, dict):
+            if n.get("kind") == "CallExpr" and len(n.get("inner", [])) == 3:
+                f, a, b = n["inner"]
+                f, a = _ref(f), _strip(a)
+                b = _ref(b)
+                if f and f.startswith("func_") and a.get("kind") == "IntegerLiteral" and b and b.startswith("D_"):
+                    regs.append((f, int(a["value"], 0), b))
+            for v in n.values():
+                if isinstance(v, (dict, list)):
+                    walk(v)
+        elif isinstance(n, list):
+            for x in n:
+                walk(x)
+    walk(ast)
+    return tables, regs
+
+
+def zj_stubs():
+    """{stub name: id}: the extract's (asm/*_zerojmp.s, tools/host_check.py),
+    or else port/snapshot/us's (every version has us's names)"""
+    sys.path.insert(0, os.path.join(ROOT, "tools"))
+    sys.path.insert(0, os.path.join(ROOT, "port", "tools"))
+    cwd = os.getcwd()
+    os.chdir(ROOT)
+    try:
+        import host_check
+        if host_check.glob.glob("asm/*_zerojmp.s"):
+            return host_check.zerojump_stubs()
+        import gen_zerojump
+        return gen_zerojump.stubs_decode(json.load(open("port/snapshot/us/zerojump.json"))["stubs"])
+    finally:
+        os.chdir(cwd)
+
+
+PRIM = {"void", "int", "unsigned", "signed", "char", "short", "long", "float", "double"}
+QUALS = re.compile(r"\b(const|volatile|restrict|__restrict|struct|union|enum)\b\s*")
+
+
+def split_sig(qt):
+    """a function type's (return, [parameter...] or None without a
+    prototype, variadic)"""
+    qt = qt.strip()
+    if not qt.endswith(")"):
+        return qt, None, False
+    depth = 0
+    for i in range(len(qt) - 1, -1, -1):
+        if qt[i] == ")":
+            depth += 1
+        elif qt[i] == "(":
+            depth -= 1
+            if depth == 0:
+                break
+    ret, inner = qt[:i].strip(), qt[i + 1:-1].strip()
+    if inner == "":
+        return ret, None, False
+    out, depth, cur = [], 0, ""
+    for ch in inner:
+        depth += ch in "([" and 1 or ch in ")]" and -1 or 0
+        if ch == "," and depth == 0:
+            out.append(cur.strip())
+            cur = ""
+        else:
+            cur += ch
+    out.append(cur.strip())
+    if out == ["void"]:
+        out = []
+    var = bool(out) and out[-1] == "..."
+    return ret, [p for p in out if p != "..."], var
+
+
+def norm_type(t, scalars):
+    """a type as compared: without qualifiers, its scalar typedefs as what
+    they name, o32's int and long as one"""
+    t = QUALS.sub("", t)
+    for _ in range(8):
+        n = re.sub(r"\b[A-Za-z_]\w*\b", lambda m: scalars[m.group(0)]
+                   if m.group(0) in scalars and "(" not in scalars[m.group(0)] else m.group(0), t)
+        n = QUALS.sub("", n)
+        if n == t:
+            break
+        t = n
+    t = re.sub(r"\blong long\b", "LL", t)
+    t = re.sub(r"\blong( int)?\b", "int", t).replace("LL", "long long")
+    t = re.sub(r"\bunsigned\b(?! (char|short|int|long))", "unsigned int", t)
+    t = re.sub(r"\s+", " ", t).replace(" *", "*").replace("( ", "(").replace(" )", ")").strip()
+    return t
+
+
 def unit(path, version):
     argv = ["clang"] + CFLAGS + ["-DVERSION_%s" % version.upper(), path]
     r1 = subprocess.run(argv + ["-Xclang", "-ast-dump=json"], capture_output=True, text=True, cwd=ROOT)
@@ -206,6 +354,8 @@ def unit(path, version):
     recs = {}           # id -> {tag, kind, place, key}
     typedefs = []       # (name, place, target: ("rec", id) / ("td", name) / ("other", qt))
     uses = []           # (symbol, role, base name, rest)
+    protos = []         # (func_ name, its type as declared, whether this is its definition)
+    scalars = {}        # typedef name -> the type it names (not a record's)
 
     def visit(n, here, parent):
         k = n.get("kind")
@@ -228,6 +378,8 @@ def unit(path, version):
             else:
                 tgt = ("other", n.get("type", {}).get("qualType", ""))
             typedefs.append((n["name"], (here[0], here[1]), tgt))
+            if tgt[0] != "rec":
+                scalars[n["name"]] = n.get("type", {}).get("qualType", "")
         elif k == "VarDecl" and re.match(r"D_[0-9A-Fa-f]", n.get("name", "")) and \
                 parent is not None and parent.get("kind") == "TranslationUnitDecl":
             b = base_type(n.get("type", {}).get("qualType", ""))
@@ -235,6 +387,9 @@ def unit(path, version):
                 uses.append((n["name"], "var", b[0], b[1]))
         elif k == "FunctionDecl" and n.get("name", "").startswith("func_"):
             qt = n.get("type", {}).get("qualType", "")
+            if not n.get("isImplicit"):
+                body = any(c.get("kind") == "CompoundStmt" for c in n.get("inner", []))
+                protos.append((n["name"], qt, body))
             ret = qt.split("(")[0]
             b = base_type(ret)
             if b:
@@ -248,6 +403,7 @@ def unit(path, version):
                     i += 1
 
     Walker().walk(ast, visit)
+    tables, regs = zj_tables(ast)
     # (a tag is named bare: `struct X` and a typedef X of it are one name)
     byname = {r["name"]: rid for rid, r in recs.items() if r["name"] and r["top"]}
     defs = []           # (name, place, layout or ("alias", name))
@@ -279,7 +435,81 @@ def unit(path, version):
             defs.append((r["name"], r["place"], lay))
     defs += tds
     uses = [(s, ro, re.sub(r"^(?:struct|union) ", "", b), x) for s, ro, b, x in uses]
-    return path, {"defs": defs, "uses": uses}, None
+    return path, {"defs": defs, "uses": uses, "protos": protos, "scalars": scalars, "tables": tables,
+                  "regs": regs}, None
+
+
+def short(path):
+    """a file as (e) names it: its basename, an overlay's as its name"""
+    m = re.match(r"src/overlays/ovl_(\w+?)/", path)
+    if m:
+        return m.group(1)
+    return os.path.splitext(os.path.basename(path))[0]
+
+
+def check_e(results):
+    """(e): [(function, role, {type: files}, allowed)] where a function's
+    declarations differ: its return or a parameter's type, or how many
+    parameters it has (without a prototype: its return only).  A ZeroJump
+    stub's declarations count as its target's (the id's table entry, the
+    tables and their registration read from the C)."""
+    scalars = {}
+    tables, regs = {}, collections.defaultdict(set)
+    defined = set()
+    for res in results.values():
+        for k, v in res["scalars"].items():
+            scalars.setdefault(k, v)
+        tables.update(res["tables"])
+        for name, _, body in res["protos"]:
+            if body:
+                defined.add(name)
+    stubs = zj_stubs()
+    reg = {"func_80001A30"} | {n for n, i in stubs.items() if i == 0}
+    for res in results.values():
+        for f, sid, d in res["regs"]:
+            if f in reg:
+                regs[sid].add(d)
+    regs[0].add("D_80019F80")       # boot_code's own (1050.c's func_80000450 sets it)
+
+    def key(name):
+        sid = stubs.get(name)
+        if not sid or name in defined:
+            return name, None
+        hi, lo = sid >> 8, sid & 0xFF
+        ts = {tables[t][lo] for t in regs.get(hi, ()) if t in tables and lo < len(tables[t])} - {"0"}
+        return (ts.pop() if len(ts) == 1 else name), sid
+
+    groups = collections.defaultdict(lambda: collections.defaultdict(set))   # key -> (role, type) -> {(file, name)}
+    ids = collections.defaultdict(set)
+    for path, res in results.items():
+        for name, qt, _ in res["protos"]:
+            k, sid = key(name)
+            if sid:
+                ids[k].add(sid)
+            ret, params, var = split_sig(qt)
+            g = groups[k]
+            g[("ret", norm_type(ret, scalars))].add((path, name))
+            if params is None:
+                continue
+            if not var:
+                g[("count", str(len(params)))].add((path, name))
+            for i, p in enumerate(params):
+                g[("param %d" % i, norm_type(p, scalars))].add((path, name))
+    out = []
+    for k in sorted(groups):
+        roles = collections.defaultdict(dict)
+        for (role, t), fs in groups[k].items():
+            roles[role][t] = fs
+        for role in sorted(roles, key=lambda r: (r != "ret", r != "count", r)):
+            if len(roles[role]) > 1:
+                name = k + "".join(" (0x%04X)" % i for i in sorted(ids.get(k, ())))
+                recs = {t for t in roles[role] if set(re.findall(r"[A-Za-z_]\w*", t)) - PRIM}
+                out.append((name, role, roles[role], allowed_e(k, role), len(recs) > 1))
+    return out
+
+
+def allowed_e(func, role):
+    return next((why for (f, r), why in ALLOW_E.items() if f == func and (r is None or r == role)), None)
 
 
 def main():
@@ -380,6 +610,21 @@ def main():
         why = allowed_d(ns)
         print("  size 0x%X, %d fields: %s%s" % (sg[0] or 0, len(sg[2]), ", ".join(
             "%s (%s)" % (n, " ".join(sorted(real[n]))) for n in ns), " allowed: " + why if why else ""))
+    same_e = check_e(results)
+    open_e = [x for x in same_e if x[4] and not x[3]]
+    print("\n(e) one function, different structure types (its declarations in different files, a "
+          "ZeroJump stub's with its target's): %d, %d allowed; %d other differences%s"
+          % (len(open_e), sum(1 for x in same_e if x[4] and x[3]), sum(1 for x in same_e if not x[4]),
+             "" if a.verbose else " (-v lists them)"))
+    for key, role, types, why, rec in sorted(same_e, key=lambda x: not x[4]):
+        if not rec and not a.verbose:
+            continue
+        print("  %s%s %s: %s%s" % ("" if rec else "(other) ", key, role, "; ".join(
+            "%s (%s)" % (t, " ".join(sorted({short(f) for f, _ in fs})) if len(fs) < 8 else "%d files" % len(fs))
+            for t, fs in sorted(types.items())), " allowed: " + why if why else ""))
+        if a.verbose and rec:
+            for t, fs in sorted(types.items()):
+                print("      %s: %s" % (t, " ".join(sorted("%s:%s" % f for f in fs))))
     if a.json:
         out = {"defs": {n: {p: (l if l[0] == "alias" else {"size": l[0], "align": l[1],
                                                              "fields": [list(f) for f in l[2]]})
@@ -387,11 +632,14 @@ def main():
                "a": sorted(dup_a), "c": sorted(conf_c),
                "b": [{"symbol": s, "role": r, "rest": x, "names": {n: sorted(f) for n, f in ns.items()},
                       "relation": rel, "allowed": ALLOW_B.get((s, r))} for s, r, x, ns, _, rel in same_b],
-               "d": [ns for ns, _ in same_d], "d_allowed": [ns for ns, _ in same_d if allowed_d(ns)]}
+               "d": [ns for ns, _ in same_d], "d_allowed": [ns for ns, _ in same_d if allowed_d(ns)],
+               "e": [{"function": k, "role": r, "structures": rec, "allowed": why,
+                      "types": {t: sorted("%s:%s" % f for f in fs) for t, fs in ts.items()}}
+                     for k, r, ts, why, rec in same_e]}
         json.dump(out, open(a.json, "w"), indent=1, sort_keys=True)
     if bad:
         return 2
-    if a.check and (dup_a or conf_c or open_b or open_d):
+    if a.check and (dup_a or conf_c or open_b or open_d or open_e):
         return 1
     return 0
 

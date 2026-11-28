@@ -49,17 +49,6 @@
  * are named for the empty stubs they leave.
  */
 
-/* seven arguments of func_ovl0F_09_80044E58 */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-} UnkStruct_ovl0F_09_8004612C; /* size 0x1C */
-
 void func_ovl0F_09_80044C58(s32);
 void func_ovl0F_09_80044C70(s32);
 void func_ovl0F_09_80044C98(s32, s32, s32, s32, s32, s32);
@@ -195,7 +184,7 @@ s32 D_ovl0F_09_8004611C = 0x12;
 s32 D_ovl0F_09_80046120 = 0x61;
 s32 D_ovl0F_09_80046124 = 0x13;
 s32 D_ovl0F_09_80046128 = 0;
-UnkStruct_ovl0F_09_8004612C D_ovl0F_09_8004612C[2] = {
+UnkStruct_ovl0F_01_80048508 D_ovl0F_09_8004612C[2] = {
     { 0x40, 3, 8.5f, 2, 0, 1, 0 },
     { 0xC0, 3, 8.5f, 3, 0, 1, 0 },
 };

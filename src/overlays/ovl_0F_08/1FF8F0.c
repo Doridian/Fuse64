@@ -33,17 +33,6 @@
  * they leave (their order inferred from the rules in docs/DECOMPILING.md).
  */
 
-/* seven arguments of func_ovl0F_08_80044A28 */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-} UnkStruct_ovl0F_08_80045CD0; /* size 0x1C */
-
 void func_ovl0F_08_80044828(s32);
 void func_ovl0F_08_80044840(s32);
 void func_ovl0F_08_80044888(f32, f32, f32, f32 *, s32);
@@ -159,7 +148,7 @@ UnkStruct_ovl0F_01_80048264 D_ovl0F_08_80045B90[6] = {
 /* func_ovl0F_08_80043200's: four arguments to test, three to pass on */
 s32 D_ovl0F_08_80045C98[7] = { 0x29, 0x12, 0x29, 0x12, 0x5E, 0x12, 0 };
 s32 D_ovl0F_08_80045CB4[7] = { 6, 0x12, 6, 0x12, 0x61, 0x12, 0 };
-UnkStruct_ovl0F_08_80045CD0 D_ovl0F_08_80045CD0[2] = {
+UnkStruct_ovl0F_01_80048508 D_ovl0F_08_80045CD0[2] = {
     { 0xC0, 3, 8.5f, 4, 0, 1, 1 },
     { 0x40, 3, 8.5f, 4, 0, 1, 1 },
 };

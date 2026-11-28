@@ -59,17 +59,6 @@
  * everywhere are named for the empty stubs they leave.
  */
 
-/* seven arguments of func_ovl0F_10_800455B8 */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-} UnkStruct_ovl0F_10_800468C0; /* size 0x1C */
-
 /* the task func_ovl0F_10_80044B8C runs as: its argument at 0x2C */
 typedef struct {
     /* 0x00 */ u8 unk0[0x2C];
@@ -215,7 +204,7 @@ extern f32 D_ovl0F_10_800468B0;
 extern s32 D_ovl0F_10_800468B4;
 extern UnkStructA *D_ovl0F_10_800468B8;
 extern s32 D_ovl0F_10_800468BC;
-extern UnkStruct_ovl0F_10_800468C0 D_ovl0F_10_800468C0;
+extern UnkStruct_ovl0F_01_80048508 D_ovl0F_10_800468C0;
 
 /* unused: the stubs IDO -O3 leaves at the end of the object */
 /* A second caller keeps func_ovl0F_10_80043088 from being inlined. */

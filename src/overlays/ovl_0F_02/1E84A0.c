@@ -137,17 +137,6 @@ typedef struct {
     /* 0x08 */ s32 unk8;
 } UnkStruct_ovl0F_02_80048918; /* size 0xC */
 
-/* seven arguments of func_ovl0F_02_800474E8 */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-} UnkStruct_ovl0F_02_80048A8C; /* size 0x1C */
-
 /* one of the particles func_ovl0F_02_800454E8 draws (D_ovl0F_02_80048D80) */
 typedef struct {
     /* 0x00 */ f32 unk0;
@@ -451,7 +440,7 @@ UnkStruct_ovl0F_02_800489F4 D_ovl0F_02_800489F4 = {
 /* func_ovl0F_02_800433A0's: four arguments to test, three to pass on */
 s32 D_ovl0F_02_80048A54[7] = { 0x1C, 0x10, 0x1C, 0x10, 0x58, 0x12, 0 };
 s32 D_ovl0F_02_80048A70[7] = { 0xD, 1, 0xE, 2, 0x5A, 0x12, 0 };
-UnkStruct_ovl0F_02_80048A8C D_ovl0F_02_80048A8C[2] = {
+UnkStruct_ovl0F_01_80048508 D_ovl0F_02_80048A8C[2] = {
     { 0x40, 3, 8.5f, 3, 0, 1, 0 },
     { 0xA0, 3, 8.5f, 3, 0, 1, 1 },
 }; /* the scripts' strings, .rodata in this order */ const char D_ovl0F_02_80048B10[] = "MA"; const char D_ovl0F_02_80048B14[] = "MA"; const char D_ovl0F_02_80048B18[] = "WM1 WG1 WSH WAP WDSW WB2"; const char D_ovl0F_02_80048B34[] = "WM1 WG1 WSH WAP WDW WB11 WDNW WB1"; const char D_ovl0F_02_80048B58[] = "M1 ST1 M6 ST1"; const char D_ovl0F_02_80048B68[] = "WM1 WG1 WSH WAP WDNE WB2 WDN WB0"; const char D_ovl0F_02_80048B8C[] = "M2 ST200"; const char D_ovl0F_02_80048B98[] = "WM1 WG1 WSH WAP WDN WB3 WDW WB0"; const char D_ovl0F_02_80048BB8[] = "WM1 WG1 WSH WAP WDW WB5"; const char D_ovl0F_02_80048BD0[] = "M0 M0"; const char D_ovl0F_02_80048BD8[] = "WM1 WG1 WSH WAP WDW WB3 ST10"; const char D_ovl0F_02_80048BF8[] = "WM1 WG1 WSH WAP WDE WB2 ST30";

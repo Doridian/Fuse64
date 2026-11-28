@@ -195,17 +195,6 @@ typedef struct {
     /* 0x5C */ void (*unk5C)(void);
 } UnkStruct_ovl0F_04_80048880; /* size 0x60 */
 
-/* seven arguments of func_ovl0F_04_80047378 */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-} UnkStruct_ovl0F_04_80048918; /* size 0x1C */
-
 /* a panel's tile and what it is set to */
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -517,7 +506,7 @@ UnkStruct_ovl0F_04_80048880 D_ovl0F_04_80048880 = {
 /* func_ovl0F_04_800433A0's: four arguments to test, three to pass on */
 s32 D_ovl0F_04_800488E0[7] = { 0x1B, 0x10, 0x1B, 0x10, 0x58, 0x14, 0 };
 s32 D_ovl0F_04_800488FC[7] = { 8, 0x1D, 9, 0x1E, 0x5A, 0x14, 0 };
-UnkStruct_ovl0F_04_80048918 D_ovl0F_04_80048918[2] = {
+UnkStruct_ovl0F_01_80048508 D_ovl0F_04_80048918[2] = {
     { 0x40, 3, 8.5f, 3, 0, 1, 0 },
     { 0xE0, 3, 8.5f, 2, 0, 1, 0 },
 }; /* the scripts' strings, .rodata in this order */ const char D_ovl0F_04_80048950[] = "MA"; const char D_ovl0F_04_80048954[] = "MA"; const char D_ovl0F_04_80048958[] = "WM1 WG1 WSH WAP WDW WB3 ST10"; const char D_ovl0F_04_80048978[] = "WM1 WG1 WSH WAP WDE WB2 ST30";

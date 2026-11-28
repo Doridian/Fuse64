@@ -365,4 +365,15 @@ typedef struct {
     /* 0x28 */ s32 unk28;
 } UnkStruct_ovl0F_01_80048264; /* size 0x2C */
 
+/* seven arguments of func_ovl0F_01_80047038 */
+typedef struct {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ f32 unk8;
+    /* 0x0C */ s32 unkC;
+    /* 0x10 */ s32 unk10;
+    /* 0x14 */ s32 unk14;
+    /* 0x18 */ s32 unk18;
+} UnkStruct_ovl0F_01_80048508; /* size 0x1C */
+
 #endif

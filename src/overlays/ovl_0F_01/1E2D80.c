@@ -105,17 +105,6 @@
  * they leave.
  */
 
-/* seven arguments of func_ovl0F_01_80047038 */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-} UnkStruct_ovl0F_01_80048508; /* size 0x1C */
-
 /* one step of a mover's route (D_ovl0F_01_8004815C) */
 typedef struct {
     /* 0x00 */ u16 unk0;
@@ -1206,7 +1195,7 @@ void func_ovl0F_01_80043B0C(void) {
     func_ovl0F_01_80047760(50.0f, 50.0f, 50.0f);
     func_ovl0F_01_80047750(20);
     D_ovl0F_01_80048420 = 2;
-#line 1195 /* fake: renumbers the lines (as1 orders a block partly by .loc line); the loop as one of the list-only stubs (80043AEC, i its local) orders it, but its area is 16 bytes: x/sv 8/16 off */
+#line 1184 /* fake: renumbers the lines (as1 orders a block partly by .loc line); the loop as one of the list-only stubs (80043AEC, i its local) orders it, but its area is 16 bytes: x/sv 8/16 off */
     for (i = 0; i < 3; i++) {
         D_ovl0F_01_80048738[i]->unkC = 0;
         func_ovl0F_01_80047840(D_ovl0F_01_80048738[i], 0x01000030);

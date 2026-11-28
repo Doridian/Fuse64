@@ -23,17 +23,6 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-/* seven arguments of func_ovl0F_07_80044A18 */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-} UnkStruct_ovl0F_07_80045D90; /* size 0x1C */
-
 /* the task func_ovl0F_07_80044208 runs as: its argument at 0x2C */
 typedef struct {
     /* 0x00 */ u8 unk0[0x2C];
@@ -141,7 +130,7 @@ s32 D_ovl0F_07_80045B24 = 0;
 s32 D_ovl0F_07_80045B28 = -1;
 u8 D_ovl0F_07_80045B2C[4] = { 0 };
 extern UnkStruct_ovl0F_01_80048264 D_ovl0F_07_80045B88[7];
-extern UnkStruct_ovl0F_07_80045D90 D_ovl0F_07_80045D90;
+extern UnkStruct_ovl0F_01_80048508 D_ovl0F_07_80045D90;
 
 /* the PACK of the two speeds into unk64 */
 #define PACK_ovl0F_07(a, b) (((s32)((a) * 500.0f) << 16) | ((s32)((b) * 500.0f) & 0xFFFF))
@@ -268,12 +257,12 @@ UnkStruct_ovl0F_01_80048264 D_ovl0F_07_80045CBC[2] = {
 /* func_ovl0F_07_80043040's: four arguments to test, three to pass on */
 s32 D_ovl0F_07_80045D14[7] = { 0x28, 9, 0x28, 9, 0x5F, 0x11, 0 };
 s32 D_ovl0F_07_80045D30[7] = { 6, 9, 6, 9, 0x60, 0x11, 0 };
-UnkStruct_ovl0F_07_80045D90 D_ovl0F_07_80045D4C[2] = {
+UnkStruct_ovl0F_01_80048508 D_ovl0F_07_80045D4C[2] = {
     { 0x80, 3, 8.5f, 2, 0, 1, 1 },
     { 0x80, 3, 8.5f, 2, 0, 1, 1 },
 };
 u8 D_ovl0F_07_80045D84[0xC] = { 0 };
-UnkStruct_ovl0F_07_80045D90 D_ovl0F_07_80045D90 = { 0, 3, 3.75f, 15, 0, 0, 0 };
+UnkStruct_ovl0F_01_80048508 D_ovl0F_07_80045D90 = { 0, 3, 3.75f, 15, 0, 0, 0 };
 f32 D_ovl0F_07_80045DAC = 0.6f;
 
 void func_ovl0F_07_800440D8(UnkStructA *arg0) {

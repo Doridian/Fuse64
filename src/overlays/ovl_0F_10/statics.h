@@ -53,7 +53,7 @@ UnkStruct_ovl0F_01_80048264 D_ovl0F_10_800467DC[2] = {
 /* func_ovl0F_10_800432E0's: four arguments to test, three to pass on */
 s32 D_ovl0F_10_80046834[7] = { 0x2D, 0x1D, 0x2D, 0x1E, 0x5F, 0x14, 0 };
 s32 D_ovl0F_10_80046850[7] = { 0xA, 0x1E, 0xA, 0x1E, 0x60, 0x14, 0 };
-UnkStruct_ovl0F_10_800468C0 D_ovl0F_10_8004686C[2] = {
+UnkStruct_ovl0F_01_80048508 D_ovl0F_10_8004686C[2] = {
     { 0, 3, 8.5f, 2, 0, 1, 0 },
     { 0, 3, 8.5f, 2, 0, 1, 0 },
 };
@@ -64,7 +64,7 @@ f32 D_ovl0F_10_800468B0 = 0.0f;
 s32 D_ovl0F_10_800468B4 = 0;
 UnkStructA *D_ovl0F_10_800468B8 = NULL;
 s32 D_ovl0F_10_800468BC = -1;
-UnkStruct_ovl0F_10_800468C0 D_ovl0F_10_800468C0 = { 0, 3, 3.75f, 15, 0, 0, 0 };
+UnkStruct_ovl0F_01_80048508 D_ovl0F_10_800468C0 = { 0, 3, 3.75f, 15, 0, 0, 0 };
 /* the camera scripts func_ovl0F_10_80043E08 passes to func_ovl0F_10_800455C0 */
 char D_ovl0F_10_800468DC[] = "WM1 WG1 WSL WAP WDN WB3 WDNE WB1 WDN WB2";
 char D_ovl0F_10_80046908[] = "M9 ST90";

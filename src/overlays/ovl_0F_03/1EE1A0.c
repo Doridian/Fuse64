@@ -91,17 +91,6 @@ typedef struct {
     /* 0x5C */ void (*unk5C)(void);
 } UnkStruct_ovl0F_03_80046F0C; /* size 0x60 */
 
-/* seven arguments of func_ovl0F_03_80045CF8 */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-} UnkStruct_ovl0F_03_80046FE4; /* size 0x1C */
-
 /* one of the particles func_ovl0F_03_80044258 draws (D_ovl0F_03_800470E8) */
 typedef struct {
     /* 0x00 */ f32 unk0;
@@ -283,10 +272,10 @@ extern UnkStruct_ovl0F_01_80048264 D_ovl0F_03_80046EB4[2];
 extern UnkStruct_ovl0F_03_80046F0C D_ovl0F_03_80046F0C;
 extern s32 D_ovl0F_03_80046F6C[7];
 extern s32 D_ovl0F_03_80046F88[7];
-extern UnkStruct_ovl0F_03_80046FE4 D_ovl0F_03_80046FA4[2];
+extern UnkStruct_ovl0F_01_80048508 D_ovl0F_03_80046FA4[2];
 extern UnkStructA * D_ovl0F_03_80046FDC;
 extern char D_ovl0F_03_80046FE0[];
-extern UnkStruct_ovl0F_03_80046FE4 D_ovl0F_03_80046FE4;
+extern UnkStruct_ovl0F_01_80048508 D_ovl0F_03_80046FE4;
 
 /* unused: the stubs IDO -O3 leaves at the end of the object */
 #include "statics.h"
@@ -638,13 +627,13 @@ UnkStruct_ovl0F_03_80046F0C D_ovl0F_03_80046F0C = {
 /* func_ovl0F_03_80043284's: four arguments to test, three to pass on */
 s32 D_ovl0F_03_80046F6C[7] = { 1, 0x1A, 2, 0x1B, 0x59, 0x13, 0 };
 s32 D_ovl0F_03_80046F88[7] = { 0x2D, 0x1B, 0x2E, 0x1C, 0x5B, 0x13, 0 };
-UnkStruct_ovl0F_03_80046FE4 D_ovl0F_03_80046FA4[2] = {
+UnkStruct_ovl0F_01_80048508 D_ovl0F_03_80046FA4[2] = {
     { 0x20, 3, 8.5f, 3, 0, 1, 1 },
     { 0xE0, 3, 8.5f, 2, 0, 1, 0 },
 };
 UnkStructA *D_ovl0F_03_80046FDC = NULL;
 char D_ovl0F_03_80046FE0[] = "MA";
-UnkStruct_ovl0F_03_80046FE4 D_ovl0F_03_80046FE4 = { 0, 3, 3.75f, 15, 0, 0, 0 };
+UnkStruct_ovl0F_01_80048508 D_ovl0F_03_80046FE4 = { 0, 3, 3.75f, 15, 0, 0, 0 };
 
 static void func_ovl0F_03_8004393C(void) {
     func_ovl0F_03_800465D8(0.0f);

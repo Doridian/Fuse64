@@ -1759,6 +1759,14 @@ with the N64, frame 1,033; its reports are the same loader's), and each
 run stops where it does on i386: the 36 census entries that aren't the
 same to their end are the 23 credits' shots and the 13 where both stop.
 
+eu and jp (2026-11-27, x86-64 check builds of seed 1, built with
+`PORT_ROM_FREE=OFF` from a tree before 6ff4eeb6, the scattered copy
+after the ROM's fill): the census and `extra` report nothing but
+155:16. Every census entry stops where it does on i386 (eu: 250 the
+same to the end, 23 credits' shots, 13 where both stop; jp: 249, 24
+and the 13 with 116:18's loop), and the extras are the same as the
+emulator to their ends.
+
 ### Where pointers are 8 bytes
 
 DozerEncore's pointer pass ("Where pointers are 8 bytes" in its PORT.md),
@@ -2844,7 +2852,9 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
     with the census the runs cover 65.5% of the lines (from 56.3%:
     "Coverage"). The census on seeds 2 and 3 and `extra` and `ovl` on
     seeds 1-3 report nothing after one more fix (20:16's entry -1).
-    Left: the census on eu and jp, the room monkey on seeds 2 and 3; the
+    eu's and jp's census and `extra` (seed 1) report nothing either.
+    Left: eu and jp on seeds 2 and 3 and their room monkey, us's room
+    monkey on seeds 2 and 3; the
     rest of each room is behind its progress (switches, doors, the
     bosses' later phases), which a fixed walk doesn't reach.
   - The default build itself: the fixed-address names are still aliases

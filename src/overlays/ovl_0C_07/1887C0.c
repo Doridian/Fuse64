@@ -56,33 +56,6 @@ typedef struct {
     /* 0x40 */ f32 unk40;
 } UnkStruct_ovl0C_07_80047648;
 
-/* three lifts, each the task func_ovl0C_07_80045694's */
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ s16 unk2;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ UnkStructA *unk8;
-    /* 0x0C */ UnkStructA *unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ s16 unk34;
-    /* 0x36 */ s16 unk36;
-    /* 0x38 */ s16 unk38;
-    /* 0x3A */ s16 unk3A;
-    /* 0x3C */ s16 unk3C;
-    /* 0x3E */ s16 unk3E;
-    /* 0x40 */ s16 unk40;
-    /* 0x42 */ s16 unk42;
-    /* 0x44 */ s32 unk44;
-} UnkStruct_ovl0C_07_800476D0;
-
 void func_ovl0C_07_80046238(s32);
 void func_ovl0C_07_80046250(s32);
 void func_ovl0C_07_80046270(s32, s32, s32, s32);
@@ -211,8 +184,8 @@ void func_ovl0C_07_80044B48(void);
 void func_ovl0C_07_80044CE0(void);
 void func_ovl0C_07_80044D40(s32 arg0, UnkStructA *arg1, UnkStructA *arg2, f32 arg3);
 void func_ovl0C_07_80044DC8(void);
-void func_ovl0C_07_800454AC(UnkStruct_ovl0C_07_800476D0 *arg0, UnkStructA *arg1, UnkStructA *arg2);
-void func_ovl0C_07_80045548(UnkStruct_ovl0C_07_800476D0 *arg0, UnkStructA *arg1);
+void func_ovl0C_07_800454AC(UnkStruct_ovl0C_06_80048F88 *arg0, UnkStructA *arg1, UnkStructA *arg2);
+void func_ovl0C_07_80045548(UnkStruct_ovl0C_06_80048F88 *arg0, UnkStructA *arg1);
 void func_ovl0C_07_80045694(void);
 void func_ovl0C_07_80045B10(UnkStructA *arg0);
 void func_ovl0C_07_80045BD0(UnkStructA *arg0);
@@ -272,7 +245,7 @@ UnkStruct_ovl0C_07_80047648 D_ovl0C_07_80047648[] = {
     { 1, NULL, 0x2D, 0x16, 0.0f, 12.0f, 34.0f, 1.0f, 1, 0x438,
       3350.0f, 2000.0f, 1000.0f, 3350.0f, 1450.0f, 3350.0f, 3850.0f },
 };
-UnkStruct_ovl0C_07_800476D0 D_ovl0C_07_800476D0[] = {
+UnkStruct_ovl0C_06_80048F88 D_ovl0C_07_800476D0[] = {
     { 0, 0, 0, NULL, NULL, 1850.0f, 100.0f, 2250.0f, 100.0f, 700.0f, 1850.0f, 0.0f, 2250.0f, 43.5f,
       0x12, 1, 0x16, 0x13, 3, 0x17, 0x40, 0, 0 },
     { 1, 0, 0, NULL, NULL, 1850.0f, 100.0f, 1850.0f, 100.0f, 900.0f, 1850.0f, 0.0f, 1850.0f, 43.5f,
@@ -350,7 +323,7 @@ static void func_ovl0C_07_80045EA4(void) {
 
 /* a lift: rises while something stands on it, falls back otherwise */
 void func_ovl0C_07_80045694(void) {
-    UnkStruct_ovl0C_07_800476D0 *rec;
+    UnkStruct_ovl0C_06_80048F88 *rec;
     UnkStructA *obj;
     UnkStructA *player;
     s16 wait;
@@ -431,7 +404,7 @@ void func_ovl0C_07_80045694(void) {
     }
 }
 
-void func_ovl0C_07_80045548(UnkStruct_ovl0C_07_800476D0 *arg0, UnkStructA *arg1) {
+void func_ovl0C_07_80045548(UnkStruct_ovl0C_06_80048F88 *arg0, UnkStructA *arg1) {
     UnkStructA *player;
 
     if (arg1->unk68 != 0.0f && func_ovl0C_07_80046BE8(arg1, 1) != 0) {
@@ -450,7 +423,7 @@ void func_ovl0C_07_80045548(UnkStruct_ovl0C_07_800476D0 *arg0, UnkStructA *arg1)
     }
 }
 
-void func_ovl0C_07_800454AC(UnkStruct_ovl0C_07_800476D0 *arg0, UnkStructA *arg1, UnkStructA *arg2) {
+void func_ovl0C_07_800454AC(UnkStruct_ovl0C_06_80048F88 *arg0, UnkStructA *arg1, UnkStructA *arg2) {
     f32 pos[3];
 
     arg0->unk44 &= ~2;
@@ -819,7 +792,7 @@ void func_ovl0C_07_80044178(void) {
 }
 
 void func_ovl0C_07_80044024(void) {
-    UnkStruct_ovl0C_07_800476D0 *p;
+    UnkStruct_ovl0C_06_80048F88 *p;
     UnkStructA *obj;
     s16 i;
 
@@ -1018,7 +991,7 @@ void func_ovl0C_07_80043750(void) {
 }
 
 void func_ovl0C_07_800436D8(void) {
-    UnkStruct_ovl0C_07_800476D0 *p;
+    UnkStruct_ovl0C_06_80048F88 *p;
     s16 i;
 
     for (i = 0, p = D_ovl0C_07_800476D0; i < 3; i++, p++) {

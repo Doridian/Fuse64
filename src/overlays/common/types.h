@@ -169,4 +169,31 @@ typedef struct {
     /* 0x18 */ s32 unk18;
 } UnkStruct_ovl0C_01_8004A5B4;
 
+/* three lifts, each the task func_ovl0C_07_80045694's */
+typedef struct {
+    /* 0x00 */ s16 unk0;
+    /* 0x02 */ s16 unk2;
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ UnkStructA *unk8;
+    /* 0x0C */ UnkStructA *unkC;
+    /* 0x10 */ f32 unk10;
+    /* 0x14 */ f32 unk14;
+    /* 0x18 */ f32 unk18;
+    /* 0x1C */ f32 unk1C;
+    /* 0x20 */ f32 unk20;
+    /* 0x24 */ f32 unk24;
+    /* 0x28 */ f32 unk28;
+    /* 0x2C */ f32 unk2C;
+    /* 0x30 */ f32 unk30;
+    /* 0x34 */ s16 unk34;
+    /* 0x36 */ s16 unk36;
+    /* 0x38 */ s16 unk38;
+    /* 0x3A */ s16 unk3A;
+    /* 0x3C */ s16 unk3C;
+    /* 0x3E */ s16 unk3E;
+    /* 0x40 */ s16 unk40;
+    /* 0x42 */ s16 unk42;
+    /* 0x44 */ s32 unk44;
+} UnkStruct_ovl0C_06_80048F88;
+
 #endif

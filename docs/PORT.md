@@ -405,7 +405,12 @@ seven the same on x86-64). The VI ("Graphics", "The VI") changed what is
 hashed, the picture the VI shows instead of the framebuffer: all 21
 recorded again (i386), after `--vi-raw` (the framebuffer's hash, as
 before) gave the old references in all 21, and the sound, the EEPROM and
-the digest stayed (us's seven the same on x86-64).
+the digest stayed (us's seven the same on x86-64). The noise as a
+function of the pixel ("The OpenGL renderer", 2026-11-27) changed story's
+pictures in all three versions (us's from retrace 4328 to 4602, eu's
+checkpoint at 4500, jp's at 4200; the sound, the EEPROM and the digest the
+same) and nothing else (us's other six with soft, eu's and jp's with gl,
+which draws the same noise): story recorded again (i386).
 jp's battle input is the port's own timing of battle.jp.txt
 (`port/tools/inputs/battle.jp.txt`, which test.py prefers to the shift
 check's): the port loads without the N64's waits, so
@@ -2375,6 +2380,18 @@ integers:
   alpha compare, the z test (the RDP's: the 18-bit depth squeezed, dz and
   the slopes, the four z modes, interpenetration's coverage), coverage
   times alpha, the blender with its divider, the dither, CVG_DST.
+- The noise (the combiner's NOISE, the dither's noise, the alpha compare's
+  random threshold) is a function of the pixel and the task, in both back
+  ends (gfx.h's `gfx_noise_start`): each pixel's generator (xorshift32)
+  starts from a hash of its x, y and the tasks drawn since the power-on,
+  and each use takes its next value in the RDP's order. The N64's sequence
+  is unknown; soft's was one generator stepped by every use in its drawing
+  order, which the GPU, drawing the pixels in any order, couldn't follow,
+  and GL's a hash of its own: us's story differed from soft's references
+  from retrace 4328 to 4602 (the scene with the sparkling sphere
+  in the beam), eu's and jp's too, the picture only (the sound, the save,
+  the digest and RDRAM the same), since the first step (abab626c). soft's
+  story pictures were recorded again (test.py, "Testing").
 - What the RDP reads from memory, the color image's pixel and coverage
   (IMAGE_READ) and the z image's (a z compare), is read in the shader: the
   framebuffer fetched (EXT_shader_framebuffer_fetch, coherent, where the
@@ -2392,7 +2409,8 @@ integers:
   `PORT_GL_MEM=fetch|barrier|copy` picks a weaker one than the driver's
   best, to check them. GL's blend and depth test aren't used.
 
-`port/tools/gl_cmp.py BUILD` runs test.py's scenarios (and its own:
+`port/tools/gl_cmp.py BUILD` runs test.py's scenarios (by default legal,
+menus, battle, story, warp-stage and warp-boss, and its own:
 `attract`, 3000 retraces without input, through the first attract demo's
 screen captures; `reset`, menus with the reset button at 1500) with soft
 and gl side by side (headless, `setarch -R`), compares the VI's pictures
@@ -2403,8 +2421,8 @@ outside the images and with them, and writes the worst pair as PNGs
 (`--out`). With the images on the GPU, RDRAM is compared where it is read:
 a dump syncs the images, as every reader does, and between the readers
 the images in RDRAM are stale by design (nothing reads them there).
-Measured 2026-11-27 (us every 50 retraces, warp-boss and warp-stage every
-100, attract and reset every 1000 with RDRAM every 250, eu and jp's
+Measured 2026-11-27 (us every 50 retraces, story's 240 with RDRAM at 12
+points after the noise, warp-boss and warp-stage every 100, attract and reset every 1000 with RDRAM every 250, eu and jp's
 battle every 100):
 
 | | pictures the same | mean, >24 | digest | RDRAM, all of it |
@@ -2412,6 +2430,7 @@ battle every 100):
 | us legal | 6 of 6 | 0, 0% | the same | the same (1 point) |
 | us menus | 60 of 60 | 0, 0% | the same | the same (3 of 3) |
 | us battle | 120 of 120 | 0, 0% | the same | the same (6 of 6) |
+| us story (the noise) | 240 of 240 | 0, 0% | the same | the same (12 of 12) |
 | us attract (the captures) | 3 of 3 | 0, 0% | the same | the same (12 of 12) |
 | us reset | 3 of 3 | 0, 0% | the same | the same (12 of 12) |
 | us warp-boss (the after-image) | 50 of 50 | 0, 0% | the same | the same (5 of 5) |
@@ -2423,7 +2442,9 @@ test.py's legal, menus and battle with `--renderer gl` give soft's
 references (every retrace's picture, the sound, the save, the digest),
 in us with each of the three ways of reading the memory (barriers on
 radeonsi, copies with `PORT_GL_MEM=copy`, the fetch on llvmpipe), and on
-x86-64; eu's and jp's battle with barriers. RDRAM outside the images once differed in host pointers the game's structures keep (the
+x86-64; eu's and jp's battle with barriers. After the noise, all seven
+scenarios in us, eu and jp with barriers, and us's story with copies and on
+llvmpipe too. RDRAM outside the images once differed in host pointers the game's structures keep (the
 tasks' saved stack pointers, 80580.c's sound records), which depended on
 the host's heap the GL driver shares; they are in arenas of their own
 ("The host's blocks the game keeps").
@@ -2461,7 +2482,7 @@ pixel, none made by vi.c instead; test.py's legal, menus and battle with
 `--renderer gl` give soft's references in us (barriers, copies, x86-64;
 legal and menus on llvmpipe) and eu, story, warp-stage, warp-boss and
 warp-battle as before (story's pictures differed from retrace 4500 at the
-latest before it too, and with `PORT_VI_GPU=0`); gl_cmp.py's us table
+latest before it too, and with `PORT_VI_GPU=0`: the noise, above); gl_cmp.py's us table
 above is the same again; `gfx_ref.py run --renderer gl`'s 20 screens are
 angrylion's VI's pictures exactly. With a window, SDL's offscreen video
 driver (EGL) gave the renderer the window's context, and the picture shown

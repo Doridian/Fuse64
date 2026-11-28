@@ -15,7 +15,7 @@ static void func_ovl14_02_8004D638(s16 x, s16 z, Vec3f *vel) {
 
 void func_ovl14_02_8004D640(UnkStructA *obj) {
     UnkStructA *spark;
-    f32 pad0; /* fake: unused, frame space the original has (no source for it found) */
+    s32 id;
     Vec3f pos2;
     Vec3f dir;
     f32 pad1[4]; /* fake: unused, frame space the original has (no source for it found) */
@@ -95,8 +95,8 @@ void func_ovl14_02_8004D640(UnkStructA *obj) {
         if (dir.z > 1450.0f) {
             dir.z = 1449.0f;
             func_ovl14_02_8004F5A0(&dir, &pos2);
-            spark = (UnkStructA *)(func_ovl14_02_8004EDE8());
-            spark = func_ovl14_02_8004EE48((PORT_IP(s32)) spark);
+            id = func_ovl14_02_8004EDE8();
+            spark = func_ovl14_02_8004EE48(id);
             D_ovl14_02_80050270.x = spark->unk40->unk10 = D_ovl14_02_800502EC->x + pos2.x;
             D_ovl14_02_80050270.z = spark->unk40->unk18 = D_ovl14_02_800502EC->z + pos2.z;
         }

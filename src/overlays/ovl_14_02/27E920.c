@@ -1877,7 +1877,8 @@ void func_ovl14_02_8004AD5C(f32 arg0) {
     f32 n;
     f32 hi;
     f32 t;
-    f32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
+    f32 lo2;
+    f32 hi2;
 
     t = D_ovl14_02_800503C0->unk40->unk48->unk4[0].unk4;
     if (t < 35.0f) {
@@ -1910,8 +1911,8 @@ void func_ovl14_02_8004AD5C(f32 arg0) {
         d[0] = -430.0f;
         d[1] = 1520.0f;
         d[2] = 430.0f;
-        hi = 35.0f;
-        t = 0.0f;
+        hi2 = 35.0f;
+        lo2 = 0.0f;
     } else {
         c[0] = -430.0f;
         c[1] = 1520.0f;
@@ -1919,10 +1920,10 @@ void func_ovl14_02_8004AD5C(f32 arg0) {
         d[0] = -430.0f;
         d[1] = 1520.0f;
         d[2] = 430.0f;
-        hi = arg0;
-        t = 35.0f;
+        hi2 = arg0;
+        lo2 = 35.0f;
     }
-    func_ovl14_02_80048E98(D_ovl14_02_800503CC, (Vec3f *) c, (Vec3f *) d, n -= t, hi -= t);
+    func_ovl14_02_80048E98(D_ovl14_02_800503CC, (Vec3f *) c, (Vec3f *) d, n -= lo2, hi2 -= lo2);
 }
 
 void func_ovl14_02_8004AABC(f32 arg0) {
@@ -2830,8 +2831,6 @@ void func_ovl14_02_80048830(f32 *arg0, f32 *arg1, f32 arg2, f32 *arg3) {
     arg1[1] += dy;
 }
 
-/* #line trick: switching back to an already-seen file name ("x.c" after "y.c") ends an as1
- * scheduling block there (puts `move a2,zero` after the &D_800502EC setup); no code of its own */
 void func_ovl14_02_80048490(void) {
     s32 i;
     s32 j;
@@ -2847,11 +2846,7 @@ void func_ovl14_02_80048490(void) {
         D_ovl14_02_800502F0[i] = func_ovl14_02_8004F630(0x27D, 0x01000004, 0xD0, NULL);
         D_ovl14_02_80050330[i] = 0;
     }
-    i = 0;
-#line 4016 "y.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
-    row = 0;
-    do {
-#line 5018 "x.c" /* fake: another file: its .file ends as1 scheduling blocks (perhaps an included file of statics in the original) */
+    for (i = 0, row = 0; i < 12; row++) {
         for (j = 0; j < 2 && i < 12; j++, i++) {
             D_ovl14_02_800502F0[i]->unk40->unk10 = (j * 1000.0f) + 1900.0f;
             D_ovl14_02_800502F0[i]->unk40->unk14 = D_ovl14_02_800502EC->y;
@@ -2863,8 +2858,7 @@ void func_ovl14_02_80048490(void) {
             D_ovl14_02_800502F0[i]->unk40->unk14 = D_ovl14_02_800502EC->y;
             D_ovl14_02_800502F0[i]->unk40->unk18 = (row * 500.0f) + 600.0f;
         }
-        row++;
-    } while (i < 12);
+    }
     D_ovl14_02_800502F0[i]->unk40->unk10 = 2350.0f;
     D_ovl14_02_800502F0[i]->unk40->unk14 = D_ovl14_02_800502EC->y;
     D_ovl14_02_800502F0[i]->unk40->unk18 = 50.0f;

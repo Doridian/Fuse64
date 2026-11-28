@@ -41,7 +41,7 @@ s32 func_80297E60(void *);
 s32 func_80297E68(void *, u8, u8 *);
 s32 func_80297E70(void *, u8, u8 *);
 s32 func_80297E78(void *, u8, u8 *, s32);
-u16 func_80297E80(void *, u8, u8 *, s32); /* fake: declared u16: the narrowing keeps ret in v1 (header) */
+u16 func_80297E80(void *, u8, u8 *, s32); /* fake: declared u16: the narrowing keeps ret in v1 (header; s32 with a ternary, continue, an && chain, swapped arms, ret = -1 or ret reused for func_80292E88's result: none; func_80297E70 declared u16 instead matches too, as much a guess) */
 
 static s32 func_80294A40(s32 slot);
 static s32 func_802949BC(u8 b);
@@ -425,10 +425,10 @@ void func_8029414C(u8 *buf) {
     *p++ = func_80293FE4(0xB);
     *p++ = func_80293EAC(chk, 6);
     chk += 7;
-#line 397 /* fake: numbering for as1 order (header) */
+#line 397 /* fake: numbering for as1 order (header; tried i and k initialised at their declarations, i = 0, k = 0 order, the loop as an inlined static defined above: it leaves a stub) */
     for (k = 0, i = 0; i < 6; i++, k += 4) {
         j = k + 0x15;
-        do {} while (0); /* fake: splits the block */
+        do {} while (0); /* fake: splits the block, so j + 1 isn't folded to k + 0x16 (tried j as the induction variable, k from 0x15, j = i * 4 + 0x15, j += 2 between the calls: none; `if (1) {}` around the calls matches too) */
         func_80294064(&p, &chk, j, j + 1);
         func_80294064(&p, &chk, j + 2, j + 3);
     }
@@ -721,11 +721,11 @@ static s32 func_802934E0(u8 **pp) {
     s32 j;
     s32 k;
     s32 r;
-    s32 pad2[6]; /* fake: frame-tuned (header) */
+    s32 pad2[6]; /* fake: frame-tuned (header; with pad, it puts msg at sp+0xC4: a bigger msg instead lands it lower, msg[0x90] alone is 5 words off) */
 
     for (k = 0, i = 0; i < 6; i++, k += 4) {
         j = k + 0x15;
-        do {} while (0); /* fake: splits the block */
+        do {} while (0); /* fake: splits the block (tried j as the induction variable, k from 0x15, j = i * 4 + 0x15, a while loop, both tests in one if; a 15-minute permuter run found nothing) */
         r = func_802933E8(pp, j, j + 1);
         if (r == 1) {
             break;
@@ -739,7 +739,7 @@ static s32 func_802934E0(u8 **pp) {
 }
 
 static u8 func_802934D8(u8 **pp, s32 *out) {
-    s32 pad[8]; /* fake: frame-tuned (header) */
+    s32 pad[8]; /* fake: frame-tuned (header; see pad2: msg[0x78] in place of this one is 1 word off) */
     u8 *p = *pp;
     u8 sum;
 

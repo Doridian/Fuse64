@@ -32,18 +32,6 @@
  * and their switches are ovl_0C_06's own (as in ovl_0C_01 and ovl_0C_02).
  */
 
-/* an object, its position and the limits the movers check it against */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-} UnkStruct_ovl0C_06_80048FD0;
-
 /* a mover: the tasks func_ovl0C_07_80044CE0 and func_ovl0C_07_80044DC8
  * take one (unk0 indexes D_ovl0C_06_80048FD0) */
 typedef struct {

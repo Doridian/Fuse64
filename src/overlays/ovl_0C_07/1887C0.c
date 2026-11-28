@@ -22,18 +22,6 @@
  * the camera, the lifts and the movers, ovl_0C_04's object setup.
  */
 
-/* an object, its position and the limits the movers check it against */
-typedef struct {
-    /* 0x00 */ UnkStructA *unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-} UnkStruct_ovl0C_07_80047608;
-
 /* a mover: the tasks func_ovl0C_07_80044CE0 and func_ovl0C_07_80044DC8
  * take one (unk0 indexes D_ovl0C_07_80047608) */
 typedef struct {
@@ -153,7 +141,7 @@ void func_ovl0C_07_80043750(void);
 void func_ovl0C_07_80043798(void);
 void func_ovl0C_07_80043820(UnkStruct_ovl0C_01_8004A104 *arg0);
 void func_ovl0C_07_800438E4(UnkStruct_ovl0C_01_8004A104 *arg0);
-void func_ovl0C_07_80043920(UnkStruct_ovl0C_07_80047608 *arg0);
+void func_ovl0C_07_80043920(UnkStruct_ovl0C_06_80048FD0 *arg0);
 void func_ovl0C_07_800439A4(void);
 void func_ovl0C_07_80043A28(void);
 void func_ovl0C_07_80043A80(f32);
@@ -235,7 +223,7 @@ UnkStruct_ovl0C_01_8004A104 D_ovl0C_07_80047590[] = {
     { 0, NULL, 200.0f, 200.0f, 1850.0f, 0x40, 250.0f, 200.0f, 1850.0f, 1, 1, 0x12, 4, 2, 0x13, 1, 1, 0x12, 1,
       0x13, 3, 1, 0x14, 0x17, 0xA010, 3, 1, 0x11, 0x18, 0xA010 },
 };
-UnkStruct_ovl0C_07_80047608 D_ovl0C_07_80047608[] = {
+UnkStruct_ovl0C_06_80048FD0 D_ovl0C_07_80047608[] = {
     { NULL, 1550.0f, 1000.0f, 1850.0f, 1000.0f, -400.0f, 3350.0f, 1850.0f },
     { NULL, 3350.0f, 1000.0f, 1850.0f, 1000.0f, -400.0f, 3350.0f, 1850.0f },
 };
@@ -461,7 +449,7 @@ void func_ovl0C_07_80044DC8(void) {
     UnkStruct_ovl0C_07_80047648 *rec;
     UnkStructA *obj;
     UnkStructA *other;
-    UnkStruct_ovl0C_07_80047608 *lim;
+    UnkStruct_ovl0C_06_80048FD0 *lim;
     s16 done;
     f32 dist;
     s32 fl;
@@ -950,7 +938,7 @@ void func_ovl0C_07_800439A4(void) {
     func_ovl0C_07_80046D88(func_ovl0C_07_80044800, NULL, 0, 0, 0x130);
 }
 
-void func_ovl0C_07_80043920(UnkStruct_ovl0C_07_80047608 *arg0) {
+void func_ovl0C_07_80043920(UnkStruct_ovl0C_06_80048FD0 *arg0) {
     UnkStructA *obj;
     UnkStructA *shadow;
 
@@ -1057,7 +1045,7 @@ void func_ovl0C_07_80043400(void) {
 void func_ovl0C_07_80043340(UnkStruct_ovl0C_07_80047648 *arg0) {
     UnkStructA *obj;
     UnkStructA *other;
-    UnkStruct_ovl0C_07_80047608 *lim;
+    UnkStruct_ovl0C_06_80048FD0 *lim;
 
     obj = func_ovl0C_07_80046C80(0x2B2, 0xD0, arg0->unk28, arg0->unk2C, arg0->unk30);
     func_ovl0C_07_80046C70(obj);

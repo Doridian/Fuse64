@@ -123,8 +123,8 @@ UnkStructA *func_ovl12_05_8004A220(void);
 void func_ovl12_05_8004A240(void);
 void func_ovl12_05_8004A258(u16);
 void func_ovl12_05_8004A268(s32, s32, s32);
-UnkStructC *func_ovl12_05_8004A280(s32);
-void func_ovl12_05_8004A290(UnkStructC *, s32);
+UnkStruct_802B0260 *func_ovl12_05_8004A280(s32);
+void func_ovl12_05_8004A290(UnkStruct_802B0260 *, s32);
 f32 func_ovl12_05_8004A3A0(f32);
 f32 func_ovl12_05_8004A3A8(f32);
 f64 func_ovl12_05_8004A3B0(void);
@@ -236,7 +236,7 @@ s32 D_ovl12_05_8004AC4C;
 s32 D_ovl12_05_8004AC50;
 UnkStructA *D_ovl12_05_8004AC54;
 s32 D_ovl12_05_8004AC58;
-UnkStructC *D_ovl12_05_8004AC5C;
+UnkStruct_802B0260 *D_ovl12_05_8004AC5C;
 s32 D_ovl12_05_8004AC60;
 s32 D_ovl12_05_8004AC64;
 s32 D_ovl12_05_8004AC68;
@@ -301,7 +301,7 @@ static void func_ovl12_05_800492FC(void) {
 /* twin of 17_10:80044CB8 (src/overlays/ovl_17_10/2BC0B0.c) */
 /* twin of 12_03:80043EFC (nonmatching/overlays/ovl_12_03/250B70.c) */
 void func_ovl12_05_800491E8(void) {
-    UnkStructC *obj;
+    UnkStruct_802B0260 *obj;
 
     func_ovl12_05_800491A8();
     func_ovl12_05_80049790(func_ovl12_05_80049130);

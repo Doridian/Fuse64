@@ -74,8 +74,8 @@ void func_ovl0F_08_80045388(void);
 void func_ovl0F_08_80045398(s32);
 PORT_IP(s32) func_ovl0F_08_800453A0(void);
 void func_ovl0F_08_800453C0(void);
-UnkStructC *func_ovl0F_08_80045400(s32);
-void func_ovl0F_08_80045410(UnkStructC *, s32);
+UnkStruct_802B0260 *func_ovl0F_08_80045400(s32);
+void func_ovl0F_08_80045410(UnkStruct_802B0260 *, s32);
 s32 func_ovl0F_08_80045600(s32);
 void func_ovl0F_08_800456E0(u32 (*)[3]);
 void func_ovl0F_08_800457C8(s32, f32, f32, f32, PORT_IP(s32));
@@ -114,7 +114,7 @@ u8 D_ovl0F_08_80045DD8[0x4];
 s32 D_ovl0F_08_80045DDC;
 s32 D_ovl0F_08_80045DE0;
 Vec3f D_ovl0F_08_80045DE8;
-UnkStructC *D_ovl0F_08_80045DF4;
+UnkStruct_802B0260 *D_ovl0F_08_80045DF4;
 
 /* .data */
 f32 D_ovl0F_08_80045B20 = 0.01f;

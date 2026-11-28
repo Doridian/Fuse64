@@ -122,8 +122,8 @@ void func_ovl0F_10_80045F18(void);
 void func_ovl0F_10_80045F28(s32);
 void *func_ovl0F_10_80045F30(void);
 void func_ovl0F_10_80045F50(void);
-UnkStructC *func_ovl0F_10_80045F90(s32);
-void func_ovl0F_10_80045FA0(UnkStructC *, s32);
+UnkStruct_802B0260 *func_ovl0F_10_80045F90(s32);
+void func_ovl0F_10_80045FA0(UnkStruct_802B0260 *, s32);
 s32 func_ovl0F_10_80046170(s32);
 void func_ovl0F_10_80046180(s32);
 s32 func_ovl0F_10_80046190(s32);
@@ -182,7 +182,7 @@ u8 D_ovl0F_10_80046B18[0x4];
 s32 D_ovl0F_10_80046B1C;
 s32 D_ovl0F_10_80046B20;
 Vec3f D_ovl0F_10_80046B28;
-UnkStructC *D_ovl0F_10_80046B34;
+UnkStruct_802B0260 *D_ovl0F_10_80046B34;
 u8 D_ovl0F_10_80046B38[0x8];
 
 /* .data */

@@ -104,23 +104,6 @@ typedef struct {
     /* 0x68 */ f32 unk68;
 } Obj;
 
-typedef struct {
-    /* 0x00 */ u8 unk0[0x18];
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ u8 unk20[8];
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ u8 unk38[4];
-    /* 0x3C */ f32 unk3C;
-    /* 0x40 */ f32 unk40;
-    /* 0x44 */ f32 unk44;
-    /* 0x48 */ f32 unk48;
-    /* 0x4C */ f32 unk4C;
-} Sprite;
-
 /* A placed object: what a table entry spawns and where. */
 typedef struct {
     /* 0x00 */ Obj *obj;
@@ -185,8 +168,8 @@ void func_ovl0A_01_80047F98(void); /* 0x1902 */
 void func_ovl0A_01_80047FA8(s32); /* 0x1904 */
 Obj * func_ovl0A_01_80047FB0(void); /* 0x1905 */
 s32 func_ovl0A_01_80047FD0(void); /* 0x1909 */
-Sprite * func_ovl0A_01_80048010(s32); /* 0x1A00 */
-void func_ovl0A_01_80048020(Sprite *, s32); /* 0x1A02 */
+UnkStruct_802B0260 * func_ovl0A_01_80048010(s32); /* 0x1A00 */
+void func_ovl0A_01_80048020(UnkStruct_802B0260 *, s32); /* 0x1A02 */
 f32 func_ovl0A_01_80048130(f32); /* 0x1D00 */
 f64 func_ovl0A_01_80048140(void); /* 0x1D02 */
 s32 func_ovl0A_01_80048148(s32); /* 0x1D03 */
@@ -207,7 +190,7 @@ s32 D_ovl0A_01_80048D08;
 Vec3f_ovl0A_01 D_ovl0A_01_80048D10;
 s32 D_ovl0A_01_80048D1C;
 s32 *D_ovl0A_01_80048D20;
-Sprite *D_ovl0A_01_80048D24;
+UnkStruct_802B0260 *D_ovl0A_01_80048D24;
 u8 D_ovl0A_01_80048D28[8];
 
 static void func_ovl0A_01_80046F10(s32 arg0, Gfx_80225840 **arg1);
@@ -1068,7 +1051,7 @@ void func_ovl0A_01_80044F3C(void) {
     func_ovl0A_01_80044A2C();
     v = 0;
     pos[0] = 200.0f;
-#line 1047 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1030 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     pos[2] = 900.0f;
     pos[1] = v;
     played = 0;
@@ -1357,15 +1340,15 @@ void func_ovl0A_01_800442B4(void) {
         } while (++j < 1370);
     }
     v = j;
-#line 1331 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1314 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     func_ovl0A_01_80047530(0x1A, 0x12, 4);
     func_ovl0A_01_80047F98();
 }
 
 static void func_ovl0A_01_8004428C(void) {
-#line 1339 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1322 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     D_ovl0A_01_80048A70 = 0;
-#line 1338 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1321 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     D_ovl0A_01_80048A64 = func_ovl0A_01_80047F88(func_ovl0A_01_80045EA0, NULL, 0, 0, 0x130);
 }
 
@@ -1377,7 +1360,7 @@ static void func_ovl0A_01_800442A4(void) {
     func_ovl0A_01_80047E38(D_ovl0A_01_80048770[4].obj, 0x80000);
 }
 
-#line 1313 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1296 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 static void func_ovl0A_01_800442AC(void) {
     D_ovl0A_01_80048A1C = 0.0f;
     D_ovl0A_01_80048A20 = 0.0f;
@@ -1630,9 +1613,9 @@ static void func_ovl0A_01_80043380(Entry *tbl, s32 n) {
     Entry *e;
 
     for (i = 0; i < n; i++) {
-#line 1598 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1581 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
         e = tbl;
-#line 1597 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1580 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
         tbl->obj = func_ovl0A_01_80047E60(tbl->unk4 == 0 ? tbl->unk8 : 0x320, 0x0D000000, 0xD0, NULL);
         if (tbl->unk4 != 0) {
             func_ovl0A_01_80043378(tbl);

@@ -60,11 +60,11 @@ void func_ovl10_01_80046868(void (*)(void), s32, PORT_IP(s32), s32, s32);
 void func_ovl10_01_80046888(s32);
 void func_ovl10_01_800468B0(void);
 #ifdef TARGET_PC
-UnkStruct_ovl10_01_80047540 *func_ovl10_01_800468F0(s32 arg0); /* ZeroJump 0x1A00, func_80287DC0 */
+UnkStruct_802B0260 *func_ovl10_01_800468F0(s32 arg0); /* ZeroJump 0x1A00, func_80287DC0 */
 #else
-UnkStruct_ovl10_01_80047540 *func_ovl10_01_800468F0(void);
+UnkStruct_802B0260 *func_ovl10_01_800468F0(void);
 #endif
-void func_ovl10_01_80046900(UnkStruct_ovl10_01_80047540 *, s32);
+void func_ovl10_01_80046900(UnkStruct_802B0260 *, s32);
 f32 func_ovl10_01_80046A10(f32);
 s32 func_ovl10_01_80046A28(s32);
 s32 *func_ovl10_01_80046B00(void);
@@ -187,7 +187,7 @@ s32 D_ovl10_01_80047330;
 s32 D_ovl10_01_80047338[64];
 s32 D_ovl10_01_80047438; /* the running task */
 void (*D_ovl10_01_80047440[64])(void);
-UnkStruct_ovl10_01_80047540 *D_ovl10_01_80047540;
+UnkStruct_802B0260 *D_ovl10_01_80047540;
 UnkStructA *D_ovl10_01_80047548[8];
 UnkStructA *D_ovl10_01_80047568[8];
 void *D_ovl10_01_80047588[8];

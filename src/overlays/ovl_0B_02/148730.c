@@ -171,8 +171,8 @@ void func_ovl0B_02_80049188(void); /* 0x1902 */
 void func_ovl0B_02_80049198(s32); /* 0x1904 */
 void *func_ovl0B_02_800491A0(void); /* 0x1905 */
 s32 func_ovl0B_02_800491C0(void); /* 0x1909 */
-UnkStructC *func_ovl0B_02_80049200(s32); /* 0x1A00 */
-void func_ovl0B_02_80049210(UnkStructC *, s32); /* 0x1A02 */
+UnkStruct_802B0260 *func_ovl0B_02_80049200(s32); /* 0x1A00 */
+void func_ovl0B_02_80049210(UnkStruct_802B0260 *, s32); /* 0x1A02 */
 f32 func_ovl0B_02_80049320(f32); /* 0x1D00 */
 f32 func_ovl0B_02_80049328(f32); /* 0x1D01 */
 f64 func_ovl0B_02_80049330(void); /* 0x1D02 */
@@ -240,7 +240,7 @@ s32 D_ovl0B_02_8004A440;
 s32 D_ovl0B_02_8004A444;
 s32 D_ovl0B_02_8004A448;
 s32 D_ovl0B_02_8004A44C;
-UnkStructC *D_ovl0B_02_8004A450[4];
+UnkStruct_802B0260 *D_ovl0B_02_8004A450[4];
 
 void func_ovl0B_02_80044490(void);
 void func_ovl0B_02_800431C4(void);

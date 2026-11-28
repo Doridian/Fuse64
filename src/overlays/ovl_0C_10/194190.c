@@ -92,8 +92,8 @@ void func_ovl0C_10_80045DC8(void);
 void func_ovl0C_10_80045DD8(s32);
 void *func_ovl0C_10_80045DE0(void);
 s32 func_ovl0C_10_80045E00(void);
-UnkStructC *func_ovl0C_10_80045E40(s32);
-void func_ovl0C_10_80045E50(UnkStructC *, s32);
+UnkStruct_802B0260 *func_ovl0C_10_80045E40(s32);
+void func_ovl0C_10_80045E50(UnkStruct_802B0260 *, s32);
 f32 func_ovl0C_10_80045F60(f32);
 f32 func_ovl0C_10_80045F68(f32);
 void func_ovl0C_10_80045FD8(void);
@@ -164,7 +164,7 @@ UnkStruct_ovl0C_01_8004A9C8 D_ovl0C_10_800466B0;
 s32 D_ovl0C_10_800466C4;
 s32 D_ovl0C_10_800466C8;
 s32 D_ovl0C_10_800466CC;
-UnkStructC *D_ovl0C_10_800466D0;
+UnkStruct_802B0260 *D_ovl0C_10_800466D0;
 
 /* .data */
 UnkStruct_ovl0C_10_80046560 D_ovl0C_10_80046560[] = {

@@ -568,8 +568,8 @@ void func_ovl0B_06_80048CB0(s32); /* 0x1901 */
 void func_ovl0B_06_80048CB8(void); /* 0x1902 */
 void func_ovl0B_06_80048CC8(s32); /* 0x1904 */
 s32 func_ovl0B_06_80048CF0(void); /* 0x1909 */
-UnkStructC *func_ovl0B_06_80048D30(s32); /* 0x1A00 */
-void func_ovl0B_06_80048D40(UnkStructC *, s32); /* 0x1A02 */
+UnkStruct_802B0260 *func_ovl0B_06_80048D30(s32); /* 0x1A00 */
+void func_ovl0B_06_80048D40(UnkStruct_802B0260 *, s32); /* 0x1A02 */
 s32 func_ovl0B_06_80048DF0(s32); /* 0x1C02 */
 s32 func_ovl0B_06_80048DF8(s32, s32); /* 0x1C03 */
 s32 func_ovl0B_06_80048E00(s32); /* 0x1C04 */
@@ -764,7 +764,7 @@ UnkStructA_40 *D_ovl0B_06_8004A628;
 UnkStructA_40 *D_ovl0B_06_8004A62C;
 UnkStructA_40 *D_ovl0B_06_8004A630;
 UnkStructA_40 *D_ovl0B_06_8004A634;
-UnkStructC *D_ovl0B_06_8004A638;
+UnkStruct_802B0260 *D_ovl0B_06_8004A638;
 u8 D_ovl0B_06_8004A640[8];
 u8 D_ovl0B_06_8004A648[8];
 s32 D_ovl0B_06_8004A650[4];

@@ -120,19 +120,32 @@ typedef struct {
     /* 0xC4 */ u8 unkC4[4][9];
 } UnkStruct_8023A834;
 
-/* What the main_code function behind the overlays' ZeroJump stub at
- * 0x80044690 (ovl_17_03) returns. */
+/* A sprite slot (D_802B0260, two of them; A1EA0): what func_80287DC0
+ * returns, which the overlays call through ZeroJump 0x1A00 (ovl_17_03's
+ * stub at 0x80044690) and pass to 0x1A02/0x1A03.  unk28-unk34 go to its
+ * model object's (D_802B0308[unk0], UnkStructA_40) unk10-unk1C. */
 typedef struct {
-    /* 0x00 */ u8 unk0[0x18];
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ s32 unk8;
+    /* 0x0C */ s32 unkC;
+    /* 0x10 */ s32 unk10;
+    /* 0x14 */ s32 unk14;
     /* 0x18 */ f32 unk18;
     /* 0x1C */ f32 unk1C;
-    /* 0x20 */ u8 unk20[0x1C];
+    /* 0x20 */ f32 unk20;
+    /* 0x24 */ f32 unk24;
+    /* 0x28 */ f32 unk28;
+    /* 0x2C */ f32 unk2C;
+    /* 0x30 */ f32 unk30;
+    /* 0x34 */ f32 unk34;
+    /* 0x38 */ f32 unk38;
     /* 0x3C */ f32 unk3C;
     /* 0x40 */ f32 unk40;
     /* 0x44 */ f32 unk44;
-    /* 0x48 */ u8 unk48[4];
+    /* 0x48 */ f32 unk48;
     /* 0x4C */ f32 unk4C;
-} UnkStructC;
+} UnkStruct_802B0260; /* size 0x50 */
 
 /* What func_8023A840 returns. */
 typedef struct {

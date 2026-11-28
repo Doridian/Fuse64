@@ -66,18 +66,6 @@ typedef struct {
     /* 0x70 */ f32 unk70;
 } UnkStruct_ovl0A_05_80048CA0;
 
-typedef struct {
-    /* 0x00 */ u8 unk0[0x18];
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ u8 unk20[0x1C];
-    /* 0x3C */ f32 unk3C;
-    /* 0x40 */ f32 unk40;
-    /* 0x44 */ f32 unk44;
-    /* 0x48 */ f32 unk48;
-    /* 0x4C */ f32 unk4C;
-} UnkStruct_ovl0A_05_80048E50;
-
 /* what ZeroJump 0x1500 returns: a screen rectangle with its size */
 typedef struct {
     /* 0x00 */ u8 unk0[0xC];
@@ -167,8 +155,8 @@ void func_ovl0A_05_80048DD8(void); /* 0x1902 */
 void func_ovl0A_05_80048DE8(s32); /* 0x1904 */
 UnkStruct_ovl0A_05_80048CA0 *func_ovl0A_05_80048DF0(void); /* 0x1905 */
 s32 func_ovl0A_05_80048E10(void); /* 0x1909 */
-UnkStruct_ovl0A_05_80048E50 *func_ovl0A_05_80048E50(s32); /* 0x1A00 */
-void func_ovl0A_05_80048E60(UnkStruct_ovl0A_05_80048E50 *, s32); /* 0x1A02 */
+UnkStruct_802B0260 *func_ovl0A_05_80048E50(s32); /* 0x1A00 */
+void func_ovl0A_05_80048E60(UnkStruct_802B0260 *, s32); /* 0x1A02 */
 f32 func_ovl0A_05_80048F70(f32); /* 0x1D00 */
 void func_ovl0A_05_80049040(s32); /* 0x1E06 */
 void func_ovl0A_05_80049048(s32); /* 0x1E07 */
@@ -203,10 +191,10 @@ UnkStruct_ovl0A_05_80048958 *D_ovl0A_05_8004990C;
 UnkStruct_ovl0A_05_80048958 *D_ovl0A_05_80049910;
 UnkStruct_ovl0A_05_80048958 *D_ovl0A_05_80049914;
 UnkStruct_ovl0A_05_80048958 *D_ovl0A_05_80049918;
-UnkStruct_ovl0A_05_80048E50 *D_ovl0A_05_8004991C;
+UnkStruct_802B0260 *D_ovl0A_05_8004991C;
 s32 D_ovl0A_05_80049920;
 UnkStruct_ovl0A_05_80048CA0 *D_ovl0A_05_80049924;
-UnkStruct_ovl0A_05_80048E50 *D_ovl0A_05_80049928;
+UnkStruct_802B0260 *D_ovl0A_05_80049928;
 UnkStruct_ovl0A_05_80049518 *D_ovl0A_05_80049930[4];
 UnkStruct_ovl0A_05_80048CA0 *D_ovl0A_05_80049940;
 UnkStruct_ovl0A_05_80048CA0 *D_ovl0A_05_80049944;

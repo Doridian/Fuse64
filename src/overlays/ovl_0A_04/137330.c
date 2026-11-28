@@ -57,19 +57,6 @@ typedef struct {
 } UnkStruct_ovl0A_04_80045D30;
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0x28];
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ u8 unk38[8];
-    /* 0x40 */ f32 unk40;
-    /* 0x44 */ f32 unk44;
-    /* 0x48 */ f32 unk48;
-    /* 0x4C */ f32 unk4C;
-} UnkStruct_ovl0A_04_80045EE0;
-
-typedef struct {
     f32 x, y, z;
 } Vec3f_ovl0A_04_800466F0;
 
@@ -114,8 +101,8 @@ void func_ovl0A_04_80045E68(void);
 void func_ovl0A_04_80045E78(s32);
 Obj04 *func_ovl0A_04_80045E80(void);
 s32 func_ovl0A_04_80045EA0(void);
-UnkStruct_ovl0A_04_80045EE0 *func_ovl0A_04_80045EE0(s32);
-void func_ovl0A_04_80045EF0(UnkStruct_ovl0A_04_80045EE0 *, s32);
+UnkStruct_802B0260 *func_ovl0A_04_80045EE0(s32);
+void func_ovl0A_04_80045EF0(UnkStruct_802B0260 *, s32);
 f32 func_ovl0A_04_80046000(f32);
 f64 func_ovl0A_04_80046010(void);
 s32 func_ovl0A_04_80046018(s32);
@@ -141,7 +128,7 @@ u8 D_ovl0A_04_800466C0[0x24]; /* not referenced here */
 s32 D_ovl0A_04_800466E4;
 s32 D_ovl0A_04_800466E8;
 Vec3f_ovl0A_04_800466F0 D_ovl0A_04_800466F0;
-UnkStruct_ovl0A_04_80045EE0 *D_ovl0A_04_800466FC;
+UnkStruct_802B0260 *D_ovl0A_04_800466FC;
 s32 D_ovl0A_04_80046700;
 s32 D_ovl0A_04_80046704;
 #ifdef TARGET_PC

@@ -230,9 +230,9 @@ void func_ovl15_02_80050728(s32); /* 0x1904 */ /* also: s32 (s32) x1 */
 void *func_ovl15_02_80050730(void); /* 0x1905 */ /* also: Obj02 * (void) x1; Obj03 * (void) x1; UnkStruct_ovl0A_05_80048CA0 *(void) x1 */
 s32 func_ovl15_02_80050750(void); /* 0x1909 */ /* also: void (void) x8 */
 s32 func_ovl15_02_80050788(void); /* 0x1910 */
-UnkStructC *func_ovl15_02_80050790(s32); /* 0x1A00 */ /* also: void * (s32) x1; UnkStruct_ovl0A_03_80047FD0 * (s32) x1; UnkStruct_ovl0A_05_80048E50 *(s32) x1 */
-void func_ovl15_02_800507A0(UnkStructC *, s32); /* 0x1A02 */ /* also: void (void *, s32) x1; void (UnkStruct_ovl0A_03_80047FD0 *, s32) x1; void (UnkStruct_ovl0A_05_80048E50 *, s32) x1 */
-void func_ovl15_02_800507A8(void *, s32); /* 0x1A03 */ /* also: void (UnkStruct_ovl0A_03_80047FD0 *, s32) x1 */
+UnkStruct_802B0260 *func_ovl15_02_80050790(s32); /* 0x1A00 */ /* also: void * (s32) x1; UnkStruct_802B0260 * (s32) x1; UnkStruct_802B0260 *(s32) x1 */
+void func_ovl15_02_800507A0(UnkStruct_802B0260 *, s32); /* 0x1A02 */ /* also: void (void *, s32) x1; void (UnkStruct_802B0260 *, s32) x1; void (UnkStruct_802B0260 *, s32) x1 */
+void func_ovl15_02_800507A8(void *, s32); /* 0x1A03 */ /* also: void (UnkStruct_802B0260 *, s32) x1 */
 f32 func_ovl15_02_800508B0(f32); /* 0x1D00 */
 f32 func_ovl15_02_800508B8(f32); /* 0x1D01 */
 f64 func_ovl15_02_800508C0(void); /* 0x1D02 */
@@ -329,7 +329,7 @@ struct port_bss_ovl15_02_800513E8 {
 #define D_ovl15_02_800513EC (port_bss_ovl15_02_800513E8.D_ovl15_02_800513EC)
 #define D_ovl15_02_800513F0 (port_bss_ovl15_02_800513E8.D_ovl15_02_800513F0)
 UnkStructA * D_ovl15_02_800513F4;
-UnkStructC * D_ovl15_02_800513F8;
+UnkStruct_802B0260 * D_ovl15_02_800513F8;
 s32 D_ovl15_02_800513FC;
 s32 D_ovl15_02_80051400;
 s32 D_ovl15_02_80051404;
@@ -405,7 +405,7 @@ s32 D_ovl15_02_800513E8;
 u8 D_ovl15_02_800513EC[4];
 u8 D_ovl15_02_800513F0[4];
 UnkStructA * D_ovl15_02_800513F4;
-UnkStructC * D_ovl15_02_800513F8;
+UnkStruct_802B0260 * D_ovl15_02_800513F8;
 s32 D_ovl15_02_800513FC;
 s32 D_ovl15_02_80051400;
 s32 D_ovl15_02_80051404;
@@ -845,7 +845,7 @@ static void func_ovl15_02_8004F354() {
 }
 
 void func_ovl15_02_8004F36C(void) {
-    UnkStructC *temp_v0;
+    UnkStruct_802B0260 *temp_v0;
 
     func_ovl15_02_8004F364();
     func_ovl15_02_8004F35C();

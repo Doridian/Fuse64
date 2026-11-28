@@ -12,8 +12,8 @@ void func_ovl17_03_80043C68(void);
 void func_ovl17_03_800442D8(s32);
 void func_ovl17_03_800442E8(s32);
 void func_ovl17_03_80044360(s32);
-UnkStructC *func_ovl17_03_80044690(s32);
-void func_ovl17_03_800446A0(UnkStructC *, s32);
+UnkStruct_802B0260 *func_ovl17_03_80044690(s32);
+void func_ovl17_03_800446A0(UnkStruct_802B0260 *, s32);
 void func_ovl17_03_800447D0(f32, f32);
 void func_ovl17_03_80044908(s32, s32, s32, f32);
 void func_ovl17_03_80044970(u32 (*)[3]);
@@ -43,7 +43,7 @@ u8 D_ovl17_03_80044E40[0x24];
 s32 D_ovl17_03_80044E64;
 s32 D_ovl17_03_80044E68;
 Vec3f D_ovl17_03_80044E70;
-UnkStructC *D_ovl17_03_80044E7C;
+UnkStruct_802B0260 *D_ovl17_03_80044E7C;
 
 /* .data */
 /* passed to func_ovl17_03_80044970: three 12-byte records */

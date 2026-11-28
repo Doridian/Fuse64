@@ -103,8 +103,8 @@ void func_ovl0B_07_800463B8(void); /* 0x1902 */
 void func_ovl0B_07_800463C8(s32); /* 0x1904 */
 void *func_ovl0B_07_800463D0(void); /* 0x1905 */
 s32 func_ovl0B_07_800463F0(void); /* 0x1909 */
-UnkStructC *func_ovl0B_07_80046430(s32); /* 0x1A00 */
-void func_ovl0B_07_80046440(UnkStructC *, s32); /* 0x1A02 */
+UnkStruct_802B0260 *func_ovl0B_07_80046430(s32); /* 0x1A00 */
+void func_ovl0B_07_80046440(UnkStruct_802B0260 *, s32); /* 0x1A02 */
 s32 func_ovl0B_07_80046478(s32); /* 0x1B05 */
 s32 func_ovl0B_07_80046488(s32); /* 0x1B07 */
 f64 func_ovl0B_07_80046560(void); /* 0x1D02 */
@@ -683,7 +683,7 @@ void func_ovl0B_07_8004345C(void) {
 void func_ovl0B_07_80043010(s32 arg0) {
     s32 i;
     s32 j;
-    UnkStructC *c;
+    UnkStruct_802B0260 *c;
 
     switch (arg0) {
         case 2:

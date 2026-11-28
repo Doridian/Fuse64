@@ -325,8 +325,6 @@ static void *func_80268438(s16 num);
 static void func_80268430(s16 idx, s16 script, s8 type);
 static s16 func_802699C0();
 static void func_80266928(s16 idx);
-s32 *func_8026B79C(void);
-s16 func_8026B9CC(void *, void *);
 void func_80297D50(void *, void *);
 void func_80297D80(void *, void *, s32);
 s32 func_80297D90(void *, void *, s32);
@@ -507,34 +505,16 @@ s32 D_802A1250 = 0x7D00;
 #ifdef TARGET_PC
 /* The port: the configs as the structures they are, with native pointers
  * (IDO's are words at the N64's offsets, read and written as such below):
- * libaudio.h's ALSynConfig and ALSeqpConfig, audiomgr's amConfig
- * (85A10.c), and a count with the heap. */
-typedef struct {
-    s32 maxVVoices, maxPVoices, maxUpdates, maxFXbusses;
-    void *dmaproc;
-    void *heap;
-    s32 outputRate;
-    u8 fxType;
-    s32 *params;
-} SynConfig80580;
-typedef struct {
-    u16 numDMABuffers;
-    s32 dmaBufferLength;
-    u32 framesPerField;
-    u32 maxACMDSize;
-    s32 outputRate;
-    void *sched;
-    s32 pri;
-    s32 id;
-} AmConfig80580;
+ * libaudio.h's ALSynConfig and audiomgr's amConfig (85A10.h's),
+ * ALSeqpConfig, and a count with the heap. */
 typedef struct {
     s32 maxVoices, maxEvents;
     u8 maxChannels, debugFlags;
     void *heap;
     void *initOsc, *updateOsc, *stopOsc;
 } SeqpConfig80580;
-SynConfig80580 D_802A1254 = { 0x10, 0x10, 0x15E, 0, NULL, &D_802AD120, 0, 1, NULL };
-AmConfig80580 D_802A1278 = { 0x18, 0x800, 1, 0x800, 0, NULL, 0, 0 };
+UnkStruct_8026B9CC_0 D_802A1254 = { 0x10, 0x10, 0x15E, 0, NULL, &D_802AD120, 0, 1, NULL };
+UnkStruct_8026B9CC_1 D_802A1278 = { 0x18, 0x800, 1, 0x800, 0, NULL, 0, 0 };
 SeqpConfig80580 D_802A1298 = { 0x10, 0x80, 0x10, 0, &D_802AD120, func_8026A8B4, func_8026ABF4, func_8026B1EC };
 #else
 u32 D_802A1254[] = { 0x10, 0x10, 0x15E, 0, 0, (u32) &D_802AD120, 0, 0x01000000, 0 };
@@ -772,7 +752,7 @@ s16 func_8026A754(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     M2C_FIELD(D_802A1278, s32 *, 0x18) = arg0;
     M2C_FIELD(D_802A1278, s32 *, 0x1C) = arg1;
     M2C_FIELD(D_802A1278, s32 *, 0x10) = (s32) D_802A1250;
-    temp_v0_3 = func_8026B9CC(D_802A1254, D_802A1278);
+    temp_v0_3 = func_8026B9CC((UnkStruct_8026B9CC_0 *) D_802A1254, (UnkStruct_8026B9CC_1 *) D_802A1278);
 #endif
     if (temp_v0_3 != 0) {
         return temp_v0_3;
@@ -825,7 +805,7 @@ s16 func_8026A5BC() {
 #else
     M2C_FIELD(D_802A1278, s32 *, 0x14) = 0;
     M2C_FIELD(D_802A1278, s32 *, 0x10) = (s32) D_802A1250;
-    temp_v0_3 = func_8026B9CC(D_802A1254, D_802A1278);
+    temp_v0_3 = func_8026B9CC((UnkStruct_8026B9CC_0 *) D_802A1254, (UnkStruct_8026B9CC_1 *) D_802A1278);
 #endif
     if (temp_v0_3 != 0) {
         return temp_v0_3;
@@ -1318,19 +1298,19 @@ s32 func_80269820() {
 }
 
 s32 func_80269800() {
-    return *func_8026B79C();
+    return func_8026B79C()->flags;
 }
 
 s32 func_802697E0() {
-    return M2C_FIELD(func_8026B79C(), s32 *, 4);
+    return func_8026B79C()->maxDMAs;
 }
 
 s32 func_802697C0() {
-    return M2C_FIELD(func_8026B79C(), s32 *, 8);
+    return func_8026B79C()->maxBuffers;
 }
 
 s32 func_802697A0() {
-    return M2C_FIELD(func_8026B79C(), s32 *, 0xC);
+    return func_8026B79C()->maxCmds;
 }
 
 void func_80269704(u8 arg0) {

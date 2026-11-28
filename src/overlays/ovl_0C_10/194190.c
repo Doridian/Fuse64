@@ -11,9 +11,10 @@
  * How it came to match:
  * - The handler's case 11 is a static, func_ovl0C_10_80043070, inlined into
  *   it (its stub is the one at 80043070), as in ovl_12_06
- *   (src/overlays/ovl_12_06/25D670.c).  Its locals, with pad0 and pad1, give
- *   the handler's frame the original's 0xA8 and the original's slots (obj0
- *   0x90, pos 0x80, target 0x74, angle 0x68, flag 0x60, task 0x58, snd 0x4C).
+ *   (src/overlays/ovl_12_06/25D670.c).  Its locals (angle a Vec3f: func_8022FF58
+ *   writes three floats through it) give the handler's frame the original's
+ *   0xA8 and the original's slots (obj0 0x90, pos 0x80, target 0x74, angle
+ *   0x68, flag 0x60, task 0x58, snd 0x4C), obj1 and obj in the words between.
  * - Its ANGLE_ADD keeps the else arm's value in d (f14, as the distance)
  *   and stores it after: as a macro, the ternary's temporary takes a slot.
  *   `flag = FALSE` after the turn, not before it, schedules its store where
@@ -251,11 +252,13 @@ void func_ovl0C_10_80044C30(UnkStructA *arg0, s32 arg1, s32 arg2, f32 arg3, f32 
 
 /* a task: moves the object it is given along its angle */
 void func_ovl0C_10_80044B90(void) {
+    UnkStructA *self;
     UnkStructA_40 *p;
     f32 s;
     f32 c;
 
-    p = ((UnkStructA *) func_ovl0C_10_80045DE0())->unk40;
+    self = func_ovl0C_10_80045DE0();
+    p = self->unk40;
     while (TRUE) {
         s = func_ovl0C_10_80045F60(p->unk20);
         c = func_ovl0C_10_80045F68(p->unk20);
@@ -267,21 +270,16 @@ void func_ovl0C_10_80044B90(void) {
 
 /* a task: the camera follows the object it is given; the player faces it */
 void func_ovl0C_10_80044A08(void) {
+    UnkStructA *self;
     UnkStructA *player;
     UnkStructA_40 *p;
-    f32 pad0; /* fake: unused, frame space the original has (no source for it found) */
     Vec3f target;
     Vec3f pos;
-    f32 pad[2]; /* fake: unused, frame space the original has (no source for it found) */
-#ifdef TARGET_PC
-    Vec3f port_angle; /* func_8022FF58 (ZeroJump 0x1803) writes three floats through &angle: on the N64 into the frame's next words */
-#define angle port_angle.x
-#else
-    f32 angle;
-#endif
+    Vec3f angle;
 
     player = func_ovl0C_10_800454A8(0);
-    p = ((UnkStructA *) func_ovl0C_10_80045DE0())->unk40;
+    self = func_ovl0C_10_80045DE0();
+    p = self->unk40;
     target.x = 2350.0f;
     target.z = 1530.0f;
     target.y = 0.0f;
@@ -290,14 +288,11 @@ void func_ovl0C_10_80044A08(void) {
         pos.x = p->unk10;
         pos.y = p->unk14;
         pos.z = p->unk18;
-        func_ovl0C_10_80045BF8(&pos.x, &target.x, &angle);
-        player->unk40->unk20 = (180.0f + angle >= 360.0f) ? 180.0f + angle - 360.0f : (180.0f + angle < 0.0f) ? 180.0f + angle + 360.0f : 180.0f + angle;
+        func_ovl0C_10_80045BF8(&pos.x, &target.x, &angle.x);
+        player->unk40->unk20 = (180.0f + angle.x >= 360.0f) ? 180.0f + angle.x - 360.0f : (180.0f + angle.x < 0.0f) ? 180.0f + angle.x + 360.0f : 180.0f + angle.x;
         func_ovl0C_10_80045E00();
     }
 }
-#ifdef TARGET_PC
-#undef angle
-#endif
 
 /* a task: the camera's moves in D_ovl0C_10_80046560 */
 void func_ovl0C_10_800448C0(void) {
@@ -655,24 +650,17 @@ static f32 func_ovl0C_10_80043010(UnkStructA_40 *from, UnkStructA_40 *to) {
     return angle.x;
 }
 /* Case 11: a static inlined into the handler; its stub is the one at
- * 80043070.  The pads place its block of the handler's frame. */
+ * 80043070.  Its locals place its block of the handler's frame. */
 static void func_ovl0C_10_80043070(void) {
     f32 d;
     UnkStructA *obj0;
     s32 i;
     Vec3f pos;
     Vec3f target;
+    Vec3f angle;
     UnkStructA *obj1;
-    UnkStructA *obj;
-#ifdef TARGET_PC
-    Vec3f port_angle; /* func_8022FF58 (ZeroJump 0x1803) writes three floats through &angle: on the N64 into the frame's next words */
-#define angle port_angle.x
-#else
-    f32 angle;
-#endif
-    s32 pad0; /* fake: unused, frame space the original has (no source for it found) */
     s32 flag;
-    s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
+    UnkStructA *obj;
     s32 task;
     UnkStruct_8022DBBC snd;
 
@@ -706,14 +694,14 @@ static void func_ovl0C_10_80043070(void) {
         target.x = 2350.0f;
         target.y = 0.0f;
         target.z = 1550.0f;
-        func_ovl0C_10_80045BF8(&pos.x, &target.x, &angle);
-        target.x = func_ovl0C_10_80045F60(angle) * 800.0f + pos.x;
+        func_ovl0C_10_80045BF8(&pos.x, &target.x, &angle.x);
+        target.x = func_ovl0C_10_80045F60(angle.x) * 800.0f + pos.x;
         target.y = pos.y;
-        target.z = func_ovl0C_10_80045F68(angle) * 800.0f + pos.z;
+        target.z = func_ovl0C_10_80045F68(angle.x) * 800.0f + pos.z;
         pos.x = obj->unk40->unk10;
         pos.y = obj->unk40->unk14;
         pos.z = obj->unk40->unk18;
-        func_ovl0C_10_80045BF8(&pos.x, &target.x, &angle);
+        func_ovl0C_10_80045BF8(&pos.x, &target.x, &angle.x);
         func_ovl0C_10_80045C10(&pos.x, &target.x);
         obj->unk68 = 51.0f;
         obj->unk40->unk14 = 0.1f;
@@ -791,9 +779,6 @@ static void func_ovl0C_10_80043070(void) {
     func_ovl0C_10_80045FE0();
     D_ovl0C_10_800466CC = 1;
 }
-#ifdef TARGET_PC
-#undef angle
-#endif
 
 /* The overlay's handler: the entry returns it to the loader. */
 void func_ovl0C_10_80043450(s32 arg0) {

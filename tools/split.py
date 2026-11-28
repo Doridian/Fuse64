@@ -44,9 +44,34 @@ def asm_libultra_data():
     CommonSegData.out_path = out_path
 
 
+def binary_labels():
+    """main_code's microcode is `textbin`/`rodatabin` subsegments whose .s
+    is our own (src/ucode/*.s, `use_src_path`: tools/layout.py), which
+    splat leaves alone once it exists, so it never marks the symbol at
+    each part's start defined, as writing the .s would: the C's references
+    to them would go to undefined_syms_auto.txt at their addresses.  Each
+    part defines the symbol at its start (the .s has that label)."""
+    from splat.segtypes.common.textbin import CommonSegTextbin
+    from splat.segtypes.common.rodatabin import CommonSegRodatabin
+
+    def wrap(cls):
+        orig = cls.split
+
+        def split(self, rom_bytes):
+            orig(self, rom_bytes)
+            vram = self.rom_to_ram(self.rom_start)
+            sym = self.get_symbol(vram, in_segment=True) if vram is not None else None
+            if sym is not None:
+                sym.defined = True
+        cls.split = split
+    wrap(CommonSegTextbin)
+    wrap(CommonSegRodatabin)
+
+
 def main():
     version = sys.argv[1]
     asm_libultra_data()
+    binary_labels()
     if version != "us":
         import vermap
         from splat.segtypes.common.c import CommonSegC

@@ -115,8 +115,7 @@ archive.yaml` keeps them as for US.
 
 **The boot thread and main_code.** jp's main_code (0x7ED30 bytes) ends
 before the page the boot thread loads once, so all of it is reloaded each
-time round (`table[2]` = 0xFE: 0x7F000 bytes) and the config has no
-`main_code_persist`. The one-time load is `table[3]` = 0x8D units (0x46800
+time round (`table[2]` = 0xFE: 0x7F000 bytes). The one-time load is `table[3]` = 0x8D units (0x46800
 bytes) from `0xBF000`, which is all zeros (the pad up to 0x120000): it
 clears `802A4800-802EB000` once. `tools/rom.py` writes byte 2 from the
 link and keeps byte 3 as the ROM has it.
@@ -263,8 +262,11 @@ overlay banks, 0x18 the asset archive.
   to 0x802A5000, once. It then loops forever: load segment `*0x80024818`
   (initially 2) to 0x80225800 and call it. Each time round, main_code is
   reloaded up to `table[2] * 2K` (0x7F800). Its tail from 0xBF800 on is
-  loaded once and survives the reloads (`main_code_persist` in the
-  config); main_code's bss lies in that page's zero tail and past it.
+  loaded once and survives the reloads; main_code's bss lies in that
+  page's zero tail and past it. 0x7F800 is the byte's most (0xFF pages),
+  not an object's end: in us and eu it falls inside F3DEX's data, the
+  microcode's last object but one (`tools/rom.py` writes both bytes from
+  main_code's size).
 - **The file table** (0x30800, 0x1000 bytes): two bytes per file id, the
   segment and then an offset in 2 KiB units. The overlay loader
   `0x8022691C(id)` opens the archive at `seg << 17 + off << 11`, reads its
@@ -298,8 +300,8 @@ size table from the link, and checks the file table.
 In the config (`tools/layout.py`):
 
 - **The code segments** are boot_code (VRAM 0x80000400, `entry` hasm, bss
-  from the entry's clear), zerojump (at its physical 0x80042000, hasm,
-  its strings as rodata), main_code (bss from its init's clear) and
+  from the entry's clear), zerojump (at its physical 0x80042000, hasm
+  built from src/zerojump.s, its strings that object's `.rodata`), main_code (bss from its init's clear) and
   `ovl_BB_EE` for each overlay (VRAM 0x80043000, one shared
   `exclusive_ram_id`, names `func_ovlBB_EE_XXXXXXXX`, bss from the extent
   of its references past its end). Every code segment has a RAM id: splat
@@ -307,7 +309,8 @@ In the config (`tools/layout.py`):
   inside.
 - **Text** ends after a module's last `jr ra` or ZeroJump stub, rounded
   up to 16, and before any RSP code (the first j/jal into IMEM,
-  0x04001000-0x04002000: main_code's data from 0xB7A50 is RSP microcode).
+  0x04001000-0x04002000: main_code's text from 0xB7A50 is RSP microcode,
+  below).
   That agrees with the reference decomp for boot_code (0x1AB80),
   main_code (0xB7A50) and all 95 overlays. Each module's first function
   (its entry) is an object of its own, as is the ZeroJump stub block
@@ -333,14 +336,19 @@ In the config (`tools/layout.py`):
   object on, and asm for the rest: `data` before the module's
   .data/.rodata boundary, `rodata` after it (one `rodata` block where
   nothing is cut, so that spimdisasm labels the jump tables), one `bss`
-  block. main_code's RSP code (0xB7A50-0xB9D70) is an asm `data` block
-  before its objects' .data. Plus `main_code_persist` from main_code's
-  persistent part on.
+  block.
+- **The microcode** (`UCODE`): main_code links the SDK's rspboot, F3DEX.NoN
+  (FIFO) and aspMain last, their text at the end of its `.text`
+  (0xB7A50-0xB9D70, before its objects' .data) and F3DEX's and aspMain's
+  data at the end of its `.rodata` (0xBF040-0xBFB00), the module's last
+  bytes. Each is an object of its own, `src/ucode/<object>.s`: its labels
+  and an `.incbin` of each part, splat `textbin`/`rodatabin` subsegments
+  (`use_src_path`) whose bytes extract writes to `assets/ucode/`.
 
 `tools/ld_fix.py` turns splat's linker script into the build's. Splat
 would place every segment after the one before. Instead, the pads link
 nothing and the ROM position jumps to the next fixed start (with an
-ASSERT), and `main_code_persist` starts 2 KiB-aligned. `SHIFT=1` adds the
+ASSERT). `SHIFT=1` adds the
 pads that move everything after each module's entry.
 
 ## Compiler and library hints

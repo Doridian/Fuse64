@@ -1157,7 +1157,7 @@ say where the next object's start. `data_split.txt` lists them: per
 module, the C objects from its first on, with the sizes IDO builds them
 to (`<module> <object> <.data> <.rodata> <.bss>`), and, per version,
 where the objects' `.data` start if something else comes first
-(main_code's RSP code) and where their `.rodata` start (the module's
+and where their `.rodata` start (the module's
 .data/.rodata boundary), when the list doesn't cover the whole module.
 `tools/layout.py` cuts the module's block from those: a `.data`,
 `.rodata` and `.bss` subsegment for each listed object, and asm for the
@@ -1174,7 +1174,7 @@ Cut so far (the same in us, eu and jp):
 | module | objects | .data/.rodata boundary |
 |---|---|---|
 | ovl_09_01 | all: `ovl_09_01_entry`, `120010` (.data 0x30, .rodata 0x50: the handler's jump table, .bss 0x50) | 0x80044990 (the compiler's) |
-| main_code | `main_code_entry` (.rodata 0x20: the build date), `40040` (.data 0x30: two tables), `40300` (.data 0x10: the bump pointer), `404C0` (.data 0x20, .bss 0x20), `40FB0` (.data 0x10, .bss 0x10), `412F0` (.data 0x200: the graphics tasks and display lists, .bss 0xA0), `41FD0` (.data 0x60, .bss 0x90), `426E0`, `45170`, `46300`, `479D0` (none), `47A80`, `48300` (.data 0xF0: a module table), `48600`, `4DE50`, `4E030`, `4ED50`, `52270` (.bss 0x57A0: threads), `530C0` (.bss 0x11E0: the task lists), `53D70` (.bss 0x1E0: the controllers), `54BE0` (.bss 0x10: the views), `54E40` (.bss 0x2B0; jp's .data 0xB20, eu's and jp's .rodata 0x110), `5E090`, `5E3F0` (.bss 0x720), `6BBE0`, `78CA0`, `78F60`, `7B2D0` (none), `7C4D0`, `7D840`, after the RSP code at 0x8029D250-0x8029F570 | 0x802A2D00 (jp 0x802A1F40): the build date, after the libraries' .data |
+| main_code | `main_code_entry` (.rodata 0x20: the build date), `40040` (.data 0x30: two tables), `40300` (.data 0x10: the bump pointer), `404C0` (.data 0x20, .bss 0x20), `40FB0` (.data 0x10, .bss 0x10), `412F0` (.data 0x200: the graphics tasks and display lists, .bss 0xA0), `41FD0` (.data 0x60, .bss 0x90), `426E0`, `45170`, `46300`, `479D0` (none), `47A80`, `48300` (.data 0xF0: a module table), `48600`, `4DE50`, `4E030`, `4ED50`, `52270` (.bss 0x57A0: threads), `530C0` (.bss 0x11E0: the task lists), `53D70` (.bss 0x1E0: the controllers), `54BE0` (.bss 0x10: the views), `54E40` (.bss 0x2B0; jp's .data 0xB20, eu's and jp's .rodata 0x110), `5E090`, `5E3F0` (.bss 0x720), `6BBE0`, `78CA0`, `78F60`, `7B2D0` (none), `7C4D0`, `7D840`, after the microcode's text at 0x8029D250-0x8029F570 (the end of `.text`: src/ucode/) | 0x802A2D00 (jp 0x802A1F40): the build date, after the libraries' .data |
 | boot_code | all of the game's C from the first object after the entry: `1050` (.data 0x10, .bss 0x400), `10D0` (.bss 0x80), `13F0` (.data 0x10), `14B0` (the scheduler: .data 0x20, .rodata 0x130: its assert strings and a jump table, .bss 0x70), `2350` (.data 0x3A0, jp 0x390: the jp table is an entry shorter; .bss 0x8470); the entry and 2630 are hasm and skipped | 0x8001B640 (jp 0x8001B620): 14B0's strings, after the libraries' .data |
 
 The sizes are the same in every version as long as the C is. Where a
@@ -1249,8 +1249,9 @@ jump table, no `static` or initialized globals. Check with
 and `.bss` must be empty. Their variables are `extern`, named
 `D_<us address>`, and defined by the asm blocks.
 
-The next object that extends main_code's cut is `80420` (its .data
-0x802A1230-0x802A1250 and .bss): see "What's left of the data".
+The objects after main_code's cut, `80420` on, have their data in their
+C too, placed on their own (below): nothing is left ("What's left of the
+data").
 
 **Objects placed on their own.** A library object after the game's code
 can't join the cut, so data_split.txt can place its sections where the
@@ -1303,34 +1304,40 @@ section's start (us's address).
 
 ## What's left of the data
 
-Every function is C, and every overlay's and boot_code's data is in its
-objects (boot_code's libultra data too: docs/LIBULTRA.md, "Data"). What
-`asm/data` still holds (us addresses; eu's .data is the same, its .rodata
-from 5E3F0's and its .bss 0x10 lower; jp's lower by 0x920 and more past
-54E40, data_split.txt has each version's):
+Nothing: every function is C, every module's data is in its objects
+(boot_code's libultra data too: docs/LIBULTRA.md, "Data"), and
+`asm/data` is empty. The last pieces that weren't the game's C are
+objects of their own:
 
-| block | what | owner (text order, references) | why it is asm |
-|---|---|---|---|
-| zerojump `.rodata` 0x800420A0 | ZeroJump's two error strings | zerojump (handwritten, `hasm`) | not C: its code is asm and reads them at their mapped address (`D_A0`, `D_E2`); they would go with a source `.s` of zerojump |
-| main_code `.data` 0x8029D250-0x8029F570 | rspboot (0xD0), F3DEX's text (0x1430), aspMain's text (0xE20) | the SDK's microcode, linked before the game's `.data` | binary, not C (data_split.txt's `data=` starts the objects after it) |
-| main_code `.rodata` 0x802A4840-0x802A5000 | F3DEX's data (`D_802A4840`, 0x7C0) | the microcode | binary (`__libm_qnan_f` before it is ultralib's `gu/libm_vals.s`, placed) |
-| main_code_persist `.rodata` 0x802A5000-0x802A5300 | F3DEX's data's tail (`D_802A5000`), aspMain's data (`D_802A5040`, 0x2C0) | the microcode | binary |
+| object | what | how |
+|---|---|---|
+| `src/zerojump.s` | ZeroJump's code and its error strings (zerojump 0x80042000-0x80042130) | handwritten: a `hasm` subsegment the Makefile builds from src/ instead of splat's disassembly, the strings its `.rodata` (a `.rodata` subsegment of the same name). The code reads them at their TLB-mapped address, the string's less the page's (`%hi(str - 0x80042000)`, where splat had `D_A0`/`D_E2`); the first has no NUL, so an unset segment prints both messages |
+| `src/ucode/rspboot.s` | the SDK's RSP boot microcode (`D_8029D250`, 0xD0) | `.text` after the last library object's (cosf) |
+| `src/ucode/gspF3DEX_NoN_fifo.s` | F3DEX.NoN 1.21 (FIFO): its text (`D_8029D320`, 0x1430) and its data (`D_802A4840`, 0x800) | text after rspboot's, data in `.rodata` after the last library object's (libm_vals) |
+| `src/ucode/aspMain.s` | aspMain: its text (`D_8029E750`, 0xE20) and its data (`D_802A5040`, 0x2C0) | text after F3DEX's, data after F3DEX's, main_code's last bytes |
 
-Labels inside these that nothing names (`D_802AC402`, `D_802AFF62`, ...)
-are fields: the object's C covers them with its struct. What it takes:
-for each owner, `tools/data_c.py` on its run, the definitions in its
-file (in address order, `.bss` before the first function), and a
-`data=`/`bss=` placement (`tools/data_split.py <v> --place`), as 426E0
-and the overlays did; an object's run ends where the next owner's first
-label (or 16-byte padding) is. Where the cut reaches the owner, it
-needs no placement: list it in data_split.txt in order. The microcode
-blocks stay asm (or become binary objects); they aren't the game's C.
-For the port, what the asm block gave `port/tools/asm2c.py` the host's
-layout of (its `TYPES`: the SDK's objects declared as bytes, the pointer
-tables) needs the host's size in the C: a type with the pointers, or
-`PORT_HOST` bytes (80580's marker); an x86-64 run crashed on 80580's heap
-and queue as N64-sized bytes. A digest pool the C defines is named in
-`port/tools/gen_digest_pools.py`'s `C_POOLS` (8A7A0's slots).
+The microcode objects are labels (us's names, in every version) and an
+`.incbin` of each part, whose bytes extract writes from the ROM to
+`assets/ucode/<object>.textbin.bin` / `.rodatabin.bin` (splat `textbin`
+and `rodatabin` subsegments with `use_src_path`, placed by
+tools/layout.py's `UCODE`: the parts' sizes, the same in every version,
+the texts from the module's text end, the data at its end). The SDK's
+microcode objects are linked last, which is where both parts are: the
+text right after all of the code, the data after all of the `.rodata`.
+`tools/split.py` marks each part's start symbol defined (splat leaves our
+`.s` alone, and would otherwise list the C's references to them in
+undefined_syms_auto.txt), and `tools/postsplit.py` resolves an address
+inside a C object's data against that object's first variable (the
+nearest asm label below was the microcode's, which a shifted build
+moves with the text).
+
+F3DEX's data used to be two pieces, `D_802A4840` and
+`main_code_persist`'s `D_802A5000` (us 0x7C0 + 0x40, eu 0x7D0 + 0x30, jp
+all of it): the boot thread reloads main_code up to segment byte 2's
+0xFF pages of 2 KiB (0x7F800 bytes) and loads the rest once
+(docs/LAYOUT.md, "Loaders"). That page boundary is the loader's, not an
+object's: `tools/rom.py` writes both bytes from main_code's size (all of
+it up to 0x7F800, the rest in byte 3), and the config no longer cuts it.
 
 **The build date.** main_code's .rodata starts at 0x802A2D00 with
 `"SAT SEP  6 14:57:59 JST 1997"` (eu `"MON SEP  8 12:04:49 JST 1997"`, jp

@@ -54,50 +54,8 @@ extern u8 D_8019A8D0[PORT_SIZE(0x800)];
 extern u64 D_801E56C0[0x2000];
 extern u8 D_8029D250[PORT_SIZE(0xD0)];
 extern u8 D_8029D320[PORT_SIZE(0x1430)];
-/* (F3DEX's data in main_code's rodata: below) */
-#if VERSION_JP
-#define PORT_F3DEX_HEAD 0x800
-#elif VERSION_EU
-#define PORT_F3DEX_HEAD 0x7D0
-#else
-#define PORT_F3DEX_HEAD 0x7C0
-#endif
-extern u8 D_802A4840[PORT_SIZE(PORT_F3DEX_HEAD)];
-#ifdef TARGET_PC
-/*
- * F3DEX.NoN 1.21's data, which the graphics task gives the RSP (unk28, its
- * size unk2C 0x800). In us its first 0x7C0 bytes are D_802A4840, the end
- * of main_code's rodata, and its last 0x40 the next of the N64's memory,
- * D_802A5000 at the start of main_code_persist's rodata (zeros); in eu
- * 0x7D0 and D_802A5010's 0x30; jp has no persist part there, and
- * D_802A4840 is all 0x800. On a host the two parts are apart, so the task
- * gets the 0x800 bytes together.
- */
-#if VERSION_JP
-#define port_f3dex() ((void *) D_802A4840)
-#else
-#if VERSION_EU
-extern u8 D_802A5010[PORT_SIZE(0x30)];
-#define PORT_F3DEX_TAIL D_802A5010
-#else
-extern u8 D_802A5000[PORT_SIZE(0x40)];
-#define PORT_F3DEX_TAIL D_802A5000
-#endif
-static u8 port_f3dex_data[0x800] __attribute__((aligned(16)));
-
-static void *port_f3dex(void) {
-    const u8 *head = D_802A4840;
-    s32 k;
-    if (port_f3dex_data[0x2B0] == 0) {
-        for (k = 0; k < PORT_F3DEX_HEAD; k++)
-            port_f3dex_data[k] = head[k];
-        for (k = PORT_F3DEX_HEAD; k < 0x800; k++)
-            port_f3dex_data[k] = PORT_F3DEX_TAIL[k - PORT_F3DEX_HEAD];
-    }
-    return port_f3dex_data;
-}
-#endif
-#endif
+/* F3DEX.NoN 1.21's data, the 0x800 bytes the task gives the RSP (src/ucode/gspF3DEX_NoN_fifo.s) */
+extern u8 D_802A4840[PORT_SIZE(0x800)];
 extern s32 D_802A5800;
 
 void func_802276FC(s32 arg0);
@@ -365,7 +323,7 @@ void func_80226B18(void *arg0) {
         /* (rspboot's size, the two labels' distance on the N64: on a host its array's) */
         task->unk1C = PORT_HOST((PORT_UP(u32)) D_8029D320 - (PORT_UP(u32)) D_8029D250, sizeof D_8029D250);
         task->unk20 = D_8029D320;
-        task->unk28 = PORT_HOST(D_802A4840, port_f3dex());
+        task->unk28 = D_802A4840;
         task->unk30 = D_8019A8D0;
         task->unk38 = D_801E56C0;
         /* a 64-bit sum: with a 32-bit one (or a folded symbol+offset) the

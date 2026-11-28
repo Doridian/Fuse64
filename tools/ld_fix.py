@@ -6,14 +6,10 @@
 splat lays every segment out one after another.  This game has fixed ROM
 positions (the segment size table at 0x30000, the file table at 0x30800,
 main_code at 0x40000 = ROM segment 2, the overlays from 0x120000 in the
-code image), with zero padding between them.  So:
-
-- a pad segment (`pad_*`) links nothing: the ROM position jumps to the next
-  segment's fixed start, with an ASSERT that what came before still fits
-  (objcopy fills the gap with zeros, as the pad was);
-- main_code's part that the boot thread loads once (`main_code_persist`)
-  starts 2 KiB-aligned, at `main_code_PERSIST_START` (tools/rom.py writes
-  the segment size table from it).
+code image), with zero padding between them.  So a pad segment (`pad_*`)
+links nothing: the ROM position jumps to the next segment's fixed start,
+with an ASSERT that what came before still fits (objcopy fills the gap
+with zeros, as the pad was).
 
 With --shift PAD (the SHIFT=1 build) every movable module gets PAD bytes of
 zeros after its entry object's .text and at the start of its data: the
@@ -85,9 +81,6 @@ def main():
             continue
         if section in pads and re.search(r"\.bin\.o\(", line):
             continue  # the pad itself: zeros the gap provides
-        if "main_code_persist" in line and ".o(.rodata)" in line:
-            out.append("        . = ALIGN(., 0x800);")
-            out.append("        main_code_PERSIST_START = .;")
         out.append(line)
         movable = section and section != "zerojump" and section in modules
         if a.shift and movable:

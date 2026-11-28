@@ -15,8 +15,10 @@ Two tables tie the ROM's layout to the code:
 - the segment size table (0x30000): byte n is the size of ROM segment n
   (n << 17) in 2 KiB units, 0 meaning 0x80000.  It is written here, from
   the build: segment 0 (boot_code and zerojump) from zerojump's end;
-  main_code's two bytes from the link (2: what the boot thread reloads, up
-  to main_code_PERSIST_START; 3: the rest, loaded once); an overlay bank's
+  main_code's two bytes from its size (2: what the boot thread reloads,
+  all of it up to the byte's 0xFF pages, 0x7F800 bytes; 3: the rest,
+  loaded once, after that page boundary, wherever it falls: in us and eu
+  inside F3DEX's data); an overlay bank's
   from its built size.  A byte is never lowered below the ROM's value
   except main_code's (bank 0x16's is 0x40 for 0x3800 bytes), and the
   asset archive's (0) is left alone: it is read entry by entry.
@@ -38,6 +40,9 @@ import layout  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 SEGMENT_SIZES = 0x30000
 FILE_TABLE = 0x30800
+# the most of main_code the boot thread reloads (segment byte 0xFF: 0x100,
+# 0x80000, is 0, which the original's packer didn't use)
+RELOAD_MAX = 0xFF << 11
 
 
 def units(size):
@@ -67,11 +72,10 @@ def write_sizes(rom, syms, banks):
     sizes[0] = max(sizes[0], units(syms["zerojump_ROM_END"]))
     main = syms["main_code_ROM_START"] >> 17
     size = syms["main_code_ROM_END"] - syms["main_code_ROM_START"]
-    if "main_code_PERSIST_START" in syms:
-        reload = syms["main_code_PERSIST_START"] - syms["main_code_VRAM"]
-        assert reload % 0x800 == 0, hex(reload)
-        sizes[main] = units(reload)
-        sizes[main + 1] = units(size - reload)
+    if size > RELOAD_MAX:
+        # us, eu: the byte's most, and the rest in the next segment's byte
+        sizes[main] = units(RELOAD_MAX)
+        sizes[main + 1] = units(size - RELOAD_MAX)
     else:
         # jp: all of main_code is reloaded, and the boot thread's one-time
         # load (byte 3: 0x8D, 0x46800 bytes of the ROM's zeros) is kept

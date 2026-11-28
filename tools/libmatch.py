@@ -140,8 +140,10 @@ def code_segments(version):
         if not isinstance(seg, dict) or seg.get("type") != "code" or seg["name"] == "zerojump":
             continue
         subs = seg["subsegments"]
-        # text ends at the first data subsegment
-        end = next(s[0] for s in subs if isinstance(s, list) and s[1].lstrip(".") in ("rodata", "data"))
+        # text ends at the first data subsegment (main_code's: its microcode)
+        end = next(s[0] if isinstance(s, list) else s["start"] for s in subs
+                   if isinstance(s, list) and s[1].lstrip(".") in ("rodata", "data")
+                   or isinstance(s, dict) and s.get("type") == "textbin")
         out.append((seg["name"], seg["start"], end, seg["vram"]))
     return out
 

@@ -265,6 +265,18 @@ $(BUILD_DIR)/asm/libultra/%.s.o: src/libultra/%.s
 	$(OBJCOPY) --remove-section .mdebug $@
 	$(PYTHON) $(TOOLS_DIR)/elf_mips2.py $@
 
+# zerojump (its code and its strings) is a `hasm` subsegment as well, built
+# from its source in src/ rather than splat's disassembly.
+$(BUILD_DIR)/asm/zerojump.s.o: src/zerojump.s
+	@mkdir -p $(dir $@)
+	$(AS) $(ASFLAGS) -o $@ $<
+
+# The SDK's microcode (src/ucode/, tools/layout.py's UCODE): labels and an
+# .incbin of the bytes extract wrote to assets/ucode/.
+$(BUILD_DIR)/src/ucode/%.s.o: src/ucode/%.s assets/ucode/%.textbin.bin
+	@mkdir -p $(dir $@)
+	$(AS) $(ASFLAGS) -o $@ $<
+
 # The library's sources built on their own, as reference objects for
 # tools/libmatch.py and gen_symbols.py (docs/LIBULTRA.md, "Workflow"): they
 # are a libultra revision like ultralib's builds.  Needs no extract.

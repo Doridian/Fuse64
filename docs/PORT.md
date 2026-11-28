@@ -319,8 +319,9 @@ otherwise reads of the extract (`asm/`, `assets/code.bin`, the N64 link's
 map), and none of the ROM's bytes; nothing in it depends on the target or
 the compiler:
 
-- `asm_data.json`: asm2c.py's reading of `asm/data`, the labels, their
-  directives and their symbolic words, with no datum. The asm data is
+- `asm_data.json`: asm2c.py's reading of `asm/data` (empty now) and of
+  main_code's microcode (src/ucode/: five labels of bytes), the labels,
+  their directives and their symbolic words, with no datum. The asm data is
   zeros in the C in every build, and a table in `asm_data_fill.c`
   (`port_asmfill`: each run's place, where in the code image it comes from
   and how it is laid out, bytes, halfwords, words or a word in a pointer's
@@ -2009,7 +2010,10 @@ references. They found:
   `alCSeqGetLoc` wrote the rest over `D_802AD340`. It has the host's type
   (decls.py now resolves the SDK's unnamed records' typedefs).
 - **F3DEX's data head** (412F0.c's `D_802A4840`): us's 0x7C0 in every
-  version; eu's is 0x7D0 and jp's 0x800, which each reads in full.
+  version; eu's is 0x7D0 and jp's 0x800, which each reads in full. (Now
+  one object of 0x800 bytes in every version, src/ucode/gspF3DEX_NoN_fifo.s:
+  the page boundary main_code_persist was cut at is the boot thread's
+  load, not an object's end, and 412F0.c's copy of the two parts went.)
 - **aspmain.c's envmixer**: the step to the target overflowed `s32`
   (UBSan); it wraps as the RSP's 32-bit arithmetic.
 - **Sizes**: of the 17 unsized names, 16 have one or are end markers (the
@@ -3786,6 +3790,14 @@ nonmatching/. What is left (`asm/data`, us):
 | ovl_0B_04 | .rodata | 49 | 5215 | 137 | 44 labels (1087 bytes, 65 words to code labels): IDO's jump tables and floats, which the C has of its own |
 | ovl_0B_04 | .bss | 19 | 448 | | 15 labels (96 bytes) |
 | zerojump | .rodata | | 136 | | its error strings |
+
+Since 2026-11-28 none is left: all of the game's data is C, zerojump's
+strings are in its source (src/zerojump.s), and main_code's microcode is
+objects of its own (src/ucode/: rspboot, F3DEX.NoN's text and 0x800 bytes
+of data, aspMain's text and data, the bytes in assets/ucode/). asm2c.py
+reads those five labels alone (`ucode_parts()`: their places from
+bm64.<v>.yaml, each an array of bytes the fill takes from the ROM), and
+its TYPES, SIZES and ENDS are empty.
 
 A generator like DozerEncore's `port/tools/asm2c.py` (the extracted asm as
 typed C at build time) covers it if it types each label from the C's

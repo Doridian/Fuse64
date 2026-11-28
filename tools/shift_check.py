@@ -73,7 +73,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PHYS = 0x80000000
-MARKER = re.compile(r"_(TEXT|DATA|RODATA|BSS)_(START|END|SIZE)$|_ROM_(START|END)$|_VRAM(_END)?$|_PERSIST_START$")
+MARKER = re.compile(r"_(TEXT|DATA|RODATA|BSS)_(START|END|SIZE)$|_ROM_(START|END)$|_VRAM(_END)?$")
 SEED = 0x1997
 
 

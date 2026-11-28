@@ -666,10 +666,24 @@ def source_exists(seg_dir, obj):
         (ROOT / "src" / (seg_dir or "") / f"{obj}.s").exists()
 
 
+# The SDK's RSP microcode that main_code links after the game's and the
+# libraries' code: (object, its text's size, its data's size), in link
+# order.  Each is an object of its own (src/ucode/<object>.s: its labels and
+# an .incbin of each part), its text in .text after the last C object's
+# (where the module's text ends: text_split()) and its data in .rodata
+# after the last object's, at the module's end.  The parts are splat
+# `textbin`/`rodatabin` subsegments, whose bytes extract writes to
+# assets/ucode/<object>.textbin.bin and .rodatabin.bin.  The same sizes in
+# every version.
+UCODE = [("rspboot", 0xD0, 0),
+         ("gspF3DEX_NoN_fifo", 0x1430, 0x800),   # "RSP Gfx ucode F3DEX.NoN 1.21"
+         ("aspMain", 0xE20, 0x2C0)]
+
+
 def code_segment(name, start, vram, data, bss_size, first_hasm=None,
-                 note=None, persist=None, known=(), split=None, namer=None):
-    """The YAML lines of one code segment of the image.  persist: the
-    offset of main_code's part that is loaded once (see fixed()).  known:
+                 note=None, ucode=None, known=(), split=None, namer=None):
+    """The YAML lines of one code segment of the image.  ucode: UCODE, for
+    main_code (the microcode after its text and at its end).  known:
     object boundaries (VRAM) the padding may not show.  split: the
     module's entry of data_split() (cut_data()).  A known boundary may name
     the library object that starts there (lib_objects()): one with a source
@@ -719,18 +733,26 @@ def code_segment(name, start, vram, data, bss_size, first_hasm=None,
     data_objs = [sub for _, kind, sub in subs
                  if not (kind == "hasm" and not sub.startswith("libultra/"))]
 
-    region_end = len(data)
-    if persist is not None:
-        assert text_end <= persist < len(data), hex(persist)
-        region_end = persist
+    data_start, region_end = text_end, len(data)
+    if ucode:
+        # the microcode's text after the code, its data at the end
+        for obj, tsize, _ in ucode:
+            subs.append((data_start, "textbin", f"ucode/{obj}"))
+            data_start += tsize
+        region_end -= sum(dsize for _, _, dsize in ucode)
+        assert data_start <= region_end, f"{name}: no room for the microcode"
     # .data and .rodata: cut per object where data_split.txt says, the rest
     # as asm (one rodata block where nothing is cut, so that spimdisasm
     # labels the jump tables in it)
     data_subs, bss_lines, bss_size = cut_data(
-        name, vram, data, text_end, region_end, bss_size, data_objs, split, seg_dir)
+        name, vram, data, data_start, region_end, bss_size, data_objs, split, seg_dir)
     subs += data_subs
-    if persist is not None:
-        subs.append((persist, "rodata", f"{name}_persist"))
+    if ucode:
+        pos = region_end
+        for obj, _, dsize in ucode:
+            if dsize:
+                subs.append((pos, "rodatabin", f"ucode/{obj}"))
+                pos += dsize
     out = [
         f"  - name: {name}" + (f"  # {note}" if note else ""),
         "    type: code",
@@ -753,6 +775,10 @@ def code_segment(name, start, vram, data, bss_size, first_hasm=None,
         ]
     out.append("    subsegments:")
     for off, kind, sub in subs:
+        if kind in ("textbin", "rodatabin"):
+            # (its .s is ours, src/<name>.s: splat writes only the bytes)
+            out.append(f"      - {{start: 0x{start + off:X}, type: {kind}, name: {sub}, use_src_path: yes}}")
+            continue
         if kind == "asm" and c_source(seg_dir, sub).exists():
             kind = "c"
         # an object named for its own offset needs no name (splat's default)
@@ -892,20 +918,14 @@ def config(version, d):
                 f"    vram: 0x{ZEROJUMP_VRAM:08X}",
                 "    exclusive_ram_id: zerojump",
                 "    subsegments:",
+                # handwritten: src/zerojump.s (the Makefile builds it from
+                # there), its error strings after the code its .rodata
                 f"      - [0x{start:X}, hasm, zerojump]",
-                # its error strings follow the code (as text, but they
-                # don't decode as instructions)
-                f"      - [0x{start + strings:X}, rodata, zerojump_strings]",
+                f"      - [0x{start + strings:X}, .rodata, zerojump]",
             ]
         elif name == "main_code":
-            # the boot thread reloads main_code up to segment_sizes[2] * 2 KiB
-            # each time round, and loads the rest once (segment_sizes[3]).
-            # jp's main_code ends before that page: all of it is reloaded
-            persist = d[0x30000 + (start >> 17)] << 11
-            if persist >= end - start:
-                persist = None
             out += code_segment(name, start, MAIN_VRAM, blob, main_bss(d, end),
-                                note=note, persist=persist,
+                                note=note, ucode=UCODE,
                                 known=known(name, MAIN_VRAM, start, start),
                                 split=split.get(name),
                                 namer=object_namer(version, name, start, MAIN_VRAM, start))

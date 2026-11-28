@@ -426,6 +426,7 @@ def cmd_link(a):
         return out
 
     asm_data = labels(glob.glob("asm/data/**/*.s", recursive=True), r"\s*dlabel (\w+)")
+    asm_data |= labels(glob.glob("src/ucode/*.s"), r"\.globl (\w+)")     # the microcode
     stubs = zerojump_stubs()
     hand = {}
     for p in glob.glob("asm/*.s"):
@@ -441,7 +442,7 @@ def cmd_link(a):
         elif s in stubs:
             c = "ZeroJump stubs (asm/*_zerojmp.s)"
         elif s in asm_data:
-            c = "asm data (asm/data)"
+            c = "asm data (asm/data, src/ucode)"
         elif re.search(r"_ROM_(START|END)$", s):
             c = "linker symbols"
         elif re.match(r"^D_[0-9A-F]+$", s):

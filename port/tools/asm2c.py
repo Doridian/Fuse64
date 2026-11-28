@@ -6,8 +6,9 @@ data as C"), as C for the port.
 
 Reads the extracted asm/data/*.s (main_code's .data, .rodata and .bss that
 no C object defines yet; boot_code's is libultra's, which the port
-replaces) and the code image (assets/code.bin, for the bytes), and writes
-one C file.  Each asm file is laid out as a packed struct of its labels in
+replaces: none is left, all of the game's data is C) and main_code's
+microcode (src/ucode/*.s's labels, placed by bm64.<v>.yaml: ucode_parts()),
+and the code image (assets/code.bin, for the bytes), and writes one C file.  Each asm file is laid out as a packed struct of its labels in
 their order, at their N64 offsets; in the default layout (docs/PORT.md,
 "The default layout") each label the C declares, and that isn't inside the
 one before, is a struct of its own from its place there to the next one's
@@ -48,25 +49,9 @@ import layouts  # noqa: E402
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Labels whose bytes the C reads at other widths than the directives'
-# (B a byte, H a half, I a word; the pattern repeats over the label):
-# text in the game's own encoding (which spimdisasm takes for words), the
-# lights' colours, the RSP's code and data (bytes, as the HLE and nothing
-# else reads them), and records of halves and bytes.
-LAYOUTS = {
-    # RSP microcode and its data
-    "D_8029D250": "B", "D_8029D320": "B", "D_8029E750": "B", "D_802A4840": "B", "D_802A5040": "B",
-    # Lights (gbi.h's): colour bytes
-    "D_8029F800": "B", "D_8029F810": "B",
-    # text (54E40.c's func_802811F0 and the TextItem strings)
-    "D_802A01D8": "B", "D_802A01E0": "B", "D_802A039C": "B", "D_802A0448": "B", "D_802A04A4": "B",
-    "D_802A04B4": "B", "D_802A08EC": "B",
-    # UnkStruct_8027F0C4 (995C0.c): u16, u16, four u8
-    "D_802A0B84": "HHBBBB",
-    # (D_802A1570 and D_802A1594, 97610.c's tables of halves, are words, as
-    # the overlays' tables for the same functions: func_8027EB5C splits them)
-    # UnkStruct_802A15C0 (995C0.c): four pointers, three u16, a u8
-    "D_802A15C0": "IIIIHHHBBBBB",
-}
+# (B a byte, H a half, I a word; the pattern repeats over the label): none
+# is left (the microcode is bytes as ucode_parts() gives it: one array).
+LAYOUTS = {}
 
 
 def parse(path):
@@ -127,65 +112,80 @@ def sym_value(expr):
 #   "ptrs": every word a pointer;
 #   "FILE:TYPE": TYPE as FILE's unit has it (the SDK's: port/src/ultra.c);
 #   "bytes": the N64's bytes, whatever the C declares.
-TYPES = {
-    # display lists (412F0.c)
-    "D_8029F6D8": "gfx", "D_8029F718": "gfx", "D_8029F7A0": "gfx",
-    # the ZeroJump module tables: functions
-    "D_8029F5D0": "ptrs", "D_8029F7C8": "ptrs", "D_8029F820": "ptrs", "D_8029FD40": "ptrs",
-    "D_802A0D50": "ptrs", "D_802A13D0": "ptrs", "D_802A13E4": "ptrs", "D_802A1450": "ptrs",
-    "D_802A14B8": "ptrs", "D_802A1500": "ptrs", "D_802A15DC": "ptrs", "D_802A1610": "ptrs",
-    "D_802A1A88": "ptrs", "D_802A1C00": "ptrs",
-    # the SDK's objects the C declares as bytes
-    "D_802AC3E0": "port/src/ultra.c:OSMesgQueue", "D_802AC3F8": "port/src/ultra.c:OSMesg[2]",
-    "D_802AD1F8": "port/src/ultra.c:OSMesgQueue", "D_802AD130": "port/src/ultra.c:OSMesg[50]",
-    "D_802AAC40": "port/src/ultra.c:OSScClient",
-    "D_802AD120": "port/src/ultra.c:ALHeap",
-    # 80580.c's marker for alCSeqGetLoc/alCSeqSetLoc (0xEC bytes, 0x170 where
-    # pointers are 8: the labels after it move up)
-    "D_802AD250": "port/src/ultra.c:ALCSeqMarker",
-    # 8A7A0.c's five slots, each with an object (the labels after the first
-    # are inside them)
-    "D_802AFCE8": "src/8A7A0.c:Slot30[5]",
-}
+TYPES = {}
 
 
 # labels that are no object (gen_regions.py's ENDS): the end of the array
 # before them, a thread's stack top; no room in the scattered layout
-ENDS = {"D_802A1C35": "&D_802A1C2C[9] (then 0 up to the next file's 16-byte alignment)",
-        "D_802AB1F0": "the top of D_802AAC48's thread's stack (a host thread has its own)"}
+ENDS = {}
 # the size of a label no declaration of the port's sizes (the rest of its
 # room is the next one's alignment)
-SIZES = {"__libm_qnan_f": 4,       # a float (libultra's guint.h; the port's gu.c has its own)
-         "D_802A2D00": 0x1D,       # the build's date, "SAT SEP  6 14:57:59 JST 1997" (no C reads it)
-         # 80420.c's first 0x24 bytes of .bss: no instruction of any module
-         # (us, eu, jp) reaches them, by this name or another's offset, and
-         # they stay 0 in the emulator's runs; an object of its room, so
-         # that a reach from it or into it is reported like any other
-         "D_802AD0E0": 0x24}
+SIZES = {}
 
 
 # physical addresses that are a buffer of the game's (gen_regions.py's
 # PHYS: the depth buffer): a pointer to it, not the number
 PHYS = {"D_200000"}
 
+# (All of the game's data is C now: TYPES, ENDS and SIZES are empty, and
+# what this reads is main_code's microcode alone: ucode_parts().)
+
 
 def ctype_of(width):
     return {1: "uint8_t", 2: "uint16_t", 4: "uint32_t"}[width]
 
 
+def ucode_parts():
+    """main_code's microcode (tools/layout.py's UCODE): [(file, labels,
+    section)] as parse() gives them, one file per part,
+    `ucode/<object>.<part>.s` with its one label, its bytes the image's.
+    Each part is a splat `textbin` or `rodatabin` subsegment of
+    bm64.<v>.yaml (its place in the image), its label the one before the
+    .incbin of assets/ucode/<object>.<part>.bin in src/ucode/<object>.s."""
+    # (the config's lines as tools/layout.py writes them: no YAML parser
+    # needed)
+    version = open(".version").read().strip()
+    cfg = open("bm64.%s.yaml" % version).read()
+    m = re.search(r"^  - name: main_code\b.*\n    type: code\n    start: (0x[0-9A-F]+)\n    vram: (0x[0-9A-F]+)",
+                  cfg, re.M)
+    if not m:
+        sys.exit("asm2c.py: no main_code in bm64.%s.yaml" % version)
+    main = {"start": int(m.group(1), 16), "vram": int(m.group(2), 16)}
+    starts = {}
+    for m in re.finditer(r"\{start: (0x[0-9A-F]+), type: (textbin|rodatabin), name: ([\w/]+)", cfg):
+        starts[(m.group(3), m.group(2))] = int(m.group(1), 16)
+    if not starts:
+        sys.exit("asm2c.py: no microcode in bm64.%s.yaml" % version)
+    out = []
+    for (name, part), rom in sorted(starts.items(), key=lambda x: x[1]):
+        src = open(os.path.join("src", name + ".s")).read()
+        binf = "assets/%s.%s.bin" % (name, part)
+        m = re.search(r"^(\w+):\s*\n\s*\.incbin\s+\"%s\"" % re.escape(binf), src, re.M)
+        if not m:
+            sys.exit("asm2c.py: src/%s.s has no label for %s" % (name, binf))
+        size = os.path.getsize(binf)
+        vram = main["vram"] + rom - main["start"]
+        items = [(o_, "B", 1, None) for o_ in range(size)]
+        out.append(("%s.%s.s" % (name, part), [[m.group(1), vram, rom, items]],
+                    "text" if part == "textbin" else "rodata"))
+    return out
+
+
 def load_extract():
-    """[(file, labels, section)] from asm/data, the code image, and each
-    label's izero (all its numeric words 0: the pointer tables' test)"""
+    """[(file, labels, section)] from asm/data (if any is left) and the
+    microcode (ucode_parts()), the code image, and each label's izero (all
+    its numeric words 0: the pointer tables' test)"""
     img = open("assets/code.bin", "rb").read()
-    files = sorted(f for f in os.listdir("asm/data") if f.endswith(".s"))
+    files = sorted(f for f in os.listdir("asm/data") if f.endswith(".s")) if os.path.isdir("asm/data") else []
     parsed = []
     for f in files:
         if (re.match(r"[0-9A-F]+\.", f) and int(f.split(".")[0], 16) >= 0x40000) \
-                or f.startswith("bss_802") or f.startswith("main_code_persist"):
+                or f.startswith("bss_802"):
             labels, sect = parse(os.path.join("asm/data", f))
             if not labels:
                 continue
             parsed.append((f, labels, sect))
+    parsed += ucode_parts()
     izero = {}
     for f, labels, sect in parsed:
         for name, vram, rom, items in labels:

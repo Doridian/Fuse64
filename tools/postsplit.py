@@ -112,6 +112,27 @@ def collect_labels(mods, files):
     return by_name
 
 
+def c_labels(mods, version):
+    """The C objects' data sections as labels too, each by the name of its
+    first variable (D_<its start>: the C names it for us's address, and
+    the rename gives eu's and jp's that name), so that an address inside
+    one resolves against its own object rather than the nearest asm label
+    below (which may be in another section, which a shifted build moves
+    differently: main_code's microcode, before its .data, is .text)."""
+    us = {(t, name): v for t, name, v, _ in c_sections("us")}
+    plain = [m for m in mods if not m.overlay]
+    for t, obj, start, end in c_sections(version):
+        us_start = us.get((t, obj))
+        names = c_names(obj)
+        if us_start is None or names is None or f"D_{us_start:X}" not in names:
+            continue
+        mod = next((x for x in plain if x.contains(start)), None)
+        if mod is not None and all(v != start for v, _ in mod.labels):
+            mod.labels.append((start, f"D_{start:X}"))
+    for m in mods:
+        m.labels.sort()
+
+
 def module_end(mods, home, v):
     """`<module>_VRAM_END` if v is one past the end of a module that `home`
     can see (main_code clears its bss up to its end, for one), else None."""
@@ -293,7 +314,9 @@ def c_sections(version):
         subs = []
         for sub in s.get("subsegments", []):
             if isinstance(sub, dict):
-                subs.append((sub["type"], sub.get("name"), sub["vram"]))
+                # (a bss subsegment by its VRAM, the microcode's by its start)
+                v = sub["vram"] if "vram" in sub else s["vram"] + sub["start"] - s["start"]
+                subs.append((sub["type"], sub.get("name"), v))
             else:
                 subs.append((sub[1], sub[2] if len(sub) > 2 else None,
                              s["vram"] + sub[0] - s["start"]))
@@ -363,6 +386,7 @@ def main():
     mods = modules(version)
     files = sorted((ROOT / "asm").rglob("*.s"))
     collect_labels(mods, files)
+    c_labels(mods, version)
     report = []
     words = fix_words(mods, files, report)
     syms = fix_syms(mods, version, report)

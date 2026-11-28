@@ -12,7 +12,7 @@
 #       ZeroJump stub block) have no data and are skipped.
 #   <module> @<version> data=<vram> rodata=<vram>
 #       Where the objects' .data starts, when something else comes first
-#       (main_code: RSP code), and where their .rodata starts (the module's
+#       (main_code's microcode text, src/ucode/, ends its .text), and where their .rodata starts (the module's
 #       .data/.rodata boundary), needed once a listed object has .rodata
 #       and the list doesn't cover the whole module.  Either may be left out.
 #   <module> @<version> <object> data=<vram> rodata=<vram> bss=<vram>
@@ -62,8 +62,9 @@ ovl_0A_06 ovl_0A_06_entry 0 0 0
 ovl_0A_06 1412C0 0x700 0xF0 0x270
 ovl_0A_06 @jp 1412C0 sizes=0x620,0xE0,0x270
 
-# main_code: RSP code (0x2320 bytes, rspboot and microcode) comes first, as
-# asm data; the objects' .data start after it.  .rodata starts with the
+# main_code: the SDK's microcode text (0x2320 bytes: rspboot, F3DEX's and
+# aspMain's, src/ucode/, tools/layout.py's UCODE) ends the .text; the
+# objects' .data start after it.  .rodata starts with the
 # build date (the entry's, each version's own: docs/DECOMPILING.md, "What's
 # left of the data"), after the libraries' .data.
 main_code @us data=0x8029F570 rodata=0x802A2D00

@@ -11,7 +11,9 @@ Run it with the ROM, after `make VERSION=us extract`.  It configures and
 builds each target from the extract (PORT_SNAPSHOT=OFF) into
 build/snapshot-<target>, and takes from them:
 
-  asm_data.json             asm2c.py's reading of asm/data: the labels,
+  asm_data.json             asm2c.py's reading of asm/data (empty now)
+                            and of main_code's microcode (src/ucode/,
+                            placed by bm64.us.yaml): the labels,
                             their directives and symbolic words, no datum
                             (they are zeros in the C and port_asmfill fills
                             them), with the fill's checksum for each

@@ -349,7 +349,7 @@ segments:
     exclusive_ram_id: zerojump
     subsegments:
       - [0x1CBC0, hasm, zerojump]
-      - [0x1CC60, rodata, zerojump_strings]
+      - [0x1CC60, .rodata, zerojump]
   - [0x1CCF0, bin, pad_zerojump]        # zeros
   - [0x30000, bin, segment_sizes]       # u8 per 128 KiB ROM segment: size in 2 KiB units
   - [0x30100, bin, pad_30100]           # zeros
@@ -433,7 +433,9 @@ segments:
       - [0xB7710, hasm, libultra/gu/sqrtf]
       - [0xB7720, c, libultra/gu/sinf]
       - [0xB78E0, c, libultra/gu/cosf]
-      - [0xB7A50, data]
+      - {start: 0xB7A50, type: textbin, name: ucode/rspboot, use_src_path: yes}
+      - {start: 0xB7B20, type: textbin, name: ucode/gspF3DEX_NoN_fifo, use_src_path: yes}
+      - {start: 0xB8F50, type: textbin, name: ucode/aspMain, use_src_path: yes}
       - [0xB9D70, .data, 40040]
       - [0xB9DA0, .data, 40300]
       - [0xB9DB0, .data, 404C0]
@@ -522,8 +524,8 @@ segments:
       - [0xBEF90, .rodata, libultra/gu/sinf]
       - [0xBEFE0, .rodata, libultra/gu/cosf]
       - [0xBF030, .rodata, libultra/gu/libm_vals]
-      - [0xBF040, rodata]
-      - [0xBF800, rodata, main_code_persist]
+      - {start: 0xBF040, type: rodatabin, name: ucode/gspF3DEX_NoN_fifo, use_src_path: yes}
+      - {start: 0xBF840, type: rodatabin, name: ucode/aspMain, use_src_path: yes}
       - {type: .bss, vram: 0x802A5300, name: 404C0}
       - {type: .bss, vram: 0x802A5320, name: 40FB0}
       - {type: .bss, vram: 0x802A5330, name: 412F0}

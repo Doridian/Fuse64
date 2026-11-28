@@ -105,7 +105,10 @@ The OpenGL back end, `port/host/gfx_gl.c`, adapts DozerEncore's
 offscreen context, GL state cache, texture cache, batches and the color
 image's upload and read-back, taken to this port's RDP state and RDP
 commands. Its shaders are this port's: gfx_soft.c's pixel in GLSL
-(parallel-rdp's rules, below).
+(parallel-rdp's rules, below). Its approximate path,
+`port/host/gfx_glfast.c`, draws as DozerEncore's gfx_gl.c draws (its
+triangles to the GPU's rasterizer with blending and the depth test, a
+draw per state run); the coverage resolve and the rest are this port's.
 
 ## parallel-rdp
 

@@ -60,14 +60,10 @@
 #include <string.h>
 
 #include "gfx.h"
+#include "gfx_gl_int.h"
 #include "host.h"
 
-/* epoxy's gl.h brings windows.h on Windows, whose DrawState is a macro
- * (DrawStateA) */
-#undef DrawState
-
-#define TW 320
-#define TH 240
+int gl_fast;
 
 /* ---- the context --------------------------------------------------------------------------- */
 
@@ -152,10 +148,17 @@ typedef struct {
     unsigned drawn_vi;          /* the retrace a task last drew to it */
     unsigned gen;               /* the tasks that drew to it (the VI's picture of it is still the same) */
     uint8_t shadow[TW * TH * 3];        /* RDRAM's bytes, then the hidden bits' (gfx_soft_hb) */
+    /* the approximate path with multisampling: what it draws to (tex is
+       its resolve, made at each flush: what the readers read) */
+    GLuint ms, ms_id;           /* (and a color image's primitives: gfx_glfast.c's coverage) */
+    int ms_newer;               /* drawn since tex was resolved from it */
 } Img;
 static Img imgs[NIMG];
 static Img *cur_c, *cur_z;      /* the images fbo draws to (NULL: none, scratch_c or scratch_z) */
 static GLuint fbo, rd_fbo, scratch_c, scratch_z, vao, ibo, prog;
+static GLuint ms_scratch_c, ms_scratch_z, ms_scratch_id, res_fbo;      /* (multisampled: what fbo draws to without an image) */
+GLuint gl_fbo;
+int gl_samples, gl_rdp_samples;
 static GLuint snap_fbo, snap_tex, snap_z;       /* the memory a batch reads (MEM_BLIT): a copy of both images */
 static GLint u_st, u_tex0, u_tex1, u_mem, u_zmem;
 static uint8_t rb_buf[TW * TH * 4];
@@ -192,6 +195,23 @@ static void img_drop_read(Img *m) {
     m->fence = NULL;
 }
 
+/* the z image's halfword to the RDP's 18-bit depth, and back (gfx_soft.c's
+   z_dec and z_com; the approximate path's depth texture holds depths) */
+static uint32_t z_dec(uint32_t zv) {
+    static const int sh[8] = { 6, 5, 4, 3, 2, 1, 0, 0 };
+    static const uint32_t add[8] = { 0, 0x20000, 0x30000, 0x38000, 0x3C000, 0x3E000, 0x3F000, 0x3F800 };
+    int e = (zv >> 13) & 7;
+    return (((zv >> 2) & 0x7FF) << sh[e]) + add[e];
+}
+
+static uint32_t z_com(uint32_t z) {
+    int e = 0;
+    while (e < 7 && ((z >> (17 - e)) & 1))
+        e++;
+    int shift = e < 6 ? 6 - e : 0;
+    return ((z >> shift) & 0x7FF) << 2 | (uint32_t)e << 13;
+}
+
 /* RDRAM (and the hidden bits) into the texture */
 static void img_upload(Img *m) {
     const uint8_t *hb = img_hb(m);
@@ -210,6 +230,13 @@ static void img_upload(Img *m) {
         }
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, TW, TH, GL_RGBA, GL_UNSIGNED_BYTE, rb_buf);
+    } else if (gl_fast) {
+        /* (the approximate path's depth texture: the depths, 0 to 1) */
+        float *o = (float *)rb_buf;
+        for (int i = 0; i < TW * TH; i++)
+            o[i] = (float)z_dec(port_be16(m->addr + 2 * i)) / 262143.0f;
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, TW, TH, GL_DEPTH_COMPONENT, GL_FLOAT, rb_buf);
     } else {
         uint32_t *o = (uint32_t *)rb_buf;
         for (int i = 0; i < TW * TH; i++) {
@@ -221,26 +248,54 @@ static void img_upload(Img *m) {
         glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, TW, TH, GL_RED_INTEGER, GL_UNSIGNED_INT, rb_buf);
     }
+    if (m->ms) {
+        glf_ms_upload(m->tex, m->ms, m->ms_id, m->z);
+        m->ms_newer = 0;
+    }
     img_keep(m);
     m->valid = 1;
     m->newer = 0;
     st_uploads++;
 }
 
+/* (the approximate path, multisampled) the images drawn to resolved into
+   their textures, which the readers read: at each flush */
+void gl_resolve(void) {
+    if (cur_z && cur_z->ms_newer) {
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, res_fbo);
+        glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+        glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, cur_z->tex, 0);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+        glBlitFramebuffer(0, 0, TW, TH, 0, 0, TW, TH, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+        cur_z->ms_newer = 0;
+    }
+    if (cur_c && cur_c->ms_newer) {
+        glBindFramebuffer(GL_FRAMEBUFFER, res_fbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cur_c->tex, 0);
+        glf_resolve(cur_c->ms, cur_c->ms_id, cur_z ? cur_z->ms : ms_scratch_z);
+        cur_c->ms_newer = 0;
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+}
+
 /* the read-back of what the texture holds now, into its buffer */
 static void img_start_read(Img *m) {
     img_drop_read(m);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, rd_fbo);
-    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m->tex, 0);
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    GLenum att = m->z && gl_fast ? GL_DEPTH_ATTACHMENT : GL_COLOR_ATTACHMENT0;
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, att, GL_TEXTURE_2D, m->tex, 0);
+    glReadBuffer(m->z && gl_fast ? GL_NONE : GL_COLOR_ATTACHMENT0);
     glBindBuffer(GL_PIXEL_PACK_BUFFER, m->pbo);
     glPixelStorei(GL_PACK_ALIGNMENT, 4);
     if (!m->z)
         glReadPixels(0, 0, TW, TH, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    else if (gl_fast)
+        glReadPixels(0, 0, TW, TH, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     else
         glReadPixels(0, 0, TW, TH, GL_RED_INTEGER, GL_UNSIGNED_INT, NULL);
     glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
-    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, att, GL_TEXTURE_2D, 0, 0);
     m->fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 }
 
@@ -250,8 +305,7 @@ static void img_start_read(Img *m) {
 static void img_sync(Img *m) {
     if (!m->addr || !m->newer)
         return;
-    if (ninst)
-        flush();
+    flush();
     if (!m->fence)
         img_start_read(m);
     glClientWaitSync(m->fence, GL_SYNC_FLUSH_COMMANDS_BIT, 10000000000ull);
@@ -275,6 +329,13 @@ static void img_sync(Img *m) {
             int cvg = (s[3] * 7 + 127) / 255;
             port_wbe16(p, (uint16_t)((s[0] >> 3) << 11 | (s[1] >> 3) << 6 | (s[2] >> 3) << 1 | cvg >> 2));
             hb[i] = (uint8_t)(cvg & 3);
+        } else if (gl_fast) {
+            /* (the depth squeezed as the RDP keeps it; its slope unknown: 0) */
+            float f;
+            memcpy(&f, src + 4 * i, 4);
+            int z = (int)(f * 262143.0f + 0.5f);
+            port_wbe16(p, (uint16_t)z_com((uint32_t)(z < 0 ? 0 : z > 0x3FFFF ? 0x3FFFF : z)));
+            hb[i] = 0;
         } else {
             uint32_t v;
             memcpy(&v, src + 4 * i, 4);
@@ -323,10 +384,24 @@ static Img *img_use(uint8_t *img, int z, const Img *keep) {
         m->valid = m->newer = m->checked = m->drawn = 0;
         m->drawn_vi = host_vi_count;
         glBindTexture(GL_TEXTURE_2D, m->tex);
-        if (z)
+        if (z && gl_fast)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, TW, TH, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+        else if (z)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, TW, TH, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, NULL);
         else
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, TW, TH, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        if (gl_samples) {
+            if (!m->ms) {
+                glGenTextures(1, &m->ms);
+                glGenTextures(1, &m->ms_id);
+            }
+            glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m->ms);
+            glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, gl_samples, z ? GL_DEPTH_COMPONENT32F : GL_RGBA8, TW,
+                                    TH, GL_TRUE);
+            glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m->ms_id);
+            glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, gl_samples, GL_RG32UI, TW, TH, GL_TRUE);
+            m->ms_newer = 0;
+        }
     }
     if (!m->checked) {
         if (!m->valid)
@@ -346,10 +421,23 @@ static void attach(Img *c, Img *z) {
         return;
     flush();
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    if (c != cur_c)
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, c ? c->tex : scratch_c, 0);
-    if (z != cur_z)
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, z ? z->tex : scratch_z, 0);
+    if (gl_samples) {
+        if (c != cur_c) {
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
+                                   c ? c->ms : ms_scratch_c, 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE,
+                                   c ? c->ms_id : ms_scratch_id, 0);
+        }
+        if (z != cur_z)
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE,
+                                   z ? z->ms : ms_scratch_z, 0);
+    } else {
+        if (c != cur_c)
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, c ? c->tex : scratch_c, 0);
+        if (z != cur_z)
+            glFramebufferTexture2D(GL_FRAMEBUFFER, gl_fast ? GL_DEPTH_ATTACHMENT : GL_COLOR_ATTACHMENT1,
+                                   GL_TEXTURE_2D, z ? z->tex : scratch_z, 0);
+    }
     cur_c = c;
     cur_z = z;
 }
@@ -510,22 +598,7 @@ static GLuint tile_texture(int tile) {
    and y, and the pixels to cover */
 enum { I_E0, I_E1, I_E2, I_A0, I_BOX = 11, I_N };
 typedef struct { int32_t v[I_N][4]; } Inst;
-
-/* the draw state's uniforms (u_st) */
-enum {
-    S_MODE,                     /* om_h, om_l, cycle type, flags (ST_*) */
-    S_COL0, S_ALP0, S_COL1, S_ALP1, /* the combiner's slots (gfx.h's CC_*) */
-    S_PRIM, S_ENV, S_BLEND, S_FOG,
-    S_MISC,                     /* prim LOD, prim z, prim dz, fill */
-    S_SCISSOR,                  /* x low and high in eighths, y low and high in quarters */
-    S_TILE0,                    /* shift s t, mask s t; cm s t, sl tl; sh th */
-    S_TILE1 = S_TILE0 + 3,
-    S_SEED = S_TILE1 + 3,
-    S_N
-};
-/* S_MODE's flags: the memory read (the images' copies), the tiles
-   sampled, the noise, the z compared */
-enum { ST_MEM = 1, ST_TEX0 = 2, ST_TEX1 = 4, ST_NOISE = 8, ST_ZCMP = 16 };
+/* (the draw state's uniforms, u_st: gfx_gl_int.h's S_*) */
 
 static const char *vs_src =
     "layout(location = 0) in ivec4 i_e0;\n"
@@ -565,7 +638,12 @@ static const char *fs_src =
     "uniform highp usampler2D u_zmem;\n"
     "#define MEM_COL() texelFetch(u_mem, ivec2(X, Y), 0)\n"
     "#define MEM_Z() texelFetch(u_zmem, ivec2(X, Y), 0).r\n"
-    "#endif\n"
+    "#endif\n";
+
+/* what the approximate path's shader shares (gfx_glfast.c): the uniforms,
+   the noise, the perspective divide, the tiles' sampling, the combiner's
+   inputs, the z image's encoding, the blender's divider */
+const char *gl_fs_lib =
     "uniform highp usampler2D u_tex0;\n"
     "uniform highp usampler2D u_tex1;\n"
     "uniform ivec4 u_st[18];\n"
@@ -697,7 +775,9 @@ static const char *fs_src =
     "        if ((r & 16) != 0) q |= 1 << (7 - k);\n"
     "    }\n"
     "    return q;\n"
-    "}\n"
+    "}\n";
+
+static const char *fs_main =
     "void main() {\n"
     "    int X = int(gl_FragCoord.x), Y = int(gl_FragCoord.y);\n"
     "    int omh = u_st[0].x, l = u_st[0].y, cyc = u_st[0].z, flags = u_st[0].w;\n"
@@ -922,15 +1002,16 @@ static const char *fs_src =
     "    o_col = vec4(vec3((outi >> 3) << 3) / 255.0, float(fcvg) / 7.0);\n"
     "}\n";
 
-/* a shader, after the version and how the memory is read */
-static GLuint compile(GLenum type, const char *src) {
+/* a shader of n strings, after the version and how the memory is read */
+GLuint gl_compile(GLenum type, int n, const char *const *src) {
     GLuint s = glCreateShader(type);
-    const char *head = "#version 330 core\n";
-    const char *fetch = type == GL_FRAGMENT_SHADER && mem_how == MEM_FETCH
-                            ? "#extension GL_EXT_shader_framebuffer_fetch : require\n#define MEM_FETCH 1\n"
-                            : "";
-    const char *srcs[3] = { head, fetch, src };
-    glShaderSource(s, 3, srcs, NULL);
+    const char *srcs[8] = { "#version 330 core\n",
+                            type == GL_FRAGMENT_SHADER && mem_how == MEM_FETCH && !gl_fast
+                                ? "#extension GL_EXT_shader_framebuffer_fetch : require\n#define MEM_FETCH 1\n"
+                                : "" };
+    for (int i = 0; i < n && i < 6; i++)
+        srcs[2 + i] = src[i];
+    glShaderSource(s, 2 + (n < 6 ? n : 6), srcs, NULL);
     glCompileShader(s);
     GLint ok;
     glGetShaderiv(s, GL_COMPILE_STATUS, &ok);
@@ -942,14 +1023,27 @@ static GLuint compile(GLenum type, const char *src) {
     return s;
 }
 
-/* ---- draw states and batches ---------------------------------------------------------------- */
+static GLuint compile(GLenum type, const char *src) { return gl_compile(type, 1, &src); }
 
-typedef struct {
-    int32_t st[S_N][4];
-    GLuint tex[2];
-    int cmask, amask, zmask;    /* what it writes: the color, the coverage, the z image */
-    int mem;                    /* it reads the memory (the images as the batches before it left them) */
-} DrawState;
+/* a program of the two (deleted) */
+GLuint gl_link(GLuint vs, GLuint fs) {
+    GLuint p = glCreateProgram();
+    glAttachShader(p, vs);
+    glAttachShader(p, fs);
+    glLinkProgram(p);
+    GLint ok;
+    glGetProgramiv(p, GL_LINK_STATUS, &ok);
+    if (!ok) {
+        char log[4096];
+        glGetProgramInfoLog(p, sizeof log, NULL, log);
+        host_fatal("gl: link: %s", log);
+    }
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+    return p;
+}
+
+/* ---- draw states and batches ---------------------------------------------------------------- */
 
 /* The primitives since the last flush, each tagged with its draw state and
    its layer.  A primitive that reads the memory must see what every
@@ -1056,6 +1150,10 @@ static void draw(int first, int count) {
 }
 
 static void flush(void) {
+    if (gl_fast) {
+        glf_flush();
+        return;
+    }
     if (!ninst)
         return;
     /* by layer, then draw state, then the commands' order */
@@ -1139,7 +1237,6 @@ static void flush(void) {
     }
 }
 
-enum { K_TRI, K_FILL, K_COPY, K_ZFILL };
 static GLuint dummy_tex;
 
 /* the draw state of a primitive of this kind with gs's state now */
@@ -1298,22 +1395,37 @@ static Inst *push(const int *box) {
     tags[ninst].layer = layer;
     tags[ninst].state = ds_idx;
     tags[ninst].seq = ninst;
+    gl_drawn(ds_cur.cmask, ds_cur.zmask);
+    Inst *in = &insts[ninst++];
+    memset(in, 0, sizeof *in);
+    return in;
+}
+
+/* a primitive drawn to the color image, the z image: they are newer than
+   RDRAM, and a read-back started before is stale */
+void gl_drawn(int color, int z) {
+    Img *w[2] = { color ? cur_c : NULL, z ? cur_z : NULL };
     st_prims++;
-    /* (what it draws to: newer than RDRAM, and a read-back started before
-       stale) */
-    Img *w[2] = { ds_cur.cmask ? cur_c : NULL, ds_cur.zmask ? cur_z : NULL };
     for (int k = 0; k < 2; k++)
         if (w[k]) {
-            w[k]->newer = 1;
+            w[k]->newer = w[k]->ms_newer = 1;
             if (!w[k]->drawn) {
                 w[k]->drawn = 1;
                 img_drop_read(w[k]);
             }
         }
-    Inst *in = &insts[ninst++];
-    memset(in, 0, sizeof *in);
-    return in;
 }
+
+/* (for the approximate path, gfx_glfast.c) */
+const DrawState *gl_state(int kind, int tile, uint64_t *hash) {
+    begin(kind, tile);
+    *hash = ds_hash;
+    return &ds_cur;
+}
+
+int gl_target(void) { return target(); }
+int gl_z_target(void) { return z_target(); }
+int gl_z_attached(void) { return cur_z != NULL; }
 
 /* ---- the primitives ------------------------------------------------------------------------- */
 
@@ -1526,6 +1638,9 @@ static void gl_tex_rect(uint32_t w0, uint32_t w1, uint32_t h1, uint32_t h2, int 
     memcpy(in->v[I_BOX], b, sizeof b);
 }
 
+int gl_whole_box(int xh, int yh, int xl, int yl, int *b) { return whole_box(xh, yh, xl, yl, b); }
+uint32_t gl_dz_pix(uint32_t sum) { return dz_pix(sum); }
+
 /* ---- the back end ---------------------------------------------------------------------------- */
 
 /* A task's end: its batches drawn; RDRAM stays as it was (read back where
@@ -1599,6 +1714,33 @@ static GLuint new_tex(GLint ifmt, GLenum fmt, GLenum type) {
     return t;
 }
 
+static void gl_init_images(void);
+
+/* (multisampled) the RDP's eight coverage samples' places in the pixel,
+   where the driver lets them be set (ARB_sample_locations): its four
+   subscanlines, two samples on each, the odd ones a quarter pixel right */
+static void gl_sample_locations(void) {
+    static const float loc[16] = { 0.0f, 0.0f, 0.5f, 0.0f, 0.25f, 0.25f, 0.75f, 0.25f,
+                                   0.0f, 0.5f, 0.5f, 0.5f, 0.25f, 0.75f, 0.75f, 0.75f };
+    gl_rdp_samples = 0;
+    const char *e = getenv("PORT_GL_SAMPLE_LOCATIONS");
+    if (gl_samples != 8 || !epoxy_has_gl_extension("GL_ARB_sample_locations") || (e && *e == '0')) {
+        host_log("gl: the samples at the driver's places:");
+        for (int i = 0; i < gl_samples; i++) {
+            float p[2];
+            glGetMultisamplefv(GL_SAMPLE_POSITION, (GLuint)i, p);
+            host_log(" %g,%g", p[0], p[1]);
+        }
+        host_log("\n");
+        return;
+    }
+    glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_PROGRAMMABLE_SAMPLE_LOCATIONS_ARB, GL_TRUE);
+    glFramebufferSampleLocationsfvARB(GL_FRAMEBUFFER, 0, 8, loc);
+    if (glGetError() == GL_NO_ERROR)
+        gl_rdp_samples = 1;
+    host_log("gl: the samples %s\n", gl_rdp_samples ? "at the RDP's places" : "at the driver's places");
+}
+
 static void gl_init(void) {
     gfx_soft.init();
     /* (the window's context, where there is a window: video.c) */
@@ -1606,7 +1748,13 @@ static void gl_init(void) {
         host_log("gl: %s, %s (the window's)\n", (const char *)glGetString(GL_RENDERER),
                  (const char *)glGetString(GL_VERSION));
     else if (!egl_up())
-        host_fatal("--renderer gl: no OpenGL (an EGL display with OpenGL 3.3 core, surfaceless)");
+        host_fatal("--renderer %s: no OpenGL (an EGL display with OpenGL 3.3 core, surfaceless)",
+                   gl_fast ? "gl-fast" : "gl");
+    if (gl_fast) {
+        gl_init_images();
+        glf_init();
+        return;
+    }
     /* how the memory is read: the best the driver has, or PORT_GL_MEM's */
     mem_how = epoxy_has_gl_extension("GL_EXT_shader_framebuffer_fetch")                          ? MEM_FETCH
               : epoxy_gl_version() >= 45 || epoxy_has_gl_extension("GL_ARB_texture_barrier") ||
@@ -1625,20 +1773,8 @@ static void gl_init(void) {
     base_instance = epoxy_gl_version() >= 42 || epoxy_has_gl_extension("GL_ARB_base_instance");
     host_log("gl: the memory read by %s\n", mem_how == MEM_FETCH ? "framebuffer fetch" :
                                             mem_how == MEM_BARRIER ? "texture barriers" : "copies");
-    GLuint vs = compile(GL_VERTEX_SHADER, vs_src), fs = compile(GL_FRAGMENT_SHADER, fs_src);
-    prog = glCreateProgram();
-    glAttachShader(prog, vs);
-    glAttachShader(prog, fs);
-    glLinkProgram(prog);
-    GLint ok;
-    glGetProgramiv(prog, GL_LINK_STATUS, &ok);
-    if (!ok) {
-        char log[4096];
-        glGetProgramInfoLog(prog, sizeof log, NULL, log);
-        host_fatal("gl: link: %s", log);
-    }
-    glDeleteShader(vs);
-    glDeleteShader(fs);
+    const char *fsrc[3] = { fs_src, gl_fs_lib, fs_main };
+    prog = gl_link(compile(GL_VERTEX_SHADER, vs_src), gl_compile(GL_FRAGMENT_SHADER, 3, fsrc));
     u_st = glGetUniformLocation(prog, "u_st");
     u_tex0 = glGetUniformLocation(prog, "u_tex0");
     u_tex1 = glGetUniformLocation(prog, "u_tex1");
@@ -1659,8 +1795,13 @@ static void gl_init(void) {
         glEnableVertexAttribArray((GLuint)i);
         glVertexAttribDivisor((GLuint)i, 1);
     }
-    /* the images' textures and read-back buffers; what fbo draws to
-       without one (scratch_c, scratch_z: masked) */
+    gl_init_images();
+}
+
+/* the images' textures and read-back buffers; what fbo draws to without
+   one (scratch_c, scratch_z: masked; the approximate path's scratch_z a
+   depth texture, and no copies) */
+static void gl_init_images(void) {
     for (int i = 0; i < NIMG; i++) {
         imgs[i].tex = new_tex(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);
         glGenBuffers(1, &imgs[i].pbo);
@@ -1669,22 +1810,67 @@ static void gl_init(void) {
     }
     glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
     scratch_c = new_tex(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);
-    scratch_z = new_tex(GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT);
+    if (gl_fast)
+        scratch_z = new_tex(GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, GL_FLOAT);
+    else
+        scratch_z = new_tex(GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT);
     /* the copies a batch reading the memory reads (MEM_BLIT) */
-    snap_tex = new_tex(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);
-    snap_z = new_tex(GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT);
+    if (!gl_fast) {
+        snap_tex = new_tex(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);
+        snap_z = new_tex(GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT);
+    }
     static const GLenum both[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     GLuint tex[2][2] = { { scratch_c, scratch_z }, { snap_tex, snap_z } };
     GLuint *fb[2] = { &fbo, &snap_fbo };
-    for (int k = 0; k < 2; k++) {
+    for (int k = 0; k < (gl_fast ? 1 : 2); k++) {
         glGenFramebuffers(1, fb[k]);
         glBindFramebuffer(GL_FRAMEBUFFER, *fb[k]);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex[k][0], 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, tex[k][1], 0);
-        glDrawBuffers(2, both);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, gl_fast ? GL_DEPTH_ATTACHMENT : GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D,
+                               tex[k][1], 0);
+        glDrawBuffers(gl_fast ? 1 : 2, both);
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             host_fatal("gl: framebuffer incomplete");
     }
+    /* the approximate path's multisampling (PORT_GL_MSAA=N samples, 0
+       none; 8 by default, or the most the driver has): the images drawn
+       multisampled and resolved into their textures at each flush */
+    if (gl_fast) {
+        GLint mc = 0, md = 0;
+        glGetIntegerv(GL_MAX_COLOR_TEXTURE_SAMPLES, &mc);
+        glGetIntegerv(GL_MAX_DEPTH_TEXTURE_SAMPLES, &md);
+        const char *e = getenv("PORT_GL_MSAA");
+        int want = e && *e ? atoi(e) : 8;
+        gl_samples = want < 2 ? 0 : want;
+        if (gl_samples > mc)
+            gl_samples = mc;
+        if (gl_samples > md)
+            gl_samples = md;
+        if (gl_samples < 2)
+            gl_samples = 0;
+        host_log("gl: %d samples a pixel\n", gl_samples ? gl_samples : 1);
+    }
+    if (gl_samples) {
+        GLuint *t[3] = { &ms_scratch_c, &ms_scratch_z, &ms_scratch_id };
+        static const GLenum f[3] = { GL_RGBA8, GL_DEPTH_COMPONENT32F, GL_RG32UI };
+        for (int k = 0; k < 3; k++) {
+            glGenTextures(1, t[k]);
+            glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, *t[k]);
+            glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, gl_samples, f[k], TW, TH, GL_TRUE);
+        }
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, ms_scratch_c, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE, ms_scratch_id, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, ms_scratch_z, 0);
+        glDrawBuffers(2, both);
+        gl_sample_locations();
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+            host_fatal("gl: the multisampled framebuffer is incomplete");
+        glGenFramebuffers(1, &res_fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER, res_fbo);
+        glDrawBuffers(1, both);
+    }
+    gl_fbo = fbo;
     glGenFramebuffers(1, &rd_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     static const uint8_t zero[4];
@@ -1708,10 +1894,12 @@ static void gl_reset(uint32_t clean) {
     for (int i = 0; i < NIMG; i++) {
         img_drop_read(&imgs[i]);
         imgs[i].addr = NULL;
-        imgs[i].valid = imgs[i].newer = imgs[i].checked = imgs[i].drawn = 0;
+        imgs[i].valid = imgs[i].newer = imgs[i].checked = imgs[i].drawn = imgs[i].ms_newer = 0;
     }
     prefetch = 0;
     tc_sweep();
+    if (gl_fast)
+        glf_reset();
     gfx_soft.reset(clean);
 }
 
@@ -1937,8 +2125,7 @@ int gfx_gl_vi_make(const ViSetup *v, int read) {
     static int told;
     if (!vi_prog_fetch)
         vi_init();
-    if (ninst)
-        flush();
+    flush();
     vi_drop_read();
     vi_img = NULL;
     Img *m = NULL;
@@ -2118,5 +2305,14 @@ void gfx_gl_vi_present(int dw, int dh) {
 
 const GfxBackend gfx_gl = { "gl", gl_init, gl_reset, gl_tri, gl_fill_rect, gl_tex_rect, gl_task_end,
                             gl_texture_source, gl_sync, gl_retrace };
+
+/* the approximate path (gfx_glfast.c): the same images, read-backs and VI */
+static void gl_fast_init(void) {
+    gl_fast = 1;
+    gl_init();
+}
+
+const GfxBackend gfx_gl_fast = { "gl-fast", gl_fast_init, gl_reset, glf_tri, glf_fill_rect, glf_tex_rect,
+                                 gl_task_end, gl_texture_source, gl_sync, gl_retrace };
 
 #endif

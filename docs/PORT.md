@@ -68,8 +68,9 @@ from a gameplay digest, by the game's frame: "The gameplay digest"),
 `fuse64.<v>.eep`), `--wav FILE`, `--hash` (each retrace's picture
 hash), `--vi-raw` (the color image as it is, without the VI: "The VI"),
 `--renderer soft` (the microcode, the default), `hle-sw` (the HLE front
-end: "Graphics") or `gl` (the HLE front end drawn by OpenGL, offscreen:
-"The OpenGL renderer"), `--audio hle` (the audio microcode in C, the
+end: "Graphics"), `gl` (the HLE front end drawn by OpenGL, offscreen,
+exactly) or `gl-fast` (OpenGL's approximate path: "The OpenGL
+renderer"), `--audio hle` (the audio microcode in C, the
 default) or `lle` (the game's audio microcode on the RSP interpreter,
 also `PORT_AUDIO_LLE=1`: "Audio"), `-v`. With a window the
 keyboard (arrows, Z, X, C, A, S, Enter) and SDL's game controllers are
@@ -2304,6 +2305,7 @@ Its parts (port/host/gfx.h has the interface between them):
 | gfx_rdp.c | the RDP's state and its decoding, what a back end draws with: the state commands, tiles, TMEM and its loads, the texel formats, the combiner's selectors |
 | gfx_soft.c | the software back end (`--renderer soft` and `hle-sw`): the RDP's rasterizer, exact (triangles, rectangles, the pixel pipeline, coverage and the hidden bits, the z-buffer) |
 | gfx_gl.c | the OpenGL back end (`--renderer gl`): the same pixel pipeline in a fragment shader, exact ("The OpenGL renderer") |
+| gfx_glfast.c | the OpenGL back end's approximate path (`--renderer gl-fast`): the GPU's rasterizer, depth test and blending, multisampled, with gfx_gl.c's images, textures and VI ("The approximate path") |
 | vi.c | the VI ("The VI") |
 
 **The RSP's side is the game's microcode.** port/host/rsp.c interprets
@@ -2577,6 +2579,116 @@ on X11, Wayland, Windows, macOS) and its vsync are untried.
 What it doesn't do yet (the later steps): scaling, or anything but 1x;
 the enhancements; WebGL2 (the z image's write mask is
 `glColorMaski`, which GLES 3.0 lacks, and the context is EGL's).
+
+**The approximate path.** `--renderer gl-fast` (port/host/gfx_glfast.c)
+is OpenGL's second path, DozerEncore's way: the triangles go to the GPU's
+own rasterizer, with its blending and depth test, the combiner in a
+shader, and no per-pixel emulation of the RDP's memory (no layers, no
+barriers, nothing read back between primitives). It is the base for the
+enhancements (scaling, widescreen, interpolation), which the exact
+shader, walking the RDP's edges at 1x, can't carry. Which path is used
+(DESIGN's policy, to be wired with the enhancements): with a window and
+any enhancement on, gl-fast; with them all off, the exact `gl`; headless,
+deterministic runs and replays stay `soft`. Until then gl-fast is only
+picked by hand.
+
+It shares gfx_gl.c's images (textures, read back where RDRAM is read, as
+above), texture cache, draw state and the VI's shaders. The rest:
+
+- A triangle command is the polygon its edges bound (a triangle, or a
+  rectangle's quad), its corners where the edges cross the top, middle
+  and bottom lines, with the attributes' planes (shade, s t w, z)
+  evaluated there; the GPU interpolates them linearly in the screen as
+  the RDP steps them. The shader truncates them as the RDP does, a hair
+  (0.002) up: a texture rectangle's texels and a flat shade are exact
+  integers that interpolation leaves just under (the HUD's digits lost
+  columns without it). Fill and copy rectangles are quads over their
+  whole pixels.
+- The images are drawn with 8 samples a pixel (`PORT_GL_MSAA=N`, 0 for
+  none). The driver's eight sit at odd sixteenths, one in each column and
+  row (radeonsi; `ARB_sample_locations`, which would put them at the
+  RDP's places, is used where the driver has it), so the polygons are
+  drawn a sixteenth of a pixel down and right and an edge covers as many
+  of them as of the RDP's (at quarters, two to a subscanline). An eighth,
+  the two patterns' centres together, gave more pixels off.
+- The RDP's antialiasing depends on its memory: a silhouette's pixel gets
+  the front primitive's color, unblended (the memory's coverage full, the
+  sum wraps), and its coverage less one, and the VI's filter then blends
+  it toward its fully covered neighbours. MSAA's average differs most
+  where both sides are fully covered (a face's edge on a head). So the
+  color image has a second attachment, each sample's primitive (a number)
+  and flags (it drew over: no depth compared or kept, a fill or copy, or
+  no z image; and the coverage the shader wrote), and at each flush's end
+  it is resolved into the image's texture as the RDP would have left it:
+  a pixel all of one primitive's samples, or of primitives meeting inside
+  a surface (all within 0.0015 of the front's depth), gets their average
+  and the coverage written (the least); a silhouette's gets the front
+  primitive's samples' average (the last primitive's if it drew over,
+  else the nearest samples) and their count less one. The depth is
+  blitted.
+- The shader is the exact one's pixel without the edges and the memory
+  (the perspective divide, the tile's clamp, mask, mirror and three-point
+  filter, the combiner, the dither, alpha compare, coverage times alpha,
+  the noise, in integers), the memory's coverage taken as full (7):
+  CVG_DST's clamp writes cvg - 1, zap 7. Save, and wrap, keep the
+  memory's (the samples' primitives masked): a full primitive's wrap
+  gives the memory's back, which is what the game's full-screen layers
+  and translucent panels draw (a menu's tree kept the coverage they left).
+- The blender's cycle that reads the memory is GL's blend (ONE,
+  SRC_ALPHA): the shader gives the other terms premultiplied, with the
+  dither's rounding less half a unit (the image keeps the sum rounded,
+  the RDP truncates it), and the memory's weight as the color's alpha;
+  FORCE_BL's weights over 32 or the divided ones. A blend that would keep
+  the memory where coverage is partial is a discard. A FORCE_BL triangle
+  blends a pixel whatever its coverage, so it is drawn over its pixels'
+  box, the shader taking the coverage from the RDP's edges (the exact
+  shader's walk) and writing every sample of the pixels it touches.
+- The z image is a depth texture (DEPTH_COMPONENT32F, the 18-bit depth
+  over 0x3FFFF), cleared by its fill rectangle; Z_CMP is the depth test
+  (LEQUAL; LESS for ZMODE_XLU; ZMODE_DEC against the depth less the
+  slope's top bit, written by the shader), Z_UPD the depth mask, with
+  depth clamping. Read back, it is squeezed as the RDP keeps it, the
+  slope bits 0.
+
+Against soft (gl_cmp.py's `--approx`, the default for `--gl gl-fast`:
+the thresholds on each scenario's averages, the digest, RDRAM outside
+the images; us, radeonsi, 2026-11-27, every 50 retraces, story's 240):
+
+| us | mean (worst picture) | >24 (worst picture) | digest | RDRAM outside the images |
+|---|---|---|---|---|
+| legal | 0.11 (0.11) | 0.17% (0.17%) | the same | the same |
+| menus | 1.10 (3.63) | 0.50% (2.29%) | the same | the same |
+| battle | 0.62 (4.28) | 0.60% (1.53%) | the same | the same |
+| story | 1.34 (4.43) | 0.86% (3.83%) | the same | the same |
+| warp-stage | 0.64 (3.38) | 0.76% (2.43%) | the same | the same |
+| warp-boss (the after-image) | 0.84 (3.38) | 0.81% (3.20%) | the same | the same |
+| attract (the captures) | 0.91 (21.39) | 0.92% (27.4%) | the same | the demos' pictures differ (0x30F000-, 22048 bytes) |
+| reset | 0.38 (3.38) | 0.15% (0.74%) | the same | the same |
+
+The means are under 3 everywhere; the share of pixels more than 24 off
+is over 0.1% everywhere. Most of those are coverage: edges the VI's
+filter blends differently (soft's coverage of a pixel depends on the
+order the primitives came in and on what the memory held, which the
+resolve only approximates: wrap's subtraction on the shadows, a
+translucent primitive's partial pixels, which keep the memory's
+coverage here), and partial pixels' colors along sprites' and walls'
+edges. The attract demos' pictures (a copy of the shown image the game
+makes with the CPU) are the approximate image's, so they differ, as
+expected; but at retraces 1380 to 1420 the picture with the demos'
+pictures shows other demos' pictures in most of its tiles (mean 22),
+with the digest the same, which is not understood yet (the exact `gl`
+is soft's there). The game's state never depended on the pictures: the
+digest is the same in every scenario. Speed, headless (the same
+machine): battle 6000 retraces 4.1 s (gl 4.0 s), with `--hash` 5.2 s
+(gl 5.7 s); menus 3000 2.8 s (gl 2.7 s), with `--hash` 3.2 s (3.5 s):
+the HLE front end and the CPU's side dominate both.
+
+Where the enhancements go in: the vertices are floats in the N64's
+pixels and the resolve reads N samples a pixel, so scaling is a bigger
+viewport and images (the resolve and the VI's shaders at N×; reading an
+image back means scaling it down); widescreen needs the front end's
+CULLDL and the CPU's culling widened, and the projection; interpolation
+as DozerEncore's (the display list's twins). None of it is done.
 
 The RDP's side is in integers, as the RDP computes it. A triangle is
 drawn from its command as the RDP walks it (`rdp_tri` in gfx_soft.c, after

@@ -305,7 +305,8 @@ static void usage(const char *argv0) {
             "  --vi-raw            show the color image as it is, without the VI's filters\n"
             "  --renderer NAME     the renderer: soft (the game's microcode on the RSP, the RDP in software:\n"
             "                      exact, the default), hle-sw (the microcode's commands in C, the same RDP),\n"
-            "                      gl (hle-sw's commands drawn by OpenGL, offscreen: docs/PORT.md, \"The OpenGL renderer\")\n"
+            "                      gl (hle-sw's commands drawn by OpenGL, exact: docs/PORT.md, \"The OpenGL renderer\"),\n"
+            "                      gl-fast (the same with the GPU's rasterizer, depth test and blending: approximate)\n"
             "  --audio NAME        the audio microcode: hle (in C, the default) or lle (the game's own on the\n"
             "                      RSP interpreter: docs/PORT.md, \"Audio\"; also PORT_AUDIO_LLE=1)\n"
             "  -v                  more log\n",
@@ -359,6 +360,13 @@ static void dump_rdram(void) {
             FILE *f = fopen(name, "wb");
             if (f) {
                 fwrite(port_rdram, 1, 8 << 20, f);
+                fclose(f);
+            }
+            /* (and its hidden bits, a byte a halfword: FILE.hb) */
+            strncat(name, ".hb", sizeof name - strlen(name) - 1);
+            f = fopen(name, "wb");
+            if (f) {
+                fwrite(host_gfx_hidden(), 1, PORT_RDRAM_SIZE / 2, f);
                 fclose(f);
             }
         }
@@ -415,7 +423,7 @@ int main(int argc, char **argv) {
             host_vi_raw = 1;
         else if (!strcmp(a, "--renderer") && i + 1 < argc) {
             if (!host_gfx_renderer(argv[++i])) {
-                fprintf(stderr, "fuse64: --renderer %s: no such renderer (there are soft, hle-sw and, in a build with OpenGL, gl)\n", argv[i]);
+                fprintf(stderr, "fuse64: --renderer %s: no such renderer (there are soft, hle-sw and, in a build with OpenGL, gl and gl-fast)\n", argv[i]);
                 exit(2);
             }
         }

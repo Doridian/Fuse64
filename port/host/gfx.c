@@ -1348,24 +1348,25 @@ static void run(const Cmd *dl) {
 /* ---- the task and the renderer ------------------------------------------------------------------ */
 
 /* --renderer: a front end (the microcode, or "hle-") and a back end;
-   gl is the HLE front end's */
+   gl and gl-fast are the HLE front end's */
 static const GfxBackend *const backends[] = {
     &gfx_soft,
 #ifdef PORT_HAVE_GL
     &gfx_gl,
+    &gfx_gl_fast,
 #endif
 };
 
 int host_gfx_gl(void) {
 #ifdef PORT_HAVE_GL
-    return be == &gfx_gl;
+    return be == &gfx_gl || be == &gfx_gl_fast;
 #else
     return 0;
 #endif
 }
 
 int host_gfx_renderer(const char *name) {
-    int hle = !strcmp(name, "hle-sw") || !strcmp(name, "gl");
+    int hle = !strcmp(name, "hle-sw") || !strcmp(name, "gl") || !strcmp(name, "gl-fast");
     if (!strcmp(name, "hle-sw"))
         name = "soft";
     for (size_t i = 0; i < sizeof backends / sizeof backends[0]; i++)

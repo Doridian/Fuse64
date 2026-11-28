@@ -144,6 +144,7 @@ typedef struct {
 extern const GfxBackend gfx_soft;       /* gfx_soft.c */
 #ifdef PORT_HAVE_GL
 extern const GfxBackend gfx_gl;         /* gfx_gl.c */
+extern const GfxBackend gfx_gl_fast;    /* gfx_gl.c and gfx_glfast.c */
 #endif
 /* The VI's picture as vi.c works it out from the registers (vi.c's make):
    w by h pixels (640 by 240 or 288), black unless shown; the image's lines

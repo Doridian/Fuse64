@@ -4,6 +4,7 @@ renderer").
 
   gl_cmp.py BUILD [--scenario NAME ...] [--every N] [--rdram-every N] [--vi-raw]
             [--out DIR] [--gl RENDERER] [--ref RENDERER] [--frames N] [--keep]
+            [--approx | --exact]
 
 Runs each scenario (by default legal, menus, battle, story, warp-stage,
 warp-boss, attract and reset; test.py's: its input, warp and save, headless and
@@ -29,6 +30,13 @@ randomization (setarch -R), so that the host pointers the game's
 structures hold are the same; the words that still differ are listed.
 --out writes the worst picture's pair and difference as PNGs; --keep
 keeps the runs (their screenshots and RDRAM dumps).
+
+With --approx (the default for --gl gl-fast, the approximate OpenGL path,
+which draws the images only within the thresholds of soft's) a scenario
+passes when its pictures' mean difference and >24 share, averaged, are
+under the thresholds, the digest is the same and RDRAM outside the images
+is the same; the images themselves may differ.  Each run's time is
+printed too (the two run side by side).
 """
 import argparse
 import os
@@ -37,6 +45,7 @@ import struct
 import subprocess
 import sys
 import tempfile
+import time
 import zlib
 from concurrent.futures import ThreadPoolExecutor
 
@@ -150,15 +159,27 @@ def main():
     ap.add_argument("--frames", type=int, help="stop the scenarios there")
     ap.add_argument("--timeout", type=int, default=600)
     ap.add_argument("--keep", action="store_true", help="keep the runs' directories (their RDRAM dumps)")
+    ap.add_argument("--approx", action="store_true", default=None,
+                    help="the thresholds on the averages, the images free (default for --gl gl-fast)")
+    ap.add_argument("--exact", dest="approx", action="store_false", help="every picture under the thresholds, RDRAM all the same")
     a = ap.parse_args()
+    if a.approx is None:
+        a.approx = a.gl == "gl-fast"
     images = [tuple(int(v, 16) for v in r.split(":")) for r in a.images.split(",") if r]
     fails = 0
     for name in a.scenario or DEFAULT:
         tmp = tempfile.mkdtemp(prefix="fuse64-glcmp-")
         try:
+            secs = {}
+
+            def timed(renderer):
+                t0 = time.monotonic()
+                r = play(a.build, name, renderer, a.every, a.vi_raw, tmp, a.timeout, a.frames, a.rdram_every)
+                secs[renderer] = time.monotonic() - t0
+                return r
             with ThreadPoolExecutor(2) as ex:
-                fa = ex.submit(play, a.build, name, a.ref, a.every, a.vi_raw, tmp, a.timeout, a.frames, a.rdram_every)
-                fb = ex.submit(play, a.build, name, a.gl, a.every, a.vi_raw, tmp, a.timeout, a.frames, a.rdram_every)
+                fa = ex.submit(timed, a.ref)
+                fb = ex.submit(timed, a.gl)
                 (ver, da), (_, db) = fa.result(), fb.result()
             shots = sorted(f for f in os.listdir(da) if f.startswith("s_") and f.endswith(".bmp"))
             means, fracs, worst, same = [], [], None, 0
@@ -207,7 +228,13 @@ def main():
                 words = sorted(set(int(i) & ~3 for i in idx))
                 print("  %d words, from: %s" % (len(words), ", ".join(
                     "%06X %s/%s" % (w, ra[w:w + 4][::-1].hex(), rb[w:w + 4][::-1].hex()) for w in words[:4])))
-            fails += bool(over) or not same_digest or bool(len(idx)) or same_pts != len(pts)
+            if a.approx:
+                avg_over = float(np.mean(means)) >= 3 or float(np.mean(fracs)) >= 0.001
+                print("  approximate: the averages %s; %s %.1f s, %s %.1f s" % (
+                    "over a threshold" if avg_over else "under the thresholds", a.ref, secs[a.ref], a.gl, secs[a.gl]))
+                fails += avg_over or not same_digest or bool(len(idx))
+            else:
+                fails += bool(over) or not same_digest or bool(len(idx)) or same_pts != len(pts)
             if a.out:
                 os.makedirs(a.out, exist_ok=True)
                 f, fr, m, x, y, d = worst

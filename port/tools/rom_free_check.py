@@ -4,30 +4,31 @@
   rom_free_check.py BINARY [--rom ROM] [--version V] [--all] [--assets]
                            [--objects DIR] [--min N] [--max N] [--list N] [--json OUT]
 
-Scans a built fuse64 (ELF, a Windows .exe or the .wasm) for runs of the
-ROM's bytes: the code image (the ROM below its first archive, every overlay
-inflated: tools/layout.py's image) and, with --assets, every member of the
-asset archive inflated.  Any byte order counts: a run is a stretch of
-4-byte chunks, each the ROM's chunk at the same distance with its bytes in
-one of the orders a host gives a word its fields in (as they are; halves
-swapped; the word reversed; one half reversed), so a table of floats, of
-halfwords or of mixed structures in the host's order is found as well as a
-string.  A run must be at least 32 bytes and hold one 32-byte stretch of 6
-or more distinct byte values (zeros, 0xFF and other near-constant fills are
-not counted on their own).
+Scans a built fuse64 (ELF, a Windows .exe, a Mach-O, universal too, or the
+.wasm) for runs of the ROM's bytes: the code image (the ROM below its first
+archive, every overlay inflated: tools/layout.py's image) and, with
+--assets, every member of the asset archive inflated.  Any byte order
+counts: a run is a stretch of 4-byte chunks, each the ROM's chunk at the
+same distance with its bytes in one of the orders a host gives a word its
+fields in (as they are; halves swapped; the word reversed; one half
+reversed), so a table of floats, of halfwords or of mixed structures in the
+host's order is found as well as a string.  A run must be at least 32 bytes
+and hold one 32-byte stretch of 6 or more distinct byte values (zeros, 0xFF
+and other near-constant fills are not counted on their own).
 
 What is scanned is the binary's initialized data: an ELF's allocated
 PROGBITS sections that aren't code, a .exe's initialized data sections, a
-.wasm's data segments; --all scans the whole file (the code and the debug
-information too).  The report says how many bytes, by the binary's section
-and symbol and by where the ROM has them (its module and splat's
-subsegment).  --max N exits 1 when more than N bytes are found (the gate
-after every link of a build from the extract: port/CMakeLists.txt).
+Mach-O's sections that are in the file and aren't code (each slice's, of a
+universal file), a .wasm's data segments; --all scans the whole file (the
+code and the debug information too).  The report says how many bytes, by the
+binary's section and symbol and by where the ROM has them (its module and
+splat's subsegment).  --max N exits 1 when more than N bytes are found (the
+gate after every link of a build from the extract: port/CMakeLists.txt).
 
 --objects DIR (a build directory) counts only the runs that are the build's
-own objects' data (*.o, *.obj under DIR), and lists the others apart: a
-library linked in (a sanitizer's runtime, a static libc) can have a table
-the game has too.
+own objects' data (*.o, *.obj under DIR: ELF, COFF, Mach-O or wasm), and
+lists the others apart: a library linked in (a sanitizer's runtime, a
+static libc) can have a table the game has too.
 """
 import argparse
 import bisect
@@ -132,6 +133,105 @@ class ImageNames:
 
 # ---- the binary's side -----------------------------------------------------
 
+# Mach-O (macOS): 32- and 64-bit, either byte order on disk
+MACHO_MAGICS = (b"\xcf\xfa\xed\xfe", b"\xce\xfa\xed\xfe", b"\xfe\xed\xfa\xcf", b"\xfe\xed\xfa\xce")
+MACHO_CPUS = {7: "i386", 0x01000007: "x86_64", 12: "arm", 0x0100000C: "arm64", 0x0200000C: "arm64_32",
+              18: "ppc", 0x01000012: "ppc64"}
+
+
+def fat_slices(d):
+    """A universal (fat) Mach-O's slices, [(file offset, size, cpu's
+    name)], or None (Java's class files share the magic number: a fat
+    file has a few slices, each inside the file)."""
+    if len(d) < 8 or d[:4] not in (b"\xca\xfe\xba\xbe", b"\xca\xfe\xba\xbf"):
+        return None
+    wide = d[3] == 0xBF
+    n, = struct.unpack_from(">I", d, 4)
+    ent = 32 if wide else 20
+    if not 0 < n <= 16 or 8 + n * ent > len(d):
+        return None
+    out = []
+    for i in range(n):
+        o = 8 + i * ent
+        if wide:
+            cpu, _, off, size = struct.unpack_from(">iiQQ", d, o)
+        else:
+            cpu, _, off, size = struct.unpack_from(">iiII", d, o)
+        if off + size > len(d) or d[off:off + 4] not in MACHO_MAGICS:
+            return None
+        out.append((off, size, MACHO_CPUS.get(cpu & 0xFFFFFFFF, "cpu%#x" % (cpu & 0xFFFFFFFF))))
+    return out
+
+
+def macho_parse(d, base=0):
+    """A Mach-O at BASE in D: (byte order, word size, its sections
+    [(segment, section, address, size, file offset in D, flags, the
+    segment's initial protection)], its symbols [(name, n_type, n_sect,
+    n_value)]); None if it isn't one."""
+    mg = d[base:base + 4]
+    if mg not in MACHO_MAGICS:
+        return None
+    e = "<" if mg[0] in (0xCF, 0xCE) else ">"
+    wide = mg in (b"\xcf\xfa\xed\xfe", b"\xfe\xed\xfa\xcf")
+    ncmds, = struct.unpack_from(e + "I", d, base + 16)
+    o = base + (32 if wide else 28)
+    secs, syms = [], []
+    symtab = None
+
+    def cstr(b, at):            # (16 bytes, NUL-padded, not always ended)
+        return b[at:at + 16].split(b"\0")[0].decode("latin-1")
+    for _ in range(ncmds):
+        cmd, size = struct.unpack_from(e + "II", d, o)
+        if cmd in (0x19, 0x1):                  # LC_SEGMENT_64, LC_SEGMENT
+            if cmd == 0x19:
+                _, _, _, _, _, prot, nsects = struct.unpack_from(e + "QQQQiiI", d, o + 24)
+                p, ent = o + 72, 80
+            else:
+                _, _, _, _, _, prot, nsects = struct.unpack_from(e + "IIIIiiI", d, o + 24)
+                p, ent = o + 56, 68
+            for k in range(nsects):
+                q = p + k * ent
+                sect, seg = cstr(d, q), cstr(d, q + 16)
+                if cmd == 0x19:
+                    addr, ssize, off = struct.unpack_from(e + "QQI", d, q + 32)
+                    flags, = struct.unpack_from(e + "I", d, q + 64)
+                else:
+                    addr, ssize, off = struct.unpack_from(e + "III", d, q + 32)
+                    flags, = struct.unpack_from(e + "I", d, q + 56)
+                secs.append((seg, sect, addr, ssize, base + off if off else 0, flags, prot))
+        elif cmd == 0x2:                        # LC_SYMTAB
+            symtab = struct.unpack_from(e + "IIII", d, o + 8)
+        o += size
+    if symtab:
+        symoff, nsyms, stroff, strsize = symtab
+        ent = 16 if wide else 12
+        strs = d[base + stroff:base + stroff + strsize]
+        for i in range(nsyms):
+            q = base + symoff + i * ent
+            if wide:
+                strx, ty, sect, _, value = struct.unpack_from(e + "IBBhQ", d, q)
+            else:
+                strx, ty, sect, _, value = struct.unpack_from(e + "IBBhI", d, q)
+            end = strs.find(b"\0", strx)
+            syms.append((strs[strx:end if end >= 0 else len(strs)].decode("latin-1"), ty, sect, value))
+    return e, 8 if wide else 4, secs, syms
+
+
+def macho_is_data(seg, flags, off, size):
+    """A Mach-O section of initialized data: in the file (not zerofill),
+    neither code nor debug information"""
+    return bool(off and size and flags & 0xFF not in (0x1, 0xC, 0x12)
+                and not flags & 0x80000400 and not flags & 0x02000000
+                and seg not in ("__DWARF", "__LINKEDIT"))
+
+
+def macho_member(path):
+    """An N_OSO's object: its file's name, or an archive member's
+    (lib.a(member.o))"""
+    if path.endswith(")") and "(" in path:
+        return path[path.rindex("(") + 1:-1]
+    return path
+
 class Binary:
     """The regions of a built file that hold initialized data, each
     (name, file offset, size, address), and its symbols where it has them.
@@ -166,6 +266,13 @@ class Binary:
         elif d[:2] == b"MZ":
             self.kind = "pe"
             self._pe()
+        elif d[:4] in MACHO_MAGICS:
+            self.kind = "mach-o"
+            self._macho(0, "", 0)
+        elif fat_slices(d) is not None:
+            self.kind = "mach-o (universal)"
+            for i, (off, size, cpu) in enumerate(fat_slices(d)):
+                self._macho(off, cpu + ":", i << 56)
         if all_ or not self.regions:
             self.regions = [("(file)", 0, len(d), None)]
             self.readonly = {}
@@ -375,6 +482,48 @@ class Binary:
                 elif v >> 12 == 10:
                     self.relocs.append((base + page + (v & 0xFFF), 8))
             o += bsize
+
+    def _macho(self, base, prefix, tag):
+        """A Mach-O (an executable or one slice of a universal file at
+        BASE): its sections of initialized data, its symbols, and the
+        static variables' objects from the debug map's stabs (ld64's, where
+        the objects had -g).  A slice's addresses get TAG in their top
+        byte, so that two slices' are told apart."""
+        m = macho_parse(self.data, base)
+        if m is None:
+            return
+        self.endian, self.word, secs, syms = m
+        for seg, sect, addr, size, off, flags, prot in secs:
+            if macho_is_data(seg, flags, off, size):
+                nm = "%s%s,%s" % (prefix, seg, sect)
+                self.regions.append((nm, off, size, addr | tag))
+                self.readonly[nm] = not prot & 2
+        fname = None
+        named = []
+        for name, ty, sect, value in syms:
+            if ty & 0xE0:                       # a stab: the debug map
+                if ty == 0x66:                  # N_OSO: an object's path
+                    fname = macho_member(name)
+                elif ty == 0x64 and not name:   # N_SO "": its end
+                    fname = None
+                elif ty == 0x26 and fname and value:    # N_STSYM: a static variable
+                    self.locals.append((value | tag, fname))
+                continue
+            if ty & 0x0E != 0x0E or not 0 < sect <= len(secs) or not value:     # N_SECT
+                continue
+            s = secs[sect - 1]
+            name = name[1:] if name.startswith("_") else name
+            named.append((value, s[2] + s[3], name))
+            if ty & 1 and macho_is_data(s[0], s[5], s[4], s[3]):       # N_EXT, in data
+                self.globals.append((value | tag, name))
+        # (no sizes: each runs to the next symbol, or its section's end)
+        named.sort()
+        for i, (value, end, name) in enumerate(named):
+            nxt = named[i + 1][0] if i + 1 < len(named) else end
+            self.symbols.append((value | tag, max(min(nxt, end) - value, 0), name))
+        self.symbols.sort()
+        self.globals.sort()
+        self.global_addrs = [s[0] for s in self.globals]
 
     def page_class(self, addr, size):
         """An ELF's pages under [addr, addr + size): 'rw' if every one is
@@ -593,6 +742,10 @@ def object_data(path):
                 out.append(f[p:p + n])
             p += n
         return out
+    if f[:4] in MACHO_MAGICS:
+        _, _, secs, _ = macho_parse(f)
+        return [f[off:off + size] for seg, _, _, size, off, flags, _ in secs
+                if macho_is_data(seg, flags, off, size)]
     machine, nsec = struct.unpack_from("<HH", f, 0)
     if machine in (0x14C, 0x8664, 0xAA64, 0x1C4):
         sec = 20 + struct.unpack_from("<H", f, 16)[0]
@@ -621,8 +774,20 @@ def file_key(name):
 
 
 def object_globals(path):
-    """The global data symbols an ELF relocatable defines (COMMON too)"""
+    """The global data symbols an ELF relocatable or a Mach-O object
+    defines (COMMON too)"""
     f = open(path, "rb").read()
+    if f[:4] in MACHO_MAGICS:
+        _, _, secs, syms = macho_parse(f)
+        out = []
+        for name, ty, sect, value in syms:
+            if ty & 0xE0 or not ty & 1:         # a stab; not N_EXT
+                continue
+            s = secs[sect - 1] if 0 < sect <= len(secs) else None
+            in_data = ty & 0x0E == 0x0E and s is not None and macho_is_data(s[0], s[5], s[4], s[3])
+            if in_data or (ty & 0x0E == 0 and value):  # N_SECT in data; N_UNDF with a size: common
+                out.append(name[1:] if name.startswith("_") else name)
+        return out
     if f[:4] != b"\x7fELF":
         return []
     e = "<" if f[5] == 1 else ">"

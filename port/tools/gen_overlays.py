@@ -10,7 +10,9 @@ N64) and calls its entry (func_ovlBB_EE_80043000).  Its C is compiled with
 port/include/port_ovl_section.h, which puts its variables (function-scope
 statics too) in sections of their own, whose bounds are the linker's
 __start_/__stop_ names: fuse64d_<overlay> and fuse64b_<overlay> on ELF,
-fuse64o_<overlay> (both kinds) in WebAssembly.
+fuse64o_<overlay> (both kinds) in WebAssembly; on Mach-O (16-byte section
+names, in a segment) __DATA's f64d_BB_EE and f64b_BB_EE, whose bounds are
+the linker's section$start$ and section$end$ names.
 """
 import os
 import sys
@@ -26,9 +28,16 @@ def main():
     for n in ovls:
         bb, ee = n[4:6], n[7:9]
         o.append("void *func_ovl%s_%s_80043000(void);" % (bb, ee))
+        o.append("#ifdef __APPLE__")
+        for k in "db":
+            for e, w in (("lo", "start"), ("hi", "end")):
+                o.append("extern char ovl%s_%s_%s[] __asm(\"section$%s$__DATA$f64%s_%s_%s\");"
+                         % (k, n, e, w, k, bb, ee))
+        o.append("#else")
         for k in "dbo":
             o.append("extern char __start_fuse64%s_%s[] __attribute__((weak));" % (k, n))
             o.append("extern char __stop_fuse64%s_%s[] __attribute__((weak));" % (k, n))
+        o.append("#endif")
     o.append("")
     o.append("const PortOverlay port_overlays[] = {")
     for n in ovls:
@@ -37,6 +46,9 @@ def main():
         o.append("#ifdef __EMSCRIPTEN__")
         o.append("    { \"%s\", 0x%s, %d, func_ovl%s_%s_80043000, __start_fuse64o_%s, __stop_fuse64o_%s, 0, 0 },"
                  % (n, bb, int(ee, 10), bb, ee, n, n))
+        o.append("#elif defined(__APPLE__)")
+        o.append("    { \"%s\", 0x%s, %d, func_ovl%s_%s_80043000, ovld_%s_lo, ovld_%s_hi, ovlb_%s_lo, ovlb_%s_hi },"
+                 % (n, bb, int(ee, 10), bb, ee, n, n, n, n))
         o.append("#else")
         o.append("    { \"%s\", 0x%s, %d, func_ovl%s_%s_80043000, __start_fuse64d_%s, __stop_fuse64d_%s, "
                  "__start_fuse64b_%s, __stop_fuse64b_%s }," % (n, bb, int(ee, 10), bb, ee, n, n, n, n))

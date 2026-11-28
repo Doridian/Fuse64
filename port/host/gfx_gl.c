@@ -45,11 +45,15 @@
  *   or read back (the picture alone).
  *
  * Its context is offscreen (EGL, surfaceless), or the window's (video.c),
- * where the picture is shown.
+ * where the picture is shown.  macOS has no EGL (nor has libepoxy's
+ * header there): only the window's, so no headless --renderer gl.
  */
 #ifdef PORT_HAVE_GL
 
+#if !defined(__APPLE__) && __has_include(<epoxy/egl.h>)
+#define PORT_GL_EGL
 #include <epoxy/egl.h>
+#endif
 #include <epoxy/gl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -63,6 +67,7 @@
 
 /* ---- the context --------------------------------------------------------------------------- */
 
+#ifdef PORT_GL_EGL
 static EGLDisplay egl_dpy = EGL_NO_DISPLAY;
 static EGLContext egl_ctx = EGL_NO_CONTEXT;
 
@@ -103,6 +108,12 @@ static int egl_up(void) {
     host_log("gl: %s, %s\n", (const char *)glGetString(GL_RENDERER), (const char *)glGetString(GL_VERSION));
     return 1;
 }
+#else
+static int egl_up(void) {
+    host_log("gl: no EGL here: OpenGL only in the window\n");
+    return 0;
+}
+#endif
 
 /* ---- the images: the GPU's copies, read back where something reads ----------------------------- */
 

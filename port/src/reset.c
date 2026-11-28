@@ -29,6 +29,14 @@ extern char __start_fuse64r[] __attribute__((weak)), __stop_fuse64r[] __attribut
 #define DATA_HI __stop_fuse64r
 #define BSS_LO ((char *)0)
 #define BSS_HI ((char *)0)
+#elif defined(__APPLE__)
+/* (Mach-O has no __start_/__stop_ names, nor a weak undefined name in an
+   executable; port_reset_section.h is ELF's alone: no soft reset, as
+   where the threads are host threads, which macOS's are) */
+#define DATA_LO ((char *)0)
+#define DATA_HI ((char *)0)
+#define BSS_LO ((char *)0)
+#define BSS_HI ((char *)0)
 #else
 extern char __start_fuse64rd[] __attribute__((weak)), __stop_fuse64rd[] __attribute__((weak));
 extern char __start_fuse64rb[] __attribute__((weak)), __stop_fuse64rb[] __attribute__((weak));

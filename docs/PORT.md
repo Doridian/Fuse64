@@ -248,6 +248,9 @@ changes in the build:
   the save in `~/Library/Application Support/Fuse64` (SDL's).
 - libepoxy is the runner's Homebrew bottle, built for that macOS (26):
   macOS 11 is what our code and SDL2 are built for, not tried.
+- **The link** is LLVM's `ld64.lld` (Homebrew's `lld`, which CMake
+  insists on there): Apple's own (ld-prime) asserts "custom section index
+  overflow" on the overlays' 190 sections (port_ovl_section.h).
 
 Checked from Linux (2026-11-27), with zig 0.17 (`port/tools/cross-macos.cmake`:
 zig carries macOS's libc headers and libSystem's stubs): the headless

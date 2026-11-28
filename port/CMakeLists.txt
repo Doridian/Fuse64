@@ -523,6 +523,16 @@ endif()
 if(HAVE_SWAPCONTEXT)
     target_compile_definitions(fuse64 PRIVATE PORT_HAVE_UCONTEXT)
 endif()
+if(APPLE AND NOT PORT_ZIG_TARGET)
+    # Apple's linker (ld-prime) gives up on the overlays' sections, two for
+    # each of 95 (port_ovl_section.h): "custom section index overflow".
+    # LLVM's ld64.lld links them (Homebrew's lld)
+    find_program(PORT_LD64_LLD ld64.lld HINTS /opt/homebrew/opt/lld/bin /usr/local/opt/lld/bin)
+    if(NOT PORT_LD64_LLD)
+        message(FATAL_ERROR "macOS: the link needs ld64.lld (brew install lld); Apple's ld can't take the overlays' sections")
+    endif()
+    target_link_options(fuse64 PRIVATE --ld-path=${PORT_LD64_LLD})
+endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT CMAKE_POSITION_INDEPENDENT_CODE)
     # a static executable's image is linked where no N64 physical address
     # (below 8 MiB) is (port/src/memory.c tells them apart)

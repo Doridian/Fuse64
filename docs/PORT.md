@@ -2395,12 +2395,14 @@ battle every 100):
 | us reset | 3 of 3 | 0, 0% | the same | the same (12 of 12) |
 | us warp-boss (the after-image) | 50 of 50 | 0, 0% | the same | the same (5 of 5) |
 | us warp-stage | 50 of 50 | 0, 0% | the same | the same (5 of 5) |
+| eu battle | 60 of 60 | 0, 0% | the same | the same (6 of 6) |
+| jp battle | 60 of 60 | 0, 0% | the same | the same (6 of 6) |
 
 test.py's legal, menus and battle with `--renderer gl` give soft's
 references (every retrace's picture, the sound, the save, the digest),
-with each of the three ways of reading the memory (barriers on radeonsi,
-copies with `PORT_GL_MEM=copy`, the fetch on llvmpipe). RDRAM outside the
-images once differed in host pointers the game's structures keep (the
+in us with each of the three ways of reading the memory (barriers on
+radeonsi, copies with `PORT_GL_MEM=copy`, the fetch on llvmpipe), and on
+x86-64; eu's and jp's battle with barriers. RDRAM outside the images once differed in host pointers the game's structures keep (the
 tasks' saved stack pointers, 80580.c's sound records), which depended on
 the host's heap the GL driver shares; they are in arenas of their own
 ("The host's blocks the game keeps").

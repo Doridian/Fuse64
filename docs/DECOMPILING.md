@@ -146,9 +146,11 @@ too. A position where two or more structure types meet fails `--check`
 unless it is in `ALLOW_E` with the reason: the task's argument and
 7D840's `Gfx` for 426E0's `Gfx_80225840`. The other differences (an `s32` for a `u32` or a pointer, a `void *` for a
 structure's pointer, a `void` return for an `s32`, fewer parameters:
-about 400) are counted and listed with `-v`; several are what a match or
-the port needs (PORT_RET, a halfword argument), and proto_check.py
-checks the ones that matter where pointers are 8 bytes.
+309 in us, from about 400 before "Prototypes", below) are counted and listed with `-v`, and
+`--check` fails when there are more than `E_OTHER_MAX` (per version);
+several are what a match or the port needs (PORT_RET, a halfword
+argument), and proto_check.py checks the ones that matter where pointers
+are 8 bytes.
 
 The overlays' shared structures are in `src/overlays/common/types.h`,
 each under the name the first overlay that has it gave it (its address
@@ -230,6 +232,60 @@ and 0B_05's menu tables are 995C0's `UnkStruct_8027F0C4` (0B_01's and
 and 0F_04's switch state, 0F_01/02/04's route step, the 0E and 17 tasks'
 tile argument, 0F_07's and 0F_10's task argument and 17_07's and 17_10's
 model.
+
+## Prototypes
+
+A main_code or boot_code function that other files call is declared once,
+in its object's header `include/<object>.h` (`include/48600.h` for
+`src/48600.c`'s), with the definition's signature (its PORT_IP, PORT_RET
+and parameter names as written there). The callers include the header in
+place of their own `extern` prototypes, and the defining file includes it
+too, so that the compiler checks the definition against it. A header
+includes the topic headers its types need (`model.h`, `<ultralib/ultra64.h>`
+for an `OS...` type: in `<>`, so that the port's `port/include/sdk` comes
+first). A file's declarations of its own static functions, and of global
+ones only it calls, stay in the file. `include/functions.h` (which common.h
+includes everywhere) is left with the one declaration of 87190's
+func_8026CE28/func_8026CCBC, 426E0's func_8022A1E8/func_8022A6C4 and
+main_code's ZeroJump stubs (asm).
+
+**48600 keeps its declarations.** IDO lays out 48600's function statics
+(`static f32 *D_802A5560;` in a function) in `.bss` in an order that
+follows the order the functions it calls are first declared in: one
+prototype of a called function moved up a few lines moves them (an unused
+prototype doesn't). So 48600 doesn't include the headers, and its
+prototypes stay where they are; moving functions.h's four would move them
+too (functions.h comes before 48600's own). No other file has shown it.
+
+**What is left in the files.** A caller keeps its own declaration where
+it can't take the definition's:
+- an `s8`/`s16` parameter (func_80227BAC, func_80270C24) or a narrow return
+  (func_8026DC74's `u8`) that the caller declares as an int: with the
+  definition's the caller narrows the value itself, and the code changes;
+- a `void` definition whose callers read its value (`$v0`: func_80239094,
+  func_8022979C, 48600's func_80231274, ...);
+- a definition whose parameter is m2c's placeholder (`u8 *`, `f32 *`:
+  48600's and 8A7A0's objects) where callers pass a structure or hold the
+  object in an integer, or the reverse (func_8022F4AC's and
+  func_8022F550's `UnkStructA *` that m2c callers keep in an `s32`):
+  where every caller compiles the same, the definition takes the structure
+  (48600's func_80230914, func_802311E8, func_802312AC, func_802313B0,
+  func_802313DC, func_80231408, func_80232DB4 and func_80230CB4's parent
+  take an `UnkStructA *`; the m2c callers that hold the object in a `u8 *`
+  cast it at the call), the rest is still to do;
+- a type local to the defining file (41FD0's `UnkStruct_800BD5B0`, 85A10's,
+  926A0's `Rec926`), a definition or a declaration under `#if`
+  (func_802268F4's TARGET_PC parameter), and the fakes that need a
+  declaration of their own (1050's `s64 func_80000698`, 7D840's
+  func_8026437C with gbi.h's `Gfx`).
+
+`tools/structs.py -v` lists them ((e)'s "other" differences, with the
+overlays' ZeroJump stubs, which are still declared in each overlay and
+counted against their targets: their header is for later). The headers
+were made by `scratch/protos/gen.py` (a plan from clang's AST: each
+declaration of a function against its definition; the ones that differ
+taken one group at a time, with the ROM's objects compared and the port
+built at `-m32` and x86-64).
 
 ## NON_MATCHING drafts
 

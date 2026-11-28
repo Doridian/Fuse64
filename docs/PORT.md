@@ -181,6 +181,55 @@ that is behind doesn't hold the tab. Checked in headless Chromium
 (scratch: a Playwright script) through the legal screen, the opening and
 the attract demos at full speed.
 
+### Packages
+
+```
+cmake -S port -B build-port-pkg -G Ninja -DCMAKE_C_COMPILER=clang   # x86-64, with SDL2
+cmake --build build-port-pkg --target appimage                      # build-port-pkg/fuse64-us-x86_64.AppImage
+```
+
+`port/tools/appimage.py BUILD` (the `appimage` target), after
+DozerEncore's package: linuxdeploy makes the AppDir from the executable,
+`port/res/fuse64.desktop` and `fuse64.png` (the port's own icon), with
+`LICENSE` and `NOTICES.md` in `usr/share/doc/fuse64`; SDL2 and libepoxy
+and what they link go in, libGL and the system's base libraries stay the
+host's (linuxdeploy's exclude list). Where SDL2 is sdl2-compat, which
+loads SDL3 by name at run time, `libSDL3.so.0` is added by hand. The
+script refuses a cross, headless, sanitized, scattered or unstripped
+build; it runs `rom_free_check.py --max 0` on the executable before
+linuxdeploy and on the AppDir's copy after it (its patchelf and strip
+rewrite the file), then the AppImage, extracted, with `--help` and, with
+the version's ROM, 60 retraces headless. linuxdeploy is `--linuxdeploy`,
+`$LINUXDEPLOY`, the PATH's, or its continuous release fetched once into
+`~/.cache/fuse64`; it runs extracted (`APPIMAGE_EXTRACT_AND_RUN`), so
+building needs no FUSE. The AppImage needs the glibc it was built
+against or a newer one, so a package for others is built on an old
+distribution (DozerEncore's on Ubuntu 22.04). The checks before
+linuxdeploy have run (us, 2026-11-27); linuxdeploy itself hasn't run
+here yet ("What's left").
+
+**The ROM** (`port/host/romfind.c`, DozerEncore's): a package is
+started from its icon, with no arguments and no telling what the working
+directory is. With no ROM on the command line, none by the default's
+name (`baserom.<v>.z64`) in the working directory, and a window to come,
+the port takes the ROM it was given before (`rom-path.<v>.txt` in the
+player's data directory, `SDL_GetPrefPath`: `~/.local/share/Fuse64`,
+`%APPDATA%\Fuse64`, `~/Library/Application Support/Fuse64`), or asks
+with the system's file dialog (Windows' open dialog, osascript's `choose
+file` on macOS, zenity or kdialog on Linux), or, with none of those, a
+window of its own that takes the ROM dropped on it (what it wants in its
+title: there is no font in the port). A ROM is taken only if it is this
+version's and gives the build its data (`host_rom_fill_check`: the bytes
+the strip took out, by their checksum, nothing written); another is
+refused with a message box and it asks again. The save then goes in the
+data directory too, unless `--save-dir` says otherwise. A fatal error
+while finding or loading the ROM is also shown in a message box. Headless
+runs, and runs given a ROM, are as before. Checked with a scripted
+zenity, SDL's offscreen video and a data directory of its own (us): the
+eu ROM refused and asked again, a `.v64` taken and kept, the next run
+taking it without a dialog, a cancelled dialog the fatal message, a ROM
+on the command line no dialog and the save in the working directory.
+
 ## Testing
 
 `port/tools/test.py run BUILD` runs the build headless and deterministic
@@ -1338,6 +1387,19 @@ the seven, x86-64 and jp `legal`, the `.wasm` `legal`'s 300 retraces
 under node). The strip also checks that the code image is the build's
 version's (`--version`).
 
+The other builds (us, 2026-11-27, `legal` and `rom_free_check.py --max 0`
+on each): ASan and UBSan on x86-64 (66,696 bytes taken out; ASan's own
+32-byte table left, which `--objects` doesn't count), the scattered check
+build (seed 1, 66,676; no report), Windows i386 and x64 by zig (77,140
+and 68,768, under wine), big-endian MIPS by zig under qemu (75,084): all
+`legal` as the reference, nothing left. Three of them needed fixes: the
+scattered layout's copy of the asm data ran before the fill
+(`port_scatter_copy` now runs after it), ASan's start read a table the
+strip had zeroed (`--objects`, above), and the Windows builds' gameplay
+digest had CRs (written in binary mode now). The zig cross builds have
+no OpenGL renderer (the host's libepoxy had put glibc's headers on the
+mips build's command line).
+
 Not counted, and so left:
 
 - **Shorter runs.** At 16 bytes the check finds 7.7 K more on i386, most
@@ -1358,8 +1420,8 @@ Not counted, and so left:
   texture load's commands (`E8000000 ... F0000000 073FC000`, the gbi
   macros' bytes) that every model in bank 0x18 has too.
 - **macOS**: no Mach-O reader in the strip, so no strip there yet.
-- **Windows**: the strip reads a PE (sections, base relocations) and the
-  fill uses VirtualProtect, but no Windows build has run stripped yet.
+- **Windows** ran stripped under wine only (`legal`, i386 and x64), not
+  on Windows itself.
 
 ### Memory
 
@@ -2707,8 +2769,11 @@ digest") and the wait for the NMI in 6BBE0.c ("The reset button").
   Corps' "Packages") and a hosted page: after 64-bit, with SDL in the
   Windows cross build. Their first step is done: the executable and the
   `.wasm` carry none of the code image's runs of 32 bytes or more, and
-  fill them from the player's ROM ("The ROM's data"). Left there: a
-  Mach-O for macOS, a stripped Windows build run, the shorter runs.
+  fill them from the player's ROM ("The ROM's data"), and the AppImage's
+  script and the ROM finder are in ("Packages"). Left there: the
+  AppImage itself built and tried (its linuxdeploy step hasn't run
+  here), on an old distribution for its glibc; a Mach-O for macOS; the
+  `.exe` with SDL; the shorter runs.
 - **Renderer**: checked task by task against angrylion and the game's
   microcode ("Graphics": `gfx_ref.py`); the microcode runs on the port's
   RSP interpreter, so every task's RDP commands are the N64's, and with

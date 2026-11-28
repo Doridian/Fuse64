@@ -518,3 +518,11 @@ if(PORT_ROM_FREE AND NOT APPLE)
             --max 0
         VERBATIM)
 endif()
+# the Linux package (docs/PORT.md, "Packages"): `cmake --build BUILD --target
+# appimage` makes BUILD/fuse64-<version>-<arch>.AppImage (tools/appimage.py:
+# linuxdeploy, fetched once into ~/.cache/fuse64 if it isn't on the PATH)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT CMAKE_CROSSCOMPILING AND NOT EMSCRIPTEN)
+    add_custom_target(appimage
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/appimage.py ${CMAKE_CURRENT_BINARY_DIR}
+        DEPENDS fuse64 USES_TERMINAL VERBATIM)
+endif()

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Fuse64
+Comment=A PC port of Bomberman 64 (needs your own ROM)
+Exec=fuse64 %f
+Icon=fuse64
+Categories=Game;
+Terminal=false

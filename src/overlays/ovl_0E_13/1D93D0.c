@@ -37,22 +37,6 @@ typedef struct {
     /* 0x0C */ f32 unkC;
 } UnkStruct_ovl0E_13_800469F8;
 
-/* UnkStructA_40 with the pointer at 0x48 */
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (structs.h's UnkStructA_40_48_4: its animation) */
-    /* 0x04 */ f32 unk4;
-} UnkStruct_ovl0E_13_48_4;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[4];
-    /* 0x04 */ UnkStruct_ovl0E_13_48_4 *unk4;
-} UnkStruct_ovl0E_13_48;
-
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[0x48];, u8 unk0[0x3C]; void *unk3C; void *unk40; void *unk44;)
-    /* 0x48 */ UnkStruct_ovl0E_13_48 *unk48;
-} UnkStruct_ovl0E_13_40;
-
 void func_ovl0E_13_800454A8(s32);
 void func_ovl0E_13_800454C0(s32);
 f32 func_ovl0E_13_800454D0(void);
@@ -665,7 +649,7 @@ void func_ovl0E_13_80044008(void) {
 #include "overlays/common/angle.h"
 
 void func_ovl0E_13_80043E54(void) {
-    ((UnkStruct_ovl0E_13_40 *) D_ovl0E_13_80046800[0].unk0->unk40)->unk48->unk4->unk4 =
+    ((UnkStructA_40 *) D_ovl0E_13_80046800[0].unk0->unk40)->unk48->unk4->unk4 =
         func_ovl0E_13_80045BE8(D_ovl0E_13_80046800[0].unk0->unk40, 0) - 0.001f;
 }
 

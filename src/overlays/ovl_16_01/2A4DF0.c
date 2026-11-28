@@ -8,26 +8,6 @@
  * messages kept (func_ovl16_01_80043020).
  */
 
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (structs.h's UnkStructA_40_48_4: its animation) */
-    /* 0x04 */ f32 unk4;
-} UnkStruct_ovl16_01_800436B0_4;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[4];
-    /* 0x04 */ UnkStruct_ovl16_01_800436B0_4 *unk4;
-} UnkStruct_ovl16_01_800436B0_48;
-
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[0x48];, u8 unk0[0x3C]; void *unk3C; void *unk40; void *unk44;)
-    /* 0x48 */ UnkStruct_ovl16_01_800436B0_48 *unk48;
-} UnkStruct_ovl16_01_800436B0_40;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[0x40];
-    /* 0x40 */ UnkStruct_ovl16_01_800436B0_40 *unk40;
-} UnkStruct_ovl16_01_800436B0;
-
 void func_ovl16_01_80043D38(const char *, ...);
 void func_ovl16_01_80044068(s32);
 void func_ovl16_01_80044080(s32);
@@ -176,7 +156,7 @@ void func_ovl16_01_8004363C(UnkStructA *arg0) {
     }
 }
 
-void func_ovl16_01_800436B0(UnkStruct_ovl16_01_800436B0 *arg0) {
+void func_ovl16_01_800436B0(UnkStructA *arg0) {
     arg0->unk40->unk48->unk4->unk4 = func_ovl16_01_80044740(arg0->unk40, 0) - 0.001f;
 }
 

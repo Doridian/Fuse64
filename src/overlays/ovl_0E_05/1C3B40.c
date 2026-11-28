@@ -6,23 +6,6 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-/* what UnkStructA_40's 0x48 points to (func_ovl0E_05_8004345C) */
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[4];, void *unk0;) /* (structs.h's UnkStructA_40_48_4: its animation) */
-    /* 0x04 */ f32 unk4;
-} UnkStruct_ovl0E_05_48_4;
-
-typedef struct {
-    /* 0x00 */ u8 unk0[4];
-    /* 0x04 */ UnkStruct_ovl0E_05_48_4 *unk4;
-} UnkStruct_ovl0E_05_48;
-
-/* UnkStructA_40 with the pointer at 0x48 */
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[0x48];, u8 unk0[0x3C]; void *unk3C; void *unk40; void *unk44;)
-    /* 0x48 */ UnkStruct_ovl0E_05_48 *unk48;
-} UnkStruct_ovl0E_05_40;
-
 /* what func_ovl0E_05_80044DA8 returns */
 typedef struct {
     /* 0x00 */ u8 unk0[0x10];
@@ -520,7 +503,7 @@ void func_ovl0E_05_80043860(void) {
 #undef STATICS_PART
         func_ovl0E_05_80045658(D_ovl0E_05_8004615C[i].unk0, 0x02000000);
         func_ovl0E_05_80045660(D_ovl0E_05_8004615C[i].unk0, 0x80000);
-        if (((UnkStruct_ovl0E_05_40 *) D_ovl0E_05_8004615C[i].unk0->unk40)->unk48->unk4->unk4 != 0.0f) {
+        if (((UnkStructA_40 *) D_ovl0E_05_8004615C[i].unk0->unk40)->unk48->unk4->unk4 != 0.0f) {
             func_ovl0E_05_80044918("init time error\n");
             while (TRUE) {
             }
@@ -592,7 +575,7 @@ void func_ovl0E_05_80043618(void) {
 #include "overlays/common/angle.h"
 
 void func_ovl0E_05_8004345C(UnkStruct_ovl0C_01_8004A54C *arg0) {
-    ((UnkStruct_ovl0E_05_40 *) arg0->unk0->unk40)->unk48->unk4->unk4 = func_ovl0E_05_80045398(arg0->unk0->unk40, 0) - 1.0f;
+    ((UnkStructA_40 *) arg0->unk0->unk40)->unk48->unk4->unk4 = func_ovl0E_05_80045398(arg0->unk0->unk40, 0) - 1.0f;
 }
 
 void func_ovl0E_05_8004343C(void) {
@@ -645,7 +628,7 @@ static void func_ovl0E_05_80043274(void) {
 void func_ovl0E_05_80043100(void) {
     s32 flags;
 
-    if (((UnkStruct_ovl0E_05_40 *) D_ovl0E_05_8004615C[0].unk0->unk40)->unk48->unk4->unk4 == 0.0f) {
+    if (((UnkStructA_40 *) D_ovl0E_05_8004615C[0].unk0->unk40)->unk48->unk4->unk4 == 0.0f) {
         D_ovl0E_05_80046264->unk30 = 1;
         D_ovl0E_05_80046264->unk34 = 50.0f;
         D_ovl0E_05_80046264->unk38 = 50.0f;

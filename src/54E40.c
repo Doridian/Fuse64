@@ -12,12 +12,9 @@
  * the text items and the task table D_802A0CF4 (eu: the D_802A0958 and
  * D_802A09B8 times). Its .bss (0x802AC5D0-0x802AC880, the 16-byte
  * boundaries after D_802AC5C0..CC, which 54BE0 sets, and before 5E090's
- * D_802AC880) is its own too, but the C reaches most of it through
- * m2c's overlapping structs and arrays (D_802AC610, D_802AC660,
- * D_802AC770), so it stays extern (asm), except D_802AC7A0[10],
- * D_802AC7C8 and D_802AC7CC: those are defined here
- * (0x802AC7A0-0x802AC7D0, no padding) and that .bss is placed in
- * data_split.txt.
+ * D_802AC880) is its own too, all defined here: the names the asm had
+ * inside D_802AC610 and D_802AC660 are their fields, and D_802AC780 is
+ * its own array after D_802AC770 (at its definition). The cut reaches it.
  *
  * Written from m2c's functions in the reverse of the ROM's order (IDO
  * -O3 emits last to first), with the fixes the -O3 build needs. It is one
@@ -470,34 +467,71 @@ extern s32 D_800BE824;
 extern u8 D_800BE830[PORT_SIZE(0x18)]; /* 0x2C flags, a word per 8 */
 extern s32 D_802A0038;
 extern s32 D_802AC5CC;
-extern s32 D_802AC5D0;
-extern s32 D_802AC5D4;
-extern s32 D_802AC5D8;
-extern s32 D_802AC5DC;
-extern s32 D_802AC5E0;
-extern s32 D_802AC5E4;
-extern s32 D_802AC5E8;
-extern s32 D_802AC5EC;
-extern s32 D_802AC5F0;
-extern f32 D_802AC5F4;
-extern f32 D_802AC5F8;
-extern f32 D_802AC5FC;
-extern f32 D_802AC600;
-extern s32 D_802AC604;
-extern s32 D_802AC608;
-extern UnkStruct_802AC610 D_802AC610;
-extern s32 D_802AC624;
-extern s32 D_802AC628;
-extern UnkStruct_802AC660 D_802AC660;
-extern u8 D_802AC670[];
-extern u8 D_802AC6A0[];
-extern u8 D_802AC714[];
-extern s32 D_802AC758;
-extern s32 D_802AC75C;
-extern s32 D_802AC760;
-extern PORT_RET(s32, void) (*D_802AC768)(void *); /* 6BBE0.c's func_8025D1AC and func_8025D008: void */
-extern s32 D_802AC770[10];
-extern u8 D_802AC780[];
+/* .bss (0x802AC5D0-0x802AC880, from the 16-byte boundary after 54BE0's
+ * D_802AC5C0..CC to 5E090's D_802AC880), in address order: IDO lays it out
+ * in the order it first sees each variable, and puts the arrays and
+ * structs 8-aligned (the words before D_802AC610, D_802AC770, D_802AC7F8
+ * and D_802AC820 are that padding). */
+s32 D_802AC5D0;
+s32 D_802AC5D4;
+s32 D_802AC5D8;
+s32 D_802AC5DC;
+s32 D_802AC5E0;
+s32 D_802AC5E4;
+s32 D_802AC5E8;
+s32 D_802AC5EC;
+s32 D_802AC5F0;
+f32 D_802AC5F4;
+f32 D_802AC5F8;
+f32 D_802AC5FC;
+f32 D_802AC600;
+s32 D_802AC604;
+s32 D_802AC608;
+UnkStruct_802AC610 D_802AC610;
+UnkStruct_802AC660 D_802AC660;
+s32 D_802AC758;
+s32 D_802AC75C;
+s32 D_802AC760[2]; /* one per player of two */
+PORT_RET(s32, void) (*D_802AC768)(void *); /* 6BBE0.c's func_8025D1AC and func_8025D008: void */
+#ifdef TARGET_PC
+s32 D_802AC770[10];
+#define D_802AC780 ((u8 *) &D_802AC770[4])
+#else
+/* func_80242270's ten digits run on from D_802AC770 into D_802AC780, which
+ * func_8023CC54 fills with digits of its own: it reaches D_802AC780 by its
+ * own address, which as &D_802AC770[4] IDO would fold into its offsets */
+s32 D_802AC770[4];
+s32 D_802AC780[6];
+#endif
+s32 D_802AC798;
+s32 D_802AC7A0[10];
+s32 D_802AC7C8;
+s32 D_802AC7CC;
+void *D_802AC7D0;
+void *D_802AC7D4;
+s32 D_802AC7D8;
+void *D_802AC7DC;
+void *D_802AC7E0;
+s32 D_802AC7E4;
+s32 D_802AC7E8;
+s32 D_802AC7EC;
+s32 D_802AC7F0;
+UnkStruct_8023FD08 *D_802AC7F8[5];
+s32 D_802AC80C;
+s32 D_802AC810;
+s32 D_802AC814;
+void *D_802AC818;
+PORT_RET(u8, u8 *) D_802AC820[PORT_HOST(8, 2)]; /* (two objects: pointers) */
+PORT_RET(u8, u8 *) D_802AC828[PORT_HOST(0x28, 10)]; /* (two players' five objects: pointers) */
+s32 D_802AC850;
+s32 D_802AC854;
+u32 D_802AC858[4]; /* one per player (id 0-3) */
+#define AC858(i) (D_802AC858[i])
+u8 D_802AC868[5 * 4]; /* an s32 per entry */
+/* names the N64 has inside those variables are their fields */
+#define D_802AC624 (D_802AC610.unk14)
+#define D_802AC628 (D_802AC610.unk18)
+#define D_802AC714 ((u8 *) D_802AC660.unkB4)
 #ifdef TARGET_PC
 /* names the N64 has inside other variables are their fields here, so the
  * port doesn't depend on where those variables are (docs/PORT.md, "The
@@ -513,10 +547,6 @@ extern u8 D_800BCFE8[];
 #undef D_800AF06C
 #undef D_800AF0B0
 #undef D_800BD000
-#undef D_802AC624
-#undef D_802AC628
-#undef D_802AC714
-#undef D_802AC780
 #define PLAYER_S32_68(i) (*(s32 *) &PLAYERS[i].pad50[0x68 - 0x50])
 #define D_800AEE04 (PLAYERS[0].unk14)
 #define D_800AEE14 (PLAYERS[0].unk24)
@@ -528,42 +558,7 @@ extern u8 D_800BCFE8[];
 #define D_800AF06C (PLAYERS[3].unk24)
 #define D_800AF0B0 PLAYER_S32_68(3)
 #define D_800BD000 ((u8 *) &((Port_800BCFE8 *) D_800BCFE8)[0].unk18)
-#define D_802AC624 (D_802AC610.unk14)
-#define D_802AC628 (D_802AC610.unk18)
-#define D_802AC714 ((u8 *) D_802AC660.unkB4)
-#define D_802AC780 ((u8 *) &D_802AC770[4])
 #endif
-extern s32 D_802AC798;
-s32 D_802AC7A0[10];
-s32 D_802AC7C8;
-s32 D_802AC7CC;
-extern void *D_802AC7D0;
-extern void *D_802AC7D4;
-extern s32 D_802AC7D8;
-extern void *D_802AC7DC;
-extern void *D_802AC7E0;
-extern s32 D_802AC7E4;
-extern s32 D_802AC7E8;
-extern s32 D_802AC7EC;
-extern s32 D_802AC7F0;
-extern UnkStruct_8023FD08 *D_802AC7F8[];
-extern s32 D_802AC80C;
-extern s32 D_802AC810;
-extern s32 D_802AC814;
-extern void *D_802AC818;
-extern PORT_RET(u8, u8 *) D_802AC820[]; /* (two objects: pointers) */
-extern PORT_RET(u8, u8 *) D_802AC828[]; /* (two players' five objects: pointers) */
-extern s32 D_802AC850;
-extern s32 D_802AC854;
-#ifdef TARGET_PC
-/* one per player (id 0-3) */
-extern u32 D_802AC858[4];
-#define AC858(i) (D_802AC858[i])
-#else
-extern u32 D_802AC858;
-#define AC858(i) ((&D_802AC858)[i])
-#endif
-extern u8 D_802AC868[PORT_SIZE(5 * 4)]; /* an s32 per entry */
 
 void func_8023A640(void);
 void func_8023A68C(void);
@@ -1442,7 +1437,7 @@ loop_3:
             for (i = 0; i < lives - PORT_FIELD(obj, u8 *, 0x6D, Port_80288040, unk6C[1]); i++) {
                 func_8022FC90(((u8 *(*)[5]) D_802AC828)[id][lives - 1 - i]);
             }
-            (&D_802AC760)[id] = 0;
+            D_802AC760[id] = 0;
             break;
         }
         if (((PORT_FIELD(obj, u8 *, 0x7A, Port_80288040, unk6C[14]) & 0xF) == 3) && (lives != PORT_FIELD(obj, u8 *, 0x6D, Port_80288040, unk6C[1]))) {
@@ -1499,12 +1494,12 @@ void func_80242DA8() {
             }
         }
     } else {
-        while ((&D_802AC760)[0] != 0 && (&D_802AC760)[1] != 0) {
+        while (D_802AC760[0] != 0 && D_802AC760[1] != 0) {
             func_80239094();
         }
         D_802AC850 = 1;
         func_8023903C(0x3C);
-        if ((&D_802AC760)[0] != 0 || (&D_802AC760)[1] != 0) {
+        if (D_802AC760[0] != 0 || D_802AC760[1] != 0) {
             func_80238DFC(0xD0, 0xD0, 0);
         }
     }
@@ -1537,7 +1532,7 @@ static void func_80242994() {
         }
     }
     if (((D_802AC660.unk0 == 0) && (n != 1)) ||
-        ((D_802AC660.unk0 == 1) && ((&D_802AC760)[0] == 0) && ((&D_802AC760)[1] == 0))) {
+        ((D_802AC660.unk0 == 1) && (D_802AC760[0] == 0) && (D_802AC760[1] == 0))) {
         func_8023903C(0x3C);
         func_8026C660(0x1E6);
         func_8023903C(0x32);
@@ -1583,7 +1578,7 @@ static void func_80242994() {
         func_8026C8E8();
         func_8026C894();
         for (i = 0; i < 2; i++) {
-            if ((&D_802AC760)[i] == 1) {
+            if (D_802AC760[i] == 1) {
                 break;
             }
         }
@@ -3424,7 +3419,7 @@ static void func_8023CA94() {
         }
         if (D_802AC660.unk0 == 1) {
             D_802AC610.unk10 = 0;
-            (&D_802AC760)[0] = (&D_802AC760)[1] = 1;
+            D_802AC760[0] = D_802AC760[1] = 1;
             ((PORT_IP(s32) *) D_802AC820)[0] = ((PORT_IP(s32) *) D_802AC820)[1] = 0;
             func_80238A10(func_80242FB4, 1, 0, 0, 0x130);
             func_80238A10(func_80242FB4, 2, 0, 0, 0x130);
@@ -3441,7 +3436,7 @@ static void func_8023C170() {
         if (D_802AC758 < 2) {
             return;
         }
-    } else if (((&D_802AC760)[0] != 1) || ((&D_802AC760)[1] != 1)) {
+    } else if ((D_802AC760[0] != 1) || (D_802AC760[1] != 1)) {
         return;
     }
     D_802AC854 = 1;

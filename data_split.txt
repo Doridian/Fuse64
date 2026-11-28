@@ -104,20 +104,18 @@ main_code 530C0 0x50 0x60 0x11E0
 main_code 53D70 0x60 0x10 0x1E0
 # 54BE0: the two views and their ids (.rodata a float)
 main_code 54BE0 0 0x10 0x10
+# 54E40: .data its strings (jp's 0x80 shorter: its text), text items and
+# tables (eu: its times), .rodata its constants and jump tables, .bss its
+# state up to 5E090's D_802AC880
+main_code 54E40 0xBA0 0x120 0x2B0
+main_code @eu 54E40 sizes=0xBA0,0x110,0x2B0
+main_code @jp 54E40 sizes=0xB20,0x110,0x2B0
 
 # Game objects after the cut that own their .rodata (constants, jump tables,
 # strings), placed where the ROM has it; their .data and .bss stay asm
 # until the cut reaches them (unless all of an object's .data is its own:
 # 53D70's local pattern and its function table; 54E40's strings, text items
 # and tables, jp's 0x80 shorter: its text).
-# So does 54E40 for D_802AC7A0[10] (and the two words after it, which end
-# that run on a 16-byte boundary); the rest of its .bss stays asm.
-main_code 54E40 0xBA0 0x120 0x30
-main_code @eu 54E40 sizes=0xBA0,0x110,0x30
-main_code @jp 54E40 sizes=0xB20,0x110,0x30
-main_code @us 54E40 data=0x802A01B0 rodata=0x802A2F00 bss=0x802AC7A0
-main_code @eu 54E40 data=0x802A01B0 rodata=0x802A2F00 bss=0x802AC790
-main_code @jp 54E40 data=0x8029F890 rodata=0x802A2140 bss=0x802AB9D0
 main_code 5E3F0 0x190 0x870 0
 main_code @us 5E3F0 data=0x802A0D60 rodata=0x802A3020
 main_code @eu 5E3F0 data=0x802A0D60 rodata=0x802A3010

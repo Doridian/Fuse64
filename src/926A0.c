@@ -33,37 +33,6 @@ extern u8 D_800AEDF0[];
 s16 D_802A14F0 = 0;
 s16 D_802AFE70;
 
-#ifdef TARGET_PC
-/* the object pool's object and its 0x40 (structs.h), as the host lays them out */
-typedef UnkStructA_40 Sub926;
-typedef UnkStructA Obj926;
-#else
-typedef struct {
-    /* 0x00 */ u8 pad0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ u8 pad1C[4];
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ u8 pad24[4];
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ s16 pad34;
-    /* 0x36 */ s16 unk36;
-} Sub926;
-
-typedef struct {
-    /* 0x00 */ u8 pad0[0x30];
-    /* 0x30 */ s32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ f32 unk38;
-    /* 0x3C */ u8 pad3C[4];
-    /* 0x40 */ Sub926 *unk40;
-} Obj926;
-#endif
-
 typedef struct {
     /* 0x00 */ s16 unk0;
     /* 0x02 */ u8 pad2[6];
@@ -72,8 +41,8 @@ typedef struct {
     /* 0x0E */ u16 unkE;
     /* 0x10 */ s16 unk10;
     /* 0x12 */ u8 pad12[2];
-    /* 0x14 */ Obj926 *unk14;
-    /* 0x18 */ Sub926 *unk18;
+    /* 0x14 */ UnkStructA *unk14;
+    /* 0x18 */ UnkStructA_40 *unk18;
     /* 0x1C */ f32 unk1C;
     /* 0x20 */ f32 unk20;
     /* 0x24 */ f32 unk24;
@@ -211,7 +180,7 @@ void func_802787E4(Rec926 *arg0) {
     f32 scale;
     f32 rot;
     f32 w;
-    Sub926 *sub;
+    UnkStructA_40 *sub;
 
     if (arg0->unk44 <= 0) {
         arg0->unk38 += arg0->unk3A;
@@ -336,7 +305,7 @@ Rec926 *func_80277FC4(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4, f32 arg5
     s32 flags;
     s32 type;
     f32 f;
-    Obj926 *obj;
+    UnkStructA *obj;
     Rec926 *r;
 
     idx = func_80277F74();

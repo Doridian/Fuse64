@@ -76,9 +76,6 @@ typedef struct {
     /* 0x18 */ void (*unk18)(s32, Gfx_80225840 **);
 } UnkStruct_ovl0A_01_Entry2;
 
-typedef UnkStruct_ovl0A_01_Entry Entry;
-typedef UnkStruct_ovl0A_01_Entry2 Entry2;
-
 void func_ovl0A_01_800470F0(const char *); /* 0x100 */
 void func_ovl0A_01_80047450(s32); /* 0xD00 */
 void func_ovl0A_01_80047530(s32, s32, s32); /* 0xF00 */
@@ -150,7 +147,7 @@ Vtx_ovl0A_01 D_ovl0A_01_80048730[4] = {
     { { 170, 250, 0 }, 0, { 0, 0 }, { 0x00, 0x00, 0x00, 0xFF } },
     { { 50, 0, 0 }, 0, { 0, 0 }, { 0x00, 0x00, 0x00, 0xFF } },
 };
-Entry D_ovl0A_01_80048770[8] = {
+UnkStruct_ovl0A_01_Entry D_ovl0A_01_80048770[8] = {
     { NULL, 1, 0x324, 2300.0f, 0.0f, 1100.0f, 0, -1, 0.0f },
     { NULL, 1, 0x321, 2100.0f, 0.0f, 1500.0f, 0, -1, 135.0f },
     { NULL, 1, 0x322, 2500.0f, 0.0f, 1500.0f, 0, -1, 225.0f },
@@ -160,11 +157,11 @@ Entry D_ovl0A_01_80048770[8] = {
     { NULL, 0, 0x1FA, 0.0f, 0.0f, 0.0f, -1, -1, 0.0f },
     { NULL, 0, 0x1FC, 0.0f, 0.0f, 0.0f, -1, -1, 0.0f },
 };
-Entry D_ovl0A_01_80048890[2] = {
+UnkStruct_ovl0A_01_Entry D_ovl0A_01_80048890[2] = {
     { NULL, 0, 0x320, 2300.0f, 0.0f, 2000.0f, 1, 2, 180.0f },
     { NULL, 0, 0x340, 2300.0f, 400.0f, 800.0f, -1, -1, 0.0f },
 };
-Entry D_ovl0A_01_800488D8[9] = {
+UnkStruct_ovl0A_01_Entry D_ovl0A_01_800488D8[9] = {
     { NULL, 0, 0x345, 1235.0f, 895.0f, 512.0f, -1, -1, 57.0f },
     { NULL, 0, 0x343, 0.0f, 0.0f, 0.0f, -1, -1, 0.0f },
     { NULL, 0, 0x49, 620.0f, 0.0f, 1300.0f, 5, 6, 90.0f },
@@ -180,7 +177,7 @@ f32 D_ovl0A_01_80048A20 = 0.0f;
 f32 D_ovl0A_01_80048A24 = 0.0f;
 s32 D_ovl0A_01_80048A28[4] = { 0x9B, 0xFF, 0x5C, 0 };
 s32 D_ovl0A_01_80048A38[4] = { 0x9B, 0xFF, 0x5C, 0xFF };
-Entry2 D_ovl0A_01_80048A48[1] = {
+UnkStruct_ovl0A_01_Entry2 D_ovl0A_01_80048A48[1] = {
     { NULL, { D_ovl0A_01_80048A28, D_ovl0A_01_80048A38, D_ovl0A_01_80048A28, D_ovl0A_01_80048A38 }, 0x80, func_ovl0A_01_80046F10 },
 };
 #define LIGHTS D_ovl0A_01_80048A48
@@ -189,7 +186,7 @@ s32 D_ovl0A_01_80048A68 = -1;
 s32 D_ovl0A_01_80048A6C = -1;
 s32 D_ovl0A_01_80048A70 = 0;
 f32 D_ovl0A_01_80048A74 = 0.0f;
-extern Entry D_ovl0A_01_80048A84[3];
+extern UnkStruct_ovl0A_01_Entry D_ovl0A_01_80048A84[3];
 extern s32 D_ovl0A_01_80048AF0;
 extern s32 D_ovl0A_01_80048AF4;
 
@@ -206,8 +203,8 @@ void func_ovl0A_01_8004609C(void);
 void func_ovl0A_01_8004694C(void);
 void func_ovl0A_01_80046A50(void);
 
-static void func_ovl0A_01_80043018(s32 n, Entry *tbl);
-static void func_ovl0A_01_80043020(s32 n, Entry2 *tbl);
+static void func_ovl0A_01_80043018(s32 n, UnkStruct_ovl0A_01_Entry *tbl);
+static void func_ovl0A_01_80043020(s32 n, UnkStruct_ovl0A_01_Entry2 *tbl);
 static void func_ovl0A_01_80043010(s32 task);
 void func_ovl0A_01_80043028(void);
 static void func_ovl0A_01_80043274(void);
@@ -217,9 +214,9 @@ void func_ovl0A_01_8004328C(void);
 void func_ovl0A_01_800432C8(void);
 void func_ovl0A_01_80043300(void);
 void func_ovl0A_01_80043338(void);
-static void func_ovl0A_01_80043378(Entry *e);
-static void func_ovl0A_01_80043370(Entry *e);
-static void func_ovl0A_01_80043380(Entry *tbl, s32 n);
+static void func_ovl0A_01_80043378(UnkStruct_ovl0A_01_Entry *e);
+static void func_ovl0A_01_80043370(UnkStruct_ovl0A_01_Entry *e);
+static void func_ovl0A_01_80043380(UnkStruct_ovl0A_01_Entry *tbl, s32 n);
 static void func_ovl0A_01_80043500(s32 id);
 static void func_ovl0A_01_800435E4(void);
 void func_ovl0A_01_8004364C(void);
@@ -244,7 +241,7 @@ static void func_ovl0A_01_80045278(void);
 static void func_ovl0A_01_80045270(void);
 static void func_ovl0A_01_80046094(void);
 static void func_ovl0A_01_8004608C(void);
-static void func_ovl0A_01_8004607C(s32 n, Entry2 *tbl);
+static void func_ovl0A_01_8004607C(s32 n, UnkStruct_ovl0A_01_Entry2 *tbl);
 static void func_ovl0A_01_80046084(f32 a);
 void func_ovl0A_01_80046C88(s32 arg0);
 s32 func_ovl0A_01_80046DB8(s32, void *);
@@ -265,8 +262,8 @@ static void func_ovl0A_01_80046EF8(void);
 static void func_ovl0A_01_80046F00(void);
 static void func_ovl0A_01_80046F08(void);
 
-static void func_ovl0A_01_80043018(s32 n, Entry *tbl);
-static void func_ovl0A_01_80043020(s32 n, Entry2 *tbl);
+static void func_ovl0A_01_80043018(s32 n, UnkStruct_ovl0A_01_Entry *tbl);
+static void func_ovl0A_01_80043020(s32 n, UnkStruct_ovl0A_01_Entry2 *tbl);
 static void func_ovl0A_01_80043010(s32 task);
 void func_ovl0A_01_80043028(void);
 static void func_ovl0A_01_80043274(void);
@@ -276,9 +273,9 @@ void func_ovl0A_01_8004328C(void);
 void func_ovl0A_01_800432C8(void);
 void func_ovl0A_01_80043300(void);
 void func_ovl0A_01_80043338(void);
-static void func_ovl0A_01_80043378(Entry *e);
-static void func_ovl0A_01_80043370(Entry *e);
-static void func_ovl0A_01_80043380(Entry *tbl, s32 n);
+static void func_ovl0A_01_80043378(UnkStruct_ovl0A_01_Entry *e);
+static void func_ovl0A_01_80043370(UnkStruct_ovl0A_01_Entry *e);
+static void func_ovl0A_01_80043380(UnkStruct_ovl0A_01_Entry *tbl, s32 n);
 static void func_ovl0A_01_80043500(s32 id);
 static void func_ovl0A_01_800435E4(void);
 void func_ovl0A_01_8004364C(void);
@@ -303,7 +300,7 @@ static void func_ovl0A_01_80045278(void);
 static void func_ovl0A_01_80045270(void);
 static void func_ovl0A_01_80046094(void);
 static void func_ovl0A_01_8004608C(void);
-static void func_ovl0A_01_8004607C(s32 n, Entry2 *tbl);
+static void func_ovl0A_01_8004607C(s32 n, UnkStruct_ovl0A_01_Entry2 *tbl);
 static void func_ovl0A_01_80046084(f32 a);
 void func_ovl0A_01_80046C88(s32 arg0);
 s32 func_ovl0A_01_80046DB8(s32, void *);
@@ -324,8 +321,8 @@ static void func_ovl0A_01_80046EF8(void);
 static void func_ovl0A_01_80046F00(void);
 static void func_ovl0A_01_80046F08(void);
 
-static void func_ovl0A_01_80043018(s32 n, Entry *tbl);
-static void func_ovl0A_01_80043020(s32 n, Entry2 *tbl);
+static void func_ovl0A_01_80043018(s32 n, UnkStruct_ovl0A_01_Entry *tbl);
+static void func_ovl0A_01_80043020(s32 n, UnkStruct_ovl0A_01_Entry2 *tbl);
 static void func_ovl0A_01_80043010(s32 task);
 void func_ovl0A_01_80043028(void);
 static void func_ovl0A_01_80043274(void);
@@ -335,9 +332,9 @@ void func_ovl0A_01_8004328C(void);
 void func_ovl0A_01_800432C8(void);
 void func_ovl0A_01_80043300(void);
 void func_ovl0A_01_80043338(void);
-static void func_ovl0A_01_80043378(Entry *e);
-static void func_ovl0A_01_80043370(Entry *e);
-static void func_ovl0A_01_80043380(Entry *tbl, s32 n);
+static void func_ovl0A_01_80043378(UnkStruct_ovl0A_01_Entry *e);
+static void func_ovl0A_01_80043370(UnkStruct_ovl0A_01_Entry *e);
+static void func_ovl0A_01_80043380(UnkStruct_ovl0A_01_Entry *tbl, s32 n);
 static void func_ovl0A_01_80043500(s32 id);
 static void func_ovl0A_01_800435E4(void);
 void func_ovl0A_01_8004364C(void);
@@ -362,7 +359,7 @@ static void func_ovl0A_01_80045278(void);
 static void func_ovl0A_01_80045270(void);
 static void func_ovl0A_01_80046094(void);
 static void func_ovl0A_01_8004608C(void);
-static void func_ovl0A_01_8004607C(s32 n, Entry2 *tbl);
+static void func_ovl0A_01_8004607C(s32 n, UnkStruct_ovl0A_01_Entry2 *tbl);
 static void func_ovl0A_01_80046084(f32 a);
 void func_ovl0A_01_80046C88(s32 arg0);
 s32 func_ovl0A_01_80046DB8(s32, void *);
@@ -383,8 +380,8 @@ static void func_ovl0A_01_80046EF8(void);
 static void func_ovl0A_01_80046F00(void);
 static void func_ovl0A_01_80046F08(void);
 
-static void func_ovl0A_01_80043018(s32 n, Entry *tbl);
-static void func_ovl0A_01_80043020(s32 n, Entry2 *tbl);
+static void func_ovl0A_01_80043018(s32 n, UnkStruct_ovl0A_01_Entry *tbl);
+static void func_ovl0A_01_80043020(s32 n, UnkStruct_ovl0A_01_Entry2 *tbl);
 static void func_ovl0A_01_80043010(s32 task);
 void func_ovl0A_01_80043028(void);
 static void func_ovl0A_01_80043274(void);
@@ -394,9 +391,9 @@ void func_ovl0A_01_8004328C(void);
 void func_ovl0A_01_800432C8(void);
 void func_ovl0A_01_80043300(void);
 void func_ovl0A_01_80043338(void);
-static void func_ovl0A_01_80043378(Entry *e);
-static void func_ovl0A_01_80043370(Entry *e);
-static void func_ovl0A_01_80043380(Entry *tbl, s32 n);
+static void func_ovl0A_01_80043378(UnkStruct_ovl0A_01_Entry *e);
+static void func_ovl0A_01_80043370(UnkStruct_ovl0A_01_Entry *e);
+static void func_ovl0A_01_80043380(UnkStruct_ovl0A_01_Entry *tbl, s32 n);
 static void func_ovl0A_01_80043500(s32 id);
 static void func_ovl0A_01_800435E4(void);
 void func_ovl0A_01_8004364C(void);
@@ -421,7 +418,7 @@ static void func_ovl0A_01_80045278(void);
 static void func_ovl0A_01_80045270(void);
 static void func_ovl0A_01_80046094(void);
 static void func_ovl0A_01_8004608C(void);
-static void func_ovl0A_01_8004607C(s32 n, Entry2 *tbl);
+static void func_ovl0A_01_8004607C(s32 n, UnkStruct_ovl0A_01_Entry2 *tbl);
 static void func_ovl0A_01_80046084(f32 a);
 void func_ovl0A_01_80046C88(s32 arg0);
 s32 func_ovl0A_01_80046DB8(s32, void *);
@@ -691,7 +688,7 @@ void func_ovl0A_01_8004609C(void) {
     func_ovl0A_01_80046084(0.0f);
 }
 
-static void func_ovl0A_01_8004607C(s32 n, Entry2 *tbl) {
+static void func_ovl0A_01_8004607C(s32 n, UnkStruct_ovl0A_01_Entry2 *tbl) {
     s32 i;
 
     for (i = 0; i < n; i++, tbl++) {
@@ -981,7 +978,7 @@ static void func_ovl0A_01_80045278(void) {
 static void func_ovl0A_01_80045280(void) {
 }
 
-Entry D_ovl0A_01_80048A84[3] = {
+UnkStruct_ovl0A_01_Entry D_ovl0A_01_80048A84[3] = {
     { NULL, 0, 0x1CB, -1000.0f, 1500.0f, 2000.0f, -1, -1, 0.0f },
     { NULL, 0, 0xA, -200.0f, 20.0f, 900.0f, -1, -1, 0.0f },
     { NULL, 0, 0xA, -200.0f, 450.0f, 900.0f, -1, -1, 0.0f },
@@ -999,7 +996,7 @@ void func_ovl0A_01_80044F3C(void) {
     func_ovl0A_01_80044A2C();
     v = 0;
     pos[0] = 200.0f;
-#line 978 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 975 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     pos[2] = 900.0f;
     pos[1] = v;
     played = 0;
@@ -1288,15 +1285,15 @@ void func_ovl0A_01_800442B4(void) {
         } while (++j < 1370);
     }
     v = j;
-#line 1262 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1259 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     func_ovl0A_01_80047530(0x1A, 0x12, 4);
     func_ovl0A_01_80047F98();
 }
 
 static void func_ovl0A_01_8004428C(void) {
-#line 1270 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1267 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     D_ovl0A_01_80048A70 = 0;
-#line 1269 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1266 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     D_ovl0A_01_80048A64 = func_ovl0A_01_80047F88(func_ovl0A_01_80045EA0, NULL, 0, 0, 0x130);
 }
 
@@ -1308,7 +1305,7 @@ static void func_ovl0A_01_800442A4(void) {
     func_ovl0A_01_80047E38(D_ovl0A_01_80048770[4].obj, 0x80000);
 }
 
-#line 1244 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1241 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 static void func_ovl0A_01_800442AC(void) {
     D_ovl0A_01_80048A1C = 0.0f;
     D_ovl0A_01_80048A20 = 0.0f;
@@ -1474,12 +1471,12 @@ void func_ovl0A_01_8004364C(void) {
         case 19:
             func_ovl0A_01_80043500(0x296);
             {
-            Entry *tbl;
+            UnkStruct_ovl0A_01_Entry *tbl;
             s32 n;
             s32 i;
             s32 j;
             s32 m;
-            Entry *e;
+            UnkStruct_ovl0A_01_Entry *e;
 
             n = 9;
             tbl = &D_ovl0A_01_800488D8[0];
@@ -1556,14 +1553,14 @@ static void func_ovl0A_01_80043500(s32 id) {
     }
 }
 
-static void func_ovl0A_01_80043380(Entry *tbl, s32 n) {
+static void func_ovl0A_01_80043380(UnkStruct_ovl0A_01_Entry *tbl, s32 n) {
     s32 i;
-    Entry *e;
+    UnkStruct_ovl0A_01_Entry *e;
 
     for (i = 0; i < n; i++) {
-#line 1529 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1526 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
         e = tbl;
-#line 1528 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1525 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
         tbl->obj = func_ovl0A_01_80047E60(tbl->unk4 == 0 ? tbl->unk8 : 0x320, 0x0D000000, 0xD0, NULL);
         if (tbl->unk4 != 0) {
             func_ovl0A_01_80043378(tbl);
@@ -1580,14 +1577,14 @@ static void func_ovl0A_01_80043380(Entry *tbl, s32 n) {
     }
 }
 
-static void func_ovl0A_01_80043370(Entry *e) {
+static void func_ovl0A_01_80043370(UnkStruct_ovl0A_01_Entry *e) {
     e->obj->unk40->unk10 = e->unkC;
     e->obj->unk40->unk14 = e->unk10;
     e->obj->unk40->unk18 = e->unk14;
     e->obj->unk40->unk20 = e->unk20;
 }
 
-static void func_ovl0A_01_80043378(Entry *e) {
+static void func_ovl0A_01_80043378(UnkStruct_ovl0A_01_Entry *e) {
     s32 j;
     s32 m;
 
@@ -1628,7 +1625,7 @@ static void func_ovl0A_01_8004327C(void) {
 static void func_ovl0A_01_80043274(void) {
 }
 
-static void func_ovl0A_01_80043018(s32 n, Entry *tbl) {
+static void func_ovl0A_01_80043018(s32 n, UnkStruct_ovl0A_01_Entry *tbl) {
     s32 i;
 
     for (i = 0; i < n; i++) {
@@ -1637,7 +1634,7 @@ static void func_ovl0A_01_80043018(s32 n, Entry *tbl) {
     }
 }
 
-static void func_ovl0A_01_80043020(s32 n, Entry2 *tbl) {
+static void func_ovl0A_01_80043020(s32 n, UnkStruct_ovl0A_01_Entry2 *tbl) {
     s32 i;
 
     for (i = 0; i < n; i++) {

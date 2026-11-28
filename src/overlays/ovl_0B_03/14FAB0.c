@@ -96,8 +96,6 @@
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 
-typedef struct Inner Inner;
-
 /* A text label: the string, its place, its scale and the handle
  * func_ovl0B_03_80048748 returns for it. */
 typedef struct {
@@ -160,7 +158,7 @@ void func_ovl0B_03_80047EC0(UnkStructA_40 *, s32);
 void func_ovl0B_03_80047EC8(UnkStructA_40 *, s32, s32, s32);
 void func_ovl0B_03_80047ED8(UnkStructA_40 *, s32);
 void func_ovl0B_03_80047EE0(UnkStructA_40 *, s32, s32);
-Inner *func_ovl0B_03_80047F18(void (*)(s32, Gfx_80225840 **), s32);
+UnkStructA_40 *func_ovl0B_03_80047F18(void (*)(s32, Gfx_80225840 **), s32); /* 0x1510 */
 s32 func_ovl0B_03_80047F28(UnkStructA_40 *, s32);
 void func_ovl0B_03_80047FD8(s32);
 void func_ovl0B_03_80047FE8(s32);
@@ -415,7 +413,7 @@ s32 D_ovl0B_03_8004A330;
 UnkStructA_40 *D_ovl0B_03_8004A334;
 UnkStructA_40 *D_ovl0B_03_8004A338;
 Anim_ovl0B_03 D_ovl0B_03_8004A340[3][5];
-Inner *D_ovl0B_03_8004A3F4;
+UnkStructA_40 *D_ovl0B_03_8004A3F4;
 UnkStructA_40 *D_ovl0B_03_8004A3F8;
 s32 D_ovl0B_03_8004A400[4];
 s32 D_ovl0B_03_8004A410;
@@ -909,7 +907,7 @@ void func_ovl0B_03_8004386C(void) {
         case 1:
             func_ovl0B_03_800433BC();
             D_ovl0B_03_8004A3F4 = func_ovl0B_03_80047F18(func_ovl0B_03_80046918, 0);
-            M2C_FIELD(D_ovl0B_03_8004A3F4, s32 *, 0xC) |= 0x480;
+            D_ovl0B_03_8004A3F4->unkC |= 0x480;
             D_ovl0B_03_8004A410 = D_ovl0B_03_8004A328 * 50;
             D_ovl0B_03_8004A32C = 0;
             func_ovl0B_03_80043340(D_ovl0B_03_80048DA0, 8, 0x35);
@@ -1064,7 +1062,7 @@ void func_ovl0B_03_8004386C(void) {
             for (i = 0; i < 4; i++) {
                 D_ovl0B_03_80048E9C[i].unk10->unkC |= 0x41;
             }
-            func_ovl0B_03_80047EA0((UnkStructA_40 *) D_ovl0B_03_8004A3F4);
+            func_ovl0B_03_80047EA0(D_ovl0B_03_8004A3F4);
             func_ovl0B_03_80043134(D_ovl0B_03_80048DA0, 8);
             func_ovl0B_03_80043134(D_ovl0B_03_80048E6C, 2);
             for (i = 0; i < 4; i++) {
@@ -1293,7 +1291,7 @@ void func_ovl0B_03_8004386C(void) {
                 func_ovl0B_03_80043170(&D_ovl0B_03_80048DA0[i], 1.0f);
             }
             D_ovl0B_03_8004A3F4 = func_ovl0B_03_80047F18(func_ovl0B_03_80046918, 0);
-            M2C_FIELD(D_ovl0B_03_8004A3F4, s32 *, 0xC) |= 0x480;
+            D_ovl0B_03_8004A3F4->unkC |= 0x480;
             D_ovl0B_03_8004A410 = D_ovl0B_03_8004A330 * 50;
             while (TRUE) {
                 btn = func_ovl0B_03_800432F0();
@@ -1379,7 +1377,7 @@ void func_ovl0B_03_8004386C(void) {
             func_ovl0B_03_80043134(D_ovl0B_03_80049024, 2);
             func_ovl0B_03_80043134(D_ovl0B_03_8004900C, 1);
             func_ovl0B_03_80043134(D_ovl0B_03_80048DA0, 4);
-            func_ovl0B_03_80047EA0((UnkStructA_40 *) D_ovl0B_03_8004A3F4);
+            func_ovl0B_03_80047EA0(D_ovl0B_03_8004A3F4);
             func_ovl0B_03_80043010();
             state = next;
             break;

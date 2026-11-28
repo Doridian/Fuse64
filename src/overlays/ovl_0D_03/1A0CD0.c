@@ -51,19 +51,6 @@ typedef struct {
     s32 unk8;
 } Trio_0D03;
 
-/* passed to func_ovl0D_03_80047260 (as in ovl_0D_06) */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ s32 unk18[3];
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ PORT_RET(s32 unk28[7];, s32 unk28[5]; void *unk3C; void *unk40;) /* (4ED50.c's UnkStruct_802363BC: two links) */
-} Cam_0D03;
-
 void func_ovl0D_03_800469E8(s32); /* 0xC00 */
 void func_ovl0D_03_800469F8(s32 *); /* 0xC02 */
 void func_ovl0D_03_80046A28(s32, s32, s32, s32, s32, s32); /* 0xD05 */
@@ -104,7 +91,7 @@ void func_ovl0D_03_80047138(s32); /* 0x150E */
 void func_ovl0D_03_80047228(f32, f32, f32); /* 0x1704 */
 void func_ovl0D_03_80047248(f32, f32, f32); /* 0x1708 */
 void func_ovl0D_03_80047250(f32 *, f32 *, f32 *); /* 0x1709 */
-void func_ovl0D_03_80047260(Cam_0D03 *, s32, s32); /* 0x170B */
+void func_ovl0D_03_80047260(UnkStruct_802363BC *, s32, s32); /* 0x170B */
 s32 func_ovl0D_03_80047278(void); /* 0x170E */
 void func_ovl0D_03_80047280(void); /* 0x170F */
 void func_ovl0D_03_80047288(s32); /* 0x1710 */
@@ -311,7 +298,7 @@ Trio_0D03 D_ovl0D_03_80047FDC[5] = {
     { 3, 1, 0xDE },
     { 4, 9, 0xE7 },
 };
-Cam_0D03 D_ovl0D_03_80048018 = { 0x708, 1, 1, 0.0f, 0.0f, 0.0f, { 0, 0, 0 }, 0.1875f };
+UnkStruct_802363BC D_ovl0D_03_80048018 = { 0x708, 1, 1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.1875f };
 
 #include "statics.h"
 

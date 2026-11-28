@@ -64,17 +64,6 @@ typedef struct {
     s32 unk8;
 } Trio_0D06;
 
-/* passed to func_ovl0D_06_80046600 */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ PORT_RET(s32 unk18[11];, s32 unk18[9]; void *unk3C; void *unk40;) /* (4ED50.c's UnkStruct_802363BC: two links) */
-} Move_0D06;
-
 void func_ovl0D_06_80045D88(s32); /* 0xC00 */
 void func_ovl0D_06_80045D98(s32 *); /* 0xC02 */
 void func_ovl0D_06_80045DC8(s32, s32, s32, s32, s32, s32); /* 0xD05 */
@@ -118,7 +107,7 @@ void func_ovl0D_06_800464F0(s32, s32); /* 0x1511 */
 void func_ovl0D_06_800465C8(f32, f32, f32); /* 0x1704 */
 void func_ovl0D_06_800465E8(f32, f32, f32); /* 0x1708 */
 void func_ovl0D_06_800465F0(f32 *, f32 *, f32 *); /* 0x1709 */
-void func_ovl0D_06_80046600(Move_0D06 *, s32, s32); /* 0x170B */
+void func_ovl0D_06_80046600(UnkStruct_802363BC *, s32, s32); /* 0x170B */
 s32 func_ovl0D_06_80046618(void); /* 0x170E */
 void func_ovl0D_06_80046620(void); /* 0x170F */
 void func_ovl0D_06_80046628(s32); /* 0x1710 */
@@ -294,7 +283,7 @@ UnkStruct_ovl0C_01_8004A54C D_ovl0D_06_8004740C[1] = {
 UnkStruct_ovl0C_01_8004A54C D_ovl0D_06_80047444[1] = {
     { NULL, -1, 0x168, -1, -1, -1, -1, 230.0f, 40.0f, 180.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
-Move_0D06 D_ovl0D_06_8004747C = { 0, 1, 1 };
+UnkStruct_802363BC D_ovl0D_06_8004747C = { 0, 1, 1 };
 Trio_0D06 D_ovl0D_06_800474C0[6] = {
     { 0, 7, 0xE5 },
     { 1, 9, 0xE7 },

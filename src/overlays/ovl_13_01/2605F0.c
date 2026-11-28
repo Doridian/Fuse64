@@ -99,19 +99,6 @@ typedef struct {
     /* 0x0C */ u8 unkC[4]; PORT_PAD(10 * 12 - 0x10) /* 800493EC keeps ten Vec3fs here, past .bss's end on the N64 */
 } Vec3fPad_ovl13_01;
 
-/* The camera move ZeroJump 0x170B takes: two vectors' steps and their changes. */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC[3];
-    /* 0x18 */ f32 unk18[3];
-    /* 0x24 */ f32 unk24[3];
-    /* 0x30 */ f32 unk30[3];
-    /* 0x3C */ PORT_RET(s32 unk3C;, void *unk3C;) /* (4ED50.c's UnkStruct_802363BC: two links) */
-    /* 0x40 */ PORT_RET(s32 unk40;, void *unk40;)
-} Move_ovl13_01;
-
 void func_ovl13_01_8004AC48(s32 *); /* 0xC02 */
 void func_ovl13_01_8004AC50(s32); /* 0xD00 */
 f32 func_ovl13_01_8004AC60(void); /* 0xD02 */
@@ -144,7 +131,7 @@ void func_ovl13_01_8004B478(f32, f32, f32); /* 0x1704 */
 void func_ovl13_01_8004B488(f32, f32, f32); /* 0x1706 */
 void func_ovl13_01_8004B498(f32, f32, f32); /* 0x1708 */
 void func_ovl13_01_8004B4A0(f32 *, f32 *, f32 *); /* 0x1709 */
-void func_ovl13_01_8004B4B0(Move_ovl13_01 *, s32, s32); /* 0x170B */
+void func_ovl13_01_8004B4B0(UnkStruct_802363BC *, s32, s32); /* 0x170B */
 void func_ovl13_01_8004B4D0(void); /* 0x170F */
 void func_ovl13_01_8004B4D8(s32); /* 0x1710 */
 void func_ovl13_01_8004B4E0(s32); /* 0x1711 */
@@ -2690,7 +2677,7 @@ void func_ovl13_01_800431D4(void) {
     s32 p4;
     s32 p5;
     s32 p6;
-    Move_ovl13_01 sp74;
+    UnkStruct_802363BC sp74;
 
     if (func_ovl13_01_8004BA10(0x400) != 0) {
         return;
@@ -2726,18 +2713,18 @@ void func_ovl13_01_800431D4(void) {
             sp74.unk8 = 0;
             sp74.unk3C = 0;
             sp74.unk40 = 0;
-            sp74.unkC[0] = (2300.0f - spFC.x) / 60.0f;
-            sp74.unkC[1] = (856.0f - spFC.y) / 60.0f;
-            sp74.unkC[2] = (1500.0f - spFC.z) / 60.0f;
-            sp74.unk18[0] = (sp74.unkC[0] / 120.0f) * -1.0f;
-            sp74.unk18[1] = (sp74.unkC[1] / 120.0f) * -1.0f;
-            sp74.unk18[2] = (sp74.unkC[2] / 120.0f) * -1.0f;
-            sp74.unk24[0] = (2300.0f - sp108.x) / 60.0f;
-            sp74.unk24[1] = (1772.0f - sp108.y) / 60.0f;
-            sp74.unk24[2] = (3900.0f - sp108.z) / 60.0f;
-            sp74.unk30[0] = (sp74.unk24[0] / 120.0f) * -1.0f;
-            sp74.unk30[1] = (sp74.unk24[1] / 120.0f) * -1.0f;
-            sp74.unk30[2] = (sp74.unk24[2] / 120.0f) * -1.0f;
+            sp74.unkC = (2300.0f - spFC.x) / 60.0f;
+            sp74.unk10 = (856.0f - spFC.y) / 60.0f;
+            sp74.unk14 = (1500.0f - spFC.z) / 60.0f;
+            sp74.unk18 = (sp74.unkC / 120.0f) * -1.0f;
+            sp74.unk1C = (sp74.unk10 / 120.0f) * -1.0f;
+            sp74.unk20 = (sp74.unk14 / 120.0f) * -1.0f;
+            sp74.unk24 = (2300.0f - sp108.x) / 60.0f;
+            sp74.unk28 = (1772.0f - sp108.y) / 60.0f;
+            sp74.unk2C = (3900.0f - sp108.z) / 60.0f;
+            sp74.unk30 = (sp74.unk24 / 120.0f) * -1.0f;
+            sp74.unk34 = (sp74.unk28 / 120.0f) * -1.0f;
+            sp74.unk38 = (sp74.unk2C / 120.0f) * -1.0f;
             func_ovl13_01_8004B4B0(&sp74, 0x170, 0);
             func_ovl13_01_8004BAE0(1);
             func_ovl13_01_8004BAE8(0xBF);

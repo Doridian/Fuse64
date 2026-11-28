@@ -51,19 +51,6 @@ typedef struct {
     PORT_UP(u32) w1;
 } Gfx_ovl13_02;
 
-/* A camera move for ZeroJump 0x170B: a list of steps linked both ways. */
-typedef struct Move_ovl13_02 {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC[3];
-    /* 0x18 */ f32 unk18[3];
-    /* 0x24 */ f32 unk24[3];
-    /* 0x30 */ f32 unk30[3];
-    /* 0x3C */ struct Move_ovl13_02 *unk3C;
-    /* 0x40 */ struct Move_ovl13_02 *unk40;
-} Move_ovl13_02;
-
 /* D_ovl13_02_8004DE80, DE98 and DEB0. */
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -110,7 +97,7 @@ void func_ovl13_02_8004CA38(f32, f32, f32); /* 0x1704 */
 void func_ovl13_02_8004CA48(f32, f32, f32); /* 0x1706 */
 void func_ovl13_02_8004CA58(f32, f32, f32); /* 0x1708 */
 void func_ovl13_02_8004CA60(f32 *, f32 *, f32 *); /* 0x1709 */
-void func_ovl13_02_8004CA70(Move_ovl13_02 *, s32, s32); /* 0x170B */ /* also: void (u32 *, s32, s32) x1; void (Move_0D01 *, s32, s32) x1; void (Cam_0D03 *, s32, s32) x1 */
+void func_ovl13_02_8004CA70(UnkStruct_802363BC *, s32, s32); /* 0x170B */
 void func_ovl13_02_8004CA90(void); /* 0x170F */
 void func_ovl13_02_8004CA98(s32); /* 0x1710 */
 void func_ovl13_02_8004CAA0(s32); /* 0x1711 */
@@ -292,7 +279,7 @@ s32 D_ovl13_02_8004DFB0[3];
 f32 D_ovl13_02_8004DFBC;
 s32 D_ovl13_02_8004DFC0[4];
 s32 D_ovl13_02_8004DFD0[4];
-Move_ovl13_02 D_ovl13_02_8004DFE0;
+UnkStruct_802363BC D_ovl13_02_8004DFE0;
 #else
 Vec3f D_ovl13_02_8004DC90;
 s32 D_ovl13_02_8004DCA0[3];
@@ -377,7 +364,7 @@ s32 D_ovl13_02_8004DFB0[3];
 f32 D_ovl13_02_8004DFBC;
 s32 D_ovl13_02_8004DFC0[4];
 s32 D_ovl13_02_8004DFD0[4];
-Move_ovl13_02 D_ovl13_02_8004DFE0;
+UnkStruct_802363BC D_ovl13_02_8004DFE0;
 #endif
 
 void func_ovl13_02_80043010(void);
@@ -469,26 +456,26 @@ void func_ovl13_02_8004BE48(void);
 
 /* .data */
 u8 D_ovl13_02_8004D4F0[8] = { 0 };
-Move_ovl13_02 D_ovl13_02_8004D4F8[4] = {
-    { 0xF0, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, NULL, &D_ovl13_02_8004D4F8[1] },
-    { 0, 2, 0, { 32768.0f, 32768.0f, 32768.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, &D_ovl13_02_8004D4F8[0], NULL },
-    { 0xF0, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, NULL, &D_ovl13_02_8004D4F8[3] },
-    { 0, 2, 0, { 32768.0f, 32768.0f, 32768.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, &D_ovl13_02_8004D4F8[2], NULL }
+UnkStruct_802363BC D_ovl13_02_8004D4F8[4] = {
+    { 0xF0, 1, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, NULL, &D_ovl13_02_8004D4F8[1] },
+    { 0, 2, 0, 32768.0f, 32768.0f, 32768.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, &D_ovl13_02_8004D4F8[0], NULL },
+    { 0xF0, 1, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, NULL, &D_ovl13_02_8004D4F8[3] },
+    { 0, 2, 0, 32768.0f, 32768.0f, 32768.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, &D_ovl13_02_8004D4F8[2], NULL }
 };
-Move_ovl13_02 D_ovl13_02_8004D608[10] = {
-    { 0xC0, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, NULL, &D_ovl13_02_8004D608[1] },
-    { 0x30, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, &D_ovl13_02_8004D608[0], &D_ovl13_02_8004D608[2] },
-    { 0, 2, 0, { 32768.0f, 32768.0f, 32768.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, &D_ovl13_02_8004D608[1], NULL },
-    { 0x30, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, NULL, &D_ovl13_02_8004D608[4] },
-    { 0x12C, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, &D_ovl13_02_8004D608[3], &D_ovl13_02_8004D608[5] },
-    { 0xC0, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, &D_ovl13_02_8004D608[4], &D_ovl13_02_8004D608[6] },
-    { 0, 2, 0, { 32768.0f, 32768.0f, 32768.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, &D_ovl13_02_8004D608[5], NULL },
-    { 0x1E, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 33.333332f, 0.0f }, { 0.0f, 0.0f, 0.0f }, NULL, &D_ovl13_02_8004D608[8] },
-    { 0x3C, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, &D_ovl13_02_8004D608[7], &D_ovl13_02_8004D608[9] },
-    { 0x1E, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, -33.333332f, -0.0f }, { 0.0f, 0.0f, 0.0f }, &D_ovl13_02_8004D608[8], NULL }
+UnkStruct_802363BC D_ovl13_02_8004D608[10] = {
+    { 0xC0, 1, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, NULL, &D_ovl13_02_8004D608[1] },
+    { 0x30, 1, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, &D_ovl13_02_8004D608[0], &D_ovl13_02_8004D608[2] },
+    { 0, 2, 0, 32768.0f, 32768.0f, 32768.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, &D_ovl13_02_8004D608[1], NULL },
+    { 0x30, 1, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, NULL, &D_ovl13_02_8004D608[4] },
+    { 0x12C, 1, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, &D_ovl13_02_8004D608[3], &D_ovl13_02_8004D608[5] },
+    { 0xC0, 1, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, &D_ovl13_02_8004D608[4], &D_ovl13_02_8004D608[6] },
+    { 0, 2, 0, 32768.0f, 32768.0f, 32768.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, &D_ovl13_02_8004D608[5], NULL },
+    { 0x1E, 1, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 33.333332f, 0.0f, 0.0f, 0.0f, 0.0f, NULL, &D_ovl13_02_8004D608[8] },
+    { 0x3C, 1, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, &D_ovl13_02_8004D608[7], &D_ovl13_02_8004D608[9] },
+    { 0x1E, 1, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -33.333332f, -0.0f, 0.0f, 0.0f, 0.0f, &D_ovl13_02_8004D608[8], NULL }
 };
-Move_ovl13_02 D_ovl13_02_8004D8B0 = { 0x1E, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, NULL, NULL };
-Move_ovl13_02 D_ovl13_02_8004D8F4 = { 0x1E, 1, 0, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, NULL, NULL };
+UnkStruct_802363BC D_ovl13_02_8004D8B0 = { 0x1E, 1, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, NULL, NULL };
+UnkStruct_802363BC D_ovl13_02_8004D8F4 = { 0x1E, 1, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, NULL, NULL };
 f32 D_ovl13_02_8004D938[6] = { -200.0f, -100.0f, -0.0f, 200.0f, 100.0f, 0.0f };
 
 /* unused: the stubs IDO -O3 leaves after the tail (an unused static's
@@ -1269,50 +1256,50 @@ void func_ovl13_02_80049D50(void) {
 void func_ovl13_02_800499A0(void) {
     f32 frames = 30.0f; /* D_8004D8B0's step count (unk0) as a float: a guess, other constants held fit too */
 
-    D_ovl13_02_8004D4F8[0].unk24[0] = (M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4)) / D_ovl13_02_8004D4F8[0].unk0;
-    D_ovl13_02_8004D4F8[0].unk24[1] = (M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4)) / D_ovl13_02_8004D4F8[0].unk0;
-    D_ovl13_02_8004D4F8[0].unk24[2] = (M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4)) / D_ovl13_02_8004D4F8[0].unk0;
-    D_ovl13_02_8004D4F8[0].unk24[0] += -20.833334f;
-    D_ovl13_02_8004D4F8[0].unk30[0] = 0.17433752f;
-    D_ovl13_02_8004D4F8[1].unk24[0] = M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 0 * 4);
-    D_ovl13_02_8004D4F8[1].unk24[1] = M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 1 * 4);
-    D_ovl13_02_8004D4F8[1].unk24[2] = M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 2 * 4);
-    D_ovl13_02_8004D4F8[2].unk24[0] = (M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 0 * 4)) / D_ovl13_02_8004D4F8[2].unk0;
-    D_ovl13_02_8004D4F8[2].unk24[1] = (M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 1 * 4)) / D_ovl13_02_8004D4F8[2].unk0;
-    D_ovl13_02_8004D4F8[2].unk24[2] = (M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 2 * 4)) / D_ovl13_02_8004D4F8[2].unk0;
-    D_ovl13_02_8004D4F8[2].unk24[0] += -20.833334f;
-    D_ovl13_02_8004D4F8[2].unk30[0] = 0.17433752f;
-    D_ovl13_02_8004D4F8[3].unk24[0] = M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4);
-    D_ovl13_02_8004D4F8[3].unk24[1] = M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4);
-    D_ovl13_02_8004D4F8[3].unk24[2] = M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4);
-    D_ovl13_02_8004D608[0].unk24[0] = (M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4)) / D_ovl13_02_8004D608[0].unk0;
-    D_ovl13_02_8004D608[0].unk24[1] = (M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4)) / D_ovl13_02_8004D608[0].unk0;
-    D_ovl13_02_8004D608[0].unk24[2] = (M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4)) / D_ovl13_02_8004D608[0].unk0;
-    D_ovl13_02_8004D608[0].unk24[0] += -26.041666f;
-    D_ovl13_02_8004D608[0].unk30[0] = 0.2726876f;
-    D_ovl13_02_8004D608[1].unk24[0] = (M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 0 * 4)) / D_ovl13_02_8004D608[1].unk0;
-    D_ovl13_02_8004D608[1].unk24[1] = (M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 1 * 4)) / D_ovl13_02_8004D608[1].unk0;
-    D_ovl13_02_8004D608[1].unk24[2] = (M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 2 * 4)) / D_ovl13_02_8004D608[1].unk0;
-    D_ovl13_02_8004D608[2].unk24[0] = M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 0 * 4);
-    D_ovl13_02_8004D608[2].unk24[1] = M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 1 * 4);
-    D_ovl13_02_8004D608[2].unk24[2] = M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 2 * 4);
-    D_ovl13_02_8004D608[3].unk24[0] = (M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 0 * 4)) / D_ovl13_02_8004D608[3].unk0;
-    D_ovl13_02_8004D608[3].unk24[1] = (M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 1 * 4)) / D_ovl13_02_8004D608[3].unk0;
-    D_ovl13_02_8004D608[3].unk24[2] = (M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 2 * 4)) / D_ovl13_02_8004D608[3].unk0;
-    D_ovl13_02_8004D608[5].unk24[0] = (M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 0 * 4)) / D_ovl13_02_8004D608[5].unk0;
-    D_ovl13_02_8004D608[5].unk24[1] = (M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 1 * 4)) / D_ovl13_02_8004D608[5].unk0;
-    D_ovl13_02_8004D608[5].unk24[2] = (M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 2 * 4)) / D_ovl13_02_8004D608[5].unk0;
-    D_ovl13_02_8004D608[5].unk24[0] += -26.041666f;
-    D_ovl13_02_8004D608[5].unk30[0] = 0.2726876f;
-    D_ovl13_02_8004D608[6].unk24[0] = M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4);
-    D_ovl13_02_8004D608[6].unk24[1] = M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4);
-    D_ovl13_02_8004D608[6].unk24[2] = M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4);
-    D_ovl13_02_8004D8B0.unk24[0] = (M2C_FIELD(&D_ovl13_02_8004DFD0, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4)) / frames;
-    D_ovl13_02_8004D8B0.unk24[1] = (M2C_FIELD(&D_ovl13_02_8004DFD0, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4)) / frames;
-    D_ovl13_02_8004D8B0.unk24[2] = (M2C_FIELD(&D_ovl13_02_8004DFD0, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4)) / frames;
-    PORT_HOST((&D_ovl13_02_8004D8B0)[1], D_ovl13_02_8004D8F4).unk24[0] = D_ovl13_02_8004D8B0.unk24[0] * -1.0f;
-    PORT_HOST((&D_ovl13_02_8004D8B0)[1], D_ovl13_02_8004D8F4).unk24[1] = D_ovl13_02_8004D8B0.unk24[1] * -1.0f;
-    PORT_HOST((&D_ovl13_02_8004D8B0)[1], D_ovl13_02_8004D8F4).unk24[2] = D_ovl13_02_8004D8B0.unk24[2] * -1.0f;
+    D_ovl13_02_8004D4F8[0].unk24 = (M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4)) / D_ovl13_02_8004D4F8[0].unk0;
+    D_ovl13_02_8004D4F8[0].unk28 = (M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4)) / D_ovl13_02_8004D4F8[0].unk0;
+    D_ovl13_02_8004D4F8[0].unk2C = (M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4)) / D_ovl13_02_8004D4F8[0].unk0;
+    D_ovl13_02_8004D4F8[0].unk24 += -20.833334f;
+    D_ovl13_02_8004D4F8[0].unk30 = 0.17433752f;
+    D_ovl13_02_8004D4F8[1].unk24 = M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 0 * 4);
+    D_ovl13_02_8004D4F8[1].unk28 = M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 1 * 4);
+    D_ovl13_02_8004D4F8[1].unk2C = M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 2 * 4);
+    D_ovl13_02_8004D4F8[2].unk24 = (M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 0 * 4)) / D_ovl13_02_8004D4F8[2].unk0;
+    D_ovl13_02_8004D4F8[2].unk28 = (M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 1 * 4)) / D_ovl13_02_8004D4F8[2].unk0;
+    D_ovl13_02_8004D4F8[2].unk2C = (M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DF70, f32 *, 2 * 4)) / D_ovl13_02_8004D4F8[2].unk0;
+    D_ovl13_02_8004D4F8[2].unk24 += -20.833334f;
+    D_ovl13_02_8004D4F8[2].unk30 = 0.17433752f;
+    D_ovl13_02_8004D4F8[3].unk24 = M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4);
+    D_ovl13_02_8004D4F8[3].unk28 = M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4);
+    D_ovl13_02_8004D4F8[3].unk2C = M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4);
+    D_ovl13_02_8004D608[0].unk24 = (M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4)) / D_ovl13_02_8004D608[0].unk0;
+    D_ovl13_02_8004D608[0].unk28 = (M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4)) / D_ovl13_02_8004D608[0].unk0;
+    D_ovl13_02_8004D608[0].unk2C = (M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4)) / D_ovl13_02_8004D608[0].unk0;
+    D_ovl13_02_8004D608[0].unk24 += -26.041666f;
+    D_ovl13_02_8004D608[0].unk30 = 0.2726876f;
+    D_ovl13_02_8004D608[1].unk24 = (M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 0 * 4)) / D_ovl13_02_8004D608[1].unk0;
+    D_ovl13_02_8004D608[1].unk28 = (M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 1 * 4)) / D_ovl13_02_8004D608[1].unk0;
+    D_ovl13_02_8004D608[1].unk2C = (M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 2 * 4)) / D_ovl13_02_8004D608[1].unk0;
+    D_ovl13_02_8004D608[2].unk24 = M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 0 * 4);
+    D_ovl13_02_8004D608[2].unk28 = M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 1 * 4);
+    D_ovl13_02_8004D608[2].unk2C = M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 2 * 4);
+    D_ovl13_02_8004D608[3].unk24 = (M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 0 * 4)) / D_ovl13_02_8004D608[3].unk0;
+    D_ovl13_02_8004D608[3].unk28 = (M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 1 * 4)) / D_ovl13_02_8004D608[3].unk0;
+    D_ovl13_02_8004D608[3].unk2C = (M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DFA0, f32 *, 2 * 4)) / D_ovl13_02_8004D608[3].unk0;
+    D_ovl13_02_8004D608[5].unk24 = (M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 0 * 4)) / D_ovl13_02_8004D608[5].unk0;
+    D_ovl13_02_8004D608[5].unk28 = (M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 1 * 4)) / D_ovl13_02_8004D608[5].unk0;
+    D_ovl13_02_8004D608[5].unk2C = (M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DF90, f32 *, 2 * 4)) / D_ovl13_02_8004D608[5].unk0;
+    D_ovl13_02_8004D608[5].unk24 += -26.041666f;
+    D_ovl13_02_8004D608[5].unk30 = 0.2726876f;
+    D_ovl13_02_8004D608[6].unk24 = M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4);
+    D_ovl13_02_8004D608[6].unk28 = M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4);
+    D_ovl13_02_8004D608[6].unk2C = M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4);
+    D_ovl13_02_8004D8B0.unk24 = (M2C_FIELD(&D_ovl13_02_8004DFD0, f32 *, 0 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 0 * 4)) / frames;
+    D_ovl13_02_8004D8B0.unk28 = (M2C_FIELD(&D_ovl13_02_8004DFD0, f32 *, 1 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 1 * 4)) / frames;
+    D_ovl13_02_8004D8B0.unk2C = (M2C_FIELD(&D_ovl13_02_8004DFD0, f32 *, 2 * 4) - M2C_FIELD(&D_ovl13_02_8004DD58, f32 *, 2 * 4)) / frames;
+    PORT_HOST((&D_ovl13_02_8004D8B0)[1], D_ovl13_02_8004D8F4).unk24 = D_ovl13_02_8004D8B0.unk24 * -1.0f;
+    PORT_HOST((&D_ovl13_02_8004D8B0)[1], D_ovl13_02_8004D8F4).unk28 = D_ovl13_02_8004D8B0.unk28 * -1.0f;
+    PORT_HOST((&D_ovl13_02_8004D8B0)[1], D_ovl13_02_8004D8F4).unk2C = D_ovl13_02_8004D8B0.unk2C * -1.0f;
 }
 
 void func_ovl13_02_8004980C(void) {
@@ -3087,18 +3074,18 @@ void func_ovl13_02_800439DC(void) {
         D_ovl13_02_8004DFE0.unk0 = 0x186;
         D_ovl13_02_8004DFE0.unk4 = 1;
         D_ovl13_02_8004DFE0.unk8 = 1;
-        D_ovl13_02_8004DFE0.unkC[0] = 0;
-        D_ovl13_02_8004DFE0.unkC[1] = 1.7948718f;
-        D_ovl13_02_8004DFE0.unkC[2] = 8.717949f;
-        D_ovl13_02_8004DFE0.unk18[0] = 0.0f;
-        D_ovl13_02_8004DFE0.unk18[1] = 0.0f;
-        D_ovl13_02_8004DFE0.unk18[2] = 0.0f;
-        D_ovl13_02_8004DFE0.unk24[0] = -0.77698714f;
-        D_ovl13_02_8004DFE0.unk24[1] = -0.033815384f;
-        D_ovl13_02_8004DFE0.unk24[2] = 0;
-        D_ovl13_02_8004DFE0.unk30[0] = 0.0f;
-        D_ovl13_02_8004DFE0.unk30[1] = 0.0f;
-        D_ovl13_02_8004DFE0.unk30[2] = 0.0f;
+        D_ovl13_02_8004DFE0.unkC = 0;
+        D_ovl13_02_8004DFE0.unk10 = 1.7948718f;
+        D_ovl13_02_8004DFE0.unk14 = 8.717949f;
+        D_ovl13_02_8004DFE0.unk18 = 0.0f;
+        D_ovl13_02_8004DFE0.unk1C = 0.0f;
+        D_ovl13_02_8004DFE0.unk20 = 0.0f;
+        D_ovl13_02_8004DFE0.unk24 = -0.77698714f;
+        D_ovl13_02_8004DFE0.unk28 = -0.033815384f;
+        D_ovl13_02_8004DFE0.unk2C = 0;
+        D_ovl13_02_8004DFE0.unk30 = 0.0f;
+        D_ovl13_02_8004DFE0.unk34 = 0.0f;
+        D_ovl13_02_8004DFE0.unk38 = 0.0f;
         D_ovl13_02_8004DFE0.unk3C = 0;
         D_ovl13_02_8004DFE0.unk40 = 0;
     }

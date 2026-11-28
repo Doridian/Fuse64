@@ -10,26 +10,6 @@ typedef struct {
     /* 0x2C */ s32 unk2C;
 } UnkStruct_80090050;
 
-typedef struct UnkStruct_802363BC {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ f32 unk38;
-    /* 0x3C */ struct UnkStruct_802363BC *unk3C;
-    /* 0x40 */ struct UnkStruct_802363BC *unk40;
-} UnkStruct_802363BC; /* size 0x44 */
-
 s32 func_80238A10(void *, PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 void func_80234F6C(s32);
 void func_80235114(Vec3f *);
@@ -106,7 +86,7 @@ extern f32 D_8008F430;
 void func_8026DCAC(f32, f32, f32, Unk8026DCAC *, s32);
 s32 func_8026EE18(f32);
 s32 func_8026D7D8(s32, s32, s32);
-void func_802358D0(void *, s32, s16);
+void func_802358D0(UnkStruct_802363BC *, s32, s16);
 PORT_RET(s32, u16) func_802399AC(s32);
 extern UnkStructA *D_8009004C;
 s32 func_80243DDC(void);
@@ -433,7 +413,7 @@ void func_80236ACC(u16 arg0) {
     D_8008F424 &= ~arg0;
 }
 
-void func_802358D0(void *arg0, s32 arg1, s16 arg2) {
+void func_802358D0(UnkStruct_802363BC *arg0, s32 arg1, s16 arg2) {
     // Source order: this function and func_80235924 sit just above
     // func_80236658, not in address order.  In address order IDO -O3 pulls
     // func_80236658 (whose address this takes) and its callees in before this

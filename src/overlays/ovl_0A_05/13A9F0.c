@@ -59,7 +59,7 @@ void func_ovl0A_05_80048AB8(f32, f32, f32); /* 0x1704 */
 void func_ovl0A_05_80048AC8(f32, f32, f32); /* 0x1706 */
 void func_ovl0A_05_80048AD8(f32, f32, f32); /* 0x1708 */
 void func_ovl0A_05_80048AE0(f32 *, f32 *, f32 *); /* 0x1709 */
-void func_ovl0A_05_80048AF0(u32 *, s32, s32); /* 0x170B */
+void func_ovl0A_05_80048AF0(UnkStruct_802363BC *, s32, s32); /* 0x170B */
 void func_ovl0A_05_80048B18(s32); /* 0x1710 */
 void func_ovl0A_05_80048B20(s32); /* 0x1711 */
 void func_ovl0A_05_80048B30(s32); /* 0x1713 */
@@ -1159,7 +1159,7 @@ void func_ovl0A_05_80044FD0(void) {
     func_ovl0A_05_800490A8(1);
     func_ovl0A_05_80048468(1);
     func_ovl0A_05_800483E0(0);
-    func_ovl0A_05_80048AF0(D_ovl0A_05_800496D8, 0x170, 0);
+    func_ovl0A_05_80048AF0((UnkStruct_802363BC *) D_ovl0A_05_800496D8, 0x170, 0);
     func_ovl0A_05_80048DC8(func_ovl0A_05_800461C8, NULL, 0, 0, 0x110);
     func_ovl0A_05_80048DC8(func_ovl0A_05_800450B4, NULL, 0, 0, 0x150);
     func_ovl0A_05_80048480("WSH W1 WG1 WDS WAP WB10 ST1");

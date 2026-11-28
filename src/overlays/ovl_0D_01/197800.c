@@ -57,19 +57,6 @@ typedef struct {
     s32 unk8;
 } Trio_0D01;
 
-/* passed to func_ovl0D_01_80046AE0 */
-typedef struct {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ s32 unk18[5];
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ PORT_RET(s32 unk30[5];, s32 unk30[3]; void *unk3C; void *unk40;) /* (4ED50.c's UnkStruct_802363BC: two links) */
-} Move_0D01;
-
 /* what ZeroJump 0x3106 returns (as in ovl_0A_05) */
 typedef struct {
     /* 0x00 */ PORT_RET(u8 unk0[0xC];, void *unk0; u8 unk4[0x8];)
@@ -120,7 +107,7 @@ void func_ovl0D_01_800469D0(s32, s32); /* 0x1511 */
 void func_ovl0D_01_80046AA8(f32, f32, f32); /* 0x1704 */
 void func_ovl0D_01_80046AC8(f32, f32, f32); /* 0x1708 */
 void func_ovl0D_01_80046AD0(f32 *, f32 *, f32 *); /* 0x1709 */
-void func_ovl0D_01_80046AE0(Move_0D01 *, s32, s32); /* 0x170B */
+void func_ovl0D_01_80046AE0(UnkStruct_802363BC *, s32, s32); /* 0x170B */
 s32 func_ovl0D_01_80046AF8(void); /* 0x170E */
 void func_ovl0D_01_80046B00(void); /* 0x170F */
 void func_ovl0D_01_80046B08(s32); /* 0x1710 */
@@ -336,7 +323,7 @@ UnkStruct_ovl0C_01_8004A54C D_ovl0D_01_8004788C[1] = {
 UnkStruct_ovl0C_01_8004A54C D_ovl0D_01_800478C4[1] = {
     { NULL, -1, 0x323, -1, -1, -1, -1, 130.0f, 60.0f, 100.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
 };
-Move_0D01 D_ovl0D_01_800478FC = { 0x708, 1, 0, 0.0f, 0.0f, 0.0f, { 0 }, -1.0f };
+UnkStruct_802363BC D_ovl0D_01_800478FC = { 0x708, 1, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f };
 
 #include "statics.h"
 

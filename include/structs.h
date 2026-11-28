@@ -182,6 +182,30 @@ typedef struct {
     /* 0x4C */ s32 unk4C;
 } UnkStruct_802AC610; /* size 0x50 */
 
+/* A camera move: a step of a list linked both ways (4ED50's func_80236658
+ * runs it as a task: func_802358D0, ZeroJump 0x170B, starts it); the
+ * position's step and its change (unkC, unk18), the look-at point's
+ * (unk24, unk30). */
+typedef struct UnkStruct_802363BC {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ s32 unk8;
+    /* 0x0C */ f32 unkC;
+    /* 0x10 */ f32 unk10;
+    /* 0x14 */ f32 unk14;
+    /* 0x18 */ f32 unk18;
+    /* 0x1C */ f32 unk1C;
+    /* 0x20 */ f32 unk20;
+    /* 0x24 */ f32 unk24;
+    /* 0x28 */ f32 unk28;
+    /* 0x2C */ f32 unk2C;
+    /* 0x30 */ f32 unk30;
+    /* 0x34 */ f32 unk34;
+    /* 0x38 */ f32 unk38;
+    /* 0x3C */ struct UnkStruct_802363BC *unk3C;
+    /* 0x40 */ struct UnkStruct_802363BC *unk40;
+} UnkStruct_802363BC; /* size 0x44 */
+
 /*
  * A word's low half, as 93850 and 949A0 read UnkStruct_802AC610's unk4,
  * unk8 and unkC: the halfword at +2 on the N64; the port takes the whole

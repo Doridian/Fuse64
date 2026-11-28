@@ -143,7 +143,7 @@ void func_ovl15_01_8004D218(f32, f32, f32); /* 0x1704 */
 void func_ovl15_01_8004D228(f32, f32, f32); /* 0x1706 */
 void func_ovl15_01_8004D238(f32, f32, f32); /* 0x1708 */
 void func_ovl15_01_8004D240(f32 *, f32 *, f32 *); /* 0x1709 */
-void func_ovl15_01_8004D250(void *, s32, s32); /* 0x170B */ /* also: void (u32 *, s32, s32) x1; void (Move_0D06 *, s32, s32) x1; void (Cam_0D03 *, s32, s32) x1 */
+void func_ovl15_01_8004D250(UnkStruct_802363BC *, s32, s32); /* 0x170B */
 void func_ovl15_01_8004D270(void); /* 0x170F */
 void func_ovl15_01_8004D278(s32); /* 0x1710 */
 void func_ovl15_01_8004D280(s32); /* 0x1711 */
@@ -3230,7 +3230,7 @@ void func_ovl15_01_8004391C(void) {
         func_ovl15_01_8004D280(0x30);
         func_ovl15_01_8004D218(2300.0f, 300.0f, -1400.0f);
         func_ovl15_01_8004D228(2300.0f, 750.0f, 2300.0f);
-        func_ovl15_01_8004D250(&D_ovl15_01_8004E0D8, 0x170, 0);
+        func_ovl15_01_8004D250((UnkStruct_802363BC *) &D_ovl15_01_8004E0D8, 0x170, 0);
         speed = sa[1];
         acc = sa[0];
         func_ovl15_01_80043010(0x13D, D_ovl15_01_8004E010);

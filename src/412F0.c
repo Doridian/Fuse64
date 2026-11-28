@@ -54,20 +54,6 @@ extern u8 D_8019A8D0[PORT_SIZE(0x800)];
 extern u64 D_801E56C0[0x2000];
 extern u8 D_8029D250[PORT_SIZE(0xD0)];
 extern u8 D_8029D320[PORT_SIZE(0x1430)];
-extern s32 D_8029F5E0;
-extern s32 D_8029F5E4;
-extern s32 D_8029F5E8;
-extern s32 D_8029F5EC;
-extern s32 D_8029F5F0;
-extern s32 D_8029F5F4;
-extern s32 D_8029F5F8;
-extern s32 D_8029F5FC;
-extern s32 D_8029F600;
-extern UnkStruct_8029F608 D_8029F608[2];
-extern u8 D_8029F6D8[];
-extern u8 D_8029F718[];
-extern u8 D_8029F7A0[];
-extern u8 D_8029F7C8[];
 /* (F3DEX's data in main_code's rodata: below) */
 #if VERSION_JP
 #define PORT_F3DEX_HEAD 0x800
@@ -113,6 +99,58 @@ static void *port_f3dex(void) {
 #endif
 #endif
 extern s32 D_802A5800;
+
+void func_802276FC(s32 arg0);
+void func_802276E0(s32 r, s32 g, s32 b);
+void func_802276D4(s32 arg0);
+void func_802276C8(s32 arg0);
+
+/* This object's .data (0x8029F5E0-0x8029F7E0) */
+s32 D_8029F5E0 = 0;
+s32 D_8029F5E4 = 1;
+s32 D_8029F5E8 = 1;
+s32 D_8029F5EC = 0;
+s32 D_8029F5F0 = 0;
+s32 D_8029F5F4 = 0;
+s32 D_8029F5F8 = 0;
+s32 D_8029F5FC = 0x84;
+s32 D_8029F600 = 0;
+/* (sched.h's OSScTask is 8-aligned, by its OSTask's long long, which this
+   file's struct doesn't show: the word between) */
+u8 D_8029F604[4] = { 0 };
+/* the two graphics tasks: OS_SC_* flags 0x63, M_GFXTASK, the dram stack
+   and the yield buffer (at the end of the output buffer, D_801E56C0's
+   0x10000 bytes); the rest is filled in per frame */
+UnkStruct_8029F608 D_8029F608[2] = {
+    { NULL, 0, 0x63, NULL, 1, 0, NULL, 0, NULL, 0x1000, NULL, 0x800, D_8019A8D0, 0x800, NULL, NULL,
+      NULL, 0, (u8 *) D_801E56C0 + 0x10000, 0xC00, NULL },
+    { NULL, 0, 0x63, NULL, 1, 0, NULL, 0, NULL, 0x1000, NULL, 0x800, D_8019A8D0, 0x800, NULL, NULL,
+      NULL, 0, (u8 *) D_801E56C0 + 0x10000, 0xC00, NULL },
+};
+/* the RSP's state: geometry mode, texture off, clip ratio 2 */
+UnkStruct_80226E84 D_8029F6D8[] = {
+    { 0xB6000000, 0x001F3205 }, { 0xBB000000, 0x00000000 }, { 0xB7000000, 0x00000204 },
+    { 0xBC000404, 0x00000002 }, { 0xBC000C04, 0x00000002 }, { 0xBC001404, 0x0000FFFE },
+    { 0xBC001C04, 0x0000FFFE }, { 0xB8000000, 0x00000000 },
+};
+/* the RDP's other modes, combiner and blend colour */
+UnkStruct_80226E84 D_8029F718[] = {
+    { 0xBA001001, 0x00000000 }, { 0xBA000E02, 0x00000000 }, { 0xBA001102, 0x00000000 },
+    { 0xBA001301, 0x00080000 }, { 0xBA000C02, 0x00002000 }, { 0xBA000903, 0x00000C00 },
+    { 0xFCFFFFFF, 0xFFFE793C }, { 0xB900031D, 0x00000000 }, { 0xBA000801, 0x00000000 },
+    { 0xB9000002, 0x00000000 }, { 0xBA000402, 0x00000030 }, { 0xF9000000, 0x000000E6 },
+    { 0xC0000000, 0x00000000 }, { 0xBA001701, 0x00800000 }, { 0xE7000000, 0x00000000 },
+    { 0xBA001402, 0x00000000 }, { 0xB8000000, 0x00000000 },
+};
+/* fill mode on the depth buffer (segment address D_200000) */
+UnkStruct_80226E84 D_8029F7A0[] = {
+    { 0xE7000000, 0x00000000 }, { 0xBA001402, 0x00300000 },
+    { 0xFF10013F, (PORT_UP(u32)) D_200000 }, { 0xF7000000, 0xFFFCFFFC },
+    { 0xB8000000, 0x00000000 },
+};
+/* ZeroJump module 0x22's table (func_80226D80); its .data's last two words
+   are zeros, taken here for the section's padding */
+void *D_8029F7C8[] = { func_802276FC, func_802276E0, func_802276D4, func_802276C8 };
 
 /* This object's .bss (0x802A5330-0x802A53D0). Defined here because the
  * code depends on it: as1 shares one `lui $at` between stores to two

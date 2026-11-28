@@ -27,6 +27,9 @@ import sys
 EXCLUDE = {
     "D_80300000",   # 40300.c: the sbrk pointer's start
     "D_802AD120",   # 80580.c: the audio configs
+    "D_8019A8D0",   # 412F0.c: the graphics tasks' dram stack,
+    "D_801E56C0",   # ... their yield buffer,
+    "D_200000",     # ... and the depth buffer its display list fills
 }
 
 

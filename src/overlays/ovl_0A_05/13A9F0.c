@@ -172,7 +172,7 @@ void func_ovl0A_05_80045568(void);
 void func_ovl0A_05_8004571C(void);
 void func_ovl0A_05_800458BC(void);
 void func_ovl0A_05_800458DC(UnkStructA *obj, f32 *from, f32 *to);
-void func_ovl0A_05_8004599C(void);
+UnkStructA *func_ovl0A_05_8004599C(void);
 static void func_ovl0A_05_80045C00(UnkStructA *obj);
 void func_ovl0A_05_80045C58(void);
 void func_ovl0A_05_80045D90(void);
@@ -490,7 +490,7 @@ void func_ovl0A_05_800473A0(void) {
 }
 
 void func_ovl0A_05_8004704C(void) {
-    s32 pad[2]; /* fake: unused; the original frame has these slots */
+    s32 pad[2]; /* fake: unused; two words above the locals, as in the tasks 800459C8 and 8004333C (an inlined call of the empty statics or 80047EE4, a parameter: no) */
     PORT_IP(s32) idx;
     UnkStruct_802B03C0 *slot;
     f32 sx;
@@ -646,7 +646,7 @@ void func_ovl0A_05_800469EC(void) {
 
 void func_ovl0A_05_800467FC(void) {
     s32 n;
-    f32 pad; /* fake: unused; the original frame has this slot */
+    f32 pad; /* fake: unused; a slot between n and i (the index and the loop counter as two variables give the frame, but the index in a0 where the original keeps both in s1) */
     PORT_IP(s32) i;
     f32 x0;
     f32 y0;
@@ -933,18 +933,17 @@ static void func_ovl0A_05_80045C00(UnkStructA *obj) {
 }
 
 void func_ovl0A_05_800459C8(void) {
+    s32 pad[2]; /* fake: unused; two words above the locals, as 8004704C's (and 8004333C's one): all three are tasks (0x1900) */
     s32 i;
     f32 v;
-    f32 s;
-    f32 dv;
     UnkStructA *objs[2];
-    s32 pad1; /* fake: unused; the original's frame has these slots */
+    f32 s;
     f32 b[3];
     f32 a[3];
-    s32 pad2[2]; /* fake: unused; as pad1 */
+    f32 dv;
 
     for (i = 0; i < 2; i++) {
-        objs[i] = func_ovl0A_05_80048CA0(0x1CB, 0x01480000, 0xD0, NULL);
+        objs[i] = func_ovl0A_05_8004599C();
         objs[i]->unk40->unk30 = 0.1f;
         objs[i]->unk40->unk28 = objs[i]->unk40->unk30;
         objs[i]->unk40->unk36 = 0xBF;
@@ -976,8 +975,9 @@ void func_ovl0A_05_800459C8(void) {
     }
 }
 
-void func_ovl0A_05_8004599C(void) {
-    func_ovl0A_05_80048CA0(0x1CB, 0x01480000, 0xD0, NULL);
+/* Inlined into 800459C8 (its one call), and emitted too, as a global. */
+UnkStructA *func_ovl0A_05_8004599C(void) {
+    return func_ovl0A_05_80048CA0(0x1CB, 0x01480000, 0xD0, NULL);
 }
 
 void func_ovl0A_05_800458DC(UnkStructA *obj, f32 *from, f32 *to) {
@@ -1498,7 +1498,7 @@ void func_ovl0A_05_800438A0(void) {
 }
 
 void func_ovl0A_05_8004333C(void) {
-    s32 pad; /* fake: unused; the original frame has this slot */
+    s32 pad; /* fake: unused; a word above flag, as in the tasks 8004704C and 800459C8 (any order of the four locals: no) */
     s32 flag;
     s32 i;
     f32 v;

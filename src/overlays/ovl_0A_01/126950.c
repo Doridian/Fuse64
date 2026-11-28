@@ -38,11 +38,16 @@
  * 80044A24, 80044294 and 80043010/18/20 replaced eight `#line`s; the
  * order 80046094 before 8004608C is needed, the rest a guess).
  *
+ * 8004428C is the D_ovl0A_01_80048A70 = 0 store alone, inlined before
+ * 800442B4's task call (so the store, a later line, lands in the call's
+ * delay slot), and 800442AC is defined between 800442B4 and 800442A4 (its
+ * third store's lines after the prologue's, before 800442A4's load): two
+ * `#line` pairs gone (2026-11-28).
+ *
  * Levers that fixed the rest: `#line` renumbering (80043380's `e = tbl`
- * after the call's line; 8004428C's
- * store and 800442B4's final `v = j` numbered after the call they precede,
- * so they land in its delay slot; 800442AC renumbered for
- * 800442B4's setup order; 80044F3C's `pos[2]` numbered before `v = 0`),
+ * after the call's line; 800442B4's final `v = j` numbered after the call
+ * it precedes, so it lands in its delay slot; 80044F3C's `pos[2]`
+ * numbered before `v = 0`),
  * `k = D_ovl0A_01_80048D1C = ...` in 8004364C's switch, `base[0]` and `tgt[0]` computed separately in
  * 80043AA4 (ugen then picks $f0), a compiled-out `fall == NULL` check atop
  * 80044798 (its IPA registers: fall in s1, the table in s2), and in
@@ -996,7 +1001,7 @@ void func_ovl0A_01_80044F3C(void) {
     func_ovl0A_01_80044A2C();
     v = 0;
     pos[0] = 200.0f;
-#line 975 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 975 /* fake: pos[2]'s store and the rest numbered before v = 0 and pos[0] (statement orders, pos[1] = v = 0, the inits in the loop's for: no) */
     pos[2] = 900.0f;
     pos[1] = v;
     played = 0;
@@ -1242,6 +1247,7 @@ void func_ovl0A_01_800442B4(void) {
     func_ovl0A_01_80044294();
     i = v;
     func_ovl0A_01_8004428C();
+    D_ovl0A_01_80048A64 = func_ovl0A_01_80047F88(func_ovl0A_01_80045EA0, NULL, 0, 0, 0x130);
     for (; i < 670; i++) {
         func_ovl0A_01_800441F8();
         func_ovl0A_01_800440F4();
@@ -1285,31 +1291,27 @@ void func_ovl0A_01_800442B4(void) {
         } while (++j < 1370);
     }
     v = j;
-#line 1259 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1259 /* fake: v = j numbered after the call, for its delay slot (on the call's line, in its arguments: no) */
     func_ovl0A_01_80047530(0x1A, 0x12, 4);
     func_ovl0A_01_80047F98();
 }
 
 static void func_ovl0A_01_8004428C(void) {
-#line 1267 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
     D_ovl0A_01_80048A70 = 0;
-#line 1266 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
-    D_ovl0A_01_80048A64 = func_ovl0A_01_80047F88(func_ovl0A_01_80045EA0, NULL, 0, 0, 0x130);
 }
 
 static void func_ovl0A_01_8004429C(void) {
     func_ovl0A_01_80047E40(D_ovl0A_01_80048890[0].obj, 0x01000000);
 }
 
-static void func_ovl0A_01_800442A4(void) {
-    func_ovl0A_01_80047E38(D_ovl0A_01_80048770[4].obj, 0x80000);
-}
-
-#line 1241 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
 static void func_ovl0A_01_800442AC(void) {
     D_ovl0A_01_80048A1C = 0.0f;
     D_ovl0A_01_80048A20 = 0.0f;
     D_ovl0A_01_80048A24 = 0.0f;
+}
+
+static void func_ovl0A_01_800442A4(void) {
+    func_ovl0A_01_80047E38(D_ovl0A_01_80048770[4].obj, 0x80000);
 }
 
 static void func_ovl0A_01_800441F8(void) {
@@ -1503,7 +1505,7 @@ void func_ovl0A_01_8004364C(void) {
                 e->obj->unk40->unk18 = e->unk14;
                 e->obj->unk40->unk20 = e->unk20;
             }
-                if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
+                if (0) { /* fake: dead call; without it 80043380 (and its stubs) no longer come out before 8004364C (a call from an unused static or the block written as the call: no) */
                     func_ovl0A_01_80043380(tbl, n);
                 }
             }
@@ -1558,7 +1560,7 @@ static void func_ovl0A_01_80043380(UnkStruct_ovl0A_01_Entry *tbl, s32 n) {
     UnkStruct_ovl0A_01_Entry *e;
 
     for (i = 0; i < n; i++) {
-#line 1526 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1526 /* fake: e = tbl numbered after the call (func_ovl0A_01_80043370(tbl++) or tbl++ in the for: 8004364C and 80044584 change with it) */
         e = tbl;
 #line 1525 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
         tbl->obj = func_ovl0A_01_80047E60(tbl->unk4 == 0 ? tbl->unk8 : 0x320, 0x0D000000, 0xD0, NULL);

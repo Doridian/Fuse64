@@ -1,16 +1,7 @@
 #include "common.h"
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-} UnkStruct_8027EFD8;
-
-typedef struct {
-    /* 0x00 */ UnkStruct_8027EFD8 *unk0;
+    /* 0x00 */ UnkStructA_40 *unk0;
     /* 0x04 */ UnkStruct_8027F0C4 *unk4;
     /* 0x08 */ void *unk8;
     /* 0x0C */ s32 (*unkC)(u8, u16);
@@ -45,7 +36,7 @@ void func_8027F5A8(u16 arg0, u16 arg1, u16 arg2);
 void func_8027F498(UnkStruct_8027F0C4 *arg0);
 void func_8027F428(void);
 void func_8027F400(void);
-UnkStruct_8027EFD8 *func_8027EFC8(void);
+UnkStructA_40 *func_8027EFC8(void);
 PORT_RET(void, s32) func_8027EFA8(void);
 
 /* .data: the selection state func_8027F658 sets up, the sound
@@ -252,7 +243,7 @@ static void func_8027EFD8(f32 arg0, f32 arg1) {
     }
 }
 
-UnkStruct_8027EFD8 *func_8027EFC8(void) {
+UnkStructA_40 *func_8027EFC8(void) {
     return D_802A15C0.unk0;
 }
 

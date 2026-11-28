@@ -17,8 +17,10 @@
  * The handler's cases (80043018-80045B00) are defined above the handler,
  * so that IDO emits them, with the statics, in the reverse order of the
  * handler's calls, as in the original. The empty statics leave the
- * `jr ra; nop` stubs at 80043010, 80044480, 80045834/3C, 80046318,
- * 80046340 and, unused, the eleven at 800492FC-8004934C.
+ * `jr ra; nop` stubs at 80043010, 80044480, 80046318, 80046340 and,
+ * unused, the eleven at 800492FC-8004934C; the handler's cases 18 and
+ * 19/30 are statics inlined into it (their locals are its frame), which
+ * leave theirs at 8004583C and 80045834.
  *
  * How the last words came to match:
  * - 80044534: func_ovl12_05_80049E10 and func_ovl12_05_8004A200 are
@@ -47,7 +49,7 @@
 #include "common.h"
 #include "overlays/common/types.h"
 
-/* what D_ovl12_05_8004AC74 is compared with (80044534, 80045D3C): eu's
+/* what D_ovl12_05_8004AC74 is compared with (80044534 and the handler's statics 8004583C and 80045834): eu's
  * limits are 10000 and 6000 where us's and jp's are 8000 and 5000 */
 #if VERSION_EU
 #define LIMIT_HI 10000
@@ -1164,8 +1166,6 @@ void func_ovl12_05_80045844(void) {
     UnkStructA_40 *temp_v1;
     UnkStructA_40 *temp_v1_2;
 
-    func_ovl12_05_80045834();
-    func_ovl12_05_8004583C();
     func_ovl12_05_8004A828(1, 7, 0x17, 0, 7);
     func_ovl12_05_80049860(0x17, 0, 0xE);
     func_ovl12_05_800498A0(0);
@@ -1182,10 +1182,82 @@ void func_ovl12_05_80045844(void) {
     D_ovl12_05_8004AC64 = func_ovl12_05_8004A1F8(func_ovl12_05_80048C3C, NULL, 0, 0, 0x130);
 }
 
+/* case 18 of the handler (10_13's 800464B0); inlined, its stub stays */
 static void func_ovl12_05_8004583C(void) {
+    s32 limit;
+    UnkStruct_ovl10_13_8004A770 *player;
+    UnkStruct_802AC610 *s;
+    Vec3f pos;
+    UnkStructA_40 *temp_v1;
+
+    s = func_ovl12_05_800497F8();
+    func_ovl12_05_8004A828(1, 8, 0x17, 0, 7);
+    func_ovl12_05_8004A828(2, 9, 0x19, 0, 0xE);
+    func_ovl12_05_80049860(0x16, 0, 0xE);
+    func_ovl12_05_800498A0(0);
+    func_ovl12_05_80049918(2);
+    func_ovl12_05_800498A0(0);
+    func_ovl12_05_80049918(0);
+    temp_v1 = func_ovl12_05_800498E8(1)->unk40;
+    temp_v1->unk10 += 50.0f;
+    func_ovl12_05_80049830(0x7E, 0x13);
+    func_ovl12_05_800498B8();
+    func_ovl12_05_80049F50(0xF);
+    player = func_ovl12_05_8004A840(1);
+    if ((D_ovl12_05_8004AC4C == 0x12) && !(player->unk124 & 8)) {
+        if (s->unk10 == 0) {
+            limit = LIMIT_HI;
+        } else {
+            limit = LIMIT_LO;
+        }
+        if (limit >= D_ovl12_05_8004AC74) {
+            pos.x = player->unk1C->unk40->unk10;
+            pos.y = player->unk1C->unk40->unk14;
+            pos.z = player->unk1C->unk40->unk18;
+            func_ovl12_05_8004A428(&pos);
+            player->unk124 |= 8;
+            s->unk2C += 1;
+        }
+    }
 }
 
+/* cases 19 and 30 of the handler (10_13's 80046324); inlined, its stub stays */
 static void func_ovl12_05_80045834(void) {
+    s32 limit;
+    UnkStruct_ovl10_13_8004A770 *player;
+    UnkStruct_802AC610 *s;
+    Vec3f pos;
+    UnkStructA_40 *temp_v1;
+    s32 pad[3]; /* fake: unused, frame space the original has below pos (only a 3-word local after pos places both statics' areas; no source for it found: the ternary, the call result's temporary and an obj local don't give it) */
+
+    s = func_ovl12_05_800497F8();
+    func_ovl12_05_8004A828(1, 8, 0x17, 0, 7);
+    func_ovl12_05_8004A828(2, 9, 0x19, 0, 0xE);
+    func_ovl12_05_80049860(0x16, 0, 0xE);
+    func_ovl12_05_800498A0(0);
+    func_ovl12_05_80049918(2);
+    func_ovl12_05_800498A0(0);
+    func_ovl12_05_80049918(0);
+    temp_v1 = func_ovl12_05_800498E8(1)->unk40;
+    temp_v1->unk10 += 50.0f;
+    func_ovl12_05_800498B8();
+    func_ovl12_05_80049F50(0xF);
+    player = func_ovl12_05_8004A840(1);
+    if ((D_ovl12_05_8004AC4C == 0x13) && !(player->unk124 & 8)) {
+        if (s->unk10 == 0) {
+            limit = LIMIT_HI;
+        } else {
+            limit = LIMIT_LO;
+        }
+        if (limit >= D_ovl12_05_8004AC74) {
+            pos.x = player->unk1C->unk40->unk10;
+            pos.y = player->unk1C->unk40->unk14;
+            pos.z = player->unk1C->unk40->unk18;
+            func_ovl12_05_8004A428(&pos);
+            player->unk124 |= 8;
+            s->unk2C += 1;
+        }
+    }
 }
 
 /* twin of 10_13:8004621C (nonmatching/overlays/ovl_10_13/2439F0.c) */
@@ -1889,22 +1961,6 @@ static void func_ovl12_05_80043018(void) {
 }
 
 void func_ovl12_05_80045D3C(s32 arg0) {
-    s32 pad0; /* fake: unused, frame space the original has (no source for it found) */
-    s32 pad1; /* fake: unused, frame space the original has (no source for it found) */
-    s32 pad2; /* fake: unused, frame space the original has (no source for it found) */
-    UnkStruct_ovl10_13_8004A770 *spC0;
-    UnkStruct_802AC610 *spBC;
-    Vec3f spB0;
-    s32 pad3; /* fake: unused, frame space the original has (no source for it found) */
-    s32 pad4; /* fake: unused, frame space the original has (no source for it found) */
-    s32 pad5; /* fake: unused, frame space the original has (no source for it found) */
-    UnkStruct_ovl10_13_8004A770 *spA0;
-    UnkStruct_802AC610 *sp9C;
-    Vec3f sp90;
-    s32 pad6; /* fake: unused, frame space the original has (cases 18 and 19 as blocks {player, s, pos, +3 words} under 3 function-level words match: the 3+3+3 words are unexplained) */
-    UnkStructA_40 *temp_v1;
-    UnkStructA_40 *temp_v1_3;
-
     switch (arg0) {
     case 2:
         D_ovl12_05_8004AC4C = func_ovl12_05_800497A8();
@@ -1920,56 +1976,11 @@ void func_ovl12_05_80045D3C(s32 arg0) {
         func_ovl12_05_80045844();
         break;
     case 18:
-        spBC = func_ovl12_05_800497F8();
-        func_ovl12_05_8004A828(1, 8, 0x17, 0, 7);
-        func_ovl12_05_8004A828(2, 9, 0x19, 0, 0xE);
-        func_ovl12_05_80049860(0x16, 0, 0xE);
-        func_ovl12_05_800498A0(0);
-        func_ovl12_05_80049918(2);
-        func_ovl12_05_800498A0(0);
-        func_ovl12_05_80049918(0);
-        temp_v1 = func_ovl12_05_800498E8(1)->unk40;
-        temp_v1->unk10 += 50.0f;
-        func_ovl12_05_80049830(0x7E, 0x13);
-        func_ovl12_05_800498B8();
-        func_ovl12_05_80049F50(0xF);
-        spC0 = func_ovl12_05_8004A840(1);
-        if ((D_ovl12_05_8004AC4C == 0x12) && !(spC0->unk124 & 8)) {
-            if ((spBC->unk10 == 0 ? LIMIT_HI : LIMIT_LO) >= D_ovl12_05_8004AC74) {
-                spB0.x = spC0->unk1C->unk40->unk10;
-                spB0.y = spC0->unk1C->unk40->unk14;
-                spB0.z = spC0->unk1C->unk40->unk18;
-                func_ovl12_05_8004A428(&spB0);
-                spC0->unk124 |= 8;
-                spBC->unk2C += 1;
-            }
-        }
+        func_ovl12_05_8004583C();
         break;
     case 19:
     case 30:
-        sp9C = func_ovl12_05_800497F8();
-        func_ovl12_05_8004A828(1, 8, 0x17, 0, 7);
-        func_ovl12_05_8004A828(2, 9, 0x19, 0, 0xE);
-        func_ovl12_05_80049860(0x16, 0, 0xE);
-        func_ovl12_05_800498A0(0);
-        func_ovl12_05_80049918(2);
-        func_ovl12_05_800498A0(0);
-        func_ovl12_05_80049918(0);
-        temp_v1_3 = func_ovl12_05_800498E8(1)->unk40;
-        temp_v1_3->unk10 += 50.0f;
-        func_ovl12_05_800498B8();
-        func_ovl12_05_80049F50(0xF);
-        spA0 = func_ovl12_05_8004A840(1);
-        if ((D_ovl12_05_8004AC4C == 0x13) && !(spA0->unk124 & 8)) {
-            if ((sp9C->unk10 == 0 ? LIMIT_HI : LIMIT_LO) >= D_ovl12_05_8004AC74) {
-                sp90.x = spA0->unk1C->unk40->unk10;
-                sp90.y = spA0->unk1C->unk40->unk14;
-                sp90.z = spA0->unk1C->unk40->unk18;
-                func_ovl12_05_8004A428(&sp90);
-                spA0->unk124 |= 8;
-                sp9C->unk2C += 1;
-            }
-        }
+        func_ovl12_05_80045834();
         break;
     case 4:
         func_ovl12_05_80045754();

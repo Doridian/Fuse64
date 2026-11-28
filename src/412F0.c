@@ -128,13 +128,13 @@ UnkStruct_8029F608 D_8029F608[2] = {
       NULL, 0, (u8 *) D_801E56C0 + 0x10000, 0xC00, NULL },
 };
 /* the RSP's state: geometry mode, texture off, clip ratio 2 */
-UnkStruct_80226E84 D_8029F6D8[] = {
+Gfx_80225840 D_8029F6D8[] = {
     { 0xB6000000, 0x001F3205 }, { 0xBB000000, 0x00000000 }, { 0xB7000000, 0x00000204 },
     { 0xBC000404, 0x00000002 }, { 0xBC000C04, 0x00000002 }, { 0xBC001404, 0x0000FFFE },
     { 0xBC001C04, 0x0000FFFE }, { 0xB8000000, 0x00000000 },
 };
 /* the RDP's other modes, combiner and blend colour */
-UnkStruct_80226E84 D_8029F718[] = {
+Gfx_80225840 D_8029F718[] = {
     { 0xBA001001, 0x00000000 }, { 0xBA000E02, 0x00000000 }, { 0xBA001102, 0x00000000 },
     { 0xBA001301, 0x00080000 }, { 0xBA000C02, 0x00002000 }, { 0xBA000903, 0x00000C00 },
     { 0xFCFFFFFF, 0xFFFE793C }, { 0xB900031D, 0x00000000 }, { 0xBA000801, 0x00000000 },
@@ -143,7 +143,7 @@ UnkStruct_80226E84 D_8029F718[] = {
     { 0xBA001402, 0x00000000 }, { 0xB8000000, 0x00000000 },
 };
 /* fill mode on the depth buffer (segment address D_200000) */
-UnkStruct_80226E84 D_8029F7A0[] = {
+Gfx_80225840 D_8029F7A0[] = {
     { 0xE7000000, 0x00000000 }, { 0xBA001402, 0x00300000 },
     { 0xFF10013F, (PORT_UP(u32)) D_200000 }, { 0xF7000000, 0xFFFCFFFC },
     { 0xB8000000, 0x00000000 },

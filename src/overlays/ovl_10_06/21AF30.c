@@ -1785,7 +1785,7 @@ void func_ovl10_06_80044D00(void) {
         x = e->unk40->unk10;
         y = e->unk40->unk14;
         z = e->unk40->unk18;
-        if (e != NULL && PORT_HOST(*(s32 *)e->unk44, (intptr_t)e->unk44) == 0 && (func_ovl10_06_80049628(x, y, z) & 0xF) == 1) {
+        if (e != NULL && e->unk44 == NULL && (func_ovl10_06_80049628(x, y, z) & 0xF) == 1) {
             D_ovl10_06_8004ADF8[D_ovl10_06_8004B7D0] = e;
             func_ovl10_06_80049F78(D_ovl10_06_8004ADB8, e);
             func_ovl10_06_80049F98(e, 0x200000);

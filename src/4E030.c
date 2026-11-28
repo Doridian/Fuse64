@@ -5,30 +5,18 @@
  * (func_80233C30) just before its first caller.  Its wrappers of 4DE50's
  * compares call them with a `jal`: 4DE50 is another file. */
 
-typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ PORT_RET(u8 unk14[0x2C];, u8 unk14[0xC]; void *unk20; void *unk24; u8 unk28[0x14]; void *unk3C;)
-    /* 0x40 */ UnkStructA_40 *unk40;
-    /* 0x44 */ PORT_RET(u8 unk44[8];, void *unk44; u8 unk48[0x4];)
-    /* 0x4C */ f32 unk4C;
-    /* 0x50 */ f32 unk50;
-    /* 0x54 */ f32 unk54;
-} UnkStruct_80231274;
-
 s32 func_8025E5EC(void);
 s32 func_8025E63C();
 void func_80227BAC(s32, s32, s32);
 f32 func_80229D3C(UnkStructA_40 *, s32);
 void func_80229E38(UnkStructA_40 *, s32, s32);
-void func_8022F808(UnkStruct_80231274 *, f32 *);
-PORT_RET(void, s32) func_8022FC90(UnkStruct_80231274 *);
+void func_8022F808(UnkStructA *, f32 *);
+PORT_RET(void, s32) func_8022FC90(UnkStructA *);
 void func_8022FEAC(f32 *, f32 *);
 void func_8022FF58(f32 *, f32 *, f32 *);
-PORT_RET(void, void *) func_802311E8(UnkStruct_80231274 *);
-UnkStruct_80231274 *func_80231274(s32, s32, s32, UnkStruct_80231274 *);
-void func_80232BA0(f32 *, UnkStruct_80231274 *);
+PORT_RET(void, void *) func_802311E8(UnkStructA *);
+UnkStructA *func_80231274(s32, s32, s32, UnkStructA *);
+void func_80232BA0(f32 *, UnkStructA *);
 PORT_RET(void, s32) func_80238A10(void (*)(), PORT_IP(s32), PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
@@ -194,7 +182,7 @@ void func_80233E3C(void) {
     f32 pos2[3];
     f32 step[3];
     f32 rot[3];
-    UnkStruct_80231274 *obj;
+    UnkStructA *obj;
     s32 i;
     f32 speed;
     f32 accel;
@@ -355,8 +343,8 @@ void func_802339A0(void) {
 }
 
 void func_80233830(void) {
-    UnkStruct_80231274 *a;
-    UnkStruct_80231274 *b;
+    UnkStructA *a;
+    UnkStructA *b;
     f32 pos[3];
 
     a = func_80231274(0x15, 0x01080010, 0xC0, NULL);

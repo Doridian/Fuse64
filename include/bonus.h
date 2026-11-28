@@ -5,25 +5,6 @@
 
 #include "common.h"
 
-typedef struct {
-    /* 0x00 */ u8 unk0[0x8];
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ PORT_RET(u8 unkC[0x24];, u8 unkC[0x14]; void *unk20; void *unk24; u8 unk28[0x8];)
-    /* 0x30 */ s32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ f32 unk38;
-    /* 0x3C */ PORT_RET(u8 unk3C[4];, void *unk3C;)
-    /* 0x40 */ UnkStructA_40 *unk40;
-    /* 0x44 */ PORT_RET(u8 unk44[0x14];, void *unk44; u8 unk48[0x10];)
-    /* 0x58 */ f32 unk58;
-    /* 0x5C */ f32 unk5C;
-    /* 0x60 */ f32 unk60;
-    /* 0x64 */ f32 unk64;
-    /* 0x68 */ f32 unk68;
-    /* 0x6C */ f32 unk6C;
-    /* 0x70 */ f32 unk70;
-} UnkStruct_80279050_14;
-
 /* A node of the list at D_800BB4A8; the last node is a sentinel */
 typedef struct UnkStruct_800BB4A8 {
     /* 0x00 */ s16 unk0;
@@ -32,7 +13,7 @@ typedef struct UnkStruct_800BB4A8 {
     /* 0x08 */ struct UnkStruct_800BB4A8 *unk8;
     /* 0x0C */ struct UnkStruct_800BB4A8 *unkC;
     /* 0x10 */ UnkStructA_40 *unk10;
-    /* 0x14 */ UnkStruct_80279050_14 *unk14;
+    /* 0x14 */ UnkStructA *unk14;
     /* 0x18 */ PORT_IP(s32) unk18;
     /* 0x1C */ s16 unk1C;
     /* 0x1E */ s16 unk1E;
@@ -66,9 +47,9 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ s32 unk0;
-    /* 0x04 */ UnkStruct_80279050_14 *unk4;
-    /* 0x08 */ UnkStruct_80279050_14 *unk8;
-    /* 0x0C */ UnkStruct_80279050_14 *unkC;
+    /* 0x04 */ UnkStructA *unk4;
+    /* 0x08 */ UnkStructA *unk8;
+    /* 0x0C */ UnkStructA *unkC;
     /* 0x10 */ s32 unk10;
     /* 0x14 */ s16 unk14;
     /* 0x18 */ f32 unk18;

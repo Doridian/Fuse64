@@ -83,12 +83,7 @@ void func_8022FF58(Vec3f *, Vec3f *, Vec3f *);
 s32 func_80233650(f32, f32);
 s32 func_802336E4(f32);
 s32 func_80233768(f32);
-typedef struct {
-    /* 0x00 */ PORT_RET(u8 unk0[0x40];, u8 unk0[0x20]; void *unk20; void *unk24; u8 unk28[0x14]; void *unk3C;)
-    /* 0x40 */ UnkStructA_40 *unk40;
-} UnkStruct_802443F4;
-
-UnkStruct_802443F4 *func_802443F4(s32);
+UnkStructA *func_802443F4(s32);
 void func_80234778(f32, f32, f32);
 void func_80234858(f32 *, f32 *, f32 *);
 f32 func_80234D24(f32, f32, f32);
@@ -113,7 +108,7 @@ s32 func_8026EE18(f32);
 s32 func_8026D7D8(s32, s32, s32);
 void func_802358D0(void *, s32, s16);
 PORT_RET(s32, u16) func_802399AC(s32);
-extern UnkStruct_802443F4 *D_8009004C;
+extern UnkStructA *D_8009004C;
 s32 func_80243DDC(void);
 void func_80234578(Vec3f *, Vec3f *, Vec3f *);
 void func_8023494C(f32 *);
@@ -156,7 +151,7 @@ void func_802361E4(f32);
 void func_80236174(f32);
 void func_80236180(Vec3f *);
 void func_80235FE4(f32, f32, f32, f32);
-void func_80235FD8(UnkStruct_802443F4 *);
+void func_80235FD8(UnkStructA *);
 void func_802360D4(f32, f32, f32, f32);
 void func_80236B7C(void);
 void func_80237890(void) {
@@ -746,12 +741,12 @@ void func_80235FE4(f32 arg0, f32 arg1, f32 arg2, f32 arg3) {
     }
 }
 
-void func_80235FD8(UnkStruct_802443F4 *arg0) {
+void func_80235FD8(UnkStructA *arg0) {
     D_8009004C = arg0;
 }
 
 void func_80235D7C(void) {
-    UnkStruct_802443F4 *p;
+    UnkStructA *p;
     u16 sp8A;
     Vec3f sp7C;
     Vec3f sp70;
@@ -894,7 +889,7 @@ void func_80235234(Vec3f *arg0) {
     f32 sp70;
     f32 sp6C;
     f32 sp68;
-    UnkStruct_802443F4 *p;
+    UnkStructA *p;
     f32 diff;
     s32 sp5C;
 

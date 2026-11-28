@@ -3,11 +3,11 @@
 # bytes"):  FILE FUNCTION BASE STRUCT  (FUNCTION * for the whole file).
 
 # 48600: the object pool's objects (D_800A3F00) and their shapes
-src/48600.c * arg0 UnkStructA80
-src/48600.c * arg1 UnkStructA80
-src/48600.c * temp_v0 UnkStructA80
-src/48600.c * var_t0 UnkStructA80
-src/48600.c func_802312AC p Shape
+src/48600.c * arg0 UnkStructA
+src/48600.c * arg1 UnkStructA
+src/48600.c * temp_v0 UnkStructA
+src/48600.c * var_t0 UnkStructA
+src/48600.c func_802312AC p UnkStructA_40
 
 # 54E40: the objects (structs.h's UnkStructA, the pool's object)
 src/54E40.c * obj UnkStructA
@@ -117,10 +117,10 @@ src/80580.c * func_8026B79C() -
 # (`-`: an object with no pointer before what is read: an object's model,
 # 426E0.c's UnkObj / structs.h's UnkStructA_40, below 0x3C; a vector; the
 # players D_800AEDF0 below 0x28)
-src/48600.c func_80232A34 sv_a2 UnkStructA80
-src/48600.c func_802310BC arg2 UnkStructA80
-src/48600.c func_8023101C arg3 UnkStructA80
-src/48600.c func_80230604 D_802A5560 UnkStructA80
+src/48600.c func_80232A34 sv_a2 UnkStructA
+src/48600.c func_802310BC arg2 UnkStructA
+src/48600.c func_8023101C arg3 UnkStructA
+src/48600.c func_80230604 D_802A5560 UnkStructA
 src/87D80.c func_8026E938 arg0 -
 src/87D80.c func_8026E6E4 arg0 -
 src/87D80.c func_8026E338 arg3 -

@@ -279,10 +279,10 @@ s32 func_80272024(s16 arg0);
 void func_802720C8(u8 *arg0);
 s32 func_802721D4(u8 *arg0, PORT_IP(s32) arg1, s32 *arg2);
 s16 func_8027241C(s16 arg0);
-void func_80272494(Obj8E *arg0, Obj8E *arg1, Ctl87 *arg2);
+void func_80272494(UnkStructA *arg0, UnkStructA *arg1, Ctl87 *arg2);
 void func_802727D8(Ctl87 *arg0);
-void func_80272FC0(Obj8E *arg0, s16 arg1);
-void func_802731A4(Obj8E *arg0, s16 arg1);
+void func_80272FC0(UnkStructA *arg0, s16 arg1);
+void func_802731A4(UnkStructA *arg0, s16 arg1);
 void *func_80273370(PORT_IP(s32) arg0);
 void func_802733C8(u8 *arg0);
 void func_802733F8(s16 *arg0);
@@ -769,12 +769,12 @@ f32 func_8026EAF8(u8 *arg0) {
     f32 r;
     f32 h;
 
-    fx = ((Obj8E *) arg0)->unk40->unk10;
-    fz = ((Obj8E *) arg0)->unk40->unk18;
-    ax = ((Obj8E *) arg0)->unk40->unk10 + 50.0f;
-    fy = ((Obj8E *) arg0)->unk40->unk14;
-    ay = ((Obj8E *) arg0)->unk40->unk14 + 50.0f;
-    az = ((Obj8E *) arg0)->unk40->unk18 + 50.0f;
+    fx = ((UnkStructA *) arg0)->unk40->unk10;
+    fz = ((UnkStructA *) arg0)->unk40->unk18;
+    ax = ((UnkStructA *) arg0)->unk40->unk10 + 50.0f;
+    fy = ((UnkStructA *) arg0)->unk40->unk14;
+    ay = ((UnkStructA *) arg0)->unk40->unk14 + 50.0f;
+    az = ((UnkStructA *) arg0)->unk40->unk18 + 50.0f;
     func_8026DCAC(fx, fy, fz, pos.i, 2);
     attr = func_8026D7D8(pos.i[0], pos.i[1], pos.i[2]);
     if (attr & 0x60) {
@@ -795,7 +795,7 @@ f32 func_8026EAF8(u8 *arg0) {
             DEBUG_PRINT(("D_800B15D8 == NULL\n"));
         }
         if (pos.i[1] >= D_800B15D8->unk0) {
-            r = ((Obj8E *) arg0)->unk40->unk14;
+            r = ((UnkStructA *) arg0)->unk40->unk14;
         } else {
             h = func_8026E2B0(pos.i[1]);
             if (func_8026E278(attr) != 0) {
@@ -807,7 +807,7 @@ f32 func_8026EAF8(u8 *arg0) {
     } else if (func_8026E278(a) != 0) {
         r = func_8026E3AC(ax, ay, az);
     } else {
-        r = ((Obj8E *) arg0)->unk40->unk14;
+        r = ((UnkStructA *) arg0)->unk40->unk14;
     }
     return r;
 }

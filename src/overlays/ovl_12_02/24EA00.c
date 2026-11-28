@@ -209,8 +209,8 @@ void func_ovl12_02_80043608(void) {
     func_ovl12_02_80043EF0(func_ovl12_02_80043840);
     obj = func_ovl12_02_80044990(0x2E5);
     func_ovl12_02_800449A0(obj, 0x20000001);
-    obj->unk18 = 0.03f;
-    obj->unk1C = 0.0f;
+    *(f32 *) &obj->unk18 = 0.03f;
+    *(f32 *) &obj->unk1C = 0.0f;
 }
 
 /* The overlay's handler: the entry returns it to the loader. */

@@ -100,7 +100,7 @@ typedef struct {
     /* 0x28 */ u8 unk28[0x3C - 0x28];
     /* 0x3C */ void *unk3C;
     /* 0x40 */ DigestModel *unk40;
-} DigestObj; /* 5E3F0.c's UnkObj, as far as unk40 */
+} DigestObj; /* structs.h's UnkStructA, as far as unk40 */
 
 typedef struct {
     /* 0x00 */ u32 unk0, unk4, unk8, unkC, unk10, unk14, unk18, unk1C, unk20, unk24;
@@ -140,9 +140,9 @@ static const struct {
     unsigned n, stride;
     const char *spec;
 } pools[] = {
-    /* 48600.c's UnkStructA80: the objects (the three lists), D_800AEDF0's unk28 */
+    /* structs.h's UnkStructA: the objects (the three lists), D_800AEDF0's unk28 */
     POOL("obj", D_800A3F00, 128, 0x80, "0-1c:w 28-38:w 48-74:w 20:p 24:p 3c:p 40:p 44:p 78:p 7c:p"),
-    /* 426E0.c's UnkObj: the models drawn (an object's unk40 is one) */
+    /* structs.h's UnkStructA_40: the models drawn (an object's unk40 is one) */
     POOL("mdl", D_800A0D00, 160, 0x50, "0-30:w 34:h 36:h 38:w 3c:p 40:p 44:p 48:p 4c:p"),
     /* 926A0.c's Rec926 */
     POOL("rec", D_8008E658, 48, 0x48, "0:h c:h e:h 10:h 1c-30:w 36:h 38:h 3a:h 3c-40:w 44:h 46:h 8:p 14:p 18:p"),

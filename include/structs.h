@@ -55,40 +55,33 @@ typedef struct UnkStructA_40 {
     /* 0x4C */ struct UnkTexSlots *unk4C;
 } UnkStructA_40; /* size 0x50 */
 
-/* What the overlays' tasks and callbacks get, and what the main_code
+/* An object of the pool D_800A3F00 (128 of them, 0x80 bytes; main_code's
+ * 48600 links them in the lists D_802A5578, D_802A55F8 and D_802A5678):
+ * what the overlays' tasks and callbacks get, and what the main_code
  * function behind the overlays' ZeroJump stub at 0x80044A20 (ovl_0E_06)
- * returns. */
-typedef struct {
-    /* 0x00 */ u8 unk0[8];
+ * returns (func_802443F4, a player's).  unk18/unk1C are 48600's nearest
+ * hit's distance (0x7FFFFFFF for none) and unk20/unk24 its object; the
+ * overlays' ovl_12_01-04 keep floats in unk18/unk1C. */
+typedef struct UnkStructA {
+    /* 0x00 */ s32 unk0;
+    /* 0x04 */ s32 unk4;
     /* 0x08 */ s32 unk8;
     /* 0x0C */ s32 unkC;
     /* 0x10 */ s32 unk10;
-    /* 0x14 */ u8 unk14[4];
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-#ifdef TARGET_PC
-    /* 0x20 */ intptr_t unk20;
-    /* 0x24 */ intptr_t unk24;
-#else
-    /* 0x20 */ u8 unk20[8];
-#endif
+    /* 0x14 */ s32 unk14;
+    /* 0x18 */ s32 unk18;
+    /* 0x1C */ s32 unk1C;
+    /* 0x20 */ struct UnkStructA *unk20;
+    /* 0x24 */ struct UnkStructA *unk24;
     /* 0x28 */ s32 unk28;
-    /* 0x2C */ u8 unk2C[4];
+    /* 0x2C */ s32 unk2C;
     /* 0x30 */ s32 unk30;
     /* 0x34 */ f32 unk34;
     /* 0x38 */ f32 unk38;
-#ifdef TARGET_PC
-    /* the pointers 48600.c's UnkStructA80 has (the object pool's whole
-       object): where pointers are 8 bytes they make room for themselves */
-    /* 0x3C */ void *unk3C;
+    /* 0x3C */ struct Step3C *unk3C;
     /* 0x40 */ UnkStructA_40 *unk40;
-    /* 0x44 */ void *unk44;
-    /* 0x48 */ u8 unk48[4];
-#else
-    /* 0x3C */ u8 unk3C[4];
-    /* 0x40 */ UnkStructA_40 *unk40;
-    /* 0x44 */ u8 unk44[8];
-#endif
+    /* 0x44 */ struct UnkStructA *unk44;
+    /* 0x48 */ s32 unk48;
     /* 0x4C */ f32 unk4C;
     /* 0x50 */ f32 unk50;
     /* 0x54 */ f32 unk54;
@@ -99,12 +92,10 @@ typedef struct {
     /* 0x68 */ f32 unk68;
     /* 0x6C */ f32 unk6C;
     /* 0x70 */ f32 unk70;
-#ifdef TARGET_PC
     /* 0x74 */ f32 unk74;
-    /* 0x78 */ void *unk78;
-    /* 0x7C */ void *unk7C;
-#endif
-} UnkStructA;
+    /* 0x78 */ struct UnkStructA *unk78;
+    /* 0x7C */ struct UnkStructA *unk7C;
+} UnkStructA; /* size 0x80 */
 
 /* What func_8023A834 returns (per controller pak, four values and a name);
  * the overlays call it through ZeroJump id 0xF11 (ovl_17_04's stub at

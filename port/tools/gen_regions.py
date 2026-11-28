@@ -57,7 +57,7 @@ ENDS = {"D_80090C10": "&D_80090440[50]", "D_800A8570": "&D_800A7F30[100]", "D_80
         "D_800AEBBC": "&D_800AEDF0[-3].unk24", "D_800AED4C": "&D_800AEDF0[-1].unk24"}
 # a name whose declarations disagree: the one that is its object
 # (426E0.c's D_800A3F00 is the end of D_800A0D00[], 48600.c's the pool after it)
-TYPES = {"D_800A3F00": ("src/48600.c", "UnkStructA80[128]"), "D_800BCFE8": ("src/6BBE0.c", "Port_800BCFE8[4]"),
+TYPES = {"D_800A3F00": ("src/48600.c", "UnkStructA[128]"), "D_800BCFE8": ("src/6BBE0.c", "Port_800BCFE8[4]"),
          "D_8008E658": ("src/926A0.c", "Rec926[48]"),
          "D_8008F438": ("src/8A7A0.c", "Ent88[22]"),
          # 6BBE0.c's message queue and its message (the C declares bytes)

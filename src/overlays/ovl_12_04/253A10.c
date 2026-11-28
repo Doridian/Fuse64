@@ -197,8 +197,8 @@ void func_ovl12_04_80043460(void) {
     func_ovl12_04_80043E00(func_ovl12_04_80043750);
     obj = func_ovl12_04_800448A0(0x2E5);
     func_ovl12_04_800448B0(obj, 0x20000001);
-    obj->unk18 = 0.03f;
-    obj->unk1C = 0.0f;
+    *(f32 *) &obj->unk18 = 0.03f;
+    *(f32 *) &obj->unk1C = 0.0f;
 }
 
 void func_ovl12_04_80043690(UnkStructA *arg0) {

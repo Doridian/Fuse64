@@ -22,7 +22,7 @@ typedef struct Port_Ent88 Port_Ent88;
 typedef struct Port_800BB4A8 Port_800BB4A8;
 typedef struct Port_ObjDir Port_ObjDir;
 
-/* the object pool D_800A3F00's object (48600.c's UnkStructA80, structs.h's UnkStructA) */
+/* the object pool D_800A3F00's object (structs.h's UnkStructA) */
 struct Port_UnkStructA {
     /* 0x00 */ u8 unk0[0x20];
     /* 0x20 */ void *unk20;
@@ -36,7 +36,7 @@ struct Port_UnkStructA {
     /* 0x7C */ Port_UnkStructA *unk7C;
 }; /* N64 size 0x80 */
 
-/* an object's model: the pool D_800A0D00's (426E0.c's UnkObj, structs.h's UnkStructA_40) */
+/* an object's model: the pool D_800A0D00's (structs.h's UnkStructA_40) */
 struct Port_UnkStructA_40 {
     /* 0x00 */ u8 unk0[0x3C];
     /* 0x3C */ void *unk3C;
@@ -52,7 +52,7 @@ struct Port_UnkStructA_40_48 {
     /* 0x04 */ Port_UnkStructA_40_48_4 *unk4;
 }; /* N64 size 0x8 */
 
-/* structs.h's UnkStructA_40_48_4: two of 426E0.c's UnkAnimSlot (an animation, its time and flags) */
+/* two of structs.h's UnkStructA_40_48_4 (an animation, its time and flags) */
 struct Port_UnkStructA_40_48_4 {
     /* 0x00 */ void *unk0;
     /* 0x04 */ u8 unk4[0x8];

@@ -403,7 +403,7 @@ def analyse(u):
 # it is called as (a parameter of a function pointer type is one already;
 # a parameter passed on to one of these is one too)
 SINKS = {
-    ("func_8022A328", 0): "void (*)(UnkObj *, UnkGfx **)",   # 426E0.c: an object's draw (kind 1), func_802289C0
+    ("func_8022A328", 0): "void (*)(UnkStructA_40 *, UnkGfx **)",   # 426E0.c: an object's draw (kind 1), func_802289C0
     ("func_8027F84C", 0): "void (*)(void *)",                # 99F40.c's callback, given the object (TARGET_PC)
 }
 

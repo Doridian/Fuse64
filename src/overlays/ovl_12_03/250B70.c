@@ -308,8 +308,8 @@ void func_ovl12_03_80043EFC(void) {
     func_ovl12_03_80044A20(func_ovl12_03_80044380);
     obj = func_ovl12_03_800454C0(0x2E5);
     func_ovl12_03_800454D0(obj, 0x20000001);
-    obj->unk18 = 0.03f;
-    obj->unk1C = 0.0f;
+    *(f32 *) &obj->unk18 = 0.03f;
+    *(f32 *) &obj->unk1C = 0.0f;
 }
 
 void func_ovl12_03_800442CC(void) {

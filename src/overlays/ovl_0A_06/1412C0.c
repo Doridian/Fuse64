@@ -1625,7 +1625,7 @@ static s32 func_ovl0A_06_8004311C(void) {
                 SE(2, 2);
             }
         } else if (pressed & 0x4000) {
-#line 1652 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1652 /* fake: ret = 1 written before SE(2, 2) but numbered after it, for the call's delay slot (written after it, any line: no) */
             ret = 1;
 #line 1647 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             SE(2, 2);

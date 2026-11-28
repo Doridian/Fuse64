@@ -490,7 +490,7 @@ void func_ovl0A_05_800473A0(void) {
 }
 
 void func_ovl0A_05_8004704C(void) {
-    s32 pad[2]; /* fake: unused; the original frame has these slots */
+    s32 pad[2]; /* fake: unused; two words above the locals, as in the tasks 800459C8 and 8004333C (an inlined call of the empty statics or 80047EE4, a parameter: no) */
     PORT_IP(s32) idx;
     UnkStruct_802B03C0 *slot;
     f32 sx;
@@ -646,7 +646,7 @@ void func_ovl0A_05_800469EC(void) {
 
 void func_ovl0A_05_800467FC(void) {
     s32 n;
-    f32 pad; /* fake: unused; the original frame has this slot */
+    f32 pad; /* fake: unused; a slot between n and i (the index and the loop counter as two variables give the frame, but the index in a0 where the original keeps both in s1) */
     PORT_IP(s32) i;
     f32 x0;
     f32 y0;
@@ -1498,7 +1498,7 @@ void func_ovl0A_05_800438A0(void) {
 }
 
 void func_ovl0A_05_8004333C(void) {
-    s32 pad; /* fake: unused; the original frame has this slot */
+    s32 pad; /* fake: unused; a word above flag, as in the tasks 8004704C and 800459C8 (any order of the four locals: no) */
     s32 flag;
     s32 i;
     f32 v;

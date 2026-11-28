@@ -1001,7 +1001,7 @@ void func_ovl0A_01_80044F3C(void) {
     func_ovl0A_01_80044A2C();
     v = 0;
     pos[0] = 200.0f;
-#line 975 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 975 /* fake: pos[2]'s store and the rest numbered before v = 0 and pos[0] (statement orders, pos[1] = v = 0, the inits in the loop's for: no) */
     pos[2] = 900.0f;
     pos[1] = v;
     played = 0;
@@ -1291,7 +1291,7 @@ void func_ovl0A_01_800442B4(void) {
         } while (++j < 1370);
     }
     v = j;
-#line 1259 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1259 /* fake: v = j numbered after the call, for its delay slot (on the call's line, in its arguments: no) */
     func_ovl0A_01_80047530(0x1A, 0x12, 4);
     func_ovl0A_01_80047F98();
 }
@@ -1505,7 +1505,7 @@ void func_ovl0A_01_8004364C(void) {
                 e->obj->unk40->unk18 = e->unk14;
                 e->obj->unk40->unk20 = e->unk20;
             }
-                if (0) { /* fake: dead code, for the order or allocation it gives (no code) */
+                if (0) { /* fake: dead call; without it 80043380 (and its stubs) no longer come out before 8004364C (a call from an unused static or the block written as the call: no) */
                     func_ovl0A_01_80043380(tbl, n);
                 }
             }
@@ -1560,7 +1560,7 @@ static void func_ovl0A_01_80043380(UnkStruct_ovl0A_01_Entry *tbl, s32 n) {
     UnkStruct_ovl0A_01_Entry *e;
 
     for (i = 0; i < n; i++) {
-#line 1526 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1526 /* fake: e = tbl numbered after the call (func_ovl0A_01_80043370(tbl++) or tbl++ in the for: 8004364C and 80044584 change with it) */
         e = tbl;
 #line 1525 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
         tbl->obj = func_ovl0A_01_80047E60(tbl->unk4 == 0 ? tbl->unk8 : 0x320, 0x0D000000, 0xD0, NULL);

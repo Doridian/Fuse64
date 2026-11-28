@@ -33,21 +33,35 @@ void func_80281E70(void);
 void func_80281F0C(void);
 void func_80282034(s32 arg0, UnkStruct_80281FA0 **arg1);
 void func_802820BC(s32 arg0, UnkStruct_80281FA0 **arg1);
+void func_80282144(s32 arg0, s32 arg1, s32 arg2, f32 arg3);
+void func_80281AE0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void func_80281AB4(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void func_80281A88(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void func_80281A40(void);
+void func_80281A00(s32 arg0);
+void func_80281994(s32 arg0);
+void func_8028192C(s32 arg0);
 
 extern u8 D_1000000[];
-extern UnkStruct_802A1A80 *D_802A1A80;
-extern UnkStruct_802A1A80 *D_802A1A84;
-extern u8 D_802A1A88[];
+/* .data: the two objects' pointers and ZeroJump module 32's table
+   (func_802817D0); its last two words are zeros, taken here for the
+   section's padding */
+UnkStruct_802A1A80 *D_802A1A80 = NULL;
+UnkStruct_802A1A80 *D_802A1A84 = NULL;
+void *D_802A1A88[] = {
+    func_80281A00, func_80281994, func_8028192C, func_80281A40,
+    func_80282144, func_80281AE0, func_80281AB4, func_80281A88,
+};
 extern s32 D_802AC5CC;
-extern s32 D_802B0230;
-extern s32 D_802B0234;
-extern s32 D_802B0238;
-extern s32 D_802B023C;
-extern s32 D_802B0240;
-extern s32 D_802B0244;
-extern s32 D_802B0248;
-extern s32 D_802B024C;
-extern s32 D_802B0250;
+s32 D_802B0230;
+s32 D_802B0234;
+s32 D_802B0238;
+s32 D_802B023C;
+s32 D_802B0240;
+s32 D_802B0244;
+s32 D_802B0248;
+s32 D_802B024C;
+s32 D_802B0250;
 
 void func_80282144(s32 arg0, s32 arg1, s32 arg2, f32 arg3) {
     f32 alpha;

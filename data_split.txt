@@ -220,6 +220,11 @@ main_code @jp 9A5F0 sizes=0x40,0,0
 main_code @us 9A5F0 data=0x802A1630 bss=0x802B0220
 main_code @eu 9A5F0 data=0x802A1630 bss=0x802B0210
 main_code @jp 9A5F0 data=0x802A0C90
+# 9BFD0: .data its two object pointers and module 32's table, .bss nine words
+main_code 9BFD0 0x30 0 0x30
+main_code @us 9BFD0 data=0x802A1A80 bss=0x802B0230
+main_code @eu 9BFD0 data=0x802A1A80 bss=0x802B0220
+main_code @jp 9BFD0 data=0x802A0CD0 bss=0x802AF450
 main_code 9CAB0 0xA0 0x300 0
 main_code @us 9CAB0 data=0x802A1AB0 rodata=0x802A4050
 main_code @eu 9CAB0 data=0x802A1AB0 rodata=0x802A4040

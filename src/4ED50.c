@@ -7,6 +7,8 @@
 #include "5E3F0.h"
 #include "87D80.h"
 #include "53D70.h"
+#include "48600.h"
+#include "41FD0.h"
 
 typedef struct {
     /* 0x00 */ s32 unk0;
@@ -61,8 +63,6 @@ extern UnkStruct_80090050 D_80090050;
 
 #define WRAP360(a) ((a) >= 360.0f ? (a) - 360.0f : ((a) < 0.0f ? (a) + 360.0f : (a)))
 
-void func_8022FEAC(Vec3f *, Vec3f *);
-void func_8022FF58(Vec3f *, Vec3f *, Vec3f *);
 UnkStructA *func_802443F4(s32);
 f32 func_80234D24(f32, f32, f32);
 s32 func_80234DD4(f32, f32, f32, UnkStructA_40 *);
@@ -96,8 +96,7 @@ void func_802363BC(UnkStruct_802363BC *);
 void func_8023646C(UnkStruct_802363BC *);
 void func_80236AEC(u16);
 void func_80236ACC(u16);
-void func_80227CD0(PORT_RET(s32, void *), f32, f32, f32, f32, f32, f32, f32, f32, f32);
-extern PORT_RET(s32, void *) D_802AC5C0;
+extern UnkStruct_800BD5B0 *D_802AC5C0;
 extern Vec3f D_8008F3D8;
 void func_80235D7C(void);
 void func_80236D30(void);
@@ -165,10 +164,10 @@ f32 func_802375A4(f32 arg0) {
 
     switch (D_8008F404) {
         case 0:
-            func_8022FF58(&D_8008F3E8, &D_8008E648, &sp2C);
+            func_8022FF58(&D_8008F3E8.x, &D_8008E648.x, &sp2C.x);
             break;
         case 1:
-            func_8022FF58(&D_8008E648, &D_8008F3E8, &sp2C);
+            func_8022FF58(&D_8008E648.x, &D_8008F3E8.x, &sp2C.x);
             break;
     }
     return WRAP360(sp2C.x + arg0);
@@ -179,10 +178,10 @@ void func_80237478(f32 *arg0, f32 *arg1) {
 
     switch (D_8008F404) {
         case 0:
-            func_8022FF58(&D_8008F3E8, &D_8008E648, &sp24);
+            func_8022FF58(&D_8008F3E8.x, &D_8008E648.x, &sp24.x);
             break;
         case 1:
-            func_8022FF58(&D_8008E648, &D_8008F3E8, &sp24);
+            func_8022FF58(&D_8008E648.x, &D_8008F3E8.x, &sp24.x);
             break;
     }
     *arg0 = WRAP360(sp24.x);
@@ -198,10 +197,10 @@ void func_8023733C(UnkStructA_40 *arg0, f32 *arg1, f32 *arg2) {
     sp28.z = arg0->unk18;
     switch (D_8008F404) {
         case 0:
-            func_8022FF58(&sp28, &D_8008E648, &sp34);
+            func_8022FF58(&sp28.x, &D_8008E648.x, &sp34.x);
             break;
         case 1:
-            func_8022FF58(&sp28, &D_8008F3E8, &sp34);
+            func_8022FF58(&sp28.x, &D_8008F3E8.x, &sp34.x);
             break;
     }
     *arg1 = WRAP360(sp34.x);
@@ -316,7 +315,7 @@ void func_80236D30(void) {
     switch (D_8008F408) {
         case 0:
             func_80235208(&D_8008F3D8);
-            func_8022FF58(&D_8008E648, &D_8008F3E8, &D_8008F3F8);
+            func_8022FF58(&D_8008E648.x, &D_8008F3E8.x, &D_8008F3F8.x);
             D_8008F3F8.y = WRAP360(D_8008F3F8.y - 90.0f);
             break;
         case 1:
@@ -325,7 +324,7 @@ void func_80236D30(void) {
             sp2C.x = D_8008F3F8.x;
             sp2C.y = WRAP360(D_8008F3F8.y);
             sp2C.z = D_8008F3F8.z;
-            func_8022FEAC(&sp2C, &D_8008F3D8);
+            func_8022FEAC(&sp2C.x, &D_8008F3D8.x);
             D_8008F3D8.x += D_8008E648.x;
             D_8008F3D8.y += D_8008E648.y;
             D_8008F3D8.z += D_8008E648.z;
@@ -729,7 +728,7 @@ void func_80235D7C(void) {
                 sp64.x = D_8008FFF8.x;
                 sp64.y = D_8008FFF8.y;
                 sp64.z = D_8008FFF8.z;
-                func_8022FEAC(&sp64, &sp70);
+                func_8022FEAC(&sp64.x, &sp70.x);
                 sp70.x += p->unk40->unk10;
                 sp70.y += p->unk40->unk14 + 100.0f;
                 sp70.z += p->unk40->unk18;
@@ -865,7 +864,7 @@ void func_80235234(Vec3f *arg0) {
             func_802351DC(&sp94);
             break;
     }
-    func_8022FF58(arg0, &sp94, &sp7C);
+    func_8022FF58(&arg0->x, &sp94.x, &sp7C.x);
     sp7C.z = func_80234D24(sp7C.z, 0.0f, D_8008F430);
     if (func_802336E4(sp7C.z) != 0) {
         D_8008F430 = D_8008FFE8;
@@ -895,7 +894,7 @@ void func_80235234(Vec3f *arg0) {
             sp7C.z = D_8008FFF0 * 3.0f;
         }
     }
-    func_8022FEAC(&sp7C, &sp88);
+    func_8022FEAC(&sp7C.x, &sp88.x);
     sp94.x = arg0->x + sp88.x;
     sp94.y = arg0->y + sp88.y;
     sp94.z = arg0->z + sp88.z;
@@ -1030,7 +1029,7 @@ void func_80234F6C(s32 arg0) {
             sp2C.x = D_8008F3F8.x;
             sp2C.y = WRAP360(D_8008F3F8.y);
             sp2C.z = D_8008F3F8.z;
-            func_8022FEAC(&sp2C, &D_8008F3E8);
+            func_8022FEAC(&sp2C.x, &D_8008F3E8.x);
             D_8008F3E8.x += D_8008E648.x;
             D_8008F3E8.y += D_8008E648.y;
             D_8008F3E8.z += D_8008E648.z;
@@ -1040,7 +1039,7 @@ void func_80234F6C(s32 arg0) {
                 break;
             }
             D_8008F408 = arg0;
-            func_8022FF58(&D_8008E648, &D_8008F3E8, &D_8008F3F8);
+            func_8022FF58(&D_8008E648.x, &D_8008F3E8.x, &D_8008F3F8.x);
             D_8008F3F8.y = WRAP360(D_8008F3F8.y - 90.0f);
             break;
     }
@@ -1057,7 +1056,7 @@ s32 func_80234DD4(f32 arg0, f32 arg1, f32 arg2, UnkStructA_40 *arg3) {
     ret = 0;
     sp80.z = 50.0f;
     while (sp80.z < arg2) {
-        func_8022FEAC(&sp80, &sp8C);
+        func_8022FEAC(&sp80.x, &sp8C.x);
         sp8C.x += arg3->unk10 + 50.0f;
         sp8C.y += arg3->unk14;
         sp8C.z += arg3->unk18 + 50.0f;
@@ -1118,7 +1117,7 @@ void func_8023494C(f32 *arg0) {
     spA4 = spCC.y;
     spCC.y = 0.0f;
     func_80234578(&sp98, &D_80090020, &spCC);
-    func_8022FF58(&sp98, &spCC, &spB4);
+    func_8022FF58(&sp98.x, &spCC.x, &spB4.x);
     if (!(D_8008F428 & 0x40)) {
         far = D_8009002C;
         near = D_80090030;
@@ -1151,7 +1150,7 @@ void func_8023494C(f32 *arg0) {
         *arg0 = 0.0f;
         spB4.z = D_8009002C;
         spB4.y = WRAP360(spB4.y - 90.0f);
-        func_8022FEAC(&spB4, &spC0);
+        func_8022FEAC(&spB4.x, &spC0.x);
         spCC.x = sp98.x + spC0.x;
         spCC.z = sp98.z + spC0.z;
         switch (func_80234768()) {
@@ -1250,9 +1249,9 @@ void func_802346C8(f32 arg0, f32 arg1, f32 arg2) {
 void func_80234578(Vec3f *arg0, Vec3f *arg1, Vec3f *arg2) {
     Vec3f sp24;
 
-    func_8022FF58(arg1, arg2, &sp24);
+    func_8022FF58(&arg1->x, &arg2->x, &sp24.x);
     sp24.y = WRAP360(sp24.y - 90.0f);
-    func_8022FEAC(&sp24, arg0);
+    func_8022FEAC(&sp24.x, &arg0->x);
     arg0->x += arg1->x;
     arg0->y = 0.0f;
     arg0->z += arg1->z;

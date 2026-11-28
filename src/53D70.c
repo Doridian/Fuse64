@@ -3,6 +3,7 @@
 #include "4DE50.h"
 #include "53D70.h"
 #include "96540.h"
+#include "48600.h"
 
 /* A controller's input, one per frame in a ring of 16 per controller. */
 typedef struct {
@@ -36,7 +37,6 @@ typedef struct {
 } UnkStruct_80239B08; /* size 0x6 */
 
 void func_80239094(void);
-void func_8022FF58(f32 *, f32 *, f32 *);
 void func_80297D80(void *, void *, s32);
 void func_80297D88(s32, void *, PORT_IP(s32));
 s32 func_80297D90(void *, void *, s32);

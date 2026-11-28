@@ -41,7 +41,8 @@ TYPEDEFS = {"u8": "unsigned char", "s8": "signed char", "u16": "unsigned short",
             "OSEvent": "unsigned int", "OSIntMask": "unsigned int", "OSPageMask": "unsigned int",
             "OSMesg": "void *", "ALMicroTime": "int", "ALPan": "unsigned char", "ALSndId": "short",
             "size_t": "__SIZE_TYPE__", "__size_t": "__SIZE_TYPE__", "OSYieldResult": "unsigned int",
-            "uintptr_t": "uintptr_t", "intptr_t": "intptr_t", "vs32": "int", "vu32": "unsigned int"}
+            "uintptr_t": "uintptr_t", "intptr_t": "intptr_t", "vs32": "int", "vu32": "unsigned int",
+            "UnkCb_8026D4B0": "void *", "UnkCb_802909FC": "void *"}
 UNKNOWN = set()
 # the integers an argument register holds whole
 WORD_INTS = {"char", "signed char", "unsigned char", "short", "unsigned short", "int", "unsigned int", "_Bool"}

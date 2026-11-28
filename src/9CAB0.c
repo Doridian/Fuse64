@@ -37,6 +37,7 @@
 #include "48600.h"
 #include "78CA0.h"
 #include "86680.h"
+#include "AA580.h"
 
 extern UnkStruct_800BA8E8 D_800BA8E8[6];
 extern UnkStruct_800BA900 D_800BA900[16];
@@ -46,20 +47,16 @@ extern UnkStruct_80288040 *D_800BB484;
 
 UnkStructA *func_8022F550(UnkStructA *, s32);
 PORT_RET(void, s32) func_8022FC90(void *);
-s32 func_80232D18(void *, s32);
+s32 func_80232D18(UnkStructA *arg0, s32 arg1);
 s32 func_80238A10(void *, void *, PORT_RET(s32, void *), s32, s32);
 void func_80239094(void);
 UnkStruct_800BB340 *func_802391F0(void);
 UnkStructA *func_802443F4(s32);
-PORT_RET(s32, void *) func_802700EC(UnkStructA *, UnkStructA *, s32, f32);
-void func_80270BA4(void *);
 void func_80270C24(UnkStructA *, s32, s32);
-void func_802733C8(void *);
 PORT_RET(void, s32) func_8027B7C4(s16, f32, f32, f32);
 void func_8027F820(UnkStructA *);
 void func_8027F858(UnkStructA *, s32);
 s32 func_8028A81C(s32, f32, f32, f32, UnkStructA *);
-s32 func_802909FC(UnkStructA *, void *);
 void func_80291944(void *, s32, f32);
 f32 sinf(f32);
 
@@ -185,7 +182,6 @@ void func_80286F04(void);
 void func_80286F70(void);
 void func_80287008(s32 arg0, s32 arg1, s32 arg2);
 static UnkStruct_80288040 *func_80287024(UnkStructA *arg0);
-s32 func_802870A8(UnkStructA *arg0, PORT_IP(s32) arg1);
 s32 func_80287150(void);
 static UnkStruct_800BB340 *func_802871C8(UnkStruct_80288040 *arg0);
 s32 func_802872E0(s32 arg0, f32 arg1, f32 arg2, f32 arg3);
@@ -967,7 +963,7 @@ static s32 func_8028556C(s32 arg0) {
     func_8028555C();
     func_80285554();
     p = D_800BB484;
-#line 860 /* fake: numbering for as1 order (the load before the 0x2000 test); p9: p from a getter static defined after this function (as one of the three stubs) gets the order but colours p->unk24 into a1, not v1 (21 words); the global read directly, a getter of the flags word: worse */
+#line 856 /* fake: numbering for as1 order (the load before the 0x2000 test); p9: p from a getter static defined after this function (as one of the three stubs) gets the order but colours p->unk24 into a1, not v1 (21 words); the global read directly, a getter of the flags word: worse */
     if ((arg0 & 0x2000) ||
         (!(p->unk24 & 0x20) && ((arg0 & 0xF) == 0xF)) ||
         (!(p->unk24 & 0x10) && (arg0 & 0x60)) ||
@@ -1542,7 +1538,7 @@ static void func_80283FCC(UnkStruct_80288040 *arg0) {
                 }
                 arg0->unk40 = 0;
             } else if (!(p->unk8 & 4) || (((u8) (arg0->unk7A & 0xF)) == 1) || (p->unk8 & 0x20000) || (arg0->unk30 == 2) || (arg0->unk30 == 3)) {
-                arg0->unk68 = PORT_INT(func_802700EC(arg0->unk0, p, arg0->unk1C & 0xF0, arg0->unk2C));
+                arg0->unk68 = (PORT_IP(s32)) func_802700EC(arg0->unk0, p, arg0->unk1C & 0xF0, arg0->unk2C);
                 func_80282430(arg0, 0xF0, 0x30);
                 func_80231408(arg0->unk0, 0x20400);
             }

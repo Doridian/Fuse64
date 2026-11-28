@@ -5,6 +5,7 @@
 #include "86680.h"
 #include "404C0.h"
 #include "40FB0.h"
+#include "48600.h"
 
 typedef struct {
     /* 0x00 */ f32 unk0;
@@ -14,8 +15,6 @@ typedef struct {
     /* 0x10 */ s32 unk10;
 } UnkStruct_800BD778; /* size 0x14 */
 
-void func_8022FEAC(Vec3f *, Vec3f *);
-void func_8022FF58(Vec3f *, Vec3f *, Vec3f *);
 void func_80267654(s32, f32, f32, f32, f32);
 PORT_RET(s32, s16) func_8026A754(s32, s32, void *, void *, s32);
 f32 sqrtf(f32);
@@ -37,7 +36,6 @@ s32 D_802AFC20;
 s32 D_802AFC24;
 f32 D_802AFC28;
 
-s32 func_8026C630(s32 arg0, Vec3f *arg1);
 void func_8026C40C(s32 arg0, Vec3f *arg1);
 
 void *D_802A1380[] = {
@@ -146,8 +144,8 @@ s32 func_8026C660(s32 arg0) {
     return -1;
 }
 
-s32 func_8026C630(s32 arg0, Vec3f *arg1) {
-    return func_8026C51C(arg0, arg1->x, arg1->y, arg1->z);
+s32 func_8026C630(s32 arg0, f32 *arg1) {
+    return func_8026C51C(arg0, arg1[0], arg1[1], arg1[2]);
 }
 
 s32 func_8026C51C(s32 arg0, f32 x, f32 y, f32 z) {
@@ -278,11 +276,11 @@ static void func_8026C0A8(Vec3f *pos, f32 *angle, f32 *dist) {
     sp3C.x = sp2C;
     sp3C.y = 0.0f;
     sp3C.z = 300.0f;
-    func_8022FEAC(&sp3C, &sp48);
+    func_8022FEAC(&sp3C.x, &sp48.x);
     sp54.x += sp48.x;
     sp54.y += sp48.y - 100.0f;
     sp54.z += sp48.z;
-    func_8022FF58(&sp54, pos, &sp3C);
+    func_8022FF58(&sp54.x, &pos->x, &sp3C.x);
     dx = pos->x - sp54.x;
     dy = pos->y - sp54.y;
     dz = pos->z - sp54.z;

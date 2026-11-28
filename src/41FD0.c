@@ -23,21 +23,6 @@ typedef struct {
     /* 0x08 */ UnkStruct_8029F800 l[2];
 } UnkStruct_8029F7F8; /* size 0x28 */
 
-/* a viewport, its view matrix and its scissor box */
-typedef struct {
-    /* 0x00 */ s16 vscale[4];
-    /* 0x08 */ s16 vtrans[4];
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ UnkStruct_802A53D8 unk18;
-    /* 0x58 */ void *unk58;
-    /* 0x5C */ f32 unk5C;
-    /* 0x60 */ f32 unk60;
-    /* 0x64 */ f32 unk64;
-    /* 0x68 */ f32 unk68;
-    /* 0x6C */ s32 unk6C;
-} UnkStruct_800BD5B0; /* size 0x70 */
-
 void *func_80227678(s32);
 void guPerspective(UnkStruct_802A53D8 *, u16 *, f32, f32, f32, f32, f32);
 void guLookAt(UnkStruct_802A53D8 *, f32, f32, f32, f32, f32, f32, f32, f32, f32);

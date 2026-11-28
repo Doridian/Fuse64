@@ -27,14 +27,10 @@
 #include "B11F0.h"
 #include "53D70.h"
 
-void func_80227C9C(PORT_RET(s32, void *), s32);
-void func_80227CD0(PORT_RET(s32, void *), f32, f32, f32, f32, f32, f32, f32, f32, f32);
-void func_80227D50(PORT_RET(s32, void *), s32, s32, s32, s32);
-PORT_RET(s32, void *) func_80227E38(void);
 
 /* .bss: the two views (func_80227E38's) and their ids (func_8022773C's) */
-PORT_RET(s32, void *) D_802AC5C0;
-PORT_RET(s32, void *) D_802AC5C4;
+UnkStruct_800BD5B0 *D_802AC5C0;
+UnkStruct_800BD5B0 *D_802AC5C4;
 s32 D_802AC5C8;
 s32 D_802AC5CC;
 

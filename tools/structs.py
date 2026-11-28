@@ -429,8 +429,11 @@ def split_sig(qt):
 
 def norm_type(t, scalars):
     """a type as compared: without qualifiers, its scalar typedefs as what
-    they name, o32's int and long as one"""
+    they name (a function pointer's typedef too, where it is the whole type),
+    o32's int and long as one"""
     t = QUALS.sub("", t)
+    if t.strip() in scalars and "(" in scalars[t.strip()]:
+        t = QUALS.sub("", scalars[t.strip()])
     for _ in range(8):
         n = re.sub(r"\b[A-Za-z_]\w*\b", lambda m: scalars[m.group(0)]
                    if m.group(0) in scalars and "(" not in scalars[m.group(0)] else m.group(0), t)

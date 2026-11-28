@@ -11,6 +11,11 @@ typedef struct {
     PORT_UP(u32) w1;
 } Gfx_80225840;
 
+/* A model object's draw callback: what its unk3C holds in place of a model
+ * when unkC has 2 (426E0's func_802289C0 calls it; func_8026D4B0, the
+ * overlays' 0x1510, and func_8022A328 take one) */
+typedef void (*UnkCb_8026D4B0)(struct UnkStructA_40 *, Gfx_80225840 **);
+
 /* gbi.h's Vtx_t, a vertex (0A_01's D_ovl0A_01_80048730, 0A_06's
  * D_ovl0A_06_80047028) */
 typedef struct {

@@ -230,6 +230,7 @@
 #include "78CA0.h"
 #include "8A7A0.h"
 #include "949A0.h"
+#include "AA580.h"
 
 typedef struct { s32 n; f32 f4; s32 unk8; f32 fC; } SeqA; /* 0x10 */
 typedef struct { s32 n; u16 v; } SeqB; /* 0x8 */
@@ -256,29 +257,24 @@ PORT_RET(s32, void) func_8022979C(PORT_RET(s32, void *), s32, s32);
 PORT_RET(s32, void) func_8022984C(void *, s32);
 s32 func_80229C90(PORT_RET(s32, void *), s32, s32, s32, s32, s32);
 PORT_RET(s32, void) func_80229F74(void *, s32);
-PORT_RET(s32, void *) func_8022F550(PORT_RET(s32, void *), s32);
-PORT_IP(s32) func_8022F698(void *, PORT_RET(s32, void *), f32 *, void *, s32);
-void func_8022F808(void *, f32 *);
+UnkStructA *func_8022F550(UnkStructA *arg0, s32 arg1);
 void *func_8022FA88();
 PORT_RET(void, s32) func_8022FC90(void *);
-void func_8022FF58(f32 *, f32 *, f32 *);
 void * func_80231274(s32, s32, s32, void *);
-void func_80232BA0(f32 *, void *);
-s32 func_80232D18(void *, s32);
+s32 func_80232D18(UnkStructA *arg0, s32 arg1);
 s32 func_80238A10(void *, void *, PORT_RET(s32, void *), s32, s32);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 s32 *func_802391F0(void);
-void * func_8023A834(void);
-void * func_802443F4(s32);
-f32 func_8026E938(void *);
+UnkStruct_8023A834 *func_8023A834(void);
+UnkStructA *func_802443F4(s32 arg0);
+f32 func_8026E938(UnkStructA_40 *arg0);
 PORT_IP(s32) func_80270770(s16, s16);
 PORT_RET(s32, void) func_80271F74(PORT_RET(s32, void *));
 PORT_RET(f32, void) func_80277484(void);
 void func_8027F820();
 void func_8027F858(PORT_IP(s32), s32);
 s32 func_8028A81C(s32, f32, f32, f32, PORT_IP(s32));
-s32 func_802909FC(void *, void *);
 void func_80291944(void *, s32, f32);
 void func_80297D30(s32, void *);
 void func_80297D80(void *, void *, s32);
@@ -599,7 +595,7 @@ void func_8025DC60(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     ent->unk20 = M2C_FIELD(def, s32 *, 8);
     func_8024585C(arg0);
     func_802459BC(arg0);
-    obj = func_802443F4(arg0);
+    obj = (u8 *) func_802443F4(arg0);
     if (arg1 == 7) {
         M2C_FIELD(obj, s32 *, 0xC) = 0;
     } else {
@@ -1293,7 +1289,7 @@ static void func_802553D4() {
     u8 *temp_s1;
 
     sp108 = func_8023A840();
-    sp148 = func_8023A834();
+    sp148 = (s32 *) func_8023A834();
     var_fp = func_802391F0();
     sp118 = M2C_FIELD(var_fp, s32 *, 0xC);
     func_802515D8((f32 *) var_fp);
@@ -1639,7 +1635,7 @@ loop_148:
                                 if (func_80244BA4(M2C_FIELD(var_fp, s32 *, 0x10), 0x1000) != 0) {
                                     M2C_FIELD(temp_s1, s32 *, 8) = (s32) (M2C_FIELD(temp_s1, s32 *, 8) & ~0x200);
                                 }
-                                if (!(PORT_FIELD(var_fp, s32 *, 0x124, Port_800BCFE8, unkA0[132]) & 8) && (func_8022F550((PORT_RET(s32, void *)) temp_s1, 1) == (PORT_IP(s32)) PORT_FIELD(var_fp, void **, 0x1C, Port_800BCFE8, unk1C))) {
+                                if (!(PORT_FIELD(var_fp, s32 *, 0x124, Port_800BCFE8, unkA0[132]) & 8) && ((PORT_IP(s32)) func_8022F550((UnkStructA *) temp_s1, 1) == (PORT_IP(s32)) PORT_FIELD(var_fp, void **, 0x1C, Port_800BCFE8, unk1C))) {
                                     func_80233C80((f32 *) (PORT_AT(var_fp, 0x2C, Port_800BCFE8, unk20[12])));
                                     PORT_FIELD(var_fp, s32 *, 0x124, Port_800BCFE8, unkA0[132]) = (s32) (PORT_FIELD(var_fp, s32 *, 0x124, Port_800BCFE8, unkA0[132]) | 8);
                                     sp108->unk2C = (s32) (sp108->unk2C + 1);
@@ -1649,7 +1645,7 @@ loop_148:
                             } while (var_s3 < 0x1E);
                             var_s3 = 0;
                             do {
-                                if (!(PORT_FIELD(var_fp, s32 *, 0x124, Port_800BCFE8, unkA0[132]) & 8) && (func_8022F550((PORT_RET(s32, void *)) temp_s1, 1) == (PORT_IP(s32)) PORT_FIELD(var_fp, void **, 0x1C, Port_800BCFE8, unk1C))) {
+                                if (!(PORT_FIELD(var_fp, s32 *, 0x124, Port_800BCFE8, unkA0[132]) & 8) && ((PORT_IP(s32)) func_8022F550((UnkStructA *) temp_s1, 1) == (PORT_IP(s32)) PORT_FIELD(var_fp, void **, 0x1C, Port_800BCFE8, unk1C))) {
                                     func_80233C80((f32 *) (PORT_AT(var_fp, 0x2C, Port_800BCFE8, unk20[12])));
                                     PORT_FIELD(var_fp, s32 *, 0x124, Port_800BCFE8, unkA0[132]) = (s32) (PORT_FIELD(var_fp, s32 *, 0x124, Port_800BCFE8, unkA0[132]) | 8);
                                     sp108->unk2C = (s32) (sp108->unk2C + 1);
@@ -1823,7 +1819,7 @@ loop_148:
                             }
                             func_80291944(M2C_FIELD(var_fp, f32 **, 0x18), D_802A0F7C[var_s3], 20.0f);
                             func_80230914(M2C_FIELD(var_fp, UnkStructA **, 0x18));
-                            func_802909FC(M2C_FIELD(var_fp, f32 **, 0x18), func_8025D504);
+                            func_802909FC((UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18), func_8025D504);
                             if ((func_8026E8B8() >= M2C_FIELD(PORT_FIELD(M2C_FIELD(var_fp, f32 **, 0x18), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x14)) ? 1 : 0) {
                                 func_8024585C(1);
                                 func_802452E8(0);
@@ -1832,7 +1828,7 @@ loop_148:
                             }
                             var_s5 = PORT_INT(func_8022F4AC((PORT_RET(s32, void *)) M2C_FIELD(var_fp, f32 **, 0x18), 0x10, PORT_PTR(D_800AEDF0[M2C_FIELD(var_fp, s32 *, 0xC)].unk4C)));
                             if (var_s5 != 0) {
-                                func_80232BA0(PORT_RET((f32 *)((u8 *)M2C_FIELD(var_fp, f32 **, 0x18) + 0x58), &((UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18))->unk58), M2C_FIELD(var_fp, f32 **, 0x18)); /* (the object's 0x58: unk58, at another offset where pointers are 8 bytes) */
+                                func_80232BA0(PORT_RET((f32 *)((u8 *)M2C_FIELD(var_fp, f32 **, 0x18) + 0x58), &((UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18))->unk58), (UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18)); /* (the object's 0x58: unk58, at another offset where pointers are 8 bytes) */
                                 break;
                             }
                             func_80239094();
@@ -2223,7 +2219,7 @@ block_358:
                                     M2C_FIELD(PORT_FIELD(M2C_FIELD(var_fp, f32 **, 0x18), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x10) = (f32) (((f64) M2C_FIELD(PORT_FIELD(PORT_FIELD(var_fp, void **, 0x1C, Port_800BCFE8, unk1C), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x10) + (func_8025E63C() * 160.0)) - 80.0);
                                     M2C_FIELD(PORT_FIELD(M2C_FIELD(var_fp, f32 **, 0x18), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x18) = (f32) (((f64) M2C_FIELD(PORT_FIELD(PORT_FIELD(var_fp, void **, 0x1C, Port_800BCFE8, unk1C), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x18) + (func_8025E63C() * 160.0)) - 80.0);
                                     func_802515D8((f32 *) var_fp);
-                                } while ((func_8022F550((PORT_RET(s32, void *)) M2C_FIELD(var_fp, f32 **, 0x18), 0x10) != 0) || (func_80251AC8(func_8026D7D8(PORT_FIELD(var_fp, s32 *, 0x38, Port_800BCFE8, unk20[24]), PORT_FIELD(var_fp, s32 *, 0x3C, Port_800BCFE8, unk20[28]), PORT_FIELD(var_fp, s32 *, 0x40, Port_800BCFE8, unk20[32]))) != 0));
+                                } while ((func_8022F550((UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18), 0x10) != NULL) || (func_80251AC8(func_8026D7D8(PORT_FIELD(var_fp, s32 *, 0x38, Port_800BCFE8, unk20[24]), PORT_FIELD(var_fp, s32 *, 0x3C, Port_800BCFE8, unk20[28]), PORT_FIELD(var_fp, s32 *, 0x40, Port_800BCFE8, unk20[32]))) != 0));
                                 func_8025500C(0x275, M2C_FIELD(var_fp, u8 **, 0x18));
                                 func_80231408(M2C_FIELD(var_fp, UnkStructA **, 0x18), 0x01000000);
                                 func_80231408(M2C_FIELD(var_fp, UnkStructA **, 0x18), 0x11);
@@ -2313,7 +2309,7 @@ block_401:
                                             do {
                                                 M2C_FIELD(PORT_FIELD(M2C_FIELD(var_fp, f32 **, 0x18), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x10) = (f32) ((func_8025E63C() * 1100.0) + 1800.0);
                                                 M2C_FIELD(PORT_FIELD(M2C_FIELD(var_fp, f32 **, 0x18), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x18) = (f32) ((func_8025E63C() * 1100.0) + 800.0);
-                                            } while (func_8022F550((PORT_RET(s32, void *)) M2C_FIELD(var_fp, f32 **, 0x18), 0x10) != 0);
+                                            } while (func_8022F550((UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18), 0x10) != NULL);
                                             func_8025500C(0x275, M2C_FIELD(var_fp, u8 **, 0x18));
                                             func_80231408(M2C_FIELD(var_fp, UnkStructA **, 0x18), 0x01000000);
                                             func_80231408(M2C_FIELD(var_fp, UnkStructA **, 0x18), 0x11);
@@ -2489,7 +2485,7 @@ loop_484:
                     }
                     sp10C[1] = M2C_FIELD(PORT_FIELD(M2C_FIELD(var_fp, f32 **, 0x18), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x14);
                     sp10C[2] = (f32) ((func_8025E63C() * 1100.0) + 500.0);
-                    func_8022F808(M2C_FIELD(var_fp, f32 **, 0x18), (f32 *) (PORT_AT(var_fp, 0x20, Port_800BCFE8, unk20)));
+                    func_8022F808((UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18), (f32 *) (PORT_AT(var_fp, 0x20, Port_800BCFE8, unk20)));
                     temp_fv0 = func_80251994((f32 *) (PORT_AT(var_fp, 0x20, Port_800BCFE8, unk20)), sp10C);
                     sp12C = temp_fv0;
                     M2C_FIELD(PORT_FIELD(M2C_FIELD(var_fp, f32 **, 0x18), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x20) = temp_fv0;
@@ -2551,7 +2547,7 @@ loop_484:
                     sp10C[0] = (f32) ((func_8025E63C() * 1100.0) + 1800.0);
                     sp10C[1] = M2C_FIELD(PORT_FIELD(M2C_FIELD(var_fp, f32 **, 0x18), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x14);
                     sp10C[2] = -200.0f;
-                    func_8022F808(M2C_FIELD(var_fp, f32 **, 0x18), (f32 *) (PORT_AT(var_fp, 0x20, Port_800BCFE8, unk20)));
+                    func_8022F808((UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18), (f32 *) (PORT_AT(var_fp, 0x20, Port_800BCFE8, unk20)));
                     temp_fv0 = func_80251994((f32 *) (PORT_AT(var_fp, 0x20, Port_800BCFE8, unk20)), sp10C);
                     sp12C = temp_fv0;
                     M2C_FIELD(PORT_FIELD(M2C_FIELD(var_fp, f32 **, 0x18), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x20) = temp_fv0;
@@ -2603,7 +2599,7 @@ loop_484:
                     func_8024585C(0);
                 }
             } else if (func_80243D2C(M2C_FIELD(var_fp, s32 *, 0x10)) > 0) {
-                if (((func_80232D18(M2C_FIELD(var_fp, f32 **, 0x18), 0x40) != 0) && (D_802A0F9C == 0)) || (D_800AEDF0[M2C_FIELD(var_fp, s32 *, 0xC)].unk24 == 3) || (M2C_FIELD(PORT_FIELD(M2C_FIELD(var_fp, f32 **, 0x18), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x14) < 0.0f)) {
+                if (((func_80232D18((UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18), 0x40) != 0) && (D_802A0F9C == 0)) || (D_800AEDF0[M2C_FIELD(var_fp, s32 *, 0xC)].unk24 == 3) || (M2C_FIELD(PORT_FIELD(M2C_FIELD(var_fp, f32 **, 0x18), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x14) < 0.0f)) {
                     if (M2C_FIELD(PORT_FIELD(M2C_FIELD(var_fp, f32 **, 0x18), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x14) < 0.0f) {
                         func_8024585C(1);
                         func_802452E8(1);
@@ -2837,9 +2833,9 @@ loop_658:
                             if (func_80251AC8(func_80252330((s32 *) ((u8 *) PORT_AT(var_fp, 0x38, Port_800BCFE8, unk20[24])), PORT_FIELD(var_fp, f32 *, 0x74, Port_800BCFE8, unk20[84]))) == 0) {
                                 func_80291944(M2C_FIELD(var_fp, f32 **, 0x18), D_802A0F7C[var_s3], 50.0f);
                                 func_80230914(M2C_FIELD(var_fp, UnkStructA **, 0x18));
-                                func_802909FC(M2C_FIELD(var_fp, f32 **, 0x18), func_8025D504);
-                                if ((var_s5 = PORT_INT(func_8022F550((PORT_RET(s32, void *)) M2C_FIELD(var_fp, f32 **, 0x18), 0x10))) != 0) {
-                                    func_80232BA0(PORT_RET((f32 *)((u8 *)M2C_FIELD(var_fp, f32 **, 0x18) + 0x58), &((UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18))->unk58), M2C_FIELD(var_fp, f32 **, 0x18)); /* (the object's 0x58: unk58, at another offset where pointers are 8 bytes) */
+                                func_802909FC((UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18), func_8025D504);
+                                if ((var_s5 = (PORT_IP(s32)) func_8022F550((UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18), 0x10)) != 0) {
+                                    func_80232BA0(PORT_RET((f32 *)((u8 *)M2C_FIELD(var_fp, f32 **, 0x18) + 0x58), &((UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18))->unk58), (UnkStructA *) M2C_FIELD(var_fp, f32 **, 0x18)); /* (the object's 0x58: unk58, at another offset where pointers are 8 bytes) */
                                 } else {
                                     if (!(var_s2 & 3)) {
                                         func_80238A10(func_8025CC5C, (void *) var_fp, 0, 0, 0x130);
@@ -3013,7 +3009,7 @@ block_740:
                                 } else if ((sp148[M2C_FIELD(var_fp, s32 *, 0xC) + 5] == 2) || (M2C_FIELD(sp148, s32 *, 0x30) < 0x1E)) {
                                     temp_s1 = func_80254E00(M2C_FIELD(var_fp, f32 **, 0x18), &sp12C);
                                     if ((temp_s1 != NULL) && (PORT_FIELD(temp_s1, PORT_IP(s32) *, 0x44, Port_UnkStructA, unk44) == 0)) {
-                                        func_8022F808(temp_s1, sp10C);
+                                        func_8022F808((UnkStructA *) temp_s1, sp10C);
                                         temp_fv0 = func_80251994((f32 *) (PORT_AT(var_fp, 0x20, Port_800BCFE8, unk20)), sp10C);
                                         PORT_FIELD(var_fp, f32 *, 0x74, Port_800BCFE8, unk20[84]) = temp_fv0;
                                         M2C_FIELD(PORT_FIELD(temp_s1, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x20) = temp_fv0;
@@ -3050,7 +3046,7 @@ block_768:
                                 var_s4 = 0;
                                 if ((M2C_FIELD(sp148, s32 *, 0) == 1) && (func_80234248(0x3E8) < 0x1F4) && (temp_s1 = func_8022FA88(M2C_FIELD(var_fp, f32 **, 0x18), 4, &sp12C), (temp_s1 != NULL)) && (var_s3 = 1 - sp148[M2C_FIELD(var_fp, s32 *, 0xC) + 0x24], (((s32 *)D_802AC760)[var_s3] != 0)) && (temp_s1 == (u8 *) *((void ***)D_802AC820)[var_s3]) && (sp12C < 800.0f)) {
                                     if ((sp12C < 500.0f) && (M2C_FIELD(var_fp, s32 *, 4) != 5) && (PORT_FIELD(var_fp, u32 *, 0x94, Port_800BCFE8, unk20[116]) == 0)) {
-                                        func_8022F808(temp_s1, (f32 *) (PORT_AT(var_fp, 0x2C, Port_800BCFE8, unk20[12])));
+                                        func_8022F808((UnkStructA *) temp_s1, (f32 *) (PORT_AT(var_fp, 0x2C, Port_800BCFE8, unk20[12])));
                                         temp_fv0 = (f32) func_802519B4(func_80251994((f32 *) (PORT_AT(var_fp, 0x20, Port_800BCFE8, unk20)), (f32 *) (PORT_AT(var_fp, 0x2C, Port_800BCFE8, unk20[12])))) * 45.0f;
                                         M2C_FIELD(PORT_FIELD(M2C_FIELD(var_fp, f32 **, 0x18), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x20) = temp_fv0;
                                         PORT_FIELD(var_fp, f32 *, 0x74, Port_800BCFE8, unk20[84]) = temp_fv0;
@@ -3063,7 +3059,7 @@ block_768:
                                         M2C_FIELD(var_fp, s32 *, 4) = 5;
                                         PORT_FIELD(var_fp, f32 *, 0x7C, Port_800BCFE8, unk20[92]) = 60.0f;
                                     } else {
-                                        func_8022F808(temp_s1, (f32 *) (PORT_AT(var_fp, 0x2C, Port_800BCFE8, unk20[12])));
+                                        func_8022F808((UnkStructA *) temp_s1, (f32 *) (PORT_AT(var_fp, 0x2C, Port_800BCFE8, unk20[12])));
                                         var_s4 = 1;
                                         goto block_788;
                                     }
@@ -3138,7 +3134,7 @@ block_788:
                                         if (func_80244BA4(M2C_FIELD(var_fp, s32 *, 0xC), 0x8000) != 0) {
                                             temp_s1 = func_80252CB4(M2C_FIELD(var_fp, f32 **, 0x18), &sp12C);
                                             if ((temp_s1 != NULL) && (sp12C < 400.0f)) {
-                                                func_8022F808(temp_s1, sp10C);
+                                                func_8022F808((UnkStructA *) temp_s1, sp10C);
                                                 M2C_FIELD(PORT_FIELD(M2C_FIELD(var_fp, f32 **, 0x18), void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x20) = func_80251994((f32 *) (PORT_AT(var_fp, 0x20, Port_800BCFE8, unk20)), sp10C);
                                                 func_80254EC4((f32 *) var_fp);
                                                 M2C_FIELD(var_fp, s32 *, 0) &= ~0x100;
@@ -3197,7 +3193,7 @@ block_788:
                                                 if (func_80252724((u8 *) var_fp) != 0) {
                                                     if (temp_s1 != NULL) {
                                                         if (sp12C < 110.0f) {
-                                                            func_8022F808(temp_s1, sp10C);
+                                                            func_8022F808((UnkStructA *) temp_s1, sp10C);
                                                             temp_fv0 = func_80251994((f32 *) (PORT_AT(var_fp, 0x20, Port_800BCFE8, unk20)), sp10C);
                                                             PORT_FIELD(var_fp, f32 *, 0x74, Port_800BCFE8, unk20[84]) = temp_fv0;
                                                             M2C_FIELD(PORT_FIELD(temp_s1, void **, 0x40, Port_UnkStructA, unk40), f32 *, 0x20) = temp_fv0;
@@ -3522,7 +3518,7 @@ static PORT_IP(s32) func_80254DC8(void *arg0, s32 arg1, f32 arg2) {
     size[2] = arg2;
     size[1] = arg2;
     size[0] = arg2;
-    return func_8022F698((void *) arg1, (PORT_RET(s32, void *)) arg0, size, buf, 10);
+    return func_8022F698(arg1, (f32 *) arg0, size, (UnkStructA **) buf, 10);
 }
 
 static void func_80254C90(f32 *arg0) {
@@ -4624,7 +4620,7 @@ void func_80251804(s32 arg0) {
     u8 *sp40;
     s32 temp_v0;
 
-    sp40 = func_8023A834();
+    sp40 = (u8 *) func_8023A834();
     temp_s4 = (f32 *)((arg0 * PORT_HOST(0x128, sizeof(Port_800BCFE8))) + D_800BCFE8);
     M2C_FIELD(temp_s4, s32 *, 0xC) = arg0;
     PORT_FIELD(temp_s4, UnkStruct_802ACF08 **, 0x9C, Port_800BCFE8, unk9C) = &D_802ACF08[arg0];
@@ -4658,7 +4654,7 @@ static s32 func_80251708(s32 arg0) {
     u8 *g;
     s32 p;
 
-    g = func_8023A834();
+    g = (u8 *) func_8023A834();
     p = func_80234248(3);
     if ((D_800AEDF0[p].unk24 == 1 || D_800AEDF0[p].unk24 == 2) && func_80243EF0(p) == 0) {
         if (M2C_FIELD(g, s32 *, 0) == 1 && ((s32 *) (g + 0x90))[p] == ((s32 *) (g + 0x90))[arg0]) {

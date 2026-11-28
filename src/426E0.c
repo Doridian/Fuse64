@@ -1118,7 +1118,7 @@ void func_802289C0(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     Gfx_80225840 *gfx;
     UnkInst *t1;
     s32 pushed;
-    void (*fn)(UnkStructA_40 *, Gfx_80225840 **);
+    UnkCb_8026D4B0 fn;
 
     if (arg0->unkC & 1) {
         return;
@@ -1137,7 +1137,7 @@ void func_802289C0(UnkStructA_40 *arg0, Gfx_80225840 **arg1) {
     }
     if (arg0->unkC & 2) {
         D_802A5470 = -1;
-        fn = (void (*)(UnkStructA_40 *, Gfx_80225840 **))arg0->unk3C;
+        fn = (UnkCb_8026D4B0) arg0->unk3C;
         fn(arg0, &gfx);
     } else if ((arg0->unkC & 4) && (arg0->unkC & 8)) {
         if (D_8029F84C == 0 || (arg0->unkC & 0x100)) {

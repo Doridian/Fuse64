@@ -7,26 +7,14 @@
 #include "86680.h"
 
 typedef struct {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-} UnkStruct_802AFC44;
-
-typedef struct {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ void *unk4;
 } UnkStruct_800BCDE8; /* size 0x8 */
 
 #include "gfx.h"
+#include "model.h"
 
-void *func_8022A328(void *, s32, s32, s32, s32);
+UnkStructA_40 *func_8022A328(UnkModel *arg0, s32 arg1, s32 arg2, u32 arg3, s32 arg4);
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 void func_8026D2C4(UnkStructA_40 *, Gfx_80225840 **);
@@ -35,7 +23,7 @@ extern u8 D_1000000[];
 extern UnkStruct_800BCDE8 D_800BCDE8[64];
 void func_8026D518(s32 arg0, s32 arg1);
 void func_8026D354(void *arg0);
-PORT_RET(void, PORT_IP(s32)) func_8026D4B0(void (*arg0)(UnkStructA_40 *, Gfx_80225840 **), s32 arg1);
+PORT_RET(void, PORT_IP(s32)) func_8026D4B0(UnkCb_8026D4B0 arg0, s32 arg1);
 void func_8026D2A4(s32 arg0, s32 arg1);
 void func_8026CFF4(s32 arg0, s32 arg1, s32 arg2);
 /* 426E0's (in its table only here; UnkObj is 426E0.c's) */
@@ -56,8 +44,8 @@ void *D_802A13E4[] = {
 };
 
 s32 D_802AFC40;
-UnkStruct_802AFC44 *D_802AFC44;
-UnkStruct_802AFC44 *D_802AFC48;
+UnkStructA_40 *D_802AFC44;
+UnkStructA_40 *D_802AFC48;
 
 void func_8026CF30(void) {
     s32 i;
@@ -88,7 +76,7 @@ void func_8026CFF4(s32 arg0, s32 arg1, s32 arg2) {
     }
     func_8023A864(0);
     func_80243698(1);
-    D_802AFC48 = func_8022A328(func_8026D2C4, 0x40, 1, 0, 0);
+    D_802AFC48 = func_8022A328((UnkModel *) func_8026D2C4, 0x40, 1, 0, 0);
     D_802AFC48->unkC |= 0x90;
     D_802A13E0 = func_8026CE28(arg0);
     D_802AFC44 = func_8022A6C4(D_802A13E0, 0x40);
@@ -199,11 +187,11 @@ s32 func_8026D428(void) {
     return -1;
 }
 
-PORT_RET(void, PORT_IP(s32)) func_8026D4B0(void (*arg0)(UnkStructA_40 *, Gfx_80225840 **), s32 arg1) {
+PORT_RET(void, PORT_IP(s32)) func_8026D4B0(UnkCb_8026D4B0 arg0, s32 arg1) {
     s32 i = func_8026D428();
 
     D_800BCDE8[i].unk0 = -1;
-    PORT_V0(D_800BCDE8[i].unk4 = func_8022A328((void *) arg0, arg1 + 0x40, 1, 0, 0));
+    PORT_V0(D_800BCDE8[i].unk4 = func_8022A328((UnkModel *) arg0, arg1 + 0x40, 1, 0, 0));
 PORT_ONLY(return (intptr_t)port_v0;) }
 
 void func_8026D518(s32 arg0, s32 arg1) {

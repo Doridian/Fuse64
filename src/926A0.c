@@ -33,41 +33,13 @@ extern u8 D_800AEDF0[];
 s16 D_802A14F0 = 0;
 s16 D_802AFE70;
 
-typedef struct {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ u8 pad2[6];
-    /* 0x08 */ PORT_IP(s32) *unk8; /* the caller's slot that holds this record */
-    /* 0x0C */ s16 unkC;
-    /* 0x0E */ u16 unkE;
-    /* 0x10 */ s16 unk10;
-    /* 0x12 */ u8 pad12[2];
-    /* 0x14 */ UnkStructA *unk14;
-    /* 0x18 */ UnkStructA_40 *unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ u8 pad34[2];
-    /* 0x36 */ s16 unk36;
-    /* 0x38 */ s16 unk38;
-    /* 0x3A */ s16 unk3A;
-    /* 0x3C */ f32 unk3C;
-    /* 0x40 */ f32 unk40;
-    /* 0x44 */ s16 unk44;
-    /* 0x46 */ s16 unk46;
-} Rec926; /* size 0x48 */
-
 PORT_RET(s32, u8) func_8026DC74(s32 arg0);
 s32 func_80277EA0(s16 arg0);
 s16 func_80277F0C(Rec926 *arg0);
 s16 func_80277F74(void);
-Rec926 *func_80277FC4(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4, f32 arg5, f32 arg6, f32 arg7, s16 arg8, PORT_IP(s32) *arg9);
 void func_80278740(Rec926 *arg0);
 void func_80278788(Rec926 *arg0);
 void func_802787E4(Rec926 *arg0);
-void func_80278D54(Rec926 *arg0);
 void func_80278E28(s16 arg0, s16 arg1);
 void func_80278E84(s16 arg0, s16 arg1);
 void func_80278F00(s16 arg0);

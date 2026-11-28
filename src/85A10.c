@@ -115,38 +115,6 @@ typedef struct {
     /* 0x238 */ u8 g[PORT_HOST(0x50, PORT_SIZEOF_ALGLOBALS)];
 } UnkStruct_802AD6A0; /* size 0x288 */
 
-/* error flags (1 heap, 2 DMA, 4 AI underrun, 8 command list, 0x10 DMA
- * buffers) and peaks: DMAs per frame, buffers used, commands */
-typedef struct {
-    /* 0x00 */ u32 flags;
-    /* 0x04 */ u32 maxDMAs;
-    /* 0x08 */ u32 maxBuffers;
-    /* 0x0C */ u32 maxCmds;
-} UnkStruct_802AD680;
-
-/* libaudio.h's ALSynConfig */
-typedef struct {
-    /* 0x00 */ s32 maxVVoices;
-    /* 0x04 */ s32 maxPVoices;
-    /* 0x08 */ s32 maxUpdates;
-    /* 0x0C */ s32 maxFXbusses;
-    /* 0x10 */ void *dmaproc;
-    /* 0x14 */ void *heap;
-    /* 0x18 */ s32 outputRate;
-} UnkStruct_8026B9CC_0;
-
-/* audiomgr.h's amConfig, Hudson's */
-typedef struct {
-    /* 0x00 */ u16 numDMABuffers;
-    /* 0x04 */ s32 dmaBufferLength;
-    /* 0x08 */ u32 framesPerField;
-    /* 0x0C */ u32 maxACMDSize;
-    /* 0x10 */ s32 outputRate;
-    /* 0x14 */ void *sched;
-    /* 0x18 */ s32 pri;
-    /* 0x1C */ s32 id;
-} UnkStruct_8026B9CC_1;
-
 /* libaudio.h's ALHeap */
 typedef struct {
     /* 0x00 */ u8 *base;

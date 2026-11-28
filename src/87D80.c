@@ -160,11 +160,9 @@ void func_8026DFB8(f32 arg0, f32 arg1, f32 arg2, f32 *arg3);
 f32 func_8026E2B0(s32 arg0);
 f32 func_8026E3AC(f32 arg0, f32 arg1, f32 arg2);
 s32 func_8026E5CC(s32 arg0);
-void func_8026E6E4(u8 *arg0, f32 *arg1, f32 *arg2);
 s32 func_8026E8C8(void);
 s32 func_8026E8E0(PORT_IP(s32) arg0);
-f32 func_8026E938(u8 *arg0);
-f32 func_8026EAF8(u8 *arg0);
+f32 func_8026E938(UnkStructA_40 *arg0);
 void func_8026ECC0(void);
 void func_8026ECE8(f32 arg0);
 void func_8026ECF4(void);
@@ -633,7 +631,7 @@ void func_8026ECC0() {
     D_802AFC68 = 0.0f;
 }
 
-f32 func_8026EAF8(u8 *arg0) {
+f32 func_8026EAF8(UnkStructA *arg0) {
     Unk8026DCAC pos;
     f32 fx;
     f32 fy;
@@ -647,12 +645,12 @@ f32 func_8026EAF8(u8 *arg0) {
     f32 r;
     f32 h;
 
-    fx = ((UnkStructA *) arg0)->unk40->unk10;
-    fz = ((UnkStructA *) arg0)->unk40->unk18;
-    ax = ((UnkStructA *) arg0)->unk40->unk10 + 50.0f;
-    fy = ((UnkStructA *) arg0)->unk40->unk14;
-    ay = ((UnkStructA *) arg0)->unk40->unk14 + 50.0f;
-    az = ((UnkStructA *) arg0)->unk40->unk18 + 50.0f;
+    fx = arg0->unk40->unk10;
+    fz = arg0->unk40->unk18;
+    ax = arg0->unk40->unk10 + 50.0f;
+    fy = arg0->unk40->unk14;
+    ay = arg0->unk40->unk14 + 50.0f;
+    az = arg0->unk40->unk18 + 50.0f;
     func_8026DCAC(fx, fy, fz, pos.i, 2);
     attr = func_8026D7D8(pos.i[0], pos.i[1], pos.i[2]);
     if (attr & 0x60) {
@@ -673,7 +671,7 @@ f32 func_8026EAF8(u8 *arg0) {
             DEBUG_PRINT(("D_800B15D8 == NULL\n"));
         }
         if (pos.i[1] >= D_800B15D8->unk0) {
-            r = ((UnkStructA *) arg0)->unk40->unk14;
+            r = arg0->unk40->unk14;
         } else {
             h = func_8026E2B0(pos.i[1]);
             if (func_8026E278(attr) != 0) {
@@ -685,12 +683,12 @@ f32 func_8026EAF8(u8 *arg0) {
     } else if (func_8026E278(a) != 0) {
         r = func_8026E3AC(ax, ay, az);
     } else {
-        r = ((UnkStructA *) arg0)->unk40->unk14;
+        r = arg0->unk40->unk14;
     }
     return r;
 }
 
-f32 func_8026E938(u8 *arg0) {
+f32 func_8026E938(UnkStructA_40 *arg0) {
     s32 t1;
     f32 fx;
     f32 fy;
@@ -708,11 +706,11 @@ f32 func_8026E938(u8 *arg0) {
     s32 b;
 
     if ((D_802AFC54 != 0) && (func_8026E8E0((PORT_IP(s32)) arg0) != 0)) {
-        r = M2C_FIELD(arg0, f32 *, 0x14);
+        r = arg0->unk14;
     } else {
-        fz = M2C_FIELD(arg0, f32 *, 0x18);
-        fx = M2C_FIELD(arg0, f32 *, 0x10);
-        fy = M2C_FIELD(arg0, f32 *, 0x14);
+        fz = arg0->unk18;
+        fx = arg0->unk10;
+        fy = arg0->unk14;
         func_8026DCAC(fx, fy, fz, &pos, 2);
         x = pos.i[0];
         y = pos.i[1];
@@ -768,7 +766,7 @@ f32 func_8026E8B8() {
     return D_802AFC5C;
 }
 
-void func_8026E6E4(u8 *arg0, f32 *arg1, f32 *arg2) {
+void func_8026E6E4(UnkStructA_40 *arg0, f32 *arg1, f32 *arg2) {
     Unk8026DCAC sp78;
     f32 sp6C[3];
     f32 temp_fs3;
@@ -777,9 +775,9 @@ void func_8026E6E4(u8 *arg0, f32 *arg1, f32 *arg2) {
     s32 temp_v1;
     s32 temp_v0;
 
-    temp_fs3 = M2C_FIELD(arg0, f32 *, 0x10);
-    var_fs0 = M2C_FIELD(arg0, f32 *, 0x14);
-    temp_fs4 = M2C_FIELD(arg0, f32 *, 0x18);
+    temp_fs3 = arg0->unk10;
+    var_fs0 = arg0->unk14;
+    temp_fs4 = arg0->unk18;
     do {
         func_8026DCAC(temp_fs3, var_fs0, temp_fs4, &sp78, 2);
         temp_v0 = func_8026D7D8(sp78.i[0], sp78.i[1], sp78.i[2]);

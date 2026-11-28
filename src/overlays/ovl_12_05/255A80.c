@@ -62,98 +62,99 @@
 #define ANGLE_ADD(a, d) \
     (a) = ((a) + (d) >= 360.0f) ? (a) + (d) - 360.0f : ((a) + (d) < 0.0f) ? (a) + (d) + 360.0f : (a) + (d)
 
-void func_ovl12_05_800496C0(s32);
-void func_ovl12_05_800496D8(f32);
-void func_ovl12_05_80049730(UnkStructA_40 *, f32 *, f32 *);
-void func_ovl12_05_80049790(void (*)(UnkStructA *));
-void func_ovl12_05_800497A0(s32, s32, s32);
-s32 func_ovl12_05_800497A8(void);
-void func_ovl12_05_800497E0(void (*)(UnkStructA *));
-UnkStruct_802AC610 *func_ovl12_05_800497F8(void);
-void func_ovl12_05_80049820(s32);
-void func_ovl12_05_80049830(s32, s32);
-void func_ovl12_05_80049848(s32);
-void func_ovl12_05_80049858(void);
-void func_ovl12_05_80049860(s32, s32, s32);
-void func_ovl12_05_80049868(void *);
-s32 func_ovl12_05_80049888(void);
-void func_ovl12_05_80049890(s32, void *);
-void func_ovl12_05_80049898(s32);
-void func_ovl12_05_800498A0(s32);
-void func_ovl12_05_800498A8(s32, s32, f32, s32, s32, s32, s32);
-void func_ovl12_05_800498B8(void);
-UnkStructA *func_ovl12_05_800498E8(s32);
-void func_ovl12_05_800498F0(s32);
-void func_ovl12_05_80049918(s32);
-void func_ovl12_05_80049938(s32, s32);
-void func_ovl12_05_80049958(void);
-s32 func_ovl12_05_80049970(s32);
-UnkStructA_40 *func_ovl12_05_80049D88(s32, s32);
-void func_ovl12_05_80049D90(UnkStructA_40 *);
-void func_ovl12_05_80049DA8(UnkStructA_40 *, s32);
-void func_ovl12_05_80049DB0(UnkStructA_40 *, s32);
-void func_ovl12_05_80049DB8(UnkStructA_40 *, s32, s32, s32);
-void func_ovl12_05_80049DD0(UnkStructA_40 *, s32, s32);
-s32 func_ovl12_05_80049E10(s32, s32); /* s32: see the header */
-s32 func_ovl12_05_80049E18(UnkStructA_40 *, s32);
-void func_ovl12_05_80049E20(s32, s32, s32);
-void func_ovl12_05_80049E30(s32, s32, s32);
-void func_ovl12_05_80049ED8(s32);
-void func_ovl12_05_80049EE8(f32, f32, f32);
-void func_ovl12_05_80049EF8(f32, f32, f32);
-void func_ovl12_05_80049F08(f32, f32, f32);
-void func_ovl12_05_80049F10(f32 *, f32 *, f32 *);
-void func_ovl12_05_80049F48(s32);
-void func_ovl12_05_80049F50(s32);
-void func_ovl12_05_80049FB8(void);
-void func_ovl12_05_80049FC0(s32);
-void func_ovl12_05_80049FD0(f32, f32, f32);
-void func_ovl12_05_8004A038(Vec3f *, Vec3f *, Vec3f *);
-void func_ovl12_05_8004A0A8(UnkStructA *, s32);
-void func_ovl12_05_8004A0B0(UnkStructA *, s32);
-void func_ovl12_05_8004A0C0(UnkStructA *);
-UnkStructA *func_ovl12_05_8004A0D0(s32, s32, s32, PORT_IP(s32));
-UnkStructA *func_ovl12_05_8004A0E0(UnkStructA *);
-UnkStructA *func_ovl12_05_8004A0F0(s32, s32, f32, f32, f32);
-void func_ovl12_05_8004A128(UnkStructA *);
-s32 func_ovl12_05_8004A1F8(void (*)(void), void *, PORT_IP(s32), s32, s32);
-s32 func_ovl12_05_8004A200(s32); /* s32: see the header */
-void func_ovl12_05_8004A208(void);
-void func_ovl12_05_8004A210(u16, s32);
-void func_ovl12_05_8004A218(s32);
-UnkStructA *func_ovl12_05_8004A220(void);
-void func_ovl12_05_8004A240(void);
-void func_ovl12_05_8004A258(u16);
-void func_ovl12_05_8004A268(s32, s32, s32);
-UnkStruct_802B0260 *func_ovl12_05_8004A280(s32);
-void func_ovl12_05_8004A290(UnkStruct_802B0260 *, s32);
-f32 func_ovl12_05_8004A3A0(f32);
-f32 func_ovl12_05_8004A3A8(f32);
-f64 func_ovl12_05_8004A3B0(void);
-s32 func_ovl12_05_8004A3B8(s32);
-void func_ovl12_05_8004A418(void);
-void func_ovl12_05_8004A420(void);
-void func_ovl12_05_8004A428(Vec3f *);
-void func_ovl12_05_8004A478(s32);
-void func_ovl12_05_8004A4F0(void);
-void func_ovl12_05_8004A500(s32, s32, s32, s32);
-void func_ovl12_05_8004A510(s32, s32, s32, s32);
-void func_ovl12_05_8004A648(s32, f32, f32, f32, PORT_IP(s32));
-void func_ovl12_05_8004A688(void);
-void func_ovl12_05_8004A6E8(void);
-s32 func_ovl12_05_8004A780(s32);
-void func_ovl12_05_8004A790(s32);
-void func_ovl12_05_8004A798(void);
-s32 func_ovl12_05_8004A7A0(s32, f32, f32, f32);
-void func_ovl12_05_8004A7C0(s32);
-void func_ovl12_05_8004A7E0(s32);
-void func_ovl12_05_8004A810(UnkStructA_40 *, s32, s32, s32, f32);
-void func_ovl12_05_8004A820(UnkStructA_40 *);
-void func_ovl12_05_8004A828(s32, s32, s32, s32, s32);
-UnkStruct_800BCFE8 *func_ovl12_05_8004A840(s32);
-void func_ovl12_05_8004A848(s32);
-void func_ovl12_05_8004A8F8(void);
-void func_ovl12_05_8004A900(void);
+#define ZJ_0D00 func_ovl12_05_800496C0
+#define ZJ_0D03 func_ovl12_05_800496D8
+#define ZJ_0D0E func_ovl12_05_80049730
+#define ZJ_0E03 func_ovl12_05_80049790
+#define ZJ_0F00 func_ovl12_05_800497A0
+#define ZJ_0F01 func_ovl12_05_800497A8
+#define ZJ_0F08 func_ovl12_05_800497E0
+#define ZJ_0F0B func_ovl12_05_800497F8
+#define ZJ_0F10 func_ovl12_05_80049820
+#define ZJ_0F12 func_ovl12_05_80049830
+#define ZJ_0F15 func_ovl12_05_80049848
+#define ZJ_1000 func_ovl12_05_80049858
+#define ZJ_1001 func_ovl12_05_80049860
+#define ZJ_1002 func_ovl12_05_80049868
+#define ZJ_1006 func_ovl12_05_80049888
+#define ZJ_1007 func_ovl12_05_80049890
+#define ZJ_1008 func_ovl12_05_80049898
+#define ZJ_1009 func_ovl12_05_800498A0
+#define ZJ_100A func_ovl12_05_800498A8
+#define ZJ_100C func_ovl12_05_800498B8
+#define ZJ_1012 func_ovl12_05_800498E8
+#define ZJ_1013 func_ovl12_05_800498F0
+#define ZJ_1018 func_ovl12_05_80049918
+#define ZJ_101C func_ovl12_05_80049938
+#define ZJ_1020 func_ovl12_05_80049958
+#define ZJ_1023 func_ovl12_05_80049970
+#define ZJ_1500 func_ovl12_05_80049D88
+#define ZJ_1501 func_ovl12_05_80049D90
+#define ZJ_1504 func_ovl12_05_80049DA8
+#define ZJ_1505 func_ovl12_05_80049DB0
+#define ZJ_1506 func_ovl12_05_80049DB8
+#define ZJ_1509 func_ovl12_05_80049DD0
+#define ZJ_1511 func_ovl12_05_80049E10
+#define ZJ_1512 func_ovl12_05_80049E18
+#define ZJ_1513 func_ovl12_05_80049E20
+#define ZJ_1515 func_ovl12_05_80049E30
+#define ZJ_1702 func_ovl12_05_80049ED8
+#define ZJ_1704 func_ovl12_05_80049EE8
+#define ZJ_1706 func_ovl12_05_80049EF8
+#define ZJ_1708 func_ovl12_05_80049F08
+#define ZJ_1709 func_ovl12_05_80049F10
+#define ZJ_1710 func_ovl12_05_80049F48
+#define ZJ_1711 func_ovl12_05_80049F50
+#define ZJ_171E func_ovl12_05_80049FB8
+#define ZJ_171F func_ovl12_05_80049FC0
+#define ZJ_1721 func_ovl12_05_80049FD0
+void func_ovl12_05_8004A038(Vec3f *, Vec3f *, Vec3f *); /* 0x1803, kept: its callers pass Vec3f * (the header's f32 *) */
+#define ZJ_1811 func_ovl12_05_8004A0A8
+#define ZJ_1812 func_ovl12_05_8004A0B0
+#define ZJ_1814 func_ovl12_05_8004A0C0
+#define ZJ_1816 func_ovl12_05_8004A0D0
+#define ZJ_1818 func_ovl12_05_8004A0E0
+#define ZJ_181A func_ovl12_05_8004A0F0
+#define ZJ_1821 func_ovl12_05_8004A128
+#define ZJ_1900 func_ovl12_05_8004A1F8
+#define ZJ_1901 func_ovl12_05_8004A200
+#define ZJ_1902 func_ovl12_05_8004A208
+#define ZJ_1903 func_ovl12_05_8004A210
+#define ZJ_1904 func_ovl12_05_8004A218
+#define ZJ_1905 func_ovl12_05_8004A220
+#define ZJ_1909 func_ovl12_05_8004A240
+#define ZJ_190C func_ovl12_05_8004A258
+#define ZJ_190E func_ovl12_05_8004A268
+#define ZJ_1A00 func_ovl12_05_8004A280
+#define ZJ_1A02 func_ovl12_05_8004A290
+#define ZJ_1D00 func_ovl12_05_8004A3A0
+#define ZJ_1D01 func_ovl12_05_8004A3A8
+#define ZJ_1D02 func_ovl12_05_8004A3B0
+#define ZJ_1D03 func_ovl12_05_8004A3B8
+#define ZJ_1D0F func_ovl12_05_8004A418
+#define ZJ_1D10 func_ovl12_05_8004A420
+void func_ovl12_05_8004A428(Vec3f *); /* 0x1D11, kept: its callers pass Vec3f * (the header's f32 *) */
+#define ZJ_1E07 func_ovl12_05_8004A478
+#define ZJ_2003 func_ovl12_05_8004A4F0
+#define ZJ_2005 func_ovl12_05_8004A500
+#define ZJ_2007 func_ovl12_05_8004A510
+#define ZJ_2600 func_ovl12_05_8004A648
+#define ZJ_2704 func_ovl12_05_8004A688
+#define ZJ_2805 func_ovl12_05_8004A6E8
+#define ZJ_2B00 func_ovl12_05_8004A780
+#define ZJ_2B02 func_ovl12_05_8004A790
+#define ZJ_2B03 func_ovl12_05_8004A798
+#define ZJ_2B04 func_ovl12_05_8004A7A0
+#define ZJ_2B08 func_ovl12_05_8004A7C0
+#define ZJ_2B0C func_ovl12_05_8004A7E0
+#define ZJ_2C03 func_ovl12_05_8004A810
+#define ZJ_2C05 func_ovl12_05_8004A820
+#define ZJ_2D00 func_ovl12_05_8004A828
+#define ZJ_2D03 func_ovl12_05_8004A840
+#define ZJ_2D04 func_ovl12_05_8004A848
+#define ZJ_3000 func_ovl12_05_8004A8F8
+#define ZJ_3001 func_ovl12_05_8004A900
+#include "overlays/common/zerojump.h"
 
 static void func_ovl12_05_80043010(void);
 static void func_ovl12_05_80043018(void);

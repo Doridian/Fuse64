@@ -34,64 +34,65 @@ typedef struct {
     /* 0x10 */ f32 unk10;
 } UnkStruct_ovl12_03_80045CE4;
 
-void func_ovl12_03_800448E8(s32);
-void func_ovl12_03_80044900(s32);
-s32 func_ovl12_03_80044950(s32);
-void func_ovl12_03_80044970(UnkStructA_40 *, f32 *, f32 *);
-void func_ovl12_03_800449D0(void (*)(UnkStructA *));
-void func_ovl12_03_800449E0(s32, s32, s32);
-void func_ovl12_03_80044A08(void);
-void func_ovl12_03_80044A20(void (*)(UnkStructA *));
-void func_ovl12_03_80044A50(s32);
-void func_ovl12_03_80044A58(s32);
-void func_ovl12_03_80044A98(void);
-void func_ovl12_03_80044AA0(s32, s32, s32);
-void func_ovl12_03_80044AA8(void *);
-s32 func_ovl12_03_80044AB0(s32, s32, s32, s32);
-s32 func_ovl12_03_80044AC8(void);
-void func_ovl12_03_80044AD0(s32, void *);
-void func_ovl12_03_80044AD8(s32);
-void func_ovl12_03_80044AE0(s32);
-void func_ovl12_03_80044AE8(s32, s32, f32, s32, s32, s32, s32);
-void func_ovl12_03_80044AF8(void);
-void func_ovl12_03_80044B30(s32);
+#define ZJ_0C00 func_ovl12_03_800448E8
+#define ZJ_0D00 func_ovl12_03_80044900
+#define ZJ_0D0A func_ovl12_03_80044950
+#define ZJ_0D0E func_ovl12_03_80044970
+#define ZJ_0E03 func_ovl12_03_800449D0
+#define ZJ_0F00 func_ovl12_03_800449E0
+#define ZJ_0F05 func_ovl12_03_80044A08
+#define ZJ_0F08 func_ovl12_03_80044A20
+#define ZJ_0F0E func_ovl12_03_80044A50
+#define ZJ_0F0F func_ovl12_03_80044A58
+#define ZJ_1000 func_ovl12_03_80044A98
+#define ZJ_1001 func_ovl12_03_80044AA0
+#define ZJ_1002 func_ovl12_03_80044AA8
+#define ZJ_1003 func_ovl12_03_80044AB0
+#define ZJ_1006 func_ovl12_03_80044AC8
+#define ZJ_1007 func_ovl12_03_80044AD0
+#define ZJ_1008 func_ovl12_03_80044AD8
+#define ZJ_1009 func_ovl12_03_80044AE0
+#define ZJ_100A func_ovl12_03_80044AE8
+#define ZJ_100C func_ovl12_03_80044AF8
+#define ZJ_1013 func_ovl12_03_80044B30
 /* Declared without a prototype and called with no arguments: the `a0`
  * it gets is what the branch's delay slot loads for the next test (0x1D,
  * 0xD, 0x1D, 0x28), and its `jal` keeps a nop in its slot, as in the
  * original (4 words to 0). ovl_12_06 passes an argument to the same
  * service (0x1020). */
-void func_ovl12_03_80044B98();
-void func_ovl12_03_80044FF0(UnkStructA_40 *, s32);
-void func_ovl12_03_80044FF8(UnkStructA_40 *, s32, s32, s32);
-f32 func_ovl12_03_80045028(UnkStructA_40 *, s32);
-void func_ovl12_03_80045128(f32, f32, f32);
-void func_ovl12_03_80045148(f32, f32, f32);
-void func_ovl12_03_80045150(f32 *, f32 *, f32 *);
-void func_ovl12_03_80045188(s32);
-void func_ovl12_03_80045190(s32);
-void func_ovl12_03_80045218(void *);
-void func_ovl12_03_80045248(void);
-void func_ovl12_03_80045250(void);
-void func_ovl12_03_800452E8(UnkStructA *, s32);
-void func_ovl12_03_800452F0(UnkStructA *, s32);
-void func_ovl12_03_80045300(UnkStructA *);
-UnkStructA *func_ovl12_03_80045330(s32, s32, f32, f32, f32);
-void func_ovl12_03_80045368(UnkStructA *);
-void func_ovl12_03_80045458(s32);
-void func_ovl12_03_80045480(void);
-UnkStructA *func_ovl12_03_800454C0(s32);
-void func_ovl12_03_800454D0(UnkStructA *, s32);
-void func_ovl12_03_800456B0(s32);
-void func_ovl12_03_800456B8(s32);
-s32 func_ovl12_03_800456C0(s32);
-void func_ovl12_03_80045760(s32, s32, s32);
-void func_ovl12_03_80045778(s32, s32, s32, s32, s32);
-void func_ovl12_03_800457A0(u32 (*)[3]);
-s32 func_ovl12_03_80045890(s32, Vec3f *, s32);
-void func_ovl12_03_80045898(s32);
-void func_ovl12_03_80045948(s32, s32, s32);
-void func_ovl12_03_800459C0(s32);
-s32 func_ovl12_03_800459E0(s32, f32, f32, f32);
+#define ZJ_1020 func_ovl12_03_80044B98
+#define ZJ_1505 func_ovl12_03_80044FF0
+#define ZJ_1506 func_ovl12_03_80044FF8
+#define ZJ_150C func_ovl12_03_80045028
+#define ZJ_1704 func_ovl12_03_80045128
+#define ZJ_1708 func_ovl12_03_80045148
+#define ZJ_1709 func_ovl12_03_80045150
+#define ZJ_1710 func_ovl12_03_80045188
+#define ZJ_1711 func_ovl12_03_80045190
+#define ZJ_1722 func_ovl12_03_80045218
+#define ZJ_1728 func_ovl12_03_80045248
+#define ZJ_1729 func_ovl12_03_80045250
+#define ZJ_1811 func_ovl12_03_800452E8
+#define ZJ_1812 func_ovl12_03_800452F0
+#define ZJ_1814 func_ovl12_03_80045300
+#define ZJ_181A func_ovl12_03_80045330
+#define ZJ_1821 func_ovl12_03_80045368
+#define ZJ_1904 func_ovl12_03_80045458
+#define ZJ_1909 func_ovl12_03_80045480
+UnkStructA *func_ovl12_03_800454C0(s32); /* 0x1A00, kept: it keeps the return in UnkStructA * (the header's UnkStruct_802B0260 *) */
+void func_ovl12_03_800454D0(UnkStructA *, s32); /* 0x1A02, kept: its callers pass UnkStructA * (the header's UnkStruct_802B0260 *) */
+#define ZJ_1E06 func_ovl12_03_800456B0
+#define ZJ_1E07 func_ovl12_03_800456B8
+#define ZJ_1E08 func_ovl12_03_800456C0
+#define ZJ_2101 func_ovl12_03_80045760
+#define ZJ_2104 func_ovl12_03_80045778
+#define ZJ_2300 func_ovl12_03_800457A0
+s32 func_ovl12_03_80045890(s32, Vec3f *, s32); /* 0x2601, kept: its callers pass Vec3f * (the header's f32 *) */
+#define ZJ_2602 func_ovl12_03_80045898
+#define ZJ_2A00 func_ovl12_03_80045948
+#define ZJ_2B00 func_ovl12_03_800459C0
+#define ZJ_2B04 func_ovl12_03_800459E0
+#include "overlays/common/zerojump.h"
 
 void func_ovl12_03_80043010(void);
 void func_ovl12_03_80043020(void);

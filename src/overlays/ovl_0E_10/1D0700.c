@@ -3,55 +3,56 @@
 
 void func_ovl0E_10_80043BFC(UnkStructA *);
 void func_ovl0E_10_80043CC0(UnkStructA *);
-void func_ovl0E_10_80044220(UnkStructA_40 *, f32 *, f32 *);
-void func_ovl0E_10_80044280(void (*)(UnkStructA *));
-void func_ovl0E_10_800442D0(void (*)(UnkStructA *));
-void func_ovl0E_10_80044358(void *);
-s32 func_ovl0E_10_80044378(void);
-void func_ovl0E_10_80044380(s32, void *);
-void func_ovl0E_10_80044390(s32);
-void func_ovl0E_10_80044398(s32, s32, f32, s32, s32, s32, s32);
-void func_ovl0E_10_800443A8(void);
-void func_ovl0E_10_800443E0(s32);
-void func_ovl0E_10_800449D8(f32, f32, f32);
-void func_ovl0E_10_800449F8(f32, f32, f32);
-void func_ovl0E_10_80044A00(f32 *, f32 *, f32 *);
-void func_ovl0E_10_80044BA0(UnkStructA *, s32);
-UnkStructA *func_ovl0E_10_80044BE0(s32, s32, f32, f32, f32);
-void func_ovl0E_10_80044D08(s32);
-void func_ovl0E_10_80044F60(s32);
-void func_ovl0E_10_80044F68(s32);
-s32 func_ovl0E_10_80044F70(s32);
-void func_ovl0E_10_80045140(s32, f32 *, s32);
-void func_ovl0E_10_80045270(s32);
-s32 func_ovl0E_10_80045290(s32, f32, f32, f32);
-void func_ovl0E_10_80045298(s32, f32 *);
+#define ZJ_0D0E func_ovl0E_10_80044220
+#define ZJ_0E03 func_ovl0E_10_80044280
+#define ZJ_0F08 func_ovl0E_10_800442D0
+#define ZJ_1002 func_ovl0E_10_80044358
+#define ZJ_1006 func_ovl0E_10_80044378
+#define ZJ_1007 func_ovl0E_10_80044380
+#define ZJ_1009 func_ovl0E_10_80044390
+#define ZJ_100A func_ovl0E_10_80044398
+#define ZJ_100C func_ovl0E_10_800443A8
+#define ZJ_1013 func_ovl0E_10_800443E0
+#define ZJ_1704 func_ovl0E_10_800449D8
+#define ZJ_1708 func_ovl0E_10_800449F8
+#define ZJ_1709 func_ovl0E_10_80044A00
+#define ZJ_1812 func_ovl0E_10_80044BA0
+#define ZJ_181A func_ovl0E_10_80044BE0
+#define ZJ_1904 func_ovl0E_10_80044D08
+#define ZJ_1E06 func_ovl0E_10_80044F60
+#define ZJ_1E07 func_ovl0E_10_80044F68
+#define ZJ_1E08 func_ovl0E_10_80044F70
+#define ZJ_2601 func_ovl0E_10_80045140
+#define ZJ_2B00 func_ovl0E_10_80045270
+#define ZJ_2B04 func_ovl0E_10_80045290
+#define ZJ_2B05 func_ovl0E_10_80045298
 
 /* The three statements are on one line, a macro: only then does IDO
  * schedule across them (the store into the first call's delay slot). */
 #define UNK_MACRO_ovl0E_10_8004325C() \
     D_ovl0E_10_8004557C = func_ovl0E_10_80044378(); func_ovl0E_10_80044358(&D_ovl0E_10_80045570); func_ovl0E_10_80044380(D_ovl0E_10_8004557C, D_ovl0E_10_80045560)
 
-void func_ovl0E_10_80044198(s32);
-void func_ovl0E_10_800441B0(s32);
-void func_ovl0E_10_80044290(s32, s32, s32);
-void func_ovl0E_10_80044348(void);
-void func_ovl0E_10_80044350(s32, s32, s32);
-s32 func_ovl0E_10_80044360(s32, s32, s32, s32);
-s32 func_ovl0E_10_80044368(s32, s32, s32, s32, s32);
-UnkStructA *func_ovl0E_10_800443D8(s32);
-void func_ovl0E_10_800448E0(UnkStructA_40 *, s32, s32, s32, s32, s32);
-void func_ovl0E_10_80044900(s32, s32);
-void func_ovl0E_10_80044B98(UnkStructA *, s32);
-void func_ovl0E_10_80044BD0(UnkStructA *);
-UnkStructA *func_ovl0E_10_80044C28(UnkStructA *, s32);
-f32 func_ovl0E_10_80044E90(f32);
-f32 func_ovl0E_10_80044E98(f32);
-s32 func_ovl0E_10_80044F50(s32);
-void func_ovl0E_10_80045028(s32, s32, s32, s32, s32);
-void func_ovl0E_10_80045038(s32, s32, s32);
-void func_ovl0E_10_80045050(u32 (*)[3]);
-void func_ovl0E_10_800451F8(s32, s32, s32);
+#define ZJ_0C00 func_ovl0E_10_80044198
+#define ZJ_0D00 func_ovl0E_10_800441B0
+#define ZJ_0F00 func_ovl0E_10_80044290
+#define ZJ_1000 func_ovl0E_10_80044348
+#define ZJ_1001 func_ovl0E_10_80044350
+#define ZJ_1003 func_ovl0E_10_80044360
+#define ZJ_1004 func_ovl0E_10_80044368
+#define ZJ_1012 func_ovl0E_10_800443D8
+#define ZJ_150D func_ovl0E_10_800448E0
+#define ZJ_1511 func_ovl0E_10_80044900
+#define ZJ_1811 func_ovl0E_10_80044B98
+#define ZJ_1818 func_ovl0E_10_80044BD0
+#define ZJ_1823 func_ovl0E_10_80044C28
+#define ZJ_1D00 func_ovl0E_10_80044E90
+#define ZJ_1D01 func_ovl0E_10_80044E98
+#define ZJ_1E04 func_ovl0E_10_80044F50
+#define ZJ_2104 func_ovl0E_10_80045028
+#define ZJ_2201 func_ovl0E_10_80045038
+#define ZJ_2300 func_ovl0E_10_80045050
+#define ZJ_2A00 func_ovl0E_10_800451F8
+#include "overlays/common/zerojump.h"
 
 /* The five stores are one line too: IDO orders them by line otherwise. */
 #define UNK_MACRO_ovl0E_10_800455A0(a, b, c, d, e) \

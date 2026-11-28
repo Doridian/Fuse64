@@ -6,17 +6,18 @@
  * CORE_FUNC_D needed an `if (1)` fake to keep arg1 out of its stack home.
  */
 
-void func_ovl0F_06_80043598(s32);
-void func_ovl0F_06_800435B0(s32);
-void func_ovl0F_06_80043748(void);
-void func_ovl0F_06_80043750(s32, s32, s32);
-void func_ovl0F_06_800437A8(void);
-void func_ovl0F_06_80043DD8(f32, f32, f32);
-void func_ovl0F_06_80043DF8(f32, f32, f32);
-void func_ovl0F_06_80043E00(f32 *, f32 *, f32 *);
-void func_ovl0F_06_80044108(s32);
-void func_ovl0F_06_800445F8(s32, s32, s32);
-s32 func_ovl0F_06_80044690(s32, f32, f32, f32);
+#define ZJ_0C00 func_ovl0F_06_80043598
+#define ZJ_0D00 func_ovl0F_06_800435B0
+#define ZJ_1000 func_ovl0F_06_80043748
+#define ZJ_1001 func_ovl0F_06_80043750
+#define ZJ_100C func_ovl0F_06_800437A8
+#define ZJ_1704 func_ovl0F_06_80043DD8
+#define ZJ_1708 func_ovl0F_06_80043DF8
+#define ZJ_1709 func_ovl0F_06_80043E00
+#define ZJ_1904 func_ovl0F_06_80044108
+#define ZJ_2A00 func_ovl0F_06_800445F8
+#define ZJ_2B04 func_ovl0F_06_80044690
+#include "overlays/common/zerojump.h"
 
 /* .bss, in first-seen order (docs/DECOMPILING.md, "Data") */
 u8 D_ovl0F_06_80044940[0x24]; /* unused (func_ovl0F_06_800431EC) */

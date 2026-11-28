@@ -14,70 +14,71 @@
  * places. 80044288 is defined just below 800442A4, which inlines it.
  */
 
-void func_ovl10_05_800456C8(const char *, ...);
-void func_ovl10_05_80045A08(s32);
-void func_ovl10_05_80045A10(s32, f32, f32, f32, s32, s32);
-void func_ovl10_05_80045A20(s32);
-f32 func_ovl10_05_80045AC8(UnkStructA_40 *);
-void func_ovl10_05_80045AD0(s32);
-void func_ovl10_05_80045AF0(void (*)(UnkStructA *));
-void func_ovl10_05_80045B00(s32, s32, s32);
-void func_ovl10_05_80045B40(void (*)(UnkStructA *));
-void func_ovl10_05_80045BB8(void);
-void func_ovl10_05_80045BC0(s32, s32, s32);
-s32 func_ovl10_05_80045BD0(s32, s32, s32, s32);
-s32 func_ovl10_05_80045BE8(void);
-void func_ovl10_05_80045C00(s32);
-void func_ovl10_05_80045C08(s32, s32, f32, s32, s32, s32, s32);
-void func_ovl10_05_80045C18(void);
-UnkStructA *func_ovl10_05_80045C48(s32);
-void func_ovl10_05_80045C50(s32);
-s32 func_ovl10_05_80045C70(void);
-s32 func_ovl10_05_80045CD0(s32);
-void func_ovl10_05_80046110(UnkStructA_40 *, s32);
-void func_ovl10_05_80046118(UnkStructA_40 *, s32, s32, s32);
-void func_ovl10_05_80046130(UnkStructA_40 *, s32, s32);
-f32 func_ovl10_05_80046148(UnkStructA_40 *, s32);
-void func_ovl10_05_80046160(UnkStructA_40 *, s32, s32);
-void func_ovl10_05_80046248(f32, f32, f32);
-void func_ovl10_05_80046268(f32, f32, f32);
-void func_ovl10_05_80046270(f32 *, f32 *, f32 *);
-void func_ovl10_05_800462B0(s32);
-void func_ovl10_05_80046398(Vec3f *, Vec3f *, Vec3f *);
-void func_ovl10_05_800463A0(Vec3f *, Vec3f *);
-f32 func_ovl10_05_800463B0(Vec3f *, Vec3f *);
-s32 func_ovl10_05_800463B8(UnkStructA *, s32);
-void func_ovl10_05_80046408(void *, s32);
-void func_ovl10_05_80046410(UnkStructA *, s32);
-void func_ovl10_05_80046420(UnkStructA *);
-UnkStructA *func_ovl10_05_80046430(s32, s32, s32, PORT_IP(s32));
-void func_ovl10_05_80046440(UnkStructA *);
-void *func_ovl10_05_80046460(s32, s32, UnkStructA *);
-void func_ovl10_05_80046488(UnkStructA *);
-void func_ovl10_05_800464D8(UnkStructA *, Vec3f *);
-UnkStructA *func_ovl10_05_80046520(UnkStructA *, s32);
-void func_ovl10_05_80046558(void (*)(void), s32, PORT_IP(s32), s32, s32);
-void func_ovl10_05_80046578(s32);
-void func_ovl10_05_800465A0(void);
+#define ZJ_0100 func_ovl10_05_800456C8
+#define ZJ_0C00 func_ovl10_05_80045A08
+#define ZJ_0C01 func_ovl10_05_80045A10
+#define ZJ_0D00 func_ovl10_05_80045A20
+#define ZJ_0D15 func_ovl10_05_80045AC8
+#define ZJ_0D16 func_ovl10_05_80045AD0
+#define ZJ_0E03 func_ovl10_05_80045AF0
+#define ZJ_0F00 func_ovl10_05_80045B00
+#define ZJ_0F08 func_ovl10_05_80045B40
+#define ZJ_1000 func_ovl10_05_80045BB8
+#define ZJ_1001 func_ovl10_05_80045BC0
+#define ZJ_1003 func_ovl10_05_80045BD0
+#define ZJ_1006 func_ovl10_05_80045BE8
+#define ZJ_1009 func_ovl10_05_80045C00
+#define ZJ_100A func_ovl10_05_80045C08
+#define ZJ_100C func_ovl10_05_80045C18
+#define ZJ_1012 func_ovl10_05_80045C48
+#define ZJ_1013 func_ovl10_05_80045C50
+#define ZJ_1017 func_ovl10_05_80045C70
+#define ZJ_1023 func_ovl10_05_80045CD0
+#define ZJ_1505 func_ovl10_05_80046110
+#define ZJ_1506 func_ovl10_05_80046118
+#define ZJ_1509 func_ovl10_05_80046130
+#define ZJ_150C func_ovl10_05_80046148
+#define ZJ_150F func_ovl10_05_80046160
+#define ZJ_1704 func_ovl10_05_80046248
+#define ZJ_1708 func_ovl10_05_80046268
+#define ZJ_1709 func_ovl10_05_80046270
+#define ZJ_1711 func_ovl10_05_800462B0
+void func_ovl10_05_80046398(Vec3f *, Vec3f *, Vec3f *); /* 0x1803, kept: its callers pass Vec3f * (the header's f32 *) */
+void func_ovl10_05_800463A0(Vec3f *, Vec3f *); /* 0x1804, kept: its callers pass Vec3f * (the header's f32 *) */
+f32 func_ovl10_05_800463B0(Vec3f *, Vec3f *); /* 0x1806, kept: its callers pass Vec3f * (the header's f32 *) */
+#define ZJ_1807 func_ovl10_05_800463B8
+#define ZJ_1811 func_ovl10_05_80046408
+#define ZJ_1812 func_ovl10_05_80046410
+#define ZJ_1814 func_ovl10_05_80046420
+#define ZJ_1816 func_ovl10_05_80046430
+#define ZJ_1818 func_ovl10_05_80046440
+#define ZJ_181C func_ovl10_05_80046460
+#define ZJ_1821 func_ovl10_05_80046488
+#define ZJ_182B func_ovl10_05_800464D8
+#define ZJ_1834 func_ovl10_05_80046520
+#define ZJ_1900 func_ovl10_05_80046558
+#define ZJ_1904 func_ovl10_05_80046578
+#define ZJ_1909 func_ovl10_05_800465A0
 #ifdef TARGET_PC
 UnkStruct_802B0260 *func_ovl10_05_800465E0(s32 arg0); /* ZeroJump 0x1A00, func_80287DC0 */
 #else
 UnkStruct_802B0260 *func_ovl10_05_800465E0(void);
 #endif
-void func_ovl10_05_800465F0(UnkStruct_802B0260 *, s32);
-f32 func_ovl10_05_80046700(f32);
-f32 func_ovl10_05_80046708(f32);
-s32 func_ovl10_05_80046718(s32);
-s32 *func_ovl10_05_800467F0(void);
-void func_ovl10_05_80046858(s32, s32, s32, f32);
-void func_ovl10_05_800468C0(u32 (*)[3]);
-void func_ovl10_05_800469A8(s32, f32, f32, f32, PORT_IP(s32));
-void func_ovl10_05_800469B0(s32, Vec3f *, s32);
-void func_ovl10_05_80046A50(UnkStructA *, s32, f32, s32 (*)(s32));
-void func_ovl10_05_80046A68(s32, s32, s32);
-void func_ovl10_05_80046AE0(s32);
-s32 func_ovl10_05_80046B00(s32, f32, f32, f32);
-void func_ovl10_05_80046B08(s32, Vec3f *);
+#define ZJ_1A02 func_ovl10_05_800465F0
+#define ZJ_1D00 func_ovl10_05_80046700
+#define ZJ_1D01 func_ovl10_05_80046708
+#define ZJ_1D03 func_ovl10_05_80046718
+s32 *func_ovl10_05_800467F0(void); /* 0x1E0A, kept: called with 0 arguments (the definition takes 1) */
+#define ZJ_2004 func_ovl10_05_80046858
+#define ZJ_2300 func_ovl10_05_800468C0
+#define ZJ_2600 func_ovl10_05_800469A8
+void func_ovl10_05_800469B0(s32, Vec3f *, s32); /* 0x2601, kept: its callers pass Vec3f * (the header's f32 *) */
+#define ZJ_2900 func_ovl10_05_80046A50
+#define ZJ_2A00 func_ovl10_05_80046A68
+#define ZJ_2B00 func_ovl10_05_80046AE0
+#define ZJ_2B04 func_ovl10_05_80046B00
+#include "overlays/common/zerojump.h"
+void func_ovl10_05_80046B08(s32, Vec3f *); /* 0x2B05, kept: its callers pass Vec3f * (the header's f32 *) */
 
 void func_ovl10_05_80043010(void);
 void func_ovl10_05_80043028(void);

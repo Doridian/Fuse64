@@ -503,65 +503,66 @@ typedef struct {
     /* 0x00 */ s32 unk[6];
 } Unk18_ovl0B_06; /* size = 0x18 */
 
-s32 func_ovl0B_06_80047E20(u8 *, const char *, s32); /* 0x0101 */
-void func_ovl0B_06_80048250(s32, s32, s32); /* 0x0F00 */
-s32 func_ovl0B_06_80048258(void); /* 0x0F01 */
-u16 func_ovl0B_06_80048268(void); /* 0x0F03 */
-void func_ovl0B_06_800482B0(s32); /* 0x0F0C */
-void func_ovl0B_06_80048300(s32, s32, s32); /* 0x0F16 */
-UnkStructA_40 *func_ovl0B_06_80048838(s32, s32); /* 0x1500 */
-void func_ovl0B_06_80048840(UnkStructA_40 *); /* 0x1501 */
-void func_ovl0B_06_80048860(UnkStructA_40 *, s32); /* 0x1505 */
-void func_ovl0B_06_80048868(UnkStructA_40 *, s32, s32, s32); /* 0x1506 */
-s32 func_ovl0B_06_80048888(UnkStructA_40 *, s32); /* 0x150A */
-UnkStructA_40 *func_ovl0B_06_800488B8(void (*)(UnkStructA_40 *, Gfx_80225840 **), s32); /* 0x1510 */
-s32 func_ovl0B_06_800488C8(UnkStructA_40 *, s32); /* 0x1512 */
-void func_ovl0B_06_800488D8(s32); /* 0x1514 */
-void func_ovl0B_06_80048978(s32); /* 0x1700 */
-void func_ovl0B_06_80048988(s32); /* 0x1702 */
-void func_ovl0B_06_80048998(f32, f32, f32); /* 0x1704 */
-void func_ovl0B_06_800489B8(f32, f32, f32); /* 0x1708 */
-void func_ovl0B_06_800489C0(f32 *, f32 *, f32 *); /* 0x1709 */
-void func_ovl0B_06_80048A00(s32); /* 0x1711 */
-s32 func_ovl0B_06_80048CA8(void (*)(), void *, void *, s32, s32); /* 0x1900 */
-void func_ovl0B_06_80048CB0(s32); /* 0x1901 */
-void func_ovl0B_06_80048CB8(void); /* 0x1902 */
-void func_ovl0B_06_80048CC8(s32); /* 0x1904 */
-s32 func_ovl0B_06_80048CF0(void); /* 0x1909 */
-UnkStruct_802B0260 *func_ovl0B_06_80048D30(s32); /* 0x1A00 */
-void func_ovl0B_06_80048D40(UnkStruct_802B0260 *, s32); /* 0x1A02 */
-s32 func_ovl0B_06_80048DF0(s32); /* 0x1C02 */
-s32 func_ovl0B_06_80048DF8(s32, s32); /* 0x1C03 */
-s32 func_ovl0B_06_80048E00(s32); /* 0x1C04 */
-s32 func_ovl0B_06_80048E18(void); /* 0x1C07 */
-s32 func_ovl0B_06_80048E20(s32); /* 0x1C08 */
-s32 func_ovl0B_06_80048E28(s32, s32 *); /* 0x1C09 */
-u8 *func_ovl0B_06_80048E38(void); /* 0x1C0B */
-void func_ovl0B_06_80048E40(s32); /* 0x1C0C */
-void func_ovl0B_06_80048E48(s32); /* 0x1C0D */
-f32 func_ovl0B_06_80048E50(f32); /* 0x1D00 */
-void func_ovl0B_06_80048EF0(void); /* 0x1E00 */
-void func_ovl0B_06_80048FF8(s32, s32, s32); /* 0x2201 */
-s32 func_ovl0B_06_80049060(void); /* 0x2406 */
-s32 func_ovl0B_06_80049090(u8 *, u16, u16, f32, f32, u8); /* 0x2501 */
-s32 func_ovl0B_06_80049098(s32); /* 0x2502 */
-void func_ovl0B_06_800490A0(s32, u8 *, s32); /* 0x2503 */
-void func_ovl0B_06_800490A8(s32, u16, u16); /* 0x2504 */
-void func_ovl0B_06_800490B0(s32, u16, u16); /* 0x2505 */
-void func_ovl0B_06_800490B8(s32, f32, f32); /* 0x2506 */
-void func_ovl0B_06_800490C0(s32, f32, f32); /* 0x2507 */
-UnkStructA_40 *func_ovl0B_06_800490C8(s32); /* 0x2508 */
-s32 func_ovl0B_06_800490E0(u8 *); /* 0x250B */
-s32 func_ovl0B_06_800490E8(u8 *, u16, u16, f32, f32, u8); /* 0x250C */
-void func_ovl0B_06_800490F0(s32, u8 *, s32); /* 0x250D */
-void func_ovl0B_06_80049230(s32); /* 0x2B00 */
-s32 func_ovl0B_06_80049250(s32, f32, f32, f32); /* 0x2B04 */
-PORT_IP(s32) func_ovl0B_06_80049368(s32, s32); /* 0x2F09 */
-s32 func_ovl0B_06_80049370(void); /* 0x2F0A */
-void func_ovl0B_06_80049378(s32); /* 0x2F0B */
-void func_ovl0B_06_80049380(s32); /* 0x2F0C */
-s32 func_ovl0B_06_80049388(void); /* 0x2F0D */
-s32 func_ovl0B_06_80049390(void); /* 0x2F0E */
+#define ZJ_0101 func_ovl0B_06_80047E20
+#define ZJ_0F00 func_ovl0B_06_80048250
+#define ZJ_0F01 func_ovl0B_06_80048258
+u16 func_ovl0B_06_80048268(void); /* 0x0F03, kept: its u16 return: the header's s32 changes its code */
+#define ZJ_0F0C func_ovl0B_06_800482B0
+#define ZJ_0F16 func_ovl0B_06_80048300
+#define ZJ_1500 func_ovl0B_06_80048838
+#define ZJ_1501 func_ovl0B_06_80048840
+#define ZJ_1505 func_ovl0B_06_80048860
+#define ZJ_1506 func_ovl0B_06_80048868
+#define ZJ_150A func_ovl0B_06_80048888
+#define ZJ_1510 func_ovl0B_06_800488B8
+#define ZJ_1512 func_ovl0B_06_800488C8
+#define ZJ_1514 func_ovl0B_06_800488D8
+#define ZJ_1700 func_ovl0B_06_80048978
+#define ZJ_1702 func_ovl0B_06_80048988
+#define ZJ_1704 func_ovl0B_06_80048998
+#define ZJ_1708 func_ovl0B_06_800489B8
+#define ZJ_1709 func_ovl0B_06_800489C0
+#define ZJ_1711 func_ovl0B_06_80048A00
+s32 func_ovl0B_06_80048CA8(void (*)(), void *, void *, s32, s32); /* 0x1900, kept: its callers pass s32[4] (the header's PORT_IP(s32)) */
+#define ZJ_1901 func_ovl0B_06_80048CB0
+#define ZJ_1902 func_ovl0B_06_80048CB8
+#define ZJ_1904 func_ovl0B_06_80048CC8
+#define ZJ_1909 func_ovl0B_06_80048CF0
+#define ZJ_1A00 func_ovl0B_06_80048D30
+#define ZJ_1A02 func_ovl0B_06_80048D40
+#define ZJ_1C02 func_ovl0B_06_80048DF0
+#define ZJ_1C03 func_ovl0B_06_80048DF8
+#define ZJ_1C04 func_ovl0B_06_80048E00
+#define ZJ_1C07 func_ovl0B_06_80048E18
+#define ZJ_1C08 func_ovl0B_06_80048E20
+#define ZJ_1C09 func_ovl0B_06_80048E28
+#define ZJ_1C0B func_ovl0B_06_80048E38
+#define ZJ_1C0C func_ovl0B_06_80048E40
+#define ZJ_1C0D func_ovl0B_06_80048E48
+#define ZJ_1D00 func_ovl0B_06_80048E50
+#define ZJ_1E00 func_ovl0B_06_80048EF0
+#define ZJ_2201 func_ovl0B_06_80048FF8
+#define ZJ_2406 func_ovl0B_06_80049060
+s32 func_ovl0B_06_80049090(u8 *, u16, u16, f32, f32, u8); /* 0x2501, kept: its u8 parameter 5: the header's s32 changes its code */
+#define ZJ_2502 func_ovl0B_06_80049098
+#define ZJ_2503 func_ovl0B_06_800490A0
+#define ZJ_2504 func_ovl0B_06_800490A8
+#define ZJ_2505 func_ovl0B_06_800490B0
+#define ZJ_2506 func_ovl0B_06_800490B8
+#define ZJ_2507 func_ovl0B_06_800490C0
+#define ZJ_2508 func_ovl0B_06_800490C8
+#define ZJ_250B func_ovl0B_06_800490E0
+s32 func_ovl0B_06_800490E8(u8 *, u16, u16, f32, f32, u8); /* 0x250C, kept: its u8 parameter 5: the header's s32 changes its code */
+#define ZJ_250D func_ovl0B_06_800490F0
+#define ZJ_2B00 func_ovl0B_06_80049230
+#define ZJ_2B04 func_ovl0B_06_80049250
+#define ZJ_2F09 func_ovl0B_06_80049368
+#define ZJ_2F0A func_ovl0B_06_80049370
+#define ZJ_2F0B func_ovl0B_06_80049378
+#define ZJ_2F0C func_ovl0B_06_80049380
+#define ZJ_2F0D func_ovl0B_06_80049388
+#define ZJ_2F0E func_ovl0B_06_80049390
+#include "overlays/common/zerojump.h"
 
 /*
  * Three menus are a static asking within a static choosing a file: us
@@ -3155,7 +3156,7 @@ static void func_ovl0B_06_80043018(void) {
  * two; tried: the start index as a parameter (jp's n home moves), OPEN_B
  * in a statics.h (jp swaps). The number is the call's line minus 5, so a
  * line added or removed above the handler changes it. */
-#line 2700
+#line 2701
 static void OPEN_B(s32 n, UnkStruct_ovl0B_01_80045E34 *box) {
     s32 i;
     f32 step;

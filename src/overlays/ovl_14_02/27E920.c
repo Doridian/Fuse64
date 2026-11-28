@@ -200,110 +200,111 @@
 #define WRAP360(x) ((x) >= 360.0f ? (x) - 360.0f : ((x) < 0.0f ? (x) + 360.0f : (x)))
 #define D_800503F0_VEC (*(Vec3f *) &D_ovl14_02_800503F0)
 
-void func_ovl14_02_8004EC08(s32); /* 0xC00 */
-void func_ovl14_02_8004EC18(s32 *); /* 0xC02 */
-void func_ovl14_02_8004EC20(s32); /* 0xD00 */
-f32 func_ovl14_02_8004EC30(void); /* 0xD02 */
-void func_ovl14_02_8004EC48(s32, s32, s32, s32, s32, s32); /* 0xD05 */
-s32 func_ovl14_02_8004EC70(s32); /* 0xD0A */
-f32 func_ovl14_02_8004ECC8(void *); /* 0xD15 */ 
-void func_ovl14_02_8004ECE8(void (*)(UnkStructA *), s32); /* 0xE02 */
-void func_ovl14_02_8004ECF0(void (*)(UnkStructA *)); /* 0xE03 */ 
-void func_ovl14_02_8004ED28(void); /* 0xF05 */
-UnkStruct_802AC610 *func_ovl14_02_8004ED58(void); /* 0xF0B */
-void func_ovl14_02_8004ED70(s32); /* 0xF0E */
-void func_ovl14_02_8004ED80(s32); /* 0xF10 */
-void func_ovl14_02_8004EDB8(void); /* 0x1000 */
-void func_ovl14_02_8004EDC8(void *); /* 0x1002 */
-s32 func_ovl14_02_8004EDE8(void); /* 0x1006 */
-void func_ovl14_02_8004EDF0(s32, void *); /* 0x1007 */
-void func_ovl14_02_8004EDF8(s32); /* 0x1008 */
-void func_ovl14_02_8004EE10(const char *); /* 0x100B */
-UnkStructA * func_ovl14_02_8004EE48(PORT_IP(s32)); /* 0x1012 */
-UnkStructA * func_ovl14_02_8004EE88(s32); /* 0x101A */
-void func_ovl14_02_8004EE98(s32, s32); /* 0x101C */
-s32 func_ovl14_02_8004EED0(s32); /* 0x1023 */
-void func_ovl14_02_8004F310(void *, s32); /* 0x1505 */
-void func_ovl14_02_8004F318(void *, s32, s32, s32); /* 0x1506 */
-void func_ovl14_02_8004F330(void *, s32, s32); /* 0x1509 */
-f32 func_ovl14_02_8004F348(void *, s32); /* 0x150C */
-s32 func_ovl14_02_8004F378(void *, s32); /* 0x1512 */ 
-void func_ovl14_02_8004F380(s32, s32, s32); /* 0x1513 */
-void func_ovl14_02_8004F438(s32); /* 0x1702 */
-void func_ovl14_02_8004F448(f32, f32, f32); /* 0x1704 */
-void func_ovl14_02_8004F458(f32, f32, f32); /* 0x1706 */
-void func_ovl14_02_8004F468(f32, f32, f32); /* 0x1708 */
-void func_ovl14_02_8004F470(f32 *, f32 *, f32 *); /* 0x1709 */
-void func_ovl14_02_8004F4A8(s32); /* 0x1710 */
-void func_ovl14_02_8004F4B0(s32); /* 0x1711 */
-void func_ovl14_02_8004F4C0(s32); /* 0x1713 */
-void func_ovl14_02_8004F4E8(f32 *); /* 0x1718 */
-void func_ovl14_02_8004F4F8(f32, f32, f32, f32); /* 0x171A */
-void func_ovl14_02_8004F500(f32, f32); /* 0x171B */
-void func_ovl14_02_8004F508(f32, f32, f32, f32); /* 0x171C */
-void func_ovl14_02_8004F520(s32); /* 0x171F */
-void func_ovl14_02_8004F530(f32, f32, f32); /* 0x1721 */
-void func_ovl14_02_8004F538(void *); /* 0x1722 */
-void func_ovl14_02_8004F540(f32 *); /* 0x1723 */
-void func_ovl14_02_8004F548(f32 *); /* 0x1724 */
-void func_ovl14_02_8004F550(f32 *); /* 0x1725 */
-void func_ovl14_02_8004F598(Vec3f *, Vec3f *, Vec3f *); /* 0x1803 */
-void func_ovl14_02_8004F5A0(Vec3f *, Vec3f *); /* 0x1804 */
-f32 func_ovl14_02_8004F5B0(f32 *, f32 *); /* 0x1806 */
-s32 func_ovl14_02_8004F5B8(UnkStructA *, s32); /* 0x1807 */
-s32 func_ovl14_02_8004F5C0(UnkStructA *, s32); /* 0x1808 */
-void func_ovl14_02_8004F5E0(UnkStructA *); /* 0x180C */
-void func_ovl14_02_8004F5E8(UnkStructA *, UnkStructA *); /* 0x180D */
-void func_ovl14_02_8004F600(s32); /* 0x1810 */
-void func_ovl14_02_8004F608(UnkStructA *, s32); /* 0x1811 */
-void func_ovl14_02_8004F610(UnkStructA *, s32); /* 0x1812 */
-s32 func_ovl14_02_8004F620(UnkStructA *); /* 0x1814 */
-UnkStructA *func_ovl14_02_8004F630(s32, s32, s32, UnkStructA *); /* 0x1816 */
-UnkStructA *func_ovl14_02_8004F640(UnkStructA *); /* 0x1818 */
-void func_ovl14_02_8004F688(UnkStructA *); /* 0x1821 */
-void func_ovl14_02_8004F6D8(UnkStructA *, f32 *); /* 0x182B */
-void func_ovl14_02_8004F6E0(UnkStructA *, UnkStructA *); /* 0x182C */
-void func_ovl14_02_8004F718(UnkStructA *); /* 0x1833 */
-PORT_IP(s32) func_ovl14_02_8004F728(UnkStructA *, s32, UnkStructA *); /* 0x1835 */
-void func_ovl14_02_8004F738(s32 *); /* 0x1837 */
-void func_ovl14_02_8004F740(void); /* 0x1838 */
-void func_ovl14_02_8004F748(void); /* 0x1839 */
-void func_ovl14_02_8004F750(UnkStruct_8022DBBC *); /* 0x183A */
-s32 func_ovl14_02_8004F758(void (*)(), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
-void func_ovl14_02_8004F768(void); /* 0x1902 */
-void func_ovl14_02_8004F778(s32); /* 0x1904 */
-void *func_ovl14_02_8004F780(void); /* 0x1905 */
-s32 func_ovl14_02_8004F7A0(void); /* 0x1909 */
-f32 func_ovl14_02_8004F900(f32); /* 0x1D00 */
-f32 func_ovl14_02_8004F908(f32); /* 0x1D01 */
-f64 func_ovl14_02_8004F910(void); /* 0x1D02 */
-s32 func_ovl14_02_8004F918(s32); /* 0x1D03 */
-void func_ovl14_02_8004F970(void); /* 0x1D0E */
-void func_ovl14_02_8004F978(void); /* 0x1D0F */
-void func_ovl14_02_8004F980(void); /* 0x1D10 */
-void func_ovl14_02_8004F988(f32 *); /* 0x1D11 */
-void func_ovl14_02_8004F990(void); /* 0x1D12 */
-s32 func_ovl14_02_8004F9C0(s32); /* 0x1E04 */
-void func_ovl14_02_8004F9D0(s32); /* 0x1E06 */
-void func_ovl14_02_8004F9D8(s32); /* 0x1E07 */
-s32 func_ovl14_02_8004F9E0(s32); /* 0x1E08 */
-void func_ovl14_02_8004FA38(s32); /* 0x2000 */
-void func_ovl14_02_8004FA50(void); /* 0x2003 */
-void func_ovl14_02_8004FA58(s32, s32, s32, f32); /* 0x2004 */
-void func_ovl14_02_8004FA98(s32, s32, s32, s32, s32); /* 0x2104 */
-void func_ovl14_02_8004FAA8(s32, s32, s32); /* 0x2201 */
-void func_ovl14_02_8004FAB0(s32); /* 0x2202 */
-void func_ovl14_02_8004FAB8(s32); /* 0x2203 */
-void func_ovl14_02_8004FBA8(s32, f32, f32, f32, PORT_IP(s32)); /* 0x2600 */
-void func_ovl14_02_8004FBB0(s32, f32 *, s32); /* 0x2601 */
-s32 func_ovl14_02_8004FCE0(s32); /* 0x2B00 */
-void func_ovl14_02_8004FCF0(PORT_IP(s32)); /* 0x2B02 */
-void func_ovl14_02_8004FCF8(void); /* 0x2B03 */
-s32 func_ovl14_02_8004FD00(s32, f32, f32, f32); /* 0x2B04 */
-void func_ovl14_02_8004FD08(s32, f32 *); /* 0x2B05 */
-void func_ovl14_02_8004FD10(s32); /* 0x2B06 */
-void func_ovl14_02_8004FE58(void); /* 0x3000 */
-void func_ovl14_02_8004FE60(void); /* 0x3001 */
+#define ZJ_0C00 func_ovl14_02_8004EC08
+#define ZJ_0C02 func_ovl14_02_8004EC18
+#define ZJ_0D00 func_ovl14_02_8004EC20
+#define ZJ_0D02 func_ovl14_02_8004EC30
+#define ZJ_0D05 func_ovl14_02_8004EC48
+#define ZJ_0D0A func_ovl14_02_8004EC70
+#define ZJ_0D15 func_ovl14_02_8004ECC8
+#define ZJ_0E02 func_ovl14_02_8004ECE8
+#define ZJ_0E03 func_ovl14_02_8004ECF0
+#define ZJ_0F05 func_ovl14_02_8004ED28
+#define ZJ_0F0B func_ovl14_02_8004ED58
+#define ZJ_0F0E func_ovl14_02_8004ED70
+#define ZJ_0F10 func_ovl14_02_8004ED80
+#define ZJ_1000 func_ovl14_02_8004EDB8
+#define ZJ_1002 func_ovl14_02_8004EDC8
+#define ZJ_1006 func_ovl14_02_8004EDE8
+#define ZJ_1007 func_ovl14_02_8004EDF0
+#define ZJ_1008 func_ovl14_02_8004EDF8
+#define ZJ_100B func_ovl14_02_8004EE10
+UnkStructA * func_ovl14_02_8004EE48(PORT_IP(s32)); /* 0x1012, kept: a PORT_IP(s32) parameter: it passes a pointer through it (proto_check.py sees it at the stub) */
+#define ZJ_101A func_ovl14_02_8004EE88
+#define ZJ_101C func_ovl14_02_8004EE98
+#define ZJ_1023 func_ovl14_02_8004EED0
+#define ZJ_1505 func_ovl14_02_8004F310
+#define ZJ_1506 func_ovl14_02_8004F318
+#define ZJ_1509 func_ovl14_02_8004F330
+#define ZJ_150C func_ovl14_02_8004F348
+#define ZJ_1512 func_ovl14_02_8004F378
+#define ZJ_1513 func_ovl14_02_8004F380
+#define ZJ_1702 func_ovl14_02_8004F438
+#define ZJ_1704 func_ovl14_02_8004F448
+#define ZJ_1706 func_ovl14_02_8004F458
+#define ZJ_1708 func_ovl14_02_8004F468
+#define ZJ_1709 func_ovl14_02_8004F470
+#define ZJ_1710 func_ovl14_02_8004F4A8
+#define ZJ_1711 func_ovl14_02_8004F4B0
+#define ZJ_1713 func_ovl14_02_8004F4C0
+#define ZJ_1718 func_ovl14_02_8004F4E8
+#define ZJ_171A func_ovl14_02_8004F4F8
+#define ZJ_171B func_ovl14_02_8004F500
+#define ZJ_171C func_ovl14_02_8004F508
+#define ZJ_171F func_ovl14_02_8004F520
+#define ZJ_1721 func_ovl14_02_8004F530
+#define ZJ_1722 func_ovl14_02_8004F538
+#define ZJ_1723 func_ovl14_02_8004F540
+void func_ovl14_02_8004F548(f32 *); /* 0x1724, kept: its callers pass f32 * (the header's Vec3f *) */
+#define ZJ_1725 func_ovl14_02_8004F550
+void func_ovl14_02_8004F598(Vec3f *, Vec3f *, Vec3f *); /* 0x1803, kept: its callers pass Vec3f * (the header's f32 *) */
+void func_ovl14_02_8004F5A0(Vec3f *, Vec3f *); /* 0x1804, kept: its callers pass Vec3f * (the header's f32 *) */
+#define ZJ_1806 func_ovl14_02_8004F5B0
+#define ZJ_1807 func_ovl14_02_8004F5B8
+#define ZJ_1808 func_ovl14_02_8004F5C0
+#define ZJ_180C func_ovl14_02_8004F5E0
+#define ZJ_180D func_ovl14_02_8004F5E8
+#define ZJ_1810 func_ovl14_02_8004F600
+#define ZJ_1811 func_ovl14_02_8004F608
+#define ZJ_1812 func_ovl14_02_8004F610
+#define ZJ_1814 func_ovl14_02_8004F620
+UnkStructA *func_ovl14_02_8004F630(s32, s32, s32, UnkStructA *); /* 0x1816, kept: its callers pass UnkStructA * (the header's PORT_IP(s32)) */
+#define ZJ_1818 func_ovl14_02_8004F640
+#define ZJ_1821 func_ovl14_02_8004F688
+void func_ovl14_02_8004F6D8(UnkStructA *, f32 *); /* 0x182B, kept: its callers pass f32 * (the header's Vec3f *) */
+#define ZJ_182C func_ovl14_02_8004F6E0
+#define ZJ_1833 func_ovl14_02_8004F718
+#define ZJ_1835 func_ovl14_02_8004F728
+#define ZJ_1837 func_ovl14_02_8004F738
+#define ZJ_1838 func_ovl14_02_8004F740
+#define ZJ_1839 func_ovl14_02_8004F748
+#define ZJ_183A func_ovl14_02_8004F750
+#define ZJ_1900 func_ovl14_02_8004F758
+#define ZJ_1902 func_ovl14_02_8004F768
+#define ZJ_1904 func_ovl14_02_8004F778
+#define ZJ_1905 func_ovl14_02_8004F780
+#define ZJ_1909 func_ovl14_02_8004F7A0
+#define ZJ_1D00 func_ovl14_02_8004F900
+#define ZJ_1D01 func_ovl14_02_8004F908
+#define ZJ_1D02 func_ovl14_02_8004F910
+#define ZJ_1D03 func_ovl14_02_8004F918
+#define ZJ_1D0E func_ovl14_02_8004F970
+#define ZJ_1D0F func_ovl14_02_8004F978
+#define ZJ_1D10 func_ovl14_02_8004F980
+#define ZJ_1D11 func_ovl14_02_8004F988
+#define ZJ_1D12 func_ovl14_02_8004F990
+#define ZJ_1E04 func_ovl14_02_8004F9C0
+#define ZJ_1E06 func_ovl14_02_8004F9D0
+#define ZJ_1E07 func_ovl14_02_8004F9D8
+#define ZJ_1E08 func_ovl14_02_8004F9E0
+#define ZJ_2000 func_ovl14_02_8004FA38
+#define ZJ_2003 func_ovl14_02_8004FA50
+#define ZJ_2004 func_ovl14_02_8004FA58
+#define ZJ_2104 func_ovl14_02_8004FA98
+#define ZJ_2201 func_ovl14_02_8004FAA8
+#define ZJ_2202 func_ovl14_02_8004FAB0
+#define ZJ_2203 func_ovl14_02_8004FAB8
+#define ZJ_2600 func_ovl14_02_8004FBA8
+#define ZJ_2601 func_ovl14_02_8004FBB0
+#define ZJ_2B00 func_ovl14_02_8004FCE0
+void func_ovl14_02_8004FCF0(PORT_IP(s32)); /* 0x2B02, kept: a PORT_IP(s32) parameter: it passes a pointer through it (proto_check.py sees it at the stub) */
+#define ZJ_2B03 func_ovl14_02_8004FCF8
+#define ZJ_2B04 func_ovl14_02_8004FD00
+#define ZJ_2B05 func_ovl14_02_8004FD08
+#define ZJ_2B06 func_ovl14_02_8004FD10
+#define ZJ_3000 func_ovl14_02_8004FE58
+#define ZJ_3001 func_ovl14_02_8004FE60
+#include "overlays/common/zerojump.h"
 static void func_ovl14_02_8004DF98(void);
 
 /* .bss */

@@ -1,40 +1,39 @@
 #include "common.h"
 #include "overlays/common/types.h"
 
-void func_ovl17_02_80044278(f32, f32, f32);
-void func_ovl17_02_80044298(f32, f32, f32);
-void func_ovl17_02_800442A0(f32 *, f32 *, f32 *);
-void func_ovl17_02_800445A8(s32);
-s32 func_ovl17_02_80044B30(s32, f32, f32, f32);
+#define ZJ_1704 func_ovl17_02_80044278
+#define ZJ_1708 func_ovl17_02_80044298
+#define ZJ_1709 func_ovl17_02_800442A0
+#define ZJ_1904 func_ovl17_02_800445A8
+#define ZJ_2B04 func_ovl17_02_80044B30
 
 void func_ovl17_02_8004327C(UnkStructA *);
 void func_ovl17_02_80043398(void);
 void func_ovl17_02_80043490(void);
-void func_ovl17_02_80043A38(s32);
-void func_ovl17_02_80043A50(s32);
-f32 func_ovl17_02_80043A60(void);
-void func_ovl17_02_80043A68(f32);
-void func_ovl17_02_80043B20(void (*)(UnkStructA *));
-void func_ovl17_02_80043BB0(s32);
-UnkStruct_8023A834 *func_ovl17_02_80043BB8(void);
-void func_ovl17_02_80043BE8(void);
-void func_ovl17_02_80044258(s32);
-void func_ovl17_02_80044268(s32);
-void func_ovl17_02_80044278(f32, f32, f32);
-void func_ovl17_02_80044298(f32, f32, f32);
-void func_ovl17_02_800442E0(s32);
-void func_ovl17_02_80044438(UnkStructA *, s32);
-void func_ovl17_02_80044440(UnkStructA *, s32);
-void func_ovl17_02_80044450(UnkStructA *);
-UnkStructA *func_ovl17_02_80044460(s32, s32, s32, PORT_IP(s32));
-UnkStructA *func_ovl17_02_80044480(s32, s32, f32, f32, f32);
-void func_ovl17_02_80044588(void (*)(void), void *, PORT_IP(s32), s32, s32);
-void func_ovl17_02_80044598(void);
-void *func_ovl17_02_800445B0(void);
-void func_ovl17_02_800445D0(void);
-f32 func_ovl17_02_80044730(f32);
-void func_ovl17_02_80044888(s32, s32, s32, f32);
-void func_ovl17_02_800448F0(u32 (*)[3]);
+#define ZJ_0C00 func_ovl17_02_80043A38
+#define ZJ_0D00 func_ovl17_02_80043A50
+#define ZJ_0D02 func_ovl17_02_80043A60
+#define ZJ_0D03 func_ovl17_02_80043A68
+#define ZJ_0E03 func_ovl17_02_80043B20
+#define ZJ_0F10 func_ovl17_02_80043BB0
+#define ZJ_0F11 func_ovl17_02_80043BB8
+#define ZJ_1000 func_ovl17_02_80043BE8
+#define ZJ_1700 func_ovl17_02_80044258
+#define ZJ_1702 func_ovl17_02_80044268
+#define ZJ_1711 func_ovl17_02_800442E0
+#define ZJ_1811 func_ovl17_02_80044438
+#define ZJ_1812 func_ovl17_02_80044440
+#define ZJ_1814 func_ovl17_02_80044450
+#define ZJ_1816 func_ovl17_02_80044460
+#define ZJ_181A func_ovl17_02_80044480
+#define ZJ_1900 func_ovl17_02_80044588
+#define ZJ_1902 func_ovl17_02_80044598
+#define ZJ_1905 func_ovl17_02_800445B0
+#define ZJ_1909 func_ovl17_02_800445D0
+#define ZJ_1D00 func_ovl17_02_80044730
+#define ZJ_2004 func_ovl17_02_80044888
+#define ZJ_2300 func_ovl17_02_800448F0
+#include "overlays/common/zerojump.h"
 
 /* .bss */
 u8 D_ovl17_02_80044DC0[0x24];

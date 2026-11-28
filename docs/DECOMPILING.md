@@ -146,7 +146,7 @@ too. A position where two or more structure types meet fails `--check`
 unless it is in `ALLOW_E` with the reason: the task's argument and
 7D840's `Gfx` for 426E0's `Gfx_80225840`. The other differences (an `s32` for a `u32` or a pointer, a `void *` for a
 structure's pointer, a `void` return for an `s32`, fewer parameters:
-309 in us, from about 400 before "Prototypes", below) are counted and listed with `-v`, and
+279 in us, from about 400 before "Prototypes", below) are counted and listed with `-v`, and
 `--check` fails when there are more than `E_OTHER_MAX` (per version);
 several are what a match or the port needs (PORT_RET, a halfword
 argument), and proto_check.py checks the ones that matter where pointers
@@ -280,12 +280,51 @@ it can't take the definition's:
   func_8026437C with gbi.h's `Gfx`).
 
 `tools/structs.py -v` lists them ((e)'s "other" differences, with the
-overlays' ZeroJump stubs, which are still declared in each overlay and
-counted against their targets: their header is for later). The headers
-were made by `scratch/protos/gen.py` (a plan from clang's AST: each
-declaration of a function against its definition; the ones that differ
-taken one group at a time, with the ROM's objects compared and the port
-built at `-m32` and x86-64).
+overlays' ZeroJump stubs, below, counted against their targets). The
+headers were made by `scratch/protos/gen.py` (a plan from clang's AST:
+each declaration of a function against its definition; the ones that
+differ taken one group at a time, with the ROM's objects compared and the
+port built at `-m32` and x86-64).
+
+**The overlays' ZeroJump stubs.** Every overlay has the same table of
+stubs at its own addresses (`func_ovl0C_01_80048F08` is 0C_01's 0x0F0B),
+so one id is one main_code function, and `src/overlays/common/zerojump.h`
+declares each id once, as `ZJ_<id>`, under `#ifdef ZJ_<id>`. In place of
+its stubs' prototypes an overlay defines the name of its stub for each id
+it calls (`#define ZJ_0F0B func_ovl0C_01_80048F08`, as core.h's
+`CORE_ZJ_<id>`) and includes the header after them; the calls keep the
+stubs' names. A declaration is the target's (from its `include/<obj>.h`
+or its definition: its PORT_IP/PORT_RET and parameter names) where every
+overlay compiles to the same code with it, ROM and port; otherwise it is
+the overlays' view, and its comment says how it differs and why:
+- an int where the definition has an s16 or a u8 (0x150D's halfwords,
+  0x2800's), an s32 for a u32 (0x1904: a float argument converts
+  differently), an int return for a u8/u16 one: the callers' code changes
+  with the definition's (as above);
+- a value the callers read where the definition is `void` (0x1003, 0x1500,
+  0x1816's `UnkStructA *`, ...);
+- the structure the overlays pass or read where the definition has m2c's
+  placeholder or a `PORT_IP(s32)` (48600's `u8 *`/`f32 *` objects: 0x1807,
+  0x180B..0x180E, 0x182B; 0x1012's and 0x101A's `UnkStructA *` return;
+  87D80's 0x0D0E), the callback types the overlays register (0x0E02,
+  0x0E03, 0x0F08 take a `void (*)(UnkStructA *)`), the `f32 *` or `void *`
+  most overlays pass where the definition has a `Vec3f *` (0x1718,
+  0x1722..0x1727, 0x2A0B, 0x2B05), 97610's file-local types (0x2300,
+  0x2303's `u32 (*)[3]`).
+
+An overlay whose view is still another keeps its own declaration, with
+`/* 0x<id>, kept: <reason> */`, and doesn't define the id: its callers pass
+a `Vec3f *` where the others pass an `f32 *` (0x1803, 0x1806, 0x2601,
+...), it calls the stub without its argument (0x1A00 and 0x1E0A in the
+0x10 bank, tasks.h), a narrower type changes its code (0D_01's u32 for
+0x1812, 0F_02/0F_04's s16 for 0x2801), it passes a pointer through a
+`PORT_IP(s32)` parameter (kept so that port/tools/proto_check.py sees it
+at the stub), or jp's `#define`s make two of its stubs one (0B_05's 0x2503
+and 0x250D). `scratch/protos2/gen.py` wrote the header and the overlays'
+lines from their original declarations (`choice.txt` and `keep.txt` there
+hold the decisions; each was checked by the ROM's objects in us, eu and
+jp, `scratch/protos2/bisect.py` finding the id that changed one, and by
+the x86-64 port's errors).
 
 ## NON_MATCHING drafts
 

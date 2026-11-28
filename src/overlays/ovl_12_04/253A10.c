@@ -6,42 +6,43 @@
  * (IDO -O3 emits a file's functions in reverse).
  */
 
-void func_ovl12_04_80043CC8(s32);
-void func_ovl12_04_80043CE0(s32);
-void func_ovl12_04_80043D50(UnkStructA_40 *, f32 *, f32 *);
-void func_ovl12_04_80043DB0(void (*)(UnkStructA *));
-void func_ovl12_04_80043DC0(s32, s32, s32);
-void func_ovl12_04_80043E00(void (*)(UnkStructA *));
-void func_ovl12_04_80043E78(void);
-void func_ovl12_04_80043E80(s32, s32, s32);
-void func_ovl12_04_80043E88(void *);
-s32 func_ovl12_04_80043E90(s32, s32, s32, s32);
-s32 func_ovl12_04_80043EA8(void);
-void func_ovl12_04_80043EB0(s32, void *);
-void func_ovl12_04_80043EC0(s32);
-void func_ovl12_04_80043EC8(s32, s32, f32, s32, s32, s32, s32);
-void func_ovl12_04_80043ED8(void);
-void func_ovl12_04_80043F10(s32);
-PORT_IP(s32) func_ovl12_04_80043F48(s32);
-void func_ovl12_04_80044508(f32, f32, f32);
-void func_ovl12_04_80044528(f32, f32, f32);
-void func_ovl12_04_80044530(f32 *, f32 *, f32 *);
-void func_ovl12_04_80044570(s32);
-s32 func_ovl12_04_80044678(UnkStructA *, s32);
-void func_ovl12_04_800446D0(UnkStructA *, s32);
-void func_ovl12_04_80044748(UnkStructA *);
-PORT_IP(s32) func_ovl12_04_800447E8(UnkStructA *, s32, PORT_IP(s32));
-void func_ovl12_04_80044838(s32);
-void func_ovl12_04_80044860(void);
-UnkStructA *func_ovl12_04_800448A0(s32);
-void func_ovl12_04_800448B0(UnkStructA *, s32);
-void func_ovl12_04_80044A98(s32);
-void func_ovl12_04_80044B40(s32, s32, s32);
-void func_ovl12_04_80044B80(u32 (*)[3]);
-void func_ovl12_04_80044B98(u32 (*)[3]);
-void func_ovl12_04_80044D18(UnkStructA *, s32, f32);
-void func_ovl12_04_80044D28(s32, s32, s32);
-s32 func_ovl12_04_80044DC0(s32, f32, f32, f32);
+#define ZJ_0C00 func_ovl12_04_80043CC8
+#define ZJ_0D00 func_ovl12_04_80043CE0
+#define ZJ_0D0E func_ovl12_04_80043D50
+#define ZJ_0E03 func_ovl12_04_80043DB0
+#define ZJ_0F00 func_ovl12_04_80043DC0
+#define ZJ_0F08 func_ovl12_04_80043E00
+#define ZJ_1000 func_ovl12_04_80043E78
+#define ZJ_1001 func_ovl12_04_80043E80
+#define ZJ_1002 func_ovl12_04_80043E88
+#define ZJ_1003 func_ovl12_04_80043E90
+#define ZJ_1006 func_ovl12_04_80043EA8
+#define ZJ_1007 func_ovl12_04_80043EB0
+#define ZJ_1009 func_ovl12_04_80043EC0
+#define ZJ_100A func_ovl12_04_80043EC8
+#define ZJ_100C func_ovl12_04_80043ED8
+#define ZJ_1013 func_ovl12_04_80043F10
+PORT_IP(s32) func_ovl12_04_80043F48(s32); /* 0x101A, kept: it keeps the return in PORT_IP(s32) (the header's UnkStructA *) */
+#define ZJ_1704 func_ovl12_04_80044508
+#define ZJ_1708 func_ovl12_04_80044528
+#define ZJ_1709 func_ovl12_04_80044530
+#define ZJ_1711 func_ovl12_04_80044570
+#define ZJ_1807 func_ovl12_04_80044678
+#define ZJ_1812 func_ovl12_04_800446D0
+#define ZJ_1821 func_ovl12_04_80044748
+PORT_IP(s32) func_ovl12_04_800447E8(UnkStructA *, s32, PORT_IP(s32)); /* 0x1835, kept: its callers pass PORT_IP(s32) (the header's UnkStructA *) */
+#define ZJ_1904 func_ovl12_04_80044838
+#define ZJ_1909 func_ovl12_04_80044860
+UnkStructA *func_ovl12_04_800448A0(s32); /* 0x1A00, kept: it keeps the return in UnkStructA * (the header's UnkStruct_802B0260 *) */
+void func_ovl12_04_800448B0(UnkStructA *, s32); /* 0x1A02, kept: its callers pass UnkStructA * (the header's UnkStruct_802B0260 *) */
+#define ZJ_1E07 func_ovl12_04_80044A98
+#define ZJ_2101 func_ovl12_04_80044B40
+#define ZJ_2300 func_ovl12_04_80044B80
+#define ZJ_2303 func_ovl12_04_80044B98
+#define ZJ_2901 func_ovl12_04_80044D18
+#define ZJ_2A00 func_ovl12_04_80044D28
+#define ZJ_2B04 func_ovl12_04_80044DC0
+#include "overlays/common/zerojump.h"
 
 void func_ovl12_04_80043010(void);
 void func_ovl12_04_80043020(void);

@@ -89,42 +89,43 @@ typedef struct {
     /* 0x28 */ void (*unk28)(UnkStructA_40 *, Gfx_80225840 **);
 } UnkStruct_ovl0A_06_80047178; /* size 0x2C */
 
-s32 func_ovl0A_06_800456D0(u8 *, const char *, s32); /* 0x101 */
-void func_ovl0A_06_80045B00(s32, s32, s32); /* 0xF00 */
-u16 func_ovl0A_06_80045B18(void); /* 0xF03 */
-void func_ovl0A_06_80045B70(s32); /* 0xF0E */
-UnkStructA_40 *func_ovl0A_06_800460E8(s32, s32); /* 0x1500 */
-void func_ovl0A_06_800460F0(UnkStructA_40 *); /* 0x1501 */
-UnkStructA_40 *func_ovl0A_06_80046168(void (*)(UnkStructA_40 *, Gfx_80225840 **), s32); /* 0x1510 */
-void func_ovl0A_06_80046248(f32, f32, f32); /* 0x1704 */
-void func_ovl0A_06_80046268(f32, f32, f32); /* 0x1708 */
-void func_ovl0A_06_80046270(f32 *, f32 *, f32 *); /* 0x1709 */
-s32 func_ovl0A_06_80046558(void (*)(), void *, PORT_IP(s32), s32, s32); /* 0x1900 */
-void func_ovl0A_06_80046568(void); /* 0x1902 */
-void func_ovl0A_06_80046578(s32); /* 0x1904 */
-s32 func_ovl0A_06_800465A0(void); /* 0x1909 */
-s32 func_ovl0A_06_800466A0(s32); /* 0x1C02 */
-s32 func_ovl0A_06_800466B0(s32); /* 0x1C04 */
-s32 func_ovl0A_06_800466B8(PakDir *); /* 0x1C05 */
-s32 func_ovl0A_06_800466C0(void); /* 0x1C06 */
-s32 func_ovl0A_06_800466C8(void); /* 0x1C07 */
-s32 func_ovl0A_06_800466D0(s32); /* 0x1C08 */
-void func_ovl0A_06_80046838(s32); /* 0x2000 */
-void func_ovl0A_06_80046850(void); /* 0x2003 */
-void func_ovl0A_06_800468A8(s32, s32, s32); /* 0x2201 */
-s32 func_ovl0A_06_80046910(void); /* 0x2406 */
-s32 func_ovl0A_06_80046940(u8 *, u16, u16, f32, f32, s32); /* 0x2501 */
-s32 func_ovl0A_06_80046948(s32); /* 0x2502 */
-void func_ovl0A_06_80046950(s32, u8 *, s32); /* 0x2503 */
-void func_ovl0A_06_80046960(s32, u16, u16); /* 0x2505 */
-void func_ovl0A_06_80046968(s32, f32, f32); /* 0x2506 */
-UnkStructA_40 *func_ovl0A_06_80046978(s32); /* 0x2508 */
-void func_ovl0A_06_80046988(s32, s32, s32, s32); /* 0x250A */
-s32 func_ovl0A_06_80046998(u8 *, u16, u16, f32, f32, s32); /* 0x250C */
-void func_ovl0A_06_800469A0(s32, u8 *, s32); /* 0x250D */
-void func_ovl0A_06_80046AE0(s32); /* 0x2B00 */
-s32 func_ovl0A_06_80046B00(s32, f32, f32, f32); /* 0x2B04 */
-s32 func_ovl0A_06_80046C50(); /* 0x2F10 */
+#define ZJ_0101 func_ovl0A_06_800456D0
+#define ZJ_0F00 func_ovl0A_06_80045B00
+u16 func_ovl0A_06_80045B18(void); /* 0x0F03, kept: its u16 return: the header's s32 changes its code */
+#define ZJ_0F0E func_ovl0A_06_80045B70
+#define ZJ_1500 func_ovl0A_06_800460E8
+#define ZJ_1501 func_ovl0A_06_800460F0
+#define ZJ_1510 func_ovl0A_06_80046168
+#define ZJ_1704 func_ovl0A_06_80046248
+#define ZJ_1708 func_ovl0A_06_80046268
+#define ZJ_1709 func_ovl0A_06_80046270
+#define ZJ_1900 func_ovl0A_06_80046558
+#define ZJ_1902 func_ovl0A_06_80046568
+#define ZJ_1904 func_ovl0A_06_80046578
+#define ZJ_1909 func_ovl0A_06_800465A0
+#define ZJ_1C02 func_ovl0A_06_800466A0
+#define ZJ_1C04 func_ovl0A_06_800466B0
+#define ZJ_1C05 func_ovl0A_06_800466B8
+#define ZJ_1C06 func_ovl0A_06_800466C0
+#define ZJ_1C07 func_ovl0A_06_800466C8
+#define ZJ_1C08 func_ovl0A_06_800466D0
+#define ZJ_2000 func_ovl0A_06_80046838
+#define ZJ_2003 func_ovl0A_06_80046850
+#define ZJ_2201 func_ovl0A_06_800468A8
+#define ZJ_2406 func_ovl0A_06_80046910
+#define ZJ_2501 func_ovl0A_06_80046940
+#define ZJ_2502 func_ovl0A_06_80046948
+#define ZJ_2503 func_ovl0A_06_80046950
+#define ZJ_2505 func_ovl0A_06_80046960
+#define ZJ_2506 func_ovl0A_06_80046968
+#define ZJ_2508 func_ovl0A_06_80046978
+#define ZJ_250A func_ovl0A_06_80046988
+#define ZJ_250C func_ovl0A_06_80046998
+#define ZJ_250D func_ovl0A_06_800469A0
+#define ZJ_2B00 func_ovl0A_06_80046AE0
+#define ZJ_2B04 func_ovl0A_06_80046B00
+#define ZJ_2F10 func_ovl0A_06_80046C50
+#include "overlays/common/zerojump.h"
 
 static void func_ovl0A_06_80045524(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
 static void func_ovl0A_06_8004554C(UnkStructA_40 *arg0, Gfx_80225840 **arg1);
@@ -1606,9 +1607,9 @@ static s32 func_ovl0A_06_8004311C(void) {
             D_ovl0A_06_80047018 = 1;
             func_ovl0A_06_80043020(0, 1);
         } else if ((pressed & 0x8000) || (pressed & 0x1000)) {
-#line 1652 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1653 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             ret = 1;
-#line 1628 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1629 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             if (D_ovl0A_06_80047018 == 0) {
                 /* SE(1, 1) with `ret = 2` between its wait and its call */
                 switch (1) {
@@ -1625,9 +1626,9 @@ static s32 func_ovl0A_06_8004311C(void) {
                 SE(2, 2);
             }
         } else if (pressed & 0x4000) {
-#line 1652 /* fake: ret = 1 written before SE(2, 2) but numbered after it, for the call's delay slot (written after it, any line: no) */
+#line 1653 /* fake: ret = 1 written before SE(2, 2) but numbered after it, for the call's delay slot (written after it, any line: no) */
             ret = 1;
-#line 1647 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
+#line 1648 /* fake: renumbers the lines (as1 orders a block partly by .loc line) */
             SE(2, 2);
         }
         func_ovl0A_06_800465A0();

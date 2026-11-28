@@ -3650,7 +3650,7 @@ void func_ovl14_02_80045384(void) {
     f32 b;
     f32 t;
     s32 i;
-    f32 radius; /* radius, steps, eps: held values; their slots make the original's frame (which values is a guess) */
+    f32 radius; /* fake: radius, steps, eps: held values; their slots make the original's frame (which values is a guess) */
     f32 steps;
     f32 eps;
 
@@ -3798,7 +3798,7 @@ void func_ovl14_02_80044C60(void) {
     s32 j;
     f32 t;
     f32 scale;
-    f32 w; /* w, slow, fast: held values; their slots make the original's frame (which values is a guess) */
+    f32 w; /* fake: w, slow, fast: held values; their slots make the original's frame (which values is a guess) */
     f32 sign;
     f32 slow;
     f32 fast;

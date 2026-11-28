@@ -775,7 +775,7 @@ static f32 func_ovl0F_01_8004464C_inl0(UnkStruct_ovl0F_01_80048264 *p) {
 }
 
 static void func_ovl0F_01_8004464C_inl1(UnkStruct_ovl0F_01_80048264 *p) {
-    s32 id = 0x168; /* the effect, held (a guess: it is the word above pos, 0xA8; as ovl_0F_04's) */
+    s32 id = 0x168; /* fake: the effect, held (a guess: it is the word above pos, 0xA8; as ovl_0F_04's) */
     f32 pos[3];
 
     pos[0] = (*p->unk0)->unk40->unk10;

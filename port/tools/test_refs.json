@@ -78,7 +78,7 @@
    "3600": "aea60772",
    "3900": "cdc1a569",
    "4200": "a5a9de87",
-   "4500": "281d9a3a",
+   "4500": "9c2e12c8",
    "4800": "913da1a4",
    "5100": "752c2cbe",
    "5400": "f737178e",
@@ -103,7 +103,7 @@
   "digest": "595c62398fe1ccf913f2859baa67131891d193c7",
   "digest_pools": "1fd71e8ce41cb62d3da4075486797c9e57babd58",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
-  "frames": "28ca993aa432d2bf79169c85cff2ab9c744cc61c",
+  "frames": "8b2a47b9b6ceaba7d7be2139c3a172268e2a1b27",
   "wav": "db465f4f1c79c868301d80c0d61fada4e3480625"
  },
  "eu/warp-battle": {
@@ -263,7 +263,7 @@
    "3300": "4741c04a",
    "3600": "30bd2224",
    "3900": "8cf6d271",
-   "4200": "4192f0c3",
+   "4200": "ed8704f9",
    "4500": "37d89d6c",
    "4800": "e063d803",
    "5100": "977137f2",
@@ -289,7 +289,7 @@
   "digest": "26097e3d593c4a6105eea4a2958239f01da94eb2",
   "digest_pools": "95f550e61cbc37cf38c0b0dddf7c149adea6b1c5",
   "eeprom": "2e939a4b4c54e88a202a0ddda9310a089445e547",
-  "frames": "c55c3042aa01ebda0153744d621d0dacaf074a32",
+  "frames": "5b52a6ca83dd2e8496ea31aff07fd2c6b137c712",
   "wav": "5146e77ef561b57a57e348b3ce6d156a9b3f976e"
  },
  "jp/tas-2053M": {
@@ -465,7 +465,7 @@
    "3600": "d2003772",
    "3900": "333ac569",
    "4200": "631e5e87",
-   "4500": "0635aa3a",
+   "4500": "7b5542c8",
    "4800": "a627f1a4",
    "5100": "4d91bcbe",
    "5400": "8eccc78e",
@@ -490,7 +490,7 @@
   "digest": "a80bea045ebf3b9a55b74e2fc015ccf90a29bb55",
   "digest_pools": "aee82b310726ee1d1815e7d22a128bc70af4e19f",
   "eeprom": "c1b186f86191dc6d86cebf78e8f836b64fc5f90b",
-  "frames": "33643acd6ecfe546bc75c4631f0dcad2fbb70475",
+  "frames": "dcec72ad5479a565eb541ca844a16e14e24eb680",
   "wav": "8db435c8a497e7eec7229ea596316b4c98dac581"
  },
  "us/warp-battle": {

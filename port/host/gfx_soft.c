@@ -215,9 +215,9 @@ typedef struct {
 /* the slots (gfx.h's CC_*), the constant ones set once a primitive (cc_begin) */
 static int slot[CC_N][4];
 
-/* the noise input and the blender's dither: a generator of the renderer's
-   own, the same on every host (rand()'s isn't) */
-static uint32_t noise_state = 0x12345678u;
+/* the noise input and the blender's dither: the pixel's generator, from
+   gfx_noise_start (gfx.h), the same on every host and in every back end */
+static uint32_t noise_state;
 static uint32_t noise8(void) {
     noise_state ^= noise_state << 13;
     noise_state ^= noise_state >> 17;
@@ -543,6 +543,7 @@ static void rdp_pixel(int x, int y, const Frag *f) {
     uint8_t *p;
     if (!cimg_px(x, y, &p))
         return;
+    noise_state = gfx_noise_start(x, y, gs.noise_task);
     uint32_t l = gs.om_l;
     int two = ((gs.om_h >> 20) & 3) == 1;
     int aa = (l >> 3) & 1, zcmp = (l >> 4) & 1, zupd = (l >> 5) & 1;
@@ -1002,13 +1003,12 @@ static void tex_rect(uint32_t w0, uint32_t w1, uint32_t h1, uint32_t h2, int fli
 
 /* ---- the back end ---------------------------------------------------------------------------------- */
 
-/* the NMI: the combiner's slots and the noise as at the power-on, RDRAM's
+/* the NMI: the combiner's slots as at the power-on, RDRAM's
    hidden bits below `clean` (what IPL3 writes again, port/src/reset.c) as
    at startup; the rest of RDRAM keeps its hidden bits, as it keeps its
    bytes */
 static void soft_reset(uint32_t clean) {
     memset(slot, 0, sizeof slot);
-    noise_state = 0x12345678u;
     memset(hidden, HB_CLEAN, clean / 2 < sizeof hidden ? clean / 2 : sizeof hidden);
 }
 

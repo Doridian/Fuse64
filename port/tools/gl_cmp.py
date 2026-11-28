@@ -5,7 +5,8 @@ renderer").
   gl_cmp.py BUILD [--scenario NAME ...] [--every N] [--rdram-every N] [--vi-raw]
             [--out DIR] [--gl RENDERER] [--ref RENDERER] [--frames N] [--keep]
 
-Runs each scenario (test.py's: its input, warp and save, headless and
+Runs each scenario (by default legal, menus, battle, story, warp-stage,
+warp-boss, attract and reset; test.py's: its input, warp and save, headless and
 deterministic; or "attract", 3000 retraces without input: the first attract
 demo and its screen captures; or "reset", menus with the reset button at
 retrace 1500) twice, with --renderer soft and --renderer gl, takes a
@@ -51,6 +52,10 @@ SCENARIOS = dict(test.SCENARIOS)
 SCENARIOS["attract"] = (3000, None)
 SCENARIOS["reset"] = (3000, "tools/inputs/menus.txt")
 SCENARIO_ENV = {"reset": {"PORT_RESET": "1500"}}
+# without --scenario: test.py's default three, and story (the opening, the
+# world select and the first stage: its noise, docs/PORT.md), the warps and
+# gl_cmp's own
+DEFAULT = test.DEFAULT + ["story", "warp-stage", "warp-boss", "attract", "reset"]
 
 
 def bmp(path):
@@ -148,7 +153,7 @@ def main():
     a = ap.parse_args()
     images = [tuple(int(v, 16) for v in r.split(":")) for r in a.images.split(",") if r]
     fails = 0
-    for name in a.scenario or test.DEFAULT:
+    for name in a.scenario or DEFAULT:
         tmp = tempfile.mkdtemp(prefix="fuse64-glcmp-")
         try:
             with ThreadPoolExecutor(2) as ex:

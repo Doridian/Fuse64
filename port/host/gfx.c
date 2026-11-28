@@ -1424,6 +1424,7 @@ int host_gfx_task(const void *dl, uint32_t size) {
     run((const Cmd *)dl);
     if (be->task_end)
         be->task_end();
+    gs.noise_task++;
     xr_end();
     xr_task++;
     if (host_fbw_on) {

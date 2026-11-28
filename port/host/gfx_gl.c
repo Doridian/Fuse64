@@ -147,7 +147,6 @@ static uint8_t rb_buf[TW * TH * 4];
 static int prefetch;            /* tasks to start the color image's read-back at their end */
 static unsigned long long st_tasks, st_prims, st_batches, st_tex_decoded, st_readbacks, st_uploads, st_snaps,
     st_barriers, st_kept, st_membatches, st_layers, st_vi_gpu, st_vi_cpu;
-static uint32_t frame_seed;
 static int ninst;
 
 /* How a primitive reads the memory (the images as the primitives before it
@@ -570,7 +569,13 @@ static const char *fs_src =
     "    -81, -80, -79, -77, -76, -74, -74, -72, -71, -70, -69, -67, -67, -65, -65);\n"
     "const int dmagic[16] = int[16](0, 6, 1, 7, 4, 2, 5, 3, 3, 5, 2, 4, 7, 1, 6, 0);\n"
     "const int dbayer[16] = int[16](0, 4, 1, 5, 4, 0, 5, 1, 3, 7, 2, 6, 7, 3, 6, 2);\n"
+    /* the noise: gfx.h's gfx_noise_start and the generator gfx_soft.c steps */
     "uint nstate;\n"
+    "uint noise_start(int x, int y, uint task) {\n"
+    "    uint h = uint(x) * 0x9E3779B1u ^ uint(y) * 0x85EBCA77u ^ task * 0xC2B2AE3Du;\n"
+    "    h ^= h >> 16u; h *= 0x7FEB352Du; h ^= h >> 15u; h *= 0x846CA68Bu; h ^= h >> 16u;\n"
+    "    return h | 1u;\n"
+    "}\n"
     "int noise8() { nstate ^= nstate << 13u; nstate ^= nstate >> 17u; nstate ^= nstate << 5u; return int(nstate & 255u); }\n"
     /* s and t over w, as the RDP divides (s10.5) */
     "ivec2 persp_div(int s, int t, int w) {\n"
@@ -681,7 +686,7 @@ static const char *fs_src =
     "void main() {\n"
     "    int X = int(gl_FragCoord.x), Y = int(gl_FragCoord.y);\n"
     "    int omh = u_st[0].x, l = u_st[0].y, cyc = u_st[0].z, flags = u_st[0].w;\n"
-    "    nstate = uint(X * 1973 + Y * 9277 + u_st[17].x * 26699) | 1u;\n"
+    "    nstate = noise_start(X, Y, uint(u_st[17].x));\n"
     "#ifdef MEM_FETCH\n"
     "    vec4 fb_col = o_col;\n"
     "    uint fb_z = o_z;\n"
@@ -1206,7 +1211,7 @@ static void begin(int kind, int tile) {
             c[0] = t->sh; c[1] = t->th;
             d.tex[u] = tile_texture(tile + u);
         }
-        d.st[S_SEED][0] = (int32_t)(frame_seed % 997);
+        d.st[S_SEED][0] = (int32_t)gs.noise_task;
         /* the z image: compared (from its copy, as the memory is), updated */
         int zcmp = (l >> 4) & 1, zupd = (l >> 5) & 1;
         if (kind == K_TRI && cur_z && zcmp) {
@@ -1528,7 +1533,6 @@ static void gl_task_end(void) {
     }
     attach(NULL, NULL);
     raw_valid = 0;
-    frame_seed++;
     st_tasks++;
     if (host_verbose && st_tasks % 300 == 0)
         host_log("gl: %llu tasks, %llu primitives in %llu draws (%llu read the memory) in %llu layers, %llu barriers, "

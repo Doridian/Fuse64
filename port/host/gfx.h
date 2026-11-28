@@ -53,9 +53,28 @@ typedef struct {
     float prim_lod;
     uint32_t prim_z, prim_dz;           /* (z18, and dz) */
     int sc_xh, sc_yh, sc_xl, sc_yl;     /* the scissor, 10.2 */
+    uint32_t noise_task;                /* the tasks drawn since the power-on (the noise's seed) */
 } GfxRdpState;
 
 extern GfxRdpState gs;
+
+/* The noise (the combiner's NOISE input, the dither's noise, the alpha
+   compare's random threshold): the N64's sequence is unknown, so it is a
+   function of the pixel and the task, which a back end that draws pixels in
+   any order (the GPU's) computes the same: a pixel's generator starts from
+   this hash of its x, y and gs.noise_task, and each use takes its next value
+   (xorshift32, its low 8 bits), in the RDP's order (the combiner, the color
+   dither, the alpha dither, the alpha compare).  gfx_gl.c's shader has the
+   same in GLSL. */
+static inline uint32_t gfx_noise_start(int x, int y, uint32_t task) {
+    uint32_t h = (uint32_t)x * 0x9E3779B1u ^ (uint32_t)y * 0x85EBCA77u ^ task * 0xC2B2AE3Du;
+    h ^= h >> 16;
+    h *= 0x7FEB352Du;
+    h ^= h >> 15;
+    h *= 0x846CA68Bu;
+    h ^= h >> 16;
+    return h | 1;
+}
 extern uint8_t gfx_tmem[4096];
 extern uint32_t gfx_tmem_gen;           /* bumped by every TMEM load */
 

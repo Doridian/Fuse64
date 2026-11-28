@@ -27,7 +27,6 @@ UnkStructA *func_80230E6C(s32, PORT_IP(s32));
 UnkStructA *func_80231274(s32, s32, s32, UnkStructA *);
 s32 func_80238A10(void *, void *, PORT_RET(s32, void *), s32, s32);
 void func_80239094(void);
-s32 func_8026C630(s32, f32 *);
 f32 func_8026E938(UnkStructA_40 *);
 void func_80297D30(s32, void *);
 s32 func_8029217C(UnkStructA *obj, s32 dir, f32 speed, s32 (*cb)(s32));

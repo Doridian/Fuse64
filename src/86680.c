@@ -36,7 +36,6 @@ s32 D_802AFC20;
 s32 D_802AFC24;
 f32 D_802AFC28;
 
-s32 func_8026C630(s32 arg0, Vec3f *arg1);
 void func_8026C40C(s32 arg0, Vec3f *arg1);
 
 void *D_802A1380[] = {
@@ -145,8 +144,8 @@ s32 func_8026C660(s32 arg0) {
     return -1;
 }
 
-s32 func_8026C630(s32 arg0, Vec3f *arg1) {
-    return func_8026C51C(arg0, arg1->x, arg1->y, arg1->z);
+s32 func_8026C630(s32 arg0, f32 *arg1) {
+    return func_8026C51C(arg0, arg1[0], arg1[1], arg1[2]);
 }
 
 s32 func_8026C51C(s32 arg0, f32 x, f32 y, f32 z) {

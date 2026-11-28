@@ -22,7 +22,6 @@ PORT_RET(void, s32) func_80238A10(void (*)(), PORT_IP(s32), PORT_RET(s32, void *
 PORT_RET(void, s32) func_8023903C(s32);
 void func_80239094(void);
 PORT_IP(s32) func_802391F0(void);
-PORT_RET(void, s32) func_8026C630(s32, f32 *);
 PORT_RET(void, s32) func_8027B7C4(s32, f32, f32, f32);
 PORT_RET(void, s32) func_8027BA80(s32, f32, f32, f32, s32, s32);
 PORT_RET(void, s32) func_8028A7CC(s32, f32 *, PORT_IP(s32));

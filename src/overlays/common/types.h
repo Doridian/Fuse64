@@ -376,4 +376,13 @@ typedef struct {
     /* 0x18 */ s32 unk18;
 } UnkStruct_ovl0F_01_80048508; /* size 0x1C */
 
+/* one of the particles func_ovl0F_01_8004540C draws (D_ovl0F_01_80048798) */
+typedef struct {
+    /* 0x00 */ f32 unk0;
+    /* 0x04 */ f32 unk4;
+    /* 0x08 */ f32 unk8;
+    /* 0x0C */ f32 unkC;
+    /* 0x10 */ s32 unk10;
+} UnkStruct_ovl0F_01_80048798; /* size 0x14 */
+
 #endif

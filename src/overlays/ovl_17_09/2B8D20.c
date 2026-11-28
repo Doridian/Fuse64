@@ -80,15 +80,6 @@ typedef struct {
 /* gbi.h's _SHIFTL */
 #define _SHIFTL(v, s, w) ((u32) (((u32) (v) & ((0x01 << (w)) - 1)) << (s)))
 
-/* one of the particles func_ovl17_09_80043750 draws (D_ovl17_09_800463D0) */
-typedef struct {
-    /* 0x00 */ f32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl17_09_800463D0; /* size 0x14 */
-
 /* what func_ovl17_09_800450D8 returns */
 typedef struct {
     /* 0x00 */ u8 unk0[0x10];
@@ -149,7 +140,7 @@ void func_ovl17_09_80046060(s32);
 s32 func_ovl17_09_80046080(s32, f32, f32, f32);
 
 static void func_ovl17_09_80043010(void);
-static void func_ovl17_09_80043144(UnkStruct_ovl17_09_800463D0 *);
+static void func_ovl17_09_80043144(UnkStruct_ovl0F_01_80048798 *);
 static void func_ovl17_09_80043748(UnkStruct_ovl17_09_Gfx **);
 static void func_ovl17_09_8004412C(UnkStruct_ovl0C_01_8004A3BC *);
 static s32 func_ovl17_09_80044504(UnkStructA *);
@@ -166,7 +157,7 @@ s32 D_ovl17_09_800463B4;
 s32 D_ovl17_09_800463B8;
 Vec3f D_ovl17_09_800463C0;
 u8 D_ovl17_09_800463CC[0x4];
-UnkStruct_ovl17_09_800463D0 D_ovl17_09_800463D0[20];
+UnkStruct_ovl0F_01_80048798 D_ovl17_09_800463D0[20];
 Vec3f D_ovl17_09_80046560;
 UnkStructA *D_ovl17_09_8004656C;
 f32 D_ovl17_09_80046570;
@@ -488,7 +479,7 @@ static void func_ovl17_09_80043748(UnkStruct_ovl17_09_Gfx **gdl) {
     D_ovl17_09_80046288 *= 1500.0f / view[2];
     for (i = 0; i < 20; i++) {
         if (func_ovl17_09_80045D60(0x407) != 0) {
-            UnkStruct_ovl17_09_800463D0 *p = &D_ovl17_09_800463D0[i];
+            UnkStruct_ovl0F_01_80048798 *p = &D_ovl17_09_800463D0[i];
 
             { UnkStruct_ovl17_09_Gfx *g = g2++; g->w0 = _SHIFTL(0xE4, 24, 8) | _SHIFTL(PORT_F2U(p->unk8 + p->unk4 - 1) << 2, 0, 12) | _SHIFTL(PORT_F2U(p->unk0 + p->unk8 - 1) << 2, 12, 12); g->w1 = _SHIFTL(0, 24, 3) | _SHIFTL(PORT_F2U(p->unk4) << 2, 0, 12) | _SHIFTL(PORT_F2U(p->unk0) << 2, 12, 12); { UnkStruct_ovl17_09_Gfx *g = g2++; g->w0 = 0xB4000000; g->w1 = 0; } { UnkStruct_ovl17_09_Gfx *g = g2++; g->w0 = 0xB3000000; g->w1 = _SHIFTL((s32) (16.0f / (p->unk8 - 1) * 1024.0f), 0, 16) | _SHIFTL((s32) (16.0f / (p->unk8 - 1) * 1024.0f), 16, 16); } }
         }

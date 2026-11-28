@@ -127,15 +127,6 @@ typedef struct {
     /* 0x20 */ void (*unk20)(s32, s32);
 } UnkStruct_ovl0F_01_80048938; /* size 0x24 */
 
-/* one of the particles func_ovl0F_01_8004540C draws (D_ovl0F_01_80048798) */
-typedef struct {
-    /* 0x00 */ f32 unk0;
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ s32 unk10;
-} UnkStruct_ovl0F_01_80048798; /* size 0x14 */
-
 /* what func_ovl0F_01_800480D8 returns */
 typedef struct {
     /* 0x00 */ PORT_RET(u8 unk0[0xC];, void *unk0; u8 unk4[0x8];)
@@ -1195,7 +1186,7 @@ void func_ovl0F_01_80043B0C(void) {
     func_ovl0F_01_80047760(50.0f, 50.0f, 50.0f);
     func_ovl0F_01_80047750(20);
     D_ovl0F_01_80048420 = 2;
-#line 1184 /* fake: renumbers the lines (as1 orders a block partly by .loc line); the loop as one of the list-only stubs (80043AEC, i its local) orders it, but its area is 16 bytes: x/sv 8/16 off */
+#line 1175 /* fake: renumbers the lines (as1 orders a block partly by .loc line); the loop as one of the list-only stubs (80043AEC, i its local) orders it, but its area is 16 bytes: x/sv 8/16 off */
     for (i = 0; i < 3; i++) {
         D_ovl0F_01_80048738[i]->unkC = 0;
         func_ovl0F_01_80047840(D_ovl0F_01_80048738[i], 0x01000030);

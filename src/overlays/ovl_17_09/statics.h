@@ -156,7 +156,7 @@ void func_ovl17_09_80043290(s32 arg0) {
     }
 }
 
-static void func_ovl17_09_80043144(UnkStruct_ovl17_09_800463D0 *p) {
+static void func_ovl17_09_80043144(UnkStruct_ovl0F_01_80048798 *p) {
     f32 r;
     f64 t;
 
